@@ -39,13 +39,9 @@ namespace App\Providers\Filament;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
 class LandlordPanelProvider extends PanelProvider
@@ -59,12 +55,8 @@ class LandlordPanelProvider extends PanelProvider
             ->favicon(fn () => asset('/images/default-favicon.png'))
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->middleware([
-                StartSession::class,
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
-                AuthenticateSession::class,
-                ShareErrorsFromSession::class,
-                VerifyCsrfToken::class,
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
             ])
