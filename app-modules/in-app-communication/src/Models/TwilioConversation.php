@@ -38,6 +38,7 @@ namespace AdvisingApp\InAppCommunication\Models;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use AdvisingApp\InAppCommunication\Enums\ConversationType;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
@@ -48,6 +49,7 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 class TwilioConversation extends Model
 {
     use UsesTenantConnection;
+    use SoftDeletes;
 
     protected $primaryKey = 'sid';
 

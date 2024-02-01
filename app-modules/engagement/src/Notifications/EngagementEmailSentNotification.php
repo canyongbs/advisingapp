@@ -57,7 +57,7 @@ class EngagementEmailSentNotification extends BaseNotification implements EmailN
         public Engagement $engagement
     ) {}
 
-    public function toEmail(NotifiableInterface $notifiable): MailMessage
+    public function toEmail(object $notifiable): MailMessage
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
@@ -65,7 +65,7 @@ class EngagementEmailSentNotification extends BaseNotification implements EmailN
             ->line("Your engagement was successfully delivered to {$this->engagement->recipient->display_name}.");
     }
 
-    public function toDatabase(NotifiableInterface $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
         return FilamentNotification::make()
             ->success()

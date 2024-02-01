@@ -69,7 +69,7 @@ class CreateTwilioConversation
         ?array $users = null,
         ?string $channelName = null,
         ?bool $isPrivateChannel = null
-    ): TwilioConversation {
+    ): ?TwilioConversation {
         if ($type === ConversationType::UserToUser) {
             throw_if(
                 count($users) !== 2,
@@ -92,12 +92,22 @@ class CreateTwilioConversation
             );
         }
 
-        $twilioConversation = $this->twilioClient->conversations->v1->conversations->create([
-            'friendlyName' => $friendlyName,
-            'attributes' => json_encode([
-                'type' => $type->value,
-            ]),
-        ]);
+        try {
+            $twilioConversation = $this->twilioClient
+                ->conversations
+                ->v1
+                ->conversations
+                ->create([
+                    'friendlyName' => $friendlyName,
+                    'attributes' => json_encode([
+                        'type' => $type->value,
+                    ]),
+                ]);
+        } catch (Exception $e) {
+            report($e);
+
+            return null;
+        }
 
         $conversation = TwilioConversation::create([
             'sid' => $twilioConversation->sid,

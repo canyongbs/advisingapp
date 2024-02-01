@@ -36,9 +36,7 @@
 
 namespace AdvisingApp\Notification\Notifications;
 
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
-
 interface DatabaseNotification
 {
-    public function toDatabase(NotifiableInterface $notifiable): array;
+    public function toDatabase(object $notifiable): array;
 }

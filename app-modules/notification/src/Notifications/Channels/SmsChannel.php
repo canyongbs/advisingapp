@@ -49,13 +49,12 @@ use Talkroute\MessageSegmentCalculator\SegmentCalculator;
 use AdvisingApp\Notification\Notifications\SmsNotification;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 
 class SmsChannel
 {
-    public function send(NotifiableInterface $notifiable, SmsNotification $notification): void
+    public function send(object $notifiable, SmsNotification $notification): void
     {
         try {
             DB::beginTransaction();
@@ -88,7 +87,7 @@ class SmsChannel
         }
     }
 
-    public function handle(NotifiableInterface $notifiable, SmsNotification $notification): NotificationResultData
+    public function handle(object $notifiable, SmsNotification $notification): NotificationResultData
     {
         $twilioMessage = $notification->toSms($notifiable);
 
@@ -125,7 +124,7 @@ class SmsChannel
         return $result;
     }
 
-    public static function afterSending(NotifiableInterface $notifiable, OutboundDeliverable $deliverable, SmsChannelResultData $result): void
+    public static function afterSending(object $notifiable, OutboundDeliverable $deliverable, SmsChannelResultData $result): void
     {
         if ($result->success) {
             $deliverable->update([

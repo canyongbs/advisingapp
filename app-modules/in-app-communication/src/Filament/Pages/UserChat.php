@@ -70,6 +70,7 @@ use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\InAppCommunication\Actions\AddUserToConversation;
 use AdvisingApp\InAppCommunication\Actions\TogglePinConversation;
 use AdvisingApp\InAppCommunication\Actions\CreateTwilioConversation;
+use AdvisingApp\InAppCommunication\Actions\DeleteTwilioConversation;
 use AdvisingApp\InAppCommunication\Actions\RemoveUserFromConversation;
 use AdvisingApp\InAppCommunication\Actions\PromoteUserToChannelManager;
 use AdvisingApp\InAppCommunication\Actions\DemoteUserFromChannelManager;
@@ -205,7 +206,14 @@ class UserChat extends Page implements HasForms, HasActions
                     ],
                 );
 
-                $this->selectConversation($conversation);
+                if ($conversation) {
+                    $this->selectConversation($conversation);
+
+                    Notification::make()
+                        ->title('Chat created.')
+                        ->success()
+                        ->send();
+                }
             });
     }
 
@@ -261,7 +269,14 @@ class UserChat extends Page implements HasForms, HasActions
                     isPrivateChannel: $data['is_private'],
                 );
 
-                $this->selectConversation($conversation);
+                if ($conversation) {
+                    $this->selectConversation($conversation);
+
+                    Notification::make()
+                        ->title('Channel created.')
+                        ->success()
+                        ->send();
+                }
             });
     }
 
@@ -334,6 +349,43 @@ class UserChat extends Page implements HasForms, HasActions
                     ->whereNotIn('id', $data['managers'])
                     ->whereNot('id', $user->id)
                     ->each(fn (User $demote) => app(DemoteUserFromChannelManager::class)(user: $demote, conversation: $this->conversation));
+
+                Notification::make()
+                    ->title('Channel updated.')
+                    ->success()
+                    ->send();
+            });
+    }
+
+    public function deleteChannelAction(): Action
+    {
+        return Action::make('deleteChannel')
+            ->color('danger')
+            ->link()
+            ->icon('heroicon-o-trash')
+            ->requiresConfirmation()
+            ->modalHeading('Are you sure you want to delete this channel?')
+            ->modalDescription('This action will permanently delete all chats and information contained within in the channel and cannot be undone.')
+            ->action(function (DeleteTwilioConversation $deleteTwilioConversation) {
+                if ($this->conversation->type !== ConversationType::Channel) {
+                    return;
+                }
+
+                /** @var User $user */
+                $user = auth()->user();
+
+                if (! $this->conversation->managers()->find($user)) {
+                    return;
+                }
+
+                if ($deleteTwilioConversation(conversation: $this->conversation)) {
+                    $this->selectConversation(null);
+
+                    Notification::make()
+                        ->title('Channel deleted.')
+                        ->success()
+                        ->send();
+                }
             });
     }
 
@@ -384,7 +436,7 @@ class UserChat extends Page implements HasForms, HasActions
                 }
 
                 Notification::make()
-                    ->title('Channels joined.')
+                    ->title($channels->count() > 1 ? 'Channels joined.' : 'Channel joined.')
                     ->success()
                     ->send();
 
@@ -394,10 +446,9 @@ class UserChat extends Page implements HasForms, HasActions
             });
     }
 
-    public function leaveConversationAction(): Action
+    public function leaveChannelAction(): Action
     {
-        $action = Action::make('leaveConversation')
-            ->label('Leave conversation')
+        $action = Action::make('leaveChannel')
             ->color('danger')
             ->link()
             ->icon('heroicon-m-arrow-right-start-on-rectangle')
@@ -412,12 +463,14 @@ class UserChat extends Page implements HasForms, HasActions
                 /** @var User $user */
                 $user = auth()->user();
 
-                $removeUserFromConversation(
-                    user: $user,
-                    conversation: $this->conversation,
-                );
+                if ($removeUserFromConversation(user: $user, conversation: $this->conversation)) {
+                    $this->selectConversation(null);
 
-                $this->selectConversation(null);
+                    Notification::make()
+                        ->title('Left channel.')
+                        ->success()
+                        ->send();
+                }
             });
 
         /** @var User $user */
@@ -493,7 +546,7 @@ class UserChat extends Page implements HasForms, HasActions
                 }
 
                 Notification::make()
-                    ->title('Users invited to channel.')
+                    ->title($users->count() > 1 ? 'Users invited to channel.' : 'User invited to channel.')
                     ->success()
                     ->send();
             });

@@ -40,6 +40,7 @@ use Exception;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Channels\MailChannel;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
@@ -55,7 +56,7 @@ class EmailChannel extends MailChannel
 {
     public function send($notifiable, Notification $notification): void
     {
-        /** @var NotifiableInterface $notifiable */
+        /** @var AnonymousNotifiable|NotifiableInterface $notifiable */
         try {
             DB::beginTransaction();
 

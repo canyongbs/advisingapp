@@ -33,6 +33,11 @@
 */
 document.addEventListener('alpine:init', () => {
     global = globalThis;
+    const { generateHTML } = require('@tiptap/html');
+    const { Editor } = require('@tiptap/core');
+    const { Placeholder } = require('@tiptap/extension-placeholder');
+    const { StarterKit } = require('@tiptap/starter-kit');
+    const { Underline } = require('@tiptap/extension-underline');
     const { Client } = require('@twilio/conversations');
 
     let avatarCache = {};
@@ -57,7 +62,7 @@ document.addEventListener('alpine:init', () => {
 
             this.conversation.sendMessage(this.message).catch((error) => this.handleError(error));
 
-            this.message = '';
+            window.dispatchEvent(new CustomEvent('clearChatMessage'));
         },
         formatDate: (date) => {
             if (date.toDateString() === new Date().toDateString()) {
@@ -204,6 +209,10 @@ document.addEventListener('alpine:init', () => {
 
                 this.loading = false;
             }
+
+            window.addEventListener('chatTyping', () => {
+                this.conversation?.typing();
+            });
         },
         async getMessages() {
             this.loadingMessage = 'Loading messages…';
@@ -275,13 +284,65 @@ document.addEventListener('alpine:init', () => {
                 .then(() => console.info('Chat client error sent to error handler.'))
                 .catch((error) => console.error('Error handler failed to handle error: ', error));
         },
-        typing(e) {
-            if (e.keyCode === 13) {
-                e.preventDefault();
-                this.submit();
-            } else {
-                this.conversation?.typing();
-            }
+        generateHTML: (content) => {
+            return generateHTML(content, [StarterKit, Underline]);
         },
     }));
+
+    Alpine.data('chatEditor', () => {
+        let editor;
+
+        return {
+            content: null,
+            updatedAt: Date.now(),
+
+            init() {
+                const _this = this;
+
+                editor = new Editor({
+                    element: this.$refs.element,
+                    extensions: [
+                        StarterKit,
+                        Underline,
+                        Placeholder.configure({
+                            placeholder: 'Write a message...',
+                        }),
+                    ],
+                    onCreate({ editor }) {
+                        _this.updatedAt = Date.now();
+                        _this.content = JSON.stringify(editor.getJSON());
+                    },
+                    onUpdate({ editor }) {
+                        _this.updatedAt = Date.now();
+                        _this.content = JSON.stringify(editor.getJSON());
+
+                        window.dispatchEvent(new CustomEvent('chatTyping'));
+                    },
+                    onSelectionUpdate({ editor }) {
+                        _this.updatedAt = Date.now();
+                        _this.content = JSON.stringify(editor.getJSON());
+                    },
+                });
+
+                window.addEventListener('clearChatMessage', () => {
+                    editor.commands.clearContent(true);
+                });
+            },
+            isLoaded() {
+                return editor;
+            },
+            isActive(type, opts = {}) {
+                return editor.isActive(type, opts);
+            },
+            toggleBold() {
+                editor.chain().toggleBold().focus().run();
+            },
+            toggleItalic() {
+                editor.chain().toggleItalic().focus().run();
+            },
+            toggleUnderline() {
+                editor.chain().toggleUnderline().focus().run();
+            },
+        };
+    });
 });

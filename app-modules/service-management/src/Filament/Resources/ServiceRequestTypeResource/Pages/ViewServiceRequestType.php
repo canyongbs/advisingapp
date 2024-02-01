@@ -38,6 +38,7 @@ namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeRes
 
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\Group;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -54,6 +55,7 @@ class ViewServiceRequestType extends ViewRecord
         return $infolist
             ->schema([
                 Section::make()
+                    ->columns()
                     ->schema([
                         TextEntry::make('name')
                             ->label('Name'),
@@ -62,8 +64,25 @@ class ViewServiceRequestType extends ViewRecord
                             ->hidden(fn (ServiceRequestType $record) => ! $record->form)
                             ->url(fn (ServiceRequestType $record) => $record->form ? ServiceRequestFormResource::getUrl('edit', ['record' => $record?->form]) : null)
                             ->color('primary'),
-                    ])
-                    ->columns(),
+                        Group::make()
+                            ->schema([
+                                TextEntry::make('has_enabled_feedback_collection')
+                                    ->hiddenLabel()
+                                    ->state('Feedback collection')
+                                    ->badge()
+                                    ->color(fn (ServiceRequestType $record) => $record->has_enabled_feedback_collection ? 'success' : 'gray'),
+                                TextEntry::make('has_enabled_csat')
+                                    ->hiddenLabel()
+                                    ->state('CSAT')
+                                    ->badge()
+                                    ->color(fn (ServiceRequestType $record) => $record->has_enabled_csat ? 'success' : 'gray'),
+                                TextEntry::make('has_enabled_nps')
+                                    ->hiddenLabel()
+                                    ->state('NPS')
+                                    ->badge()
+                                    ->color(fn (ServiceRequestType $record) => $record->has_enabled_nps ? 'success' : 'gray'),
+                            ]),
+                    ]),
             ]);
     }
 

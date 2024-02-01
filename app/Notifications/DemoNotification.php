@@ -37,40 +37,25 @@
 namespace App\Notifications;
 
 use App\Models\User;
-use Illuminate\Bus\Queueable;
 use App\Models\NotificationSetting;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
-class DemoNotification extends Notification implements ShouldQueue
+class DemoNotification extends BaseNotification implements EmailNotification
 {
-    use Queueable;
+    use EmailChannelTrait;
 
     public function __construct(protected User $sender) {}
 
-    /**
-     * @return array<int, string>
-     */
-    public function via(User $notifiable): array
-    {
-        return ['mail'];
-    }
-
-    public function toMail(User $notifiable): MailMessage
+    public function toEmail(object $notifiable): MailMessage
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
             ->line('The introduction to the notification.')
             ->action('Notification Action', url('/'))
             ->line('Thank you for using our application!');
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function toArray(User $notifiable): array
-    {
-        return [];
     }
 
     private function resolveNotificationSetting(User $notifiable): ?NotificationSetting

@@ -39,6 +39,7 @@ use App\Models\User;
 use function Pest\Laravel\seed;
 
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Notification;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;

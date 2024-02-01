@@ -37,32 +37,24 @@
 namespace AdvisingApp\Assistant\Notifications;
 
 use App\Models\User;
-use Illuminate\Bus\Queueable;
 use App\Models\NotificationSetting;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use AdvisingApp\Assistant\Models\AssistantChat;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 
-class SendAssistantTranscriptNotification extends Notification implements ShouldQueue
+class SendAssistantTranscriptNotification extends BaseNotification implements EmailNotification
 {
-    use Queueable;
+    use EmailChannelTrait;
 
     public function __construct(
         protected AssistantChat $chat,
         protected User $sender
     ) {}
 
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
-    {
-        return ['mail'];
-    }
-
-    public function toMail(User $notifiable): MailMessage
+    public function toEmail(object $notifiable): MailMessage
     {
         $message = MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
@@ -93,14 +85,6 @@ class SendAssistantTranscriptNotification extends Notification implements Should
             });
 
         return $message;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
-    {
-        return [];
     }
 
     private function resolveNotificationSetting(User $notifiable): ?NotificationSetting

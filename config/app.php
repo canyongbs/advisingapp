@@ -35,6 +35,7 @@
 */
 
 use Illuminate\Support\Facades\Facade;
+use App\Providers\Filament\LandlordPanelProvider;
 use App\Providers\MultiConnectionParallelTestingServiceProvider;
 use Nuwave\Lighthouse\WhereConditions\WhereConditionsServiceProvider;
 
@@ -194,9 +195,6 @@ return [
     */
 
     'providers' => [
-        /*
-         * Laravel Framework Service Providers...
-         */
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
@@ -219,22 +217,14 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-
-        /*
-         * Package Service Providers...
-         */
-
-        /*
-         * Application Service Providers...
-         */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        LandlordPanelProvider::class,
         App\Providers\Filament\AdminPanelProvider::class,
         App\Providers\MorphServiceProvider::class,
-
         App\Providers\HealthServiceProvider::class,
         App\Providers\FilamentServiceProvider::class,
         MultiConnectionParallelTestingServiceProvider::class,

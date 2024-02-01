@@ -48,6 +48,7 @@ use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionRelation;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 
 /**
  * @extends Factory<Interaction>
@@ -57,17 +58,14 @@ class InteractionFactory extends Factory
     public function definition(): array
     {
         $interactable = fake()->randomElement([
-            Student::class,
-            Prospect::class,
-            // Disabled until ADVAPP-253
-            //ServiceRequest::class,
+            Student::inRandomOrder()->first() ?? Student::factory()->create(),
+            Prospect::factory()->create(),
+            ServiceRequest::factory()->create(),
         ]);
-
-        $interactable = $interactable::factory()->create();
 
         return [
             'user_id' => User::factory(),
-            'interactable_id' => $interactable->identifier(),
+            'interactable_id' => $interactable->getKey(),
             'interactable_type' => $interactable->getMorphClass(),
             'interaction_type_id' => InteractionType::factory(),
             'interaction_relation_id' => InteractionRelation::factory(),
