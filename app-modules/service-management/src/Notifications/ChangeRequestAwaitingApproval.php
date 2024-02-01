@@ -45,7 +45,6 @@ use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource;
@@ -59,7 +58,7 @@ class ChangeRequestAwaitingApproval extends BaseNotification implements EmailNot
         public ChangeRequest $changeRequest,
     ) {}
 
-    public function toEmail(NotifiableInterface $notifiable): MailMessage
+    public function toEmail(object $notifiable): MailMessage
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
@@ -71,7 +70,7 @@ class ChangeRequestAwaitingApproval extends BaseNotification implements EmailNot
             ->action('View Change Request', url(ChangeRequestResource::getUrl('view', ['record' => $this->changeRequest])));
     }
 
-    public function toDatabase(NotifiableInterface $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
         return Notification::make()
             ->title('Change Request Awaiting Your Approval')

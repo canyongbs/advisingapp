@@ -39,7 +39,6 @@ namespace AdvisingApp\Form\Notifications;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Notification\Notifications\SmsNotification;
 use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use AdvisingApp\Notification\Notifications\Concerns\SmsChannelTrait;
 
@@ -51,7 +50,7 @@ class FormSubmissionRequestSmsNotification extends BaseNotification implements S
         public FormSubmission $submission,
     ) {}
 
-    public function toSms(NotifiableInterface $notifiable): TwilioMessage
+    public function toSms(object $notifiable): TwilioMessage
     {
         $body = "You have been sent a request to complete {$this->submission->submissible->name} by {$this->submission->requester->name}." .
                     (filled($this->submission->request_note) ? " {$this->submission->request_note}" : '') .

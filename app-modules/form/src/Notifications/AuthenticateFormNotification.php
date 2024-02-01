@@ -36,35 +36,36 @@
 
 namespace AdvisingApp\Form\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\AnonymousNotifiable;
 use AdvisingApp\Form\Models\SubmissibleAuthentication;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Notifications\OnDemandNotification;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
-class AuthenticateFormNotification extends Notification
+class AuthenticateFormNotification extends BaseNotification implements EmailNotification, OnDemandNotification
 {
-    use Queueable;
+    use EmailChannelTrait;
 
     public function __construct(
         public SubmissibleAuthentication $submissibleAuthentication,
         public int $code,
     ) {}
 
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
-    {
-        return ['mail'];
-    }
-
-    public function toMail(AnonymousNotifiable $notifiable): MailMessage
+    public function toEmail(object $notifiable): MailMessage
     {
         return MailMessage::make()
             ->subject("Your authentication code for {$this->submissibleAuthentication->submissible->name}")
             ->line("Your code is: {$this->code}.")
             ->line('You should type this code into the form to authenticate yourself.')
             ->line('For security reasons, the code will expire in 24 hours, but you can always request another.');
+    }
+
+    public function identifyRecipient(): array
+    {
+        return [
+            $this->submissibleAuthentication->author->getKey(),
+            $this->submissibleAuthentication->author->getMorphClass(),
+        ];
     }
 }

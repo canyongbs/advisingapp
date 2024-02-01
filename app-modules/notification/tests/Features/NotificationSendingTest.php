@@ -42,7 +42,6 @@ use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use Filament\Notifications\Notification as FilamentNotification;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 
@@ -74,7 +73,7 @@ class TestMultipleChannelNotification extends BaseNotification implements EmailN
     use EmailChannelTrait;
     use DatabaseChannelTrait;
 
-    public function toEmail(NotifiableInterface $notifiable): MailMessage
+    public function toEmail(object $notifiable): MailMessage
     {
         return MailMessage::make()
             ->subject('Test Subject')
@@ -83,7 +82,7 @@ class TestMultipleChannelNotification extends BaseNotification implements EmailN
             ->salutation('Test Salutation');
     }
 
-    public function toDatabase(NotifiableInterface $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
         return FilamentNotification::make()
             ->success()

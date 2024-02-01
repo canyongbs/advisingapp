@@ -38,8 +38,10 @@ namespace App\Multitenancy\Http\Controllers;
 
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Multitenancy\Actions\CreateTenant;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use App\Multitenancy\Http\Requests\CreateTenantRequest;
@@ -82,6 +84,10 @@ class CreateTenantController extends Controller
             DB::rollBack();
 
             report($e);
+
+            if ($e instanceof ValidationException) {
+                Log::error($e->getMessage());
+            }
 
             if ($request->expectsJson()) {
                 return response()->json([

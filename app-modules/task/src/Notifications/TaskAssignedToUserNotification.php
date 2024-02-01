@@ -37,32 +37,30 @@
 namespace AdvisingApp\Task\Notifications;
 
 use App\Models\User;
-use Illuminate\Bus\Queueable;
 use AdvisingApp\Task\Models\Task;
 use Illuminate\Support\HtmlString;
 use App\Models\NotificationSetting;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use Filament\Notifications\Notification as FilamentNotification;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\EditTask;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 
-class TaskAssignedToUserNotification extends Notification implements ShouldQueue
+class TaskAssignedToUserNotification extends BaseNotification implements DatabaseNotification, EmailNotification
 {
-    use Queueable;
+    use DatabaseChannelTrait;
+    use EmailChannelTrait;
     use SerializesModels;
 
     public function __construct(
         public Task $task,
     ) {}
 
-    public function via(User $notifiable): array
-    {
-        return ['mail', 'database'];
-    }
-
-    public function toMail(User $notifiable): MailMessage
+    public function toEmail(object $notifiable): MailMessage
     {
         $truncatedTaskDescription = str($this->task->description)->limit(50);
 
@@ -73,7 +71,7 @@ class TaskAssignedToUserNotification extends Notification implements ShouldQueue
             ->line("\"{$truncatedTaskDescription}\"");
     }
 
-    public function toDatabase(User $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
         $url = EditTask::getUrl(['record' => $this->task]);
 

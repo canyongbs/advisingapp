@@ -82,7 +82,7 @@ enum SocialiteProvider: string
             'azure_calendar' => new Config(
                 key: $azureCalendarSettings->client_id,
                 secret: $azureCalendarSettings->client_secret,
-                callbackUri: route('socialite.callback', ['provider' => 'azure_calendar']),
+                callbackUri: route('calendar.outlook.callback'),
                 additionalProviderConfig: ['tenant' => $azureCalendarSettings->tenant_id ?? 'common']
             ),
             'google' => new Config(

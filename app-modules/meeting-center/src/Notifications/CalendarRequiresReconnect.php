@@ -57,7 +57,7 @@ class CalendarRequiresReconnect extends BaseNotification implements EmailNotific
 
     public function __construct(public Calendar $calendar) {}
 
-    public function toEmail(NotifiableInterface $notifiable): MailMessage
+    public function toEmail(object $notifiable): MailMessage
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
@@ -66,7 +66,7 @@ class CalendarRequiresReconnect extends BaseNotification implements EmailNotific
             ->action('View Schedule and Appointments', CalendarEventResource::getUrl());
     }
 
-    public function toDatabase(NotifiableInterface $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
         return FilamentNotification::make()
             ->danger()

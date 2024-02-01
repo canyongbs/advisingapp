@@ -152,7 +152,7 @@
             @if ($conversation)
                 <div
                     class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3"
-                    x-data="userToUserChat(`{{ $conversation->getKey() }}`)"
+                    x-data="userToUserChat({ selectedConversation: @js($conversation->getKey()), users: @js($users) })"
                     wire:key="conversation-{{ $conversation->getKey() }}"
                 >
                     <div
@@ -197,9 +197,9 @@
                                     :key="message.message.index"
                                 >
                                     <div class="group w-full dark:bg-gray-800">
-                                        <div class="m-auto justify-center px-6 py-3 text-base md:gap-6">
+                                        <div class="m-auto justify-center px-6 py-3 text-base">
                                             <div
-                                                class="mx-auto flex flex-1 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
+                                                class="mx-auto flex flex-1 gap-6 text-base md:max-w-2xl lg:max-w-[38rem] xl:max-w-3xl">
                                                 <div class="relative mt-1 flex flex-shrink-0 flex-col items-end">
                                                     <x-filament::avatar
                                                         class="rounded-full"
@@ -224,7 +224,9 @@
 
                                                         <div
                                                             class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
-                                                            <div x-text="message.message.body"></div>
+                                                            <div
+                                                                x-html="generateHTML(JSON.parse(message.message.body))">
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -251,26 +253,84 @@
                             <div
                                 class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
                                 <div class="bg-white dark:bg-gray-800">
-                                    <label
-                                        class="sr-only"
-                                        for="message_input"
-                                    >Type here</label>
-                                    <textarea
-                                        class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
-                                        id="message_input"
+                                    <div
+                                        x-data="chatEditor({ currentUser: @js(auth()->id()), users: @js($users) })"
                                         x-model="message"
-                                        rows="4"
-                                        placeholder="Type here..."
-                                        required
-                                        x-on:keydown="typing"
+                                        wire:ignore
+                                        x-modelable="content"
                                     >
-                                    </textarea>
+                                        <template x-if="isLoaded()">
+                                            <div class="flex flex-wrap gap-1 border-b px-3 py-2 dark:border-gray-700">
+                                                <button
+                                                    class="rounded p-0.5"
+                                                    type="button"
+                                                    x-on:click="toggleBold()"
+                                                    x-bind:class="{ 'bg-gray-200 dark:bg-gray-700': isActive('bold', updatedAt) }"
+                                                >
+                                                    <svg
+                                                        class="h-5 w-5"
+                                                        fill="currentColor"
+                                                        viewBox="0 0 1024 1024"
+                                                        version="1.1"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path
+                                                            d="M576 661.333H426.667v-128H576c35.413 0 64 28.587 64 64 0 35.414-28.587 64-64 64m-149.333-384h128c35.413 0 64 28.587 64 64 0 35.414-28.587 64-64 64h-128m238.933 55.04C706.987 431.36 736 384 736 341.333c0-96.426-74.667-170.666-170.667-170.666H298.667V768H599.04c89.6 0 158.293-72.533 158.293-161.707 0-64.853-36.693-120.32-91.733-145.92z"
+                                                        />
+                                                    </svg>
+                                                </button>
+
+                                                <button
+                                                    class="rounded p-0.5"
+                                                    type="button"
+                                                    x-on:click="toggleItalic()"
+                                                    x-bind:class="{ 'bg-gray-200 dark:bg-gray-700': isActive('italic', updatedAt) }"
+                                                >
+                                                    <svg
+                                                        class="h-5 w-5"
+                                                        fill="currentColor"
+                                                        viewBox="0 0 1024 1024"
+                                                        version="1.1"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path
+                                                            d="M426.667 170.667v128h94.293L375.04 640H256v128h341.333V640H503.04l145.92-341.333H768v-128H426.667z"
+                                                        />
+                                                    </svg>
+                                                </button>
+
+                                                <button
+                                                    class="rounded p-0.5"
+                                                    type="button"
+                                                    x-on:click="toggleUnderline()"
+                                                    x-bind:class="{ 'bg-gray-200 dark:bg-gray-700': isActive('underline', updatedAt) }"
+                                                >
+                                                    <svg
+                                                        class="h-5 w-5"
+                                                        fill="currentColor"
+                                                        viewBox="0 0 1024 1024"
+                                                        version="1.1"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path
+                                                            d="M232 872h560v-80H232v80m280-160c132.4 0 240-107.6 240-240V152H652v320c0 77.2-62.8 140-140 140s-140-62.8-140-140V152H272v320c0 132.4 107.6 240 240 240z"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </template>
+
+                                        <div class="w-full px-4 py-2 text-gray-900 dark:text-white">
+                                            <div x-ref="element"></div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
                                     <div class="flex items-center gap-3">
                                         <x-filament::button type="submit">
-                                            Post
+                                            Send
                                         </x-filament::button>
+
                                         <div
                                             class="relative flex h-6 items-center justify-center gap-0.5"
                                             x-show="usersTyping.length"
@@ -297,14 +357,23 @@
                             </div>
                         </form>
                         @if ($conversation->type === ConversationType::Channel)
-                            <div class="flex items-center justify-end gap-3">
-                                @if ($conversation->managers()->find(auth()->user()))
-                                    {{ $this->editChannelAction }}
+                            @php
+                                $isManager = (bool) $conversation->managers()->find(auth()->user());
+                            @endphp
+                            <div class="{{ $isManager ? 'justify-between' : 'justify-end' }} flex items-center">
+                                @if ($isManager)
+                                    <div class="flex gap-3">
+                                        {{ $this->editChannelAction }}
+
+                                        {{ $this->deleteChannelAction }}
+                                    </div>
                                 @endif
 
-                                {{ $this->addUserToChannelAction }}
+                                <div class="flex gap-3">
+                                    {{ $this->addUserToChannelAction }}
 
-                                {{ $this->leaveConversationAction }}
+                                    {{ $this->leaveChannelAction }}
+                                </div>
                             </div>
                         @endif
                     </div>
@@ -316,5 +385,18 @@
             @endif
         </div>
         <script src="{{ FilamentAsset::getScriptSrc('userToUserChat', 'canyon-gbs/in-app-communication') }}"></script>
+        <style>
+            .tiptap .is-editor-empty:first-child::before {
+                color: #adb5bd;
+                content: attr(data-placeholder);
+                float: left;
+                height: 0;
+                pointer-events: none;
+            }
+
+            .ProseMirror-focused {
+                outline-color: transparent;
+            }
+        </style>
     </div>
 </x-filament-panels::page>

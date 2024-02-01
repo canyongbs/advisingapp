@@ -54,7 +54,7 @@ use Filament\Http\Middleware\Authenticate;
 use AdvisingApp\Theme\Settings\ThemeSettings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
-use Spatie\Multitenancy\Http\Middleware\NeedsTenant;
+use App\Multitenancy\Http\Middleware\NeedsTenant;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;

@@ -34,8 +34,11 @@
 import { createInput } from '@formkit/vue';
 import Slider from "./Slider.vue";
 import Rating from "./Rating.vue";
+import inputs from '../../../../form/src/FormKit/Inputs/index';
+
 
 export default {
+    'otp': inputs.otp,
     'slider': createInput(Slider, {
         props: [],
     }),

@@ -52,9 +52,9 @@ use AdvisingApp\Authorization\Filament\Widgets\UnlicensedNotice;
 
 class Dashboard extends BasePage
 {
-    protected static ?string $navigationLabel = 'My Dashboard';
+    protected static ?string $navigationLabel = 'Home';
 
-    protected ?string $heading = 'My Dashboard';
+    protected ?string $heading = 'Home';
 
     public function getWidgets(): array
     {

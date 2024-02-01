@@ -52,7 +52,13 @@ class GoogleCalendarController extends CalendarController
     {
         $client = GoogleCalendarManager::client();
 
-        return redirect()->away($client->createAuthUrl());
+        return redirect()->away(
+            $client->createAuthUrl(
+                queryParams: [
+                    'prompt' => 'select_account',
+                ]
+            )
+        );
     }
 
     public function callback(Request $request): RedirectResponse
