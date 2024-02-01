@@ -50,9 +50,6 @@ class ServiceManagement extends Cluster
     // TODO Move into policy once created...
     public static function canAccess(): bool
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
+        return auth()->user()->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
     }
 }
