@@ -15,7 +15,7 @@
     "price": null,
     "price_unit": null,
     "sid": "SMXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "message_status": "delivered",
+    "MessageStatus": "delivered",
     "subresource_uris": {
         "media": "/2010-04-01/Accounts/ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/Messages/SMXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/Media.json"
     },
