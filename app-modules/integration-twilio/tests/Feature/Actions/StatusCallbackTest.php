@@ -20,7 +20,6 @@ test('it will appropriately update the status of an outbound deliverable based o
             'external_reference_id' => '12345',
         ]);
 
-    ray('outboundDeliverable', $outboundDeliverable);
     expect($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::Awaiting);
 
     $payload = replaceKeyInFixture(
