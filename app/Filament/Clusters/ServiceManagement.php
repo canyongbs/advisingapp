@@ -36,6 +36,7 @@
 
 namespace App\Filament\Clusters;
 
+use App\Models\User;
 use Filament\Clusters\Cluster;
 use AdvisingApp\Authorization\Enums\LicenseType;
 
@@ -50,6 +51,9 @@ class ServiceManagement extends Cluster
     // TODO Move into policy once created...
     public static function canAccess(): bool
     {
-        return auth()->user()->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
     }
 }
