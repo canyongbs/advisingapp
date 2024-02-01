@@ -55,6 +55,7 @@ class OutlookCalendarController extends CalendarController
         return $driver
             ->setConfig(SocialiteProvider::AzureCalendar->config())
             ->scopes(['Calendars.ReadWrite', 'User.Read', 'offline_access'])
+            ->with(['prompt' => 'select_account'])
             ->redirect();
     }
 
