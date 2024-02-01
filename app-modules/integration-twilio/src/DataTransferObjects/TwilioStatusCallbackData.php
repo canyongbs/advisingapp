@@ -41,27 +41,16 @@ use Illuminate\Http\Request;
 class TwilioStatusCallbackData extends TwilioWebhookData
 {
     public function __construct(
+        public ?string $apiVersion,
+        public ?string $messageStatus,
+        public ?string $smsId,
+        public ?string $smsStatus,
+        public ?string $to,
+        public ?string $from,
         public ?string $messageSid,
         public ?string $accountSid,
-        public ?string $apiVersion,
-        public ?string $body,
-        public ?string $dateCreated,
-        public ?string $dateSent,
-        public ?string $dateUpdated,
-        public ?string $direction,
         public ?string $errorCode,
         public ?string $errorMessage,
-        public ?string $from,
-        public ?string $messagingServiceSid,
-        public ?string $numMedia,
-        public ?string $numSegments,
-        public ?string $price,
-        public ?string $priceUnit,
-        public ?string $sid,
-        public ?string $status,
-        public ?string $to,
-        public ?string $uri,
-        public ?string $messageStatus,
     ) {}
 
     public static function fromRequest(Request $request): static
@@ -69,27 +58,16 @@ class TwilioStatusCallbackData extends TwilioWebhookData
         $data = $request->all();
 
         return new static(
-            messageSid: $data['MessageSid'] ?? null,
-            accountSid: $data['account_sid'] ?? null,
-            apiVersion: $data['api_version'] ?? null,
-            body: $data['body'] ?? null,
-            dateCreated: $data['date_created'] ?? null,
-            dateSent: $data['date_sent'] ?? null,
-            dateUpdated: $data['date_updated'] ?? null,
-            direction: $data['direction'] ?? null,
-            errorCode: $data['error_code'] ?? null,
-            errorMessage: $data['error_message'] ?? null,
-            from: $data['from'] ?? null,
-            messagingServiceSid: $data['messaging_service_sid'] ?? null,
-            numMedia: $data['num_media'] ?? null,
-            numSegments: $data['num_segments'] ?? null,
-            price: $data['price'] ?? null,
-            priceUnit: $data['price_unit'] ?? null,
-            sid: $data['sid'] ?? null,
-            status: $data['status'] ?? null,
-            to: $data['to'] ?? null,
-            uri: $data['uri'] ?? null,
+            apiVersion: $data['ApiVersion'] ?? null,
             messageStatus: $data['MessageStatus'] ?? null,
+            smsId: $data['SmsSid'] ?? null,
+            smsStatus: $data['SmsStatus'] ?? null,
+            to: $data['To'] ?? null,
+            from: $data['From'] ?? null,
+            messageSid: $data['MessageSid'] ?? null,
+            accountSid: $data['AccountSid'] ?? null,
+            errorCode: $data['ErrorCode'] ?? null,
+            errorMessage: $data['ErrorMessage'] ?? null,
         );
     }
 }
