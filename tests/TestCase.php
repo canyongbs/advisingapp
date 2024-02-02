@@ -51,7 +51,6 @@ use App\Multitenancy\DataTransferObjects\TenantMailersConfig;
 use App\Multitenancy\DataTransferObjects\TenantDatabaseConfig;
 use Illuminate\Foundation\Testing\DatabaseTransactionsManager;
 use App\Multitenancy\DataTransferObjects\TenantSmtpMailerConfig;
-use App\Multitenancy\DataTransferObjects\TenantSisDatabaseConfig;
 use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
 use AdvisingApp\Authorization\Console\Commands\SyncRolesAndPermissions;
 use Illuminate\Foundation\Testing\Traits\CanConfigureMigrationCommands;
@@ -73,7 +72,6 @@ abstract class TestCase extends BaseTestCase
         Tenant::first()->makeCurrent();
 
         $this->beginDatabaseTransactionOnConnection($this->tenantDatabaseConnectionName());
-        $this->beginDatabaseTransactionOnConnection('sis');
     }
 
     public function createTestingEnvironment(): void
@@ -88,24 +86,11 @@ abstract class TestCase extends BaseTestCase
             name: 'Test Tenant',
             domain: 'test.advisingapp.local',
             database: 'testing_tenant',
-            sisDatabase: 'testing',
         );
 
         $tenant->makeCurrent();
 
         $this->artisan('migrate:fresh', $this->migrateFreshUsing());
-
-        $this->artisan('migrate:fresh', [
-            '--database' => 'sis',
-            '--path' => 'app-modules/student-data-model/database/migrations/sis',
-            ...$this->migrateFreshUsing(),
-        ]);
-
-        $this->artisan('app:setup-foreign-data-wrapper');
-
-        if (config('database.adm_materialized_views_enabled')) {
-            $this->artisan('app:create-adm-materialized-views');
-        }
 
         $currentTenant = Tenant::current();
 
@@ -146,7 +131,7 @@ abstract class TestCase extends BaseTestCase
         });
     }
 
-    public function createTenant(string $name, string $domain, string $database, string $sisDatabase): Tenant
+    public function createTenant(string $name, string $domain, string $database): Tenant
     {
         return app(CreateTenant::class)(
             $name,
@@ -158,13 +143,6 @@ abstract class TestCase extends BaseTestCase
                     database: $database,
                     username: config('database.connections.landlord.username'),
                     password: config('database.connections.landlord.password'),
-                ),
-                sisDatabase: new TenantSisDatabaseConfig(
-                    host: config('database.connections.sis.host'),
-                    port: config('database.connections.sis.port'),
-                    database: $sisDatabase,
-                    username: config('database.connections.sis.username'),
-                    password: config('database.connections.sis.password'),
                 ),
                 s3Filesystem: new TenantS3FilesystemConfig(
                     key: config('filesystems.disks.s3.key'),
