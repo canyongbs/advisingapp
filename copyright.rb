@@ -1,8 +1,10 @@
 #!/usr/bin/env ruby
 
+YEAR = Time.now.year;
+
 COPYRIGHT = <<EOM
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2022-#{YEAR}, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -153,16 +155,6 @@ def underline;      "\e[4m#{self}\e[24m" end
 def blink;          "\e[5m#{self}\e[25m" end
 def reverse_color;  "\e[7m#{self}\e[27m" end
 end
-
-# [
-#     'app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
-#     'app-modules/assistant/resources/views/filament/pages/personal-assistant.blade.php',
-#     'widgets/form/src/App.vue',
-#     'widgets/form/src/widget.js',
-#     'widgets/form/src/widget.css',
-# ].each do |file|
-#     handle(file)
-# end
 
 system('git', 'add', '.')
 
