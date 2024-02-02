@@ -90,16 +90,20 @@ abstract class TestCase extends BaseTestCase
 
         $tenant->makeCurrent();
 
-        $this->artisan('migrate:fresh', $this->migrateFreshUsing());
+        $tenant->execute(function () {
+            $this->artisan('migrate:fresh', [
+                '--database' => $this->tenantDatabaseConnectionName(),
+                '--seeder' => 'SisDataSeeder',
+                ...$this->migrateFreshUsing(),
+            ]);
 
-        $currentTenant = Tenant::current();
-
-        $this->artisan(
-            command: SyncRolesAndPermissions::class,
-            parameters: [
-                '--tenant' => $currentTenant->id,
-            ],
-        );
+            $this->artisan(
+                command: SyncRolesAndPermissions::class,
+                parameters: [
+                    '--tenant' => Tenant::current()->id,
+                ],
+            );
+        });
 
         Tenant::forgetCurrent();
 
