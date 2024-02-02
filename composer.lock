@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d4b21060c988298903e42a02149ff481",
+    "content-hash": "a1d33481f3861afc3a8ed56739a80ad9",
     "packages": [
         {
             "name": "amphp/amp",
@@ -1128,16 +1128,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.298.0",
+            "version": "3.298.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "55536f81006d8721c51e342d638e7ccc3529e754"
+                "reference": "7c7dd6f596e7f7ba22653a503ae76e8e11702028"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/55536f81006d8721c51e342d638e7ccc3529e754",
-                "reference": "55536f81006d8721c51e342d638e7ccc3529e754",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/7c7dd6f596e7f7ba22653a503ae76e8e11702028",
+                "reference": "7c7dd6f596e7f7ba22653a503ae76e8e11702028",
                 "shasum": ""
             },
             "require": {
@@ -1217,9 +1217,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.298.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.298.1"
             },
-            "time": "2024-01-31T19:06:05+00:00"
+            "time": "2024-02-01T19:07:41+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1606,6 +1606,41 @@
                     "AdvisingApp\\Alert\\Tests\\": "tests/",
                     "AdvisingApp\\Alert\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\Alert\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/advising-app-analytics",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/analytics",
+                "reference": "20bf4d89a69ac1f56cfcf0e0395714be2b53e1cd"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Analytics\\Providers\\AnalyticsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Analytics\\": "src/",
+                    "AdvisingApp\\Analytics\\Tests\\": "tests/",
+                    "AdvisingApp\\Analytics\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Analytics\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -2292,6 +2327,41 @@
             }
         },
         {
+            "name": "canyon-gbs/advising-app-inventory-management",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/inventory-management",
+                "reference": "4125a058df41583461c17a1538636b1baf92bf48"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\InventoryManagement\\Providers\\InventoryManagementServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\InventoryManagement\\": "src/",
+                    "AdvisingApp\\InventoryManagement\\Tests\\": "tests/",
+                    "AdvisingApp\\InventoryManagement\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\InventoryManagement\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "canyon-gbs/advising-app-knowledge-base",
             "version": "1.0",
             "dist": {
@@ -2459,6 +2529,41 @@
                     "AdvisingApp\\Prospect\\Tests\\": "tests/",
                     "AdvisingApp\\Prospect\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\Prospect\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/advising-app-report",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/report",
+                "reference": "40ff87de1d9cf2f7932743e9910e1570c732dc04"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Report\\Providers\\ReportServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Report\\": "src/",
+                    "AdvisingApp\\Report\\Tests\\": "tests/",
+                    "AdvisingApp\\Report\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Report\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -2742,76 +2847,6 @@
                     "AdvisingApp\\Webhook\\Tests\\": "tests/",
                     "AdvisingApp\\Webhook\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\Webhook\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "canyon-gbs/analytics",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/analytics",
-                "reference": "ee7fa00ee78ce3e31c49566043aaf89cca68ad6b"
-            },
-            "require": {
-                "filament/filament": "^3.0.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\Analytics\\Providers\\AnalyticsServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\Analytics\\": "src/",
-                    "AdvisingApp\\Analytics\\Tests\\": "tests/",
-                    "AdvisingApp\\Analytics\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\Analytics\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "canyon-gbs/inventory-management",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/inventory-management",
-                "reference": "16210c789f3a6d5a4b14ce0db3a17f5cdc4f6e48"
-            },
-            "require": {
-                "filament/filament": "^3.0.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\InventoryManagement\\Providers\\InventoryManagementServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\InventoryManagement\\": "src/",
-                    "AdvisingApp\\InventoryManagement\\Tests\\": "tests/",
-                    "AdvisingApp\\InventoryManagement\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\InventoryManagement\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -5687,21 +5722,21 @@
         },
         {
             "name": "google/auth",
-            "version": "v1.34.0",
+            "version": "v1.35.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "155daeadfd2f09743f611ea493b828d382519575"
+                "reference": "6e9c9fd4e2bbd7042f50083076346e4a1eff4e4b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/155daeadfd2f09743f611ea493b828d382519575",
-                "reference": "155daeadfd2f09743f611ea493b828d382519575",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/6e9c9fd4e2bbd7042f50083076346e4a1eff4e4b",
+                "reference": "6e9c9fd4e2bbd7042f50083076346e4a1eff4e4b",
                 "shasum": ""
             },
             "require": {
                 "firebase/php-jwt": "^6.0",
-                "guzzlehttp/guzzle": "^6.2.1|^7.0",
+                "guzzlehttp/guzzle": "^6.5.8||^7.4.5",
                 "guzzlehttp/psr7": "^2.4.5",
                 "php": "^7.4||^8.0",
                 "psr/cache": "^1.0||^2.0||^3.0",
@@ -5739,9 +5774,9 @@
             "support": {
                 "docs": "https://googleapis.github.io/google-auth-library-php/main/",
                 "issues": "https://github.com/googleapis/google-auth-library-php/issues",
-                "source": "https://github.com/googleapis/google-auth-library-php/tree/v1.34.0"
+                "source": "https://github.com/googleapis/google-auth-library-php/tree/v1.35.0"
             },
-            "time": "2024-01-03T20:45:15+00:00"
+            "time": "2024-02-01T20:41:08+00:00"
         },
         {
             "name": "graham-campbell/result-type",

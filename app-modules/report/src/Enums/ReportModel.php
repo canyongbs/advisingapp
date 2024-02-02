@@ -34,23 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseloadManagement\Enums;
+namespace AdvisingApp\Report\Enums;
 
+use App\Models\User;
 use Filament\Tables\Table;
+use App\Models\Authenticatable;
+use App\Filament\Tables\UsersTable;
 use Filament\Support\Contracts\HasLabel;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Report\Filament\Exports\UserExporter;
 use AdvisingApp\Prospect\Filament\Tables\ProspectsTable;
+use AdvisingApp\Report\Filament\Exports\StudentExporter;
+use AdvisingApp\Report\Filament\Exports\ProspectExporter;
 use AdvisingApp\StudentDataModel\Filament\Tables\StudentsTable;
-use AdvisingApp\CaseloadManagement\Importers\StudentCaseloadSubjectImporter;
-use AdvisingApp\CaseloadManagement\Importers\ProspectCaseloadSubjectImporter;
 
-enum CaseloadModel: string implements HasLabel
+enum ReportModel: string implements HasLabel
 {
     case Prospect = 'prospect';
 
     case Student = 'student';
+
+    case User = 'user';
 
     public function getLabel(): ?string
     {
@@ -67,14 +73,7 @@ enum CaseloadModel: string implements HasLabel
         return match ($this) {
             static::Student => Student::query(),
             static::Prospect => Prospect::query(),
-        };
-    }
-
-    public function class(): string
-    {
-        return match ($this) {
-            static::Student => Student::class,
-            static::Prospect => Prospect::class,
+            static::User => User::query(),
         };
     }
 
@@ -83,26 +82,42 @@ enum CaseloadModel: string implements HasLabel
         return $table->tap(app(match ($this) {
             static::Student => StudentsTable::class,
             static::Prospect => ProspectsTable::class,
+            static::User => UsersTable::class,
         }));
     }
 
-    public static function tryFromCaseOrValue(CaseloadModel | string $value): ?static
+    public function class(): string
     {
-        if ($value instanceof CaseloadModel) {
+        return match ($this) {
+            static::Student => Student::class,
+            static::Prospect => Prospect::class,
+            static::User => User::class,
+        };
+    }
+
+    public function exporter(): string
+    {
+        return match ($this) {
+            static::Student => StudentExporter::class,
+            static::Prospect => ProspectExporter::class,
+            static::User => UserExporter::class,
+        };
+    }
+
+    public function canBeAccessed(Authenticatable $user): bool
+    {
+        return match ($this) {
+            static::Student, static::Prospect => $user->hasLicense($this->class()::getLicenseType()),
+            static::User => $user->can('viewAny', User::class),
+        };
+    }
+
+    public static function tryFromCaseOrValue(ReportModel | string $value): ?static
+    {
+        if ($value instanceof static) {
             return $value;
         }
 
         return static::tryFrom($value);
-    }
-
-    /**
-     * @return class-string<Importer>
-     */
-    public function getSubjectImporter(): string
-    {
-        return match ($this) {
-            static::Prospect => ProspectCaseloadSubjectImporter::class,
-            static::Student => StudentCaseloadSubjectImporter::class,
-        };
     }
 }

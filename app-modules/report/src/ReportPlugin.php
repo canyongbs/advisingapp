@@ -34,29 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseloadManagement\Database\Factories;
+namespace AdvisingApp\Report;
 
-use App\Models\User;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
+use Filament\Panel;
+use Filament\Contracts\Plugin;
 
-/**
- * @extends Factory<Caseload>
- */
-class CaseloadFactory extends Factory
+class ReportPlugin implements Plugin
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    public function getId(): string
     {
-        return [
-            'name' => fake()->words(asText: true),
-            'model' => fake()->randomElement(CaseloadModel::cases()),
-            'type' => CaseloadType::Dynamic, //TODO: add static later
-            'user_id' => User::inRandomOrder()->first()?->getKey() ?? User::factory()->create()?->getKey(),
-        ];
+        return 'report';
     }
+
+    public function register(Panel $panel): void
+    {
+        $panel->discoverResources(
+            in: __DIR__ . '/Filament/Resources',
+            for: 'AdvisingApp\\Report\\Filament\\Resources'
+        );
+    }
+
+    public function boot(Panel $panel): void {}
 }

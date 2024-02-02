@@ -39,10 +39,9 @@ namespace AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource\Pag
 use Filament\Tables\Table;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Tables\Enums\FiltersLayout;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Concerns\InteractsWithTable;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
 use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource;
 
 class GetCaseloadQuery extends EditRecord implements HasTable
@@ -62,32 +61,19 @@ class GetCaseloadQuery extends EditRecord implements HasTable
         $this->previousUrl = url()->previous();
     }
 
-    public function afterFill(): void
-    {
-        $this->data['model'] = CaseloadModel::from($this->data['model']);
-        $this->data['type'] = CaseloadType::from($this->data['type']);
-        $this->data['user']['name'] = $this->getRecord()->user->name;
-    }
-
     public function table(Table $table): Table
     {
-        return $table
-            ->columns(CaseloadResource::columns($this->data['model']))
-            ->filters(CaseloadResource::filters($this->data['model']), layout: FiltersLayout::AboveContent)
-            // ->actions(CaseloadResource::actions($this->data['model']))
-            ->query(function () {
-                $model = $this->data['model'];
-                $query = $model->query();
+        $caseload = $this->getRecord();
 
-                if ($this->getRecord()->type === CaseloadType::Static) {
-                    $column = app($model->class())->getKeyName();
-                    $ids = $this->getRecord()->subjects()->pluck('subject_id');
+        $table = $caseload->model->table($table);
 
-                    $query->whereIn($column, $ids);
-                }
+        if ($caseload->type === CaseloadType::Static) {
+            $keys = $caseload->subjects()->pluck('subject_id');
 
-                return $query;
-            });
+            $table->modifyQueryUsing(fn (Builder $query) => $query->whereKey($keys));
+        }
+
+        return $table;
     }
 
     public function bootedInteractsWithTable(): void
@@ -97,5 +83,16 @@ class GetCaseloadQuery extends EditRecord implements HasTable
         }
 
         $this->baseBootedInteractsWithTable();
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $caseload = $this->getRecord();
+
+        $data['model'] = $caseload->model;
+        $data['type'] = $caseload->type;
+        $data['user']['name'] = $caseload->user->name;
+
+        return $data;
     }
 }

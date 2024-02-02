@@ -34,34 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource\Pages;
+namespace AdvisingApp\Report\Filament\Resources\ReportResource\Pages;
 
+use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ExportAction;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Report\Enums\ReportModel;
+use Filament\Actions\Exports\ExportColumn;
+use Filament\Forms\Components\CheckboxList;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Tables\Concerns\InteractsWithTable;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
-use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource;
+use AdvisingApp\Report\Filament\Resources\ReportResource;
 
-class EditCaseload extends EditRecord implements HasTable
+class EditReport extends EditRecord implements HasTable
 {
     use InteractsWithTable {
         bootedInteractsWithTable as baseBootedInteractsWithTable;
     }
 
-    protected static string $resource = CaseloadResource::class;
+    protected static string $resource = ReportResource::class;
 
-    protected static string $view = 'caseload-management::filament.resources.caseloads.pages.edit-caseload';
+    protected static string $view = 'report::filament.resources.reports.pages.edit-report';
 
     public function form(Form $form): Form
     {
@@ -76,35 +80,46 @@ class EditCaseload extends EditRecord implements HasTable
                     ->columnSpanFull(),
                 Grid::make()
                     ->schema([
-                        Select::make('type')
-                            ->options(CaseloadType::class)
-                            ->disabled(),
                         Select::make('model')
-                            ->label('Population')
-                            ->options(CaseloadModel::class)
+                            ->options(ReportModel::class)
                             ->disabled()
-                            ->visible(auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])),
+                            ->visible(auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()]) || auth()->user()->can('viewAny', User::class)),
                         TextInput::make('user.name')
                             ->label('User')
                             ->disabled(),
                     ])
                     ->columns(3),
+                CheckboxList::make('columns')
+                    ->options(fn (): array => array_reduce(
+                        $this->getRecord()->model->exporter()::getColumns(),
+                        fn (array $options, ExportColumn $column): array => [
+                            ...$options,
+                            $column->getName() => $column->getLabel(),
+                        ],
+                        [],
+                    ))
+                    ->columns(3)
+                    ->live()
+                    ->columnSpanFull()
+                    ->afterStateUpdated($this->bootedInteractsWithTable(...)),
             ]);
     }
 
     public function table(Table $table): Table
     {
-        $caseload = $this->getRecord();
+        $report = $this->getRecord();
 
-        $table = $caseload->model->table($table);
+        $columns = $this->form->getRawState()['columns'] ?? [];
 
-        if ($caseload->type === CaseloadType::Static) {
-            $keys = $caseload->subjects()->pluck('subject_id');
-
-            $table->modifyQueryUsing(fn (Builder $query) => $query->whereKey($keys));
-        }
-
-        return $table;
+        return $report->model->table($table)
+            ->columns(array_reduce(
+                $report->model->exporter()::getColumns(type: TextColumn::class),
+                fn (array $carry, TextColumn $column): array => [
+                    ...$carry,
+                    ...(in_array($column->getName(), $columns) ? [$column->getName() => $column] : []),
+                ],
+                [],
+            ));
     }
 
     public function bootedInteractsWithTable(): void
@@ -118,11 +133,10 @@ class EditCaseload extends EditRecord implements HasTable
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $caseload = $this->getRecord();
+        $report = $this->getRecord();
 
-        $data['model'] = $caseload->model;
-        $data['type'] = $caseload->type;
-        $data['user']['name'] = $caseload->user->name;
+        $data['model'] = $report->model;
+        $data['user']['name'] = $report->user->name;
 
         return $data;
     }
@@ -130,17 +144,36 @@ class EditCaseload extends EditRecord implements HasTable
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('export')
+                ->icon('heroicon-m-arrow-down-tray')
+                ->action(function () {
+                    $this->save();
+
+                    $exporter = $this->getRecord()->model->exporter();
+                    $columns = $this->form->getRawState()['columns'] ?? [];
+
+                    ExportAction::make()
+                        ->livewire($this)
+                        ->exporter($exporter)
+                        ->modalHidden()
+                        ->formData([
+                            'columnMap' => array_reduce($exporter::getColumns(), fn (array $carry, ExportColumn $column): array => [
+                                ...$carry,
+                                $column->getName() => [
+                                    'isEnabled' => in_array($column->getName(), $columns),
+                                    'label' => $column->getLabel(),
+                                ],
+                            ], []),
+                        ])
+                        ->call();
+                }),
             DeleteAction::make(),
         ];
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        if (CaseloadType::tryFromCaseOrValue($this->data['type']) === CaseloadType::Dynamic) {
-            $data['filters'] = $this->tableFilters ?? [];
-        } else {
-            $data['filters'] = [];
-        }
+        $data['filters'] = $this->tableFilters ?? [];
 
         return $data;
     }
