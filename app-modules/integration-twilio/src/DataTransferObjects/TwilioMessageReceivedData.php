@@ -67,7 +67,7 @@ class TwilioMessageReceivedData extends TwilioWebhookData
     {
         $data = $request->all();
 
-        return new static(
+        return new self(
             toCountry: $data['ToCountry'] ?? null,
             toState: $data['ToState'] ?? null,
             smsMessageSid: $data['SmsMessageSid'] ?? null,

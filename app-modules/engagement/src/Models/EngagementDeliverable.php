@@ -91,7 +91,7 @@ class EngagementDeliverable extends BaseModel implements Auditable
         }
     }
 
-    public function markDeliveryFailed(string $reason): void
+    public function markDeliveryFailed(?string $reason): void
     {
         if (! $this->hasBeenDelivered()) {
             $this->update([

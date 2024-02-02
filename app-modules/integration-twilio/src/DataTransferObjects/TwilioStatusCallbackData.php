@@ -57,7 +57,7 @@ class TwilioStatusCallbackData extends TwilioWebhookData
     {
         $data = $request->all();
 
-        return new static(
+        return new self(
             apiVersion: $data['ApiVersion'] ?? null,
             messageStatus: $data['MessageStatus'] ?? null,
             smsId: $data['SmsSid'] ?? null,

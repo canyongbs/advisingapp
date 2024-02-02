@@ -107,7 +107,7 @@ class OutboundDeliverable extends BaseModel
         }
     }
 
-    public function markDeliveryFailed(string $reason): void
+    public function markDeliveryFailed(?string $reason): void
     {
         if (! $this->hasBeenDelivered()) {
             $this->update([
