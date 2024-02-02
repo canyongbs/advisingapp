@@ -146,7 +146,6 @@
         ],
         "refresh-database": [
             "@php artisan tenants:artisan \"migrate:fresh --database=tenant\"",
-            "@php artisan app:remove-foreign-data-wrapper",
             "@php artisan tenants:artisan \"db:seed --database=tenant\""
         ],
         "php-cs-format": [
