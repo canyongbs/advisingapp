@@ -344,7 +344,7 @@ class MessageCenter extends Page
                         ->orWhere('mobile', 'like', "%{$search}%")
                         ->orWhere('phone', 'like', "%{$search}%");
                 })
-                ->joinSub($studentLatestActivity, 'latest_activity', function ($join) use ($studentsTable) {
+                ->joinSub($studentLatestActivity, 'latest_activity', function ($join) {
                     $join->on('students.sisid', '=', 'latest_activity.educatable_id');
                 })
                 ->select('students.sisid', 'students.full_name', 'latest_activity.latest_activity', DB::raw("'student' as type"));
