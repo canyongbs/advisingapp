@@ -80,7 +80,7 @@ test('it will appropriately update the status of an outbound deliverable based o
     ['StatusCallback/undelivered', NotificationDeliveryStatus::Failed],
 ]);
 
-test('it will update a related entity if one exists', function (string $payloadPath, NotificationDeliveryStatus $expectedStatus) {
+test('it will update a related entity if one exists', function (string $payloadPath, NotificationDeliveryStatus $expectedStatus, EngagementDeliveryStatus $expectedEngagementStatus) {
     // Given that we have an outbound deliverable with a related EngagementDeliverable
     $engagementDeliverable = EngagementDeliverable::factory()
         ->sms()
@@ -114,13 +114,13 @@ test('it will update a related entity if one exists', function (string $payloadP
     // Our outbound deliverable, along with our engagement deliverable
     // should have been updated appropriately based on the status of the callback
     expect($outboundDeliverable->delivery_status)->toBe($expectedStatus);
-    expect($engagementDeliverable->delivery_status)->toBe($expectedStatus);
+    expect($engagementDeliverable->delivery_status)->toBe($expectedEngagementStatus);
 
     if ($expectedStatus === NotificationDeliveryStatus::Failed) {
         expect($outboundDeliverable->delivery_response)->toBe($payload['ErrorMessage']);
         expect($engagementDeliverable->delivery_response)->toBe($payload['ErrorMessage']);
     }
 })->with([
-    ['StatusCallback/delivered', NotificationDeliveryStatus::Successful],
-    ['StatusCallback/undelivered', NotificationDeliveryStatus::Failed],
+    ['StatusCallback/delivered', NotificationDeliveryStatus::Successful, EngagementDeliveryStatus::Successful],
+    ['StatusCallback/undelivered', NotificationDeliveryStatus::Failed, EngagementDeliveryStatus::Failed],
 ]);
