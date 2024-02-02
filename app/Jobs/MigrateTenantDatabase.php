@@ -65,9 +65,15 @@ class MigrateTenantDatabase implements ShouldQueue, NotTenantAware
     public function handle(): void
     {
         $this->tenant->execute(function () {
+            $currentQueueFailedConnection = config('queue.failed.database');
+
+            config(['queue.failed.database' => 'landlord']);
+
             Artisan::call(
                 command: 'migrate --force'
             );
+
+            config(['queue.failed.database' => $currentQueueFailedConnection]);
         });
     }
 }
