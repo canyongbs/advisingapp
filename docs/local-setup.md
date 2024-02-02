@@ -42,7 +42,7 @@ It may also be helpful to add some aliases for quick artisan and composer comman
 
 ```bash
 alias spina='spin exec -it php php artisan'
-alias spinc='spin exec -it php php composer'
+alias spinc='spin exec -it php composer'
 ```
 
 Make sure to add these after the `spin` alias.
