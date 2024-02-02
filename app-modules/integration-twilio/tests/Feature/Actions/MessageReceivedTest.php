@@ -69,7 +69,7 @@ it('will create an engagement response when a message is received', function () 
     $messageReceived->handle();
 
     assertDatabaseHas('engagement_responses', [
-        'sender_id' => $student->sisid,
+        'sender_id' => $student->getKey(),
         'sender_type' => (new Student())->getMorphClass(),
         'content' => $request->all()['Body'],
     ]);
