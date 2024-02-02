@@ -62,8 +62,6 @@ test('it will appropriately update the status of an outbound deliverable based o
         value: $outboundDeliverable->external_reference_id,
     );
 
-    ray('payload', $payload);
-
     // When we process the status callback webhook
     $request = Request::create('/', 'POST', $payload);
     $statusCallback = new StatusCallback(TwilioStatusCallbackData::fromRequest($request));
