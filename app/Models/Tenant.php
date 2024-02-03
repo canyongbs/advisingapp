@@ -36,7 +36,6 @@
 
 namespace App\Models;
 
-use App\Casts\TenantEncrypted;
 use App\Casts\LandlordEncrypted;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Spatie\Multitenancy\Models\Tenant as SpatieTenant;
@@ -59,6 +58,6 @@ class Tenant extends SpatieTenant
 
     protected $casts = [
         'key' => LandlordEncrypted::class,
-        'config' => TenantEncrypted::class,
+        'config' => LandlordEncrypted::class,
     ];
 }
