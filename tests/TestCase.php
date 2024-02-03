@@ -41,6 +41,7 @@ use Tests\Concerns\LoadsFixtures;
 use Illuminate\Contracts\Console\Kernel;
 use App\Multitenancy\Actions\CreateTenant;
 use Spatie\Permission\PermissionRegistrar;
+use Illuminate\Support\Facades\ParallelTesting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
@@ -85,7 +86,7 @@ abstract class TestCase extends BaseTestCase
         $tenant = $this->createTenant(
             name: 'Test Tenant',
             domain: 'test.advisingapp.local',
-            database: 'testing_tenant',
+            database: ParallelTesting::token() ? 'testing_tenant_test_' . ParallelTesting::token() : 'testing_tenant',
         );
 
         $tenant->makeCurrent();

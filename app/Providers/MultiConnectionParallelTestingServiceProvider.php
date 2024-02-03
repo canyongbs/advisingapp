@@ -58,7 +58,7 @@ class MultiConnectionParallelTestingServiceProvider extends ServiceProvider
 {
     use TestDatabases;
 
-    protected array $parallelConnections = ['sis'];
+    protected array $parallelConnections = ['landlord', 'tenant'];
 
     /**
      * Register any application services.
@@ -116,9 +116,9 @@ class MultiConnectionParallelTestingServiceProvider extends ServiceProvider
                             $this->usingConnection($connection, function () use ($testDatabase) {
                                 ParallelTesting::callSetUpTestDatabaseCallbacks($testDatabase);
                             });
-                        }
 
-                        Config::set('database.connections.sis.database', "testing_test_{$token}");
+                            Config::set("database.connections.{$connection}.database", $testDatabase);
+                        }
                     });
                 }
             });

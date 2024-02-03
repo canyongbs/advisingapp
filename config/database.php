@@ -84,11 +84,11 @@ return [
 
         'tenant' => [
             'driver' => 'pgsql',
-            'host' => null,
-            'port' => null,
-            'database' => null,
-            'username' => null,
-            'password' => null,
+            'host' => env('TENANT_DB_HOST'),
+            'port' => env('TENANT_DB_PORT'),
+            'database' => env('TENANT_DB_DATABASE'),
+            'username' => env('TENANT_DB_USERNAME'),
+            'password' => env('TENANT_DB_PASSWORD'),
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
