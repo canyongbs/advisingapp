@@ -37,8 +37,12 @@
 namespace Tests;
 
 use App\Models\Tenant;
+use Illuminate\Support\Str;
 use Tests\Concerns\LoadsFixtures;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Process\Process;
 use Illuminate\Contracts\Console\Kernel;
+use Symfony\Component\Finder\SplFileInfo;
 use App\Multitenancy\Actions\CreateTenant;
 use Spatie\Permission\PermissionRegistrar;
 use Illuminate\Support\Facades\ParallelTesting;
@@ -75,19 +79,24 @@ abstract class TestCase extends BaseTestCase
         $this->beginDatabaseTransactionOnConnection($this->tenantDatabaseConnectionName());
     }
 
-    public function createTestingEnvironment(): void
+    public function createLandlordTestingEnvironment(): void
     {
         $this->artisan('migrate:fresh', [
             '--database' => $this->landlordDatabaseConnectionName(),
-            '--path' => 'database/migrations/landlord',
+            '--path' => 'database/landlord',
             ...$this->migrateFreshUsing(),
         ]);
 
-        $tenant = $this->createTenant(
+        $this->createTenant(
             name: 'Test Tenant',
             domain: 'test.advisingapp.local',
             database: ParallelTesting::token() ? 'testing_tenant_test_' . ParallelTesting::token() : 'testing_tenant',
         );
+    }
+
+    public function createTenantTestingEnvironment(): void
+    {
+        $tenant = Tenant::firstOrFail();
 
         $tenant->makeCurrent();
 
@@ -107,8 +116,6 @@ abstract class TestCase extends BaseTestCase
         });
 
         Tenant::forgetCurrent();
-
-        $this->app[Kernel::class]->setArtisan(null);
     }
 
     public function beginDatabaseTransactionOnConnection(string $name)
@@ -194,11 +201,91 @@ abstract class TestCase extends BaseTestCase
     protected function refreshTestDatabase()
     {
         if (! RefreshDatabaseState::$migrated) {
-            $this->createTestingEnvironment();
+            $cachedLandlordChecksum = $this->getCachedMigrationChecksum('landlord');
+            $currentLandlordChecksum = $this->calculateMigrationChecksum(
+                [
+                    database_path('landlord'),
+                ]
+            );
+
+            if ($cachedLandlordChecksum !== $currentLandlordChecksum) {
+                $this->createLandlordTestingEnvironment();
+
+                $this->app[Kernel::class]->setArtisan(null);
+
+                $this->storeMigrationChecksum('landlord', $currentLandlordChecksum);
+            }
+
+            $cachedTenantChecksum = $this->getCachedMigrationChecksum('tenant');
+            $currentTenantChecksum = $this->calculateMigrationChecksum(
+                [
+                    database_path('migrations'),
+                    database_path('settings'),
+                    base_path('app-modules/*/database/migrations'),
+                    base_path('app-modules/*/config/**'),
+                    base_path('app-modules/*/src/Models'),
+                ]
+            );
+
+            if ($cachedTenantChecksum !== $currentTenantChecksum) {
+                $this->createTenantTestingEnvironment();
+
+                $this->app[Kernel::class]->setArtisan(null);
+
+                $this->storeMigrationChecksum('tenant', $currentTenantChecksum);
+            }
 
             RefreshDatabaseState::$migrated = true;
         }
 
         $this->beginDatabaseTransactionOnConnection($this->landlordDatabaseConnectionName());
+    }
+
+    protected function calculateMigrationChecksum(array $paths): string
+    {
+        $finder = Finder::create()
+            ->in($paths)
+            ->name('*.php')
+            ->ignoreDotFiles(true)
+            ->ignoreVCS(true)
+            ->files();
+
+        $migrations = array_map(static function (SplFileInfo $fileInfo) {
+            return [$fileInfo->getMTime(), $fileInfo->getPath()];
+        }, iterator_to_array($finder));
+
+        // Reset the array keys so there is less data
+
+        $migrations = array_values($migrations);
+
+        // Add the current git branch
+
+        $checkBranch = new Process(['git', 'branch', '--show-current']);
+        $checkBranch->run();
+
+        $migrations['gitBranch'] = trim($checkBranch->getOutput());
+
+        // Create a hash
+
+        return hash('sha256', json_encode($migrations, JSON_THROW_ON_ERROR));
+    }
+
+    protected function storeMigrationChecksum(string $connection, string $checksum): void
+    {
+        file_put_contents($this->getMigrationChecksumFile($connection), $checksum);
+    }
+
+    protected function getCachedMigrationChecksum(string $connection): ?string
+    {
+        return rescue(fn () => file_get_contents($this->getMigrationChecksumFile($connection)), null, false);
+    }
+
+    protected function getMigrationChecksumFile(string $connection): string
+    {
+        $database = config("database.connections.{$connection}.database");
+
+        $databaseNameSlug = Str::slug(ParallelTesting::token() ? $database . '_test_' . ParallelTesting::token() : $database);
+
+        return storage_path("app/migration-checksum_{$databaseNameSlug}.txt");
     }
 }
