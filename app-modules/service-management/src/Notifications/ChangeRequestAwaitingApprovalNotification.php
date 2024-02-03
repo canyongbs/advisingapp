@@ -49,7 +49,7 @@ use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource;
 
-class ChangeRequestAwaitingApproval extends BaseNotification implements EmailNotification, DatabaseNotification
+class ChangeRequestAwaitingApprovalNotification extends BaseNotification implements EmailNotification, DatabaseNotification
 {
     use EmailChannelTrait;
     use DatabaseChannelTrait;
@@ -82,8 +82,10 @@ class ChangeRequestAwaitingApproval extends BaseNotification implements EmailNot
             ->getDatabaseMessage();
     }
 
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
+    private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
     {
-        return $notifiable->teams()->first()?->division?->notificationSetting?->setting;
+        return $notifiable instanceof User
+            ? $notifiable->teams()->first()?->division?->notificationSetting?->setting
+            : null;
     }
 }
