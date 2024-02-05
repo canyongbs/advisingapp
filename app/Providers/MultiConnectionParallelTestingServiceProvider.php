@@ -58,7 +58,7 @@ class MultiConnectionParallelTestingServiceProvider extends ServiceProvider
 {
     use TestDatabases;
 
-    protected array $parallelConnections = ['landlord', 'tenant'];
+    protected array $parallelConnections = ['tenant'];
 
     /**
      * Register any application services.
