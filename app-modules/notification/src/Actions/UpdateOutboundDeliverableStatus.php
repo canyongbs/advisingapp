@@ -67,8 +67,9 @@ class UpdateOutboundDeliverableStatus implements ShouldQueue
         $this->deliverable->driver()->updateDeliveryStatus($data);
 
         if ($this->deliverable->related) {
-            // TODO Ensure the related model has a driver() method
-            $this->deliverable->related->driver()->updateDeliveryStatus($data);
+            if (method_exists($this->deliverable->related, 'driver')) {
+                $this->deliverable->related->driver()->updateDeliveryStatus($data);
+            }
         }
     }
 
