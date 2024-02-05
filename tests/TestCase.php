@@ -284,7 +284,7 @@ abstract class TestCase extends BaseTestCase
     {
         $database = config("database.connections.{$connection}.database");
 
-        $databaseNameSlug = Str::slug(ParallelTesting::token() ? $database . '_test_' . ParallelTesting::token() : $database);
+        $databaseNameSlug = Str::slug($database);
 
         return storage_path("app/migration-checksum_{$databaseNameSlug}.txt");
     }
