@@ -230,10 +230,10 @@ abstract class TestCase extends BaseTestCase
             if ($cachedTenantChecksum !== $currentTenantChecksum) {
                 $this->createTenantTestingEnvironment();
 
-                $this->app[Kernel::class]->setArtisan(null);
-
                 $this->storeMigrationChecksum('tenant', $currentTenantChecksum);
             }
+
+            $this->app[Kernel::class]->setArtisan(null);
 
             RefreshDatabaseState::$migrated = true;
         }
