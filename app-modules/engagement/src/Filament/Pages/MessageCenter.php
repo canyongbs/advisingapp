@@ -321,10 +321,6 @@ class MessageCenter extends Page
         $studentPopulationQuery = null;
         $prospectPopulationQuery = null;
 
-        $studentsTable = config('database.adm_materialized_views_enabled')
-        ? 'students_local'
-        : 'students';
-
         /** @var Authenticatable $user */
         $user = auth()->user();
 
@@ -348,10 +344,10 @@ class MessageCenter extends Page
                         ->orWhere('mobile', 'like', "%{$search}%")
                         ->orWhere('phone', 'like', "%{$search}%");
                 })
-                ->joinSub($studentLatestActivity, 'latest_activity', function ($join) use ($studentsTable) {
-                    $join->on("{$studentsTable}.sisid", '=', 'latest_activity.educatable_id');
+                ->joinSub($studentLatestActivity, 'latest_activity', function ($join) {
+                    $join->on('students.sisid', '=', 'latest_activity.educatable_id');
                 })
-                ->select("{$studentsTable}.sisid", "{$studentsTable}.full_name", 'latest_activity.latest_activity', DB::raw("'student' as type"));
+                ->select('students.sisid', 'students.full_name', 'latest_activity.latest_activity', DB::raw("'student' as type"));
         }
 
         if ($this->filterPeopleType === 'prospects' || $this->filterPeopleType === 'all') {

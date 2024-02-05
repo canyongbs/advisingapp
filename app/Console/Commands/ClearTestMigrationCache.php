@@ -34,27 +34,35 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+namespace App\Console\Commands;
 
-test('relationships work cross connections', function () {
-    $student = Student::factory()
-        ->has(
-            ServiceRequest::factory()
-                ->count(3),
-            'serviceRequests'
-        )
-        ->create();
+use Illuminate\Console\Command;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
-    expect($student->serviceRequests)->toHaveCount(3);
+class ClearTestMigrationCache extends Command
+{
+    protected $signature = 'app:clear-test-migration-cache';
 
-    Student::factory()->create();
+    protected $description = 'Deletes the cache files used for the testing migrations cache.';
 
-    expect(Student::all())->toHaveCount(2);
+    public function handle(): void
+    {
+        $this->comment('Clearing the testing migration cache...');
 
-    $whereHas = Student::whereHas('serviceRequests', function ($query) {
-        $query->whereNotNull('res_details');
-    })->get();
+        $finder = Finder::create()
+            ->in(storage_path('app'))
+            ->name('migration-checksum_*.txt')
+            ->ignoreDotFiles(true)
+            ->ignoreVCS(true)
+            ->files();
 
-    expect($whereHas)->toHaveCount(1);
-});
+        $this->withProgressBar($finder, function (SplFileInfo $file) {
+            unlink($file->getPathname());
+        });
+
+        $this->newLine();
+
+        $this->info('Testing migration cache cleared!');
+    }
+}
