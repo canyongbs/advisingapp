@@ -62,7 +62,16 @@ class PortalSettings extends Settings
 
     public bool $has_notifications = false;
 
+    /**
+     * Knowledge Base
+    */
     public bool $has_knowledge_base = false;
+
+    public ?string $knowledge_base_primary_color = null;
+
+    public ?string $knowledge_base_rounding = null;
+
+    public ?string $knowledge_base_authorized_domain = null;
 
     public bool $has_tasks = false;
 
