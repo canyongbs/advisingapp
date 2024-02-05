@@ -36,6 +36,7 @@
 
 use Illuminate\Support\Facades\Facade;
 use App\Providers\Filament\LandlordPanelProvider;
+use App\Providers\MultiConnectionParallelTestingServiceProvider;
 use Nuwave\Lighthouse\WhereConditions\WhereConditionsServiceProvider;
 
 return [
@@ -226,7 +227,7 @@ return [
         App\Providers\MorphServiceProvider::class,
         App\Providers\HealthServiceProvider::class,
         App\Providers\FilamentServiceProvider::class,
-        //MultiConnectionParallelTestingServiceProvider::class,
+        MultiConnectionParallelTestingServiceProvider::class,
         WhereConditionsServiceProvider::class,
     ],
 

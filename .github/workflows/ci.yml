@@ -111,12 +111,6 @@ jobs:
       DB_PASSWORD: root
       DB_DATABASE: testing_landlord
       SCOUT_PREFIX: test_
-      MEILISEARCH_KEY: testing
-      MEILISEARCH_HOST: http://meilisearch:7700
-      MEILISEARCH_PORT: 7700
-      SIS_DB_USERNAME: root
-      SIS_DB_PASSWORD: root
-      SIS_DB_DATABASE: testing
 
     timeout-minutes: 15
 
@@ -145,30 +139,8 @@ jobs:
           - 6379:6379
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-#      meilisearch:
-#        image: "getmeili/meilisearch:v1.2.0"
-#        ports:
-#          - 7700:7700
-#        options: --health-cmd "wget --no-verbose --spider http://127.0.0.1:7700/health" --health-timeout 5s --health-retries 3
-
-      redshift:
-        # Docker Hub image
-        image: postgres:15
-        # Provide the password for postgres
-        env:
-          PGPASSWORD: ${{ env.SIS_DB_PASSWORD }}
-          POSTGRES_DB: ${{ env.SIS_DB_DATABASE }}
-          POSTGRES_USER: ${{ env.SIS_DB_USERNAME }}
-          POSTGRES_PASSWORD: ${{ env.SIS_DB_PASSWORD }}
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
-      - name: Install git
+      - name: Install packages
         run: apt-get update ; apt-get install -y git zip unzip postgresql-client
 
       - name: Create tenant database
