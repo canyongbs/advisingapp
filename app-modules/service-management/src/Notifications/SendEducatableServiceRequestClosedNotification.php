@@ -2,18 +2,17 @@
 
 namespace AdvisingApp\ServiceManagement\Notifications;
 
-use App\Models\NotificationSetting;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use Illuminate\Support\HtmlString;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\NotificationSetting;
 
-class SendEducatableServiceRequestOpenedNotification extends BaseNotification implements EmailNotification
+class SendEducatableServiceRequestClosedNotification extends BaseNotification implements EmailNotification
 {
     use EmailChannelTrait;
 
@@ -32,15 +31,13 @@ class SendEducatableServiceRequestOpenedNotification extends BaseNotification im
         };
 
         $status = $this->serviceRequest->status;
-        $type = $this->serviceRequest->priority->type;
 
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
             ->subject("{$this->serviceRequest->service_request_number} - is now {$status->name}")
             ->greeting("Hello {$name},")
-            ->line("A new {$type->name} service request has been created and is now in a {$status->name} status. Your new ticket number is: {$this->serviceRequest->service_request_number}.")
-            ->line('The details of your service request are shown below:')
-            ->lines(str(nl2br($this->serviceRequest->close_details))->explode('<br />'));
+            ->line("Your request {$this->serviceRequest->service_request_number} for service is now {$status->name}.")
+            ->line('Thank you.');
     }
 
     private function resolveNotificationSetting(object $notifiable): ?NotificationSetting

@@ -38,9 +38,13 @@ namespace App\Notifications;
 
 use App\Models\User;
 use App\Models\NotificationSetting;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Vite;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
 class DemoNotification extends BaseNotification implements EmailNotification
@@ -51,10 +55,15 @@ class DemoNotification extends BaseNotification implements EmailNotification
 
     public function toEmail(object $notifiable): MailMessage
     {
+        // config()->set("app.asset_url", config("app.url"));
+        // Vite::asset("resources/images/default-logo-light.png");
+
+        URL::forceRootUrl(config('app.url'));
+
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
             ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
+            ->action('Notification Action', url(StudentResource::getUrl('view', ['record' => Student::first()])))
             ->line('Thank you for using our application!');
     }
 

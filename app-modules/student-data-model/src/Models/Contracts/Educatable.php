@@ -44,7 +44,6 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 /**
  * @property-read Collection $careTeam
  * @property string $email
- *  @property string $first_name
  */
 interface Educatable extends Identifiable
 {
