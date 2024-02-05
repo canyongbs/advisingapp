@@ -364,12 +364,21 @@
                                                             </x-filament::input.wrapper>
                                                         </label>
 
-                                                        <div class="flex items-center flex-wrap gap-3">
-                                                            <x-filament::button size="sm" type="submit">
+                                                        <div class="flex flex-wrap items-center gap-3">
+                                                            <x-filament::button
+                                                                type="submit"
+                                                                size="sm"
+                                                            >
                                                                 Save
                                                             </x-filament::button>
 
-                                                            <x-filament::button size="sm" x-show="linkUrl" x-on:click="removeLink" type="button" color="gray">
+                                                            <x-filament::button
+                                                                type="button"
+                                                                size="sm"
+                                                                x-show="linkUrl"
+                                                                x-on:click="removeLink"
+                                                                color="gray"
+                                                            >
                                                                 Remove
                                                             </x-filament::button>
                                                         </div>
