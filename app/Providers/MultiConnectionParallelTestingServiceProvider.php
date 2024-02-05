@@ -93,7 +93,7 @@ class MultiConnectionParallelTestingServiceProvider extends ServiceProvider
                 ];
 
                 if (Arr::hasAny($uses, $databaseTraits) && ! ParallelTesting::option('without_databases')) {
-                    $this->whenNotUsingInMemoryDatabase(function ($database) use ($uses, $token) {
+                    $this->whenNotUsingInMemoryDatabase(function ($database) use ($uses) {
                         $allCreated = [];
 
                         foreach ($this->parallelConnections as $connection) {
