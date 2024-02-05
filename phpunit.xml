@@ -23,7 +23,11 @@
         <server name="SESSION_DRIVER" value="array"/>
         <server name="TELESCOPE_ENABLED" value="false"/>
         <env name="DB_DATABASE" value="testing_landlord"/>
-        <env name="SIS_DB_DATABASE" value="testing"/>
+        <env name="TENANT_DB_HOST" value="pgsql"/>
+        <env name="TENANT_DB_PORT" value="5432"/>
+        <env name="TENANT_DB_DATABASE" value="testing_tenant"/>
+        <env name="TENANT_DB_USERNAME" value="advisingapp"/>
+        <env name="TENANT_DB_PASSWORD" value="password"/>
         <env name="AZURE_OPEN_AI_ENABLE_TEST_MODE" value="true"/>
         <env name="SCOUT_DRIVER" value="database"/>
         <env name="TWILIO_ENABLE_TEST_SENDER" value="true"/>
