@@ -5,8 +5,6 @@ services:
       target: development
     environment:
       SSL_MODE: "mixed"
-#      PUID: '${UID:-1000}'
-#      PGID: '${GID:-1000}'
       LARAVEL_SCHEDULER_ENABLED: '${LARAVEL_SCHEDULER_ENABLED:-true}'
       LARAVEL_QUEUE_ENABLED: '${LARAVEL_QUEUE_ENABLED:-true}'
     labels:
@@ -26,7 +24,6 @@ services:
       - meilisearch
       - minio
       - mailpit
-      - redshift
       - pgsql
   redis:
     image: 'redis:alpine'
@@ -113,32 +110,6 @@ services:
         - '${DB_USERNAME}'
       retries: 3
       timeout: 5s
-  redshift:
-    image: 'postgres:15'
-    ports:
-      - '${FORWARD_SIS_DB_PORT:-5433}:5433'
-    environment:
-      PGPASSWORD: '${SIS_DB_PASSWORD:-secret}'
-      POSTGRES_DB: '${SIS_DB_DATABASE}'
-      POSTGRES_USER: '${SIS_DB_USERNAME}'
-      POSTGRES_PASSWORD: '${SIS_DB_PASSWORD:-secret}'
-    volumes:
-      - 'advisingapp-redshift:/var/lib/postgresql/data'
-      - './docker/pgsql/create-testing-sis-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
-    command: -p 5433
-    networks:
-      - development
-    healthcheck:
-      test:
-        - CMD
-        - pg_isready
-        - '-q'
-        - '-d'
-        - '${SIS_DB_DATABASE}'
-        - '-U'
-        - '${SIS_DB_USERNAME}'
-      retries: 3
-      timeout: 5s
 networks:
   development:
 volumes:
@@ -147,8 +118,6 @@ volumes:
   advisingapp-meilisearch:
     driver: local
   advisingapp-minio:
-    driver: local
-  advisingapp-redshift:
     driver: local
   advisingapp-pgsql:
     driver: local
