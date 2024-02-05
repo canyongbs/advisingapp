@@ -357,11 +357,11 @@
                                                         </label>
 
                                                         <div class="flex items-center flex-wrap gap-3">
-                                                            <x-filament::button type="submit">
+                                                            <x-filament::button size="sm" type="submit">
                                                                 Save
                                                             </x-filament::button>
 
-                                                            <x-filament::button x-show="linkUrl" x-on:click="removeLink" type="button" color="gray">
+                                                            <x-filament::button size="sm" x-show="linkUrl" x-on:click="removeLink" type="button" color="gray">
                                                                 Remove
                                                             </x-filament::button>
                                                         </div>
