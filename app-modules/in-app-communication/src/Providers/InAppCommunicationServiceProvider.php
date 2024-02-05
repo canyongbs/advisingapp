@@ -50,7 +50,7 @@ class InAppCommunicationServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new InAppCommunicationPlugin()));
+        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new InAppCommunicationPlugin()));
     }
 
     public function boot()

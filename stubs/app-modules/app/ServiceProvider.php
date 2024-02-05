@@ -47,7 +47,7 @@ class StubClassNamePrefixServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new StubClassNamePrefixPlugin()));
+        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new StubClassNamePrefixPlugin()));
     }
 
     public function boot()

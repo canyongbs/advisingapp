@@ -52,7 +52,7 @@ class DivisionServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new DivisionPlugin()));
+        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new DivisionPlugin()));
     }
 
     public function boot(): void

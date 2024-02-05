@@ -49,7 +49,7 @@ class IntegrationAIServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new IntegrationAIPlugin()));
+        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationAIPlugin()));
 
         $this->app->singleton(AIChatClient::class, function () {
             if ($this->app->runningUnitTests() || config('services.azure_open_ai.enable_test_mode') === true) {

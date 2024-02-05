@@ -50,7 +50,7 @@ class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new IntegrationAwsSesEventHandlingPlugin()));
+        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationAwsSesEventHandlingPlugin()));
     }
 
     public function boot()

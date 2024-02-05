@@ -50,7 +50,7 @@ class AnalyticsServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new AnalyticsPlugin()));
+        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AnalyticsPlugin()));
     }
 
     public function boot(): void

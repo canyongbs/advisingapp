@@ -46,7 +46,7 @@ class IntegrationGoogleRecaptchaServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new IntegrationGoogleRecaptchaPlugin()));
+        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationGoogleRecaptchaPlugin()));
     }
 
     public function boot()

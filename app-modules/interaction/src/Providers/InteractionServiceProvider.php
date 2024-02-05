@@ -59,7 +59,7 @@ class InteractionServiceProvider extends ServiceProvider
 
     public function register()
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new InteractionPlugin()));
+        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new InteractionPlugin()));
     }
 
     public function boot()
