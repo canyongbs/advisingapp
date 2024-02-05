@@ -21,7 +21,6 @@ services:
       - development
     depends_on:
       - redis
-      - meilisearch
       - minio
       - mailpit
       - pgsql
@@ -38,23 +37,6 @@ services:
         - CMD
         - redis-cli
         - ping
-      retries: 3
-      timeout: 5s
-  meilisearch:
-    image: 'getmeili/meilisearch:v1.2.0'
-    ports:
-      - '${FORWARD_MEILISEARCH_PORT:-7700}:7700'
-    volumes:
-      - 'advisingapp-meilisearch:/meili_data'
-    networks:
-      - development
-    healthcheck:
-      test:
-        - CMD
-        - wget
-        - '--no-verbose'
-        - '--spider'
-        - 'http://localhost:7700/health'
       retries: 3
       timeout: 5s
   minio:
@@ -114,8 +96,6 @@ networks:
   development:
 volumes:
   advisingapp-redis:
-    driver: local
-  advisingapp-meilisearch:
     driver: local
   advisingapp-minio:
     driver: local
