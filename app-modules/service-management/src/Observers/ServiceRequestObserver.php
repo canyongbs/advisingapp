@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\ServiceManagement\Observers;
 
-use AdvisingApp\ServiceManagement\Notifications\SendEducatableServiceRequestClosedNotification;
 use App\Models\User;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\ServiceManagement\Actions\CreateServiceRequestHistory;
 use AdvisingApp\ServiceManagement\Enums\SystemServiceRequestClassification;
 use AdvisingApp\ServiceManagement\Exceptions\ServiceRequestNumberUpdateAttemptException;
+use AdvisingApp\ServiceManagement\Notifications\SendEducatableServiceRequestClosedNotification;
 use AdvisingApp\ServiceManagement\Notifications\SendEducatableServiceRequestOpenedNotification;
 use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
 

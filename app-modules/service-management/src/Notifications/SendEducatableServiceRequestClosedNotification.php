@@ -2,15 +2,16 @@
 
 namespace AdvisingApp\ServiceManagement\Notifications;
 
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\ServiceManagement\Models\ServiceRequest;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use App\Models\NotificationSetting;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
 class SendEducatableServiceRequestClosedNotification extends BaseNotification implements EmailNotification
 {
@@ -38,6 +39,14 @@ class SendEducatableServiceRequestClosedNotification extends BaseNotification im
             ->greeting("Hello {$name},")
             ->line("Your request {$this->serviceRequest->service_request_number} for service is now {$status->name}.")
             ->line('Thank you.');
+    }
+
+    public function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
+    {
+        $deliverable->update([
+            'related_id' => $this->serviceRequest->getKey(),
+            'related_type' => $this->serviceRequest->getMorphClass(),
+        ]);
     }
 
     private function resolveNotificationSetting(object $notifiable): ?NotificationSetting

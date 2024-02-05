@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
 
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestHistory;
@@ -56,5 +57,6 @@ class ServiceRequestTimeline extends TimelinePage
         ServiceRequestUpdate::class,
         ServiceRequestAssignment::class,
         ServiceRequestHistory::class,
+        OutboundDeliverable::class,
     ];
 }

@@ -2,16 +2,17 @@
 
 namespace AdvisingApp\ServiceManagement\Notifications;
 
+use AdvisingApp\ServiceManagement\Enums\ServiceRequestUpdateDirection;
 use App\Models\NotificationSetting;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use Illuminate\Support\HtmlString;
 
 class SendEducatableServiceRequestOpenedNotification extends BaseNotification implements EmailNotification
 {
@@ -41,6 +42,14 @@ class SendEducatableServiceRequestOpenedNotification extends BaseNotification im
             ->line("A new {$type->name} service request has been created and is now in a {$status->name} status. Your new ticket number is: {$this->serviceRequest->service_request_number}.")
             ->line('The details of your service request are shown below:')
             ->lines(str(nl2br($this->serviceRequest->close_details))->explode('<br />'));
+    }
+
+    public function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
+    {
+        $deliverable->update([
+            'related_id' => $this->serviceRequest->getKey(),
+            'related_type' => $this->serviceRequest->getMorphClass(),
+        ]);
     }
 
     private function resolveNotificationSetting(object $notifiable): ?NotificationSetting

@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Notification\Providers;
 
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Observers\OutboundDeliverableObserver;
 use Illuminate\Support\Facades\Event;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
@@ -65,6 +67,7 @@ class NotificationServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'subscription' => Subscription::class,
+            'outbound_deliverable' => OutboundDeliverable::class,
         ]);
 
         $this->registerRolesAndPermissions();
@@ -77,6 +80,7 @@ class NotificationServiceProvider extends ServiceProvider
     protected function registerObservers(): void
     {
         Subscription::observe(SubscriptionObserver::class);
+        OutboundDeliverable::observe(OutboundDeliverableObserver::class);
     }
 
     protected function registerEvents(): void

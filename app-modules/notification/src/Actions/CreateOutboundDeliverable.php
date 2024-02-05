@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Notification\Actions;
 
+use AdvisingApp\ServiceManagement\Notifications\SendEducatableServiceRequestOpenedNotification;
 use Exception;
 use Illuminate\Notifications\AnonymousNotifiable;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -66,6 +67,8 @@ class CreateOutboundDeliverable
             $channel == NotificationChannel::Database && $notification instanceof DatabaseNotification => $notification->toDatabase($notifiable),
             default => throw new Exception('Invalid notification channel.'),
         };
+
+        // $notification->toMail($notifiable)->render();
 
         $recipientId = null;
         $recipientType = 'anonymous';

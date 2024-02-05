@@ -54,7 +54,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use Illuminate\Database\UniqueConstraintViolationException;
 use AdvisingApp\ServiceManagement\Enums\SlaComplianceStatus;
@@ -273,6 +275,11 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
                     ->where('direction', ServiceRequestUpdateDirection::Outbound)
                     ->where('internal', false);
             });
+    }
+
+    public function deliverables(): MorphMany
+    {
+        return $this->morphMany(OutboundDeliverable::class, 'related');
     }
 
     public function getLatestResponseSeconds(): int

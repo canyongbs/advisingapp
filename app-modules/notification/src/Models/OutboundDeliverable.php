@@ -36,15 +36,21 @@
 
 namespace AdvisingApp\Notification\Models;
 
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
+use AdvisingApp\Timeline\Models\CustomTimeline;
+use AdvisingApp\Timeline\Timelines\OutboundDeliverableTimeline;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+use Illuminate\Support\Collection;
 
 /**
  * @mixin IdeHelperOutboundDeliverable
  */
-class OutboundDeliverable extends BaseModel
+class OutboundDeliverable extends BaseModel implements ProvidesATimeline
 {
     protected $fillable = [
         'channel',
@@ -68,6 +74,7 @@ class OutboundDeliverable extends BaseModel
         'delivered_at' => 'datetime',
         'delivery_status' => NotificationDeliveryStatus::class,
         'last_delivery_attempt' => 'datetime',
+        // 'content' => 'array',
     ];
 
     // The "related" relationship is whatever entity we might need to tie this back to
@@ -114,5 +121,15 @@ class OutboundDeliverable extends BaseModel
                 'delivery_response' => $reason,
             ]);
         }
+    }
+
+    public function timeline(): CustomTimeline
+    {
+        return new OutboundDeliverableTimeline($this);
+    }
+
+    public static function getTimelineData(Model $forModel): Collection
+    {
+        return $forModel->deliverables()->get();
     }
 }
