@@ -84,25 +84,11 @@ return [
 
         'tenant' => [
             'driver' => 'pgsql',
-            'host' => null,
-            'port' => null,
-            'database' => null,
-            'username' => null,
-            'password' => null,
-            'charset' => 'utf8',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'search_path' => 'public',
-            'sslmode' => 'prefer',
-        ],
-
-        'sis' => [
-            'driver' => 'pgsql',
-            'host' => env('SIS_DB_HOST'),
-            'port' => env('SIS_DB_PORT'),
-            'database' => env('SIS_DB_DATABASE'),
-            'username' => env('SIS_DB_USERNAME'),
-            'password' => env('SIS_DB_PASSWORD'),
+            'host' => env('TENANT_DB_HOST'),
+            'port' => env('TENANT_DB_PORT'),
+            'database' => env('TENANT_DB_DATABASE'),
+            'username' => env('TENANT_DB_USERNAME'),
+            'password' => env('TENANT_DB_PASSWORD'),
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
@@ -162,11 +148,4 @@ return [
             'database' => env('REDIS_CACHE_DB', '1'),
         ],
     ],
-
-    'fdw' => [
-        'connection' => env('FDW_CONNECTION', 'tenant'),
-        'server_name' => env('FDW_SERVER_NAME', 'sis_bridge'),
-    ],
-
-    'adm_materialized_views_enabled' => env('ADM_MATERIALIZED_VIEWS_ENABLED', false),
 ];

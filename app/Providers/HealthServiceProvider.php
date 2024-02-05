@@ -41,12 +41,12 @@ use Illuminate\Support\ServiceProvider;
 use Spatie\Health\Checks\Checks\PingCheck;
 use Spatie\Health\Checks\Checks\CacheCheck;
 use Spatie\Health\Checks\Checks\QueueCheck;
-use Spatie\Health\Checks\Checks\RedisCheck;
 use Spatie\Health\Checks\Checks\DatabaseCheck;
 use Spatie\Health\Checks\Checks\ScheduleCheck;
 use Spatie\Health\Checks\Checks\DebugModeCheck;
 use Spatie\Health\Checks\Checks\EnvironmentCheck;
 use Spatie\Health\Checks\Checks\OptimizedAppCheck;
+use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
 
 class HealthServiceProvider extends ServiceProvider
 {
@@ -70,10 +70,6 @@ class HealthServiceProvider extends ServiceProvider
                 ->name('tenant')
                 ->connectionName(config('multitenancy.tenant_database_connection_name'))
                 ->label('PostgreSQL Database'),
-            DatabaseCheck::new()
-                ->name('sis')
-                ->label('SIS Database')
-                ->connectionName('sis'),
             DebugModeCheck::new()
                 ->unless($local),
             EnvironmentCheck::new()
@@ -83,8 +79,9 @@ class HealthServiceProvider extends ServiceProvider
                 ->url('1.1.1.1')
                 ->timeout(2),
             QueueCheck::new(),
-            RedisCheck::new(),
+            // RedisCheck::new(),
             ScheduleCheck::new(),
+            UsedDiskSpaceCheck::new(),
         ]);
     }
 }
