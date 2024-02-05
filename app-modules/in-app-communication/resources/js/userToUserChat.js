@@ -382,7 +382,7 @@ document.addEventListener('alpine:init', () => {
                 editor.chain().toggleUnderline().focus().run();
             },
             saveLink(event) {
-                if (! this.linkUrl) {
+                if (!this.linkUrl) {
                     this.removeLink();
 
                     this.$refs.linkEditor.close(event);
