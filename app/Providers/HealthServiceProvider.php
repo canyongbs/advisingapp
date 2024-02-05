@@ -41,12 +41,12 @@ use Illuminate\Support\ServiceProvider;
 use Spatie\Health\Checks\Checks\PingCheck;
 use Spatie\Health\Checks\Checks\CacheCheck;
 use Spatie\Health\Checks\Checks\QueueCheck;
+use Spatie\Health\Checks\Checks\RedisCheck;
 use Spatie\Health\Checks\Checks\DatabaseCheck;
 use Spatie\Health\Checks\Checks\ScheduleCheck;
 use Spatie\Health\Checks\Checks\DebugModeCheck;
 use Spatie\Health\Checks\Checks\EnvironmentCheck;
 use Spatie\Health\Checks\Checks\OptimizedAppCheck;
-use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
 
 class HealthServiceProvider extends ServiceProvider
 {
@@ -60,9 +60,12 @@ class HealthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $local = app()->isLocal() && str(config('app.url'))->contains(['localhost', '.local']);
+
         Health::checks([
             CacheCheck::new(),
-            OptimizedAppCheck::new(),
+            OptimizedAppCheck::new()
+                ->unless($local),
             DatabaseCheck::new()
                 ->name('tenant')
                 ->connectionName(config('multitenancy.tenant_database_connection_name'))
@@ -71,16 +74,17 @@ class HealthServiceProvider extends ServiceProvider
                 ->name('sis')
                 ->label('SIS Database')
                 ->connectionName('sis'),
-            DebugModeCheck::new(),
-            EnvironmentCheck::new(),
+            DebugModeCheck::new()
+                ->unless($local),
+            EnvironmentCheck::new()
+                ->unless($local),
             // cloudflare dns
             PingCheck::new()
                 ->url('1.1.1.1')
                 ->timeout(2),
             QueueCheck::new(),
-            // RedisCheck::new(),
+            RedisCheck::new(),
             ScheduleCheck::new(),
-            UsedDiskSpaceCheck::new(),
         ]);
     }
 }

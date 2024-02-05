@@ -69,7 +69,7 @@ class ProductHealth extends HealthCheckResults
         $count = app(ResultStore::class)
             ->latestResults()
             ?->storedCheckResults
-            ->filter(fn ($check) => $check->status !== Status::ok()->value)
+            ->filter(fn ($check) => ! in_array($check->status, [Status::ok()->value, Status::skipped()->value]))
             ->count();
 
         return $count > 0 ? $count : null;
