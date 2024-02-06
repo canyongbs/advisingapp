@@ -36,6 +36,7 @@
 
 namespace App\Providers;
 
+use Spatie\Health\Checks\Checks\RedisCheck;
 use Spatie\Health\Facades\Health;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Health\Checks\Checks\PingCheck;
@@ -79,9 +80,8 @@ class HealthServiceProvider extends ServiceProvider
                 ->url('1.1.1.1')
                 ->timeout(2),
             QueueCheck::new(),
-            // RedisCheck::new(),
+            RedisCheck::new(),
             ScheduleCheck::new(),
-            UsedDiskSpaceCheck::new(),
         ]);
     }
 }
