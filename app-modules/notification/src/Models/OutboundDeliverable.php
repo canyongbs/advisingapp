@@ -70,7 +70,6 @@ class OutboundDeliverable extends BaseModel implements ProvidesATimeline
         'related_id',
         'related_type',
         'quota_usage',
-        'html',
     ];
 
     protected $casts = [

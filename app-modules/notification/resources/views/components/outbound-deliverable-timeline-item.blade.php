@@ -23,7 +23,6 @@
     </x-timeline::timeline.time>
 
     <x-timeline::timeline.content>
-        {{--        {!! $record->html !!}--}}
         {{ $record->content }}
     </x-timeline::timeline.content>
 </div>

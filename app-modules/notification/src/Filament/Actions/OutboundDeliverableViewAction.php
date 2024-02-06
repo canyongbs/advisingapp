@@ -19,8 +19,6 @@ class OutboundDeliverableViewAction extends ViewAction
     {
         parent::setUp();
 
-        // ray($this->record);
-
         $this->infolist([
             TextEntry::make('recipient')
                 ->getStateUsing(fn (OutboundDeliverable $record): ?string => $record->recipient?->{$record->recipient::displayNameKey()})

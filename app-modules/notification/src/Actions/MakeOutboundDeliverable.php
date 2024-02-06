@@ -80,7 +80,6 @@ class MakeOutboundDeliverable
             'content' => json_encode($content),
             'recipient_id' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getKey() : $recipientId,
             'recipient_type' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getMorphClass() : $recipientType,
-            'html' => $channel === NotificationChannel::Email && $notification instanceof EmailNotification ? $notification->toMail($notifiable)->render() : null,
         ]);
     }
 }
