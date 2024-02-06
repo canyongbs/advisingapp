@@ -55,6 +55,8 @@ class SeedTenantDatabase implements ShouldQueue, NotTenantAware
     use Queueable;
     use SerializesModels;
 
+    public int $timeout = 600;
+
     public function __construct(public Tenant $tenant) {}
 
     public function middleware(): array
