@@ -1,17 +1,20 @@
 @php
-    use \AdvisingApp\ServiceManagement\Models\ServiceRequest;
+    use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 @endphp
 
 <div>
     <div class="flex flex-row justify-between">
         <x-timeline::timeline.heading>
             <span class="flex items-center">
-                {{
-                    match($record->related::class) {
+                @php
+                    $related = $this->record->related;
+
+                    $title = match ($related::class) {
                         ServiceRequest::class => 'Auto-response Email sent',
-                        default => $record->getKey(),
-                    }
-                }}
+                        default => $this->record->getKey(),
+                    };
+                @endphp
+                {{ $title }}
             </span>
         </x-timeline::timeline.heading>
 
@@ -25,20 +28,6 @@
     </x-timeline::timeline.time>
 
     <x-timeline::timeline.content>
-        {{--        Subject: {{ $record->content['subject'] }}--}}
-        {{--        <br><br>--}}
-        {{--        {{ $record->content['greeting'] }}--}}
-        {{--        @foreach($record->content['introLines'] as $line)--}}
-        {{--            <br><br>--}}
-        {{--            {{ $line }}--}}
-        {{--        @endforeach--}}
-        {{--        <br><br>--}}
-        {{--        @if (! empty($record->content['salutation']))--}}
-        {{--            {{ $record->content['salutation'] }}--}}
-        {{--        @else--}}
-        {{--            @lang('Regards'),<br>--}}
-        {{--            {{ config('app.name') }}--}}
-        {{--        @endif--}}
         {{ $record->content['subject'] }}
     </x-timeline::timeline.content>
 </div>

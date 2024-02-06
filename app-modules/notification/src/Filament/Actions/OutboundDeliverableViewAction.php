@@ -45,7 +45,7 @@ class OutboundDeliverableViewAction extends ViewAction
                         ? $body->append("<br><br>{$record->content['salutation']}")
                         : $body->append('<br><br>Regards,<br>' . config('app.name'));
 
-                    return new HtmlString($body);
+                    return new HtmlString($body->trim());
                 })
                 ->html(),
         ]);
