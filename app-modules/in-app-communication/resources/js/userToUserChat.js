@@ -34,11 +34,13 @@
 document.addEventListener('alpine:init', () => {
     global = globalThis;
     const { generateHTML } = require('@tiptap/html');
+    const { Color } = require('@tiptap/extension-color');
     const { Editor } = require('@tiptap/core');
     const { Link } = require('@tiptap/extension-link');
     const { Mention } = require('./TipTap/Extentions/Mention');
     const { Placeholder } = require('@tiptap/extension-placeholder');
     const { StarterKit } = require('@tiptap/starter-kit');
+    const { TextStyle } = require('@tiptap/extension-text-style');
     const { Underline } = require('@tiptap/extension-underline');
     const { Client } = require('@twilio/conversations');
 
@@ -288,6 +290,7 @@ document.addEventListener('alpine:init', () => {
         },
         generateHTML: (content) => {
             return generateHTML(content, [
+                Color,
                 Link.configure({
                     openOnClick: false,
                     HTMLAttributes: {
@@ -300,6 +303,7 @@ document.addEventListener('alpine:init', () => {
                     users,
                 }),
                 StarterKit,
+                TextStyle,
                 Underline,
             ]);
         },
@@ -323,6 +327,7 @@ document.addEventListener('alpine:init', () => {
                 editor = new Editor({
                     element: this.$refs.element,
                     extensions: [
+                        Color,
                         Link.configure({
                             openOnClick: false,
                             HTMLAttributes: {
@@ -335,6 +340,7 @@ document.addEventListener('alpine:init', () => {
                             users,
                         }),
                         StarterKit,
+                        TextStyle,
                         Underline,
                         Placeholder.configure({
                             placeholder: 'Write a message...',
@@ -398,6 +404,12 @@ document.addEventListener('alpine:init', () => {
                 editor.chain().focus().extendMarkRange('link').unsetLink().run();
 
                 this.$refs.linkEditor.close(event);
+            },
+            setColor(color) {
+                editor.chain().focus().setColor(color).run();
+            },
+            removeColor() {
+                editor.chain().focus().unsetColor().run();
             },
         };
     });
