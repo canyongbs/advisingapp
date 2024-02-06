@@ -71,16 +71,6 @@ class ServiceRequestObserver
         throw_if($serviceRequest->isDirty('service_request_number'), new ServiceRequestNumberUpdateAttemptException());
     }
 
-    public function updated(ServiceRequest $serviceRequest): void
-    {
-        if (
-            $serviceRequest->wasChanged('status_id')
-            && $serviceRequest->status->classification === SystemServiceRequestClassification::Closed
-        ) {
-            $serviceRequest->respondent->notify(new SendEducatableServiceRequestClosedNotification($serviceRequest));
-        }
-    }
-
     public function saving(ServiceRequest $serviceRequest): void
     {
         if ($serviceRequest->wasChanged('status_id')) {
@@ -91,5 +81,12 @@ class ServiceRequestObserver
     public function saved(ServiceRequest $serviceRequest): void
     {
         CreateServiceRequestHistory::dispatch($serviceRequest, $serviceRequest->getChanges(), $serviceRequest->getOriginal());
+
+        if (
+            $serviceRequest->wasChanged('status_id')
+            && $serviceRequest->status->classification === SystemServiceRequestClassification::Closed
+        ) {
+            $serviceRequest->respondent->notify(new SendEducatableServiceRequestClosedNotification($serviceRequest));
+        }
     }
 }

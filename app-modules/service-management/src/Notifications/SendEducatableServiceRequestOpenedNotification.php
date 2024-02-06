@@ -74,8 +74,7 @@ class SendEducatableServiceRequestOpenedNotification extends BaseNotification im
             ->greeting("Hello {$name},")
             ->line("A new {$type->name} service request has been created and is now in a {$status->name} status. Your new ticket number is: {$this->serviceRequest->service_request_number}.")
             ->line('The details of your service request are shown below:')
-            ->lines(str(nl2br($this->serviceRequest->close_details))->explode('<br />'))
-            ->salutation('');
+            ->lines(str(nl2br($this->serviceRequest->close_details))->explode('<br />'));
     }
 
     protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
