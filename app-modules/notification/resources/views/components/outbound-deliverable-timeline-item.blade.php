@@ -2,16 +2,17 @@
     use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 @endphp
 
+@props(['component', 'record'])
 <div>
     <div class="flex flex-row justify-between">
         <x-timeline::timeline.heading>
             <span class="flex items-center">
                 @php
-                    $related = $this->record->related;
+                    $related = $record->related;
 
                     $title = match ($related::class) {
                         ServiceRequest::class => 'Auto-response Email sent',
-                        default => $this->record->getKey(),
+                        default => $record->getKey(),
                     };
                 @endphp
                 {{ $title }}
