@@ -374,8 +374,9 @@
                                                                 type="button"
                                                                 x-on:click="removeColor()"
                                                                 x-bind:class="{
-                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900': !isActive(
-                                                                        'textStyle', updatedAt),
+                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900':
+                                                                        !isActive(
+                                                                            'textStyle', updatedAt),
                                                                 }"
                                                             >
                                                                 <span class="sr-only">
