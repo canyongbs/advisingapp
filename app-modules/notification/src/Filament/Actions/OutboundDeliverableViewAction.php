@@ -4,11 +4,11 @@ namespace AdvisingApp\Notification\Filament\Actions;
 
 use App\Models\User;
 use Filament\Actions\ViewAction;
+use Illuminate\Support\HtmlString;
 use App\Filament\Resources\UserResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Infolists\Components\KeyValueEntry;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
@@ -31,11 +31,23 @@ class OutboundDeliverableViewAction extends ViewAction
                 ->color('primary'),
             TextEntry::make('channel'),
             TextEntry::make('delivery_status'),
-            // KeyValueEntry::make('content'),
-            // KeyValueEntry::make('content')
-            //     ->state(function (OutboundDeliverable $record) {
-            //         return json_decode($record->content);
-            //     }),
+            TextEntry::make('subject')
+                ->getStateUsing(fn (OutboundDeliverable $record): ?string => $record->content['subject']),
+            TextEntry::make('body')
+                ->getStateUsing(function (OutboundDeliverable $record): ?string {
+                    $body = str($record->content['greeting']);
+
+                    foreach ($record->content['introLines'] as $line) {
+                        $body = $body->append("<br><br>{$line}");
+                    }
+
+                    $body = $record->content['salutation']
+                        ? $body->append("<br><br>{$record->content['salutation']}")
+                        : $body->append('<br><br>Regards,<br>' . config('app.name'));
+
+                    return new HtmlString($body);
+                })
+                ->html(),
         ]);
     }
 }

@@ -77,7 +77,7 @@ class MakeOutboundDeliverable
         return new OutboundDeliverable([
             'channel' => $channel,
             'notification_class' => get_class($notification),
-            'content' => json_encode($content),
+            'content' => $content,
             'recipient_id' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getKey() : $recipientId,
             'recipient_type' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getMorphClass() : $recipientType,
         ]);
