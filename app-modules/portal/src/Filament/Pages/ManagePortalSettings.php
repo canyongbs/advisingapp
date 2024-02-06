@@ -183,10 +183,10 @@ class ManagePortalSettings extends SettingsPage
                                 ->action(function () {}),
                         ])
                             ->visible(
-                                fn (Get $get) => $get('has_knowledge_base') &&
-                            ! is_null($get('knowledge_base_primary_color')) &&
-                            ! is_null($get('knowledge_base_rounding')) &&
-                            ! is_null($get('knowledge_base_authorized_domain'))
+                                fn (Get $get) => $get('knowledge_base_portal_enabled') &&
+                            ! is_null($get('knowledge_base_portal_primary_color')) &&
+                            ! is_null($get('knowledge_base_portal_rounding')) &&
+                            ! is_null($get('knowledge_base_portal_authorized_domain'))
                             )
                             ->columnSpanFull(),
                     ])->columns(2),
