@@ -134,7 +134,6 @@ class OutboundDeliverable extends BaseModel implements ProvidesATimeline
         return match ($this->channel) {
             NotificationChannel::Email => new EmailDriver($this),
             NotificationChannel::Sms => new SmsDriver($this),
-            NotificationChannel::Database => throw new \Exception('To be implemented'),
         };
     }
 

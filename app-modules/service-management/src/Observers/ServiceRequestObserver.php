@@ -73,10 +73,11 @@ class ServiceRequestObserver
 
     public function updated(ServiceRequest $serviceRequest): void
     {
-        if ($serviceRequest->wasChanged('status_id')) {
-            if ($serviceRequest->status->classification === SystemServiceRequestClassification::Closed) {
-                $serviceRequest->respondent->notify(new SendEducatableServiceRequestClosedNotification($serviceRequest));
-            }
+        if (
+            $serviceRequest->wasChanged('status_id')
+            && $serviceRequest->status->classification === SystemServiceRequestClassification::Closed
+        ) {
+            $serviceRequest->respondent->notify(new SendEducatableServiceRequestClosedNotification($serviceRequest));
         }
     }
 

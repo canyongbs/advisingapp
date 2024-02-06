@@ -57,14 +57,12 @@ class MakeOutboundDeliverable
             SmsChannel::class => NotificationChannel::Sms,
             EmailChannel::class => NotificationChannel::Email,
             DatabaseChannel::class => NotificationChannel::Database,
-            default => throw new Exception('Invalid notification channel.'),
         };
 
         $content = match (true) {
             $channel == NotificationChannel::Sms && $notification instanceof SmsNotification => $notification->toSms($notifiable)->toArray(),
             $channel == NotificationChannel::Email && $notification instanceof EmailNotification => $notification->toMail($notifiable)->toArray(),
             $channel == NotificationChannel::Database && $notification instanceof DatabaseNotification => $notification->toDatabase($notifiable),
-            default => throw new Exception('Invalid notification channel.'),
         };
 
         $recipientId = null;
