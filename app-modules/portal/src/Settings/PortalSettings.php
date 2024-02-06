@@ -62,16 +62,7 @@ class PortalSettings extends Settings
 
     public bool $has_notifications = false;
 
-    /**
-     * Knowledge Base
-    */
     public bool $has_knowledge_base = false;
-
-    public ?string $knowledge_base_primary_color = null;
-
-    public ?string $knowledge_base_rounding = null;
-
-    public ?string $knowledge_base_authorized_domain = null;
 
     public bool $has_tasks = false;
 
@@ -84,6 +75,19 @@ class PortalSettings extends Settings
     public ?string $footer_color = null;
 
     public ?string $footer_copyright_statement;
+
+    /**
+    * Knowledge Base Portal
+    */
+    public bool $knowledge_base_portal_enabled = false;
+
+    public bool $knowledge_base_portal_service_management = false;
+
+    public ?string $knowledge_base_portal_primary_color = null;
+
+    public ?string $knowledge_base_portal_rounding = null;
+
+    public ?string $knowledge_base_portal_authorized_domain = null;
 
     public static function group(): string
     {

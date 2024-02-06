@@ -117,8 +117,18 @@ class ManagePortalSettings extends SettingsPage
                             ->label('Performance Alerts'),
                         Toggle::make('has_emergency_alerts')
                             ->label('Emergency Alerts'),
+                        Toggle::make('has_service_management')
+                            ->label('Service Management')
+                            ->disabled(! Gate::check(Feature::ServiceManagement->getGateName()))
+                            ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIconTooltip('Service Management is not a part of your current subscription.'),
                         Toggle::make('has_notifications')
                             ->label('Portal Notifications'),
+                        Toggle::make('has_knowledge_base')
+                            ->label('Knowledge Management')
+                            ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                            ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIconTooltip('Knowledge Management is not a part of your current subscription.'),
                         Toggle::make('has_tasks')
                             ->label('Tasks'),
                         Toggle::make('has_files_and_documents')
@@ -135,33 +145,33 @@ class ManagePortalSettings extends SettingsPage
                             ->hintIconTooltip('Surveys are not a part of your current subscription.'),
                     ])
                     ->columns(3),
-
                 Section::make('Knowledge Portal')
                     ->schema([
-                        Toggle::make('has_knowledge_base')
+                        Toggle::make('knowledge_base_portal_enabled')
                             ->label('Knowledge Management')
                             ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Knowledge Management is not a part of your current subscription.')
                             ->live()
                             ->columnSpanFull(),
-                        ColorPicker::make('knowledge_base_primary_color')
+                        ColorPicker::make('knowledge_base_portal_primary_color')
+                            ->label('Primary Color')
                             ->hexColor()
-                            ->visible(fn (Get $get) => $get('has_knowledge_base'))
+                            ->visible(fn (Get $get) => $get('knowledge_base_portal_enabled'))
                             ->columnSpan(1),
-                        Select::make('knowledge_base_rounding')
-                        // TODO Potentially extract the Rounding to be independent of forms
+                        Select::make('knowledge_base_portal_rounding')
+                            ->label('Rounding')
                             ->options(Rounding::class)
-                            ->visible(fn (Get $get) => $get('has_knowledge_base'))
+                            ->visible(fn (Get $get) => $get('knowledge_base_portal_enabled'))
                             ->columnSpan(1),
-                        TextInput::make('knowledge_base_authorized_domain')
+                        TextInput::make('knowledge_base_portal_authorized_domain')
                             ->label('Authorized Domain')
                             ->url()
-                            ->visible(fn (Get $get) => $get('has_knowledge_base'))
+                            ->visible(fn (Get $get) => $get('knowledge_base_portal_enabled'))
                             ->columnSpanFull(),
-                        Toggle::make('has_service_management')
+                        Toggle::make('knowledge_base_portal_service_management')
                             ->label('Service Management')
-                            ->visible(fn (Get $get) => $get('has_knowledge_base'))
+                            ->visible(fn (Get $get) => $get('knowledge_base_portal_enabled'))
                             ->disabled(! Gate::check(Feature::ServiceManagement->getGateName()))
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null),
                         Actions::make([

@@ -51,15 +51,7 @@ return new class () extends SettingsMigration {
         $this->migrator->add('portal.has_emergency_alerts', false);
         $this->migrator->add('portal.has_service_management', false);
         $this->migrator->add('portal.has_notifications', false);
-
-        /**
-         * Knowledge Base
-        */
         $this->migrator->add('portal.has_knowledge_base', false);
-        $this->migrator->add('portal.knowledge_base_primary_color');
-        $this->migrator->add('portal.knowledge_base_rounding');
-        $this->migrator->add('portal.knowledge_base_authorized_domain');
-
         $this->migrator->add('portal.has_tasks', false);
         $this->migrator->add('portal.has_files_and_documents', false);
         $this->migrator->add('portal.has_forms', false);
@@ -67,5 +59,14 @@ return new class () extends SettingsMigration {
 
         $this->migrator->add('portal.footer_color');
         $this->migrator->add('portal.footer_copyright_statement');
+
+        /**
+         * Knowledge Base Portal
+        */
+        $this->migrator->add('portal.knowledge_base_portal_enabled', false);
+        $this->migrator->add('portal.knowledge_base_portal_service_management', false);
+        $this->migrator->add('portal.knowledge_base_portal_primary_color');
+        $this->migrator->add('portal.knowledge_base_portal_rounding');
+        $this->migrator->add('portal.knowledge_base_portal_authorized_domain');
     }
 };
