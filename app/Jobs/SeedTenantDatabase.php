@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
+    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,46 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace App\Observers;
+namespace App\Jobs;
 
-use Throwable;
 use App\Models\Tenant;
-use Illuminate\Bus\Batch;
-use App\Jobs\SeedTenantDatabase;
-use App\Jobs\MigrateTenantDatabase;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Event;
-use App\Multitenancy\Events\NewTenantSetupFailure;
-use App\Multitenancy\Events\NewTenantSetupComplete;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Spatie\Multitenancy\Jobs\NotTenantAware;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 
-class TenantObserver
+class SeedTenantDatabase implements ShouldQueue, NotTenantAware
 {
-    public function created(Tenant $tenant): void
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public function __construct(public Tenant $tenant) {}
+
+    public function middleware(): array
     {
-        $setupChain = [
-            new MigrateTenantDatabase($tenant),
-        ];
+        return [new SkipIfBatchCancelled()];
+    }
 
-        if (config('multitenancy.seed_on_tenant_creation')) {
-            $setupChain = [
-                ...$setupChain,
-                new SeedTenantDatabase($tenant),
-            ];
-        }
+    public function handle(): void
+    {
+        $this->tenant->execute(function () {
+            $currentQueueFailedConnection = config('queue.failed.database');
 
-        Bus::batch(
-            [
-                $setupChain,
-            ]
-        )
-            ->onQueue(config('queue.landlord_queue'))
-            ->then(function (Batch $batch) use ($tenant) {
-                Event::dispatch(new NewTenantSetupComplete($tenant));
-            })
-            ->catch(function (Batch $batch, Throwable $e) use ($tenant) {
-                Event::dispatch(new NewTenantSetupFailure($tenant, $e));
-            })
-            ->allowFailures()
-            ->dispatch();
+            config(['queue.failed.database' => 'landlord']);
+
+            Artisan::call(
+                command: 'db:seed --class=DemoDatabaseSeeder --force'
+            );
+
+            config(['queue.failed.database' => $currentQueueFailedConnection]);
+        });
     }
 }
