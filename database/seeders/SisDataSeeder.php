@@ -34,32 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace App\Console\Commands;
+namespace Database\Seeders;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Process;
 
-class ClearSisDatabase extends Command
+class SisDataSeeder extends Seeder
 {
-    use TenantAware;
-
-    protected $signature = 'sis:clear {--tenant=*}';
-
-    protected $description = 'Clears the local SIS database.';
-
-    public function handle()
+    public function run(): void
     {
-        if (! app()->environment('local')) {
-            $this->error('This command can only be run in the local environment.');
+        $this->command->comment('Seeding SIS data...');
 
-            return;
-        }
+        $password = config('database.connections.tenant.password');
+        $host = config('database.connections.tenant.host');
+        $port = config('database.connections.tenant.port');
+        $database = config('database.connections.tenant.database');
+        $username = config('database.connections.tenant.username');
 
-        $this->line('Clearing SIS database...');
+        Process::run("gunzip < ./resources/sql/advising-app-adm-data.gz | PGPASSWORD={$password} psql -h {$host} -p {$port} -U {$username} -d {$database} -q")
+            ->throw();
 
-        Artisan::call('migrate:fresh --database=sis --path=app-modules/student-data-model/database/migrations/sis');
-
-        $this->info('SIS database cleared');
+        $this->command->comment('Seeding SIS data complete!');
     }
 }

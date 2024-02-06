@@ -41,12 +41,11 @@
     <env name="DB_DATABASE" value="testing_landlord"/>
     <env name="DB_USERNAME" value="root"/>
     <env name="DB_PASSWORD" value="root"/>
-    <env name="SIS_DB_CONNECTION" value="sis"/>
-    <env name="SIS_DB_HOST" value="redshift"/>
-    <env name="SIS_DB_PORT" value="5432"/>
-    <env name="SIS_DB_DATABASE" value="testing"/>
-    <env name="SIS_DB_USERNAME" value="root"/>
-    <env name="SIS_DB_PASSWORD" value="root"/>
+    <env name="TENANT_DB_HOST" value="postgres"/>
+    <env name="TENANT_DB_PORT" value="5432"/>
+    <env name="TENANT_DB_DATABASE" value="testing_tenant"/>
+    <env name="TENANT_DB_USERNAME" value="root"/>
+    <env name="TENANT_DB_PASSWORD" value="root"/>
     <env name="AZURE_OPEN_AI_ENABLE_TEST_MODE" value="true"/>
     <env name="SCOUT_DRIVER" value="database"/>
   </php>

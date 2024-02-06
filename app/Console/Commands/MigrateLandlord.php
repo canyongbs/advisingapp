@@ -48,7 +48,7 @@ class MigrateLandlord extends Command
     public function handle(): void
     {
         Artisan::call(
-            command: 'migrate --database=landlord --path=database/migrations/landlord',
+            command: 'migrate --database=landlord --path=database/landlord',
             outputBuffer: $this->output,
         );
     }

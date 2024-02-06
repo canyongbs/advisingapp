@@ -53,7 +53,7 @@ class EditTaskRequestFactory extends RequestFactory
             'status' => fake()->randomElement(TaskStatus::cases())->value,
             'due' => now()->addWeek(),
             'assigned_to' => User::factory()->create()->id,
-            'concern_id' => $student->id,
+            'concern_id' => $student->getKey(),
             'concern_type' => $student->getMorphClass(),
         ];
     }

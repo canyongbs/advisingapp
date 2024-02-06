@@ -95,6 +95,8 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     use NotifiableViaSms;
     use UsesTenantConnection;
 
+    protected $table = 'students';
+
     protected $primaryKey = 'sisid';
 
     public $incrementing = false;
@@ -106,17 +108,6 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     ];
 
     public $timestamps = false;
-
-    public function getTable()
-    {
-        if ($this->table) {
-            return $this->table;
-        }
-
-        return config('database.adm_materialized_views_enabled')
-            ? 'students_local'
-            : 'students';
-    }
 
     public function identifier(): string
     {

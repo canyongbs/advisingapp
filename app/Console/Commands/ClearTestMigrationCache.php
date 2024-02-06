@@ -37,36 +37,32 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\DataTransferObjects\ForeignDataWrapperData;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
-use App\Actions\Setup\SetupForeignDataWrapper as SetupForeignDataWrapperAction;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
-class SetupForeignDataWrapper extends Command
+class ClearTestMigrationCache extends Command
 {
-    use TenantAware;
+    protected $signature = 'app:clear-test-migration-cache';
 
-    protected $signature = 'app:setup-foreign-data-wrapper {--tenant=*}';
-
-    protected $description = 'Setup foreign data wrapper for SIS database';
+    protected $description = 'Deletes the cache files used for the testing migrations cache.';
 
     public function handle(): void
     {
-        resolve(SetupForeignDataWrapperAction::class)->handle(
-            new ForeignDataWrapperData(
-                connection: config('database.fdw.connection'),
-                localServerName: config('database.fdw.server_name'),
-                externalHost: config('database.connections.sis.host'),
-                externalPort: config('database.connections.sis.port'),
-                externalUser: config('database.connections.sis.username'),
-                externalPassword: config('database.connections.sis.password'),
-                externalDatabase: config('database.connections.sis.database'),
-                tables: [
-                    'students',
-                    'programs',
-                    'enrollments',
-                    'performance',
-                ],
-            )
-        );
+        $this->comment('Clearing the testing migration cache...');
+
+        $finder = Finder::create()
+            ->in(storage_path('app'))
+            ->name('migration-checksum_*.txt')
+            ->ignoreDotFiles(true)
+            ->ignoreVCS(true)
+            ->files();
+
+        $this->withProgressBar($finder, function (SplFileInfo $file) {
+            unlink($file->getPathname());
+        });
+
+        $this->newLine();
+
+        $this->info('Testing migration cache cleared!');
     }
 }

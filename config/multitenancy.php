@@ -37,7 +37,6 @@
 use App\Models\Tenant;
 use Illuminate\Mail\SendQueuedMailable;
 use Illuminate\Queue\CallQueuedClosure;
-use App\Multitenancy\Tasks\SwitchAppKey;
 use App\Multitenancy\Tasks\SwitchAppUrl;
 use App\Multitenancy\Tasks\SwitchAppName;
 use Illuminate\Events\CallQueuedListener;
@@ -77,7 +76,7 @@ return [
      * A valid task is any class that implements Spatie\Multitenancy\Tasks\SwitchTenantTask
      */
     'switch_tenant_tasks' => [
-        SwitchAppKey::class,
+        //SwitchAppKey::class,
         PrefixCacheTask::class,
         SwitchTenantDatabasesTask::class,
         SwitchAppUrl::class,

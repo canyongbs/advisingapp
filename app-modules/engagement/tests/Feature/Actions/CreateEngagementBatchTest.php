@@ -69,16 +69,19 @@ it('will create an engagement for every record provided', function () {
     Queue::fake([EngagementEmailChannelDelivery::class, EngagementSmsChannelDelivery::class]);
     Notification::fake();
 
+    $students = Student::factory()->count(3)->create();
+
     CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
         'user' => User::factory()->create(),
-        'records' => Student::factory()->count(3)->create(),
+        'records' => $students,
         'subject' => 'Test Subject',
         'body' => ['Test Body'],
         'deliveryMethod' => EngagementDeliveryMethod::Email->value,
     ]));
 
     expect(Engagement::count())->toBe(3);
-    expect(Student::first()->engagements()->count())->toBe(1);
+
+    $students->each(fn (Student $student) => expect($student->engagements()->count())->toBe(1));
 });
 
 it('will associate the engagement with the batch', function () {
@@ -108,8 +111,8 @@ it('will create deliverables for the created engagements', function () {
         'deliveryMethod' => EngagementDeliveryMethod::Email->value,
     ]));
 
-    expect(EngagementDeliverable::count())->toBe(1);
-    expect(Engagement::first()->deliverable()->count())->toBe(1);
+    expect(EngagementDeliverable::count())->toBe(1)
+        ->and(Engagement::first()->deliverable()->count())->toBe(1);
 });
 
 it('will dispatch a batch of jobs for each engagement that needs to be delivered', function () {
@@ -132,8 +135,6 @@ it('will dispatch a batch of jobs for each engagement that needs to be delivered
         return $batch->jobs->every(function ($job) {
             return $job instanceof EngagementEmailChannelDelivery;
         });
-
-        return true;
     });
 });
 

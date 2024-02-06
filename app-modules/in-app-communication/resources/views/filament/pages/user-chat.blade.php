@@ -267,17 +267,7 @@
                                                     x-on:click="toggleBold()"
                                                     x-bind:class="{ 'bg-gray-200 dark:bg-gray-700': isActive('bold', updatedAt) }"
                                                 >
-                                                    <svg
-                                                        class="h-5 w-5"
-                                                        fill="currentColor"
-                                                        viewBox="0 0 1024 1024"
-                                                        version="1.1"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                    >
-                                                        <path
-                                                            d="M576 661.333H426.667v-128H576c35.413 0 64 28.587 64 64 0 35.414-28.587 64-64 64m-149.333-384h128c35.413 0 64 28.587 64 64 0 35.414-28.587 64-64 64h-128m238.933 55.04C706.987 431.36 736 384 736 341.333c0-96.426-74.667-170.666-170.667-170.666H298.667V768H599.04c89.6 0 158.293-72.533 158.293-161.707 0-64.853-36.693-120.32-91.733-145.92z"
-                                                        />
-                                                    </svg>
+                                                    @svg('icon-bold', 'h-5 w-5')
                                                 </button>
 
                                                 <button
@@ -286,17 +276,7 @@
                                                     x-on:click="toggleItalic()"
                                                     x-bind:class="{ 'bg-gray-200 dark:bg-gray-700': isActive('italic', updatedAt) }"
                                                 >
-                                                    <svg
-                                                        class="h-5 w-5"
-                                                        fill="currentColor"
-                                                        viewBox="0 0 1024 1024"
-                                                        version="1.1"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                    >
-                                                        <path
-                                                            d="M426.667 170.667v128h94.293L375.04 640H256v128h341.333V640H503.04l145.92-341.333H768v-128H426.667z"
-                                                        />
-                                                    </svg>
+                                                    @svg('icon-italic', 'h-5 w-5')
                                                 </button>
 
                                                 <button
@@ -305,18 +285,65 @@
                                                     x-on:click="toggleUnderline()"
                                                     x-bind:class="{ 'bg-gray-200 dark:bg-gray-700': isActive('underline', updatedAt) }"
                                                 >
-                                                    <svg
-                                                        class="h-5 w-5"
-                                                        fill="currentColor"
-                                                        viewBox="0 0 1024 1024"
-                                                        version="1.1"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                    >
-                                                        <path
-                                                            d="M232 872h560v-80H232v80m280-160c132.4 0 240-107.6 240-240V152H652v320c0 77.2-62.8 140-140 140s-140-62.8-140-140V152H272v320c0 132.4 107.6 240 240 240z"
-                                                        />
-                                                    </svg>
+                                                    @svg('icon-underline', 'h-5 w-5')
                                                 </button>
+
+                                                <div>
+                                                    <button
+                                                        class="rounded p-0.5"
+                                                        type="button"
+                                                        x-on:click="toggleLink"
+                                                        x-bind:class="{ 'bg-gray-200 dark:bg-gray-700': isActive('link', updatedAt) }"
+                                                    >
+                                                        @svg('icon-link', 'mt-0.5 h-4 w-4')
+                                                    </button>
+
+                                                    <form
+                                                        class="absolute z-10 w-screen max-w-sm space-y-3 divide-y divide-gray-100 rounded-lg bg-white px-4 py-3 shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10"
+                                                        x-on:submit.prevent="saveLink"
+                                                        x-cloak
+                                                        x-float.offset.placement.bottom-start="{ offset: 8 }"
+                                                        x-ref="linkEditor"
+                                                        x-on:click.outside="$el.close"
+                                                        x-transition:enter-start="opacity-0"
+                                                        x-transition:leave-end="opacity-0"
+                                                    >
+                                                        <label class="grid gap-y-2">
+                                                            <span
+                                                                class="text-sm font-medium leading-6 text-gray-950 dark:text-white"
+                                                            >
+                                                                URL
+                                                            </span>
+
+                                                            <x-filament::input.wrapper>
+                                                                <x-filament::input
+                                                                    type="url"
+                                                                    x-model="linkUrl"
+                                                                    x-ref="linkInput"
+                                                                />
+                                                            </x-filament::input.wrapper>
+                                                        </label>
+
+                                                        <div class="flex flex-wrap items-center gap-3">
+                                                            <x-filament::button
+                                                                type="submit"
+                                                                size="sm"
+                                                            >
+                                                                Save
+                                                            </x-filament::button>
+
+                                                            <x-filament::button
+                                                                type="button"
+                                                                size="sm"
+                                                                x-show="linkUrl"
+                                                                x-on:click="removeLink"
+                                                                color="gray"
+                                                            >
+                                                                Remove
+                                                            </x-filament::button>
+                                                        </div>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </template>
 

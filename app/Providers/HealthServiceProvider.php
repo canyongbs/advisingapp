@@ -60,19 +60,20 @@ class HealthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $local = app()->isLocal() && str(config('app.url'))->contains(['localhost', '.local']);
+
         Health::checks([
             CacheCheck::new(),
-            OptimizedAppCheck::new(),
+            OptimizedAppCheck::new()
+                ->unless($local),
             DatabaseCheck::new()
                 ->name('tenant')
                 ->connectionName(config('multitenancy.tenant_database_connection_name'))
                 ->label('PostgreSQL Database'),
-            DatabaseCheck::new()
-                ->name('sis')
-                ->label('SIS Database')
-                ->connectionName('sis'),
-            DebugModeCheck::new(),
-            EnvironmentCheck::new(),
+            DebugModeCheck::new()
+                ->unless($local),
+            EnvironmentCheck::new()
+                ->unless($local),
             // cloudflare dns
             PingCheck::new()
                 ->url('1.1.1.1')

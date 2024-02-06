@@ -36,9 +36,6 @@
 
 namespace AdvisingApp\StudentDataModel\Database\Factories;
 
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -81,24 +78,5 @@ class StudentFactory extends Factory
             'f_e_term' => $this->faker->randomNumber(4),
             'mr_e_term' => $this->faker->randomNumber(4),
         ];
-    }
-
-    protected function store(Collection $results)
-    {
-        if (config('database.adm_materialized_views_enabled')) {
-            // Because Students points to a Materialized View, we need to set the table to the actual table name before storing and then refresh the view after storing.
-
-            $results = $results->map(fn (Model $result) => $result->setTable('students'));
-
-            parent::store($results);
-
-            $results->each(function (Model $result) {
-                $result->setTable('students_local');
-            });
-
-            DB::connection(config('multitenancy.tenant_database_connection_name'))->statement('REFRESH MATERIALIZED VIEW students_local');
-        } else {
-            parent::store($results);
-        }
     }
 }

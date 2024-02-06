@@ -51,7 +51,8 @@ class Enrollment extends Model
     use DefinesPermissions;
     use UsesTenantConnection;
 
-    // TODO: Need to revisit whether or not this should be the primary key, just using it for now since there is nothing else
+    protected $table = 'enrollments';
+
     protected $primaryKey = 'sisid';
 
     public $incrementing = false;
@@ -67,17 +68,6 @@ class Enrollment extends Model
 
     public function getApiPermissions(): Collection
     {
-        return collect([]);
-    }
-
-    public function getTable()
-    {
-        if ($this->table) {
-            return $this->table;
-        }
-
-        return config('database.adm_materialized_views_enabled')
-            ? 'enrollments_local'
-            : 'enrollments';
+        return collect();
     }
 }
