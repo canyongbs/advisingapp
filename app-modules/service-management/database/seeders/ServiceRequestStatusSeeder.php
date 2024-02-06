@@ -70,7 +70,13 @@ class ServiceRequestStatusSeeder extends Seeder
                     [
                         'classification' => SystemServiceRequestClassification::Custom,
                         'name' => 'Pending Student',
-                        'color' => ColumnColorOptions::Gray],
+                        'color' => ColumnColorOptions::Gray,
+                    ],
+                    [
+                        'classification' => SystemServiceRequestClassification::Closed,
+                        'name' => 'Closed',
+                        'color' => ColumnColorOptions::Info,
+                    ],
                 ]
             );
     }

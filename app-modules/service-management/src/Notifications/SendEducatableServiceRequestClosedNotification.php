@@ -70,9 +70,9 @@ class SendEducatableServiceRequestClosedNotification extends BaseNotification im
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
             ->subject("{$this->serviceRequest->service_request_number} - is now {$status->name}")
-            ->greeting("Hello {$name},")
+            ->greeting("Hi {$name},")
             ->line("Your request {$this->serviceRequest->service_request_number} for service is now {$status->name}.")
-            ->line('Thank you.');
+            ->salutation('Thank you.');
     }
 
     protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
