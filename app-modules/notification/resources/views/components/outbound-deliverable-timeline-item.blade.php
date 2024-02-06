@@ -45,7 +45,7 @@
 
                     $title = match ($related::class) {
                         ServiceRequest::class => "Auto-response {$record->channel->getLabel()} sent",
-                        default => $record->getKey()
+                        default => $record->getKey(),
                     };
                 @endphp
                 {{ $title }}
