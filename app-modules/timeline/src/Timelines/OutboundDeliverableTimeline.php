@@ -54,8 +54,7 @@ class OutboundDeliverableTimeline extends CustomTimeline
         return match ($this->outboundDeliverable->related::class) {
             ServiceRequest::class => match ($this->outboundDeliverable->channel) {
                 NotificationChannel::Email => 'heroicon-o-envelope',
-                NotificationChannel::Sms => 'heroicon-o-chat',
-                NotificationChannel::Database => 'heroicon-o-circle-stack',
+                NotificationChannel::Sms => 'heroicon-o-chat-bubble-bottom-center-text',
             },
             default => 'heroicon-o-arrow-up-tray',
         };

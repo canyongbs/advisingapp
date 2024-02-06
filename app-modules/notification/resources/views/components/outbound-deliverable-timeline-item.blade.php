@@ -32,6 +32,7 @@
 </COPYRIGHT>
 --}}
 @php
+    use AdvisingApp\Notification\Enums\NotificationChannel;
     use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 @endphp
 
@@ -44,8 +45,8 @@
                     $related = $record->related;
 
                     $title = match ($related::class) {
-                        ServiceRequest::class => 'Auto-response Email sent',
-                        default => $record->getKey(),
+                        ServiceRequest::class => "Auto-response {$record->channel->getLabel()} sent",
+                        default => $record->getKey()
                     };
                 @endphp
                 {{ $title }}
