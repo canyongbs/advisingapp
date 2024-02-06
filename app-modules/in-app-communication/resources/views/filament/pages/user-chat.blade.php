@@ -261,7 +261,8 @@
                                         x-modelable="content"
                                     >
                                         <template x-if="isLoaded()">
-                                            <div class="flex items-center flex-wrap gap-1 border-b px-3 py-2 dark:border-gray-700">
+                                            <div
+                                                class="flex flex-wrap items-center gap-1 border-b px-3 py-2 dark:border-gray-700">
                                                 <button
                                                     class="rounded p-0.5"
                                                     type="button"
@@ -490,14 +491,16 @@
                                                         x-transition:enter-start="opacity-0"
                                                         x-transition:leave-end="opacity-0"
                                                     >
-                                                        <div class="flex flex-wrap gap-2 items-center">
-                                                            <template x-for="emoji in ['😀', '😂', '👍', '👎', '🙏', '😕', '🤔', '😊', '🎉', '💼', '🕒', '📅', '🔒', '❗', '❓', '💡', '🚫', '✅', '🤖', '📧', '🌐', '💬', '📈', '📉', '🤝']">
+                                                        <div class="flex flex-wrap items-center gap-2">
+                                                            <template
+                                                                x-for="emoji in ['😀', '😂', '👍', '👎', '🙏', '😕', '🤔', '😊', '🎉', '💼', '🕒', '📅', '🔒', '❗', '❓', '💡', '🚫', '✅', '🤖', '📧', '🌐', '💬', '📈', '📉', '🤝']"
+                                                            >
                                                                 <button
-                                                                    x-on:click="insertContent(emoji)"
+                                                                    class="h-5 w-5 rounded hover:bg-gray-100"
                                                                     type="button"
+                                                                    x-on:click="insertContent(emoji)"
                                                                     x-text="emoji"
                                                                     x-bind:key="emoji"
-                                                                    class="h-5 w-5 rounded hover:bg-gray-100"
                                                                 ></button>
                                                             </template>
                                                         </div>
