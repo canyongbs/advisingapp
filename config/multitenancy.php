@@ -78,9 +78,9 @@ return [
      */
     'switch_tenant_tasks' => [
         //SwitchAppKey::class,
-        SwitchSessionDriver::class,
         PrefixCacheTask::class,
         SwitchTenantDatabasesTask::class,
+        SwitchSessionDriver::class,
         SwitchAppUrl::class,
         SwitchAppName::class,
         SwitchMailTask::class,
