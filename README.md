@@ -59,7 +59,7 @@ Our student service CRM is designed to support the management of prospective and
 A [PHP](https://php.net) TALL Stack is used to create our software:
 
 * [Tailwind CSS](https://tailwindcss.com/)
-* [Apline.js](https://alpinejs.dev)
+* [Alpine.js](https://alpinejs.dev)
 * [Laravel](https://laravel.com/)
 * [Livewire](https://laravel-livewire.com/)
 
