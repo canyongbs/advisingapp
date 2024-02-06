@@ -1,6 +1,7 @@
 name: Update Yearly Copyright
 
 on:
+  workflow_dispatch:
   schedule:  # Run every year on January 1st
     - cron: "0 0 1 1 *" # UTC time
 
