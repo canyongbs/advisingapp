@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -39,23 +39,27 @@ namespace AdvisingApp\Engagement\Drivers;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
 use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
+use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 
-// TODO Rename this to be "EngagementSmsDriver"
-class SmsDriver implements DeliverableDriver
+class EngagementSmsDriver implements EngagementDeliverableDriver
 {
     public function __construct(
         protected EngagementDeliverable $deliverable
     ) {}
 
-    public function updateDeliveryStatus(array $data): void
+    public function updateDeliveryStatus(UpdateDeliveryStatusData $data): void
     {
+        /** @var TwilioStatusCallbackData $updateData */
+        $updateData = $data->data;
+
         $this->deliverable->update([
-            'external_status' => $data['MessageStatus'] ?? null,
+            'external_status' => $updateData->messageStatus ?? null,
         ]);
 
         match ($this->deliverable->external_status) {
             'delivered' => $this->deliverable->markDeliverySuccessful(),
-            'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($data['ErrorMessage'] ?? null),
+            'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($updateData->errorMessage ?? null),
             default => null,
         };
     }
