@@ -1,0 +1,10 @@
+{
+    "ApiVersion": "2010-04-01",
+    "MessageStatus": "delivered",
+    "SmsSid": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "SmsStatus": "delivered",
+    "To": "+1112223344",
+    "From": "+4443331122",
+    "MessageSid": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "AccountSid": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+}

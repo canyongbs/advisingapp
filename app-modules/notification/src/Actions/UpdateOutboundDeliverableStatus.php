@@ -34,30 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+namespace AdvisingApp\Notification\Actions;
 
-use Illuminate\Support\Facades\Log;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 
-class FindEngagementResponseSender implements EngagementResponseSenderFinder
+class UpdateOutboundDeliverableStatus implements ShouldQueue
 {
-    public function find(string $phoneNumber): Student|Prospect|null
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public function __construct(
+        public OutboundDeliverable $deliverable,
+        public TwilioStatusCallbackData $data
+    ) {}
+
+    public function handle(): void
     {
-        // Student currently takes priority, but determine if we potentially want to store this response
-        // For *all* potential matches instead of just a singular result.
-        if (! is_null($student = Student::where('mobile', $phoneNumber)->orWhere('phone', $phoneNumber)->first())) {
-            return $student;
+        $data = UpdateDeliveryStatusData::from([
+            'data' => $this->data,
+        ]);
+
+        $this->deliverable->driver()->updateDeliveryStatus($data);
+
+        if ($this->deliverable->related) {
+            if (method_exists($this->deliverable->related, 'driver')) {
+                $this->deliverable->related->driver()->updateDeliveryStatus($data);
+            }
         }
+    }
 
-        if (! is_null($prospect = Prospect::where('mobile', $phoneNumber)->orWhere('phone', $phoneNumber)->first())) {
-            return $prospect;
-        }
-
-        // TODO Perhaps send a notification to an admin, but don't need to throw an exception.
-        Log::error("Could not find a Student or Prospect with the given phone number: {$phoneNumber}");
-
-        return null;
+    public function middleware(): array
+    {
+        return [
+            (new WithoutOverlapping($this->deliverable->id))
+                ->releaseAfter(30)
+                ->expireAfter(300),
+        ];
     }
 }

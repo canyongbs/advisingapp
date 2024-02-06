@@ -34,30 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+namespace AdvisingApp\Notification\Drivers;
 
-use Illuminate\Support\Facades\Log;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 
-class FindEngagementResponseSender implements EngagementResponseSenderFinder
+class SmsDriver implements OutboundDeliverableDriver
 {
-    public function find(string $phoneNumber): Student|Prospect|null
+    public function __construct(
+        protected OutboundDeliverable $deliverable
+    ) {}
+
+    public function updateDeliveryStatus(UpdateDeliveryStatusData $data): void
     {
-        // Student currently takes priority, but determine if we potentially want to store this response
-        // For *all* potential matches instead of just a singular result.
-        if (! is_null($student = Student::where('mobile', $phoneNumber)->orWhere('phone', $phoneNumber)->first())) {
-            return $student;
-        }
+        /** @var TwilioStatusCallbackData $updateData */
+        $updateData = $data->data;
 
-        if (! is_null($prospect = Prospect::where('mobile', $phoneNumber)->orWhere('phone', $phoneNumber)->first())) {
-            return $prospect;
-        }
+        $this->deliverable->update([
+            'external_status' => $updateData->messageStatus ?? null,
+        ]);
 
-        // TODO Perhaps send a notification to an admin, but don't need to throw an exception.
-        Log::error("Could not find a Student or Prospect with the given phone number: {$phoneNumber}");
-
-        return null;
+        match ($this->deliverable->external_status) {
+            'delivered' => $this->deliverable->markDeliverySuccessful(),
+            'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($updateData->errorMessage ?? null),
+            default => null,
+        };
     }
 }

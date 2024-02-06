@@ -41,13 +41,13 @@ use AdvisingApp\Webhook\Enums\InboundWebhookSource;
 
 class StoreInboundWebhook
 {
-    public function handle(InboundWebhookSource $source, string $event, string $url, string $payload): void
+    public function handle(InboundWebhookSource $source, string $event, string $url, array|string $payload): void
     {
         InboundWebhook::create([
             'source' => $source->value,
             'event' => $event,
             'url' => $url,
-            'payload' => $payload,
+            'payload' => is_array($payload) ? json_encode($payload) : $payload,
         ]);
     }
 }

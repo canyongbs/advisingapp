@@ -41,8 +41,10 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Engagement\Actions\UpdateEngagementDeliverableStatus;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Actions\UpdateOutboundDeliverableStatus;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
+use AdvisingApp\Notification\Events\CouldNotFindOutboundDeliverableFromExternalReference;
 
 class StatusCallback implements ShouldQueue
 {
@@ -52,17 +54,18 @@ class StatusCallback implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        public array $data
+        public TwilioStatusCallbackData $data
     ) {}
 
     public function handle(): void
     {
-        // TODO Update this to be the OutboundDeliverable model and hand off functionality to the "related" model if applicable
-        // https://canyongbs.atlassian.net/browse/ADVAPP-111
-        $deliverable = EngagementDeliverable::where('external_reference_id', $this->data['MessageSid'])->first();
+        $outboundDeliverable = OutboundDeliverable::query()
+            ->where('external_reference_id', $this->data->messageSid)
+            ->first();
 
-        if (is_null($deliverable)) {
-            // TODO Potentially trigger a notification to an admin that a message was received for a non-existent deliverable
+        if (is_null($outboundDeliverable)) {
+            CouldNotFindOutboundDeliverableFromExternalReference::dispatch($this->data);
+
             return;
         }
 
@@ -76,6 +79,7 @@ class StatusCallback implements ShouldQueue
         // queued, sending, sent, etc... but we don't actually want/need to do anything during these lifecycle hooks. We only really care about
         // delivered, undelivered, failed, etc... statuses.
         // https://canyongbs.atlassian.net/browse/ADVAPP-113
-        UpdateEngagementDeliverableStatus::dispatch($deliverable, $this->data);
+
+        UpdateOutboundDeliverableStatus::dispatch($outboundDeliverable, $this->data);
     }
 }

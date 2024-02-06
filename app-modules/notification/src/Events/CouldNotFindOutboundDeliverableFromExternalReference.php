@@ -34,28 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Drivers;
+namespace AdvisingApp\Notification\Events;
 
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
-use AdvisingApp\Engagement\Actions\EngagementEmailChannelDelivery;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 
-// TODO Rename this to be "EngagementEmailDriver"
-class EmailDriver implements DeliverableDriver
+class CouldNotFindOutboundDeliverableFromExternalReference
 {
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
+
     public function __construct(
-        protected EngagementDeliverable $deliverable
+        public TwilioStatusCallbackData $data
     ) {}
-
-    public function updateDeliveryStatus(array $data): void {}
-
-    public function jobForDelivery(): QueuedEngagementDelivery
-    {
-        return new EngagementEmailChannelDelivery($this->deliverable);
-    }
-
-    public function deliver(): void
-    {
-        EngagementEmailChannelDelivery::dispatch($this->deliverable);
-    }
 }

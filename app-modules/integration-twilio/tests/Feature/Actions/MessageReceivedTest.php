@@ -34,6 +34,8 @@
 </COPYRIGHT>
 */
 
+use Illuminate\Http\Request;
+
 use function Tests\loadFixtureFromModule;
 use function Pest\Laravel\assertDatabaseHas;
 
@@ -42,32 +44,33 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use function Pest\Laravel\assertDatabaseMissing;
 
 use AdvisingApp\IntegrationTwilio\Actions\MessageReceived;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioMessageReceivedData;
 
 it('will not create an engagement response when it cannot find an associated message sender', function () {
-    $messageData = loadFixtureFromModule('integration-twilio', 'MessageReceived/payload');
+    $request = Request::create('/', 'POST', loadFixtureFromModule('integration-twilio', 'MessageReceived/payload'));
 
-    $messageReceived = new MessageReceived($messageData);
+    $messageReceived = new MessageReceived(TwilioMessageReceivedData::fromRequest($request));
     $messageReceived->handle();
 
     assertDatabaseMissing('engagement_responses', [
-        'content' => $messageData['Body'],
+        'content' => $request->all()['Body'],
     ]);
 });
 
 it('will create an engagement response when a message is received', function () {
-    $messageData = loadFixtureFromModule('integration-twilio', 'MessageReceived/payload');
+    $request = Request::create('/', 'POST', loadFixtureFromModule('integration-twilio', 'MessageReceived/payload'));
 
-    $student = Student::factory()->create();
+    $student = Student::factory()->create([
+        'mobile' => $request->all()['From'],
+    ]);
 
-    $messageData['From'] = $student->mobile;
-
-    $messageReceived = new MessageReceived($messageData);
+    $messageReceived = new MessageReceived(TwilioMessageReceivedData::fromRequest($request));
 
     $messageReceived->handle();
 
     assertDatabaseHas('engagement_responses', [
-        'sender_id' => $student->sisid,
+        'sender_id' => $student->getKey(),
         'sender_type' => (new Student())->getMorphClass(),
-        'content' => $messageData['Body'],
+        'content' => $request->all()['Body'],
     ]);
 });

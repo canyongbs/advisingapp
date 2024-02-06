@@ -44,16 +44,22 @@ use function Pest\Laravel\withoutMiddleware;
 use AdvisingApp\IntegrationTwilio\Actions\StatusCallback;
 use AdvisingApp\IntegrationTwilio\Actions\MessageReceived;
 
-it('will dispatch an appropriate job to process the incoming request', function () {
+it('will dispatch the correct job to handle the incoming webhook', function (string $event, string $payloadPath, string $expectedJob, array $unexpectedJobs = []) {
     withoutMiddleware();
 
     Queue::fake();
 
     post(
-        route('inbound.webhook.twilio', 'message_received'),
-        loadFixtureFromModule('integration-twilio', 'MessageReceived/payload'),
+        route('inbound.webhook.twilio', $event),
+        loadFixtureFromModule('integration-twilio', $payloadPath),
     );
 
-    Queue::assertPushed(MessageReceived::class);
-    Queue::assertNotPushed(StatusCallback::class);
-});
+    Queue::assertPushed($expectedJob);
+
+    foreach ($unexpectedJobs as $job) {
+        Queue::assertNotPushed($job);
+    }
+})->with([
+    ['message_received', 'MessageReceived/payload', MessageReceived::class, [StatusCallback::class]],
+    ['status_callback', 'StatusCallback/sent', StatusCallback::class, [MessageReceived::class]],
+]);

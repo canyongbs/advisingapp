@@ -47,8 +47,8 @@ enum NotificationChannel: string implements HasLabel
     public function getLabel(): ?string
     {
         return match ($this) {
-            static::Email => 'Email',
             static::Sms => 'SMS',
+            default => $this->name,
         };
     }
 }

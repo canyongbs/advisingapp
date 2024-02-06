@@ -34,15 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Drivers;
+namespace AdvisingApp\Notification\Drivers;
 
-use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
 
-interface DeliverableDriver
+class EmailDriver implements OutboundDeliverableDriver
 {
-    public function updateDeliveryStatus(array $data): void;
+    public function __construct(
+        protected OutboundDeliverable $deliverable
+    ) {}
 
-    public function jobForDelivery(): QueuedEngagementDelivery;
-
-    public function deliver(): void;
+    public function updateDeliveryStatus(UpdateDeliveryStatusData $data): void {}
 }

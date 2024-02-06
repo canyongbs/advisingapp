@@ -60,3 +60,10 @@ function loadFixtureFromModule(string $module, string $file): mixed
 
     return json_decode(file_get_contents($modulePath($module, "tests/Fixtures/{$file}.json")), true);
 }
+
+function replaceKeyInFixture(mixed $fixture, string $key, mixed $value): mixed
+{
+    $fixture[$key] = $value;
+
+    return $fixture;
+}

@@ -98,7 +98,7 @@ class SmsChannel
         ];
 
         if (! app()->environment('local')) {
-            $messageContent['statusCallback'] = route('inbound.webhook.twilio', ['event' => 'status_callback']);
+            $messageContent['statusCallback'] = config('app.url') . route('inbound.webhook.twilio', 'status_callback', false);
         }
 
         $result = SmsChannelResultData::from([

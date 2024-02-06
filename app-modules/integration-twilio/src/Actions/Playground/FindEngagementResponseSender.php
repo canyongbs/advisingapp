@@ -44,7 +44,8 @@ class FindEngagementResponseSender implements EngagementResponseSenderFinder
 {
     public function find(string $phoneNumber): Student|Prospect|null
     {
-        return Student::latest()
-            ->first();
+        return Student::query()
+            ->where('mobile', $phoneNumber)
+            ->firstOr(fn () => Student::query()->inRandomOrder()->first());
     }
 }

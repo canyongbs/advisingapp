@@ -34,30 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+namespace AdvisingApp\IntegrationTwilio\DataTransferObjects;
 
-use Illuminate\Support\Facades\Log;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
+use Illuminate\Http\Request;
 
-class FindEngagementResponseSender implements EngagementResponseSenderFinder
+class TwilioStatusCallbackData extends TwilioWebhookData
 {
-    public function find(string $phoneNumber): Student|Prospect|null
+    public function __construct(
+        public ?string $apiVersion,
+        public ?string $messageStatus,
+        public ?string $smsId,
+        public ?string $smsStatus,
+        public ?string $to,
+        public ?string $from,
+        public ?string $messageSid,
+        public ?string $accountSid,
+        public ?string $errorCode,
+        public ?string $errorMessage,
+    ) {}
+
+    public static function fromRequest(Request $request): static
     {
-        // Student currently takes priority, but determine if we potentially want to store this response
-        // For *all* potential matches instead of just a singular result.
-        if (! is_null($student = Student::where('mobile', $phoneNumber)->orWhere('phone', $phoneNumber)->first())) {
-            return $student;
-        }
+        $data = $request->all();
 
-        if (! is_null($prospect = Prospect::where('mobile', $phoneNumber)->orWhere('phone', $phoneNumber)->first())) {
-            return $prospect;
-        }
-
-        // TODO Perhaps send a notification to an admin, but don't need to throw an exception.
-        Log::error("Could not find a Student or Prospect with the given phone number: {$phoneNumber}");
-
-        return null;
+        return new self(
+            apiVersion: $data['ApiVersion'] ?? null,
+            messageStatus: $data['MessageStatus'] ?? null,
+            smsId: $data['SmsSid'] ?? null,
+            smsStatus: $data['SmsStatus'] ?? null,
+            to: $data['To'] ?? null,
+            from: $data['From'] ?? null,
+            messageSid: $data['MessageSid'] ?? null,
+            accountSid: $data['AccountSid'] ?? null,
+            errorCode: $data['ErrorCode'] ?? null,
+            errorMessage: $data['ErrorMessage'] ?? null,
+        );
     }
 }

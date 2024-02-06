@@ -36,7 +36,11 @@
 
 namespace AdvisingApp\Notification\Database\Factories;
 
+use Tests\Unit\TestSmsNotification;
+use Tests\Unit\TestEmailNotification;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Notification\Models\OutboundDeliverable>
@@ -46,6 +50,18 @@ class OutboundDeliverableFactory extends Factory
     public function definition(): array
     {
         return [
+            'channel' => NotificationChannel::Email,
+            'notification_class' => TestEmailNotification::class,
+            'delivery_status' => NotificationDeliveryStatus::Awaiting,
+            'quota_usage' => 0,
         ];
+    }
+
+    public function smsChannel(): self
+    {
+        return $this->state(fn () => [
+            'channel' => NotificationChannel::Sms,
+            'notification_class' => TestSmsNotification::class,
+        ]);
     }
 }
