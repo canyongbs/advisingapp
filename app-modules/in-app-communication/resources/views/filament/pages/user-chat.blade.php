@@ -256,6 +256,7 @@
                                     <div
                                         x-data="chatEditor({ currentUser: @js(auth()->id()), users: @js($users) })"
                                         x-model="message"
+                                        x-on:click.outside="$refs.colorPicker.close"
                                         wire:ignore
                                         x-modelable="content"
                                     >
@@ -343,6 +344,133 @@
                                                             </x-filament::button>
                                                         </div>
                                                     </form>
+                                                </div>
+
+                                                <div>
+                                                    <button
+                                                        class="rounded p-0.5"
+                                                        type="button"
+                                                        x-on:click="$refs.colorPicker.toggle"
+                                                        x-bind:class="{
+                                                            'bg-gray-200 dark:bg-gray-700': isActive('textStyle',
+                                                                updatedAt)
+                                                        }"
+                                                    >
+                                                        @svg('heroicon-c-swatch', 'mt-0.5 h-4 w-4')
+                                                    </button>
+
+                                                    <div
+                                                        class="absolute z-10 max-w-xs divide-y divide-gray-100 rounded-lg bg-white px-4 py-3 shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10"
+                                                        x-cloak
+                                                        x-float.offset.placement.top-start="{ offset: 8 }"
+                                                        x-ref="colorPicker"
+                                                        x-transition:enter-start="opacity-0"
+                                                        x-transition:leave-end="opacity-0"
+                                                    >
+                                                        <div class="flex flex-wrap items-center gap-2">
+                                                            <button
+                                                                class="flex h-5 w-5 items-center rounded-full border bg-gray-50 dark:border-gray-400 dark:bg-gray-800"
+                                                                type="button"
+                                                                x-on:click="removeColor()"
+                                                                x-bind:class="{
+                                                                    'ring-2 ring-offset-2 ring-primary-600': !isActive(
+                                                                        'textStyle', updatedAt),
+                                                                }"
+                                                            >
+                                                                <span class="sr-only">
+                                                                    None
+                                                                </span>
+
+                                                                <div
+                                                                    class="flex-1 rotate-45 border-t dark:border-gray-400">
+                                                                </div>
+                                                            </button>
+
+                                                            <button
+                                                                class="h-5 w-5 rounded-full bg-[#ef4444]"
+                                                                type="button"
+                                                                x-on:click="setColor('#ef4444')"
+                                                                x-bind:class="{
+                                                                    'ring-2 ring-offset-2 ring-primary-600': updatedAt &&
+                                                                        isActive('textStyle', { color: '#ef4444' }),
+                                                                }"
+                                                            >
+                                                                <span class="sr-only">
+                                                                    Red
+                                                                </span>
+                                                            </button>
+
+                                                            <button
+                                                                class="h-5 w-5 rounded-full bg-[#ec4899]"
+                                                                type="button"
+                                                                x-on:click="setColor('#ec4899')"
+                                                                x-bind:class="{
+                                                                    'ring-2 ring-offset-2 ring-primary-600': updatedAt &&
+                                                                        isActive('textStyle', { color: '#ec4899' }),
+                                                                }"
+                                                            >
+                                                                <span class="sr-only">
+                                                                    Pink
+                                                                </span>
+                                                            </button>
+
+                                                            <button
+                                                                class="h-5 w-5 rounded-full bg-[#3b82f6]"
+                                                                type="button"
+                                                                x-on:click="setColor('#3b82f6')"
+                                                                x-bind:class="{
+                                                                    'ring-2 ring-offset-2 ring-primary-600': updatedAt &&
+                                                                        isActive('textStyle', { color: '#3b82f6' }),
+                                                                }"
+                                                            >
+                                                                <span class="sr-only">
+                                                                    Blue
+                                                                </span>
+                                                            </button>
+
+                                                            <button
+                                                                class="h-5 w-5 rounded-full bg-[#22c55e]"
+                                                                type="button"
+                                                                x-on:click="setColor('#22c55e')"
+                                                                x-bind:class="{
+                                                                    'ring-2 ring-offset-2 ring-primary-600': updatedAt &&
+                                                                        isActive('textStyle', { color: '#22c55e' }),
+                                                                }"
+                                                            >
+                                                                <span class="sr-only">
+                                                                    Green
+                                                                </span>
+                                                            </button>
+
+                                                            <button
+                                                                class="h-5 w-5 rounded-full bg-[#eab308]"
+                                                                type="button"
+                                                                x-on:click="setColor('#eab308')"
+                                                                x-bind:class="{
+                                                                    'ring-2 ring-offset-2 ring-primary-600': updatedAt &&
+                                                                        isActive('textStyle', { color: '#eab308' }),
+                                                                }"
+                                                            >
+                                                                <span class="sr-only">
+                                                                    Yellow
+                                                                </span>
+                                                            </button>
+
+                                                            <button
+                                                                class="h-5 w-5 rounded-full bg-[#737373]"
+                                                                type="button"
+                                                                x-on:click="setColor('#737373')"
+                                                                x-bind:class="{
+                                                                    'ring-2 ring-offset-2 ring-primary-600': updatedAt &&
+                                                                        isActive('textStyle', { color: '#737373' }),
+                                                                }"
+                                                            >
+                                                                <span class="sr-only">
+                                                                    Gray
+                                                                </span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </template>
