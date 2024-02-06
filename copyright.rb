@@ -28,7 +28,6 @@ COPYRIGHT = <<EOM
       Software as a Service (SaaS) by Canyon GBS LLC.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
-    - Test
 
     For more information or inquiries please visit our website at
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
