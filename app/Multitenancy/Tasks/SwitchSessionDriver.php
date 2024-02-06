@@ -51,11 +51,20 @@ class SwitchSessionDriver implements SwitchTenantTask
 
     public function makeCurrent(Tenant $tenant): void
     {
+        // Not going to switch the session driver in testing, stick with the default array driver
+        if (app()->environment('testing')) {
+            return;
+        }
+
         $this->setSessionConfig('database', 'tenant');
     }
 
     public function forgetCurrent(): void
     {
+        if (app()->environment('testing')) {
+            return;
+        }
+
         $this->setSessionConfig($this->originalSessionDriver, $this->originalSessionConnection);
     }
 
