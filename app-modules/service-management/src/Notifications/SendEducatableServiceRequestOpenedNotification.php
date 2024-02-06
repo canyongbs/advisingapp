@@ -2,7 +2,6 @@
 
 namespace AdvisingApp\ServiceManagement\Notifications;
 
-use AdvisingApp\ServiceManagement\Enums\ServiceRequestUpdateDirection;
 use App\Models\NotificationSetting;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -44,12 +43,9 @@ class SendEducatableServiceRequestOpenedNotification extends BaseNotification im
             ->lines(str(nl2br($this->serviceRequest->close_details))->explode('<br />'));
     }
 
-    public function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
+    protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
     {
-        $deliverable->update([
-            'related_id' => $this->serviceRequest->getKey(),
-            'related_type' => $this->serviceRequest->getMorphClass(),
-        ]);
+        $deliverable->related()->associate($this->serviceRequest);
     }
 
     private function resolveNotificationSetting(object $notifiable): ?NotificationSetting

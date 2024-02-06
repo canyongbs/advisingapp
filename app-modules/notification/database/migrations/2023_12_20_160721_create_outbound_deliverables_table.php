@@ -44,20 +44,25 @@ return new class () extends Migration {
     {
         Schema::create('outbound_deliverables', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('related_id')->nullable();
-            $table->string('related_type')->nullable();
-            $table->string('recipient_id')->nullable();
-            $table->string('recipient_type')->nullable();
+
             $table->string('channel');
             $table->string('notification_class');
             $table->string('external_reference_id')->nullable()->unique();
             $table->string('external_status')->nullable();
             $table->json('content')->nullable();
+            $table->longText('html')->nullable();
             $table->string('delivery_status')->default(NotificationDeliveryStatus::Awaiting);
-            $table->timestamp('delivered_at')->nullable();
-            $table->timestamp('last_delivery_attempt')->nullable();
             $table->longText('delivery_response')->nullable();
             $table->integer('quota_usage')->default(0);
+
+            $table->string('related_id')->nullable();
+            $table->string('related_type')->nullable();
+            $table->string('recipient_id')->nullable();
+            $table->string('recipient_type')->nullable();
+
+            $table->timestamp('delivered_at')->nullable();
+            $table->timestamp('last_delivery_attempt')->nullable();
+
             $table->timestamps();
         });
     }

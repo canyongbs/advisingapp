@@ -41,12 +41,9 @@ class SendEducatableServiceRequestClosedNotification extends BaseNotification im
             ->line('Thank you.');
     }
 
-    public function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
+    protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
     {
-        $deliverable->update([
-            'related_id' => $this->serviceRequest->getKey(),
-            'related_type' => $this->serviceRequest->getMorphClass(),
-        ]);
+        $deliverable->related()->associate($this->serviceRequest);
     }
 
     private function resolveNotificationSetting(object $notifiable): ?NotificationSetting

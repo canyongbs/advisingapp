@@ -42,7 +42,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Actions\CreateOutboundDeliverable;
+use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\Notifications\Channels\SmsChannel;
 use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
 use AdvisingApp\Notification\Notifications\Concerns\ChannelTrait;
@@ -84,13 +84,15 @@ abstract class BaseNotification extends Notification implements ShouldQueue
 
     public function beforeSend(object $notifiable, string $channel): OutboundDeliverable|false
     {
-        $deliverable = resolve(CreateOutboundDeliverable::class)->handle($this, $notifiable, $channel);
+        $deliverable = resolve(MakeOutboundDeliverable::class)->handle($this, $notifiable, $channel);
+
+        $this->beforeSendHook($notifiable, $deliverable, $channel);
+
+        $deliverable->save();
 
         $this->metadata = [
             'outbound_deliverable_id' => $deliverable->id,
         ];
-
-        $this->beforeSendHook($notifiable, $deliverable, $channel);
 
         return $deliverable;
     }

@@ -67,6 +67,7 @@ class OutboundDeliverable extends BaseModel implements ProvidesATimeline
         'related_id',
         'related_type',
         'quota_usage',
+        'html',
     ];
 
     protected $casts = [
@@ -74,7 +75,11 @@ class OutboundDeliverable extends BaseModel implements ProvidesATimeline
         'delivered_at' => 'datetime',
         'delivery_status' => NotificationDeliveryStatus::class,
         'last_delivery_attempt' => 'datetime',
-        // 'content' => 'array',
+        'content' => 'array',
+    ];
+
+    public array $timelineables = [
+        ServiceRequest::class,
     ];
 
     // The "related" relationship is whatever entity we might need to tie this back to

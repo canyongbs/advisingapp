@@ -1,12 +1,16 @@
 @php
-    use AdvisingApp\ServiceManagement\Enums\ServiceRequestUpdateDirection;
-    use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
+    use \AdvisingApp\ServiceManagement\Models\ServiceRequest;
 @endphp
 
 <div>
     <div class="flex flex-row justify-between">
         <x-timeline::timeline.heading>
-            Autoresponse Email Sent
+            {{
+                match($record->related::class) {
+                    ServiceRequest::class => 'Auto-response Email sent',
+                    default => $record->getKey(),
+                }
+            }}
         </x-timeline::timeline.heading>
 
         <div>
@@ -19,6 +23,7 @@
     </x-timeline::timeline.time>
 
     <x-timeline::timeline.content>
+        {{--        {!! $record->html !!}--}}
         {{ $record->content }}
     </x-timeline::timeline.content>
 </div>

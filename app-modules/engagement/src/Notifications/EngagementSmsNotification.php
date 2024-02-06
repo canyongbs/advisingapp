@@ -64,15 +64,12 @@ class EngagementSmsNotification extends BaseNotification implements SmsNotificat
             ->content($this->deliverable->engagement->getBody());
     }
 
-    public function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
+    protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
     {
-        $deliverable->update([
-            'related_id' => $this->deliverable->id,
-            'related_type' => $this->deliverable->getMorphClass(),
-        ]);
+        $deliverable->related()->associate($this->deliverable);
     }
 
-    public function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
+    protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
     {
         $this->deliverable->update([
             'external_reference_id' => $deliverable->external_reference_id,

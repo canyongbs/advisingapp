@@ -2,27 +2,26 @@
 
 namespace AdvisingApp\Notification\Filament\Actions;
 
+use App\Models\User;
+use Closure;
+use Filament\Actions\ViewAction;
+use App\Filament\Resources\UserResource;
+use AdvisingApp\Prospect\Models\Prospect;
+use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Infolists\Components\KeyValueEntry;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\ServiceManagement\Enums\ServiceRequestUpdateDirection;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Models\Student;
-use App\Filament\Resources\UserResource;
-use App\Models\User;
-use Filament\Actions\ViewAction;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\KeyValueEntry;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\View;
+use Illuminate\Contracts\Support\Htmlable;
 
 class OutboundDeliverableViewAction extends ViewAction
 {
     protected function setUp(): void
     {
         parent::setUp();
+
+        // ray($this->record);
 
         $this->infolist([
             TextEntry::make('recipient')
@@ -37,6 +36,10 @@ class OutboundDeliverableViewAction extends ViewAction
             TextEntry::make('channel'),
             TextEntry::make('delivery_status'),
             // KeyValueEntry::make('content'),
+            // KeyValueEntry::make('content')
+            //     ->state(function (OutboundDeliverable $record) {
+            //         return json_decode($record->content);
+            //     }),
         ]);
     }
 }

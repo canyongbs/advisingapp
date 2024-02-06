@@ -50,7 +50,7 @@ use AdvisingApp\Notification\Notifications\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
 use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
 
-class CreateOutboundDeliverable
+class MakeOutboundDeliverable
 {
     public function handle(BaseNotification $notification, object $notifiable, string $channel): OutboundDeliverable
     {
@@ -68,8 +68,6 @@ class CreateOutboundDeliverable
             default => throw new Exception('Invalid notification channel.'),
         };
 
-        // $notification->toMail($notifiable)->render();
-
         $recipientId = null;
         $recipientType = 'anonymous';
 
@@ -77,12 +75,13 @@ class CreateOutboundDeliverable
             [$recipientId, $recipientType] = $notification->identifyRecipient();
         }
 
-        return OutboundDeliverable::create([
+        return new OutboundDeliverable([
             'channel' => $channel,
             'notification_class' => get_class($notification),
             'content' => json_encode($content),
             'recipient_id' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getKey() : $recipientId,
             'recipient_type' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getMorphClass() : $recipientType,
+            'html' => $channel === NotificationChannel::Email && $notification instanceof EmailNotification ? $notification->toMail($notifiable)->render() : null,
         ]);
     }
 }
