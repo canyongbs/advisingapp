@@ -5,8 +5,6 @@ services:
       target: development
     environment:
       SSL_MODE: "mixed"
-#      PUID: '${UID:-1000}'
-#      PGID: '${GID:-1000}'
       LARAVEL_SCHEDULER_ENABLED: '${LARAVEL_SCHEDULER_ENABLED:-true}'
       LARAVEL_QUEUE_ENABLED: '${LARAVEL_QUEUE_ENABLED:-true}'
     labels:
@@ -23,10 +21,8 @@ services:
       - development
     depends_on:
       - redis
-      - meilisearch
       - minio
       - mailpit
-      - redshift
       - pgsql
   redis:
     image: 'redis:alpine'
@@ -41,23 +37,6 @@ services:
         - CMD
         - redis-cli
         - ping
-      retries: 3
-      timeout: 5s
-  meilisearch:
-    image: 'getmeili/meilisearch:v1.2.0'
-    ports:
-      - '${FORWARD_MEILISEARCH_PORT:-7700}:7700'
-    volumes:
-      - 'advisingapp-meilisearch:/meili_data'
-    networks:
-      - development
-    healthcheck:
-      test:
-        - CMD
-        - wget
-        - '--no-verbose'
-        - '--spider'
-        - 'http://localhost:7700/health'
       retries: 3
       timeout: 5s
   minio:
@@ -113,42 +92,12 @@ services:
         - '${DB_USERNAME}'
       retries: 3
       timeout: 5s
-  redshift:
-    image: 'postgres:15'
-    ports:
-      - '${FORWARD_SIS_DB_PORT:-5433}:5433'
-    environment:
-      PGPASSWORD: '${SIS_DB_PASSWORD:-secret}'
-      POSTGRES_DB: '${SIS_DB_DATABASE}'
-      POSTGRES_USER: '${SIS_DB_USERNAME}'
-      POSTGRES_PASSWORD: '${SIS_DB_PASSWORD:-secret}'
-    volumes:
-      - 'advisingapp-redshift:/var/lib/postgresql/data'
-      - './docker/pgsql/create-testing-sis-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
-    command: -p 5433
-    networks:
-      - development
-    healthcheck:
-      test:
-        - CMD
-        - pg_isready
-        - '-q'
-        - '-d'
-        - '${SIS_DB_DATABASE}'
-        - '-U'
-        - '${SIS_DB_USERNAME}'
-      retries: 3
-      timeout: 5s
 networks:
   development:
 volumes:
   advisingapp-redis:
     driver: local
-  advisingapp-meilisearch:
-    driver: local
   advisingapp-minio:
-    driver: local
-  advisingapp-redshift:
     driver: local
   advisingapp-pgsql:
     driver: local

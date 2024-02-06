@@ -107,7 +107,7 @@ spina queue:work --queue=landlord --stop-when-empty
 spina tenants:artisan "db:seed --database=tenant"
 ```
 
-These commands will create a new tenant with the name and domain you supplied, seed some data into it's sis database, and then refresh and seed the tenant's database.
+These commands will create a new tenant with the name and domain you supplied and then refresh and seed the tenant's database.
 
 After this the application should be accessible at the domain you supplied.
 
@@ -136,18 +136,6 @@ Within the containers, MySQL lives on port 3306. And by default it can be access
 If port 3306 is already in use on your system or you prefer to use another port,
 you can set the `FORWARD_DB_PORT` in your `.env` file to whatever available
 port you want.
-
-### Seed Mass ADM Data
-In order to seed the ADM data, you will need to first create a shell within your apps container by running the following command:
-```bash
-spin exec -it php bash
-```
-
-Then you can run the following command within the container to seed the data:
-
-```bash
-source .env ; gunzip < resources/sql/advising-app-adm-data.gz | PGPASSWORD=$SIS_DB_PASSWORD psql -h $SIS_DB_HOST -p $SIS_DB_PORT -U $SIS_DB_USERNAME -d $SIS_DB_DATABASE -q
-```
 
 ### Minio (S3 Compatible Storage)
 Minio is a S3 compatible storage solution that is used for storing files locally.
