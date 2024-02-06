@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Notification\Actions;
 
-use Exception;
 use Illuminate\Notifications\AnonymousNotifiable;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
