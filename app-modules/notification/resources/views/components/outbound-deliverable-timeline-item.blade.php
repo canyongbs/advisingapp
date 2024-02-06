@@ -32,7 +32,6 @@
 </COPYRIGHT>
 --}}
 @php
-    use AdvisingApp\Notification\Enums\NotificationChannel;
     use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 @endphp
 
