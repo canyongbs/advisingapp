@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Notification\Models;
 
-use AdvisingApp\ServiceManagement\Models\ServiceRequest;
-use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
-use AdvisingApp\Timeline\Models\CustomTimeline;
-use AdvisingApp\Timeline\Timelines\OutboundDeliverableTimeline;
 use App\Models\BaseModel;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Timeline\Models\CustomTimeline;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use Illuminate\Support\Collection;
+use AdvisingApp\Timeline\Timelines\OutboundDeliverableTimeline;
 
 /**
  * @mixin IdeHelperOutboundDeliverable

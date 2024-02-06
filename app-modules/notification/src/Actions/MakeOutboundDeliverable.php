@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Notification\Actions;
 
-use AdvisingApp\ServiceManagement\Notifications\SendEducatableServiceRequestOpenedNotification;
 use Exception;
 use Illuminate\Notifications\AnonymousNotifiable;
 use AdvisingApp\Notification\Enums\NotificationChannel;

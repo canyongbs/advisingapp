@@ -2,14 +2,10 @@
 
 namespace AdvisingApp\Timeline\Timelines;
 
-use AdvisingApp\Notification\Filament\Actions\OutboundDeliverableViewAction;
+use Filament\Actions\ViewAction;
 use AdvisingApp\Timeline\Models\CustomTimeline;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use Filament\Actions\Concerns\HasInfolist;
-use Filament\Actions\ViewAction;
-use Filament\Infolists\Components\KeyValueEntry;
-use Filament\Infolists\Concerns\InteractsWithInfolists;
-use Filament\Infolists\Contracts\HasInfolists;
+use AdvisingApp\Notification\Filament\Actions\OutboundDeliverableViewAction;
 
 class OutboundDeliverableTimeline extends CustomTimeline
 {

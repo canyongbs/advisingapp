@@ -3,7 +3,6 @@
 namespace AdvisingApp\Notification\Observers;
 
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
 

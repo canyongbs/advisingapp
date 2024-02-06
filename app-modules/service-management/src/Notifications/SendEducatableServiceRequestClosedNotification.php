@@ -2,10 +2,10 @@
 
 namespace AdvisingApp\ServiceManagement\Notifications;
 
-use AdvisingApp\Notification\Models\OutboundDeliverable;
 use App\Models\NotificationSetting;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;

@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\Notification\Providers;
 
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Observers\OutboundDeliverableObserver;
 use Illuminate\Support\Facades\Event;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
@@ -48,12 +46,14 @@ use Illuminate\Notifications\Events\NotificationFailed;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Notification\Events\SubscriptionCreated;
 use AdvisingApp\Notification\Events\SubscriptionDeleted;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Observers\SubscriptionObserver;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\Notification\Listeners\CreateAutoSubscription;
 use AdvisingApp\Notification\Listeners\HandleNotificationSent;
 use AdvisingApp\Notification\Listeners\HandleNotificationFailed;
+use AdvisingApp\Notification\Observers\OutboundDeliverableObserver;
 use AdvisingApp\Notification\Listeners\NotifyUserOfSubscriptionCreated;
 use AdvisingApp\Notification\Listeners\NotifyUserOfSubscriptionDeleted;
 

@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
 
-use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestHistory;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;

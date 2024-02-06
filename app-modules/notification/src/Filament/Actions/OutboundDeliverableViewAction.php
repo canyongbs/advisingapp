@@ -3,7 +3,6 @@
 namespace AdvisingApp\Notification\Filament\Actions;
 
 use App\Models\User;
-use Closure;
 use Filament\Actions\ViewAction;
 use App\Filament\Resources\UserResource;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -13,7 +12,6 @@ use Filament\Infolists\Components\KeyValueEntry;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use Illuminate\Contracts\Support\Htmlable;
 
 class OutboundDeliverableViewAction extends ViewAction
 {
