@@ -351,8 +351,10 @@
                                                         class="rounded p-0.5"
                                                         type="button"
                                                         x-on:click="$refs.colorPicker.toggle"
-                                                        x-bind:class="{ 'bg-gray-200 dark:bg-gray-700': isActive('textStyle',
-                                                                updatedAt) }"
+                                                        x-bind:class="{
+                                                            'bg-gray-200 dark:bg-gray-700': isActive('textStyle',
+                                                                updatedAt)
+                                                        }"
                                                     >
                                                         @svg('heroicon-c-swatch', 'mt-0.5 h-4 w-4')
                                                     </button>
