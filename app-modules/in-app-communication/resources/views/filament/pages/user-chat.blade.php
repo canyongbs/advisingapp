@@ -256,12 +256,12 @@
                                     <div
                                         x-data="chatEditor({ currentUser: @js(auth()->id()), users: @js($users) })"
                                         x-model="message"
-                                        x-on:click.outside="$refs.colorPicker.close"
+                                        x-on:click.outside="$refs.colorPicker.close(); $refs.emojiPicker.close()"
                                         wire:ignore
                                         x-modelable="content"
                                     >
                                         <template x-if="isLoaded()">
-                                            <div class="flex flex-wrap gap-1 border-b px-3 py-2 dark:border-gray-700">
+                                            <div class="flex items-center flex-wrap gap-1 border-b px-3 py-2 dark:border-gray-700">
                                                 <button
                                                     class="rounded p-0.5"
                                                     type="button"
@@ -469,6 +469,37 @@
                                                                     Gray
                                                                 </span>
                                                             </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <button
+                                                        class="rounded p-0.5"
+                                                        type="button"
+                                                        x-on:click="$refs.emojiPicker.toggle"
+                                                    >
+                                                        @svg('heroicon-c-face-smile', 'mt-0.5 h-4 w-4')
+                                                    </button>
+
+                                                    <div
+                                                        class="absolute z-10 max-w-xs divide-y divide-gray-100 rounded-lg bg-white px-4 py-3 shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10"
+                                                        x-cloak
+                                                        x-float.offset.placement.top-start="{ offset: 8 }"
+                                                        x-ref="emojiPicker"
+                                                        x-transition:enter-start="opacity-0"
+                                                        x-transition:leave-end="opacity-0"
+                                                    >
+                                                        <div class="flex flex-wrap gap-2 items-center">
+                                                            <template x-for="emoji in ['😀', '😂', '👍', '👎', '🙏', '😕', '🤔', '😊', '🎉', '💼', '🕒', '📅', '🔒', '❗', '❓', '💡', '🚫', '✅', '🤖', '📧', '🌐', '💬', '📈', '📉', '🤝']">
+                                                                <button
+                                                                    x-on:click="insertContent(emoji)"
+                                                                    type="button"
+                                                                    x-text="emoji"
+                                                                    x-bind:key="emoji"
+                                                                    class="h-5 w-5 rounded hover:bg-gray-100"
+                                                                ></button>
+                                                            </template>
                                                         </div>
                                                     </div>
                                                 </div>
