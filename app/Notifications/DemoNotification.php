@@ -38,13 +38,9 @@ namespace App\Notifications;
 
 use App\Models\User;
 use App\Models\NotificationSetting;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Vite;
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
 class DemoNotification extends BaseNotification implements EmailNotification

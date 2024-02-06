@@ -39,16 +39,16 @@ namespace AdvisingApp\Notification\Models;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Timeline\Models\CustomTimeline;
 use AdvisingApp\Notification\Drivers\SmsDriver;
+use AdvisingApp\Timeline\Models\CustomTimeline;
 use AdvisingApp\Notification\Drivers\EmailDriver;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Timeline\Timelines\OutboundDeliverableTimeline;
 use AdvisingApp\Notification\Drivers\OutboundDeliverableDriver;
+use AdvisingApp\Timeline\Timelines\OutboundDeliverableTimeline;
 
 /**
  * @mixin IdeHelperOutboundDeliverable
@@ -135,6 +135,7 @@ class OutboundDeliverable extends BaseModel implements ProvidesATimeline
         return match ($this->channel) {
             NotificationChannel::Email => new EmailDriver($this),
             NotificationChannel::Sms => new SmsDriver($this),
+            NotificationChannel::Database => throw new \Exception('To be implemented'),
         };
     }
 
