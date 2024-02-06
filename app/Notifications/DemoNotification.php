@@ -55,19 +55,14 @@ class DemoNotification extends BaseNotification implements EmailNotification
 
     public function toEmail(object $notifiable): MailMessage
     {
-        // config()->set("app.asset_url", config("app.url"));
-        // Vite::asset("resources/images/default-logo-light.png");
-
-        URL::forceRootUrl(config('app.url'));
-
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
             ->line('The introduction to the notification.')
-            ->action('Notification Action', url(StudentResource::getUrl('view', ['record' => Student::first()])))
+            ->action('Notification Action', url('/'))
             ->line('Thank you for using our application!');
     }
 
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
+    private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
     {
         return $this->sender->teams()->first()?->division?->notificationSetting?->setting;
     }

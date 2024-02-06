@@ -10,14 +10,14 @@ class OutboundDeliverableObserver
 {
     public function created(OutboundDeliverable $outboundDeliverable): void
     {
-        if (in_array($outboundDeliverable->related::class, $outboundDeliverable->timelineables)) {
+        if ($outboundDeliverable->related && in_array($outboundDeliverable->related::class, $outboundDeliverable->timelineables)) {
             TimelineableRecordCreated::dispatch($outboundDeliverable, $outboundDeliverable);
         }
     }
 
     public function deleted(OutboundDeliverable $outboundDeliverable): void
     {
-        if (in_array($outboundDeliverable->related::class, $outboundDeliverable->timelineables)) {
+        if ($outboundDeliverable->related && in_array($outboundDeliverable->related::class, $outboundDeliverable->timelineables)) {
             TimelineableRecordDeleted::dispatch($outboundDeliverable, $outboundDeliverable);
         }
     }
