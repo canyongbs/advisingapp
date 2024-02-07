@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -38,6 +38,6 @@ use Illuminate\Support\Facades\Route;
 use AdvisingApp\IntegrationTwilio\Http\Middleware\EnsureTwilioRequestIsValid;
 use AdvisingApp\IntegrationTwilio\Http\Controllers\TwilioInboundWebhookController;
 
-Route::post('/inbound/webhook/twilio/{event}', TwilioInboundWebhookController::class)
+Route::post('inbound/webhook/twilio/{event}', TwilioInboundWebhookController::class)
     ->middleware(EnsureTwilioRequestIsValid::class)
     ->name('inbound.webhook.twilio');

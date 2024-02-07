@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -95,6 +95,8 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     use NotifiableViaSms;
     use UsesTenantConnection;
 
+    protected $table = 'students';
+
     protected $primaryKey = 'sisid';
 
     public $incrementing = false;
@@ -106,17 +108,6 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     ];
 
     public $timestamps = false;
-
-    public function getTable()
-    {
-        if ($this->table) {
-            return $this->table;
-        }
-
-        return config('database.adm_materialized_views_enabled')
-            ? 'students_local'
-            : 'students';
-    }
 
     public function identifier(): string
     {

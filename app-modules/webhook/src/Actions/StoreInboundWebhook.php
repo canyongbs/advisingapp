@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -41,13 +41,13 @@ use AdvisingApp\Webhook\Enums\InboundWebhookSource;
 
 class StoreInboundWebhook
 {
-    public function handle(InboundWebhookSource $source, string $event, string $url, string $payload): void
+    public function handle(InboundWebhookSource $source, string $event, string $url, array|string $payload): void
     {
         InboundWebhook::create([
             'source' => $source->value,
             'event' => $event,
             'url' => $url,
-            'payload' => $payload,
+            'payload' => is_array($payload) ? json_encode($payload) : $payload,
         ]);
     }
 }

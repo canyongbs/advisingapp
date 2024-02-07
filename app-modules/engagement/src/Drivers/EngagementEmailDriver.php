@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -38,35 +38,24 @@ namespace AdvisingApp\Engagement\Drivers;
 
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
-use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
+use AdvisingApp\Engagement\Actions\EngagementEmailChannelDelivery;
+use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
 
-// TODO Rename this to be "EngagementSmsDriver"
-class SmsDriver implements DeliverableDriver
+class EngagementEmailDriver implements EngagementDeliverableDriver
 {
     public function __construct(
         protected EngagementDeliverable $deliverable
     ) {}
 
-    public function updateDeliveryStatus(array $data): void
-    {
-        $this->deliverable->update([
-            'external_status' => $data['MessageStatus'] ?? null,
-        ]);
-
-        match ($this->deliverable->external_status) {
-            'delivered' => $this->deliverable->markDeliverySuccessful(),
-            'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($data['ErrorMessage'] ?? null),
-            default => null,
-        };
-    }
+    public function updateDeliveryStatus(UpdateDeliveryStatusData $data): void {}
 
     public function jobForDelivery(): QueuedEngagementDelivery
     {
-        return new EngagementSmsChannelDelivery($this->deliverable);
+        return new EngagementEmailChannelDelivery($this->deliverable);
     }
 
     public function deliver(): void
     {
-        EngagementSmsChannelDelivery::dispatch($this->deliverable);
+        EngagementEmailChannelDelivery::dispatch($this->deliverable);
     }
 }

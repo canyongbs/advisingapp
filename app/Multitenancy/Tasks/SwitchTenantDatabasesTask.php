@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -54,11 +54,6 @@ class SwitchTenantDatabasesTask implements SwitchTenantTask
         protected ?string $originalDbDatabase = null,
         protected ?string $originalDbUsername = null,
         protected ?string $originalDbPassword = null,
-        protected ?string $originalSisDbHost = null,
-        protected ?string $originalSisDbPort = null,
-        protected ?string $originalSisDbDatabase = null,
-        protected ?string $originalSisDbUsername = null,
-        protected ?string $originalSisDbPassword = null,
     ) {
         $this->tenantConnectionName ??= $this->tenantDatabaseConnectionName();
 
@@ -73,16 +68,6 @@ class SwitchTenantDatabasesTask implements SwitchTenantTask
         $this->originalDbUsername ??= config("database.connections.{$this->tenantConnectionName}.username");
 
         $this->originalDbPassword ??= config("database.connections.{$this->tenantConnectionName}.password");
-
-        $this->originalSisDbHost ??= config('database.connections.sis.host');
-
-        $this->originalSisDbPort ??= config('database.connections.sis.port');
-
-        $this->originalSisDbDatabase ??= config('database.connections.sis.database');
-
-        $this->originalSisDbUsername ??= config('database.connections.sis.username');
-
-        $this->originalSisDbPassword ??= config('database.connections.sis.password');
     }
 
     public function makeCurrent(Tenant $tenant): void
@@ -96,15 +81,6 @@ class SwitchTenantDatabasesTask implements SwitchTenantTask
             database: $config->database->database,
             username: $config->database->username,
             password: $config->database->password,
-        );
-
-        $this->setTenantDatabase(
-            connectionName: 'sis',
-            host: $config->sisDatabase->host,
-            port: $config->sisDatabase->port,
-            database: $config->sisDatabase->database,
-            username: $config->sisDatabase->username,
-            password: $config->sisDatabase->password,
         );
 
         config([
@@ -125,15 +101,6 @@ class SwitchTenantDatabasesTask implements SwitchTenantTask
             database: $this->originalDbDatabase,
             username: $this->originalDbUsername,
             password: $this->originalDbPassword,
-        );
-
-        $this->setTenantDatabase(
-            connectionName: 'sis',
-            host: $this->originalSisDbHost,
-            port: $this->originalSisDbPort,
-            database: $this->originalSisDbDatabase,
-            username: $this->originalSisDbUsername,
-            password: $this->originalSisDbPassword,
         );
 
         config([

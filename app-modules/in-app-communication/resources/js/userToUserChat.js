@@ -1,7 +1,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,10 +34,13 @@
 document.addEventListener('alpine:init', () => {
     global = globalThis;
     const { generateHTML } = require('@tiptap/html');
+    const { Color } = require('@tiptap/extension-color');
     const { Editor } = require('@tiptap/core');
+    const { Link } = require('@tiptap/extension-link');
     const { Mention } = require('./TipTap/Extentions/Mention');
     const { Placeholder } = require('@tiptap/extension-placeholder');
     const { StarterKit } = require('@tiptap/starter-kit');
+    const { TextStyle } = require('@tiptap/extension-text-style');
     const { Underline } = require('@tiptap/extension-underline');
     const { Client } = require('@twilio/conversations');
 
@@ -287,10 +290,20 @@ document.addEventListener('alpine:init', () => {
         },
         generateHTML: (content) => {
             return generateHTML(content, [
+                Color,
+                Link.configure({
+                    openOnClick: false,
+                    HTMLAttributes: {
+                        target: '_blank',
+                        rel: 'noopener noreferrer nofollow',
+                        class: 'underline font-medium text-primary-600 dark:text-primary-500',
+                    },
+                }),
                 Mention.configure({
                     users,
                 }),
                 StarterKit,
+                TextStyle,
                 Underline,
             ]);
         },
@@ -301,7 +314,10 @@ document.addEventListener('alpine:init', () => {
 
         return {
             content: null,
+
             updatedAt: Date.now(),
+
+            linkUrl: null,
 
             init() {
                 const _this = this;
@@ -311,10 +327,20 @@ document.addEventListener('alpine:init', () => {
                 editor = new Editor({
                     element: this.$refs.element,
                     extensions: [
+                        Color,
+                        Link.configure({
+                            openOnClick: false,
+                            HTMLAttributes: {
+                                target: '_blank',
+                                rel: 'noopener noreferrer nofollow',
+                                class: 'underline font-medium text-primary-600 dark:text-primary-500',
+                            },
+                        }),
                         Mention.configure({
                             users,
                         }),
                         StarterKit,
+                        TextStyle,
                         Underline,
                         Placeholder.configure({
                             placeholder: 'Write a message...',
@@ -352,8 +378,38 @@ document.addEventListener('alpine:init', () => {
             toggleItalic() {
                 editor.chain().toggleItalic().focus().run();
             },
+            toggleLink(event) {
+                this.linkUrl = editor.getAttributes('link').href;
+
+                this.$refs.linkEditor.open(event);
+                this.$nextTick(() => this.$refs.linkInput.focus());
+            },
             toggleUnderline() {
                 editor.chain().toggleUnderline().focus().run();
+            },
+            saveLink(event) {
+                if (!this.linkUrl) {
+                    this.removeLink();
+
+                    this.$refs.linkEditor.close(event);
+
+                    return;
+                }
+
+                editor.chain().focus().extendMarkRange('link').setLink({ href: this.linkUrl }).run();
+
+                this.$refs.linkEditor.close(event);
+            },
+            removeLink(event) {
+                editor.chain().focus().extendMarkRange('link').unsetLink().run();
+
+                this.$refs.linkEditor.close(event);
+            },
+            setColor(color) {
+                editor.chain().focus().setColor(color).run();
+            },
+            removeColor() {
+                editor.chain().focus().unsetColor().run();
             },
         };
     });

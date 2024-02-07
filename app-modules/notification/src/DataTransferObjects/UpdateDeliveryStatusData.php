@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,21 +34,14 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\Notification\DataTransferObjects;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        Schema::create('failed_jobs', function (Blueprint $table) {
-            $table->id();
-            $table->string('uuid')->unique();
-            $table->text('connection');
-            $table->text('queue');
-            $table->longText('payload');
-            $table->longText('exception');
-            $table->timestamp('failed_at')->useCurrent();
-        });
-    }
-};
+use Spatie\LaravelData\Data;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
+
+class UpdateDeliveryStatusData extends Data
+{
+    public function __construct(
+        public TwilioStatusCallbackData $data
+    ) {}
+}

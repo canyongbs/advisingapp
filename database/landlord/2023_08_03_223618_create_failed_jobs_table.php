@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,28 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Drivers;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
-use AdvisingApp\Engagement\Actions\EngagementEmailChannelDelivery;
-
-// TODO Rename this to be "EngagementEmailDriver"
-class EmailDriver implements DeliverableDriver
-{
-    public function __construct(
-        protected EngagementDeliverable $deliverable
-    ) {}
-
-    public function updateDeliveryStatus(array $data): void {}
-
-    public function jobForDelivery(): QueuedEngagementDelivery
+return new class () extends Migration {
+    public function up(): void
     {
-        return new EngagementEmailChannelDelivery($this->deliverable);
+        Schema::create('failed_jobs', function (Blueprint $table) {
+            $table->id();
+            $table->string('uuid')->unique();
+            $table->text('connection');
+            $table->text('queue');
+            $table->longText('payload');
+            $table->longText('exception');
+            $table->timestamp('failed_at')->useCurrent();
+        });
     }
-
-    public function deliver(): void
-    {
-        EngagementEmailChannelDelivery::dispatch($this->deliverable);
-    }
-}
+};

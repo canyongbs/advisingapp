@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -42,19 +42,26 @@ use Twilio\TwiML\MessagingResponse;
 use App\Http\Controllers\Controller;
 use AdvisingApp\Webhook\Enums\InboundWebhookSource;
 use AdvisingApp\Webhook\Actions\StoreInboundWebhook;
+use AdvisingApp\Webhook\Exceptions\UnknownInboundWebhookEvent;
 use AdvisingApp\IntegrationTwilio\Actions\TwilioWebhookProcessor;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioMessageReceivedData;
 
 class TwilioInboundWebhookController extends Controller
 {
     public function __invoke(string $event, Request $request, StoreInboundWebhook $storeInboundWebhook): MessagingResponse|Response
     {
-        $data = $request->all();
+        $data = match ($event) {
+            'message_received' => TwilioMessageReceivedData::fromRequest($request),
+            'status_callback' => TwilioStatusCallbackData::fromRequest($request),
+            default => throw new UnknownInboundWebhookEvent()
+        };
 
         $storeInboundWebhook->handle(
             InboundWebhookSource::Twilio,
             $event,
             $request->url(),
-            json_encode($data)
+            $data->toArray()
         );
 
         TwilioWebhookProcessor::dispatchToHandler($event, $data);

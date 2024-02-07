@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,15 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Drivers;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
-
-interface DeliverableDriver
-{
-    public function updateDeliveryStatus(array $data): void;
-
-    public function jobForDelivery(): QueuedEngagementDelivery;
-
-    public function deliver(): void;
-}
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('job_batches', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->integer('total_jobs');
+            $table->integer('pending_jobs');
+            $table->integer('failed_jobs');
+            $table->longText('failed_job_ids');
+            $table->mediumText('options')->nullable();
+            $table->integer('cancelled_at')->nullable();
+            $table->integer('created_at');
+            $table->integer('finished_at')->nullable();
+        });
+    }
+};

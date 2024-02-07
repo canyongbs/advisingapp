@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -38,10 +38,11 @@ namespace AdvisingApp\IntegrationTwilio\Actions;
 
 use Illuminate\Http\Response;
 use Twilio\TwiML\MessagingResponse;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioWebhookData;
 
 class TwilioWebhookProcessor
 {
-    public static function dispatchToHandler(string $event, array $data): void
+    public static function dispatchToHandler(string $event, TwilioWebhookData $data): void
     {
         match ($event) {
             'message_received' => MessageReceived::dispatch($data),

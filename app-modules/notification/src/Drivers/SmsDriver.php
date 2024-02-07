@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,24 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace App\Actions\Setup;
+namespace AdvisingApp\Notification\Drivers;
 
-use Illuminate\Support\Facades\DB;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 
-class SetupAdmMaterializedViews
+class SmsDriver implements OutboundDeliverableDriver
 {
-    public function handle(string $connection, string $remoteTable, ?string $indexColumn = null): void
+    public function __construct(
+        protected OutboundDeliverable $deliverable
+    ) {}
+
+    public function updateDeliveryStatus(UpdateDeliveryStatusData $data): void
     {
-        $database = DB::connection($connection);
+        /** @var TwilioStatusCallbackData $updateData */
+        $updateData = $data->data;
 
-        $localTable = $remoteTable . '_local';
+        $this->deliverable->update([
+            'external_status' => $updateData->messageStatus ?? null,
+        ]);
 
-        $database->statement("DROP MATERIALIZED VIEW IF EXISTS {$localTable} CASCADE;");
-
-        $database->statement("CREATE MATERIALIZED VIEW {$localTable} AS SELECT * FROM {$remoteTable};");
-
-        if ($indexColumn) {
-            $database->statement("CREATE INDEX idx_{$remoteTable}_{$indexColumn} ON {$localTable} ({$indexColumn});");
-        }
+        match ($this->deliverable->external_status) {
+            'delivered' => $this->deliverable->markDeliverySuccessful(),
+            'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($updateData->errorMessage ?? null),
+            default => null,
+        };
     }
 }

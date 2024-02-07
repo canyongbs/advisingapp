@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -40,11 +40,8 @@ use Throwable;
 use App\Models\Tenant;
 use Illuminate\Bus\Batch;
 use App\Jobs\MigrateTenantDatabase;
-use App\Jobs\SetupMaterializedView;
 use Illuminate\Support\Facades\Bus;
-use App\Jobs\SetupForeignDataWrapper;
 use Illuminate\Support\Facades\Event;
-use App\Jobs\MigrateTenantSisDatabase;
 use App\Multitenancy\Events\NewTenantSetupFailure;
 use App\Multitenancy\Events\NewTenantSetupComplete;
 
@@ -52,19 +49,10 @@ class TenantObserver
 {
     public function created(Tenant $tenant): void
     {
-        $jobChain = app()->environment('local', 'testing')
-            ? [
-                new MigrateTenantSisDatabase($tenant),
-            ]
-            : [];
-
         Bus::batch(
             [
                 [
-                    ...$jobChain,
                     new MigrateTenantDatabase($tenant),
-                    new SetupForeignDataWrapper($tenant),
-                    new SetupMaterializedView($tenant),
                 ],
             ]
         )

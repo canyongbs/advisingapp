@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,22 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace App\Console\Commands;
+namespace AdvisingApp\Notification\Drivers;
 
-use Illuminate\Console\Command;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
-use App\Actions\Setup\RemoveForeignDataWrapper as RemoveForeignDataWrapperAction;
+use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
 
-class RemoveForeignDataWrapper extends Command
+interface OutboundDeliverableDriver
 {
-    use TenantAware;
-
-    protected $signature = 'app:remove-foreign-data-wrapper {--tenant=*}';
-
-    protected $description = 'Remove foreign data wrapper for SIS database';
-
-    public function handle(): void
-    {
-        resolve(RemoveForeignDataWrapperAction::class)->handle();
-    }
+    public function updateDeliveryStatus(UpdateDeliveryStatusData $data): void;
 }

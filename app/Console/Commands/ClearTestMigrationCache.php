@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -37,47 +37,32 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Actions\Setup\SetupAdmMaterializedViews;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
-class CreateAdmMaterializedViews extends Command
+class ClearTestMigrationCache extends Command
 {
-    use TenantAware;
+    protected $signature = 'app:clear-test-migration-cache';
 
-    protected $signature = 'app:create-adm-materialized-views {--tenant=*}';
-
-    protected $description = 'Creates the materialized views for the ADM tables';
+    protected $description = 'Deletes the cache files used for the testing migrations cache.';
 
     public function handle(): void
     {
-        if (! config('database.adm_materialized_views_enabled')) {
-            $this->warn('ADM materialized views are not enabled, skipping...');
+        $this->comment('Clearing the testing migration cache...');
 
-            return;
-        }
+        $finder = Finder::create()
+            ->in(storage_path('app'))
+            ->name('migration-checksum_*.txt')
+            ->ignoreDotFiles(true)
+            ->ignoreVCS(true)
+            ->files();
 
-        resolve(SetupAdmMaterializedViews::class)->handle(
-            connection: config('multitenancy.tenant_database_connection_name'),
-            remoteTable: 'students',
-            indexColumn: 'sisid',
-        );
+        $this->withProgressBar($finder, function (SplFileInfo $file) {
+            unlink($file->getPathname());
+        });
 
-        resolve(SetupAdmMaterializedViews::class)->handle(
-            connection: config('multitenancy.tenant_database_connection_name'),
-            remoteTable: 'programs',
-            indexColumn: 'sisid',
-        );
+        $this->newLine();
 
-        resolve(SetupAdmMaterializedViews::class)->handle(
-            connection: config('multitenancy.tenant_database_connection_name'),
-            remoteTable: 'enrollments',
-            indexColumn: 'sisid',
-        );
-
-        resolve(SetupAdmMaterializedViews::class)->handle(
-            connection: config('multitenancy.tenant_database_connection_name'),
-            remoteTable: 'performance',
-            indexColumn: 'sisid',
-        );
+        $this->info('Testing migration cache cleared!');
     }
 }

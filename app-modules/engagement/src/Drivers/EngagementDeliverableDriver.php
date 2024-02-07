@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,44 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace App\Jobs;
+namespace AdvisingApp\Engagement\Drivers;
 
-use App\Models\Tenant;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
-use App\Console\Commands\CreateAdmMaterializedViews;
-use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
+use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
+use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
 
-class SetupMaterializedView implements ShouldQueue, NotTenantAware
+interface EngagementDeliverableDriver
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    public function updateDeliveryStatus(UpdateDeliveryStatusData $data): void;
 
-    public function __construct(public Tenant $tenant) {}
+    public function jobForDelivery(): QueuedEngagementDelivery;
 
-    public function middleware(): array
-    {
-        return [new SkipIfBatchCancelled()];
-    }
-
-    public function handle(): void
-    {
-        $this->tenant->execute(function () {
-            Artisan::call(
-                command: CreateAdmMaterializedViews::class,
-                parameters: [
-                    '--tenant' => $this->tenant->id,
-                ],
-            );
-        });
-    }
+    public function deliver(): void;
 }

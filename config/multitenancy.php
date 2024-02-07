@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -37,7 +37,6 @@
 use App\Models\Tenant;
 use Illuminate\Mail\SendQueuedMailable;
 use Illuminate\Queue\CallQueuedClosure;
-use App\Multitenancy\Tasks\SwitchAppKey;
 use App\Multitenancy\Tasks\SwitchAppUrl;
 use App\Multitenancy\Tasks\SwitchAppName;
 use Illuminate\Events\CallQueuedListener;
@@ -77,7 +76,7 @@ return [
      * A valid task is any class that implements Spatie\Multitenancy\Tasks\SwitchTenantTask
      */
     'switch_tenant_tasks' => [
-        SwitchAppKey::class,
+        //SwitchAppKey::class,
         PrefixCacheTask::class,
         SwitchTenantDatabasesTask::class,
         SwitchAppUrl::class,

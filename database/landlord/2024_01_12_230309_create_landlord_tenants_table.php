@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,39 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace App\Console\Commands;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Console\Command;
-use App\DataTransferObjects\ForeignDataWrapperData;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
-use App\Actions\Setup\SetupForeignDataWrapper as SetupForeignDataWrapperAction;
-
-class SetupForeignDataWrapper extends Command
-{
-    use TenantAware;
-
-    protected $signature = 'app:setup-foreign-data-wrapper {--tenant=*}';
-
-    protected $description = 'Setup foreign data wrapper for SIS database';
-
-    public function handle(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        resolve(SetupForeignDataWrapperAction::class)->handle(
-            new ForeignDataWrapperData(
-                connection: config('database.fdw.connection'),
-                localServerName: config('database.fdw.server_name'),
-                externalHost: config('database.connections.sis.host'),
-                externalPort: config('database.connections.sis.port'),
-                externalUser: config('database.connections.sis.username'),
-                externalPassword: config('database.connections.sis.password'),
-                externalDatabase: config('database.connections.sis.database'),
-                tables: [
-                    'students',
-                    'programs',
-                    'enrollments',
-                    'performance',
-                ],
-            )
-        );
+        Schema::create('tenants', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->string('domain')->unique();
+            $table->text('key');
+            $table->text('config');
+            $table->timestamps();
+        });
     }
-}
+};

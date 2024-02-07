@@ -86,6 +86,7 @@
         "socialiteproviders/microsoft-azure": "^5.1",
         "spatie/laravel-cookie-consent": "^3.2",
         "spatie/laravel-data": "^3.11",
+        "spatie/laravel-health": "v1.24.1",
         "spatie/laravel-medialibrary": "^10.15",
         "spatie/laravel-multitenancy": "^3.1",
         "spatie/laravel-settings": "^3.2",
@@ -146,9 +147,6 @@
         ],
         "refresh-database": [
             "@php artisan tenants:artisan \"migrate:fresh --database=tenant\"",
-            "@php artisan app:remove-foreign-data-wrapper",
-            "@php artisan app:setup-foreign-data-wrapper",
-            "@php artisan app:create-adm-materialized-views",
             "@php artisan tenants:artisan \"db:seed --database=tenant\""
         ],
         "php-cs-format": [

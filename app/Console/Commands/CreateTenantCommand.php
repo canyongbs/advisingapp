@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -46,7 +46,6 @@ use App\Multitenancy\DataTransferObjects\TenantMailConfig;
 use App\Multitenancy\DataTransferObjects\TenantMailersConfig;
 use App\Multitenancy\DataTransferObjects\TenantDatabaseConfig;
 use App\Multitenancy\DataTransferObjects\TenantSmtpMailerConfig;
-use App\Multitenancy\DataTransferObjects\TenantSisDatabaseConfig;
 use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
 
 class CreateTenantCommand extends Command
@@ -72,9 +71,6 @@ class CreateTenantCommand extends Command
         DB::connection('landlord')->statement("DROP DATABASE IF EXISTS {$database}");
         DB::connection('landlord')->statement("CREATE DATABASE {$database}");
 
-        DB::connection('sis')->statement("DROP DATABASE IF EXISTS {$database}");
-        DB::connection('sis')->statement("CREATE DATABASE {$database}");
-
         Tenant::where('domain', $domain)->delete();
 
         $tenant = app(CreateTenant::class)(
@@ -87,13 +83,6 @@ class CreateTenantCommand extends Command
                     database: $database,
                     username: config('database.connections.landlord.username'),
                     password: config('database.connections.landlord.password'),
-                ),
-                sisDatabase: new TenantSisDatabaseConfig(
-                    host: config('database.connections.sis.host'),
-                    port: config('database.connections.sis.port'),
-                    database: $database,
-                    username: config('database.connections.sis.username'),
-                    password: config('database.connections.sis.password'),
                 ),
                 s3Filesystem: new TenantS3FilesystemConfig(
                     key: config('filesystems.disks.s3.key'),

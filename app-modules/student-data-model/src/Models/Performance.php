@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -52,7 +52,8 @@ class Performance extends Model
     use DefinesPermissions;
     use UsesTenantConnection;
 
-    // TODO: Need to revisit whether or not this should be the primary key, just using it for now since there is nothing else
+    protected $table = 'performance';
+
     protected $primaryKey = 'sisid';
 
     public $incrementing = false;
@@ -68,22 +69,11 @@ class Performance extends Model
 
     public function getApiPermissions(): Collection
     {
-        return collect([]);
+        return collect();
     }
 
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'sisid', 'sisid');
-    }
-
-    public function getTable()
-    {
-        if ($this->table) {
-            return $this->table;
-        }
-
-        return config('database.adm_materialized_views_enabled')
-            ? 'performance_local'
-            : 'performance';
     }
 }

@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,32 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace App\Console\Commands;
+namespace AdvisingApp\IntegrationTwilio\DataTransferObjects\Concerns;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use Illuminate\Http\Request;
 
-class ClearSisDatabase extends Command
+interface CanBeGeneratedFromRequest
 {
-    use TenantAware;
-
-    protected $signature = 'sis:clear {--tenant=*}';
-
-    protected $description = 'Clears the local SIS database.';
-
-    public function handle()
-    {
-        if (! app()->environment('local')) {
-            $this->error('This command can only be run in the local environment.');
-
-            return;
-        }
-
-        $this->line('Clearing SIS database...');
-
-        Artisan::call('migrate:fresh --database=sis --path=app-modules/student-data-model/database/migrations/sis');
-
-        $this->info('SIS database cleared');
-    }
+    public static function fromRequest(Request $request): static;
 }

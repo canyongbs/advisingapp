@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,16 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace App\Actions\Setup;
+namespace AdvisingApp\IntegrationTwilio\DataTransferObjects;
 
-use Illuminate\Support\Facades\DB;
+use Spatie\LaravelData\Data;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\Concerns\CanBeGeneratedFromRequest;
 
-class RemoveForeignDataWrapper
+abstract class TwilioWebhookData extends Data implements CanBeGeneratedFromRequest
 {
-    public function handle(): void
-    {
-        $database = DB::connection(config('multitenancy.tenant_database_connection_name'));
-
-        $database->statement('DROP EXTENSION IF EXISTS postgres_fdw CASCADE;');
-    }
+    public function __construct(
+    ) {}
 }

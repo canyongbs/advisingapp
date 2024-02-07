@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,27 +34,20 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+namespace AdvisingApp\Notification\Events;
 
-test('relationships work cross connections', function () {
-    $student = Student::factory()
-        ->has(
-            ServiceRequest::factory()
-                ->count(3),
-            'serviceRequests'
-        )
-        ->create();
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 
-    expect($student->serviceRequests)->toHaveCount(3);
+class CouldNotFindOutboundDeliverableFromExternalReference
+{
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
-    Student::factory()->create();
-
-    expect(Student::all())->toHaveCount(2);
-
-    $whereHas = Student::whereHas('serviceRequests', function ($query) {
-        $query->whereNotNull('res_details');
-    })->get();
-
-    expect($whereHas)->toHaveCount(1);
-});
+    public function __construct(
+        public TwilioStatusCallbackData $data
+    ) {}
+}

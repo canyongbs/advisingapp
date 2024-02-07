@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,46 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace App\Actions\Setup;
+namespace AdvisingApp\Engagement\Drivers;
 
-use Illuminate\Support\Facades\DB;
-use App\DataTransferObjects\ForeignDataWrapperData;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
+use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
+use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 
-class SetupForeignDataWrapper
+class EngagementSmsDriver implements EngagementDeliverableDriver
 {
-    public function handle(ForeignDataWrapperData $data): void
+    public function __construct(
+        protected EngagementDeliverable $deliverable
+    ) {}
+
+    public function updateDeliveryStatus(UpdateDeliveryStatusData $data): void
     {
-        $database = DB::connection($data->connection);
+        /** @var TwilioStatusCallbackData $updateData */
+        $updateData = $data->data;
 
-        $database->statement('CREATE EXTENSION IF NOT EXISTS postgres_fdw;');
+        $this->deliverable->update([
+            'external_status' => $updateData->messageStatus ?? null,
+        ]);
 
-        $database->statement("
-            CREATE SERVER IF NOT EXISTS {$data->localServerName} 
-            FOREIGN DATA WRAPPER postgres_fdw
-            OPTIONS (host '{$data->externalHost}', dbname '{$data->externalDatabase}', port '{$data->externalPort}');
-        ");
+        match ($this->deliverable->external_status) {
+            'delivered' => $this->deliverable->markDeliverySuccessful(),
+            'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($updateData->errorMessage ?? null),
+            default => null,
+        };
+    }
 
-        $database->statement("
-            CREATE USER MAPPING IF NOT EXISTS FOR CURRENT_USER 
-            SERVER {$data->localServerName}
-            OPTIONS (user '{$data->externalUser}', password '{$data->externalPassword}');
-        ");
+    public function jobForDelivery(): QueuedEngagementDelivery
+    {
+        return new EngagementSmsChannelDelivery($this->deliverable);
+    }
 
-        foreach ($data->tables as $table) {
-            $tableExists = $database->select("SELECT EXISTS (
-                SELECT FROM information_schema.tables 
-                WHERE  table_schema = 'public'
-                AND    table_name   = '{$table}'
-            );")[0]->exists;
-
-            if (! $tableExists) {
-                $database->statement("
-                    IMPORT FOREIGN SCHEMA public
-                    LIMIT TO ({$table})
-                    FROM SERVER {$data->localServerName}
-                    INTO public;
-                ");
-            }
-        }
+    public function deliver(): void
+    {
+        EngagementSmsChannelDelivery::dispatch($this->deliverable);
     }
 }

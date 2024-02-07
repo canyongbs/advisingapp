@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -58,7 +58,7 @@ class MultiConnectionParallelTestingServiceProvider extends ServiceProvider
 {
     use TestDatabases;
 
-    protected array $parallelConnections = ['sis'];
+    protected array $parallelConnections = ['tenant'];
 
     /**
      * Register any application services.
@@ -93,7 +93,7 @@ class MultiConnectionParallelTestingServiceProvider extends ServiceProvider
                 ];
 
                 if (Arr::hasAny($uses, $databaseTraits) && ! ParallelTesting::option('without_databases')) {
-                    $this->whenNotUsingInMemoryDatabase(function ($database) use ($uses, $token) {
+                    $this->whenNotUsingInMemoryDatabase(function ($database) use ($uses) {
                         $allCreated = [];
 
                         foreach ($this->parallelConnections as $connection) {
@@ -116,9 +116,9 @@ class MultiConnectionParallelTestingServiceProvider extends ServiceProvider
                             $this->usingConnection($connection, function () use ($testDatabase) {
                                 ParallelTesting::callSetUpTestDatabaseCallbacks($testDatabase);
                             });
-                        }
 
-                        Config::set('database.connections.sis.database', "testing_test_{$token}");
+                            Config::set("database.connections.{$connection}.database", $testDatabase);
+                        }
                     });
                 }
             });

@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,20 +34,40 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\IntegrationTwilio\DataTransferObjects;
 
-return new class () extends Migration {
-    public function up(): void
+use Illuminate\Http\Request;
+
+class TwilioStatusCallbackData extends TwilioWebhookData
+{
+    public function __construct(
+        public ?string $apiVersion,
+        public ?string $messageStatus,
+        public ?string $smsId,
+        public ?string $smsStatus,
+        public ?string $to,
+        public ?string $from,
+        public ?string $messageSid,
+        public ?string $accountSid,
+        public ?string $errorCode,
+        public ?string $errorMessage,
+    ) {}
+
+    public static function fromRequest(Request $request): static
     {
-        Schema::create('tenants', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('name');
-            $table->string('domain')->unique();
-            $table->text('key');
-            $table->text('config');
-            $table->timestamps();
-        });
+        $data = $request->all();
+
+        return new self(
+            apiVersion: $data['ApiVersion'] ?? null,
+            messageStatus: $data['MessageStatus'] ?? null,
+            smsId: $data['SmsSid'] ?? null,
+            smsStatus: $data['SmsStatus'] ?? null,
+            to: $data['To'] ?? null,
+            from: $data['From'] ?? null,
+            messageSid: $data['MessageSid'] ?? null,
+            accountSid: $data['AccountSid'] ?? null,
+            errorCode: $data['ErrorCode'] ?? null,
+            errorMessage: $data['ErrorMessage'] ?? null,
+        );
     }
-};
+}
