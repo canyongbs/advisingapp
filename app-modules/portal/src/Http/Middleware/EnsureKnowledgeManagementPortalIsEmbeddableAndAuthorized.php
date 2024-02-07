@@ -34,32 +34,33 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use AdvisingApp\Portal\Http\Controllers\KnowledgeManagementPortalController;
-use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
-use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized;
+namespace AdvisingApp\Portal\Http\Middleware;
 
-Route::prefix('api')
-    ->middleware([
-        'api',
-        EnsureKnowledgeManagementPortalIsEnabled::class,
-        EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
-    ])
-    ->group(function () {
-        /**
-         * Knowledge Management Portal
-         */
-        Route::prefix('portal/knowledge-management')
-            ->name('portal.knowledge-management.')
-            ->group(function () {
-                Route::get('/', [KnowledgeManagementPortalController::class, 'view'])
-                    ->middleware(['signed'])
-                    ->name('define');
-                Route::post('/search', [KnowledgeManagementPortalController::class, 'search'])
-                    ->middleware(['signed'])
-                    ->name('search');
-            })
-            ->middleware([
-                EnsureKnowledgeManagementPortalIsEnabled::class,
-            ]);
-    });
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use AdvisingApp\Portal\Settings\PortalSettings;
+
+class EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        $referer = $request->headers->get('referer');
+
+        if (! $referer) {
+            return response()->json(['error' => 'Missing referer header.'], 400);
+        }
+
+        $referer = parse_url($referer)['host'];
+
+        $settings = resolve(PortalSettings::class);
+
+        if ($referer != parse_url(config('app.url'))['host']) {
+            if (parse_url($settings->knowledge_management_portal_authorized_domain)['host'] !== $referer) {
+                return response()->json(['error' => 'Referer not allowed. Domain must be added to allowed domains list'], 403);
+            }
+        }
+
+        return $next($request);
+    }
+}

@@ -36,17 +36,24 @@
 
 namespace AdvisingApp\Portal\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Filament\Support\Colors\Color;
 use App\Http\Controllers\Controller;
 use AdvisingApp\Portal\Settings\PortalSettings;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
+use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseItemData;
+use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
+use AdvisingApp\Portal\DataTransferObjects\KnowledgeManagementSearchData;
 
 class KnowledgeManagementPortalController extends Controller
 {
     public function view(): JsonResponse
     {
         $settings = resolve(PortalSettings::class);
+
+        // TODO We potentially want to generate the API key here
 
         return response()->json([
             'primary_color' => Color::all()[$settings->knowledge_management_portal_primary_color ?? 'blue'],
@@ -59,5 +66,44 @@ class KnowledgeManagementPortalController extends Controller
                 ];
             })->toArray(),
         ]);
+    }
+
+    public function search(Request $request)
+    {
+        ray('request', $request->all());
+
+        $itemData = KnowledgeBaseItemData::collection(
+            KnowledgeBaseItem::query()
+                ->public()
+                ->search($request->get('search'))
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id' => $item->getKey(),
+                        'name' => $item->title,
+                    ];
+                })
+                ->toArray()
+        );
+
+        $categoryData = KnowledgeBaseCategoryData::collection(
+            KnowledgeBaseCategory::query()
+                ->search($request->get('search'))
+                ->get()
+                ->map(function ($category) {
+                    return [
+                        'id' => $category->getKey(),
+                        'name' => $category->name,
+                    ];
+                })
+                ->toArray()
+        );
+
+        $searchResults = KnowledgeManagementSearchData::from([
+            'items' => $itemData,
+            'categories' => $categoryData,
+        ]);
+
+        return $searchResults->wrap('data');
     }
 }

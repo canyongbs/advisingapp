@@ -49,6 +49,6 @@ customElements.define(
 
             return () => h(App, props);
         },
-        props: ['url'],
+        props: ['url', 'searchUrl'],
     }),
 );

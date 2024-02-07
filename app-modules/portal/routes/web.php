@@ -37,6 +37,7 @@
 use Illuminate\Support\Facades\Route;
 use AdvisingApp\Portal\Livewire\RenderKnowledgeManagementPortal;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
+use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized;
 
 Route::prefix('portals')
     ->name('portals.')
@@ -48,5 +49,6 @@ Route::prefix('portals')
             ->name('knowledge-management.show')
             ->middleware([
                 EnsureKnowledgeManagementPortalIsEnabled::class,
+                EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
             ]);
     });

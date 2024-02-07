@@ -35,15 +35,16 @@
 import { defineProps, onMounted, ref, watch } from 'vue';
 import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
 import getRecaptchaToken from '../../../app-modules/integration-google-recaptcha/resources/js/Services/GetRecaptchaToken.js';
-import { marked } from 'marked';
-import DOMPurify from 'dompurify';
 import Loading from './Components/Loading.vue';
 import MobileSidebar from './Components/MobileSidebar.vue';
+import HelpCenter from './Components/HelpCenter.vue';
+import SearchResults from './Components/SearchResults.vue';
 import DesktopSidebar from './Components/DesktopSidebar.vue';
 import { Bars3Icon } from '@heroicons/vue/24/outline';
-import axios from 'axios';
 
+const errorLoading = ref(false);
 const loading = ref(true);
+const loadingResults = ref(false);
 const showMobileMenu = ref(false);
 
 onMounted(async () => {
@@ -52,9 +53,16 @@ onMounted(async () => {
     });
 });
 
-const props = defineProps(['url']);
-
-const submittedSuccess = ref(false);
+const props = defineProps({
+    url: {
+        type: String,
+        required: true,
+    },
+    searchUrl: {
+        type: String,
+        required: true,
+    },
+});
 
 const scriptUrl = new URL(document.currentScript.getAttribute('src'));
 const protocol = scriptUrl.protocol;
@@ -67,16 +75,30 @@ const searchQuery = ref(searchParameter ?? null);
 
 const hostUrl = `${protocol}//${scriptHostname}`;
 
-watch(searchQuery, (value) => {
-    console.log('searchQuery', value);
-    console.log('scriptUrl', scriptUrl);
-    console.log('protocol', protocol);
-    console.log('scriptHostname', scriptHostname);
-    console.log('scriptQuery', scriptQuery);
+const searchResults = ref(null);
 
-    axios.post(hostUrl + '/graphql', {
-        query: '{ language }',
-    });
+watch(searchQuery, (value) => {
+    loadingResults.value = true;
+
+    if (!value) {
+        searchQuery.value = null;
+        searchResults.value = null;
+        return;
+    }
+
+    fetch(props.searchUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ search: searchQuery.value }),
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('search results', json);
+            searchResults.value = json;
+            loadingResults.value = false;
+        });
 });
 
 const portalPrimaryColor = ref('');
@@ -87,6 +109,8 @@ async function getKnowledgeManagementPortal() {
     await fetch(props.url)
         .then((response) => response.json())
         .then((json) => {
+            errorLoading.value = false;
+
             if (json.error) {
                 throw new Error(json.error);
             }
@@ -137,6 +161,7 @@ async function getKnowledgeManagementPortal() {
             }[json.rounding ?? 'md'];
         })
         .catch((error) => {
+            errorLoading.value = true;
             console.error(`Knowledge Management Portal Embed ${error}`);
         });
 }
@@ -171,95 +196,64 @@ async function getKnowledgeManagementPortal() {
             </div>
 
             <div v-else>
-                <MobileSidebar
-                    v-if="showMobileMenu"
-                    @sidebar-closed="showMobileMenu = !showMobileMenu"
-                    :categories="categories"
-                ></MobileSidebar>
+                <div v-if="errorLoading" class="text-center">
+                    <h1 class="text-3xl font-bold text-red-500">Error Loading Portal</h1>
+                    <p class="text-lg text-red-500">Please try again later</p>
+                </div>
 
-                <!-- Desktop Sidebar -->
-                <DesktopSidebar :categories="categories"></DesktopSidebar>
+                <div v-else>
+                    <MobileSidebar
+                        v-if="showMobileMenu"
+                        @sidebar-closed="showMobileMenu = !showMobileMenu"
+                        :categories="categories"
+                    ></MobileSidebar>
 
-                <div class="lg:pl-72">
-                    <div
-                        class="sticky top-0 z-40 flex flex-col items-center border-b border-gray-100 bg-white px-4 py-4 shadow-sm sm:px-6 lg:px-8"
-                    >
-                        <button
-                            class="w-full p-2.5 lg:hidden"
-                            type="button"
-                            v-on:click="showMobileMenu = !showMobileMenu"
+                    <!-- Desktop Sidebar -->
+                    <DesktopSidebar :categories="categories"></DesktopSidebar>
+
+                    <div class="lg:pl-72">
+                        <div
+                            class="sticky top-0 z-40 flex flex-col items-center border-b border-gray-100 bg-white px-4 py-4 shadow-sm sm:px-6 lg:px-8"
                         >
-                            <span class="sr-only">Open sidebar</span>
-                            <Bars3Icon class="h-6 w-6 text-gray-900"></Bars3Icon>
-                        </button>
-
-                        <div class="flex h-full w-full flex-col rounded bg-primary-700 px-12 py-4">
-                            <div class="flex flex-col text-left">
-                                <h3 class="text-3xl text-white">Need help?</h3>
-                                <p class="text-white">Search our knowledge base for advice and answers</p>
-                            </div>
-
-                            <form class="relative mt-2 flex h-12" action="#" method="GET">
-                                <label class="sr-only" for="search-field">Search</label>
-                                <input
-                                    class="block h-full w-full text-gray-900 border-0 py-0 pl-8 pr-0 placeholder:text-gray-400 focus:ring-0 sm:text-sm rounded"
-                                    id="search-field"
-                                    v-model="searchQuery"
-                                    name="search"
-                                    type="search"
-                                    placeholder="Search for articles and categories"
-                                />
-                            </form>
-                        </div>
-                    </div>
-
-                    <main class="py-10">
-                        <div v-if="results">Here are your results...</div>
-                        <div class="px-4 sm:px-6 lg:px-8" v-else>
-                            <h3 class="text-xl">Help Center</h3>
-
-                            <div
-                                class="mt-4 divide-y divide-gray-100 overflow-hidden rounded-lg bg-gray-100 shadow sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0"
+                            <button
+                                class="w-full p-2.5 lg:hidden"
+                                type="button"
+                                v-on:click="showMobileMenu = !showMobileMenu"
                             >
-                                <div
-                                    v-for="(category, categoryId) in categories"
-                                    :key="category.id"
-                                    :class="[
-                                        categoryId === 0 ? 'rounded-tl-lg rounded-tr-lg sm:rounded-tr-none' : '',
-                                        categoryId === 1 ? 'sm:rounded-tr-lg' : '',
-                                        categoryId === categories.length - 2 ? 'sm:rounded-bl-lg' : '',
-                                        categoryId === categories.length - 1
-                                            ? 'rounded-bl-lg rounded-br-lg sm:rounded-bl-none'
-                                            : '',
-                                        'group relative bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary-500',
-                                    ]"
-                                >
-                                    <div class="mt-8">
-                                        <h3 class="text-base font-semibold leading-6 text-gray-900">
-                                            <a class="focus:outline-none" :href="category.name">
-                                                <span class="absolute inset-0" aria-hidden="true" />
-                                                {{ category.name }}
-                                            </a>
-                                        </h3>
-                                        <p class="mt-2 text-sm text-gray-500">
-                                            Doloribus dolores nostrum quia qui natus officia quod et dolorem. Sit
-                                            repellendus qui ut at blanditiis et quo et molestiae.
-                                        </p>
-                                    </div>
-                                    <span
-                                        class="pointer-events-none absolute right-6 top-6 text-gray-300 group-hover:text-primary-400"
-                                        aria-hidden="true"
-                                    >
-                                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                                            <path
-                                                d="M20 4h1a1 1 0 00-1-1v1zm-1 12a1 1 0 102 0h-2zM8 3a1 1 0 000 2V3zM3.293 19.293a1 1 0 101.414 1.414l-1.414-1.414zM19 4v12h2V4h-2zm1-1H8v2h12V3zm-.707.293l-16 16 1.414 1.414 16-16-1.414-1.414z"
-                                            />
-                                        </svg>
-                                    </span>
+                                <span class="sr-only">Open sidebar</span>
+                                <Bars3Icon class="h-6 w-6 text-gray-900"></Bars3Icon>
+                            </button>
+
+                            <div class="flex h-full w-full flex-col rounded bg-primary-700 px-12 py-4">
+                                <div class="flex flex-col text-left">
+                                    <h3 class="text-3xl text-white">Need help?</h3>
+                                    <p class="text-white">Search our knowledge base for advice and answers</p>
                                 </div>
+
+                                <form class="relative mt-2 flex h-12" action="#" method="GET">
+                                    <label class="sr-only" for="search-field">Search</label>
+                                    <input
+                                        class="block h-full w-full text-gray-900 border-0 py-0 pl-8 pr-0 placeholder:text-gray-400 focus:ring-0 sm:text-sm rounded"
+                                        id="search-field"
+                                        v-model="searchQuery"
+                                        name="search"
+                                        type="search"
+                                        placeholder="Search for articles and categories"
+                                    />
+                                </form>
                             </div>
                         </div>
-                    </main>
+
+                        <main class="py-10">
+                            <SearchResults
+                                v-if="searchResults"
+                                :searchQuery="searchQuery"
+                                :searchResults="searchResults"
+                            ></SearchResults>
+
+                            <HelpCenter v-else :categories="categories"></HelpCenter>
+                        </main>
+                    </div>
                 </div>
             </div>
         </div>

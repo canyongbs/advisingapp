@@ -50,12 +50,15 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Section;
+use AdvisingApp\Portal\Enums\PortalType;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\GlobalSettings;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Infolists\Components\TextEntry;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Portal\Settings\PortalSettings;
+use AdvisingApp\Portal\Actions\GeneratePortalEmbedCode;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class ManagePortalSettings extends SettingsPage
@@ -181,7 +184,28 @@ class ManagePortalSettings extends SettingsPage
                                 ->openUrlInNewTab(),
                             Action::make('embed_snippet')
                                 ->label('Embed Snippet')
-                                ->action(function () {}),
+                                ->infolist(
+                                    [
+                                        TextEntry::make('snippet')
+                                            ->label('Click to Copy')
+                                            ->state(function () {
+                                                $code = resolve(GeneratePortalEmbedCode::class)->handle(PortalType::KnowledgeManagement);
+
+                                                return <<<EOD
+                                                ```
+                                                {$code}
+                                                ```
+                                                EOD;
+                                            })
+                                            ->markdown()
+                                            ->copyable()
+                                            ->copyableState(fn () => resolve(GeneratePortalEmbedCode::class)->handle(PortalType::KnowledgeManagement))
+                                            ->copyMessage('Copied!')
+                                            ->copyMessageDuration(1500),
+                                    ]
+                                )
+                                ->modalSubmitAction(false)
+                                ->modalCancelActionLabel('Close'),
                         ])
                             ->visible(
                                 fn (Get $get) => $get('knowledge_management_portal_enabled') &&

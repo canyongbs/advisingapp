@@ -34,32 +34,14 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use AdvisingApp\Portal\Http\Controllers\KnowledgeManagementPortalController;
-use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
-use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized;
+namespace AdvisingApp\Portal\DataTransferObjects;
 
-Route::prefix('api')
-    ->middleware([
-        'api',
-        EnsureKnowledgeManagementPortalIsEnabled::class,
-        EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
-    ])
-    ->group(function () {
-        /**
-         * Knowledge Management Portal
-         */
-        Route::prefix('portal/knowledge-management')
-            ->name('portal.knowledge-management.')
-            ->group(function () {
-                Route::get('/', [KnowledgeManagementPortalController::class, 'view'])
-                    ->middleware(['signed'])
-                    ->name('define');
-                Route::post('/search', [KnowledgeManagementPortalController::class, 'search'])
-                    ->middleware(['signed'])
-                    ->name('search');
-            })
-            ->middleware([
-                EnsureKnowledgeManagementPortalIsEnabled::class,
-            ]);
-    });
+use Spatie\LaravelData\Data;
+
+class KnowledgeBaseCategoryData extends Data
+{
+    public function __construct(
+        public string $id,
+        public string $name,
+    ) {}
+}

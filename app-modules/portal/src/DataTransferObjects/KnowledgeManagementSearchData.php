@@ -34,32 +34,17 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use AdvisingApp\Portal\Http\Controllers\KnowledgeManagementPortalController;
-use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
-use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized;
+namespace AdvisingApp\Portal\DataTransferObjects;
 
-Route::prefix('api')
-    ->middleware([
-        'api',
-        EnsureKnowledgeManagementPortalIsEnabled::class,
-        EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
-    ])
-    ->group(function () {
-        /**
-         * Knowledge Management Portal
-         */
-        Route::prefix('portal/knowledge-management')
-            ->name('portal.knowledge-management.')
-            ->group(function () {
-                Route::get('/', [KnowledgeManagementPortalController::class, 'view'])
-                    ->middleware(['signed'])
-                    ->name('define');
-                Route::post('/search', [KnowledgeManagementPortalController::class, 'search'])
-                    ->middleware(['signed'])
-                    ->name('search');
-            })
-            ->middleware([
-                EnsureKnowledgeManagementPortalIsEnabled::class,
-            ]);
-    });
+use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
+use Spatie\LaravelData\Attributes\DataCollectionOf;
+
+class KnowledgeManagementSearchData extends Data
+{
+    #[DataCollectionOf(KnowledgeBaseItemData::class)]
+    public DataCollection $items;
+
+    #[DataCollectionOf(KnowledgeBaseCategoryData::class)]
+    public DataCollection $categories;
+}

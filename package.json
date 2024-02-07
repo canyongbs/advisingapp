@@ -60,7 +60,6 @@
         "@ryangjchandler/alpine-clipboard": "^2.3.0",
         "@twilio/conversations": "^2.5.0",
         "alpinejs": "^3.13.2",
-        "axios": "^1.6.7",
         "dompurify": "^3.0.6",
         "env-cmd": "^10.1.0",
         "esbuild-plugin-polyfill-node": "^0.3.0",
