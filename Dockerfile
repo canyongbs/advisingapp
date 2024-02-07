@@ -14,12 +14,6 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
-RUN apt-get update \
-    && apt install -y software-properties-common && add-apt-repository ppa:openswoole/ppa -y \
-    && apt install -y php8.2-openswoole \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
-
 ARG NODE_VERSION=21.6.0
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
