@@ -32,7 +32,7 @@
 </COPYRIGHT>
 --}}
 <x-filament-widgets::widget>
-    <div class="flex flex-col md:flex-row items-center">
+    <div class="flex flex-col items-center md:flex-row">
         <div class="flex-1">
             <h1 class="font-medium">Welcome, {{ auth()->user()->name }}</h1>
 
@@ -44,19 +44,19 @@
 
         <div class="flex-shrink-0">
             <form
+                class="my-auto"
                 action="{{ filament()->getLogoutUrl() }}"
                 method="post"
-                class="my-auto"
             >
                 @csrf
 
                 <x-filament::button
+                    type="submit"
                     color="gray"
                     icon="heroicon-m-arrow-left-on-rectangle"
                     icon-alias="panels::widgets.account.logout-button"
                     labeled-from="sm"
                     tag="button"
-                    type="submit"
                 >
                     {{ __('filament-panels::widgets/account-widget.actions.logout.label') }}
                 </x-filament::button>
