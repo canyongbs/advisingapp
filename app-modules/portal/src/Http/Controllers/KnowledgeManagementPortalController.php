@@ -100,7 +100,7 @@ class KnowledgeManagementPortalController extends Controller
         );
 
         $searchResults = KnowledgeManagementSearchData::from([
-            'items' => $itemData,
+            'articles' => $itemData,
             'categories' => $categoryData,
         ]);
 

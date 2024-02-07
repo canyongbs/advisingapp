@@ -71,34 +71,48 @@ const scriptQuery = Object.fromEntries(scriptUrl.searchParams);
 
 const urlParams = new URLSearchParams(window.location.search);
 const searchParameter = urlParams.get('q');
-const searchQuery = ref(searchParameter ?? null);
+const searchQuery = ref(null);
 
 const hostUrl = `${protocol}//${scriptHostname}`;
 
 const searchResults = ref(null);
 
-watch(searchQuery, (value) => {
-    loadingResults.value = true;
+function debounce(func, delay) {
+    let timerId;
+    return function (...args) {
+        if (timerId) {
+            clearTimeout(timerId);
+        }
+        timerId = setTimeout(() => {
+            func(...args);
+        }, delay);
+    };
+}
 
+const debounceSearch = debounce((value) => {
     if (!value) {
         searchQuery.value = null;
         searchResults.value = null;
         return;
     }
 
+    loadingResults.value = true;
     fetch(props.searchUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ search: searchQuery.value }),
+        body: JSON.stringify({ search: value }),
     })
         .then((response) => response.json())
         .then((json) => {
-            console.log('search results', json);
             searchResults.value = json;
             loadingResults.value = false;
         });
+}, 500);
+
+watch(searchQuery, (value) => {
+    debounceSearch(value);
 });
 
 const portalPrimaryColor = ref('');
@@ -246,9 +260,10 @@ async function getKnowledgeManagementPortal() {
 
                         <main class="py-10">
                             <SearchResults
-                                v-if="searchResults"
+                                v-if="searchQuery"
                                 :searchQuery="searchQuery"
                                 :searchResults="searchResults"
+                                :loadingResults="loadingResults"
                             ></SearchResults>
 
                             <HelpCenter v-else :categories="categories"></HelpCenter>
