@@ -38,14 +38,14 @@ namespace AdvisingApp\Task\Tests\RequestFactories;
 
 use App\Models\User;
 use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Prospect\Models\Prospect;
 use Worksome\RequestFactories\RequestFactory;
-use AdvisingApp\StudentDataModel\Models\Student;
 
 class EditTaskRequestFactory extends RequestFactory
 {
     public function definition(): array
     {
-        $student = Student::factory()->create();
+        $prospect = Prospect::factory()->create();
 
         return [
             'title' => str(fake()->words(asText: 3))->title()->toString(),
@@ -53,8 +53,8 @@ class EditTaskRequestFactory extends RequestFactory
             'status' => fake()->randomElement(TaskStatus::cases())->value,
             'due' => now()->addWeek(),
             'assigned_to' => User::factory()->create()->id,
-            'concern_id' => $student->getKey(),
-            'concern_type' => $student->getMorphClass(),
+            'concern_id' => $prospect->getKey(),
+            'concern_type' => $prospect->getMorphClass(),
         ];
     }
 }
