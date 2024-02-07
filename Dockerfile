@@ -14,6 +14,12 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
+RUN apt-get update \
+    && apt install -y software-properties-common && add-apt-repository ppa:openswoole/ppa -y \
+    && apt install -y php8.2-openswoole \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+
 ARG NODE_VERSION=21.6.0
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
@@ -30,6 +36,9 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 COPY ./docker/s6-overlay/scripts/ /etc/s6-overlay/scripts/
 COPY docker/s6-overlay/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
 COPY ./docker/s6-overlay/user/ /etc/s6-overlay/s6-rc.d/user/contents.d/
+
+COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY ./docker/nginx/site-opts.d /etc/nginx/site-opts.d
 
 RUN apt-get update \
     && apt-get upgrade -y
