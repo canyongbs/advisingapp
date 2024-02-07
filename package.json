@@ -14,7 +14,10 @@
         "build:event-registration": "(cd widgets/event-registration && vite build)",
         "build:service-request-form": "(cd widgets/service-request-form && vite build)",
         "build:widgets": "npm run build:application && npm run build:form && npm run build:survey && npm run build:event-registration && npm run build:service-request-form",
-        "build": "npm run build:js-compile && npm run build:vite && npm run build:filament && npm run build:widgets",
+        "dev:knowledge-management": "(cd portals/knowledge-management && vite --config vite.config.js)",
+        "build:knowledge-management": "(cd portals/knowledge-management && vite build)",
+        "build:portals": "npm run build:knowledge-management",
+        "build": "npm run build:js-compile && npm run build:vite && npm run build:filament && npm run build:widgets && npm run build:portals",
         "api-docs:generate": "export NODE_OPTIONS=--max_old_space_size=4096 && env-cmd spectaql spectaql.yml"
     },
     "devDependencies": {
@@ -53,9 +56,11 @@
         "@formkit/icons": "^1.2.2",
         "@formkit/themes": "^1.2.2",
         "@formkit/vue": "^1.2.2",
+        "@heroicons/vue": "^2.1.1",
         "@ryangjchandler/alpine-clipboard": "^2.3.0",
         "@twilio/conversations": "^2.5.0",
         "alpinejs": "^3.13.2",
+        "axios": "^1.6.7",
         "dompurify": "^3.0.6",
         "env-cmd": "^10.1.0",
         "esbuild-plugin-polyfill-node": "^0.3.0",

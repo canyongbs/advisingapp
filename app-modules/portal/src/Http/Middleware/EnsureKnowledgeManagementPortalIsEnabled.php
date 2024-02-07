@@ -34,63 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Settings;
+namespace AdvisingApp\Portal\Http\Middleware;
 
-use Spatie\LaravelSettings\Settings;
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use AdvisingApp\Portal\Settings\PortalSettings;
 
-class PortalSettings extends Settings
+class EnsureKnowledgeManagementPortalIsEnabled
 {
-    public null $logo = null;
-
-    public ?string $primary_color = null;
-
-    public ?string $secondary_color = null;
-
-    public bool $has_applications = false;
-
-    public bool $has_message_center = false;
-
-    public bool $has_user_chat = false;
-
-    public bool $has_care_team = false;
-
-    public bool $has_performance_alerts = false;
-
-    public bool $has_emergency_alerts = false;
-
-    public bool $has_service_management = false;
-
-    public bool $has_notifications = false;
-
-    public bool $has_knowledge_base = false;
-
-    public bool $has_tasks = false;
-
-    public bool $has_files_and_documents = false;
-
-    public bool $has_forms = false;
-
-    public bool $has_surveys = false;
-
-    public ?string $footer_color = null;
-
-    public ?string $footer_copyright_statement;
-
-    /**
-    * Knowledge Base Portal
-    */
-    public bool $knowledge_management_portal_enabled = false;
-
-    public bool $knowledge_management_portal_service_management = false;
-
-    public ?string $knowledge_management_portal_primary_color = null;
-
-    public ?string $knowledge_management_portal_rounding = null;
-
-    public ?string $knowledge_management_portal_authorized_domain = null;
-
-    public static function group(): string
+    public function handle(Request $request, Closure $next): Response
     {
-        return 'portal';
+        if (! app(PortalSettings::class)->knowledge_management_portal_enabled) {
+            if ($request->wantsJson() || $request->fullUrlIs('*/api/portal/knowledge-management/*')) {
+                return response()->json(['error' => 'The Knowledge Management Portal is not enabled.'], Response::HTTP_FORBIDDEN);
+            }
+
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
+        return $next($request);
     }
 }
