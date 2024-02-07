@@ -45,7 +45,6 @@ use App\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Auth\Middleware\Authorize;
 use App\Http\Middleware\ValidateSignature;
 use Illuminate\Http\Middleware\HandleCors;
-use App\Http\Middleware\SetPreferredLocale;
 use Illuminate\Auth\Middleware\RequirePassword;
 use Illuminate\Http\Middleware\SetCacheHeaders;
 use Illuminate\Session\Middleware\StartSession;
@@ -99,7 +98,6 @@ class Kernel extends HttpKernel
             VerifyCsrfToken::class,
             SubstituteBindings::class,
             AuthGates::class,
-            SetPreferredLocale::class,
         ],
 
         'api' => [
