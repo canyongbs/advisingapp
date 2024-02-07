@@ -1,0 +1,12 @@
+#!/command/with-contenv bash
+
+# Exit on error
+set -e
+
+echo "Starting Laravel Octane..."
+
+cd $WEBUSER_HOME
+
+USERNAME=$(id -nu $PUID)
+
+s6-setuidgid $USERNAME php $WEBUSER_HOME/artisan octane:start --server=frankenphp --host=0.0.0.0 --admin-port=2019 --port=8000

@@ -34,6 +34,9 @@ COPY ./docker/s6-overlay/user/ /etc/s6-overlay/s6-rc.d/user/contents.d/
 COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./docker/nginx/site-opts.d /etc/nginx/site-opts.d
 
+RUN rm /etc/s6-overlay/s6-rc.d/user/contents.d/php-fpm
+RUN rm -rf /etc/s6-overlay/s6-rc.d/php-fpm
+
 RUN apt-get update \
     && apt-get upgrade -y
 
