@@ -39,15 +39,17 @@
 @endphp
 
 <x-filament-widgets::widget>
-    <div class="grid md:grid-cols-3 gap-6">
+    <div class="grid gap-6 md:grid-cols-3">
         @php
-            $hasFeature = auth()->user()->hasLicense(LicenseType::RecruitmentCrm);
+            $hasFeature = auth()
+                ->user()
+                ->hasLicense(LicenseType::RecruitmentCrm);
         @endphp
         <x-filament::section @class([
-            'opacity-50 pointer-events-none' => ! $hasFeature,
+            'opacity-50 pointer-events-none' => !$hasFeature,
         ])>
             <div class="flex flex-col gap-3">
-                <div class="text-lg font-bold text-center">
+                <div class="text-center text-lg font-bold">
                     {{ $hasFeature ? 'Available' : 'Unavailable' }}
                 </div>
 
@@ -62,20 +64,22 @@
                     </x-filament::button>
                 </div>
 
-                <div class="font-medium text-gray-700 text-center dark:text-gray-300">
+                <div class="text-center font-medium text-gray-700 dark:text-gray-300">
                     Recruitment CRM
                 </div>
             </div>
         </x-filament::section>
 
         @php
-            $hasFeature = auth()->user()->hasLicense(LicenseType::RetentionCrm);
+            $hasFeature = auth()
+                ->user()
+                ->hasLicense(LicenseType::RetentionCrm);
         @endphp
         <x-filament::section @class([
-            'opacity-50 pointer-events-none' => ! $hasFeature,
+            'opacity-50 pointer-events-none' => !$hasFeature,
         ])>
             <div class="flex flex-col gap-3">
-                <div class="text-lg font-bold text-center">
+                <div class="text-center text-lg font-bold">
                     {{ $hasFeature ? 'Available' : 'Unavailable' }}
                 </div>
 
@@ -90,20 +94,22 @@
                     </x-filament::button>
                 </div>
 
-                <div class="font-medium text-gray-700 text-center dark:text-gray-300">
+                <div class="text-center font-medium text-gray-700 dark:text-gray-300">
                     Student Success Suite
                 </div>
             </div>
         </x-filament::section>
 
         @php
-            $hasFeature = auth()->user()->hasLicense(LicenseType::ConversationalAi);
+            $hasFeature = auth()
+                ->user()
+                ->hasLicense(LicenseType::ConversationalAi);
         @endphp
         <x-filament::section @class([
-            'opacity-50 pointer-events-none' => ! $hasFeature,
+            'opacity-50 pointer-events-none' => !$hasFeature,
         ])>
             <div class="flex flex-col gap-3">
-                <div class="text-lg font-bold text-center">
+                <div class="text-center text-lg font-bold">
                     {{ $hasFeature ? 'Available' : 'Unavailable' }}
                 </div>
 
@@ -118,7 +124,7 @@
                     </x-filament::button>
                 </div>
 
-                <div class="font-medium text-gray-700 text-center dark:text-gray-300">
+                <div class="text-center font-medium text-gray-700 dark:text-gray-300">
                     Enterprise AI Assistant
                 </div>
             </div>
