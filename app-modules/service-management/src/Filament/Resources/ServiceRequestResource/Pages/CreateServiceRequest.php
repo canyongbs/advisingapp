@@ -68,11 +68,11 @@ class CreateServiceRequest extends CreateRecord
                     ->exists((new Division())->getTable(), 'id'),
                 Select::make('status_id')
                     ->relationship('status', 'name')
-                    ->preload()
                     ->label('Status')
+                    ->options(fn () => ServiceRequestStatus::optionsByClassification())
                     ->required()
                     ->exists((new ServiceRequestStatus())->getTable(), 'id'),
-                Grid::make(2)
+                Grid::make()
                     ->schema([
                         Select::make('type_id')
                             ->options(ServiceRequestType::query()->pluck('name', 'id'))
