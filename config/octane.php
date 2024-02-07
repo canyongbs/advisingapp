@@ -36,7 +36,7 @@ return [
     |
     */
 
-    'server' => env('OCTANE_SERVER', 'frankenphp'),
+    'server' => env('OCTANE_SERVER', 'swoole'),
 
     /*
     |--------------------------------------------------------------------------
@@ -98,7 +98,7 @@ return [
             FlushOnce::class,
             FlushTemporaryContainerInstances::class,
             // DisconnectFromDatabases::class,
-            // CollectGarbage::class,
+            CollectGarbage::class,
         ],
 
         WorkerErrorOccurred::class => [
