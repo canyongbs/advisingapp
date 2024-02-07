@@ -55,11 +55,17 @@ class KnowledgeBaseCategory extends BaseModel implements Auditable
 
     protected $fillable = [
         'name',
+        'description',
     ];
 
     public function knowledgeBaseItems(): HasMany
     {
         return $this->hasMany(KnowledgeBaseItem::class, 'category_id');
+    }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->where('name', 'like', '%' . $search . '%');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

@@ -97,6 +97,17 @@ class KnowledgeBaseItem extends BaseModel implements Auditable, HasMedia
         $this->addMediaCollection('notes');
     }
 
+    public function scopePublic($query)
+    {
+        return $query->where('public', true);
+    }
+
+    // TODO Extract to a re-usable scope
+    public function scopeSearch($query, $search)
+    {
+        return $query->where('title', 'like', '%' . $search . '%');
+    }
+
     protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');

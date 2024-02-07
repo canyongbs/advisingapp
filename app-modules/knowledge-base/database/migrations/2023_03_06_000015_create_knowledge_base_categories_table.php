@@ -45,6 +45,7 @@ class CreateKnowledgeBaseCategoriesTable extends Migration
         Schema::create('knowledge_base_categories', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
+            $table->longText('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

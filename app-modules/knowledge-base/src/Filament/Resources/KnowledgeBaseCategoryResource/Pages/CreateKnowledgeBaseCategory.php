@@ -37,6 +37,7 @@
 namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
 
 use Filament\Forms\Form;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
@@ -52,6 +53,10 @@ class CreateKnowledgeBaseCategory extends CreateRecord
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
+                    ->string(),
+                Textarea::make('description')
+                    ->label('Description')
+                    ->nullable()
                     ->string(),
             ]);
     }
