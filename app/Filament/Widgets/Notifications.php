@@ -45,13 +45,11 @@ class Notifications extends Widget
 
     public function getNotificationsQuery(): Builder | Relation
     {
-        /** @phpstan-ignore-next-line */
         return auth()->user()->notifications()->where('data->format', 'filament');
     }
 
     public function getUnreadNotificationsQuery(): Builder | Relation
     {
-        /** @phpstan-ignore-next-line */
         return $this->getNotificationsQuery()->unread();
     }
 
