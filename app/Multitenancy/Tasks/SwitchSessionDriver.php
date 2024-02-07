@@ -52,7 +52,7 @@ class SwitchSessionDriver implements SwitchTenantTask
     public function makeCurrent(Tenant $tenant): void
     {
         // Not going to switch the session driver in testing, stick with the default array driver
-        if (app()->environment('testing')) {
+        if (app()->runningUnitTests()) {
             return;
         }
 
