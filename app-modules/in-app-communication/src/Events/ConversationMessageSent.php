@@ -34,50 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InAppCommunication\Actions;
+namespace AdvisingApp\InAppCommunication\Events;
 
-use Exception;
 use App\Models\User;
-use Twilio\Rest\Client;
-use AdvisingApp\InAppCommunication\Enums\ConversationType;
+use Carbon\CarbonInterface;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Broadcasting\InteractsWithSockets;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 
-class AddUserToConversation
+class ConversationMessageSent
 {
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
+
+    public readonly CarbonInterface $messageSentAt;
+
     public function __construct(
-        public Client $twilioClient,
-    ) {}
-
-    public function __invoke(User $user, TwilioConversation $conversation, bool $manager = false): void
-    {
-        throw_if(
-            ($conversation->type === ConversationType::UserToUser) && ($conversation->participants->count() >= 2),
-            new Exception('User to User conversations can only have 2 participants.')
-        );
-
-        if ($conversation->participants()->whereKey($user)->exists()) {
-            return;
-        }
-
-        $participant = $this->twilioClient
-            ->conversations
-            ->v1
-            ->conversations($conversation->sid)
-            ->participants
-            ->create([
-                'identity' => $user->id,
-            ]);
-
-        $conversation->participants()
-            ->attach($user, [
-                'participant_sid' => $participant->sid,
-                ...($user->is(auth()->user()) ? [
-                    'last_read_at' => now(),
-                ] : []),
-            ]);
-
-        if ($manager) {
-            app(PromoteUserToChannelManager::class)(user: $user, conversation: $conversation);
-        }
+        readonly public TwilioConversation $conversation,
+        readonly public User $author,
+        readonly public string $messageSid,
+        readonly public array $messageContent,
+    ) {
+        $this->messageSentAt = now();
     }
 }

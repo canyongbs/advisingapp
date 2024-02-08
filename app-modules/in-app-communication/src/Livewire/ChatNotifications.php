@@ -34,50 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InAppCommunication\Actions;
+namespace AdvisingApp\InAppCommunication\Livewire;
 
-use Exception;
-use App\Models\User;
-use Twilio\Rest\Client;
-use AdvisingApp\InAppCommunication\Enums\ConversationType;
-use AdvisingApp\InAppCommunication\Models\TwilioConversation;
+use Livewire\Component;
+use Livewire\Attributes\Lazy;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
 
-class AddUserToConversation
+#[Lazy]
+class ChatNotifications extends Component
 {
-    public function __construct(
-        public Client $twilioClient,
-    ) {}
-
-    public function __invoke(User $user, TwilioConversation $conversation, bool $manager = false): void
+    public function getNotifications(): Collection
     {
-        throw_if(
-            ($conversation->type === ConversationType::UserToUser) && ($conversation->participants->count() >= 2),
-            new Exception('User to User conversations can only have 2 participants.')
-        );
+        return auth()->user()->conversations()
+            ->wherePivotNull('last_read_at')
+            ->orWherePivot('unread_messages_count', '>', 0)
+            ->latest('twilio_conversation_user.updated_at')
+            ->latest('twilio_conversation_user.created_at')
+            ->get();
+    }
 
-        if ($conversation->participants()->whereKey($user)->exists()) {
-            return;
-        }
-
-        $participant = $this->twilioClient
-            ->conversations
-            ->v1
-            ->conversations($conversation->sid)
-            ->participants
-            ->create([
-                'identity' => $user->id,
-            ]);
-
-        $conversation->participants()
-            ->attach($user, [
-                'participant_sid' => $participant->sid,
-                ...($user->is(auth()->user()) ? [
-                    'last_read_at' => now(),
-                ] : []),
-            ]);
-
-        if ($manager) {
-            app(PromoteUserToChannelManager::class)(user: $user, conversation: $conversation);
-        }
+    public function render(): View
+    {
+        return view('in-app-communication::livewire.chat-notifications');
     }
 }

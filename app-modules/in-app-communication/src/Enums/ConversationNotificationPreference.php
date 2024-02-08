@@ -34,50 +34,53 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InAppCommunication\Actions;
+namespace AdvisingApp\InAppCommunication\Enums;
 
-use Exception;
-use App\Models\User;
-use Twilio\Rest\Client;
-use AdvisingApp\InAppCommunication\Enums\ConversationType;
-use AdvisingApp\InAppCommunication\Models\TwilioConversation;
+use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasLabel;
+use Filament\Support\Contracts\HasDescription;
 
-class AddUserToConversation
+enum ConversationNotificationPreference: string implements HasColor, HasDescription, HasLabel, HasIcon
 {
-    public function __construct(
-        public Client $twilioClient,
-    ) {}
+    case All = 'all';
 
-    public function __invoke(User $user, TwilioConversation $conversation, bool $manager = false): void
+    case Mentions = 'mentions';
+
+    case None = 'none';
+
+    public function getLabel(): ?string
     {
-        throw_if(
-            ($conversation->type === ConversationType::UserToUser) && ($conversation->participants->count() >= 2),
-            new Exception('User to User conversations can only have 2 participants.')
-        );
+        return match ($this) {
+            self::All => 'All messages',
+            self::Mentions => 'Mentions only',
+            self::None => 'Mute',
+        };
+    }
 
-        if ($conversation->participants()->whereKey($user)->exists()) {
-            return;
-        }
+    public function getColor(): string | array | null
+    {
+        return match ($this) {
+            self::None => 'gray',
+            default => 'warning',
+        };
+    }
 
-        $participant = $this->twilioClient
-            ->conversations
-            ->v1
-            ->conversations($conversation->sid)
-            ->participants
-            ->create([
-                'identity' => $user->id,
-            ]);
+    public function getDescription(): ?string
+    {
+        return match ($this) {
+            self::All => 'Receive notifications for all messages.',
+            self::Mentions => 'Receive notifications for messages that mention you.',
+            self::None => 'Do not receive notifications for any messages.',
+        };
+    }
 
-        $conversation->participants()
-            ->attach($user, [
-                'participant_sid' => $participant->sid,
-                ...($user->is(auth()->user()) ? [
-                    'last_read_at' => now(),
-                ] : []),
-            ]);
-
-        if ($manager) {
-            app(PromoteUserToChannelManager::class)(user: $user, conversation: $conversation);
-        }
+    public function getIcon(): ?string
+    {
+        return match ($this) {
+            self::All => 'heroicon-m-bell-alert',
+            self::Mentions => 'heroicon-m-at-symbol',
+            self::None => 'heroicon-m-bell-slash',
+        };
     }
 }

@@ -50,6 +50,12 @@ return new class () extends Migration {
             $table->string('participant_sid');
             $table->boolean('is_channel_manager')->default(false);
             $table->boolean('is_pinned')->default(false);
+            $table->string('notification_preference')->default('all');
+            $table->string('first_unread_message_sid')->nullable();
+            $table->dateTime('first_unread_message_at')->nullable();
+            $table->text('last_unread_message_content')->nullable();
+            $table->dateTime('last_read_at')->nullable();
+            $table->unsignedInteger('unread_messages_count')->default(0);
 
             $table->timestamps();
 

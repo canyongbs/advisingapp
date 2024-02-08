@@ -39,6 +39,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Filament\Actions\Exports\Models\Export as BaseExport;
 
+/**
+ * @mixin IdeHelperExport
+ */
 class Export extends BaseExport
 {
     use HasUuids;

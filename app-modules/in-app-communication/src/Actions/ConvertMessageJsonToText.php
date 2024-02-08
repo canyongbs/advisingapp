@@ -36,48 +36,30 @@
 
 namespace AdvisingApp\InAppCommunication\Actions;
 
-use Exception;
 use App\Models\User;
-use Twilio\Rest\Client;
-use AdvisingApp\InAppCommunication\Enums\ConversationType;
-use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 
-class AddUserToConversation
+class ConvertMessageJsonToText
 {
-    public function __construct(
-        public Client $twilioClient,
-    ) {}
-
-    public function __invoke(User $user, TwilioConversation $conversation, bool $manager = false): void
+    public function __invoke(array $content, bool $isRoot = true): string
     {
-        throw_if(
-            ($conversation->type === ConversationType::UserToUser) && ($conversation->participants->count() >= 2),
-            new Exception('User to User conversations can only have 2 participants.')
-        );
+        $text = '';
 
-        if ($conversation->participants()->whereKey($user)->exists()) {
-            return;
+        foreach (($isRoot ? [$content] : $content) as $component) {
+            if (($component['type'] ?? null) === 'text') {
+                $text .= ' ' . trim($component['text'] ?? '');
+
+                continue;
+            }
+
+            if (($component['type'] ?? null) === 'mention') {
+                $text .= ' @' . User::find($component['attrs']['id'])?->name;
+
+                continue;
+            }
+
+            $text .= $this($component['content'] ?? [], isRoot: false);
         }
 
-        $participant = $this->twilioClient
-            ->conversations
-            ->v1
-            ->conversations($conversation->sid)
-            ->participants
-            ->create([
-                'identity' => $user->id,
-            ]);
-
-        $conversation->participants()
-            ->attach($user, [
-                'participant_sid' => $participant->sid,
-                ...($user->is(auth()->user()) ? [
-                    'last_read_at' => now(),
-                ] : []),
-            ]);
-
-        if ($manager) {
-            app(PromoteUserToChannelManager::class)(user: $user, conversation: $conversation);
-        }
+        return $text;
     }
 }

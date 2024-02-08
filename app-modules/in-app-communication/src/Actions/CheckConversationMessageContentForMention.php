@@ -36,48 +36,25 @@
 
 namespace AdvisingApp\InAppCommunication\Actions;
 
-use Exception;
 use App\Models\User;
-use Twilio\Rest\Client;
-use AdvisingApp\InAppCommunication\Enums\ConversationType;
-use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 
-class AddUserToConversation
+class CheckConversationMessageContentForMention
 {
-    public function __construct(
-        public Client $twilioClient,
-    ) {}
-
-    public function __invoke(User $user, TwilioConversation $conversation, bool $manager = false): void
+    public function __invoke(array $content, User $participant, bool $isRoot = true): bool
     {
-        throw_if(
-            ($conversation->type === ConversationType::UserToUser) && ($conversation->participants->count() >= 2),
-            new Exception('User to User conversations can only have 2 participants.')
-        );
+        foreach (($isRoot ? [$content] : $content) as $component) {
+            if (
+                ($component['type'] === 'mention') &&
+                ($component['attrs']['id'] === $participant->getKey())
+            ) {
+                return true;
+            }
 
-        if ($conversation->participants()->whereKey($user)->exists()) {
-            return;
+            if ($this($component['content'] ?? [], $participant, isRoot: false)) {
+                return true;
+            }
         }
 
-        $participant = $this->twilioClient
-            ->conversations
-            ->v1
-            ->conversations($conversation->sid)
-            ->participants
-            ->create([
-                'identity' => $user->id,
-            ]);
-
-        $conversation->participants()
-            ->attach($user, [
-                'participant_sid' => $participant->sid,
-                ...($user->is(auth()->user()) ? [
-                    'last_read_at' => now(),
-                ] : []),
-            ]);
-
-        if ($manager) {
-            app(PromoteUserToChannelManager::class)(user: $user, conversation: $conversation);
-        }
+        return false;
     }
 }

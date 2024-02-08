@@ -34,50 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InAppCommunication\Actions;
+namespace AdvisingApp\InAppCommunication\Jobs;
 
-use Exception;
 use App\Models\User;
-use Twilio\Rest\Client;
-use AdvisingApp\InAppCommunication\Enums\ConversationType;
-use AdvisingApp\InAppCommunication\Models\TwilioConversation;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use AdvisingApp\InAppCommunication\Events\ConversationMessageSent;
 
-class AddUserToConversation
+class NotifyConversationParticipants implements ShouldQueue
 {
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
     public function __construct(
-        public Client $twilioClient,
+        readonly public ConversationMessageSent $event,
     ) {}
 
-    public function __invoke(User $user, TwilioConversation $conversation, bool $manager = false): void
+    public function handle(): void
     {
-        throw_if(
-            ($conversation->type === ConversationType::UserToUser) && ($conversation->participants->count() >= 2),
-            new Exception('User to User conversations can only have 2 participants.')
-        );
-
-        if ($conversation->participants()->whereKey($user)->exists()) {
-            return;
-        }
-
-        $participant = $this->twilioClient
-            ->conversations
-            ->v1
-            ->conversations($conversation->sid)
-            ->participants
-            ->create([
-                'identity' => $user->id,
-            ]);
-
-        $conversation->participants()
-            ->attach($user, [
-                'participant_sid' => $participant->sid,
-                ...($user->is(auth()->user()) ? [
-                    'last_read_at' => now(),
-                ] : []),
-            ]);
-
-        if ($manager) {
-            app(PromoteUserToChannelManager::class)(user: $user, conversation: $conversation);
-        }
+        $this->event->conversation->participants()
+            ->whereKeyNot($this->event->author)
+            ->lazyById(100)
+            ->each(function (User $participant) {
+                dispatch(new NotifyConversationParticipant($this->event, $participant));
+            });
     }
 }
