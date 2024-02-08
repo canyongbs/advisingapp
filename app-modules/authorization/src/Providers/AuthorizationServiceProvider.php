@@ -51,6 +51,8 @@ use SocialiteProviders\Google\GoogleExtendSocialite;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\Observers\LicenseObserver;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\Http\Controllers\Auth\LogoutController;
+use Filament\Http\Controllers\Auth\LogoutController as FilamentLogoutController;
 
 class AuthorizationServiceProvider extends ServiceProvider
 {
@@ -64,6 +66,10 @@ class AuthorizationServiceProvider extends ServiceProvider
 
         $this->app->singleton(AuthorizationRoleRegistry::class, function ($app) {
             return new AuthorizationRoleRegistry();
+        });
+
+        $this->app->bind(FilamentLogoutController::class, function ($app) {
+            return new LogoutController();
         });
 
         app('config')->set('permission', require base_path('app-modules/authorization/config/permission.php'));

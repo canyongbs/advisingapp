@@ -34,3 +34,7 @@ public/api-docs/*
 /schema-directives.graphql
 /*tinkerwell.php
 .vault-password
+
+/caddy
+frankenphp
+frankenphp-worker.php
