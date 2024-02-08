@@ -34,37 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Models;
+namespace AdvisingApp\KnowledgeBase\Models\Scopes;
 
-use DateTimeInterface;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
 
-/**
- * @mixin IdeHelperKnowledgeBaseCategory
- */
-class KnowledgeBaseCategory extends BaseModel implements Auditable
+class SearchBy
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
+    public function __construct(
+        protected string $column,
+        protected string $argument
+    ) {}
 
-    protected $fillable = [
-        'name',
-        'description',
-    ];
-
-    public function knowledgeBaseItems(): HasMany
+    public function __invoke(Builder $query): void
     {
-        return $this->hasMany(KnowledgeBaseItem::class, 'category_id');
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+        $query->where(new Expression('lower(' . $this->column . ')'), 'like', '%' . $this->argument . '%');
     }
 }

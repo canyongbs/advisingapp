@@ -36,11 +36,13 @@
 
 namespace AdvisingApp\Portal\Http\Controllers;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Filament\Support\Colors\Color;
 use App\Http\Controllers\Controller;
 use AdvisingApp\Portal\Settings\PortalSettings;
+use AdvisingApp\KnowledgeBase\Models\Scopes\SearchBy;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseItemData;
@@ -75,7 +77,7 @@ class KnowledgeManagementPortalController extends Controller
         $itemData = KnowledgeBaseItemData::collection(
             KnowledgeBaseItem::query()
                 ->public()
-                ->search($request->get('search'))
+                ->tap(new SearchBy('title', Str::lower($request->get('search'))))
                 ->get()
                 ->map(function ($item) {
                     return [
@@ -88,7 +90,7 @@ class KnowledgeManagementPortalController extends Controller
 
         $categoryData = KnowledgeBaseCategoryData::collection(
             KnowledgeBaseCategory::query()
-                ->search($request->get('search'))
+                ->tap(new SearchBy('name', Str::lower($request->get('search'))))
                 ->get()
                 ->map(function ($category) {
                     return [

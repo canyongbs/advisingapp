@@ -23,7 +23,7 @@ defineProps({
 
         <div class="flex flex-col space-y-6 mt-6">
             <div v-if="loadingResults">
-                <p>Searching...</p>
+                <p>Loading results...</p>
             </div>
             <div v-if="!loadingResults && searchResults && searchResults.data" class="flex flex-col space-y-4">
                 <div class="border border-gray-200 rounded p-4 shadow">
