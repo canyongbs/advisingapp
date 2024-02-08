@@ -411,6 +411,9 @@ document.addEventListener('alpine:init', () => {
             removeColor() {
                 editor.chain().focus().unsetColor().run();
             },
+            insertContent(content) {
+                editor.chain().focus().insertContent(content).run();
+            },
         };
     });
 });

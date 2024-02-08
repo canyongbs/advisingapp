@@ -256,12 +256,13 @@
                                     <div
                                         x-data="chatEditor({ currentUser: @js(auth()->id()), users: @js($users) })"
                                         x-model="message"
-                                        x-on:click.outside="$refs.colorPicker.close"
+                                        x-on:click.outside="$refs.colorPicker.close(); $refs.emojiPicker.close()"
                                         wire:ignore
                                         x-modelable="content"
                                     >
                                         <template x-if="isLoaded()">
-                                            <div class="flex flex-wrap gap-1 border-b px-3 py-2 dark:border-gray-700">
+                                            <div
+                                                class="flex flex-wrap items-center gap-1 border-b px-3 py-2 dark:border-gray-700">
                                                 <button
                                                     class="rounded p-0.5"
                                                     type="button"
@@ -373,8 +374,9 @@
                                                                 type="button"
                                                                 x-on:click="removeColor()"
                                                                 x-bind:class="{
-                                                                    'ring-2 ring-offset-2 ring-primary-600': !isActive(
-                                                                        'textStyle', updatedAt),
+                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900':
+                                                                        !isActive(
+                                                                            'textStyle', updatedAt),
                                                                 }"
                                                             >
                                                                 <span class="sr-only">
@@ -391,7 +393,7 @@
                                                                 type="button"
                                                                 x-on:click="setColor('#ef4444')"
                                                                 x-bind:class="{
-                                                                    'ring-2 ring-offset-2 ring-primary-600': updatedAt &&
+                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900': updatedAt &&
                                                                         isActive('textStyle', { color: '#ef4444' }),
                                                                 }"
                                                             >
@@ -405,7 +407,7 @@
                                                                 type="button"
                                                                 x-on:click="setColor('#ec4899')"
                                                                 x-bind:class="{
-                                                                    'ring-2 ring-offset-2 ring-primary-600': updatedAt &&
+                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900': updatedAt &&
                                                                         isActive('textStyle', { color: '#ec4899' }),
                                                                 }"
                                                             >
@@ -419,7 +421,7 @@
                                                                 type="button"
                                                                 x-on:click="setColor('#3b82f6')"
                                                                 x-bind:class="{
-                                                                    'ring-2 ring-offset-2 ring-primary-600': updatedAt &&
+                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900': updatedAt &&
                                                                         isActive('textStyle', { color: '#3b82f6' }),
                                                                 }"
                                                             >
@@ -433,7 +435,7 @@
                                                                 type="button"
                                                                 x-on:click="setColor('#22c55e')"
                                                                 x-bind:class="{
-                                                                    'ring-2 ring-offset-2 ring-primary-600': updatedAt &&
+                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900': updatedAt &&
                                                                         isActive('textStyle', { color: '#22c55e' }),
                                                                 }"
                                                             >
@@ -447,7 +449,7 @@
                                                                 type="button"
                                                                 x-on:click="setColor('#eab308')"
                                                                 x-bind:class="{
-                                                                    'ring-2 ring-offset-2 ring-primary-600': updatedAt &&
+                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900': updatedAt &&
                                                                         isActive('textStyle', { color: '#eab308' }),
                                                                 }"
                                                             >
@@ -461,7 +463,7 @@
                                                                 type="button"
                                                                 x-on:click="setColor('#737373')"
                                                                 x-bind:class="{
-                                                                    'ring-2 ring-offset-2 ring-primary-600': updatedAt &&
+                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900': updatedAt &&
                                                                         isActive('textStyle', { color: '#737373' }),
                                                                 }"
                                                             >
@@ -469,6 +471,39 @@
                                                                     Gray
                                                                 </span>
                                                             </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <button
+                                                        class="rounded p-0.5"
+                                                        type="button"
+                                                        x-on:click="$refs.emojiPicker.toggle"
+                                                    >
+                                                        @svg('heroicon-c-face-smile', 'mt-0.5 h-4 w-4')
+                                                    </button>
+
+                                                    <div
+                                                        class="absolute z-10 max-w-xs divide-y divide-gray-100 rounded-lg bg-white px-4 py-3 shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10"
+                                                        x-cloak
+                                                        x-float.offset.placement.top-start="{ offset: 8 }"
+                                                        x-ref="emojiPicker"
+                                                        x-transition:enter-start="opacity-0"
+                                                        x-transition:leave-end="opacity-0"
+                                                    >
+                                                        <div class="flex flex-wrap items-center gap-2">
+                                                            <template
+                                                                x-for="emoji in ['😀', '😂', '👍', '👎', '🙏', '😕', '🤔', '😊', '🎉', '💼', '🕒', '📅', '🔒', '❗', '❓', '💡', '🚫', '✅', '🤖', '📧', '🌐', '💬', '📈', '📉', '🤝']"
+                                                            >
+                                                                <button
+                                                                    class="h-5 w-5 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+                                                                    type="button"
+                                                                    x-on:click="insertContent(emoji)"
+                                                                    x-text="emoji"
+                                                                    x-bind:key="emoji"
+                                                                ></button>
+                                                            </template>
                                                         </div>
                                                     </div>
                                                 </div>
