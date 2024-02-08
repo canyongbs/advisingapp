@@ -38,16 +38,22 @@ namespace AdvisingApp\Portal\Filament\Pages;
 
 use App\Models\User;
 use App\Enums\Feature;
+use Filament\Forms\Get;
 use Filament\Forms\Form;
 use App\Models\SettingsProperty;
 use Filament\Pages\SettingsPage;
+use AdvisingApp\Form\Enums\Rounding;
 use Illuminate\Support\Facades\Gate;
 use App\Filament\Fields\TiptapEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\GlobalSettings;
 use Filament\Forms\Components\ColorPicker;
 use FilamentTiptapEditor\Enums\TiptapOutput;
+use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Portal\Settings\PortalSettings;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
@@ -94,7 +100,7 @@ class ManagePortalSettings extends SettingsPage
                             ->hexColor(),
                     ])
                     ->columns(2),
-                Section::make('Features')
+                Section::make('CRM Portal')
                     ->schema([
                         Toggle::make('has_applications')
                             ->label('Applications'),
@@ -139,6 +145,52 @@ class ManagePortalSettings extends SettingsPage
                             ->hintIconTooltip('Surveys are not a part of your current subscription.'),
                     ])
                     ->columns(3),
+                Section::make('Knowledge Portal')
+                    ->schema([
+                        Toggle::make('knowledge_base_portal_enabled')
+                            ->label('Knowledge Management')
+                            ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                            ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIconTooltip('Knowledge Management is not a part of your current subscription.')
+                            ->live()
+                            ->columnSpanFull(),
+                        ColorPicker::make('knowledge_base_portal_primary_color')
+                            ->label('Primary Color')
+                            ->hexColor()
+                            ->visible(fn (Get $get) => $get('knowledge_base_portal_enabled'))
+                            ->columnSpan(1),
+                        Select::make('knowledge_base_portal_rounding')
+                            ->label('Rounding')
+                            ->options(Rounding::class)
+                            ->visible(fn (Get $get) => $get('knowledge_base_portal_enabled'))
+                            ->columnSpan(1),
+                        TextInput::make('knowledge_base_portal_authorized_domain')
+                            ->label('Authorized Domain')
+                            ->url()
+                            ->visible(fn (Get $get) => $get('knowledge_base_portal_enabled'))
+                            ->columnSpanFull(),
+                        Toggle::make('knowledge_base_portal_service_management')
+                            ->label('Service Management')
+                            ->visible(fn (Get $get) => $get('knowledge_base_portal_enabled'))
+                            ->disabled(! Gate::check(Feature::ServiceManagement->getGateName()))
+                            ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null),
+                        Actions::make([
+                            Action::make('view')
+                                ->icon('heroicon-o-eye')
+                                ->action(function () {}),
+                            Action::make('embed_snippet')
+                                ->label('Embed Snippet')
+                                ->action(function () {}),
+                        ])
+                            ->visible(
+                                fn (Get $get) => $get('knowledge_base_portal_enabled') &&
+                            ! is_null($get('knowledge_base_portal_primary_color')) &&
+                            ! is_null($get('knowledge_base_portal_rounding')) &&
+                            ! is_null($get('knowledge_base_portal_authorized_domain'))
+                            )
+                            ->columnSpanFull(),
+                    ])->columns(2),
+
                 Section::make('Footer')
                     ->schema([
                         ColorPicker::make('footer_color')

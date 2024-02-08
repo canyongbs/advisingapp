@@ -59,5 +59,14 @@ return new class () extends SettingsMigration {
 
         $this->migrator->add('portal.footer_color');
         $this->migrator->add('portal.footer_copyright_statement');
+
+        /**
+         * Knowledge Base Portal
+        */
+        $this->migrator->add('portal.knowledge_base_portal_enabled', false);
+        $this->migrator->add('portal.knowledge_base_portal_service_management', false);
+        $this->migrator->add('portal.knowledge_base_portal_primary_color');
+        $this->migrator->add('portal.knowledge_base_portal_rounding');
+        $this->migrator->add('portal.knowledge_base_portal_authorized_domain');
     }
 };
