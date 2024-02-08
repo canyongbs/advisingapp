@@ -36,6 +36,7 @@ import { defineProps, ref, watch, onMounted } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import Loading from '@/Components/Loading.vue';
+import DOMPurify from 'dompurify';
 
 const route = useRoute();
 
@@ -102,7 +103,7 @@ function getData() {
             <div class="prose">
                 <h1 class="text-3xl font-semibold mt-4">{{ article.name }}</h1>
                 <span>Last Updated: {{ article.lastUpdated }}</span>
-                <div v-html="article.content"></div>
+                <div v-html="DOMPurify.sanitize(article.content)"></div>
             </div>
         </div>
     </div>
