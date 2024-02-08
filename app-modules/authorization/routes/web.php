@@ -35,7 +35,6 @@
 */
 
 use AdvisingApp\Authorization\Http\Controllers\SocialiteController;
-use AdvisingApp\Authorization\Http\Controllers\Auth\LogoutController;
 use AdvisingApp\Authorization\Http\Controllers\Auth\OneTimeLoginController;
 
 Route::middleware('web')->group(function () {
@@ -50,7 +49,4 @@ Route::middleware('web')->group(function () {
     Route::get('/auth/login/{user}', OneTimeLoginController::class)
         ->name('login.one-time')
         ->middleware('signed');
-
-    Route::post('/auth/logout', LogoutController::class)
-        ->name('logout');
 });

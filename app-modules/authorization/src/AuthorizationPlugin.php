@@ -83,8 +83,7 @@ class AuthorizationPlugin implements Plugin
         $panel->userMenuItems(
             [
                 'logout' => MenuItem::make()
-                    ->label('Log out')
-                    ->url(route('logout')),
+                    ->label('Log out'),
             ]
         );
     }
