@@ -38,10 +38,11 @@ namespace AdvisingApp\Portal\DataTransferObjects;
 
 use Spatie\LaravelData\Data;
 
-class KnowledgeBaseItemData extends Data
+class KnowledgeBaseArticleData extends Data
 {
     public function __construct(
         public string $id,
+        public ?string $categoryId,
         public string $name,
         public ?string $lastUpdated,
         public ?string $content

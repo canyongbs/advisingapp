@@ -42,7 +42,7 @@ use App\Models\Scopes\SearchBy;
 use App\Http\Controllers\Controller;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseItemData;
+use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeManagementSearchData;
 
@@ -50,7 +50,7 @@ class KnowledgeManagementPortalSearchController extends Controller
 {
     public function get(Request $request): KnowledgeManagementSearchData
     {
-        $itemData = KnowledgeBaseItemData::collection(
+        $itemData = KnowledgeBaseArticleData::collection(
             KnowledgeBaseItem::query()
                 ->public()
                 ->tap(new SearchBy('title', Str::lower($request->get('search'))))
@@ -58,6 +58,7 @@ class KnowledgeManagementPortalSearchController extends Controller
                 ->map(function ($item) {
                     return [
                         'id' => $item->getKey(),
+                        'categoryId' => $item->category_id,
                         'name' => $item->title,
                     ];
                 })

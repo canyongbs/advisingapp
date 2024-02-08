@@ -40,7 +40,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseItemData;
+use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
 
 class KnowledgeManagementPortalArticleController extends Controller
@@ -53,8 +53,9 @@ class KnowledgeManagementPortalArticleController extends Controller
                 'name' => $category->name,
                 'description' => $category->description,
             ]),
-            'article' => KnowledgeBaseItemData::from([
+            'article' => KnowledgeBaseArticleData::from([
                 'id' => $article->getKey(),
+                'categoryId' => $article->category_id,
                 'name' => $article->title,
                 'lastUpdated' => $article->updated_at->format('M d Y, h:m a'),
                 'content' => tiptap_converter()->asHTML($article->article_details),

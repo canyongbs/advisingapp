@@ -42,7 +42,7 @@ use Spatie\LaravelData\Attributes\DataCollectionOf;
 
 class KnowledgeManagementSearchData extends Data
 {
-    #[DataCollectionOf(KnowledgeBaseItemData::class)]
+    #[DataCollectionOf(KnowledgeBaseArticleData::class)]
     public DataCollection $articles;
 
     #[DataCollectionOf(KnowledgeBaseCategoryData::class)]
