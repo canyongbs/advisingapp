@@ -1,6 +1,4 @@
-<?php
-
-/*
+<!--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,42 +30,44 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+-->
+<script setup>
+import SidebarContent from '@/Components/SidebarContent.vue';
+import { defineProps } from 'vue';
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
+defineProps({
+    categories: {
+        type: Object,
+        default: {},
+    },
+});
+</script>
 
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
+<template>
+    <div class="relative z-50 lg:hidden" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-gray-900/80"></div>
+        <div class="fixed inset-0 flex">
+            <div class="relative mr-16 flex w-full max-w-xs flex-1">
+                <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
+                    <button type="button" class="-m-2.5 p-2.5" @click="$emit('sidebarClosed')">
+                        <span class="sr-only">Close sidebar</span>
+                        <svg
+                            class="h-6 w-6 text-white"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            aria-hidden="true"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
 
-class EditKnowledgeBaseCategory extends EditRecord
-{
-    protected static string $resource = KnowledgeBaseCategoryResource::class;
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
-    }
-}
+                <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-primary-700 px-6 pb-4">
+                    <SidebarContent :categories="categories"></SidebarContent>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

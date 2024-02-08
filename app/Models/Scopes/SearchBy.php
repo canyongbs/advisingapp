@@ -34,40 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
+namespace App\Models\Scopes;
 
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
 
-class EditKnowledgeBaseCategory extends EditRecord
+class SearchBy
 {
-    protected static string $resource = KnowledgeBaseCategoryResource::class;
+    public function __construct(
+        protected string $column,
+        protected string $argument
+    ) {}
 
-    public function form(Form $form): Form
+    public function __invoke(Builder $query): void
     {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
+        $query->where(new Expression('lower(' . $this->column . ')'), 'like', '%' . $this->argument . '%');
     }
 }

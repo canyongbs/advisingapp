@@ -34,40 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
+namespace AdvisingApp\Portal\Http\Middleware;
 
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use AdvisingApp\Portal\Settings\PortalSettings;
 
-class EditKnowledgeBaseCategory extends EditRecord
+class EnsureKnowledgeManagementPortalIsEnabled
 {
-    protected static string $resource = KnowledgeBaseCategoryResource::class;
-
-    public function form(Form $form): Form
+    public function handle(Request $request, Closure $next): Response
     {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string(),
-            ]);
-    }
+        if (! app(PortalSettings::class)->knowledge_management_portal_enabled) {
+            if ($request->wantsJson() || $request->fullUrlIs('*/api/portal/knowledge-management/*')) {
+                return response()->json(['error' => 'The Knowledge Management Portal is not enabled.'], Response::HTTP_FORBIDDEN);
+            }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
+        return $next($request);
     }
 }

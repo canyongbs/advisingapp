@@ -34,40 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
+namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
+use Illuminate\Http\JsonResponse;
+use Filament\Support\Colors\Color;
+use App\Http\Controllers\Controller;
+use AdvisingApp\Portal\Settings\PortalSettings;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
+use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
 
-class EditKnowledgeBaseCategory extends EditRecord
+class KnowledgeManagementPortalController extends Controller
 {
-    protected static string $resource = KnowledgeBaseCategoryResource::class;
-
-    public function form(Form $form): Form
+    public function show(): JsonResponse
     {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string(),
-            ]);
-    }
+        $settings = resolve(PortalSettings::class);
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
+        return response()->json([
+            'primary_color' => Color::all()[$settings->knowledge_management_portal_primary_color ?? 'blue'],
+            'rounding' => $settings->knowledge_management_portal_rounding,
+            'categories' => KnowledgeBaseCategoryData::collection(
+                KnowledgeBaseCategory::query()
+                    ->get()
+                    ->map(function ($category) {
+                        return [
+                            'id' => $category->getKey(),
+                            'name' => $category->name,
+                            'description' => $category->description,
+                        ];
+                    })
+                    ->toArray()
+            ),
+        ]);
     }
 }

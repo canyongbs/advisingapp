@@ -63,10 +63,10 @@ return new class () extends SettingsMigration {
         /**
          * Knowledge Base Portal
         */
-        $this->migrator->add('portal.knowledge_base_portal_enabled', false);
-        $this->migrator->add('portal.knowledge_base_portal_service_management', false);
-        $this->migrator->add('portal.knowledge_base_portal_primary_color');
-        $this->migrator->add('portal.knowledge_base_portal_rounding');
-        $this->migrator->add('portal.knowledge_base_portal_authorized_domain');
+        $this->migrator->add('portal.knowledge_management_portal_enabled', false);
+        $this->migrator->add('portal.knowledge_management_portal_service_management', false);
+        $this->migrator->add('portal.knowledge_management_portal_primary_color');
+        $this->migrator->add('portal.knowledge_management_portal_rounding');
+        $this->migrator->add('portal.knowledge_management_portal_authorized_domain');
     }
 };

@@ -1,6 +1,4 @@
-<?php
-
-/*
+<!--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,42 +30,32 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+-->
+<script setup>
+import { ChevronRightIcon } from '@heroicons/vue/24/outline';
+import { defineProps } from 'vue';
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
+defineProps({
+    currentCrumb: {
+        type: String,
+        required: true,
+    },
+    breadcrumbs: {
+        type: Object,
+        default: {},
+    },
+});
+</script>
 
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
+<template>
+    <div class="flex flex-row text-gray-800 space-x-2 mt-4">
+        <div v-for="crumb in breadcrumbs" :key="crumb.route" class="flex flex-row items-center space-x-2">
+            <router-link :to="{ name: crumb.route }">
+                <h3 class="text-md">{{ crumb.name }}</h3>
+            </router-link>
+            <ChevronRightIcon class="h-4 w-4" />
+        </div>
 
-class EditKnowledgeBaseCategory extends EditRecord
-{
-    protected static string $resource = KnowledgeBaseCategoryResource::class;
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
-    }
-}
+        <h3 class="text-md font-semibold">{{ currentCrumb }}</h3>
+    </div>
+</template>

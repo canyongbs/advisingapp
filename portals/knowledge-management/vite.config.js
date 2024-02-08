@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,41 +31,28 @@
 
 </COPYRIGHT>
 */
+import { resolve } from 'path';
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
-
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
-
-class EditKnowledgeBaseCategory extends EditRecord
-{
-    protected static string $resource = KnowledgeBaseCategoryResource::class;
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
-    }
-}
+export default defineConfig({
+    plugins: [vue()],
+    build: {
+        manifest: true,
+        lib: {
+            entry: resolve(__dirname, './src/portal.js'),
+            name: 'KnowledgeManagementPortal',
+            fileName: 'advising-app-knowledge-management-portal',
+            formats: ['es'],
+        },
+        outDir: resolve(__dirname, '../../public/js/portals/knowledge-management'),
+        emptyOutDir: true,
+        sourcemap: true,
+    },
+    resolve: {
+        alias: {
+            '@': resolve(__dirname, 'src'),
+        },
+    },
+    define: { 'process.env.NODE_ENV': '"production"' },
+});

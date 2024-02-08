@@ -1,6 +1,4 @@
-<?php
-
-/*
+<!--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,42 +30,23 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+-->
+<script setup>
+import SidebarContent from '@/Components/SidebarContent.vue';
+import { defineProps } from 'vue';
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
+defineProps({
+    categories: {
+        type: Object,
+        default: {},
+    },
+});
+</script>
 
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
-
-class EditKnowledgeBaseCategory extends EditRecord
-{
-    protected static string $resource = KnowledgeBaseCategoryResource::class;
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
-    }
-}
+<template>
+    <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+        <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-primary-700 px-6 pb-4">
+            <SidebarContent :categories="categories"></SidebarContent>
+        </div>
+    </div>
+</template>

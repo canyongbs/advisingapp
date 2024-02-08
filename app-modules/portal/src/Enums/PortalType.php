@@ -34,40 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
+namespace AdvisingApp\Portal\Enums;
 
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
+use Filament\Support\Contracts\HasLabel;
 
-class EditKnowledgeBaseCategory extends EditRecord
+enum PortalType: string implements HasLabel
 {
-    protected static string $resource = KnowledgeBaseCategoryResource::class;
+    case KnowledgeManagement = 'knowledge_management';
 
-    public function form(Form $form): Form
+    public function getLabel(): ?string
     {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
+        return match ($this) {
+            PortalType::KnowledgeManagement => 'Knowledge Management',
+        };
     }
 }

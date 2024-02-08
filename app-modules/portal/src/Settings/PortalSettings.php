@@ -79,15 +79,15 @@ class PortalSettings extends Settings
     /**
     * Knowledge Base Portal
     */
-    public bool $knowledge_base_portal_enabled = false;
+    public bool $knowledge_management_portal_enabled = false;
 
-    public bool $knowledge_base_portal_service_management = false;
+    public bool $knowledge_management_portal_service_management = false;
 
-    public ?string $knowledge_base_portal_primary_color = null;
+    public ?string $knowledge_management_portal_primary_color = null;
 
-    public ?string $knowledge_base_portal_rounding = null;
+    public ?string $knowledge_management_portal_rounding = null;
 
-    public ?string $knowledge_base_portal_authorized_domain = null;
+    public ?string $knowledge_management_portal_authorized_domain = null;
 
     public static function group(): string
     {

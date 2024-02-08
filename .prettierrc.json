@@ -1,35 +1,37 @@
 {
-  "plugins": ["@shufo/prettier-plugin-blade"],
-  "overrides": [
-    {
-      "files": ["*.blade.php"],
-      "options": {
-        "printWidth": 120,
-        "tabWidth": 4,
-        "singleQuote": true,
-        "wrapAttributes": "force-expand-multiline",
-        "sortTailwindcssClasses": true,
-        "sortHtmlAttributes": "code-guide",
-        "parser": "blade"
-      }
-    },
-    {
-      "files": ["*.js", "*.css", "*.vue"],
-      "options": {
-        "printWidth": 120,
-        "tabWidth": 4,
-        "singleQuote": true,
-        "wrapAttributes": "force-expand-multiline"
-      }
-    },
-    {
-        "files": ["*.json"],
-        "options": {
-          "tabWidth": 4
+    "plugins": ["@shufo/prettier-plugin-blade"],
+    "overrides": [
+        {
+            "files": ["*.blade.php"],
+            "options": {
+                "printWidth": 120,
+                "tabWidth": 4,
+                "singleQuote": true,
+                "wrapAttributes": "force-expand-multiline",
+                "sortTailwindcssClasses": true,
+                "sortHtmlAttributes": "code-guide",
+                "parser": "blade"
+            }
+        },
+        {
+            "files": ["*.js", "*.css", "*.vue"],
+            "options": {
+                "printWidth": 120,
+                "tabWidth": 4,
+                "singleQuote": true,
+                "wrapAttributes": "force-expand-multiline",
+                "sortTailwindcssClasses": true,
+                "sortHtmlAttributes": "code-guide"
+            }
+        },
+        {
+            "files": ["*.json"],
+            "options": {
+                "tabWidth": 4
+            }
+        },
+        {
+            "files": ["*.graphql"]
         }
-      },
-    {
-      "files": ["*.graphql"]
-    }
-  ]
+    ]
 }

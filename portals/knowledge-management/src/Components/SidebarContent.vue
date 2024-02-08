@@ -1,6 +1,4 @@
-<?php
-
-/*
+<!--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,42 +30,39 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+-->
+<script setup>
+import { defineProps } from 'vue';
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
+defineProps({
+    categories: {
+        type: Object,
+        default: {},
+    },
+});
+</script>
 
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
+<template>
+    <nav class="flex flex-1 flex-col mt-4">
+        <div class="flex justify-center">
+            <router-link :to="{ name: 'home' }">
+                <h3 class="text-xl text-white">Help Center</h3>
+            </router-link>
+        </div>
 
-class EditKnowledgeBaseCategory extends EditRecord
-{
-    protected static string $resource = KnowledgeBaseCategoryResource::class;
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
-    }
-}
+        <ul role="list" class="flex flex-1 flex-col gap-y-7 mt-4">
+            <li v-for="category in categories" :key="category.id">
+                <div
+                    class="bg-gray-100 text-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                >
+                    <router-link
+                        :to="{ name: 'view-category', params: { categoryId: category.id } }"
+                        active-class="font-bold"
+                    >
+                        {{ category.name }}
+                    </router-link>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</template>

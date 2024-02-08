@@ -48,6 +48,7 @@ class KnowledgeBaseCategoryFactory extends Factory
     {
         return [
             'name' => $this->faker->word(),
+            'description' => $this->faker->sentences(2, true),
         ];
     }
 }

@@ -34,40 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
+namespace AdvisingApp\Portal\DataTransferObjects;
 
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
+use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 
-class EditKnowledgeBaseCategory extends EditRecord
+class KnowledgeManagementSearchData extends Data
 {
-    protected static string $resource = KnowledgeBaseCategoryResource::class;
+    #[DataCollectionOf(KnowledgeBaseArticleData::class)]
+    public DataCollection $articles;
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
-    }
+    #[DataCollectionOf(KnowledgeBaseCategoryData::class)]
+    public DataCollection $categories;
 }

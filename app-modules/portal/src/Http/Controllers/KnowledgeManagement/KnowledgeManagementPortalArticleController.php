@@ -34,40 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
+namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
+use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
+use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
 
-class EditKnowledgeBaseCategory extends EditRecord
+class KnowledgeManagementPortalArticleController extends Controller
 {
-    protected static string $resource = KnowledgeBaseCategoryResource::class;
-
-    public function form(Form $form): Form
+    public function show(KnowledgeBaseCategory $category, KnowledgeBaseItem $article): JsonResponse
     {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
+        return response()->json([
+            'category' => KnowledgeBaseCategoryData::from([
+                'id' => $category->getKey(),
+                'name' => $category->name,
+                'description' => $category->description,
+            ]),
+            'article' => KnowledgeBaseArticleData::from([
+                'id' => $article->getKey(),
+                'categoryId' => $article->category_id,
+                'name' => $article->title,
+                'lastUpdated' => $article->updated_at->format('M d Y, h:m a'),
+                'content' => tiptap_converter()->asHTML($article->article_details),
+            ]),
+        ]);
     }
 }

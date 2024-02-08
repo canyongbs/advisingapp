@@ -34,40 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
+namespace AdvisingApp\Portal\Actions;
 
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
+use Exception;
+use Illuminate\Support\Facades\URL;
+use AdvisingApp\Portal\Enums\PortalType;
 
-class EditKnowledgeBaseCategory extends EditRecord
+class GeneratePortalEmbedCode
 {
-    protected static string $resource = KnowledgeBaseCategoryResource::class;
-
-    public function form(Form $form): Form
+    public function handle(PortalType $portal): string
     {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string(),
-            ]);
-    }
+        return match ($portal) {
+            PortalType::KnowledgeManagement => (function () {
+                $scriptUrl = url('js/portals/knowledge-management/advising-app-knowledge-management-portal.js?');
+                $portalAccessUrl = route('portals.knowledge-management.show');
+                $portalDefinitionUrl = URL::signedRoute('portal.knowledge-management.define');
+                $portalSearchUrl = URL::signedRoute('portal.knowledge-management.search');
+                $appUrl = parse_url(config('app.url'))['host'];
+                $apiUrl = route('portal.knowledge-management.define');
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
+                return <<<EOD
+                <knowledge-management-portal-embed url="{$portalDefinitionUrl}" access-url={$portalAccessUrl} search-url="{$portalSearchUrl}" app-url="{$appUrl}" api-url="{$apiUrl}"></knowledge-management-portal-embed>
+                <script src="{$scriptUrl}"></script>
+                EOD;
+            })(),
+            default => throw new Exception('Unsupported Portal.'),
+        };
     }
 }

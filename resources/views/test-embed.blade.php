@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,42 +30,17 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<div>
+    <knowledge-management-portal-embed
+        url="http://test.advisingapp.local/api/portal/knowledge-management?signature=f5277bd0ec29e955f6b9b05477aa4ee2b3dec8c9699c0cbd3878ae2760747e2e"
+        access-url=http://test.advisingapp.local/portals/knowledge-management
+        search-url="http://test.advisingapp.local/api/portal/knowledge-management/search?signature=23611602690be61d6ac3d1d98b22fc18c69f4bf18b4f7323edb2c69f368ced7c"
+        app-url="test.advisingapp.local"
+        api-url="http://test.advisingapp.local/api/portal/knowledge-management"
+    ></knowledge-management-portal-embed>
+</div>
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
-
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
-
-class EditKnowledgeBaseCategory extends EditRecord
-{
-    protected static string $resource = KnowledgeBaseCategoryResource::class;
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
-    }
-}
+<script
+    src="http://test.advisingapp.local/js/portals/knowledge-management/advising-app-knowledge-management-portal.js?">
+</script>

@@ -34,40 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
+namespace AdvisingApp\Portal\Http\Middleware;
 
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use AdvisingApp\Portal\Settings\PortalSettings;
 
-class EditKnowledgeBaseCategory extends EditRecord
+class EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized
 {
-    protected static string $resource = KnowledgeBaseCategoryResource::class;
-
-    public function form(Form $form): Form
+    public function handle(Request $request, Closure $next): Response
     {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string(),
-            ]);
-    }
+        $referer = $request->headers->get('referer');
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
+        // If we are on the root domain
+        if (parse_url($request->url())['host'] === parse_url(config('app.url'))['host']) {
+            return $next($request);
+        }
+
+        if (! $referer) {
+            return response()->json(['error' => 'Missing referer header.'], 400);
+        }
+
+        $referer = parse_url($referer)['host'];
+
+        $settings = resolve(PortalSettings::class);
+
+        if ($referer != parse_url(config('app.url'))['host']) {
+            if (parse_url($settings->knowledge_management_portal_authorized_domain)['host'] !== $referer) {
+                return response()->json(['error' => 'Referer not allowed. Domain must be added to allowed domains list'], 403);
+            }
+        }
+
+        return $next($request);
     }
 }

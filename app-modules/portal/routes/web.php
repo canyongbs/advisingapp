@@ -34,40 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
+use Illuminate\Support\Facades\Route;
+use AdvisingApp\Portal\Livewire\RenderKnowledgeManagementPortal;
+use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
+use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized;
 
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
-
-class EditKnowledgeBaseCategory extends EditRecord
-{
-    protected static string $resource = KnowledgeBaseCategoryResource::class;
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
-    }
-}
+Route::prefix('portals')
+    ->name('portals.')
+    ->middleware([
+        'web',
+    ])
+    ->group(function () {
+        Route::middleware([
+            EnsureKnowledgeManagementPortalIsEnabled::class,
+            EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
+        ])->group(function () {
+            Route::get('/knowledge-management', RenderKnowledgeManagementPortal::class)
+                ->name('knowledge-management.show');
+            Route::get('/knowledge-management/categories/{category}', RenderKnowledgeManagementPortal::class)
+                ->name('knowledge-management.category.show');
+            Route::get('/knowledge-management/categories/{category}/articles/{article}', RenderKnowledgeManagementPortal::class)
+                ->name('knowledge-management.article.show');
+        });
+    });
