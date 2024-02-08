@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Tenant;
 use GraphQL\Type\Introspection;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Nuwave\Lighthouse\Schema\AST\ASTCache;
 use Nuwave\Lighthouse\Schema\SchemaBuilder;
@@ -112,54 +113,59 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
         $fail = false;
 
         foreach ($contents as $model) {
-            $lines = str($model)
-                ->explode("\n");
-
-            $class = str($lines->shift());
-
-            $type = $types->where('name', $class->afterLast('\\')->before('::class')->trim())->first();
-
-            if ($type) {
-                $this->info("Type found: {$class}");
-                $this->line('Description: ' . ($type['description'] ?: $this->style('Missing', 'error')));
-
-                $fields = [];
-
-                foreach ($lines as $line) {
-                    $property = str($line)->afterLast('$')->trim();
-
-                    $field = collect($type['fields'])->where('name', $property->snake())->first();
-
-                    if ($field) {
-                        if ($field['description']) {
-                            $description = $field['description'];
-                        } else {
-                            $description = $this->style('Missing', 'error');
-                            $fail = true;
-                        }
-
-                        $this->option('list')
-                        ? $this->info("Field found: {$property}")
-                        : $fields[] = ['Field' => $this->style($property), 'Description' => $description];
-                    } else {
-                        $fail = true;
-                        $this->option('list')
-                        ? $this->warn("Field not found: {$property}")
-                        : $fields[] = ['Field' => $this->style($property, 'warning'), 'Description' => $this->style('Not found', 'warning')];
-                    }
-                }
-
-                if (! $this->option('list')) {
-                    $this->table(['Field', 'Description'], $fields);
-                }
-            } else {
-                $this->warn("Type not found: {$class}");
-                $fail = true;
-            }
-            $this->newLine();
+            $this->checkModel($model, $types, $fail);
         }
 
         return $fail ? self::FAILURE : self::SUCCESS;
+    }
+
+    private function checkModel(string $model, Collection $types, &$fail): void
+    {
+        $lines = str($model)
+            ->explode("\n");
+
+        $class = str($lines->shift());
+
+        $type = $types->where('name', $class->afterLast('\\')->before('::class')->trim())->first();
+
+        if ($type) {
+            $this->info("Type found: {$class}");
+            $this->line('Description: ' . ($type['description'] ?: $this->style('Missing', 'error')));
+
+            $fields = [];
+
+            foreach ($lines as $line) {
+                $property = str($line)->afterLast('$')->trim();
+
+                $field = collect($type['fields'])->where('name', $property->snake())->first();
+
+                if ($field) {
+                    if ($field['description']) {
+                        $description = $field['description'];
+                    } else {
+                        $description = $this->style('Missing', 'error');
+                        $fail = true;
+                    }
+
+                    $this->option('list')
+                        ? $this->info("Field found: {$property}")
+                        : $fields[] = ['Field' => $this->style($property), 'Description' => $description];
+                } else {
+                    $fail = true;
+                    $this->option('list')
+                        ? $this->warn("Field not found: {$property}")
+                        : $fields[] = ['Field' => $this->style($property, 'warning'), 'Description' => $this->style('Not found', 'warning')];
+                }
+            }
+
+            if (! $this->option('list')) {
+                $this->table(['Field', 'Description'], $fields);
+            }
+        } else {
+            $this->warn("Type not found: {$class}");
+            $fail = true;
+        }
+        $this->newLine();
     }
 
     private function style(string $value, string $type = null): string
