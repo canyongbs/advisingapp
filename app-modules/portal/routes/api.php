@@ -35,9 +35,12 @@
 */
 
 use Illuminate\Support\Facades\Route;
-use AdvisingApp\Portal\Http\Controllers\KnowledgeManagementPortalController;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
+use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalController;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized;
+use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalSearchController;
+use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalArticleController;
+use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalCategoryController;
 
 Route::prefix('api')
     ->middleware([
@@ -52,14 +55,16 @@ Route::prefix('api')
         Route::prefix('portal/knowledge-management')
             ->name('portal.knowledge-management.')
             ->group(function () {
-                Route::get('/', [KnowledgeManagementPortalController::class, 'view'])
+                Route::get('/', [KnowledgeManagementPortalController::class, 'show'])
                     ->middleware(['signed'])
                     ->name('define');
-                Route::post('/search', [KnowledgeManagementPortalController::class, 'search'])
+                Route::post('/search', [KnowledgeManagementPortalSearchController::class, 'get'])
                     ->middleware(['signed'])
                     ->name('search');
-                Route::get('/categories/{category}', [KnowledgeManagementPortalController::class, 'category']);
-                Route::get('/categories/{category}/articles/{article}', [KnowledgeManagementPortalController::class, 'article']);
+                Route::get('/categories/{category}', [KnowledgeManagementPortalCategoryController::class, 'show'])
+                    ->name('category.show');
+                Route::get('/categories/{category}/articles/{article}', [KnowledgeManagementPortalArticleController::class, 'show'])
+                    ->name('article.show');
             })
             ->middleware([
                 EnsureKnowledgeManagementPortalIsEnabled::class,

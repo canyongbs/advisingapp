@@ -34,26 +34,36 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use AdvisingApp\Portal\Livewire\RenderKnowledgeManagementPortal;
-use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
-use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized;
+namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
-Route::prefix('portals')
-    ->name('portals.')
-    ->middleware([
-        'web',
-    ])
-    ->group(function () {
-        Route::middleware([
-            EnsureKnowledgeManagementPortalIsEnabled::class,
-            EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
-        ])->group(function () {
-            Route::get('/knowledge-management/{category?}/{article?}', RenderKnowledgeManagementPortal::class)
-                ->where([
-                    'category' => '[a-zA-Z0-9-]+',
-                    'article' => '[a-zA-Z0-9-]+',
-                ])
-                ->name('knowledge-management.show');
-        });
-    });
+use Illuminate\Http\JsonResponse;
+use Filament\Support\Colors\Color;
+use App\Http\Controllers\Controller;
+use AdvisingApp\Portal\Settings\PortalSettings;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
+use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
+
+class KnowledgeManagementPortalController extends Controller
+{
+    public function show(): JsonResponse
+    {
+        $settings = resolve(PortalSettings::class);
+
+        return response()->json([
+            'primary_color' => Color::all()[$settings->knowledge_management_portal_primary_color ?? 'blue'],
+            'rounding' => $settings->knowledge_management_portal_rounding,
+            'categories' => KnowledgeBaseCategoryData::collection(
+                KnowledgeBaseCategory::query()
+                    ->get()
+                    ->map(function ($category) {
+                        return [
+                            'id' => $category->getKey(),
+                            'name' => $category->name,
+                            'description' => $category->description,
+                        ];
+                    })
+                    ->toArray()
+            ),
+        ]);
+    }
+}

@@ -34,52 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Controllers;
+namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Scopes\SearchBy;
-use Illuminate\Http\JsonResponse;
-use Filament\Support\Colors\Color;
 use App\Http\Controllers\Controller;
-use AdvisingApp\Portal\Settings\PortalSettings;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseItemData;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeManagementSearchData;
 
-class KnowledgeManagementPortalController extends Controller
+class KnowledgeManagementPortalSearchController extends Controller
 {
-    public function view(): JsonResponse
+    public function get(Request $request): KnowledgeManagementSearchData
     {
-        $settings = resolve(PortalSettings::class);
-
-        // TODO We potentially want to generate the API key here
-
-        return response()->json([
-            'primary_color' => Color::all()[$settings->knowledge_management_portal_primary_color ?? 'blue'],
-            'rounding' => $settings->knowledge_management_portal_rounding,
-            'categories' => KnowledgeBaseCategoryData::collection(
-                KnowledgeBaseCategory::query()
-                    ->get()
-                    ->map(function ($category) {
-                        return [
-                            'id' => $category->getKey(),
-                            'name' => $category->name,
-                            'description' => $category->description,
-                        ];
-                    })
-                    ->toArray()
-            ),
-        ]);
-    }
-
-    // TODO Extract to dedicated controller
-    public function search(Request $request)
-    {
-        ray('request', $request->all());
-
         $itemData = KnowledgeBaseItemData::collection(
             KnowledgeBaseItem::query()
                 ->public()
@@ -113,50 +83,6 @@ class KnowledgeManagementPortalController extends Controller
             'categories' => $categoryData,
         ]);
 
-        ray('searchResults');
-
         return $searchResults->wrap('data');
-    }
-
-    // TODO Extract to dedicated controller
-    public function category(KnowledgeBaseCategory $category)
-    {
-        return response()->json([
-            'category' => KnowledgeBaseCategoryData::from([
-                'id' => $category->getKey(),
-                'name' => $category->name,
-                'description' => $category->description,
-            ]),
-            'articles' => KnowledgeBaseItemData::collection(
-                $category->knowledgeBaseItems()
-                    ->public()
-                    ->get()
-                    ->map(function ($item) {
-                        return [
-                            'id' => $item->getKey(),
-                            'name' => $item->title,
-                        ];
-                    })
-                    ->toArray()
-            ),
-        ]);
-    }
-
-    // TODO Extract to dedicated controller
-    public function article(KnowledgeBaseCategory $category, KnowledgeBaseItem $article)
-    {
-        return response()->json([
-            'category' => KnowledgeBaseCategoryData::from([
-                'id' => $category->getKey(),
-                'name' => $category->name,
-                'description' => $category->description,
-            ]),
-            'article' => KnowledgeBaseItemData::from([
-                'id' => $article->getKey(),
-                'name' => $article->title,
-                'lastUpdated' => $article->updated_at->format('M d Y, h:m a'),
-                'content' => tiptap_converter()->asHTML($article->article_details),
-            ]),
-        ]);
     }
 }

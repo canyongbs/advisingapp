@@ -34,26 +34,36 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use AdvisingApp\Portal\Livewire\RenderKnowledgeManagementPortal;
-use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
-use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized;
+namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
-Route::prefix('portals')
-    ->name('portals.')
-    ->middleware([
-        'web',
-    ])
-    ->group(function () {
-        Route::middleware([
-            EnsureKnowledgeManagementPortalIsEnabled::class,
-            EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
-        ])->group(function () {
-            Route::get('/knowledge-management/{category?}/{article?}', RenderKnowledgeManagementPortal::class)
-                ->where([
-                    'category' => '[a-zA-Z0-9-]+',
-                    'article' => '[a-zA-Z0-9-]+',
-                ])
-                ->name('knowledge-management.show');
-        });
-    });
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
+use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseItemData;
+use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
+
+class KnowledgeManagementPortalCategoryController extends Controller
+{
+    public function show(KnowledgeBaseCategory $category): JsonResponse
+    {
+        return response()->json([
+            'category' => KnowledgeBaseCategoryData::from([
+                'id' => $category->getKey(),
+                'name' => $category->name,
+                'description' => $category->description,
+            ]),
+            'articles' => KnowledgeBaseItemData::collection(
+                $category->knowledgeBaseItems()
+                    ->public()
+                    ->get()
+                    ->map(function ($item) {
+                        return [
+                            'id' => $item->getKey(),
+                            'name' => $item->title,
+                        ];
+                    })
+                    ->toArray()
+            ),
+        ]);
+    }
+}
