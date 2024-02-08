@@ -43,6 +43,7 @@ use Illuminate\Events\CallQueuedListener;
 use App\Multitenancy\Tasks\SwitchMailTask;
 use Illuminate\Broadcasting\BroadcastEvent;
 use Spatie\Multitenancy\Tasks\PrefixCacheTask;
+use App\Multitenancy\Tasks\SwitchSessionDriver;
 use App\Multitenancy\Tasks\SwitchS3FilesystemTask;
 use Spatie\Multitenancy\Actions\MigrateTenantAction;
 use App\Multitenancy\Tasks\SwitchTenantDatabasesTask;
@@ -79,6 +80,7 @@ return [
         //SwitchAppKey::class,
         PrefixCacheTask::class,
         SwitchTenantDatabasesTask::class,
+        SwitchSessionDriver::class,
         SwitchAppUrl::class,
         SwitchAppName::class,
         SwitchMailTask::class,
@@ -162,4 +164,6 @@ return [
     'not_tenant_aware_jobs' => [
         // ...
     ],
+
+    'seed_on_tenant_creation' => env('SEED_ON_TENANT_CREATION', false),
 ];

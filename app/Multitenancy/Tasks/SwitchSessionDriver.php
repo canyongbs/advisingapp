@@ -34,46 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace App\Observers;
+namespace App\Multitenancy\Tasks;
 
-use Throwable;
-use App\Models\Tenant;
-use Illuminate\Bus\Batch;
-use App\Jobs\SeedTenantDatabase;
-use App\Jobs\MigrateTenantDatabase;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Event;
-use App\Multitenancy\Events\NewTenantSetupFailure;
-use App\Multitenancy\Events\NewTenantSetupComplete;
+use Spatie\Multitenancy\Models\Tenant;
+use Spatie\Multitenancy\Tasks\SwitchTenantTask;
 
-class TenantObserver
+class SwitchSessionDriver implements SwitchTenantTask
 {
-    public function created(Tenant $tenant): void
-    {
-        $setupChain = [
-            new MigrateTenantDatabase($tenant),
-        ];
+    public function __construct(
+        protected ?string $originalSessionDriver = null,
+        protected ?string $originalSessionConnection = null,
+    ) {
+        $this->originalSessionDriver ??= config('session.driver');
+        $this->originalSessionConnection ??= config('session.connection');
+    }
 
-        if (config('multitenancy.seed_on_tenant_creation')) {
-            $setupChain = [
-                ...$setupChain,
-                new SeedTenantDatabase($tenant),
-            ];
+    public function makeCurrent(Tenant $tenant): void
+    {
+        // Not going to switch the session driver in testing, stick with the default array driver
+        if (app()->runningUnitTests()) {
+            return;
         }
 
-        Bus::batch(
-            [
-                $setupChain,
-            ]
-        )
-            ->onQueue(config('queue.landlord_queue'))
-            ->then(function (Batch $batch) use ($tenant) {
-                Event::dispatch(new NewTenantSetupComplete($tenant));
-            })
-            ->catch(function (Batch $batch, Throwable $e) use ($tenant) {
-                Event::dispatch(new NewTenantSetupFailure($tenant, $e));
-            })
-            ->allowFailures()
-            ->dispatch();
+        $this->setSessionConfig('database', 'tenant');
+    }
+
+    public function forgetCurrent(): void
+    {
+        if (app()->environment('testing')) {
+            return;
+        }
+
+        $this->setSessionConfig($this->originalSessionDriver, $this->originalSessionConnection);
+    }
+
+    protected function setSessionConfig(string $driver, string $connection): void
+    {
+        config([
+            'session.driver' => $driver,
+            'session.connection' => $connection,
+        ]);
     }
 }
