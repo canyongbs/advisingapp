@@ -1,40 +1,7 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
+// phpcs:ignoreFile
 /**
  * A helper file for your Eloquent Models
  * Copy the phpDocs from this file to the correct Model,
@@ -43,6 +10,42 @@
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  */
 
+
+namespace App\Models{
+/**
+ * App\Models\Export
+ *
+ * @property string $id
+ * @property int|null $completed_at
+ * @property string $file_disk
+ * @property string|null $file_name
+ * @property string $exporter
+ * @property int $processed_rows
+ * @property int $total_rows
+ * @property int $successful_rows
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $user
+ * @method static \Illuminate\Database\Eloquent\Builder|Export newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Export newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Export query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Export whereCompletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Export whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Export whereExporter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Export whereFileDisk($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Export whereFileName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Export whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Export whereProcessedRows($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Export whereSuccessfulRows($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Export whereTotalRows($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Export whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Export whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperExport {}
+}
 
 namespace App\Models{
 /**
@@ -306,8 +309,8 @@ namespace App\Models{
  * @property string $id
  * @property string $name
  * @property string $domain
- * @property mixed|null $key
- * @property mixed|null $config
+ * @property mixed $key
+ * @property mixed $config
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Spatie\Multitenancy\TenantCollection<int, static> all($columns = ['*'])
@@ -2028,20 +2031,25 @@ namespace AdvisingApp\InAppCommunication\Models{
  * @property bool $is_private_channel
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $managers
  * @property-read int|null $managers_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $participants
  * @property-read int|null $participants_count
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation query()
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation whereChannelName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation whereFriendlyName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation whereIsPrivateChannel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation whereSid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation withoutTrashed()
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -2057,6 +2065,12 @@ namespace AdvisingApp\InAppCommunication\Models{
  * @property string $participant_sid
  * @property bool $is_channel_manager
  * @property bool $is_pinned
+ * @property \AdvisingApp\InAppCommunication\Enums\ConversationNotificationPreference $notification_preference
+ * @property string|null $first_unread_message_sid
+ * @property \Carbon\CarbonImmutable|null $first_unread_message_at
+ * @property string|null $last_unread_message_content
+ * @property \Carbon\CarbonImmutable|null $last_read_at
+ * @property int $unread_messages_count
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \AdvisingApp\InAppCommunication\Models\TwilioConversation $conversation
@@ -2066,9 +2080,15 @@ namespace AdvisingApp\InAppCommunication\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser query()
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereConversationSid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereFirstUnreadMessageAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereFirstUnreadMessageSid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereIsChannelManager($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereIsPinned($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereLastReadAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereLastUnreadMessageContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereNotificationPreference($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereParticipantSid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereUnreadMessagesCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereUserId($value)
  * @mixin \Eloquent
@@ -3352,6 +3372,41 @@ namespace AdvisingApp\Prospect\Models{
  class IdeHelperProspectStatus {}
 }
 
+namespace AdvisingApp\Report\Models{
+/**
+ * AdvisingApp\Report\Models\Report
+ *
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property array|null $filters
+ * @property array $columns
+ * @property \AdvisingApp\Report\Enums\ReportModel $model
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \App\Models\User $user
+ * @method static \AdvisingApp\Report\Database\Factories\ReportFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Report newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Report newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Report query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Report whereColumns($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Report whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Report whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Report whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Report whereFilters($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Report whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Report whereModel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Report whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Report whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Report whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperReport {}
+}
+
 namespace AdvisingApp\ServiceManagement\Models{
 /**
  * AdvisingApp\ServiceManagement\Models\ChangeRequest
@@ -3900,6 +3955,9 @@ namespace AdvisingApp\ServiceManagement\Models{
  *
  * @property string $id
  * @property string $name
+ * @property bool $has_enabled_feedback_collection
+ * @property bool $has_enabled_csat
+ * @property bool $has_enabled_nps
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -3917,6 +3975,9 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType query()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereHasEnabledCsat($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereHasEnabledFeedbackCollection($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereHasEnabledNps($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereUpdatedAt($value)
@@ -4006,10 +4067,38 @@ namespace AdvisingApp\StudentDataModel\Models{
 /**
  * AdvisingApp\StudentDataModel\Models\Enrollment
  *
+ * @property string $sisid
+ * @property string $acad_career
+ * @property string $division
+ * @property string $semester
+ * @property string $class_nbr
+ * @property string $subject
+ * @property string $catalog_nbr
+ * @property string $enrl_status_reason
+ * @property string $enrl_add_dt
+ * @property string $enrl_drop_dt
+ * @property string $crse_grade_off
+ * @property int $unt_taken
+ * @property int $unt_earned
+ * @property string $last_upd_dt_stmp
  * @method static \AdvisingApp\StudentDataModel\Database\Factories\EnrollmentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereAcadCareer($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereCatalogNbr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereClassNbr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereCrseGradeOff($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereDivision($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereEnrlAddDt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereEnrlDropDt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereEnrlStatusReason($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereLastUpdDtStmp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereSemester($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereSisid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereSubject($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereUntEarned($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereUntTaken($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -4020,11 +4109,29 @@ namespace AdvisingApp\StudentDataModel\Models{
 /**
  * AdvisingApp\StudentDataModel\Models\Performance
  *
+ * @property string $sisid
+ * @property string $acad_career
+ * @property string $division
+ * @property bool $first_gen
+ * @property int $cum_att
+ * @property int $cum_ern
+ * @property int $pct_ern
+ * @property string $cum_gpa
+ * @property string $max_dt
  * @property-read \AdvisingApp\StudentDataModel\Models\Student|null $student
  * @method static \AdvisingApp\StudentDataModel\Database\Factories\PerformanceFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Performance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Performance newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Performance query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Performance whereAcadCareer($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Performance whereCumAtt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Performance whereCumErn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Performance whereCumGpa($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Performance whereDivision($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Performance whereFirstGen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Performance whereMaxDt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Performance wherePctErn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Performance whereSisid($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -4035,10 +4142,34 @@ namespace AdvisingApp\StudentDataModel\Models{
 /**
  * AdvisingApp\StudentDataModel\Models\Program
  *
+ * @property string $sisid
+ * @property string $otherid
+ * @property string $acad_career
+ * @property string $division
+ * @property string $acad_plan
+ * @property string $prog_status
+ * @property string $cum_gpa
+ * @property string $semester
+ * @property string $descr
+ * @property string $foi
+ * @property string $change_dt
+ * @property string $declare_dt
  * @method static \AdvisingApp\StudentDataModel\Database\Factories\ProgramFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Program newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Program newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Program query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Program whereAcadCareer($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Program whereAcadPlan($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Program whereChangeDt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Program whereCumGpa($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Program whereDeclareDt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Program whereDescr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Program whereDivision($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Program whereFoi($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Program whereOtherid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Program whereProgStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Program whereSemester($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Program whereSisid($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -4051,6 +4182,35 @@ namespace AdvisingApp\StudentDataModel\Models{
  *
  * @property string $display_name
  * @property string $mobile
+ * @property string $sisid
+ * @property string|null $otherid
+ * @property string|null $first
+ * @property string|null $last
+ * @property string|null $full_name
+ * @property string|null $preferred
+ * @property string|null $email
+ * @property string|null $email_2
+ * @property bool $sms_opt_out
+ * @property bool $email_bounce
+ * @property string|null $phone
+ * @property string|null $address
+ * @property string|null $address2
+ * @property string|null $address3
+ * @property string|null $city
+ * @property string|null $state
+ * @property string|null $postal
+ * @property string|null $birthdate
+ * @property int|null $hsgrad
+ * @property bool $dual
+ * @property bool $ferpa
+ * @property string|null $dfw
+ * @property bool $sap
+ * @property string|null $holds
+ * @property bool $firstgen
+ * @property string|null $ethnicity
+ * @property string|null $lastlmslogin
+ * @property string|null $f_e_term
+ * @property string|null $mr_e_term
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Alert\Models\Alert> $alerts
  * @property-read int|null $alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $applicationSubmissions
@@ -4099,6 +4259,36 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Student newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Student newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Student query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereAddress2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereAddress3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereBirthdate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereCity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereDfw($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereDual($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereEmail2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereEmailBounce($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereEthnicity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereFETerm($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereFerpa($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereFirst($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereFirstgen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereFullName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereHolds($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereHsgrad($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereLast($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereLastlmslogin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereMobile($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereMrETerm($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereOtherid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student wherePostal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student wherePreferred($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereSap($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereSisid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereSmsOptOut($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereState($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]

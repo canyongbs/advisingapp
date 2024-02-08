@@ -44,7 +44,6 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\InAppCommunication\Filament\Pages\UserChat;
 use AdvisingApp\InAppCommunication\Enums\ConversationNotificationPreference;
-use Livewire\Attributes\On;
 
 /**
  * @mixin IdeHelperTwilioConversationUser
@@ -96,7 +95,7 @@ class TwilioConversationUser extends Pivot
                 ->info()
                 ->icon('heroicon-o-sparkles');
         } elseif ($this->unread_messages_count) {
-            $notification ??= Notification::make($this->conversation_sid)
+            $notification = Notification::make($this->conversation_sid)
                 ->title("{$this->unread_messages_count} unread " . str('message')->plural($this->unread_messages_count) . " in {$this->conversation->getLabel()}")
                 ->body(Str::limit($this->last_unread_message_content, 50))
                 ->warning()
