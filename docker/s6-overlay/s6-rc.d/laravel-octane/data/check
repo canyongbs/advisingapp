@@ -1,0 +1,11 @@
+#!/command/with-contenv bash
+response=$(s6-setuidgid root php -d variables_order=EGPCS "$WEBUSER_HOME"/artisan octane:status)
+
+if [[ $response == *"Octane server is running"* ]]; then
+  sleep 1
+	exit 0
+else
+	echo "❌ Octane does not seem to be running. Here's the response:"
+	echo "$response"
+	exit 1
+fi
