@@ -38,12 +38,6 @@ RUN rm /etc/s6-overlay/s6-rc.d/user/contents.d/php-fpm
 RUN rm -rf /etc/s6-overlay/s6-rc.d/php-fpm
 
 RUN apt-get update \
-    && apt install -y software-properties-common && add-apt-repository ppa:openswoole/ppa -y \
-    && apt install -y php8.2-openswoole \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
-
-RUN apt-get update \
     && apt-get upgrade -y
 
 FROM base AS development
