@@ -50,7 +50,7 @@ class TeamServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new TeamPlugin()));
+        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new TeamPlugin()));
     }
 
     public function boot()

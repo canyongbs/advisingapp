@@ -54,7 +54,7 @@ class StudentDataModelServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new StudentDataModelPlugin()));
+        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new StudentDataModelPlugin()));
     }
 
     public function boot(): void

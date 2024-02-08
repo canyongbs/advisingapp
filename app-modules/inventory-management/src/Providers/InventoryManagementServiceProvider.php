@@ -58,7 +58,7 @@ class InventoryManagementServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new InventoryManagementPlugin()));
+        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new InventoryManagementPlugin()));
     }
 
     public function boot()

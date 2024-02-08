@@ -55,7 +55,7 @@ class KnowledgeBaseServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new KnowledgeBasePlugin()));
+        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new KnowledgeBasePlugin()));
     }
 
     public function boot(): void

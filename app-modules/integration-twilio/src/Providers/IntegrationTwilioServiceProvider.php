@@ -51,7 +51,7 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new IntegrationTwilioPlugin()));
+        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationTwilioPlugin()));
 
         $this->app->bind(EngagementResponseSenderFinder::class, function () {
             if (config('services.twilio.enable_test_sender') === true) {

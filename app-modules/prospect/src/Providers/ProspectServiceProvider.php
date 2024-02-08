@@ -56,7 +56,7 @@ class ProspectServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new ProspectPlugin()));
+        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ProspectPlugin()));
     }
 
     public function boot(): void

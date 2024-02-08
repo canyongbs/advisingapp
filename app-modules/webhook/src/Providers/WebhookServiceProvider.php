@@ -49,7 +49,7 @@ class WebhookServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new WebhookPlugin()));
+        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new WebhookPlugin()));
 
         $this->app->bind(
             MessageValidator::class,
