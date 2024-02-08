@@ -55,9 +55,9 @@ defineProps({
                                 :key="category.id"
                                 class="py-4 border-gray-200"
                             >
-                                <a :href="category.id" class="block">
+                                <router-link :to="{ name: 'view-category', params: { categoryId: category.id } }">
                                     <h5 class="text-md text-gray-800">{{ category.name }}</h5>
-                                </a>
+                                </router-link>
                             </li>
                         </ul>
                     </div>

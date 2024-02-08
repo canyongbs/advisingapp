@@ -29,14 +29,13 @@ defineProps({
             >
                 <div class="mt-8">
                     <h3 class="text-base font-semibold leading-6 text-gray-900">
-                        <a class="focus:outline-none" :href="category.name">
+                        <router-link :to="{ name: 'view-category', params: { categoryId: category.id } }">
                             <span class="absolute inset-0" aria-hidden="true" />
                             {{ category.name }}
-                        </a>
+                        </router-link>
                     </h3>
                     <p class="mt-2 text-sm text-gray-500">
-                        Doloribus dolores nostrum quia qui natus officia quod et dolorem. Sit repellendus qui ut at
-                        blanditiis et quo et molestiae.
+                        {{ category.description }}
                     </p>
                 </div>
                 <span

@@ -34,12 +34,47 @@
 import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
 import './portal.css';
 import App from './App.vue';
+import { createRouter, createWebHistory } from 'vue-router';
+// We'll need a Home, ViewCategory, and ViewArticle component
+import Home from './Pages/Home.vue';
+import ViewCategory from './Pages/ViewCategory.vue';
+import ViewArticle from './Pages/ViewArticle.vue';
 
 customElements.define(
     'knowledge-management-portal-embed',
     defineCustomElement({
         setup(props) {
             const app = createApp();
+
+            function getBaseUrl() {
+                let path = window.location.pathname;
+
+                return '/portals/knowledge-management';
+                return path.replace(/\/$/, '');
+            }
+
+            const router = createRouter({
+                history: createWebHistory(),
+                routes: [
+                    {
+                        path: getBaseUrl() + '/',
+                        name: 'home',
+                        component: Home,
+                    },
+                    {
+                        path: getBaseUrl() + '/categories/:categoryId',
+                        name: 'view-category',
+                        component: ViewCategory,
+                    },
+                    {
+                        path: getBaseUrl() + '/categories/:categoryId/articles/:articleId',
+                        name: 'view-article',
+                        component: ViewArticle,
+                    },
+                ],
+            });
+
+            app.use(router);
 
             app.config.devtools = true;
 

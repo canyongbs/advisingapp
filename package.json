@@ -68,6 +68,7 @@
         "showdown": "^2.1.0",
         "sortablejs": "^1.15.0",
         "spectaql": "^2.3.0",
-        "vue": "^3.3.4"
+        "vue": "^3.3.4",
+        "vue-router": "^4.2.5"
     }
 }

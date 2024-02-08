@@ -38,11 +38,11 @@ namespace AdvisingApp\Portal\Http\Controllers;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\Scopes\SearchBy;
 use Illuminate\Http\JsonResponse;
 use Filament\Support\Colors\Color;
 use App\Http\Controllers\Controller;
 use AdvisingApp\Portal\Settings\PortalSettings;
-use AdvisingApp\KnowledgeBase\Models\Scopes\SearchBy;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseItemData;
@@ -60,13 +60,18 @@ class KnowledgeManagementPortalController extends Controller
         return response()->json([
             'primary_color' => Color::all()[$settings->knowledge_management_portal_primary_color ?? 'blue'],
             'rounding' => $settings->knowledge_management_portal_rounding,
-            // TODO Extract
-            'categories' => KnowledgeBaseCategory::all()->map(function ($category) {
-                return [
-                    'id' => $category->id,
-                    'name' => $category->name,
-                ];
-            })->toArray(),
+            'categories' => KnowledgeBaseCategoryData::collection(
+                KnowledgeBaseCategory::query()
+                    ->get()
+                    ->map(function ($category) {
+                        return [
+                            'id' => $category->getKey(),
+                            'name' => $category->name,
+                            'description' => $category->description,
+                        ];
+                    })
+                    ->toArray()
+            ),
         ]);
     }
 
@@ -96,6 +101,7 @@ class KnowledgeManagementPortalController extends Controller
                     return [
                         'id' => $category->getKey(),
                         'name' => $category->name,
+                        'description' => $category->description,
                     ];
                 })
                 ->toArray()
@@ -106,6 +112,46 @@ class KnowledgeManagementPortalController extends Controller
             'categories' => $categoryData,
         ]);
 
+        ray('searchResults');
+
         return $searchResults->wrap('data');
+    }
+
+    public function category(KnowledgeBaseCategory $category)
+    {
+        return response()->json([
+            'category' => KnowledgeBaseCategoryData::from([
+                'id' => $category->getKey(),
+                'name' => $category->name,
+                'description' => $category->description,
+            ]),
+            'articles' => KnowledgeBaseItemData::collection(
+                $category->knowledgeBaseItems()
+                    ->public()
+                    ->get()
+                    ->map(function ($item) {
+                        return [
+                            'id' => $item->getKey(),
+                            'name' => $item->title,
+                        ];
+                    })
+                    ->toArray()
+            ),
+        ]);
+    }
+
+    public function article(KnowledgeBaseCategory $category, KnowledgeBaseItem $article)
+    {
+        return response()->json([
+            'category' => KnowledgeBaseCategoryData::from([
+                'id' => $category->getKey(),
+                'name' => $category->name,
+                'description' => $category->description,
+            ]),
+            'article' => KnowledgeBaseItemData::from([
+                'id' => $article->getKey(),
+                'name' => $article->title,
+            ]),
+        ]);
     }
 }

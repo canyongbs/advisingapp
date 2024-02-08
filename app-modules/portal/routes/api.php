@@ -58,6 +58,8 @@ Route::prefix('api')
                 Route::post('/search', [KnowledgeManagementPortalController::class, 'search'])
                     ->middleware(['signed'])
                     ->name('search');
+                Route::get('/categories/{category}', [KnowledgeManagementPortalController::class, 'category']);
+                Route::get('/categories/{category}/articles/{article}', [KnowledgeManagementPortalController::class, 'article']);
             })
             ->middleware([
                 EnsureKnowledgeManagementPortalIsEnabled::class,
