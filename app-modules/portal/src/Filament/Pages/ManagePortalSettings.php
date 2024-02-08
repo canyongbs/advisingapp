@@ -161,16 +161,25 @@ class ManagePortalSettings extends SettingsPage
                         ColorSelect::make('knowledge_management_portal_primary_color')
                             ->label('Primary Color')
                             ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled'))
+                            ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                            ->hintIcon(fn (ColorSelect $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIconTooltip('Knowledge Management is not a part of your current subscription.')
                             ->columnSpan(1),
                         Select::make('knowledge_management_portal_rounding')
                             ->label('Rounding')
                             ->options(Rounding::class)
                             ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled'))
+                            ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                            ->hintIcon(fn (Select $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIconTooltip('Knowledge Management is not a part of your current subscription.')
                             ->columnSpan(1),
                         TextInput::make('knowledge_management_portal_authorized_domain')
                             ->label('Authorized Domain')
                             ->url()
                             ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled'))
+                            ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                            ->hintIcon(fn (TextInput $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIconTooltip('Knowledge Management is not a part of your current subscription.')
                             ->columnSpanFull(),
                         Toggle::make('knowledge_management_portal_service_management')
                             ->label('Service Management')
@@ -181,9 +190,11 @@ class ManagePortalSettings extends SettingsPage
                             Action::make('view')
                                 ->url(fn () => route('portals.knowledge-management.show'))
                                 ->icon('heroicon-m-arrow-top-right-on-square')
+                                ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
                                 ->openUrlInNewTab(),
                             Action::make('embed_snippet')
                                 ->label('Embed Snippet')
+                                ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
                                 ->infolist(
                                     [
                                         TextEntry::make('snippet')
