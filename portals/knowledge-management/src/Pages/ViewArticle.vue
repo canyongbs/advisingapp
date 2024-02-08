@@ -1,6 +1,8 @@
 <script setup>
 import { defineProps, ref, watch, onMounted } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router';
+import Breadcrumbs from '@/Components/Breadcrumbs.vue';
+import Loading from '@/Components/Loading.vue';
 
 const route = useRoute();
 
@@ -53,8 +55,24 @@ function getData() {
 </script>
 
 <template>
-    <div v-if="loading">Loading...</div>
+    <div v-if="loading">
+        <Loading />
+    </div>
     <div v-else>
-        <h1>View {{ article.name }}</h1>
+        <Breadcrumbs
+            :currentCrumb="article.name"
+            :breadcrumbs="[
+                { name: 'Help Center', route: 'home' },
+                { name: category.name, route: 'view-category', params: { categoryId: category.id } },
+            ]"
+        ></Breadcrumbs>
+
+        <div class="w-full mt-4 flex justify-center">
+            <div class="prose">
+                <h1 class="text-3xl font-semibold mt-4">{{ article.name }}</h1>
+                <span>Last Updated: {{ article.lastUpdated }}</span>
+                <div v-html="article.content"></div>
+            </div>
+        </div>
     </div>
 </template>

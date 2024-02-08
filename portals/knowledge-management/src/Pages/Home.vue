@@ -63,7 +63,6 @@ function debounce(func, delay) {
 </script>
 
 <template>
-    <!-- TODO Extract Search -->
     <div
         class="sticky top-0 z-40 flex flex-col items-center border-b border-gray-100 bg-white px-4 py-4 shadow-sm sm:px-6 lg:px-8"
     >

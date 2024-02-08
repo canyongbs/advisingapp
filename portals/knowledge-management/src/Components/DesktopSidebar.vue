@@ -1,5 +1,5 @@
 <script setup>
-import SidebarContent from './SidebarContent.vue';
+import SidebarContent from '@/Components/SidebarContent.vue';
 import { defineProps } from 'vue';
 
 defineProps({

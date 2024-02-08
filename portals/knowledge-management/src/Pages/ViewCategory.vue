@@ -1,6 +1,8 @@
 <script setup>
 import { defineProps, ref, watch, onMounted } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router';
+import Breadcrumbs from '@/Components/Breadcrumbs.vue';
+import Loading from '@/Components/Loading.vue';
 
 const route = useRoute();
 
@@ -36,6 +38,7 @@ onMounted(function () {
 function getData() {
     loadingResults.value = true;
 
+    // TODO Replace with actual API endpoint from props...
     fetch('http://test.advisingapp.local/api/portal/knowledge-management/categories/' + route.params.categoryId)
         .then((response) => response.json())
         .then((json) => {
@@ -48,10 +51,15 @@ function getData() {
 </script>
 
 <template>
-    <div class="px-4 sm:px-6 lg:px-8">
-        <div v-if="loadingResults">Loading...</div>
-        <div v-else class="text-black">
-            <h1 class="text-3xl">{{ category.name }}</h1>
+    <div>
+        <div v-if="loadingResults">
+            <Loading />
+        </div>
+        <div v-else>
+            <Breadcrumbs
+                :currentCrumb="category.name"
+                :breadcrumbs="[{ name: 'Help Center', route: 'home' }]"
+            ></Breadcrumbs>
 
             <main class="py-10">
                 <div class="border border-gray-200 rounded p-4 shadow">

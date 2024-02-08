@@ -35,14 +35,10 @@
 import { defineProps, onMounted, ref, watch } from 'vue';
 import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
 import getRecaptchaToken from '../../../app-modules/integration-google-recaptcha/resources/js/Services/GetRecaptchaToken.js';
-import Loading from './Components/Loading.vue';
-import MobileSidebar from './Components/MobileSidebar.vue';
-import DesktopSidebar from './Components/DesktopSidebar.vue';
-import Breadcrumbs from './Components/Breadcrumbs.vue';
-import { useRoute } from 'vue-router';
-
-const route = useRoute();
-console.log('route', route);
+import AppLoading from '@/Components/AppLoading.vue';
+import MobileSidebar from '@/Components/MobileSidebar.vue';
+import DesktopSidebar from '@/Components/DesktopSidebar.vue';
+import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 
 const errorLoading = ref(false);
 const loading = ref(true);
@@ -161,7 +157,7 @@ async function getKnowledgeManagementPortal() {
         </div>
 
         <div v-if="loading">
-            <Loading></Loading>
+            <AppLoading />
         </div>
 
         <div v-else>
@@ -181,8 +177,9 @@ async function getKnowledgeManagementPortal() {
                 <DesktopSidebar :categories="categories"></DesktopSidebar>
 
                 <div class="lg:pl-72">
-                    <!-- <Breadcrumbs /> -->
-                    <router-view :search-url="searchUrl" :categories="categories"></router-view>
+                    <div class="px-4 sm:px-6 lg:px-8">
+                        <router-view :search-url="searchUrl" :categories="categories"></router-view>
+                    </div>
                 </div>
             </div>
         </div>

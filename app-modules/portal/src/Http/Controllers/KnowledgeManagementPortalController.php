@@ -75,6 +75,7 @@ class KnowledgeManagementPortalController extends Controller
         ]);
     }
 
+    // TODO Extract to dedicated controller
     public function search(Request $request)
     {
         ray('request', $request->all());
@@ -117,6 +118,7 @@ class KnowledgeManagementPortalController extends Controller
         return $searchResults->wrap('data');
     }
 
+    // TODO Extract to dedicated controller
     public function category(KnowledgeBaseCategory $category)
     {
         return response()->json([
@@ -140,6 +142,7 @@ class KnowledgeManagementPortalController extends Controller
         ]);
     }
 
+    // TODO Extract to dedicated controller
     public function article(KnowledgeBaseCategory $category, KnowledgeBaseItem $article)
     {
         return response()->json([
@@ -151,6 +154,8 @@ class KnowledgeManagementPortalController extends Controller
             'article' => KnowledgeBaseItemData::from([
                 'id' => $article->getKey(),
                 'name' => $article->title,
+                'lastUpdated' => $article->updated_at->format('M d Y, h:m a'),
+                'content' => tiptap_converter()->asHTML($article->article_details),
             ]),
         ]);
     }

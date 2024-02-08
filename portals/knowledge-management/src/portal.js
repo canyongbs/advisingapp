@@ -34,7 +34,7 @@
 import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
 import './portal.css';
 import App from './App.vue';
-import { createRouter, createWebHistory } from 'vue-router';
+import { createMemoryHistory, createRouter, createWebHistory } from 'vue-router';
 // We'll need a Home, ViewCategory, and ViewArticle component
 import Home from './Pages/Home.vue';
 import ViewCategory from './Pages/ViewCategory.vue';
@@ -46,28 +46,42 @@ customElements.define(
         setup(props) {
             const app = createApp();
 
-            function getBaseUrl() {
-                let path = window.location.pathname;
+            function getAppContext() {
+                const hostname = window.location.hostname;
+                console.log('hostname', hostname);
+                const pathname = window.location.pathname;
+                console.log('pathname', pathname);
 
-                return '/portals/knowledge-management';
-                return path.replace(/\/$/, '');
+                console.log('props', props);
+                const isEmbeddedInOwnApp = hostname === props.appUrl;
+                console.log('isEmbeddedInOwnApp', isEmbeddedInOwnApp);
+
+                let baseUrl = '/';
+                if (isEmbeddedInOwnApp) {
+                    baseUrl = '/portals/knowledge-management';
+                }
+
+                console.log('baseUrl', baseUrl);
+                return { isEmbeddedInOwnApp, baseUrl };
             }
 
+            const { isEmbeddedInOwnApp, baseUrl } = getAppContext();
+
             const router = createRouter({
-                history: createWebHistory(),
+                history: isEmbeddedInOwnApp ? createWebHistory() : createMemoryHistory(),
                 routes: [
                     {
-                        path: getBaseUrl() + '/',
+                        path: baseUrl + '/',
                         name: 'home',
                         component: Home,
                     },
                     {
-                        path: getBaseUrl() + '/categories/:categoryId',
+                        path: baseUrl + '/categories/:categoryId',
                         name: 'view-category',
                         component: ViewCategory,
                     },
                     {
-                        path: getBaseUrl() + '/categories/:categoryId/articles/:articleId',
+                        path: baseUrl + '/categories/:categoryId/articles/:articleId',
                         name: 'view-article',
                         component: ViewArticle,
                     },
@@ -82,8 +96,9 @@ customElements.define(
             Object.assign(inst.appContext, app._context);
             Object.assign(inst.provides, app._context.provides);
 
+            console.log('props in root', props);
             return () => h(App, props);
         },
-        props: ['url', 'searchUrl'],
+        props: ['url', 'searchUrl', 'appUrl'],
     }),
 );
