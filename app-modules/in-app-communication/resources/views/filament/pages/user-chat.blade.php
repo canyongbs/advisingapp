@@ -603,6 +603,11 @@
             .ProseMirror-focused {
                 outline-color: transparent;
             }
+
+            span[data-type="mention"][data-id="{{ auth()->id() }}"] {
+                background-color: #fcd34d55;
+                border-radius: 3px;
+            }
         </style>
     </div>
 </x-filament-panels::page>
