@@ -4,6 +4,8 @@ type ServiceRequest
     id: UUID!
 
     # TODO: Finish fields
+
+    initial_assignment: ServiceRequestAssignment @hasOne
 }
 
 input ServiceRequestQuery {
@@ -12,3 +14,28 @@ input ServiceRequestQuery {
 }
 
 # TODO: Query and Mutate
+
+# TODO: Move to own file
+type ServiceRequestAssignment
+    @model(class: "AdvisingApp\\ServiceManagement\\Models\\ServiceRequestAssignment") {
+    "Unique primary key."
+    id: UUID!
+
+    "The service request of the assignment."
+    service_request: ServiceRequest @belongsTo
+
+    "The user of the assignment."
+    user: User @belongsTo
+
+#    "The role of the assignment."
+#    role: ServiceRequestAssignmentRole @belongsTo
+
+#    "The status of the assignment."
+#    status: ServiceRequestAssignmentStatus @belongsTo
+
+    "The created datetime of the assignment."
+    created_at: DateTime
+
+    "The updated datetime of the assignment."
+    updated_at: DateTime
+}
