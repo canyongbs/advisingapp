@@ -109,7 +109,7 @@
                                                         </x-filament::badge>
                                                     @endif
 
-                                                    @if (! $conversationItem->participant->last_read_at)
+                                                    @if (!$conversationItem->participant->last_read_at)
                                                         <x-filament::badge color="warning">
                                                             New
                                                         </x-filament::badge>
@@ -119,7 +119,9 @@
                                                         'wire:loading.delay.' .
                                                         config('filament.livewire_loading_delay', 'default') => '',
                                                         'wire:target' =>
-                                                            'selectConversation(\'' . $conversationItem->getKey() . '\')',
+                                                            'selectConversation(\'' .
+                                                            $conversationItem->getKey() .
+                                                            '\')',
                                                     ]))->class(['w-5 h-5'])" />
                                                 </div>
                                             </button>
