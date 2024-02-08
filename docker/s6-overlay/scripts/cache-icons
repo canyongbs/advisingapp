@@ -6,8 +6,10 @@ set -e
 # Check to see if an Artisan file exists and assume it means Laravel is configured.
 if [ -f $WEBUSER_HOME/artisan ] && [ ${CACHE_ICONS:="false"} == "true" ]; then
   echo "Caching icons..."
+  
+  USERNAME=$(id -nu $PUID)
 
-  s6-setuidgid webuser php $WEBUSER_HOME/artisan icons:cache
+  s6-setuidgid $USERNAME php $WEBUSER_HOME/artisan icons:cache
 
   echo "Icons cached!"
 else
