@@ -76,12 +76,12 @@ document.addEventListener('alpine:init', () => {
                     break;
                 }
 
-                (messageContent[i].content ?? []).forEach((content) => messageContent.push(content))
+                (messageContent[i].content ?? []).forEach((content) => messageContent.push(content));
 
                 i++;
             }
 
-            if (! messageHasContent) {
+            if (!messageHasContent) {
                 return;
             }
 
@@ -193,7 +193,7 @@ document.addEventListener('alpine:init', () => {
 
                     this.conversation.setAllMessagesRead().catch((error) => this.handleError(error));
 
-                    await this.$wire.onMessageSent(message.author, message.sid, JSON.parse(message.body))
+                    await this.$wire.onMessageSent(message.author, message.sid, JSON.parse(message.body));
                 });
 
                 this.conversation.on('messageUpdated', async (data) => {

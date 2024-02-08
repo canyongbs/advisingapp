@@ -44,7 +44,6 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\InAppCommunication\Filament\Pages\UserChat;
 use AdvisingApp\InAppCommunication\Enums\ConversationNotificationPreference;
-use Livewire\Attributes\On;
 
 /**
  * @mixin IdeHelperTwilioConversationUser

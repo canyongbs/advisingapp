@@ -53,9 +53,11 @@
         </x-slot>
 
         @if (count($notifications))
-            <div class="chat-notifications -mx-6 border-y border-gray-200 divide-y divide-gray-200 dark:border-white/10 dark:divide-white/10">
+            <div
+                class="chat-notifications -mx-6 divide-y divide-gray-200 border-y border-gray-200 dark:divide-white/10 dark:border-white/10">
                 @foreach ($notifications as $notification)
-                    <div class="relative before:absolute before:start-0 before:h-full before:w-0.5 before:bg-primary-600 dark:before:bg-primary-500">
+                    <div
+                        class="relative before:absolute before:start-0 before:h-full before:w-0.5 before:bg-primary-600 dark:before:bg-primary-500">
                         {{ $notification->participant->getNotification()->inline() }}
                     </div>
                 @endforeach
@@ -64,7 +66,7 @@
             <div class="flex flex-col px-6">
                 <div class="mb-5 flex items-center justify-center">
                     <div class="rounded-full bg-gray-100 p-3 dark:bg-gray-500/20">
-                        <x-heroicon-o-chat-bubble-oval-left-ellipsis class="h-6 w-6 text-gray-500 dark:text-gray-400"/>
+                        <x-heroicon-o-chat-bubble-oval-left-ellipsis class="h-6 w-6 text-gray-500 dark:text-gray-400" />
                     </div>
                 </div>
 
@@ -81,7 +83,10 @@
         @endif
 
         <x-slot name="footerActions">
-            <x-filament::button :href="UserChat::getUrl()" tag="a">
+            <x-filament::button
+                :href="UserChat::getUrl()"
+                tag="a"
+            >
                 Open chat
             </x-filament::button>
         </x-slot>
