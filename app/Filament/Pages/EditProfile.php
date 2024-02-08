@@ -272,7 +272,7 @@ class EditProfile extends Page
                             ->label('Restrict appointments to existing students')
                             ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
                         Section::make('Days')
-                            ->schema($this->getHoursForDays('working_hours'))
+                            ->schema($this->getHoursForDays('office_hours'))
                             ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
                     ]),
                 Section::make('Out of Office')

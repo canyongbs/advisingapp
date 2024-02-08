@@ -165,7 +165,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'is_phone_number_visible_on_profile',
         'working_hours_are_enabled',
         'are_working_hours_visible_on_profile',
-        'working_hours' => 'array',
+        'working_hours',
     ];
 
     public $orderable = [

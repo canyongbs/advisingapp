@@ -67,15 +67,12 @@ class EngagementEmailNotification extends BaseNotification implements EmailNotif
             ->salutation("Regards, {$this->deliverable->engagement->user->name}");
     }
 
-    public function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
+    protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
     {
-        $deliverable->update([
-            'related_id' => $this->deliverable->id,
-            'related_type' => $this->deliverable->getMorphClass(),
-        ]);
+        $deliverable->related()->associate($this->deliverable);
     }
 
-    public function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
+    protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
     {
         $updateData = array_filter([
             'external_reference_id' => $deliverable->external_reference_id,

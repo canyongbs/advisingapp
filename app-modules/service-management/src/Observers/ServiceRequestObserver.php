@@ -40,7 +40,10 @@ use App\Models\User;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\ServiceManagement\Actions\CreateServiceRequestHistory;
+use AdvisingApp\ServiceManagement\Enums\SystemServiceRequestClassification;
 use AdvisingApp\ServiceManagement\Exceptions\ServiceRequestNumberUpdateAttemptException;
+use AdvisingApp\ServiceManagement\Notifications\SendEducatableServiceRequestClosedNotification;
+use AdvisingApp\ServiceManagement\Notifications\SendEducatableServiceRequestOpenedNotification;
 use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
 
 class ServiceRequestObserver
@@ -56,6 +59,10 @@ class ServiceRequestObserver
 
         if ($user instanceof User) {
             TriggeredAutoSubscription::dispatch($user, $serviceRequest);
+        }
+
+        if ($serviceRequest->status->classification === SystemServiceRequestClassification::Open) {
+            $serviceRequest->respondent->notify(new SendEducatableServiceRequestOpenedNotification($serviceRequest));
         }
     }
 
@@ -74,5 +81,12 @@ class ServiceRequestObserver
     public function saved(ServiceRequest $serviceRequest): void
     {
         CreateServiceRequestHistory::dispatch($serviceRequest, $serviceRequest->getChanges(), $serviceRequest->getOriginal());
+
+        if (
+            $serviceRequest->wasChanged('status_id')
+            && $serviceRequest->status->classification === SystemServiceRequestClassification::Closed
+        ) {
+            $serviceRequest->respondent->notify(new SendEducatableServiceRequestClosedNotification($serviceRequest));
+        }
     }
 }

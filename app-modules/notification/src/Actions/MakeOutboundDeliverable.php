@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Notification\Actions;
 
-use Exception;
 use Illuminate\Notifications\AnonymousNotifiable;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
@@ -49,7 +48,7 @@ use AdvisingApp\Notification\Notifications\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
 use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
 
-class CreateOutboundDeliverable
+class MakeOutboundDeliverable
 {
     public function handle(BaseNotification $notification, object $notifiable, string $channel): OutboundDeliverable
     {
@@ -57,14 +56,12 @@ class CreateOutboundDeliverable
             SmsChannel::class => NotificationChannel::Sms,
             EmailChannel::class => NotificationChannel::Email,
             DatabaseChannel::class => NotificationChannel::Database,
-            default => throw new Exception('Invalid notification channel.'),
         };
 
         $content = match (true) {
             $channel == NotificationChannel::Sms && $notification instanceof SmsNotification => $notification->toSms($notifiable)->toArray(),
             $channel == NotificationChannel::Email && $notification instanceof EmailNotification => $notification->toMail($notifiable)->toArray(),
             $channel == NotificationChannel::Database && $notification instanceof DatabaseNotification => $notification->toDatabase($notifiable),
-            default => throw new Exception('Invalid notification channel.'),
         };
 
         $recipientId = null;
@@ -74,10 +71,10 @@ class CreateOutboundDeliverable
             [$recipientId, $recipientType] = $notification->identifyRecipient();
         }
 
-        return OutboundDeliverable::create([
+        return new OutboundDeliverable([
             'channel' => $channel,
             'notification_class' => get_class($notification),
-            'content' => json_encode($content),
+            'content' => $content,
             'recipient_id' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getKey() : $recipientId,
             'recipient_type' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getMorphClass() : $recipientType,
         ]);

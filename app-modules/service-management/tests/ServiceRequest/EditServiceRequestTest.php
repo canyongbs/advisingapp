@@ -105,7 +105,7 @@ test('EditServiceRequest requires valid data', function ($data, $errors) {
         ->call('save')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseHas(ServiceRequest::class, $serviceRequest->toArray());
+    assertDatabaseHas(ServiceRequest::class, $serviceRequest->withoutRelations()->toArray());
 
     expect($serviceRequest->fresh()->division->id)
         ->toEqual($serviceRequest->division->id)

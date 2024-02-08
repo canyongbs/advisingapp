@@ -34,32 +34,55 @@
 </COPYRIGHT>
 */
 
-namespace App\Notifications;
+namespace AdvisingApp\MeetingCenter\Notifications;
 
 use App\Models\User;
 use App\Models\NotificationSetting;
+use Filament\Notifications\Actions\Action;
+use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use Filament\Notifications\Notification as FilamentNotification;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
+use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 
-class DemoNotification extends BaseNotification implements EmailNotification
+class CalendarRequiresReconnectNotification extends BaseNotification implements EmailNotification, DatabaseNotification
 {
     use EmailChannelTrait;
+    use DatabaseChannelTrait;
 
-    public function __construct(protected User $sender) {}
+    public function __construct(public Calendar $calendar) {}
 
     public function toEmail(object $notifiable): MailMessage
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
+            ->line('The calendar connection for your account needs to be reconnected.')
+            ->line('Please reconnect your calendar connection to continue using the calendar for schedules and appointments.')
+            ->action('View Schedule and Appointments', CalendarEventResource::getUrl());
+    }
+
+    public function toDatabase(object $notifiable): array
+    {
+        return FilamentNotification::make()
+            ->danger()
+            ->title('Your calendar connection needs to be reconnected.')
+            ->body('Please reconnect your calendar connection to continue using the calendar for schedules and appointments.')
+            ->actions([
+                Action::make('reconnect_calendar')
+                    ->label('Reconnect Calendar')
+                    ->url(CalendarEventResource::getUrl()),
+            ])
+            ->getDatabaseMessage();
     }
 
     private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
     {
-        return $this->sender->teams()->first()?->division?->notificationSetting?->setting;
+        return $notifiable instanceof User
+            ? $notifiable->teams()->first()?->division?->notificationSetting?->setting
+            : null;
     }
 }

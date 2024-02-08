@@ -34,32 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace App\Notifications;
+namespace AdvisingApp\Notification\Observers;
 
-use App\Models\User;
-use App\Models\NotificationSetting;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
+use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
 
-class DemoNotification extends BaseNotification implements EmailNotification
+class OutboundDeliverableObserver
 {
-    use EmailChannelTrait;
-
-    public function __construct(protected User $sender) {}
-
-    public function toEmail(object $notifiable): MailMessage
+    public function created(OutboundDeliverable $outboundDeliverable): void
     {
-        return MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
+        if ($outboundDeliverable->related && in_array($outboundDeliverable->related::class, $outboundDeliverable->timelineables)) {
+            TimelineableRecordCreated::dispatch($outboundDeliverable, $outboundDeliverable);
+        }
     }
 
-    private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
+    public function deleted(OutboundDeliverable $outboundDeliverable): void
     {
-        return $this->sender->teams()->first()?->division?->notificationSetting?->setting;
+        if ($outboundDeliverable->related && in_array($outboundDeliverable->related::class, $outboundDeliverable->timelineables)) {
+            TimelineableRecordDeleted::dispatch($outboundDeliverable, $outboundDeliverable);
+        }
     }
 }

@@ -36,54 +36,52 @@
 
 namespace AdvisingApp\ServiceManagement\Notifications;
 
-use App\Models\User;
 use App\Models\NotificationSetting;
-use Filament\Notifications\Notification;
-use Filament\Notifications\Actions\Action;
-use AdvisingApp\ServiceManagement\Models\ChangeRequest;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\Notification\Notifications\DatabaseNotification;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
-use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource;
 
-class ChangeRequestAwaitingApproval extends BaseNotification implements EmailNotification, DatabaseNotification
+class SendEducatableServiceRequestClosedNotification extends BaseNotification implements EmailNotification
 {
     use EmailChannelTrait;
-    use DatabaseChannelTrait;
 
     public function __construct(
-        public ChangeRequest $changeRequest,
+        protected ServiceRequest $serviceRequest,
     ) {}
 
     public function toEmail(object $notifiable): MailMessage
     {
+        /** @var Educatable $educatable */
+        $educatable = $notifiable;
+
+        $name = match ($notifiable::class) {
+            Student::class => $educatable->first,
+            Prospect::class => $educatable->first_name,
+        };
+
+        $status = $this->serviceRequest->status;
+
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject('A Change Request is awaiting your approval')
-            ->line("Hello {$notifiable->name}, the following Change Request is awaiting your approval:")
-            ->line("{$this->changeRequest->title}")
-            ->line("{$this->changeRequest->description}")
-            ->line('You can view more details about this Change Request by clicking the button below.')
-            ->action('View Change Request', url(ChangeRequestResource::getUrl('view', ['record' => $this->changeRequest])));
+            ->subject("{$this->serviceRequest->service_request_number} - is now {$status->name}")
+            ->greeting("Hi {$name},")
+            ->line("Your request {$this->serviceRequest->service_request_number} for service is now {$status->name}.")
+            ->salutation('Thank you.');
     }
 
-    public function toDatabase(object $notifiable): array
+    protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
     {
-        return Notification::make()
-            ->title('Change Request Awaiting Your Approval')
-            ->actions([
-                Action::make('viewChangeRequest')
-                    ->button()
-                    ->url(ChangeRequestResource::getUrl('view', ['record' => $this->changeRequest])),
-            ])
-            ->getDatabaseMessage();
+        $deliverable->related()->associate($this->serviceRequest);
     }
 
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
+    private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
     {
-        return $notifiable->teams()->first()?->division?->notificationSetting?->setting;
+        return $this->serviceRequest->division?->notificationSetting?->setting;
     }
 }

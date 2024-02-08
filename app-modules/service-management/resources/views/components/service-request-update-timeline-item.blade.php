@@ -57,12 +57,12 @@
 
                 @if ($record->direction === ServiceRequestUpdateDirection::Inbound)
                     <x-filament::icon
-                        class="h-5 w-5 text-gray-400 dark:text-gray-100"
+                        class="w-5 text-gray-400 dark:text-gray-100"
                         icon="heroicon-o-arrow-down-tray"
                     />
                 @else
                     <x-filament::icon
-                        class="h-5 w-5 text-gray-400 dark:text-gray-100"
+                        class="w-5 text-gray-400 dark:text-gray-100"
                         icon="heroicon-o-arrow-up-tray"
                     />
                 @endif

@@ -34,32 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace App\Notifications;
+namespace AdvisingApp\Timeline\Timelines;
 
-use App\Models\User;
-use App\Models\NotificationSetting;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use Filament\Actions\ViewAction;
+use AdvisingApp\Timeline\Models\CustomTimeline;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\Notification\Filament\Actions\OutboundDeliverableViewAction;
 
-class DemoNotification extends BaseNotification implements EmailNotification
+class OutboundDeliverableTimeline extends CustomTimeline
 {
-    use EmailChannelTrait;
+    public function __construct(
+        public OutboundDeliverable $outboundDeliverable
+    ) {}
 
-    public function __construct(protected User $sender) {}
-
-    public function toEmail(object $notifiable): MailMessage
+    public function icon(): string
     {
-        return MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
+        return match ($this->outboundDeliverable->related::class) {
+            ServiceRequest::class => match ($this->outboundDeliverable->channel) {
+                NotificationChannel::Email => 'heroicon-o-envelope',
+                NotificationChannel::Sms => 'heroicon-o-chat-bubble-bottom-center-text',
+            },
+            default => 'heroicon-o-arrow-up-tray',
+        };
     }
 
-    private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
+    public function sortableBy(): string
     {
-        return $this->sender->teams()->first()?->division?->notificationSetting?->setting;
+        return $this->outboundDeliverable->created_at;
+    }
+
+    public function providesCustomView(): bool
+    {
+        return true;
+    }
+
+    public function renderCustomView(): string
+    {
+        return 'notification::outbound-deliverable-timeline-item';
+    }
+
+    public function modalViewAction(): ViewAction
+    {
+        return OutboundDeliverableViewAction::make()
+            ->record($this->outboundDeliverable)
+            ->modalHeading('View Outbound Deliverable');
     }
 }

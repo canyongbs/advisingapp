@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,34 +30,38 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+@endphp
 
-namespace App\Notifications;
+@props(['component', 'record'])
+<div>
+    <div class="flex flex-row justify-between">
+        <x-timeline::timeline.heading>
+            <span class="flex items-center">
+                @php
+                    $related = $record->related;
 
-use App\Models\User;
-use App\Models\NotificationSetting;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+                    $title = match ($related::class) {
+                        ServiceRequest::class => "Auto-response {$record->channel->getLabel()} sent",
+                        default => $record->getKey(),
+                    };
+                @endphp
+                {{ $title }}
+            </span>
+        </x-timeline::timeline.heading>
 
-class DemoNotification extends BaseNotification implements EmailNotification
-{
-    use EmailChannelTrait;
+        <div>
+            {{ $viewRecordIcon }}
+        </div>
+    </div>
 
-    public function __construct(protected User $sender) {}
+    <x-timeline::timeline.time>
+        {{ $record->created_at->diffForHumans() }}
+    </x-timeline::timeline.time>
 
-    public function toEmail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
-    }
-
-    private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
-    {
-        return $this->sender->teams()->first()?->division?->notificationSetting?->setting;
-    }
-}
+    <x-timeline::timeline.content>
+        {{ $record->content['subject'] }}
+    </x-timeline::timeline.content>
+</div>

@@ -4,7 +4,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Notification;
 use AdvisingApp\ServiceManagement\Models\ChangeRequest;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
-use AdvisingApp\ServiceManagement\Notifications\ChangeRequestAwaitingApproval;
+use AdvisingApp\ServiceManagement\Notifications\ChangeRequestAwaitingApprovalNotification;
 
 /*
 <COPYRIGHT>
@@ -40,10 +40,10 @@ use AdvisingApp\ServiceManagement\Notifications\ChangeRequestAwaitingApproval;
 </COPYRIGHT>
 */
 
-test('ChangeRequestAwaitingApproval notification is sent to each change request approver based on the change request type', function () {
+test('ChangeRequestAwaitingApprovalNotification notification is sent to each change request approver based on the change request type', function () {
     Notification::fake();
 
-    // Given that we have a have a change request type with user approvers
+    // Given that we have a change request type with user approvers
     $changeRequestType = ChangeRequestType::factory()->create();
     $userApprovers = User::factory()->count(3)->create();
     $changeRequestType->userApprovers()->attach($userApprovers);
@@ -53,6 +53,6 @@ test('ChangeRequestAwaitingApproval notification is sent to each change request 
         'change_request_type_id' => $changeRequestType->id,
     ]);
 
-    // Notifcations will be sent to each approver
-    Notification::assertSentTo($userApprovers, ChangeRequestAwaitingApproval::class);
+    // Notifications will be sent to each approver
+    Notification::assertSentTo($userApprovers, ChangeRequestAwaitingApprovalNotification::class);
 });

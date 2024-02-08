@@ -46,12 +46,14 @@ use Illuminate\Notifications\Events\NotificationFailed;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Notification\Events\SubscriptionCreated;
 use AdvisingApp\Notification\Events\SubscriptionDeleted;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Observers\SubscriptionObserver;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\Notification\Listeners\CreateAutoSubscription;
 use AdvisingApp\Notification\Listeners\HandleNotificationSent;
 use AdvisingApp\Notification\Listeners\HandleNotificationFailed;
+use AdvisingApp\Notification\Observers\OutboundDeliverableObserver;
 use AdvisingApp\Notification\Listeners\NotifyUserOfSubscriptionCreated;
 use AdvisingApp\Notification\Listeners\NotifyUserOfSubscriptionDeleted;
 
@@ -65,6 +67,7 @@ class NotificationServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'subscription' => Subscription::class,
+            'outbound_deliverable' => OutboundDeliverable::class,
         ]);
 
         $this->registerRolesAndPermissions();
@@ -77,6 +80,7 @@ class NotificationServiceProvider extends ServiceProvider
     protected function registerObservers(): void
     {
         Subscription::observe(SubscriptionObserver::class);
+        OutboundDeliverable::observe(OutboundDeliverableObserver::class);
     }
 
     protected function registerEvents(): void

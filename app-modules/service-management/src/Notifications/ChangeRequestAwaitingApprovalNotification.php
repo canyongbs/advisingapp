@@ -34,38 +34,58 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Notifications;
+namespace AdvisingApp\ServiceManagement\Notifications;
 
 use App\Models\User;
 use App\Models\NotificationSetting;
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use Filament\Notifications\Notification;
+use Filament\Notifications\Actions\Action;
+use AdvisingApp\ServiceManagement\Models\ChangeRequest;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
+use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource;
 
-class SendRegistrationLinkToEventAttendee extends BaseNotification implements EmailNotification
+class ChangeRequestAwaitingApprovalNotification extends BaseNotification implements EmailNotification, DatabaseNotification
 {
     use EmailChannelTrait;
+    use DatabaseChannelTrait;
 
     public function __construct(
-        protected Event $event,
-        protected User $sender
+        public ChangeRequest $changeRequest,
     ) {}
 
     public function toEmail(object $notifiable): MailMessage
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject('You have been invited to an event!')
-            ->line("You have been invited to {$this->event->title}.")
-            ->action('Register', route('event-registration.show', ['event' => $this->event]));
+            ->subject('A Change Request is awaiting your approval')
+            ->line("Hello {$notifiable->name}, the following Change Request is awaiting your approval:")
+            ->line("{$this->changeRequest->title}")
+            ->line("{$this->changeRequest->description}")
+            ->line('You can view more details about this Change Request by clicking the button below.')
+            ->action('View Change Request', url(ChangeRequestResource::getUrl('view', ['record' => $this->changeRequest])));
     }
 
-    private function resolveNotificationSetting(NotifiableInterface $notifiable): ?NotificationSetting
+    public function toDatabase(object $notifiable): array
     {
-        return $notifiable instanceof EventAttendee ? $this->sender->teams()->first()?->division?->notificationSetting?->setting : null;
+        return Notification::make()
+            ->title('Change Request Awaiting Your Approval')
+            ->actions([
+                Action::make('viewChangeRequest')
+                    ->button()
+                    ->url(ChangeRequestResource::getUrl('view', ['record' => $this->changeRequest])),
+            ])
+            ->getDatabaseMessage();
+    }
+
+    private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
+    {
+        return $notifiable instanceof User
+            ? $notifiable->teams()->first()?->division?->notificationSetting?->setting
+            : null;
     }
 }

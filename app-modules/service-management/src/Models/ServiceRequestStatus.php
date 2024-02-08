@@ -38,6 +38,7 @@ namespace AdvisingApp\ServiceManagement\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
+use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -67,6 +68,16 @@ class ServiceRequestStatus extends BaseModel implements Auditable
     public function serviceRequests(): HasMany
     {
         return $this->hasMany(ServiceRequest::class, 'status_id');
+    }
+
+    public static function optionsByClassification(): Collection
+    {
+        return ServiceRequestStatus::query()
+            ->orderBy('classification')
+            ->orderBy('name')
+            ->get(['id', 'name', 'classification'])
+            ->groupBy(fn (ServiceRequestStatus $status) => $status->classification->getlabel())
+            ->map(fn (Collection $group) => $group->pluck('name', 'id'));
     }
 
     protected function serializeDate(DateTimeInterface $date): string
