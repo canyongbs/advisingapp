@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -37,9 +37,12 @@
 namespace AdvisingApp\Notification\Models;
 
 use App\Models\BaseModel;
+use AdvisingApp\Notification\Drivers\SmsDriver;
+use AdvisingApp\Notification\Drivers\EmailDriver;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+use AdvisingApp\Notification\Drivers\OutboundDeliverableDriver;
 
 /**
  * @mixin IdeHelperOutboundDeliverable
@@ -70,7 +73,6 @@ class OutboundDeliverable extends BaseModel
         'last_delivery_attempt' => 'datetime',
     ];
 
-    // The "related" relationship is whatever entity we might need to tie this back to
     public function related(): MorphTo
     {
         return $this->morphTo(
@@ -105,7 +107,7 @@ class OutboundDeliverable extends BaseModel
         }
     }
 
-    public function markDeliveryFailed(string $reason): void
+    public function markDeliveryFailed(?string $reason): void
     {
         if (! $this->hasBeenDelivered()) {
             $this->update([
@@ -114,5 +116,13 @@ class OutboundDeliverable extends BaseModel
                 'delivery_response' => $reason,
             ]);
         }
+    }
+
+    public function driver(): OutboundDeliverableDriver
+    {
+        return match ($this->channel) {
+            NotificationChannel::Email => new EmailDriver($this),
+            NotificationChannel::Sms => new SmsDriver($this),
+        };
     }
 }

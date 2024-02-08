@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -47,7 +47,6 @@ class FindEngagementResponseSender implements EngagementResponseSenderFinder
     {
         // Student currently takes priority, but determine if we potentially want to store this response
         // For *all* potential matches instead of just a singular result.
-        // TODO: Make use of shared Student/Prospect implementation
         if (! is_null($student = Student::where('mobile', $phoneNumber)->orWhere('phone', $phoneNumber)->first())) {
             return $student;
         }

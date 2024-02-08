@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -37,17 +37,10 @@
 namespace App\Filament\Pages;
 
 use App\Models\User;
-use App\Filament\Widgets\MyTasks;
-use App\Filament\Widgets\MyStudents;
-use App\Filament\Widgets\MyProspects;
-use App\Filament\Widgets\TotalStudents;
+use App\Filament\Widgets\Features;
+use App\Filament\Widgets\Notifications;
 use App\Filament\Widgets\WelcomeWidget;
-use App\Filament\Widgets\TotalProspects;
 use Filament\Pages\Dashboard as BasePage;
-use App\Filament\Widgets\MyServiceRequests;
-use App\Filament\Widgets\ProspectGrowthChart;
-use App\Filament\Widgets\RecentProspectsList;
-use App\Filament\Widgets\RecentKnowledgeBaseArticlesList;
 use AdvisingApp\Authorization\Filament\Widgets\UnlicensedNotice;
 
 class Dashboard extends BasePage
@@ -71,27 +64,11 @@ class Dashboard extends BasePage
             return $widgets;
         }
 
-        if ($user->can('authorization.view_dashboard')) {
-            $widgets = [
-                // 1
-                ...$widgets,
-                // 2
-                TotalStudents::class,
-                TotalProspects::class,
-                MyStudents::class,
-                MyProspects::class,
-                // 3
-                ProspectGrowthChart::class,
-                // 4
-                RecentProspectsList::class,
-                RecentKnowledgeBaseArticlesList::class,
-                // 5
-                MyServiceRequests::class,
-                MyTasks::class,
-            ];
-        }
-
-        return $widgets;
+        return [
+            ...$widgets,
+            Features::class,
+            Notifications::class,
+        ];
     }
 
     public function getColumns(): int | string | array

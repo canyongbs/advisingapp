@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -44,16 +44,22 @@ use function Pest\Laravel\withoutMiddleware;
 use AdvisingApp\IntegrationTwilio\Actions\StatusCallback;
 use AdvisingApp\IntegrationTwilio\Actions\MessageReceived;
 
-it('will dispatch an appropriate job to process the incoming request', function () {
+it('will dispatch the correct job to handle the incoming webhook', function (string $event, string $payloadPath, string $expectedJob, array $unexpectedJobs = []) {
     withoutMiddleware();
 
     Queue::fake();
 
     post(
-        route('inbound.webhook.twilio', 'message_received'),
-        loadFixtureFromModule('integration-twilio', 'MessageReceived/payload'),
+        route('inbound.webhook.twilio', $event),
+        loadFixtureFromModule('integration-twilio', $payloadPath),
     );
 
-    Queue::assertPushed(MessageReceived::class);
-    Queue::assertNotPushed(StatusCallback::class);
-});
+    Queue::assertPushed($expectedJob);
+
+    foreach ($unexpectedJobs as $job) {
+        Queue::assertNotPushed($job);
+    }
+})->with([
+    ['message_received', 'MessageReceived/payload', MessageReceived::class, [StatusCallback::class]],
+    ['status_callback', 'StatusCallback/sent', StatusCallback::class, [MessageReceived::class]],
+]);

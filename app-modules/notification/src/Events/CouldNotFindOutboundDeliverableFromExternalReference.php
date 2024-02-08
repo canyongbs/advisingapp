@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,15 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Drivers;
+namespace AdvisingApp\Notification\Events;
 
-use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 
-interface DeliverableDriver
+class CouldNotFindOutboundDeliverableFromExternalReference
 {
-    public function updateDeliveryStatus(array $data): void;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
-    public function jobForDelivery(): QueuedEngagementDelivery;
-
-    public function deliver(): void;
+    public function __construct(
+        public TwilioStatusCallbackData $data
+    ) {}
 }

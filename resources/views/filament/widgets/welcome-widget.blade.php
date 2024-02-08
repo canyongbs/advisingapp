@@ -1,7 +1,7 @@
 {{--
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -32,10 +32,35 @@
 </COPYRIGHT>
 --}}
 <x-filament-widgets::widget>
-    <h1 class="font-medium">Welcome, {{ auth()->user()->name }}</h1>
+    <div class="flex flex-col items-center md:flex-row">
+        <div class="flex-1">
+            <h1 class="font-medium">Welcome, {{ auth()->user()->name }}</h1>
 
-    <p class="text-xs">
-        Today is {{ now(auth()->user()->timezone)->format('l, F j, Y') }} and the current time is
-        {{ now(auth()->user()->timezone)->format('g:i A') }}.
-    </p>
+            <p class="text-xs">
+                Today is {{ now(auth()->user()->timezone)->format('l, F j, Y') }} and the current time is
+                {{ now(auth()->user()->timezone)->format('g:i A') }}.
+            </p>
+        </div>
+
+        <div class="flex-shrink-0">
+            <form
+                class="my-auto"
+                action="{{ filament()->getLogoutUrl() }}"
+                method="post"
+            >
+                @csrf
+
+                <x-filament::button
+                    type="submit"
+                    color="gray"
+                    icon="heroicon-m-arrow-left-on-rectangle"
+                    icon-alias="panels::widgets.account.logout-button"
+                    labeled-from="sm"
+                    tag="button"
+                >
+                    {{ __('filament-panels::widgets/account-widget.actions.logout.label') }}
+                </x-filament::button>
+            </form>
+        </div>
+    </div>
 </x-filament-widgets::widget>

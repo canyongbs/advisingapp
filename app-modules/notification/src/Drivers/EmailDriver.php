@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,28 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Drivers;
+namespace AdvisingApp\Notification\Drivers;
 
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
-use AdvisingApp\Engagement\Actions\EngagementEmailChannelDelivery;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
 
-// TODO Rename this to be "EngagementEmailDriver"
-class EmailDriver implements DeliverableDriver
+class EmailDriver implements OutboundDeliverableDriver
 {
     public function __construct(
-        protected EngagementDeliverable $deliverable
+        protected OutboundDeliverable $deliverable
     ) {}
 
-    public function updateDeliveryStatus(array $data): void {}
-
-    public function jobForDelivery(): QueuedEngagementDelivery
-    {
-        return new EngagementEmailChannelDelivery($this->deliverable);
-    }
-
-    public function deliver(): void
-    {
-        EngagementEmailChannelDelivery::dispatch($this->deliverable);
-    }
+    public function updateDeliveryStatus(UpdateDeliveryStatusData $data): void {}
 }

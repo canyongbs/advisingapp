@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -43,6 +43,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Engagement\Actions\CreateEngagementResponse;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioMessageReceivedData;
 
 class MessageReceived implements ShouldQueue
 {
@@ -52,7 +53,7 @@ class MessageReceived implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        public array $data
+        public TwilioMessageReceivedData $data
     ) {}
 
     public function handle(): void
@@ -60,8 +61,8 @@ class MessageReceived implements ShouldQueue
         $createEngagementResponse = resolve(CreateEngagementResponse::class);
 
         $createEngagementResponse(EngagementResponseData::from([
-            'from' => $this->data['From'],
-            'body' => $this->data['Body'],
+            'from' => $this->data->from,
+            'body' => $this->data->body,
         ]));
     }
 }

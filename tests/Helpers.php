@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -59,4 +59,11 @@ function loadFixtureFromModule(string $module, string $file): mixed
     $modulePath = resolve(ModulePath::class);
 
     return json_decode(file_get_contents($modulePath($module, "tests/Fixtures/{$file}.json")), true);
+}
+
+function replaceKeyInFixture(mixed $fixture, string $key, mixed $value): mixed
+{
+    $fixture[$key] = $value;
+
+    return $fixture;
 }

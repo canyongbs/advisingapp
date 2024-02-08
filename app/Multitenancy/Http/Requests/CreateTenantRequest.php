@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -50,11 +50,6 @@ class CreateTenantRequest extends FormRequest
             'database.database' => ['required', 'string', 'max:255'],
             'database.username' => ['required', 'string', 'max:255'],
             'database.password' => ['required', 'string', 'max:255'],
-            'sis_database.host' => ['required', 'string', 'max:255'],
-            'sis_database.port' => ['required', 'integer', 'min:1', 'max:65535'],
-            'sis_database.database' => ['required', 'string', 'max:255'],
-            'sis_database.username' => ['required', 'string', 'max:255'],
-            'sis_database.password' => ['required', 'string', 'max:255'],
             's3_filesystem.key' => ['required', 'string', 'max:255'],
             's3_filesystem.secret' => ['required', 'string', 'max:255'],
             's3_filesystem.region' => ['required', 'string', 'max:255'],

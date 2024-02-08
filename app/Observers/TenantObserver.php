@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -39,6 +39,7 @@ namespace App\Observers;
 use Throwable;
 use App\Models\Tenant;
 use Illuminate\Bus\Batch;
+use App\Jobs\SeedTenantDatabase;
 use App\Jobs\MigrateTenantDatabase;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
@@ -49,11 +50,20 @@ class TenantObserver
 {
     public function created(Tenant $tenant): void
     {
+        $setupChain = [
+            new MigrateTenantDatabase($tenant),
+        ];
+
+        if (config('multitenancy.seed_on_tenant_creation')) {
+            $setupChain = [
+                ...$setupChain,
+                new SeedTenantDatabase($tenant),
+            ];
+        }
+
         Bus::batch(
             [
-                [
-                    new MigrateTenantDatabase($tenant),
-                ],
+                $setupChain,
             ]
         )
             ->onQueue(config('queue.landlord_queue'))
