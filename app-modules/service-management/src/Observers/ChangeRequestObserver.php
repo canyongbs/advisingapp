@@ -41,7 +41,7 @@ use AdvisingApp\ServiceManagement\Models\ChangeRequest;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
 use AdvisingApp\ServiceManagement\Models\Scopes\ClassifiedAs;
 use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
-use AdvisingApp\ServiceManagement\Notifications\ChangeRequestAwaitingApproval;
+use AdvisingApp\ServiceManagement\Notifications\ChangeRequestAwaitingApprovalNotification;
 
 class ChangeRequestObserver
 {
@@ -58,7 +58,7 @@ class ChangeRequestObserver
 
     public function created(ChangeRequest $changeRequest): void
     {
-        Notification::send($changeRequest->type->userApprovers, new ChangeRequestAwaitingApproval($changeRequest));
+        Notification::send($changeRequest->type->userApprovers, new ChangeRequestAwaitingApprovalNotification($changeRequest));
     }
 
     public function saving(ChangeRequest $changeRequest): void

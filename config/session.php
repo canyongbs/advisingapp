@@ -105,7 +105,7 @@ return [
     |
     */
 
-    'connection' => env('SESSION_CONNECTION', 'tenant'),
+    'connection' => env('SESSION_CONNECTION', 'default'),
 
     /*
     |--------------------------------------------------------------------------

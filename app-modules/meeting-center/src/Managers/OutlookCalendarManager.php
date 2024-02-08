@@ -55,7 +55,7 @@ use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Settings\AzureCalendarSettings;
 use Microsoft\Graph\Model\Calendar as MicrosoftGraphCalendar;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
-use AdvisingApp\MeetingCenter\Notifications\CalendarRequiresReconnect;
+use AdvisingApp\MeetingCenter\Notifications\CalendarRequiresReconnectNotification;
 
 class OutlookCalendarManager implements CalendarInterface
 {
@@ -264,7 +264,7 @@ class OutlookCalendarManager implements CalendarInterface
 
                 $calendar->save();
 
-                $calendar->user->notify(new CalendarRequiresReconnect($calendar));
+                $calendar->user->notify(new CalendarRequiresReconnectNotification($calendar));
             }
 
             $response->throw();

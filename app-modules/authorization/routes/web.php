@@ -35,7 +35,6 @@
 */
 
 use AdvisingApp\Authorization\Http\Controllers\SocialiteController;
-use AdvisingApp\Authorization\Http\Controllers\Auth\LogoutController;
 use AdvisingApp\Authorization\Http\Controllers\Auth\OneTimeLoginController;
 
 Route::middleware('web')->group(function () {
@@ -43,14 +42,11 @@ Route::middleware('web')->group(function () {
         Route::get('/{provider}/redirect', [SocialiteController::class, 'redirect'])
             ->name('redirect');
 
-        Route::get('/{provider}/callback', [SocialiteController::class, 'callback'])
+        Route::middleware('panel:admin')->get('/{provider}/callback', [SocialiteController::class, 'callback'])
             ->name('callback');
     });
 
     Route::get('/auth/login/{user}', OneTimeLoginController::class)
         ->name('login.one-time')
         ->middleware('signed');
-
-    Route::post('/auth/logout', LogoutController::class)
-        ->name('logout');
 });

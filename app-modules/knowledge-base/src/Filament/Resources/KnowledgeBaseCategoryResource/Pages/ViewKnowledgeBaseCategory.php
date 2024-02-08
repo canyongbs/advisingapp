@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
 
-use Filament\Actions;
+use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
@@ -54,8 +54,9 @@ class ViewKnowledgeBaseCategory extends ViewRecord
                 Section::make()
                     ->schema([
                         TextEntry::make('name')
-                            ->label('Name')
-                            ->translateLabel(),
+                            ->label('Name'),
+                        TextEntry::make('description')
+                            ->label('Description'),
                     ])
                     ->columns(),
             ]);
@@ -64,7 +65,7 @@ class ViewKnowledgeBaseCategory extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 }

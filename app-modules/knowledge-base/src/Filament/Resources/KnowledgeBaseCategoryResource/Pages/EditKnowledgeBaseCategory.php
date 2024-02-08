@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
 
-use Filament\Actions;
 use Filament\Forms\Form;
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
@@ -54,14 +56,18 @@ class EditKnowledgeBaseCategory extends EditRecord
                     ->label('Name')
                     ->required()
                     ->string(),
+                Textarea::make('description')
+                    ->label('Description')
+                    ->nullable()
+                    ->string(),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            ViewAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

@@ -46,7 +46,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use AdvisingApp\MeetingCenter\Notifications\SendRegistrationLinkToEventAttendee;
+use AdvisingApp\MeetingCenter\Notifications\SendRegistrationLinkToEventAttendeeNotification;
 
 class CreateEventAttendee implements ShouldQueue
 {
@@ -86,6 +86,6 @@ class CreateEventAttendee implements ShouldQueue
             'status' => EventAttendeeStatus::Invited,
         ]);
 
-        $attendee->notify(new SendRegistrationLinkToEventAttendee($this->event, $this->sender));
+        $attendee->notify(new SendRegistrationLinkToEventAttendeeNotification($this->event, $this->sender));
     }
 }

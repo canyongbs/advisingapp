@@ -71,6 +71,9 @@ class AddUserToConversation
         $conversation->participants()
             ->attach($user, [
                 'participant_sid' => $participant->sid,
+                ...($user->is(auth()->user()) ? [
+                    'last_read_at' => now(),
+                ] : []),
             ]);
 
         if ($manager) {

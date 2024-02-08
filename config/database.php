@@ -86,7 +86,7 @@ return [
             'driver' => 'pgsql',
             'host' => env('TENANT_DB_HOST'),
             'port' => env('TENANT_DB_PORT'),
-            'database' => env('TENANT_DB_DATABASE'),
+            'database' => env('TENANT_DB_DATABASE', ''),
             'username' => env('TENANT_DB_USERNAME'),
             'password' => env('TENANT_DB_PASSWORD'),
             'charset' => 'utf8',

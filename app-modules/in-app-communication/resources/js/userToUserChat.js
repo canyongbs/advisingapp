@@ -62,7 +62,28 @@ document.addEventListener('alpine:init', () => {
         message: '',
         usersTyping: [],
         submit: function () {
-            if (this.message.length === 0 || this.conversation === null) return;
+            if (this.conversation === null) return;
+
+            let messageContent = [JSON.parse(this.message)];
+
+            let i = 0;
+            let messageHasContent = false;
+
+            while (i < messageContent.length) {
+                if (['text', 'mention'].includes(messageContent[i].type)) {
+                    messageHasContent = true;
+
+                    break;
+                }
+
+                (messageContent[i].content ?? []).forEach((content) => messageContent.push(content));
+
+                i++;
+            }
+
+            if (!messageHasContent) {
+                return;
+            }
 
             this.conversation.sendMessage(this.message).catch((error) => this.handleError(error));
 
@@ -171,6 +192,8 @@ document.addEventListener('alpine:init', () => {
                     });
 
                     this.conversation.setAllMessagesRead().catch((error) => this.handleError(error));
+
+                    await this.$wire.onMessageSent(message.author, message.sid, JSON.parse(message.body));
                 });
 
                 this.conversation.on('messageUpdated', async (data) => {
@@ -410,6 +433,9 @@ document.addEventListener('alpine:init', () => {
             },
             removeColor() {
                 editor.chain().focus().unsetColor().run();
+            },
+            insertContent(content) {
+                editor.chain().focus().insertContent(content).run();
             },
         };
     });

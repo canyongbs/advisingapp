@@ -50,7 +50,7 @@ class ConsentServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new ConsentPlugin()));
+        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ConsentPlugin()));
     }
 
     public function boot()

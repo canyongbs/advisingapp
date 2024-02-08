@@ -38,17 +38,27 @@ namespace AdvisingApp\Portal\Filament\Pages;
 
 use App\Models\User;
 use App\Enums\Feature;
+use Filament\Forms\Get;
 use Filament\Forms\Form;
 use App\Models\SettingsProperty;
 use Filament\Pages\SettingsPage;
+use AdvisingApp\Form\Enums\Rounding;
+use App\Filament\Fields\ColorSelect;
 use Illuminate\Support\Facades\Gate;
 use App\Filament\Fields\TiptapEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Section;
+use AdvisingApp\Portal\Enums\PortalType;
+use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\GlobalSettings;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Infolists\Components\TextEntry;
 use FilamentTiptapEditor\Enums\TiptapOutput;
+use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Portal\Settings\PortalSettings;
+use AdvisingApp\Portal\Actions\GeneratePortalEmbedCode;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class ManagePortalSettings extends SettingsPage
@@ -94,7 +104,7 @@ class ManagePortalSettings extends SettingsPage
                             ->hexColor(),
                     ])
                     ->columns(2),
-                Section::make('Features')
+                Section::make('CRM Portal')
                     ->schema([
                         Toggle::make('has_applications')
                             ->label('Applications'),
@@ -139,6 +149,84 @@ class ManagePortalSettings extends SettingsPage
                             ->hintIconTooltip('Surveys are not a part of your current subscription.'),
                     ])
                     ->columns(3),
+                Section::make('Knowledge Portal')
+                    ->schema([
+                        Toggle::make('knowledge_management_portal_enabled')
+                            ->label('Knowledge Management')
+                            ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                            ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIconTooltip('Knowledge Management is not a part of your current subscription.')
+                            ->live()
+                            ->columnSpanFull(),
+                        ColorSelect::make('knowledge_management_portal_primary_color')
+                            ->label('Primary Color')
+                            ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled'))
+                            ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                            ->hintIcon(fn (ColorSelect $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIconTooltip('Knowledge Management is not a part of your current subscription.')
+                            ->columnSpan(1),
+                        Select::make('knowledge_management_portal_rounding')
+                            ->label('Rounding')
+                            ->options(Rounding::class)
+                            ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled'))
+                            ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                            ->hintIcon(fn (Select $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIconTooltip('Knowledge Management is not a part of your current subscription.')
+                            ->columnSpan(1),
+                        TextInput::make('knowledge_management_portal_authorized_domain')
+                            ->label('Authorized Domain')
+                            ->url()
+                            ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled'))
+                            ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                            ->hintIcon(fn (TextInput $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIconTooltip('Knowledge Management is not a part of your current subscription.')
+                            ->columnSpanFull(),
+                        Toggle::make('knowledge_management_portal_service_management')
+                            ->label('Service Management')
+                            ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled'))
+                            ->disabled(! Gate::check(Feature::ServiceManagement->getGateName()))
+                            ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null),
+                        Actions::make([
+                            Action::make('view')
+                                ->url(fn () => route('portals.knowledge-management.show'))
+                                ->icon('heroicon-m-arrow-top-right-on-square')
+                                ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                                ->openUrlInNewTab(),
+                            Action::make('embed_snippet')
+                                ->label('Embed Snippet')
+                                ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                                ->infolist(
+                                    [
+                                        TextEntry::make('snippet')
+                                            ->label('Click to Copy')
+                                            ->state(function () {
+                                                $code = resolve(GeneratePortalEmbedCode::class)->handle(PortalType::KnowledgeManagement);
+
+                                                return <<<EOD
+                                                ```
+                                                {$code}
+                                                ```
+                                                EOD;
+                                            })
+                                            ->markdown()
+                                            ->copyable()
+                                            ->copyableState(fn () => resolve(GeneratePortalEmbedCode::class)->handle(PortalType::KnowledgeManagement))
+                                            ->copyMessage('Copied!')
+                                            ->copyMessageDuration(1500),
+                                    ]
+                                )
+                                ->modalSubmitAction(false)
+                                ->modalCancelActionLabel('Close'),
+                        ])
+                            ->visible(
+                                fn (Get $get) => $get('knowledge_management_portal_enabled') &&
+                            ! is_null($get('knowledge_management_portal_primary_color')) &&
+                            ! is_null($get('knowledge_management_portal_rounding')) &&
+                            ! is_null($get('knowledge_management_portal_authorized_domain'))
+                            )
+                            ->columnSpanFull(),
+                    ])->columns(2),
+
                 Section::make('Footer')
                     ->schema([
                         ColorPicker::make('footer_color')

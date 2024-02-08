@@ -58,7 +58,7 @@ class DemoNotification extends BaseNotification implements EmailNotification
             ->line('Thank you for using our application!');
     }
 
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
+    private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
     {
         return $this->sender->teams()->first()?->division?->notificationSetting?->setting;
     }

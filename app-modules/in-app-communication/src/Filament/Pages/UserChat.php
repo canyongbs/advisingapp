@@ -48,6 +48,7 @@ use Twilio\Jwt\Grants\ChatGrant;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Renderless;
+use Filament\Forms\Components\Radio;
 use Illuminate\Support\Facades\Gate;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Cache;
@@ -69,11 +70,14 @@ use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\InAppCommunication\Actions\AddUserToConversation;
 use AdvisingApp\InAppCommunication\Actions\TogglePinConversation;
+use AdvisingApp\InAppCommunication\Events\ConversationMessageSent;
 use AdvisingApp\InAppCommunication\Actions\CreateTwilioConversation;
 use AdvisingApp\InAppCommunication\Actions\DeleteTwilioConversation;
 use AdvisingApp\InAppCommunication\Actions\RemoveUserFromConversation;
 use AdvisingApp\InAppCommunication\Actions\PromoteUserToChannelManager;
+use AdvisingApp\InAppCommunication\Jobs\NotifyConversationParticipants;
 use AdvisingApp\InAppCommunication\Actions\DemoteUserFromChannelManager;
+use AdvisingApp\InAppCommunication\Enums\ConversationNotificationPreference;
 
 /**
  * @property Collection $conversations
@@ -389,6 +393,24 @@ class UserChat extends Page implements HasForms, HasActions
             });
     }
 
+    public function onMessageSent(User $author, string $messageSid, array $messageContent): void
+    {
+        if ($author->is(auth()->user())) {
+            dispatch(new NotifyConversationParticipants(
+                new ConversationMessageSent(
+                    $this->conversation,
+                    auth()->user(),
+                    $messageSid,
+                    $messageContent,
+                ),
+            ));
+
+            return;
+        }
+
+        $this->clearNotifications();
+    }
+
     public function joinChannelsAction()
     {
         $channels = TwilioConversation::query()
@@ -495,6 +517,39 @@ class UserChat extends Page implements HasForms, HasActions
         return $action;
     }
 
+    public function updateNotificationPreferenceAction(): Action
+    {
+        $participation = $this->conversation->participants()->find(auth()->id())?->participant;
+
+        return Action::make('updateNotificationPreference')
+            ->label('Notifications')
+            ->link()
+            ->color($participation?->notification_preference->getColor() ?? 'warning')
+            ->icon($participation?->notification_preference->getIcon() ?? 'heroicon-m-bell')
+            ->modalHeading('Notifications preference')
+            ->modalWidth('sm')
+            ->modalSubmitActionLabel('Update')
+            ->fillForm(fn (): array => [
+                'preference' => $participation?->notification_preference,
+            ])
+            ->form([
+                Radio::make('preference')
+                    ->hiddenLabel()
+                    ->options(ConversationNotificationPreference::class)
+                    ->required(),
+            ])
+            ->action(function (array $data) {
+                $this->conversation->participants()->updateExistingPivot(auth()->id(), [
+                    'notification_preference' => $data['preference'],
+                ]);
+
+                Notification::make()
+                    ->title('Notification preferences updated')
+                    ->success()
+                    ->send();
+            });
+    }
+
     public function addUserToChannelAction(): Action
     {
         $usersQuery = User::query()
@@ -558,6 +613,8 @@ class UserChat extends Page implements HasForms, HasActions
     {
         $this->conversationId = $conversation?->getKey();
         $this->conversation = $conversation;
+
+        $this->clearNotifications();
     }
 
     #[Renderless]
@@ -623,6 +680,22 @@ class UserChat extends Page implements HasForms, HasActions
             ->title('Something went wrong. If this issue persists, please contact support.')
             ->danger()
             ->send();
+    }
+
+    protected function clearNotifications(): void
+    {
+        $participation = $this->conversation?->participants()->find(auth()->user())?->participant;
+
+        if (! $participation) {
+            return;
+        }
+
+        $participation->first_unread_message_sid = null;
+        $participation->first_unread_message_at = null;
+        $participation->last_unread_message_content = null;
+        $participation->last_read_at = now();
+        $participation->unread_messages_count = 0;
+        $participation->save();
     }
 
     protected function getViewData(): array

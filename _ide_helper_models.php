@@ -2065,6 +2065,12 @@ namespace AdvisingApp\InAppCommunication\Models{
  * @property string $participant_sid
  * @property bool $is_channel_manager
  * @property bool $is_pinned
+ * @property \AdvisingApp\InAppCommunication\Enums\ConversationNotificationPreference $notification_preference
+ * @property string|null $first_unread_message_sid
+ * @property \Carbon\CarbonImmutable|null $first_unread_message_at
+ * @property string|null $last_unread_message_content
+ * @property \Carbon\CarbonImmutable|null $last_read_at
+ * @property int $unread_messages_count
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \AdvisingApp\InAppCommunication\Models\TwilioConversation $conversation
@@ -2074,9 +2080,15 @@ namespace AdvisingApp\InAppCommunication\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser query()
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereConversationSid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereFirstUnreadMessageAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereFirstUnreadMessageSid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereIsChannelManager($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereIsPinned($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereLastReadAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereLastUnreadMessageContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereNotificationPreference($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereParticipantSid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereUnreadMessagesCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereUserId($value)
  * @mixin \Eloquent

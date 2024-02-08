@@ -55,6 +55,7 @@ class KnowledgeBaseCategory extends BaseModel implements Auditable
 
     protected $fillable = [
         'name',
+        'description',
     ];
 
     public function knowledgeBaseItems(): HasMany

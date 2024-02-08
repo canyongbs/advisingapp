@@ -39,6 +39,7 @@ namespace App\Observers;
 use Throwable;
 use App\Models\Tenant;
 use Illuminate\Bus\Batch;
+use App\Jobs\SeedTenantDatabase;
 use App\Jobs\MigrateTenantDatabase;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
@@ -49,11 +50,20 @@ class TenantObserver
 {
     public function created(Tenant $tenant): void
     {
+        $setupChain = [
+            new MigrateTenantDatabase($tenant),
+        ];
+
+        if (config('multitenancy.seed_on_tenant_creation')) {
+            $setupChain = [
+                ...$setupChain,
+                new SeedTenantDatabase($tenant),
+            ];
+        }
+
         Bus::batch(
             [
-                [
-                    new MigrateTenantDatabase($tenant),
-                ],
+                $setupChain,
             ]
         )
             ->onQueue(config('queue.landlord_queue'))

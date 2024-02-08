@@ -165,7 +165,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'is_phone_number_visible_on_profile',
         'working_hours_are_enabled',
         'are_working_hours_visible_on_profile',
-        'working_hours' => 'array',
+        'working_hours',
     ];
 
     public $orderable = [
@@ -199,6 +199,12 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
                 'participant_sid',
                 'is_channel_manager',
                 'is_pinned',
+                'notification_preference',
+                'first_unread_message_sid',
+                'first_unread_message_at',
+                'last_unread_message_content',
+                'last_read_at',
+                'unread_messages_count',
             ])
             ->withTimestamps()
             ->as('participant')
