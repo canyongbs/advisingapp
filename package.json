@@ -14,7 +14,6 @@
         "build:event-registration": "(cd widgets/event-registration && vite build)",
         "build:service-request-form": "(cd widgets/service-request-form && vite build)",
         "build:widgets": "npm run build:application && npm run build:form && npm run build:survey && npm run build:event-registration && npm run build:service-request-form",
-        "dev:knowledge-management": "(cd portals/knowledge-management && vite --config vite.config.js)",
         "build:knowledge-management": "(cd portals/knowledge-management && vite build)",
         "build:portals": "npm run build:knowledge-management",
         "build": "npm run build:js-compile && npm run build:vite && npm run build:filament && npm run build:widgets && npm run build:portals",

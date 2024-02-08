@@ -50,7 +50,7 @@ use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
 
 class CreateTenantCommand extends Command
 {
-    protected $signature = 'tenants:create {name} {domain} {--m|run-queue} {--s|seed} {--d|default}';
+    protected $signature = 'tenants:create {name} {domain} {--m|run-queue} {--s|seed}';
 
     protected $description = 'Temporary command to test the tenant creation process.';
 
@@ -61,8 +61,6 @@ class CreateTenantCommand extends Command
 
             return;
         }
-
-        // TODO Add config and creation for creating a "default" tenant
 
         $name = $this->argument('name');
         $domain = $this->argument('domain');

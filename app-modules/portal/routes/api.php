@@ -49,9 +49,6 @@ Route::prefix('api')
         EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
     ])
     ->group(function () {
-        /**
-         * Knowledge Management Portal
-         */
         Route::prefix('portal/knowledge-management')
             ->name('portal.knowledge-management.')
             ->group(function () {
@@ -65,8 +62,5 @@ Route::prefix('api')
                     ->name('category.show');
                 Route::get('/categories/{category}/articles/{article}', [KnowledgeManagementPortalArticleController::class, 'show'])
                     ->name('article.show');
-            })
-            ->middleware([
-                EnsureKnowledgeManagementPortalIsEnabled::class,
-            ]);
+            });
     });

@@ -177,7 +177,6 @@ async function getKnowledgeManagementPortal() {
                     :categories="categories"
                 ></MobileSidebar>
 
-                <!-- Desktop Sidebar -->
                 <DesktopSidebar :categories="categories"></DesktopSidebar>
 
                 <div class="lg:pl-72">

@@ -32,8 +32,6 @@
 </COPYRIGHT>
 --}}
 <div>
-    Hello, this is my page
-
     <knowledge-management-portal-embed
         url="http://test.advisingapp.local/api/portal/knowledge-management?signature=f5277bd0ec29e955f6b9b05477aa4ee2b3dec8c9699c0cbd3878ae2760747e2e"
         access-url=http://test.advisingapp.local/portals/knowledge-management
