@@ -32,13 +32,12 @@
 </COPYRIGHT>
 */
 import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import './portal.css';
+import '@/portal.css';
 import App from './App.vue';
 import { createMemoryHistory, createRouter, createWebHistory } from 'vue-router';
-// We'll need a Home, ViewCategory, and ViewArticle component
-import Home from './Pages/Home.vue';
-import ViewCategory from './Pages/ViewCategory.vue';
-import ViewArticle from './Pages/ViewArticle.vue';
+import Home from '@/Pages/Home.vue';
+import ViewCategory from '@/Pages/ViewCategory.vue';
+import ViewArticle from '@/Pages/ViewArticle.vue';
 
 customElements.define(
     'knowledge-management-portal-embed',
@@ -47,21 +46,16 @@ customElements.define(
             const app = createApp();
 
             function getAppContext() {
-                const hostname = window.location.hostname;
-                console.log('hostname', hostname);
-                const pathname = window.location.pathname;
-                console.log('pathname', pathname);
+                const url = window.location.href;
 
-                console.log('props', props);
-                const isEmbeddedInOwnApp = hostname === props.appUrl;
-                console.log('isEmbeddedInOwnApp', isEmbeddedInOwnApp);
+                const isEmbeddedInOwnApp = url.replace(/\/$/, '') === props.accessUrl.replace(/\/$/, '');
 
                 let baseUrl = '/';
+
                 if (isEmbeddedInOwnApp) {
                     baseUrl = '/portals/knowledge-management';
                 }
 
-                console.log('baseUrl', baseUrl);
                 return { isEmbeddedInOwnApp, baseUrl };
             }
 
@@ -96,9 +90,8 @@ customElements.define(
             Object.assign(inst.appContext, app._context);
             Object.assign(inst.provides, app._context.provides);
 
-            console.log('props in root', props);
             return () => h(App, props);
         },
-        props: ['url', 'searchUrl', 'appUrl'],
+        props: ['url', 'accessUrl', 'searchUrl', 'appUrl', 'apiUrl'],
     }),
 );

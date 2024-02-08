@@ -48,13 +48,14 @@ class GeneratePortalEmbedCode
         return match ($portal) {
             PortalType::KnowledgeManagement => (function () {
                 $scriptUrl = url('js/portals/knowledge-management/advising-app-knowledge-management-portal.js?');
+                $portalAccessUrl = route('portals.knowledge-management.show');
                 $portalDefinitionUrl = URL::signedRoute('portal.knowledge-management.define');
                 $portalSearchUrl = URL::signedRoute('portal.knowledge-management.search');
                 $appUrl = parse_url(config('app.url'))['host'];
                 $apiUrl = route('portal.knowledge-management.define');
 
                 return <<<EOD
-                <knowledge-management-portal-embed url="{$portalDefinitionUrl}" search-url="{$portalSearchUrl}" app-url="{$appUrl}" api-url="{$apiUrl}"></knowledge-management-portal-embed>
+                <knowledge-management-portal-embed url="{$portalDefinitionUrl}" access-url={$portalAccessUrl} search-url="{$portalSearchUrl}" app-url="{$appUrl}" api-url="{$apiUrl}"></knowledge-management-portal-embed>
                 <script src="{$scriptUrl}"></script>
                 EOD;
             })(),
