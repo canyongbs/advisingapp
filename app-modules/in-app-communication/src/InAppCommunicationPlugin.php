@@ -38,6 +38,10 @@ namespace AdvisingApp\InAppCommunication;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\Blade;
+use AdvisingApp\InAppCommunication\Filament\Pages\UserChat;
+use AdvisingApp\InAppCommunication\Livewire\ChatNotifications;
 
 class InAppCommunicationPlugin implements Plugin
 {
@@ -56,6 +60,15 @@ class InAppCommunicationPlugin implements Plugin
         $panel->discoverPages(
             in: __DIR__ . '/Filament/Pages',
             for: 'AdvisingApp\\InAppCommunication\\Filament\\Pages'
+        );
+
+        $panel->livewireComponents([
+            ChatNotifications::class,
+        ]);
+
+        $panel->renderHook(
+            PanelsRenderHook::GLOBAL_SEARCH_AFTER,
+            fn () => (auth()->user() && UserChat::canAccess()) ? Blade::render('@livewire(\\AdvisingApp\\InAppCommunication\\Livewire\\ChatNotifications::class)') : null,
         );
     }
 

@@ -37,8 +37,14 @@
 namespace AdvisingApp\InAppCommunication\Models;
 
 use App\Models\User;
+use Illuminate\Support\Str;
+use Filament\Notifications\Notification;
+use Filament\Notifications\Actions\Action;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\InAppCommunication\Filament\Pages\UserChat;
+use AdvisingApp\InAppCommunication\Enums\ConversationNotificationPreference;
+use Livewire\Attributes\On;
 
 /**
  * @mixin IdeHelperTwilioConversationUser
@@ -48,7 +54,27 @@ class TwilioConversationUser extends Pivot
     protected $casts = [
         'is_channel_manager' => 'boolean',
         'is_pinned' => 'boolean',
+        'first_unread_message_at' => 'immutable_datetime',
+        'last_read_at' => 'immutable_datetime',
+        'unread_messages_count' => 'integer',
+        'notification_preference' => ConversationNotificationPreference::class,
     ];
+
+    public function removeNotification(string $id): void
+    {
+        $participation = auth()->user()->conversations()->where('sid', $id)->first()?->participant;
+
+        if (! $participation) {
+            return;
+        }
+
+        $participation->first_unread_message_sid = null;
+        $participation->first_unread_message_at = null;
+        $participation->last_unread_message_content = null;
+        $participation->last_read_at = now();
+        $participation->unread_messages_count = 0;
+        $participation->save();
+    }
 
     public function conversation(): BelongsTo
     {
@@ -58,5 +84,33 @@ class TwilioConversationUser extends Pivot
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getNotification(): ?Notification
+    {
+        $notification = null;
+
+        if (! $this->last_read_at) {
+            $notification = Notification::make($this->conversation_sid)
+                ->title("New chat: {$this->conversation->getLabel()}")
+                ->info()
+                ->icon('heroicon-o-sparkles');
+        } elseif ($this->unread_messages_count) {
+            $notification ??= Notification::make($this->conversation_sid)
+                ->title("{$this->unread_messages_count} unread " . str('message')->plural($this->unread_messages_count) . " in {$this->conversation->getLabel()}")
+                ->body(Str::limit($this->last_unread_message_content, 50))
+                ->warning()
+                ->icon('heroicon-o-chat-bubble-left-ellipsis');
+        }
+
+        $notification
+            ?->actions([
+                Action::make('open')
+                    ->url(fn (): string => UserChat::getUrl(['conversation' => $this->conversation->sid])),
+            ])
+            ->date(($this->updated_at ?? $this->created_at)->diffForHumans())
+            ->persistent();
+
+        return $notification;
     }
 }

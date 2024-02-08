@@ -77,6 +77,12 @@ class TwilioConversation extends Model
                 'participant_sid',
                 'is_channel_manager',
                 'is_pinned',
+                'notification_preference',
+                'first_unread_message_sid',
+                'first_unread_message_at',
+                'last_unread_message_content',
+                'last_read_at',
+                'unread_messages_count',
             ])
             ->withTimestamps()
             ->as('participant')
@@ -86,5 +92,14 @@ class TwilioConversation extends Model
     public function managers(): BelongsToMany
     {
         return $this->participants()->wherePivot('is_channel_manager', true);
+    }
+
+    public function getLabel(): ?string
+    {
+        if (filled($this->channel_name)) {
+            return $this->channel_name;
+        }
+
+        return $this->participants->where('id', '!=', auth()->id())->first()?->name;
     }
 }

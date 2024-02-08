@@ -100,18 +100,28 @@
                                                     'text-primary-600 dark:text-primary-400' =>
                                                         $conversation?->getKey() === $conversationItem->getKey(),
                                                 ])>
-                                                    @if (filled($conversationItem->channel_name))
-                                                        {{ $conversationItem->channel_name }}
-                                                    @else
-                                                        {{ $conversationItem->participants->where('id', '!=', auth()->id())->first()?->name }}
-                                                    @endif
+                                                    {{ $conversationItem->getLabel() }}
                                                 </span>
-                                                <x-filament::loading-indicator :attributes="(new \Illuminate\View\ComponentAttributeBag([
-                                                    'wire:loading.delay.' .
-                                                    config('filament.livewire_loading_delay', 'default') => '',
-                                                    'wire:target' =>
-                                                        'selectConversation(\'' . $conversationItem->getKey() . '\')',
-                                                ]))->class(['w-5 h-5'])" />
+                                                <div class="flex items-center gap-1">
+                                                    @if ($conversationItem->participant->unread_messages_count)
+                                                        <x-filament::badge color="warning">
+                                                            {{ $conversationItem->participant->unread_messages_count }}
+                                                        </x-filament::badge>
+                                                    @endif
+
+                                                    @if (! $conversationItem->participant->last_read_at)
+                                                        <x-filament::badge color="warning">
+                                                            New
+                                                        </x-filament::badge>
+                                                    @endif
+
+                                                    <x-filament::loading-indicator :attributes="(new \Illuminate\View\ComponentAttributeBag([
+                                                        'wire:loading.delay.' .
+                                                        config('filament.livewire_loading_delay', 'default') => '',
+                                                        'wire:target' =>
+                                                            'selectConversation(\'' . $conversationItem->getKey() . '\')',
+                                                    ]))->class(['w-5 h-5'])" />
+                                                </div>
                                             </button>
                                             @php
                                                 /** @var TwilioConversationUser $participant */
@@ -546,11 +556,13 @@
                                 </div>
                             </div>
                         </form>
-                        @if ($conversation->type === ConversationType::Channel)
-                            @php
-                                $isManager = (bool) $conversation->managers()->find(auth()->user());
-                            @endphp
-                            <div class="{{ $isManager ? 'justify-between' : 'justify-end' }} flex items-center">
+
+                        @php
+                            $isManager = (bool) $conversation->managers()->find(auth()->user());
+                        @endphp
+
+                        <div class="{{ $isManager ? 'justify-between' : 'justify-end' }} flex items-center">
+                            @if ($conversation->type === ConversationType::Channel)
                                 @if ($isManager)
                                     <div class="flex gap-3">
                                         {{ $this->editChannelAction }}
@@ -558,14 +570,18 @@
                                         {{ $this->deleteChannelAction }}
                                     </div>
                                 @endif
+                            @endif
 
-                                <div class="flex gap-3">
+                            <div class="flex gap-3">
+                                {{ $this->updateNotificationPreferenceAction }}
+
+                                @if ($conversation->type === ConversationType::Channel)
                                     {{ $this->addUserToChannelAction }}
 
                                     {{ $this->leaveChannelAction }}
-                                </div>
+                                @endif
                             </div>
-                        @endif
+                        </div>
                     </div>
                 </div>
             @else
