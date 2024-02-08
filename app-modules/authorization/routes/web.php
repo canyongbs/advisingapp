@@ -42,7 +42,7 @@ Route::middleware('web')->group(function () {
         Route::get('/{provider}/redirect', [SocialiteController::class, 'redirect'])
             ->name('redirect');
 
-        Route::get('/{provider}/callback', [SocialiteController::class, 'callback'])
+        Route::middleware('panel:admin')->get('/{provider}/callback', [SocialiteController::class, 'callback'])
             ->name('callback');
     });
 
