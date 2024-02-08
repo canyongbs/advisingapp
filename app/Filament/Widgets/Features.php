@@ -34,49 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Widgets;
 
-use App\Models\User;
-use App\Filament\Widgets\Features;
-use App\Filament\Widgets\Notifications;
-use App\Filament\Widgets\WelcomeWidget;
-use Filament\Pages\Dashboard as BasePage;
-use AdvisingApp\Authorization\Filament\Widgets\UnlicensedNotice;
+use Filament\Widgets\Widget;
 
-class Dashboard extends BasePage
+class Features extends Widget
 {
-    protected static ?string $navigationLabel = 'Home';
+    protected static string $view = 'filament.widgets.features';
 
-    protected ?string $heading = 'Home';
-
-    public function getWidgets(): array
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        $widgets = [
-            WelcomeWidget::class,
-        ];
-
-        if (UnlicensedNotice::canView()) {
-            $widgets[] = UnlicensedNotice::class;
-
-            return $widgets;
-        }
-
-        return [
-            ...$widgets,
-            Features::class,
-            Notifications::class,
-        ];
-    }
-
-    public function getColumns(): int | string | array
-    {
-        return [
-            'sm' => 1,
-            'md' => 2,
-            'lg' => 4,
-        ];
-    }
+    protected int | string | array $columnSpan = 'full';
 }
