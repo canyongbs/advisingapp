@@ -9,6 +9,10 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    apiUrl: {
+        type: String,
+        required: true,
+    },
     categories: {
         type: Object,
         required: true,

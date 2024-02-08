@@ -51,9 +51,10 @@ class GeneratePortalEmbedCode
                 $portalDefinitionUrl = URL::signedRoute('portal.knowledge-management.define');
                 $portalSearchUrl = URL::signedRoute('portal.knowledge-management.search');
                 $appUrl = parse_url(config('app.url'))['host'];
+                $apiUrl = route('portal.knowledge-management.define');
 
                 return <<<EOD
-                <knowledge-management-portal-embed url="{$portalDefinitionUrl}" search-url="{$portalSearchUrl}" app-url="{$appUrl}"></knowledge-management-portal-embed>
+                <knowledge-management-portal-embed url="{$portalDefinitionUrl}" search-url="{$portalSearchUrl}" app-url="{$appUrl}" api-url="{$apiUrl}"></knowledge-management-portal-embed>
                 <script src="{$scriptUrl}"></script>
                 EOD;
             })(),

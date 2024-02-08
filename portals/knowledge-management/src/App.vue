@@ -59,6 +59,10 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    apiUrl: {
+        type: String,
+        required: true,
+    },
 });
 
 const scriptUrl = new URL(document.currentScript.getAttribute('src'));
@@ -178,7 +182,7 @@ async function getKnowledgeManagementPortal() {
 
                 <div class="lg:pl-72">
                     <div class="px-4 sm:px-6 lg:px-8">
-                        <router-view :search-url="searchUrl" :categories="categories"></router-view>
+                        <router-view :search-url="searchUrl" :api-url="apiUrl" :categories="categories"></router-view>
                     </div>
                 </div>
             </div>

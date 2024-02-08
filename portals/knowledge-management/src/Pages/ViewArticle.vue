@@ -11,6 +11,10 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    apiUrl: {
+        type: String,
+        required: true,
+    },
     categories: {
         type: Object,
         required: true,
@@ -38,15 +42,9 @@ onMounted(function () {
 function getData() {
     loading.value = true;
 
-    fetch(
-        'http://test.advisingapp.local/api/portal/knowledge-management/categories/' +
-            route.params.categoryId +
-            '/articles/' +
-            route.params.articleId,
-    )
+    fetch(props.apiUrl + '/categories/' + route.params.categoryId + '/articles/' + route.params.articleId)
         .then((response) => response.json())
         .then((json) => {
-            console.log(json);
             category.value = json.category;
             article.value = json.article;
             loading.value = false;

@@ -49,11 +49,16 @@ Route::prefix('portals')
             EnsureKnowledgeManagementPortalIsEnabled::class,
             EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
         ])->group(function () {
-            Route::get('/knowledge-management/{category?}/{article?}', RenderKnowledgeManagementPortal::class)
-                ->where([
-                    'category' => '[a-zA-Z0-9-]+',
-                    'article' => '[a-zA-Z0-9-]+',
-                ])
-                ->name('knowledge-management.show');
+            Route::middleware([
+                EnsureKnowledgeManagementPortalIsEnabled::class,
+                EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
+            ])->group(function () {
+                Route::get('/knowledge-management', RenderKnowledgeManagementPortal::class)
+                    ->name('knowledge-management.show');
+                Route::get('/knowledge-management/categories/{category}', RenderKnowledgeManagementPortal::class)
+                    ->name('knowledge-management.show');
+                Route::get('/knowledge-management/categories/{category}/articles/{article}', RenderKnowledgeManagementPortal::class)
+                    ->name('knowledge-management.show');
+            });
         });
     });
