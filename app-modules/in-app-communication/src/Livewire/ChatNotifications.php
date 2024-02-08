@@ -39,6 +39,7 @@ namespace AdvisingApp\InAppCommunication\Livewire;
 use Livewire\Component;
 use Livewire\Attributes\Lazy;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 #[Lazy]
@@ -47,8 +48,9 @@ class ChatNotifications extends Component
     public function getNotifications(): Collection
     {
         return auth()->user()->conversations()
-            ->wherePivotNull('last_read_at')
-            ->orWherePivot('unread_messages_count', '>', 0)
+            ->where(fn (Builder $query) => $query
+                ->whereNull('twilio_conversation_user.last_read_at')
+                ->orWhere('twilio_conversation_user.unread_messages_count', '>', 0))
             ->latest('twilio_conversation_user.updated_at')
             ->latest('twilio_conversation_user.created_at')
             ->get();
