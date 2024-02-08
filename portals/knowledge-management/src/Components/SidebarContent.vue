@@ -43,7 +43,7 @@ defineProps({
 </script>
 
 <template>
-    <nav class="flex flex-1 flex-col">
+    <nav class="flex flex-1 flex-col mt-4">
         <div class="flex justify-center">
             <router-link :to="{ name: 'home' }">
                 <h3 class="text-xl text-white">Help Center</h3>

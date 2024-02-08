@@ -65,14 +65,6 @@ defineProps({
                 </div>
 
                 <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-primary-700 px-6 pb-4">
-                    <div class="flex h-16 shrink-0 items-center">
-                        <img
-                            class="h-8 w-auto"
-                            src="https://tailwindui.com/img/logos/mark.svg?color=white"
-                            alt="Your Company"
-                        />
-                    </div>
-
                     <SidebarContent :categories="categories"></SidebarContent>
                 </div>
             </div>
