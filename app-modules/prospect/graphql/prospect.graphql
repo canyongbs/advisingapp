@@ -61,10 +61,6 @@ type Prospect @model(class: "AdvisingApp\\Prospect\\Models\\Prospect") {
 
     "The deleted date of the prospect."
     deleted_at: DateTime
-
-    alerts: [Alert]! @morphMany
-
-    alerts_count: Int! @count(relation: "alerts")
 }
 
 input ProspectsQuery {
@@ -136,8 +132,6 @@ input ProspectsQuery {
 
     "The deleted date of the prospect."
     deleted_at: DateTime
-
-    alerts: AlertsQuery
 }
 
 type ProspectQueries {
