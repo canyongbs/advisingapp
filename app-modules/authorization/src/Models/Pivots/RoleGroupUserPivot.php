@@ -46,6 +46,7 @@ use AdvisingApp\Authorization\Events\UserRemovedFromRoleGroup;
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupUserPivot newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupUserPivot newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupUserPivot query()
+ *
  * @mixin \Eloquent
  * @mixin IdeHelperRoleGroupUserPivot
  */
