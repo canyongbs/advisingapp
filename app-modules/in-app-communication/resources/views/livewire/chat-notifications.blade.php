@@ -37,7 +37,7 @@
     $notifications = $this->getNotifications();
 @endphp
 
-<div wire:poll.10s>
+<div class="flex" wire:poll.10s>
     <x-filament::modal slide-over>
         <x-slot name="trigger">
             <x-filament::icon-button
@@ -66,7 +66,7 @@
             <div class="flex flex-col px-6">
                 <div class="mb-5 flex items-center justify-center">
                     <div class="rounded-full bg-gray-100 p-3 dark:bg-gray-500/20">
-                        <x-heroicon-o-chat-bubble-oval-left-ellipsis class="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                        <x-heroicon-o-chat-bubble-oval-left-ellipsis class="h-6 w-6 text-gray-500 dark:text-gray-400"/>
                     </div>
                 </div>
 
