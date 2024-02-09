@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource\Pages;
 
-use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
-use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
 use Filament\Forms\Form;
 use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
@@ -49,6 +47,7 @@ use Filament\Forms\Components\ViewField;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\ServiceManagement\Models\ChangeRequest;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource;
 
 class EditChangeRequest extends EditRecord
