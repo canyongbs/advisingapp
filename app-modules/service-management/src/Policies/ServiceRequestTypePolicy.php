@@ -96,6 +96,10 @@ class ServiceRequestTypePolicy
 
     public function delete(Authenticatable $authenticatable, ServiceRequestType $serviceRequestType): Response
     {
+        if ($serviceRequestType->serviceRequests()->exists()) {
+            return Response::deny('You cannot delete this service request type because it has associated service requests.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['service_request_type.*.delete', "service_request_type.{$serviceRequestType->id}.delete"],
             denyResponse: 'You do not have permissions to delete this service request type.'

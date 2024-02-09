@@ -49,6 +49,7 @@ return new class () extends Migration {
             $table->boolean('has_enabled_csat')->default(false);
             $table->boolean('has_enabled_nps')->default(false);
 
+            $table->timestamp('archived_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

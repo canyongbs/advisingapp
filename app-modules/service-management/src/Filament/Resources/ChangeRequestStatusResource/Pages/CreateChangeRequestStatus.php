@@ -34,46 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Models;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource\Pages;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use App\Models\Contracts\Archivable;
-use App\Models\Concerns\IsArchivable;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\Audit\Overrides\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Filament\Forms\Form;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
+use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource;
 
-/**
- * @mixin IdeHelperChangeRequestType
- */
-class ChangeRequestType extends BaseModel implements Auditable, Archivable
+class CreateChangeRequestStatus extends CreateRecord
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use IsArchivable {
-        isArchivable as traitIsArchivable;
-    }
+    protected static string $resource = ChangeRequestStatusResource::class;
 
-    protected $fillable = [
-        'name',
-        'number_of_required_approvals',
-    ];
-
-    public function userApprovers(): BelongsToMany
+    public function form(Form $form): Form
     {
-        return $this->belongsToMany(User::class);
-    }
-
-    public function changeRequests(): HasMany
-    {
-        return $this->hasMany(ChangeRequest::class);
-    }
-
-    public function isArchivable(): bool
-    {
-        return $this->traitIsArchivable() && $this->changeRequests()->exists();
+        return $form
+            ->schema([
+                Section::make()
+                    ->columns()
+                    ->schema([
+                        TextInput::make('name')
+                            ->required()
+                            ->string(),
+                        Select::make('classification')
+                            ->searchable()
+                            ->options(SystemChangeRequestClassification::class)
+                            ->required()
+                            ->enum(SystemChangeRequestClassification::class),
+                    ]),
+            ]);
     }
 }

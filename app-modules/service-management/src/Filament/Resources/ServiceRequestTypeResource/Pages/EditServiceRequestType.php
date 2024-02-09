@@ -42,8 +42,10 @@ use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
+use App\Filament\Actions\ArchiveAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\Actions\UnarchiveAction;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
 
 class EditServiceRequestType extends EditRecord
@@ -80,6 +82,8 @@ class EditServiceRequestType extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            ArchiveAction::make(),
+            UnarchiveAction::make(),
             DeleteAction::make(),
         ];
     }

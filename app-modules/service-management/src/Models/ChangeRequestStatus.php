@@ -37,16 +37,24 @@
 namespace AdvisingApp\ServiceManagement\Models;
 
 use App\Models\BaseModel;
+use App\Models\Contracts\Archivable;
+use App\Models\Concerns\IsArchivable;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
 
 /**
  * @mixin IdeHelperChangeRequestStatus
  */
-class ChangeRequestStatus extends BaseModel implements Auditable
+class ChangeRequestStatus extends BaseModel implements Auditable, Archivable
 {
+    use SoftDeletes;
     use AuditableTrait;
+    use IsArchivable {
+        isArchivable as traitIsArchivable;
+    }
 
     protected $fillable = [
         'name',
@@ -56,4 +64,14 @@ class ChangeRequestStatus extends BaseModel implements Auditable
     protected $casts = [
         'classification' => SystemChangeRequestClassification::class,
     ];
+
+    public function changeRequests(): HasMany
+    {
+        return $this->hasMany(ChangeRequest::class);
+    }
+
+    public function isArchivable(): bool
+    {
+        return $this->traitIsArchivable() && $this->changeRequests()->exists();
+    }
 }

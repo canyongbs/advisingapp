@@ -42,6 +42,7 @@ use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use App\Filament\Filters\ArchivedFilter;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -62,6 +63,14 @@ class ListChangeRequestStatuses extends ListRecords
                 TextColumn::make('classification')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('change_requests_count')
+                    ->label('# of Change Requests')
+                    ->counts('changeRequests')
+                    ->sortable(),
+                TextColumn::make('archived_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
                 ViewAction::make(),
@@ -71,6 +80,9 @@ class ListChangeRequestStatuses extends ListRecords
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
+            ])
+            ->filters([
+                ArchivedFilter::make(),
             ]);
     }
 

@@ -38,6 +38,8 @@ namespace AdvisingApp\ServiceManagement\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
+use App\Models\Contracts\Archivable;
+use App\Models\Concerns\IsArchivable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -49,11 +51,14 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 /**
  * @mixin IdeHelperServiceRequestType
  */
-class ServiceRequestType extends BaseModel implements Auditable
+class ServiceRequestType extends BaseModel implements Auditable, Archivable
 {
     use SoftDeletes;
     use HasUuids;
     use AuditableTrait;
+    use IsArchivable {
+        isArchivable as traitIsArchivable;
+    }
 
     protected $fillable = [
         'name',
@@ -81,6 +86,11 @@ class ServiceRequestType extends BaseModel implements Auditable
     public function form(): HasOne
     {
         return $this->hasOne(ServiceRequestForm::class, 'service_request_type_id');
+    }
+
+    public function isArchivable(): bool
+    {
+        return $this->traitIsArchivable() && $this->serviceRequests()->exists();
     }
 
     protected function serializeDate(DateTimeInterface $date): string

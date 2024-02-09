@@ -39,6 +39,8 @@ namespace AdvisingApp\ServiceManagement\Models;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
+use App\Models\Contracts\Archivable;
+use App\Models\Concerns\IsArchivable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -49,10 +51,13 @@ use AdvisingApp\ServiceManagement\Enums\SystemServiceRequestClassification;
 /**
  * @mixin IdeHelperServiceRequestStatus
  */
-class ServiceRequestStatus extends BaseModel implements Auditable
+class ServiceRequestStatus extends BaseModel implements Auditable, Archivable
 {
     use SoftDeletes;
     use AuditableTrait;
+    use IsArchivable {
+        isArchivable as traitIsArchivable;
+    }
 
     protected $fillable = [
         'classification',
@@ -78,6 +83,11 @@ class ServiceRequestStatus extends BaseModel implements Auditable
             ->get(['id', 'name', 'classification'])
             ->groupBy(fn (ServiceRequestStatus $status) => $status->classification->getlabel())
             ->map(fn (Collection $group) => $group->pluck('name', 'id'));
+    }
+
+    public function isArchivable(): bool
+    {
+        return $this->traitIsArchivable() && $this->serviceRequests()->exists();
     }
 
     protected function serializeDate(DateTimeInterface $date): string

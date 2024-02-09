@@ -34,46 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Models;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource\Pages;
 
 use App\Models\User;
-use App\Models\BaseModel;
-use App\Models\Contracts\Archivable;
-use App\Models\Concerns\IsArchivable;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\Audit\Overrides\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Filament\Forms\Form;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource;
 
-/**
- * @mixin IdeHelperChangeRequestType
- */
-class ChangeRequestType extends BaseModel implements Auditable, Archivable
+class CreateChangeRequestType extends CreateRecord
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use IsArchivable {
-        isArchivable as traitIsArchivable;
-    }
+    protected static string $resource = ChangeRequestTypeResource::class;
 
-    protected $fillable = [
-        'name',
-        'number_of_required_approvals',
-    ];
-
-    public function userApprovers(): BelongsToMany
+    public function form(Form $form): Form
     {
-        return $this->belongsToMany(User::class);
-    }
-
-    public function changeRequests(): HasMany
-    {
-        return $this->hasMany(ChangeRequest::class);
-    }
-
-    public function isArchivable(): bool
-    {
-        return $this->traitIsArchivable() && $this->changeRequests()->exists();
+        return $form
+            ->schema([
+                Section::make()
+                    ->columns()
+                    ->schema([
+                        TextInput::make('name')
+                            ->required()
+                            ->string(),
+                        Select::make('number_of_required_approvals')
+                            ->options([
+                                '0' => '0',
+                                '1' => '1',
+                                '2' => '2',
+                            ])
+                            ->required(),
+                        Select::make('userApprovers')
+                            ->label('User approvers')
+                            ->relationship('userApprovers', 'name')
+                            ->preload()
+                            ->multiple()
+                            ->exists((new User())->getTable(), 'id'),
+                    ]),
+            ]);
     }
 }

@@ -34,46 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Models;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource\Pages;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use App\Models\Contracts\Archivable;
-use App\Models\Concerns\IsArchivable;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\Audit\Overrides\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Infolist;
+use App\Filament\Resources\UserResource;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\RepeatableEntry;
+use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource;
 
-/**
- * @mixin IdeHelperChangeRequestType
- */
-class ChangeRequestType extends BaseModel implements Auditable, Archivable
+class ViewChangeRequestType extends ViewRecord
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use IsArchivable {
-        isArchivable as traitIsArchivable;
+    protected static string $resource = ChangeRequestTypeResource::class;
+
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name'),
+                        TextEntry::make('number_of_required_approvals')
+                            ->label('Number of required approvers.'),
+                        RepeatableEntry::make('userApprovers')
+                            ->schema([
+                                TextEntry::make('name')
+                                    ->hiddenLabel()
+                                    ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
+                                    ->color('primary'),
+                            ]),
+                    ])
+                    ->columns(),
+            ]);
     }
 
-    protected $fillable = [
-        'name',
-        'number_of_required_approvals',
-    ];
-
-    public function userApprovers(): BelongsToMany
+    protected function getHeaderActions(): array
     {
-        return $this->belongsToMany(User::class);
-    }
-
-    public function changeRequests(): HasMany
-    {
-        return $this->hasMany(ChangeRequest::class);
-    }
-
-    public function isArchivable(): bool
-    {
-        return $this->traitIsArchivable() && $this->changeRequests()->exists();
+        return [
+            EditAction::make(),
+        ];
     }
 }

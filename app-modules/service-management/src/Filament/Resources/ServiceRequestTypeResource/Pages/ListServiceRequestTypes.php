@@ -36,12 +36,13 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages;
 
-use Filament\Actions;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
+use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use App\Filament\Filters\ArchivedFilter;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -64,6 +65,10 @@ class ListServiceRequestTypes extends ListRecords
                     ->label('# of Service Requests')
                     ->counts('serviceRequests')
                     ->sortable(),
+                TextColumn::make('archived_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
                 ViewAction::make(),
@@ -73,13 +78,16 @@ class ListServiceRequestTypes extends ListRecords
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
+            ])
+            ->filters([
+                ArchivedFilter::make(),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

@@ -36,60 +36,54 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource\Pages;
 
-use Filament\Tables\Table;
-use App\Filament\Columns\IdColumn;
-use Filament\Actions\CreateAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use App\Filament\Filters\ArchivedFilter;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
+use App\Models\User;
+use Filament\Forms\Form;
+use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use App\Filament\Actions\ArchiveAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\EditRecord;
+use App\Filament\Actions\UnarchiveAction;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource;
 
-class ListChangeRequestTypes extends ListRecords
+class EditChangeRequestType extends EditRecord
 {
     protected static string $resource = ChangeRequestTypeResource::class;
 
-    public function table(Table $table): Table
+    public function form(Form $form): Form
     {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('number_of_required_approvals')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('change_requests_count')
-                    ->label('# of Change Requests')
-                    ->counts('changeRequests')
-                    ->sortable(),
-                TextColumn::make('archived_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->actions([
-                ViewAction::make(),
-                EditAction::make(),
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ])
-            ->filters([
-                ArchivedFilter::make(),
+        return $form
+            ->schema([
+                Section::make()
+                    ->columns()
+                    ->schema([
+                        TextInput::make('name')
+                            ->required()
+                            ->string(),
+                        Select::make('number_of_required_approvals')
+                            ->options([
+                                '0' => '0',
+                                '1' => '1',
+                                '2' => '2',
+                            ])
+                            ->required(),
+                        Select::make('userApprovers')
+                            ->label('User approvers')
+                            ->relationship('userApprovers', 'name')
+                            ->preload()
+                            ->multiple()
+                            ->exists((new User())->getTable(), 'id'),
+                    ]),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            ArchiveAction::make(),
+            UnarchiveAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

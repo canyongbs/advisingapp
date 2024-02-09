@@ -36,11 +36,14 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages;
 
-use Filament\Actions;
 use Filament\Forms\Form;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use App\Filament\Actions\ArchiveAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\Actions\UnarchiveAction;
 use AdvisingApp\ServiceManagement\Enums\ColumnColorOptions;
 use AdvisingApp\ServiceManagement\Enums\SystemServiceRequestClassification;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
@@ -53,28 +56,34 @@ class EditServiceRequestStatus extends EditRecord
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Select::make('classification')
-                    ->searchable()
-                    ->options(SystemServiceRequestClassification::class)
-                    ->required()
-                    ->enum(SystemServiceRequestClassification::class),
-                Select::make('color')
-                    ->label('Color')
-                    ->searchable()
-                    ->options(ColumnColorOptions::class)
-                    ->required()
-                    ->enum(ColumnColorOptions::class),
+                Section::make()
+                    ->columns()
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Name')
+                            ->required()
+                            ->string(),
+                        Select::make('classification')
+                            ->searchable()
+                            ->options(SystemServiceRequestClassification::class)
+                            ->required()
+                            ->enum(SystemServiceRequestClassification::class),
+                        Select::make('color')
+                            ->label('Color')
+                            ->searchable()
+                            ->options(ColumnColorOptions::class)
+                            ->required()
+                            ->enum(ColumnColorOptions::class),
+                    ]),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            ArchiveAction::make(),
+            UnarchiveAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

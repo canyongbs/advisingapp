@@ -43,9 +43,13 @@ return new class () extends Migration {
     {
         Schema::create('change_request_types', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->string('name');
             $table->integer('number_of_required_approvals');
+
+            $table->timestamp('archived_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

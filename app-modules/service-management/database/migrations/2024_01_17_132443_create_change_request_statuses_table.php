@@ -43,9 +43,13 @@ return new class () extends Migration {
     {
         Schema::create('change_request_statuses', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->string('name');
             $table->string('classification');
+
+            $table->timestamp('archived_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };
