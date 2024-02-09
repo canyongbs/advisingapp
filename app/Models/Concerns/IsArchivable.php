@@ -4,26 +4,14 @@ namespace App\Models\Concerns;
 
 use Exception;
 use Throwable;
-use App\Models\Scopes\ArchivedScope;
-use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use App\Models\Scopes\Archived;
+use Illuminate\Database\Eloquent\Builder;
 
-/**
- * @method static EloquentBuilder|QueryBuilder withArchived()
- * @method static EloquentBuilder|QueryBuilder onlyArchived()
- * @method static EloquentBuilder|QueryBuilder withoutArchived()
- */
 trait IsArchivable
 {
     public function initializeArchivable(): void
     {
         $this->casts['archived_at'] = 'datetime';
-        $this->fillable[] = 'archived_at';
-    }
-
-    public static function bootIsArchivable(): void
-    {
-        static::addGlobalScope(new ArchivedScope());
     }
 
     /**
@@ -82,5 +70,15 @@ trait IsArchivable
         }
 
         return $this->isArchived();
+    }
+
+    public function scopeArchived(Builder $query): void
+    {
+        $query->tap(new Archived());
+    }
+
+    public function scopeUnarchived(Builder $query): void
+    {
+        $query->whereNot->tap(new Archived());
     }
 }

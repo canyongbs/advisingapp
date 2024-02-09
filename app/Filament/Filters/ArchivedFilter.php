@@ -2,6 +2,7 @@
 
 namespace App\Filament\Filters;
 
+use App\Models\Scopes\Archived;
 use Filament\Tables\Filters\Indicator;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\TernaryFilter;
@@ -17,9 +18,9 @@ class ArchivedFilter extends TernaryFilter
             ->falseLabel('Only archived records')
             ->placeholder('Without archived records')
             ->queries(
-                true: fn (Builder $query) => $query->withArchived(),
-                false: fn (Builder $query) => $query->onlyArchived(),
-                blank: fn (Builder $query) => $query->withoutArchived(),
+                true: fn (Builder $query) => $query,
+                false: fn (Builder $query) => $query->tap(new Archived()),
+                blank: fn (Builder $query) => $query->whereNot->tap(new Archived()),
             )
             ->indicateUsing(function (array $state): array {
                 if ($state['value'] ?? null) {

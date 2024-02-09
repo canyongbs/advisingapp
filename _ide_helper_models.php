@@ -3512,11 +3512,13 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequest> $changeRequests
  * @property-read int|null $change_requests_count
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus archived()
  * @method static \AdvisingApp\ServiceManagement\Database\Factories\ChangeRequestStatusFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus unarchived()
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereArchivedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereClassification($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereCreatedAt($value)
@@ -3549,11 +3551,13 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property-read int|null $change_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $userApprovers
  * @property-read int|null $user_approvers_count
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType archived()
  * @method static \AdvisingApp\ServiceManagement\Database\Factories\ChangeRequestTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType unarchived()
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereArchivedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereDeletedAt($value)
@@ -3951,11 +3955,13 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus archived()
  * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestStatusFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus unarchived()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus whereArchivedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus whereClassification($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus whereColor($value)
@@ -3992,11 +3998,13 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property-read int|null $priorities_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType archived()
  * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType unarchived()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereArchivedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereDeletedAt($value)
