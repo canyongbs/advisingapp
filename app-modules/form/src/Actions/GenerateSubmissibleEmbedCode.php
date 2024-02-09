@@ -53,7 +53,11 @@ class GenerateSubmissibleEmbedCode
         return match ($submissible::class) {
             Form::class => (function () use ($submissible) {
                 $scriptUrl = url('js/widgets/form/advising-app-form-widget.js?');
-                $formDefinitionUrl = URL::signedRoute('forms.define', ['form' => $submissible]);
+                $formDefinitionUrl = URL::signedRoute(
+                    name: 'forms.define',
+                    parameters: ['form' => $submissible],
+                    absolute: false,
+                );
 
                 return <<<EOD
                 <form-embed url="{$formDefinitionUrl}"></form-embed>
