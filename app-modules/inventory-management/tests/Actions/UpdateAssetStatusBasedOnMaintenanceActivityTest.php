@@ -1,12 +1,14 @@
 <?php
 
+use function Pest\Laravel\seed;
+
 use AdvisingApp\InventoryManagement\Models\Asset;
 use AdvisingApp\InventoryManagement\Models\MaintenanceActivity;
 use AdvisingApp\InventoryManagement\Database\Seeders\AssetStatusSeeder;
 use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 
 beforeEach(function () {
-    $this->seed(AssetStatusSeeder::class);
+    seed(AssetStatusSeeder::class);
 });
 
 it('will update an asset to an unavailable classification when an in progress maintenance activity is created', function () {
