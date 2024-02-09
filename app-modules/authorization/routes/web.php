@@ -48,5 +48,5 @@ Route::middleware('web')->group(function () {
 
     Route::get('/auth/login/{user}', OneTimeLoginController::class)
         ->name('login.one-time')
-        ->middleware('signed');
+        ->middleware('signed:relative');
 });

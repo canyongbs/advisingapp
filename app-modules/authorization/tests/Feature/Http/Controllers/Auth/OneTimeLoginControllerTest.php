@@ -52,7 +52,8 @@ it('signs the user in through a signed URL', function () {
 
     get(URL::signedRoute(
         name: 'login.one-time',
-        parameters: ['user' => $user]
+        parameters: ['user' => $user],
+        absolute: false,
     ))
         ->assertRedirect();
 
