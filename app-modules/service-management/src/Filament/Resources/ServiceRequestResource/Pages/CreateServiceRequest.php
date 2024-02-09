@@ -75,7 +75,7 @@ class CreateServiceRequest extends CreateRecord
                 Grid::make()
                     ->schema([
                         Select::make('type_id')
-                            ->options(ServiceRequestType::query()->pluck('name', 'id'))
+                            ->options(ServiceRequestType::unarchived()->pluck('name', 'id'))
                             ->afterStateUpdated(fn (Set $set) => $set('priority_id', null))
                             ->label('Type')
                             ->required()

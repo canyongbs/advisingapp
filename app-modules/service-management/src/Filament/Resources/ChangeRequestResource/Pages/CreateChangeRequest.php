@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource\Pages;
 
+use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
@@ -64,9 +65,8 @@ class CreateChangeRequest extends CreateRecord
                             ->required()
                             ->columnSpanFull(),
                         Select::make('change_request_type_id')
-                            ->relationship('type', 'name')
-                            ->searchable()
-                            ->preload()
+                            ->label('Type')
+                            ->options(ChangeRequestType::unarchived()->pluck('name', 'id'))
                             ->required()
                             ->columnSpan(1),
                         Textarea::make('reason')
@@ -84,7 +84,7 @@ class CreateChangeRequest extends CreateRecord
                             ->required()
                             ->columnSpan(1),
                     ])
-                    ->columns(2),
+                    ->columns(),
                 Section::make('Risk Management')
                     ->aside()
                     ->schema([

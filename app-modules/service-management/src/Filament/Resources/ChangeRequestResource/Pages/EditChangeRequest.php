@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource\Pages;
 
+use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
 use Filament\Forms\Form;
 use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
@@ -55,6 +57,8 @@ class EditChangeRequest extends EditRecord
 
     public function form(Form $form): Form
     {
+        $disabledTypes = ChangeRequestType::archived()->pluck('id');
+
         return $form
             ->schema([
                 Section::make('Change Request Details')
@@ -75,11 +79,11 @@ class EditChangeRequest extends EditRecord
                             ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         Select::make('change_request_type_id')
                             ->relationship('type', 'name')
-                            ->searchable()
                             ->preload()
                             ->required()
                             ->columnSpan(1)
-                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew())
+                            ->disableOptionWhen(fn (string $value) => $disabledTypes->contains($value)),
                         Select::make('change_request_status_id')
                             ->relationship('status', 'name')
                             ->searchable()

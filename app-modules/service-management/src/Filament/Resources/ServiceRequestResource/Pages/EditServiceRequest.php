@@ -58,6 +58,9 @@ class EditServiceRequest extends EditRecord
 
     public function form(Form $form): Form
     {
+        $disabledStatuses = ServiceRequestStatus::archived()->pluck('id');
+        $disabledTypes = ServiceRequestType::archived()->pluck('id');
+
         return $form
             ->schema([
                 Select::make('division_id')
@@ -68,9 +71,10 @@ class EditServiceRequest extends EditRecord
                 Select::make('status_id')
                     ->relationship('status', 'name')
                     ->label('Status')
-                    ->options(fn () => ServiceRequestStatus::optionsByClassification())
+                    ->options(fn () => ServiceRequestStatus::optionsByClassification(true))
                     ->required()
-                    ->exists((new ServiceRequestStatus())->getTable(), 'id'),
+                    ->exists((new ServiceRequestStatus())->getTable(), 'id')
+                    ->disableOptionWhen(fn (string $value) => $disabledStatuses->contains($value)),
                 Grid::make()
                     ->schema([
                         Select::make('type_id')
@@ -79,7 +83,8 @@ class EditServiceRequest extends EditRecord
                             ->label('Type')
                             ->required()
                             ->live()
-                            ->exists(ServiceRequestType::class, 'id'),
+                            ->exists(ServiceRequestType::class, 'id')
+                            ->disableOptionWhen(fn (string $value) => $disabledTypes->contains($value)),
                         Select::make('priority_id')
                             ->relationship(
                                 name: 'priority',

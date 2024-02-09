@@ -75,9 +75,13 @@ class ServiceRequestStatus extends BaseModel implements Auditable, Archivable
         return $this->hasMany(ServiceRequest::class, 'status_id');
     }
 
-    public static function optionsByClassification(): Collection
+    public static function optionsByClassification(bool $includeArchived = false): Collection
     {
-        return ServiceRequestStatus::query()
+        $query = $includeArchived
+            ? static::query()
+            : static::unarchived();
+
+        return $query
             ->orderBy('classification')
             ->orderBy('name')
             ->get(['id', 'name', 'classification'])
