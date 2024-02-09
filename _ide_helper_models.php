@@ -43,8 +43,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Export whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperExport {}
+	class IdeHelperExport {}
 }
 
 namespace App\Models{
@@ -69,8 +68,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereValidationError($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperFailedImportRow {}
+	class IdeHelperFailedImportRow {}
 }
 
 namespace App\Models{
@@ -104,8 +102,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|HealthCheckResultHistoryItem whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperHealthCheckResultHistoryItem {}
+	class IdeHelperHealthCheckResultHistoryItem {}
 }
 
 namespace App\Models{
@@ -142,8 +139,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Import whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperImport {}
+	class IdeHelperImport {}
 }
 
 namespace App\Models{
@@ -173,8 +169,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperNotificationSetting {}
+	class IdeHelperNotificationSetting {}
 }
 
 namespace App\Models{
@@ -200,8 +195,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|NotificationSettingPivot whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperNotificationSettingPivot {}
+	class IdeHelperNotificationSettingPivot {}
 }
 
 namespace App\Models{
@@ -229,8 +223,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Pronouns withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperPronouns {}
+	class IdeHelperPronouns {}
 }
 
 namespace App\Models{
@@ -258,8 +251,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|SettingsProperty whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperSettingsProperty {}
+	class IdeHelperSettingsProperty {}
 }
 
 namespace App\Models{
@@ -298,8 +290,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|SystemUser withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperSystemUser {}
+	class IdeHelperSystemUser {}
 }
 
 namespace App\Models{
@@ -327,8 +318,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperTenant {}
+	class IdeHelperTenant {}
 }
 
 namespace App\Models{
@@ -489,8 +479,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperUser {}
+	class IdeHelperUser {}
 }
 
 namespace AdvisingApp\Alert\Models{
@@ -531,8 +520,7 @@ namespace AdvisingApp\Alert\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Alert withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperAlert {}
+	class IdeHelperAlert {}
 }
 
 namespace AdvisingApp\Analytics\Models{
@@ -571,8 +559,7 @@ namespace AdvisingApp\Analytics\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereUrl($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperAnalyticsResource {}
+	class IdeHelperAnalyticsResource {}
 }
 
 namespace AdvisingApp\Analytics\Models{
@@ -606,8 +593,7 @@ namespace AdvisingApp\Analytics\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperAnalyticsResourceCategory {}
+	class IdeHelperAnalyticsResourceCategory {}
 }
 
 namespace AdvisingApp\Analytics\Models{
@@ -637,8 +623,7 @@ namespace AdvisingApp\Analytics\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperAnalyticsResourceSource {}
+	class IdeHelperAnalyticsResourceSource {}
 }
 
 namespace AdvisingApp\Application\Models{
@@ -681,8 +666,7 @@ namespace AdvisingApp\Application\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Application whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperApplication {}
+	class IdeHelperApplication {}
 }
 
 namespace AdvisingApp\Application\Models{
@@ -711,8 +695,7 @@ namespace AdvisingApp\Application\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationAuthentication whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperApplicationAuthentication {}
+	class IdeHelperApplicationAuthentication {}
 }
 
 namespace AdvisingApp\Application\Models{
@@ -745,8 +728,7 @@ namespace AdvisingApp\Application\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationField whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperApplicationField {}
+	class IdeHelperApplicationField {}
 }
 
 namespace AdvisingApp\Application\Models{
@@ -775,8 +757,7 @@ namespace AdvisingApp\Application\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationStep whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperApplicationStep {}
+	class IdeHelperApplicationStep {}
 }
 
 namespace AdvisingApp\Application\Models{
@@ -811,8 +792,7 @@ namespace AdvisingApp\Application\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperApplicationSubmission {}
+	class IdeHelperApplicationSubmission {}
 }
 
 namespace AdvisingApp\Application\Models{
@@ -848,8 +828,7 @@ namespace AdvisingApp\Application\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperApplicationSubmissionState {}
+	class IdeHelperApplicationSubmissionState {}
 }
 
 namespace AdvisingApp\Assistant\Models{
@@ -877,8 +856,7 @@ namespace AdvisingApp\Assistant\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperAssistantChat {}
+	class IdeHelperAssistantChat {}
 }
 
 namespace AdvisingApp\Assistant\Models{
@@ -903,8 +881,7 @@ namespace AdvisingApp\Assistant\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperAssistantChatFolder {}
+	class IdeHelperAssistantChatFolder {}
 }
 
 namespace AdvisingApp\Assistant\Models{
@@ -929,8 +906,7 @@ namespace AdvisingApp\Assistant\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperAssistantChatMessage {}
+	class IdeHelperAssistantChatMessage {}
 }
 
 namespace AdvisingApp\Assistant\Models{
@@ -959,8 +935,7 @@ namespace AdvisingApp\Assistant\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperAssistantChatMessageLog {}
+	class IdeHelperAssistantChatMessageLog {}
 }
 
 namespace AdvisingApp\Assistant\Models{
@@ -988,8 +963,7 @@ namespace AdvisingApp\Assistant\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperPrompt {}
+	class IdeHelperPrompt {}
 }
 
 namespace AdvisingApp\Assistant\Models{
@@ -1014,8 +988,7 @@ namespace AdvisingApp\Assistant\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperPromptType {}
+	class IdeHelperPromptType {}
 }
 
 namespace AdvisingApp\Audit\Models{
@@ -1058,8 +1031,7 @@ namespace AdvisingApp\Audit\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Audit whereUserAgent($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperAudit {}
+	class IdeHelperAudit {}
 }
 
 namespace AdvisingApp\Authorization\Models{
@@ -1089,8 +1061,7 @@ namespace AdvisingApp\Authorization\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|License withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperLicense {}
+	class IdeHelperLicense {}
 }
 
 namespace AdvisingApp\Authorization\Models{
@@ -1127,8 +1098,7 @@ namespace AdvisingApp\Authorization\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperPermission {}
+	class IdeHelperPermission {}
 }
 
 namespace AdvisingApp\Authorization\Models\Pivots{
@@ -1140,8 +1110,7 @@ namespace AdvisingApp\Authorization\Models\Pivots{
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupRolePivot query()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperRoleGroupRolePivot {}
+	class IdeHelperRoleGroupRolePivot {}
 }
 
 namespace AdvisingApp\Authorization\Models\Pivots{
@@ -1153,8 +1122,7 @@ namespace AdvisingApp\Authorization\Models\Pivots{
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupUserPivot query()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperRoleGroupUserPivot {}
+	class IdeHelperRoleGroupUserPivot {}
 }
 
 namespace AdvisingApp\Authorization\Models{
@@ -1191,8 +1159,7 @@ namespace AdvisingApp\Authorization\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Role whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperRole {}
+	class IdeHelperRole {}
 }
 
 namespace AdvisingApp\Authorization\Models{
@@ -1232,8 +1199,7 @@ namespace AdvisingApp\Authorization\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperRoleGroup {}
+	class IdeHelperRoleGroup {}
 }
 
 namespace AdvisingApp\Campaign\Models{
@@ -1272,8 +1238,7 @@ namespace AdvisingApp\Campaign\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperCampaign {}
+	class IdeHelperCampaign {}
 }
 
 namespace AdvisingApp\Campaign\Models{
@@ -1316,8 +1281,7 @@ namespace AdvisingApp\Campaign\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperCampaignAction {}
+	class IdeHelperCampaignAction {}
 }
 
 namespace AdvisingApp\CareTeam\Models{
@@ -1343,8 +1307,7 @@ namespace AdvisingApp\CareTeam\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CareTeam whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperCareTeam {}
+	class IdeHelperCareTeam {}
 }
 
 namespace AdvisingApp\CaseloadManagement\Models{
@@ -1381,8 +1344,7 @@ namespace AdvisingApp\CaseloadManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperCaseload {}
+	class IdeHelperCaseload {}
 }
 
 namespace AdvisingApp\CaseloadManagement\Models{
@@ -1408,8 +1370,7 @@ namespace AdvisingApp\CaseloadManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperCaseloadSubject {}
+	class IdeHelperCaseloadSubject {}
 }
 
 namespace AdvisingApp\Consent\Models{
@@ -1444,8 +1405,7 @@ namespace AdvisingApp\Consent\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperConsentAgreement {}
+	class IdeHelperConsentAgreement {}
 }
 
 namespace AdvisingApp\Consent\Models{
@@ -1476,8 +1436,7 @@ namespace AdvisingApp\Consent\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperUserConsentAgreement {}
+	class IdeHelperUserConsentAgreement {}
 }
 
 namespace AdvisingApp\Division\Models{
@@ -1524,8 +1483,7 @@ namespace AdvisingApp\Division\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Division withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperDivision {}
+	class IdeHelperDivision {}
 }
 
 namespace AdvisingApp\Engagement\Models{
@@ -1553,8 +1511,7 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperEmailTemplate {}
+	class IdeHelperEmailTemplate {}
 }
 
 namespace AdvisingApp\Engagement\Models{
@@ -1607,8 +1564,7 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperEngagement {}
+	class IdeHelperEngagement {}
 }
 
 namespace AdvisingApp\Engagement\Models{
@@ -1634,8 +1590,7 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementBatch whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperEngagementBatch {}
+	class IdeHelperEngagementBatch {}
 }
 
 namespace AdvisingApp\Engagement\Models{
@@ -1675,8 +1630,7 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperEngagementDeliverable {}
+	class IdeHelperEngagementDeliverable {}
 }
 
 namespace AdvisingApp\Engagement\Models{
@@ -1707,8 +1661,7 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperEngagementFile {}
+	class IdeHelperEngagementFile {}
 }
 
 namespace AdvisingApp\Engagement\Models{
@@ -1732,8 +1685,7 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFileEntities whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperEngagementFileEntities {}
+	class IdeHelperEngagementFileEntities {}
 }
 
 namespace AdvisingApp\Engagement\Models{
@@ -1766,8 +1718,7 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperEngagementResponse {}
+	class IdeHelperEngagementResponse {}
 }
 
 namespace AdvisingApp\Engagement\Models{
@@ -1795,8 +1746,7 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperSmsTemplate {}
+	class IdeHelperSmsTemplate {}
 }
 
 namespace AdvisingApp\Form\Models{
@@ -1846,8 +1796,7 @@ namespace AdvisingApp\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperForm {}
+	class IdeHelperForm {}
 }
 
 namespace AdvisingApp\Form\Models{
@@ -1875,8 +1824,7 @@ namespace AdvisingApp\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|FormAuthentication whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperFormAuthentication {}
+	class IdeHelperFormAuthentication {}
 }
 
 namespace AdvisingApp\Form\Models{
@@ -1903,8 +1851,7 @@ namespace AdvisingApp\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperFormEmailAutoReply {}
+	class IdeHelperFormEmailAutoReply {}
 }
 
 namespace AdvisingApp\Form\Models{
@@ -1937,8 +1884,7 @@ namespace AdvisingApp\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperFormField {}
+	class IdeHelperFormField {}
 }
 
 namespace AdvisingApp\Form\Models{
@@ -1967,8 +1913,7 @@ namespace AdvisingApp\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|FormStep whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperFormStep {}
+	class IdeHelperFormStep {}
 }
 
 namespace AdvisingApp\Form\Models{
@@ -2016,8 +1961,7 @@ namespace AdvisingApp\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperFormSubmission {}
+	class IdeHelperFormSubmission {}
 }
 
 namespace AdvisingApp\InAppCommunication\Models{
@@ -2052,8 +1996,7 @@ namespace AdvisingApp\InAppCommunication\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperTwilioConversation {}
+	class IdeHelperTwilioConversation {}
 }
 
 namespace AdvisingApp\InAppCommunication\Models{
@@ -2093,8 +2036,7 @@ namespace AdvisingApp\InAppCommunication\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperTwilioConversationUser {}
+	class IdeHelperTwilioConversationUser {}
 }
 
 namespace AdvisingApp\Interaction\Models{
@@ -2153,8 +2095,7 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperInteraction {}
+	class IdeHelperInteraction {}
 }
 
 namespace AdvisingApp\Interaction\Models{
@@ -2184,8 +2125,7 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperInteractionCampaign {}
+	class IdeHelperInteractionCampaign {}
 }
 
 namespace AdvisingApp\Interaction\Models{
@@ -2215,8 +2155,7 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperInteractionDriver {}
+	class IdeHelperInteractionDriver {}
 }
 
 namespace AdvisingApp\Interaction\Models{
@@ -2246,8 +2185,7 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionOutcome withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperInteractionOutcome {}
+	class IdeHelperInteractionOutcome {}
 }
 
 namespace AdvisingApp\Interaction\Models{
@@ -2277,8 +2215,7 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionRelation withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperInteractionRelation {}
+	class IdeHelperInteractionRelation {}
 }
 
 namespace AdvisingApp\Interaction\Models{
@@ -2310,8 +2247,7 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionStatus withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperInteractionStatus {}
+	class IdeHelperInteractionStatus {}
 }
 
 namespace AdvisingApp\Interaction\Models{
@@ -2341,8 +2277,7 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionType withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperInteractionType {}
+	class IdeHelperInteractionType {}
 }
 
 namespace AdvisingApp\InventoryManagement\Models{
@@ -2394,8 +2329,7 @@ namespace AdvisingApp\InventoryManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Asset withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperAsset {}
+	class IdeHelperAsset {}
 }
 
 namespace AdvisingApp\InventoryManagement\Models{
@@ -2440,8 +2374,7 @@ namespace AdvisingApp\InventoryManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperAssetCheckIn {}
+	class IdeHelperAssetCheckIn {}
 }
 
 namespace AdvisingApp\InventoryManagement\Models{
@@ -2491,8 +2424,7 @@ namespace AdvisingApp\InventoryManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperAssetCheckOut {}
+	class IdeHelperAssetCheckOut {}
 }
 
 namespace AdvisingApp\InventoryManagement\Models{
@@ -2522,8 +2454,7 @@ namespace AdvisingApp\InventoryManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperAssetLocation {}
+	class IdeHelperAssetLocation {}
 }
 
 namespace AdvisingApp\InventoryManagement\Models{
@@ -2555,8 +2486,7 @@ namespace AdvisingApp\InventoryManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperAssetStatus {}
+	class IdeHelperAssetStatus {}
 }
 
 namespace AdvisingApp\InventoryManagement\Models{
@@ -2586,8 +2516,7 @@ namespace AdvisingApp\InventoryManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AssetType withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperAssetType {}
+	class IdeHelperAssetType {}
 }
 
 namespace AdvisingApp\InventoryManagement\Models{
@@ -2630,8 +2559,7 @@ namespace AdvisingApp\InventoryManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperMaintenanceActivity {}
+	class IdeHelperMaintenanceActivity {}
 }
 
 namespace AdvisingApp\InventoryManagement\Models{
@@ -2661,8 +2589,7 @@ namespace AdvisingApp\InventoryManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperMaintenanceProvider {}
+	class IdeHelperMaintenanceProvider {}
 }
 
 namespace AdvisingApp\KnowledgeBase\Models{
@@ -2671,6 +2598,7 @@ namespace AdvisingApp\KnowledgeBase\Models{
  *
  * @property string $id
  * @property string $name
+ * @property string|null $description
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -2685,6 +2613,7 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory query()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory whereUpdatedAt($value)
@@ -2692,8 +2621,7 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperKnowledgeBaseCategory {}
+	class IdeHelperKnowledgeBaseCategory {}
 }
 
 namespace AdvisingApp\KnowledgeBase\Models{
@@ -2722,6 +2650,7 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseItemFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem public()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem query()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereArticleDetails($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereCategoryId($value)
@@ -2735,8 +2664,7 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperKnowledgeBaseItem {}
+	class IdeHelperKnowledgeBaseItem {}
 }
 
 namespace AdvisingApp\KnowledgeBase\Models{
@@ -2766,8 +2694,7 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperKnowledgeBaseQuality {}
+	class IdeHelperKnowledgeBaseQuality {}
 }
 
 namespace AdvisingApp\KnowledgeBase\Models{
@@ -2797,8 +2724,7 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperKnowledgeBaseStatus {}
+	class IdeHelperKnowledgeBaseStatus {}
 }
 
 namespace AdvisingApp\MeetingCenter\Models{
@@ -2836,8 +2762,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperCalendar {}
+	class IdeHelperCalendar {}
 }
 
 namespace AdvisingApp\MeetingCenter\Models{
@@ -2871,8 +2796,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperCalendarEvent {}
+	class IdeHelperCalendarEvent {}
 }
 
 namespace AdvisingApp\MeetingCenter\Models{
@@ -2906,8 +2830,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Event whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperEvent {}
+	class IdeHelperEvent {}
 }
 
 namespace AdvisingApp\MeetingCenter\Models{
@@ -2941,8 +2864,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperEventAttendee {}
+	class IdeHelperEventAttendee {}
 }
 
 namespace AdvisingApp\MeetingCenter\Models{
@@ -2989,8 +2911,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperEventRegistrationForm {}
+	class IdeHelperEventRegistrationForm {}
 }
 
 namespace AdvisingApp\MeetingCenter\Models{
@@ -3016,8 +2937,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormAuthentication whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperEventRegistrationFormAuthentication {}
+	class IdeHelperEventRegistrationFormAuthentication {}
 }
 
 namespace AdvisingApp\MeetingCenter\Models{
@@ -3050,8 +2970,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperEventRegistrationFormField {}
+	class IdeHelperEventRegistrationFormField {}
 }
 
 namespace AdvisingApp\MeetingCenter\Models{
@@ -3081,8 +3000,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperEventRegistrationFormStep {}
+	class IdeHelperEventRegistrationFormStep {}
 }
 
 namespace AdvisingApp\MeetingCenter\Models{
@@ -3118,8 +3036,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperEventRegistrationFormSubmission {}
+	class IdeHelperEventRegistrationFormSubmission {}
 }
 
 namespace AdvisingApp\Notification\Models{
@@ -3131,7 +3048,7 @@ namespace AdvisingApp\Notification\Models{
  * @property string $notification_class
  * @property string|null $external_reference_id
  * @property string|null $external_status
- * @property mixed|null $content
+ * @property array|null $content
  * @property \AdvisingApp\Notification\Enums\NotificationDeliveryStatus $delivery_status
  * @property string|null $delivery_response
  * @property int $quota_usage
@@ -3168,8 +3085,7 @@ namespace AdvisingApp\Notification\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperOutboundDeliverable {}
+	class IdeHelperOutboundDeliverable {}
 }
 
 namespace AdvisingApp\Notification\Models{
@@ -3196,8 +3112,7 @@ namespace AdvisingApp\Notification\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Subscription whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperSubscription {}
+	class IdeHelperSubscription {}
 }
 
 namespace AdvisingApp\Prospect\Models{
@@ -3302,8 +3217,7 @@ namespace AdvisingApp\Prospect\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperProspect {}
+	class IdeHelperProspect {}
 }
 
 namespace AdvisingApp\Prospect\Models{
@@ -3333,8 +3247,7 @@ namespace AdvisingApp\Prospect\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectSource withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperProspectSource {}
+	class IdeHelperProspectSource {}
 }
 
 namespace AdvisingApp\Prospect\Models{
@@ -3368,8 +3281,7 @@ namespace AdvisingApp\Prospect\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperProspectStatus {}
+	class IdeHelperProspectStatus {}
 }
 
 namespace AdvisingApp\Report\Models{
@@ -3403,8 +3315,7 @@ namespace AdvisingApp\Report\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Report whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperReport {}
+	class IdeHelperReport {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3458,8 +3369,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperChangeRequest {}
+	class IdeHelperChangeRequest {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3490,8 +3400,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperChangeRequestResponse {}
+	class IdeHelperChangeRequestResponse {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3516,8 +3425,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperChangeRequestStatus {}
+	class IdeHelperChangeRequestStatus {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3546,8 +3454,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperChangeRequestType {}
+	class IdeHelperChangeRequestType {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3576,6 +3483,8 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \App\Models\User|null $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\OutboundDeliverable> $deliverables
+ * @property-read int|null $deliverables_count
  * @property-read \AdvisingApp\Division\Models\Division $division
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestHistory> $histories
  * @property-read int|null $histories_count
@@ -3615,8 +3524,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperServiceRequest {}
+	class IdeHelperServiceRequest {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3650,8 +3558,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperServiceRequestAssignment {}
+	class IdeHelperServiceRequestAssignment {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3700,8 +3607,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperServiceRequestForm {}
+	class IdeHelperServiceRequestForm {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3729,8 +3635,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperServiceRequestFormAuthentication {}
+	class IdeHelperServiceRequestFormAuthentication {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3762,8 +3667,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperServiceRequestFormField {}
+	class IdeHelperServiceRequestFormField {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3792,8 +3696,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperServiceRequestFormStep {}
+	class IdeHelperServiceRequestFormStep {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3844,8 +3747,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperServiceRequestFormSubmission {}
+	class IdeHelperServiceRequestFormSubmission {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3871,8 +3773,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperServiceRequestHistory {}
+	class IdeHelperServiceRequestHistory {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3910,8 +3811,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperServiceRequestPriority {}
+	class IdeHelperServiceRequestPriority {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3945,8 +3845,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperServiceRequestStatus {}
+	class IdeHelperServiceRequestStatus {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3985,8 +3884,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperServiceRequestType {}
+	class IdeHelperServiceRequestType {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -4021,8 +3919,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperServiceRequestUpdate {}
+	class IdeHelperServiceRequestUpdate {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -4059,8 +3956,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Sla withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperSla {}
+	class IdeHelperSla {}
 }
 
 namespace AdvisingApp\StudentDataModel\Models{
@@ -4101,8 +3997,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereUntTaken($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperEnrollment {}
+	class IdeHelperEnrollment {}
 }
 
 namespace AdvisingApp\StudentDataModel\Models{
@@ -4134,8 +4029,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Performance whereSisid($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperPerformance {}
+	class IdeHelperPerformance {}
 }
 
 namespace AdvisingApp\StudentDataModel\Models{
@@ -4172,8 +4066,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereSisid($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperProgram {}
+	class IdeHelperProgram {}
 }
 
 namespace AdvisingApp\StudentDataModel\Models{
@@ -4291,8 +4184,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereState($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperStudent {}
+	class IdeHelperStudent {}
 }
 
 namespace AdvisingApp\Survey\Models{
@@ -4339,8 +4231,7 @@ namespace AdvisingApp\Survey\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Survey whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperSurvey {}
+	class IdeHelperSurvey {}
 }
 
 namespace AdvisingApp\Survey\Models{
@@ -4368,8 +4259,7 @@ namespace AdvisingApp\Survey\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|SurveyAuthentication whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperSurveyAuthentication {}
+	class IdeHelperSurveyAuthentication {}
 }
 
 namespace AdvisingApp\Survey\Models{
@@ -4402,8 +4292,7 @@ namespace AdvisingApp\Survey\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|SurveyField whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperSurveyField {}
+	class IdeHelperSurveyField {}
 }
 
 namespace AdvisingApp\Survey\Models{
@@ -4432,8 +4321,7 @@ namespace AdvisingApp\Survey\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|SurveyStep whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperSurveyStep {}
+	class IdeHelperSurveyStep {}
 }
 
 namespace AdvisingApp\Survey\Models{
@@ -4481,8 +4369,7 @@ namespace AdvisingApp\Survey\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperSurveySubmission {}
+	class IdeHelperSurveySubmission {}
 }
 
 namespace AdvisingApp\Task\Models{
@@ -4530,8 +4417,7 @@ namespace AdvisingApp\Task\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Task withoutTrashed()
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperTask {}
+	class IdeHelperTask {}
 }
 
 namespace AdvisingApp\Team\Models{
@@ -4561,8 +4447,7 @@ namespace AdvisingApp\Team\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Team whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperTeam {}
+	class IdeHelperTeam {}
 }
 
 namespace AdvisingApp\Team\Models{
@@ -4586,8 +4471,7 @@ namespace AdvisingApp\Team\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|TeamUser whereUserId($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperTeamUser {}
+	class IdeHelperTeamUser {}
 }
 
 namespace AdvisingApp\Timeline\Models{
@@ -4617,8 +4501,7 @@ namespace AdvisingApp\Timeline\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Timeline whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperTimeline {}
+	class IdeHelperTimeline {}
 }
 
 namespace AdvisingApp\Webhook\Models{
@@ -4646,7 +4529,6 @@ namespace AdvisingApp\Webhook\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InboundWebhook whereUrl($value)
  * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
- class IdeHelperInboundWebhook {}
+	class IdeHelperInboundWebhook {}
 }
 

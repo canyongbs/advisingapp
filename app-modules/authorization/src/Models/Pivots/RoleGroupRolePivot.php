@@ -46,7 +46,6 @@ use AdvisingApp\Authorization\Events\RoleRemovedFromRoleGroup;
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupRolePivot newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupRolePivot newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupRolePivot query()
- *
  * @mixin \Eloquent
  * @mixin IdeHelperRoleGroupRolePivot
  */

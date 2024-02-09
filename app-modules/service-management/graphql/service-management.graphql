@@ -17,7 +17,9 @@ input ServiceRequestQuery {
 
 # TODO: Move to own file
 type ServiceRequestAssignment
-    @model(class: "AdvisingApp\\ServiceManagement\\Models\\ServiceRequestAssignment") {
+    @model(
+        class: "AdvisingApp\\ServiceManagement\\Models\\ServiceRequestAssignment"
+    ) {
     "Unique primary key."
     id: UUID!
 
@@ -27,11 +29,11 @@ type ServiceRequestAssignment
     "The user of the assignment."
     user: User @belongsTo
 
-#    "The role of the assignment."
-#    role: ServiceRequestAssignmentRole @belongsTo
+    #    "The role of the assignment."
+    #    role: ServiceRequestAssignmentRole @belongsTo
 
-#    "The status of the assignment."
-#    status: ServiceRequestAssignmentStatus @belongsTo
+    #    "The status of the assignment."
+    #    status: ServiceRequestAssignmentStatus @belongsTo
 
     "The created datetime of the assignment."
     created_at: DateTime

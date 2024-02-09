@@ -7,6 +7,7 @@ use GraphQL\Type\Introspection;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Artisan;
 use Nuwave\Lighthouse\Schema\AST\ASTCache;
 use Nuwave\Lighthouse\Schema\SchemaBuilder;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
@@ -16,7 +17,7 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
     /**
      * @var string
      */
-    protected $signature = 'dev:validate-graphql {--model=} {--list}';
+    protected $signature = 'dev:validate-graphql {--descriptions} {--details= : Show details: list, table}';
 
     protected $description = 'Validate graphql implementation.';
 
@@ -24,7 +25,7 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
     {
         parent::__construct();
 
-        if ( app()->isProduction()) {
+        if (app()->isProduction()) {
             $this->setHidden();
         }
     }
@@ -37,6 +38,24 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
             return self::FAILURE;
         }
 
+        $tenant = Tenant::first();
+
+        if (! $tenant) {
+            $this->error('No tenant found.');
+
+            return self::FAILURE;
+        }
+
+        if ($this->option('details') && ! in_array($this->option('details'), ['list', 'table'])) {
+            $this->error('The --details option must be one of: list, table.');
+
+            return self::FAILURE;
+        }
+
+        Artisan::call(GenerateHelperFiles::class, outputBuffer: $this->output);
+
+        $tenant->makeCurrent();
+
         $contents = str(File::get('_ide_helper_models.php'))
             ->explode("\n")
             ->splice(13);
@@ -46,16 +65,6 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
 
             return self::FAILURE;
         }
-
-        $tenant = Tenant::first();
-
-        if (! $tenant) {
-            $this->error('No tenant found.');
-
-            return self::FAILURE;
-        }
-
-        $tenant->makeCurrent();
 
         $cache->clear();
 
@@ -130,7 +139,10 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
 
         if ($type) {
             $this->info("Type found: {$class}");
-            $this->line('Description: ' . ($type['description'] ?: $this->style('Missing', 'error')));
+
+            if ($this->option('descriptions')) {
+                $this->line('Description: ' . ($type['description'] ?: $this->style('Missing', 'error')));
+            }
 
             $fields = [];
 
@@ -147,19 +159,26 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
                         $fail = true;
                     }
 
-                    $this->option('list')
-                        ? $this->info("Field found: {$property}")
-                        : $fields[] = ['Field' => $this->style($property), 'Description' => $description];
+                    $fields[] = ['Field' => $this->style($property), ...$this->option('descriptions') ? ['Description' => $description] : []];
+
+                    if ($this->option('details') === 'list') {
+                        $this->info("Field found: {$property}");
+                        $this->line("Description: {$description}");
+                    }
                 } else {
                     $fail = true;
-                    $this->option('list')
-                        ? $this->warn("Field not found: {$property}")
-                        : $fields[] = ['Field' => $this->style($property, 'warning'), 'Description' => $this->style('Not found', 'warning')];
+
+                    $fields[] = ['Field' => $this->style($property, 'warning'), ...$this->option('descriptions') ? ['Description' => $this->style('Not found', 'warning')] : []];
+
+                    if ($this->option('details') === 'list') {
+                        $this->warn("Field not found: {$property}");
+                        $this->line('Description: ' . $this->style('Missing', 'error'));
+                    }
                 }
             }
 
-            if (! $this->option('list')) {
-                $this->table(['Field', 'Description'], $fields);
+            if ($this->option('details') === 'table') {
+                $this->table(['Field', ...$this->option('descriptions') ? ['Description'] : []], $fields);
             }
         } else {
             $this->warn("Type not found: {$class}");

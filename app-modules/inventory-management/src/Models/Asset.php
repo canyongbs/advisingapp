@@ -49,7 +49,6 @@ use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 
 /**
  * @property-read string $purchase_age
- *
  * @mixin IdeHelperAsset
  */
 class Asset extends BaseModel implements Auditable
