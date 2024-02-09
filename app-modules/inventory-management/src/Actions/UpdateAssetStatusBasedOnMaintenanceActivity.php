@@ -34,36 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Observers;
+namespace AdvisingApp\InventoryManagement\Actions;
 
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
 use AdvisingApp\InventoryManagement\Models\MaintenanceActivity;
-use AdvisingApp\InventoryManagement\Actions\UpdateAssetStatusBasedOnMaintenanceActivity;
+use AdvisingApp\InventoryManagement\Enums\MaintenanceActivityStatus;
 
-class MaintenanceActivityObserver
+class UpdateAssetStatusBasedOnMaintenanceActivity
 {
-    public function creating(MaintenanceActivity $maintenanceActivity): void
+    public function handle(MaintenanceActivity $maintenanceActivity): void
     {
-        if (is_null($maintenanceActivity->scheduled_date) && ! is_null($maintenanceActivity->completed_date)) {
-            $maintenanceActivity->scheduled_date = $maintenanceActivity->completed_date;
-        }
-    }
-
-    public function created(MaintenanceActivity $maintenanceActivity): void
-    {
-        TimelineableRecordCreated::dispatch($maintenanceActivity->asset, $maintenanceActivity);
-
-        resolve(UpdateAssetStatusBasedOnMaintenanceActivity::class)->handle($maintenanceActivity);
-    }
-
-    public function updated(MaintenanceActivity $maintenanceActivity): void
-    {
-        resolve(UpdateAssetStatusBasedOnMaintenanceActivity::class)->handle($maintenanceActivity);
-    }
-
-    public function deleted(MaintenanceActivity $maintenanceActivity): void
-    {
-        TimelineableRecordDeleted::dispatch($maintenanceActivity->asset, $maintenanceActivity);
+        match ($maintenanceActivity->status) {
+            MaintenanceActivityStatus::InProgress => $maintenanceActivity->asset->transitionToUnderMaintenance(),
+            MaintenanceActivityStatus::Completed => $maintenanceActivity->asset->transitionToAvailable(),
+            default => null,
+        };
     }
 }

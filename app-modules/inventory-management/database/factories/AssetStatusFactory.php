@@ -51,4 +51,14 @@ class AssetStatusFactory extends Factory
             'name' => fake()->word(),
         ];
     }
+
+    public function available(): self
+    {
+        return $this->state(fn () => ['classification' => SystemAssetStatusClassification::Available]);
+    }
+
+    public function unavailable(): self
+    {
+        return $this->state(fn () => ['classification' => SystemAssetStatusClassification::Unavailable]);
+    }
 }

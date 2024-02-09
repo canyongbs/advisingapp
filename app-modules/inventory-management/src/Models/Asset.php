@@ -130,6 +130,20 @@ class Asset extends BaseModel implements Auditable
             && is_null($this->latestCheckOut?->asset_check_in_id);
     }
 
+    public function transitionToUnderMaintenance(): void
+    {
+        $this->status()
+            ->associate(AssetStatus::where('name', 'Under Maintenance')->first())
+            ->save();
+    }
+
+    public function transitionToAvailable(): void
+    {
+        $this->status()
+            ->associate(AssetStatus::where('classification', SystemAssetStatusClassification::Available)->first())
+            ->save();
+    }
+
     protected function purchaseAge(): Attribute
     {
         return Attribute::get(function () {
