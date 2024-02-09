@@ -4,8 +4,6 @@ type ServiceRequest
     id: UUID!
 
     # TODO: Finish fields
-
-    initial_assignment: ServiceRequestAssignment @hasOne
 }
 
 input ServiceRequestQuery {
