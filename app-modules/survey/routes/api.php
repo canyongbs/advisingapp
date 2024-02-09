@@ -49,16 +49,16 @@ Route::prefix('api')
             ->name('surveys.')
             ->group(function () {
                 Route::get('/{survey}', [SurveyWidgetController::class, 'view'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('define');
                 Route::post('/{survey}/authenticate/request', [SurveyWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('request-authentication');
                 Route::post('/{survey}/authenticate/{authentication}', [SurveyWidgetController::class, 'authenticate'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('authenticate');
                 Route::post('/{survey}/submit', [SurveyWidgetController::class, 'store'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('submit');
             });
     });

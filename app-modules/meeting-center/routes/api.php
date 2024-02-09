@@ -47,16 +47,16 @@ Route::prefix('api')
             ->name('event-registration.')
             ->group(function () {
                 Route::get('/{event}', [EventRegistrationWidgetController::class, 'view'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('define');
                 Route::post('/{event}/authenticate/request', [EventRegistrationWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('request-authentication');
                 Route::post('/{event}/authenticate/{authentication}', [EventRegistrationWidgetController::class, 'authenticate'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('authenticate');
                 Route::post('/{event}/submit', [EventRegistrationWidgetController::class, 'store'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('submit');
             });
     });

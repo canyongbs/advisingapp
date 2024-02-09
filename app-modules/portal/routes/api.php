@@ -53,10 +53,10 @@ Route::prefix('api')
             ->name('portal.knowledge-management.')
             ->group(function () {
                 Route::get('/', [KnowledgeManagementPortalController::class, 'show'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('define');
                 Route::post('/search', [KnowledgeManagementPortalSearchController::class, 'get'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('search');
                 Route::get('/categories/{category}', [KnowledgeManagementPortalCategoryController::class, 'show'])
                     ->name('category.show');
