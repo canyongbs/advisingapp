@@ -51,7 +51,7 @@ class IconSelect extends Select
             ->allowHtml()
             ->searchable()
             ->options(function (): array {
-                return Cache::remember(str()->random(), now()->addHour(), function (): array {
+                return Cache::remember('heroicon-select-options', now()->addHour(), function (): array {
                     $paths = app(Factory::class)->all()['heroicons']['paths'];
 
                     $options = [];
