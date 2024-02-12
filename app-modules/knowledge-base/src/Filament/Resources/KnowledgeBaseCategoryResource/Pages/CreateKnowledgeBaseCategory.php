@@ -40,6 +40,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Forms\Components\IconSelect;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
 
 class CreateKnowledgeBaseCategory extends CreateRecord
@@ -54,10 +55,12 @@ class CreateKnowledgeBaseCategory extends CreateRecord
                     ->label('Name')
                     ->required()
                     ->string(),
+                IconSelect::make('icon'),
                 Textarea::make('description')
                     ->label('Description')
                     ->nullable()
-                    ->string(),
+                    ->string()
+                    ->columnSpanFull(),
             ]);
     }
 }
