@@ -36,9 +36,7 @@
 
 namespace App\Filament\Widgets;
 
-use Illuminate\Support\Number;
 use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class TotalProspects extends StatsOverviewWidget
@@ -46,7 +44,7 @@ class TotalProspects extends StatsOverviewWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Prospects', Number::abbreviate(Prospect::count())),
+            Stat::make('Total Prospects', $this->formatCount(Prospect::count())),
         ];
     }
 }

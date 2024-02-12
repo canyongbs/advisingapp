@@ -36,15 +36,17 @@
 
 namespace App\Filament\Widgets;
 
-use Filament\Widgets\StatsOverviewWidget\Stat;
-use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Widgets\Concerns\FormatsCount;
+use Filament\Widgets\StatsOverviewWidget as BaseStatsOverviewWidget;
 
-class TotalStudents extends StatsOverviewWidget
+class StatsOverviewWidget extends BaseStatsOverviewWidget
 {
-    protected function getStats(): array
+    use FormatsCount;
+
+    protected int | string | array $columnSpan = 1;
+
+    protected function getColumns(): int
     {
-        return [
-            Stat::make('Total Students', $this->formatCount(Student::count())),
-        ];
+        return 1;
     }
 }

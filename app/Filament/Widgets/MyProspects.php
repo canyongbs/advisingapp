@@ -36,9 +36,7 @@
 
 namespace App\Filament\Widgets;
 
-use Illuminate\Support\Number;
 use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class MyProspects extends StatsOverviewWidget
@@ -48,7 +46,7 @@ class MyProspects extends StatsOverviewWidget
         return [
             Stat::make(
                 'Prospects (Subscribed)',
-                Number::abbreviate(
+                $this->formatCount(
                     auth()->user()->subscriptions()->where('subscribable_type', (new Prospect())->getMorphClass())->count()
                 )
             ),

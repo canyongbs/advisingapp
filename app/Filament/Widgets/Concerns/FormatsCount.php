@@ -34,17 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Widgets;
+namespace App\Filament\Widgets\Concerns;
 
-use Filament\Widgets\StatsOverviewWidget\Stat;
-use AdvisingApp\StudentDataModel\Models\Student;
-
-class TotalStudents extends StatsOverviewWidget
+trait FormatsCount
 {
-    protected function getStats(): array
+    protected function formatCount(int $count): string
     {
-        return [
-            Stat::make('Total Students', $this->formatCount(Student::count())),
-        ];
+        if ($count < 10000) {
+            return number_format($count);
+        }
+
+        if ($count < 1000000) {
+            return number_format($count / 1000, 2) . 'K';
+        }
+
+        if ($count < 1000000000) {
+            return number_format($count / 1000000, 3) . 'M';
+        }
+
+        return number_format($count / 1000000000, 3) . 'B';
     }
 }

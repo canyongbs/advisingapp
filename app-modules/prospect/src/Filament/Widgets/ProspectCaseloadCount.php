@@ -37,15 +37,11 @@
 namespace AdvisingApp\Prospect\Filament\Widgets;
 
 use App\Models\User;
-use Illuminate\Support\Number;
-use Illuminate\Support\Facades\Cache;
-use AdvisingApp\Alert\Enums\AlertStatus;
-use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Widgets\StatsOverviewWidget;
+use App\Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
 
-class ProspectStats extends StatsOverviewWidget
+class ProspectCaseloadCount extends StatsOverviewWidget
 {
     protected function getStats(): array
     {
@@ -53,25 +49,7 @@ class ProspectStats extends StatsOverviewWidget
         $user = auth()->user();
 
         return [
-            Stat::make('Prospects', Number::abbreviate(
-                Cache::tags(['{prospects}'])
-                    ->remember('{prospects-count}', now()->addHour(), function (): int {
-                        return Prospect::count();
-                    }),
-                maxPrecision: 2,
-            )),
-            Stat::make('Subscriptions', Cache::tags(['{prospects}', "{user-{$user->getKey()}-prospect-subscriptions}"])
-                ->remember('{prospect-subscriptions-count}', now()->addHour(), function () use ($user): int {
-                    return $user->prospectSubscriptions()->count();
-                })),
-            Stat::make('Alerts', Cache::tags(['{prospects}', "{user-{$user->getKey()}-prospect-alerts}"])
-                ->remember('{prospect-alerts-count}', now()->addHour(), function () use ($user): int {
-                    return $user->prospectAlerts()->status(AlertStatus::Active)->count();
-                })),
-            Stat::make('Caseloads', Cache::tags(["{user-{$user->getKey()}-prospect-caseloads}"])
-                ->remember('{prospect-caseloads-count}', now()->addHour(), function () use ($user): int {
-                    return $user->caseloads()->model(CaseloadModel::Prospect)->count();
-                })),
+            Stat::make('Caseloads', $user->caseloads()->model(CaseloadModel::Prospect)->count()),
         ];
     }
 }

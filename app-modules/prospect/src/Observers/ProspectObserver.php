@@ -37,7 +37,6 @@
 namespace AdvisingApp\Prospect\Observers;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Prospect\Models\Prospect;
 
 class ProspectObserver
@@ -49,15 +48,5 @@ class ProspectObserver
         if ($user instanceof User && ! $prospect->createdBy) {
             $prospect->createdBy()->associate($user);
         }
-    }
-
-    public function created(): void
-    {
-        Cache::tags('{prospects}')->flush();
-    }
-
-    public function deleted(): void
-    {
-        Cache::tags('{prospects}')->flush();
     }
 }

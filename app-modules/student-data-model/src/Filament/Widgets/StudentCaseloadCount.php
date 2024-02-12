@@ -34,17 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Widgets;
+namespace AdvisingApp\StudentDataModel\Filament\Widgets;
 
+use App\Models\User;
+use App\Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
 
-class TotalStudents extends StatsOverviewWidget
+class StudentCaseloadCount extends StatsOverviewWidget
 {
     protected function getStats(): array
     {
+        /** @var User $user */
+        $user = auth()->user();
+
         return [
-            Stat::make('Total Students', $this->formatCount(Student::count())),
+            Stat::make('Caseloads', $user->caseloads()->model(CaseloadModel::Student)->count()),
         ];
     }
 }

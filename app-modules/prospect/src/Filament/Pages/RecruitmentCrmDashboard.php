@@ -41,8 +41,11 @@ use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Widgets\ProspectGrowthChart;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Symfony\Component\HttpFoundation\Response;
-use AdvisingApp\Prospect\Filament\Widgets\ProspectStats;
+use AdvisingApp\Prospect\Filament\Widgets\ProspectCount;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectTasks;
+use AdvisingApp\Prospect\Filament\Widgets\ProspectAlertCount;
+use AdvisingApp\Prospect\Filament\Widgets\ProspectCaseloadCount;
+use AdvisingApp\Prospect\Filament\Widgets\ProspectSubscriptionCount;
 
 class RecruitmentCrmDashboard extends BaseDashboard
 {
@@ -75,9 +78,24 @@ class RecruitmentCrmDashboard extends BaseDashboard
     public function getWidgets(): array
     {
         return [
-            ProspectStats::class,
+            //1
+            ProspectCount::class,
+            ProspectSubscriptionCount::class,
+            ProspectAlertCount::class,
+            ProspectCaseloadCount::class,
+            //2
             ProspectGrowthChart::class,
+            //3
             ProspectTasks::class,
+        ];
+    }
+
+    public function getColumns(): int | string | array
+    {
+        return [
+            'sm' => 1,
+            'md' => 2,
+            'lg' => 4,
         ];
     }
 }

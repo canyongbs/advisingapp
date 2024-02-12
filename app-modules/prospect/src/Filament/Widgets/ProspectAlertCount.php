@@ -34,17 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Widgets;
+namespace AdvisingApp\Prospect\Filament\Widgets;
 
+use App\Models\User;
+use AdvisingApp\Alert\Enums\AlertStatus;
+use App\Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use AdvisingApp\StudentDataModel\Models\Student;
 
-class TotalStudents extends StatsOverviewWidget
+class ProspectAlertCount extends StatsOverviewWidget
 {
     protected function getStats(): array
     {
+        /** @var User $user */
+        $user = auth()->user();
+
         return [
-            Stat::make('Total Students', $this->formatCount(Student::count())),
+            Stat::make('Alerts', $user->prospectAlerts()->status(AlertStatus::Active)->count()),
         ];
     }
 }

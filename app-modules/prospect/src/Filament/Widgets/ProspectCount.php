@@ -34,17 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Widgets;
+namespace AdvisingApp\Prospect\Filament\Widgets;
 
+use Illuminate\Support\Number;
+use AdvisingApp\Prospect\Models\Prospect;
+use App\Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use AdvisingApp\StudentDataModel\Models\Student;
 
-class TotalStudents extends StatsOverviewWidget
+class ProspectCount extends StatsOverviewWidget
 {
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Students', $this->formatCount(Student::count())),
+            Stat::make('Prospects', Number::abbreviate(Prospect::count(), maxPrecision: 2)),
         ];
     }
 }

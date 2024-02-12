@@ -34,17 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Widgets;
+namespace AdvisingApp\Prospect\Filament\Widgets;
 
+use App\Models\User;
+use App\Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use AdvisingApp\StudentDataModel\Models\Student;
 
-class TotalStudents extends StatsOverviewWidget
+class ProspectSubscriptionCount extends StatsOverviewWidget
 {
     protected function getStats(): array
     {
+        /** @var User $user */
+        $user = auth()->user();
+
         return [
-            Stat::make('Total Students', $this->formatCount(Student::count())),
+            Stat::make('Subscriptions', $user->prospectSubscriptions()->count()),
         ];
     }
 }
