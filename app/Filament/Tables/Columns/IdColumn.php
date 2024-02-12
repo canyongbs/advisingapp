@@ -34,14 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\RelationManagers;
+namespace App\Filament\Tables\Columns;
 
-use Filament\Resources\RelationManagers\RelationManager as FilamentRelationManager;
+use Filament\Tables\Columns\TextColumn;
 
-class RelationManager extends FilamentRelationManager
+class IdColumn extends TextColumn
 {
-    public function isReadOnly(): bool
+    protected function setUp(): void
     {
-        return false;
+        parent::setUp();
+
+        $this->label('ID');
+
+        $this->sortable();
+
+        $this->toggleable(isToggledHiddenByDefault: true);
+    }
+
+    public static function make(string $name = 'id'): static
+    {
+        return parent::make($name);
     }
 }

@@ -38,9 +38,9 @@ namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
 use App\Models\User;
 use Filament\Tables\Table;
-use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;

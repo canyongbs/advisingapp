@@ -77,7 +77,7 @@ class ViewKnowledgeBaseItem extends ViewRecord
                         ViewEntry::make('article_details')
                             ->label('Article Details')
                             ->columnSpanFull()
-                            ->view('filament.infolists.entries.html'),
+                            ->view('filament.infolists.components.html'),
                     ]),
                 Section::make('Article Metadata')
                     ->collapsed()

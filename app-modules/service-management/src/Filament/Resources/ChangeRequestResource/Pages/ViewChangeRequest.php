@@ -125,7 +125,7 @@ class ViewChangeRequest extends ViewRecord
                         TextEntry::make('likelihood')
                             ->columnSpan(1),
                         ViewEntry::make('risk_score')
-                            ->view('filament.infolists.entries.change-request.risk-score')
+                            ->view('filament.infolists.components.change-request.risk-score')
                             ->columnSpan(1),
                     ])
                     ->columns(3),

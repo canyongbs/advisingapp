@@ -38,11 +38,11 @@ namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
-use App\Filament\Fields\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use FilamentTiptapEditor\Enums\TiptapOutput;
+use App\Filament\Forms\Components\TiptapEditor;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
 
 class EditSmsTemplate extends EditRecord

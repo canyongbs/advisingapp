@@ -37,9 +37,9 @@
 namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages;
 
 use Filament\Tables\Table;
-use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\InventoryManagement\Models\AssetCheckOut;

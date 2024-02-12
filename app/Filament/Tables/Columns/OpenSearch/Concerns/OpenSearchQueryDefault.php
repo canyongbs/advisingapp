@@ -34,25 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Columns;
+namespace App\Filament\Tables\Columns\OpenSearch\Concerns;
 
-use Filament\Tables\Columns\TextColumn;
+use OpenSearch\ScoutDriverPlus\Support\Query;
+use OpenSearch\ScoutDriverPlus\Builders\QueryBuilderInterface;
 
-class IdColumn extends TextColumn
+trait OpenSearchQueryDefault
 {
-    protected function setUp(): void
+    public function openSearchQuery(string $search): ?QueryBuilderInterface
     {
-        parent::setUp();
-
-        $this->label('ID');
-
-        $this->sortable();
-
-        $this->toggleable(isToggledHiddenByDefault: true);
-    }
-
-    public static function make(string $name = 'id'): static
-    {
-        return parent::make($name);
+        return Query::multiMatch()
+            ->fields($this->getSearchColumns())
+            ->type('bool_prefix')
+            ->query($search)
+            ->fuzziness('AUTO')
+            ->analyzer('standard');
     }
 }

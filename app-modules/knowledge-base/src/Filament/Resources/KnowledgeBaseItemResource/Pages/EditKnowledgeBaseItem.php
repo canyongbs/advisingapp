@@ -38,7 +38,6 @@ namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource
 
 use Filament\Forms\Form;
 use Filament\Actions\EditAction;
-use App\Filament\Fields\TiptapEditor;
 use Filament\Forms\Components\Section;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
@@ -46,6 +45,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Actions\Action as BaseAction;
 use Filament\Forms\Components\Actions\Action;
+use App\Filament\Forms\Components\TiptapEditor;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
 
 class EditKnowledgeBaseItem extends EditRecord

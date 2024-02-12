@@ -72,7 +72,7 @@ class ViewAudit extends ViewRecord
                             ->state(function (Audit $record) {
                                 return $record->getModified();
                             })
-                            ->view('filament.infolists.entries.change-entry'),
+                            ->view('filament.infolists.components.change-entry'),
                     ])
                     ->columns(),
             ]);

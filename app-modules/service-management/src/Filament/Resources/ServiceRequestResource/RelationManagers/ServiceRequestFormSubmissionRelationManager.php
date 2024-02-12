@@ -41,7 +41,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use App\Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestFormSubmission;
 
 class ServiceRequestFormSubmissionRelationManager extends RelationManager

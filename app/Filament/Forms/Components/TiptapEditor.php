@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Fields;
+namespace App\Filament\Forms\Components;
 
 use App\Filament\Actions\MediaAction;
 use App\Support\MediaEncoding\TiptapMediaEncoder;

@@ -43,8 +43,8 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use OpenSearch\Adapter\Documents\Document;
 use OpenSearch\ScoutDriverPlus\Support\Query;
-use App\Filament\Columns\OpenSearch\OpenSearchColumn;
-use App\Filament\Filters\OpenSearch\OpenSearchFilter;
+use App\Filament\Tables\Columns\OpenSearch\OpenSearchColumn;
+use App\Filament\Tables\Filters\OpenSearch\OpenSearchFilter;
 
 trait FilterTableWithOpenSearch
 {

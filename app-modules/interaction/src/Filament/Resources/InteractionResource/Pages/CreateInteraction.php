@@ -55,7 +55,7 @@ use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
-use App\Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
 
 class CreateInteraction extends CreateRecord

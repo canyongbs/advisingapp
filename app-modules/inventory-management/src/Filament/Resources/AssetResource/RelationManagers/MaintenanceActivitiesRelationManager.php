@@ -47,7 +47,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Forms\Components\DateTimePicker;
-use App\Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\InventoryManagement\Models\MaintenanceProvider;
 use AdvisingApp\InventoryManagement\Enums\MaintenanceActivityStatus;
 

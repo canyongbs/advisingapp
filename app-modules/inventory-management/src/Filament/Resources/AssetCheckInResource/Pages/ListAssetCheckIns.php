@@ -37,9 +37,9 @@
 namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Pages;
 
 use Filament\Tables\Table;
-use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
 use AdvisingApp\InventoryManagement\Enums\AssetCheckOutStatus;

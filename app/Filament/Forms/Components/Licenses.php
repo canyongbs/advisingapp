@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace App\Forms\Components;
+namespace App\Filament\Forms\Components;
 
 use App\Models\User;
 use Filament\Support\Colors\Color;
@@ -75,7 +75,6 @@ class Licenses extends Section
                     ->extraAttributes(['class' => 'grid justify-items-center'])
                     ->hiddenLabel()
                     ->content(fn () => "{$licenseType->getAvailableSeats()} / {$licenseType->getSeats()}"),
-                // ->content(fn () => "{$licenseType->getSeatsInUse()} / {$licenseType->getSeats()}"),
                 Toggle::make("{$licenseType->value}_enabled")
                     ->hiddenLabel()
                     ->offColor(Color::Red)
