@@ -44,6 +44,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\InventoryManagement\Models\Scopes\ClassifiedAs;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 
@@ -128,6 +129,20 @@ class Asset extends BaseModel implements Auditable
     {
         return $this->status->classification === SystemAssetStatusClassification::CheckedOut
             && is_null($this->latestCheckOut?->asset_check_in_id);
+    }
+
+    public function transitionToUnderMaintenance(): void
+    {
+        $this->status()
+            ->associate(AssetStatus::where('name', 'Under Maintenance')->first())
+            ->save();
+    }
+
+    public function transitionToAvailable(): void
+    {
+        $this->status()
+            ->associate(AssetStatus::tap(new ClassifiedAs(SystemAssetStatusClassification::Available))->first())
+            ->save();
     }
 
     protected function purchaseAge(): Attribute

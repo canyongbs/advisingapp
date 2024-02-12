@@ -52,10 +52,20 @@ class AssetFactory extends Factory
             'serial_number' => fake()->isbn13(),
             'name' => fake()->catchPhrase(),
             'description' => fake()->paragraph(),
-            'type_id' => AssetType::inRandomOrder()->first(),
-            'status_id' => AssetStatus::inRandomOrder()->first(),
-            'location_id' => AssetLocation::inRandomOrder()->first(),
+            'type_id' => AssetType::inRandomOrder()->first() ?? AssetType::factory()->create(),
+            'status_id' => AssetStatus::inRandomOrder()->first() ?? AssetStatus::factory()->create(),
+            'location_id' => AssetLocation::inRandomOrder()->first() ?? AssetLocation::factory()->create(),
             'purchase_date' => fake()->dateTime(),
         ];
+    }
+
+    public function available(): self
+    {
+        return $this->state(fn () => ['status_id' => AssetStatus::factory()->available()->create()]);
+    }
+
+    public function unavailable(): self
+    {
+        return $this->state(fn () => ['status_id' => AssetStatus::factory()->unavailable()->create()]);
     }
 }
