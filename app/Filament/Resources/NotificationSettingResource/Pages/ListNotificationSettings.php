@@ -42,7 +42,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use App\Filament\Columns\OpenSearch\TextColumn;
+use App\Filament\Tables\Columns\OpenSearch\TextColumn;
 use App\Filament\Resources\NotificationSettingResource;
 
 class ListNotificationSettings extends ListRecords

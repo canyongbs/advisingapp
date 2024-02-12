@@ -49,16 +49,16 @@ Route::prefix('api')
             ->name('forms.')
             ->group(function () {
                 Route::get('/{form}', [FormWidgetController::class, 'view'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('define');
                 Route::post('/{form}/authenticate/request', [FormWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('request-authentication');
                 Route::post('/{form}/authenticate/{authentication}', [FormWidgetController::class, 'authenticate'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('authenticate');
                 Route::post('/{form}/submit', [FormWidgetController::class, 'store'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('submit');
             });
     });

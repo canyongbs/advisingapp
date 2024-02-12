@@ -39,7 +39,6 @@ namespace AdvisingApp\Assistant\Filament\Resources;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use App\Infolists\Components\CodeEntry;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Clusters\UsageAuditing;
@@ -48,6 +47,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use App\Filament\Infolists\Components\CodeEntry;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 use AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource\Pages\ManageAssistantChatMessageLogs;
 

@@ -39,7 +39,7 @@ namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResourc
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
-use App\Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource\RelationManagers\HasManyMorphedInteractionsRelationManager;
 

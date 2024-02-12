@@ -37,11 +37,11 @@
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource\Pages;
 
 use Filament\Tables\Table;
-use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use App\Filament\Tables\Columns\IdColumn;
 use App\Filament\Filters\ArchivedFilter;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;

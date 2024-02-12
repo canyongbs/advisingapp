@@ -39,13 +39,13 @@ namespace App\Filament\Resources\SystemUserResource\RelationManagers;
 use Filament\Forms\Form;
 use App\Models\SystemUser;
 use Filament\Tables\Table;
-use App\Filament\Columns\IdColumn;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\AttachAction;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class PermissionsRelationManager extends RelationManager
 {

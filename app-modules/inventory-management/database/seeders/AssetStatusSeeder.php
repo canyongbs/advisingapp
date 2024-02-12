@@ -55,7 +55,10 @@ class AssetStatusSeeder extends Seeder
                         'name' => 'In Use',
                         'classification' => SystemAssetStatusClassification::CheckedOut,
                     ],
-                    ['name' => 'Under Maintenance'],
+                    [
+                        'name' => 'Under Maintenance',
+                        'classification' => SystemAssetStatusClassification::Unavailable,
+                    ],
                     ['name' => 'Out of Service'],
                     ['name' => 'Reserved'],
                     ['name' => 'Awaiting Repair'],

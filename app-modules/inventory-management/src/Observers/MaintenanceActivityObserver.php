@@ -39,6 +39,7 @@ namespace AdvisingApp\InventoryManagement\Observers;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
 use AdvisingApp\InventoryManagement\Models\MaintenanceActivity;
+use AdvisingApp\InventoryManagement\Actions\UpdateAssetStatusBasedOnMaintenanceActivity;
 
 class MaintenanceActivityObserver
 {
@@ -52,6 +53,13 @@ class MaintenanceActivityObserver
     public function created(MaintenanceActivity $maintenanceActivity): void
     {
         TimelineableRecordCreated::dispatch($maintenanceActivity->asset, $maintenanceActivity);
+
+        resolve(UpdateAssetStatusBasedOnMaintenanceActivity::class)->handle($maintenanceActivity);
+    }
+
+    public function updated(MaintenanceActivity $maintenanceActivity): void
+    {
+        resolve(UpdateAssetStatusBasedOnMaintenanceActivity::class)->handle($maintenanceActivity);
     }
 
     public function deleted(MaintenanceActivity $maintenanceActivity): void

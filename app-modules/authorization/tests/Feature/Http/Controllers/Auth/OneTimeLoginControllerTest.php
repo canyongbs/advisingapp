@@ -50,7 +50,11 @@ it('signs the user in through a signed URL', function () {
 
     assertGuest();
 
-    get(URL::signedRoute('login.one-time', ['user' => $user]))
+    get(URL::signedRoute(
+        name: 'login.one-time',
+        parameters: ['user' => $user],
+        absolute: false,
+    ))
         ->assertRedirect();
 
     assertAuthenticatedAs($user);

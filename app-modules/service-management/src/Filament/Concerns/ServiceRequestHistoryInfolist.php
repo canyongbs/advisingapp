@@ -57,7 +57,7 @@ trait ServiceRequestHistoryInfolist
                 ->state(function (ServiceRequestHistory $record) {
                     return $record->getUpdates();
                 })
-                ->view('filament.infolists.entries.update-entry'),
+                ->view('filament.infolists.components.update-entry'),
         ];
     }
 }

@@ -39,14 +39,14 @@ namespace App\Filament\Resources\UserResource\RelationManagers;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use App\Filament\Columns\IdColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Concerns\InteractsWithActions;
-use App\Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class RoleGroupsRelationManager extends RelationManager implements HasActions
 {

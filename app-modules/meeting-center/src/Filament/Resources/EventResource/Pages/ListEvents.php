@@ -38,17 +38,17 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
 use Filament\Tables\Table;
 use Livewire\Attributes\Url;
-use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use App\Filament\Columns\OpenSearch\TextColumn;
+use App\Filament\Tables\Columns\OpenSearch\TextColumn;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 
 class ListEvents extends ListRecords

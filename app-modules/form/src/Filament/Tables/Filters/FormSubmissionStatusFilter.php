@@ -38,7 +38,7 @@ namespace AdvisingApp\Form\Filament\Tables\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Form\Enums\FormSubmissionStatus;
-use App\Filament\Filters\OpenSearch\SelectFilter;
+use App\Filament\Tables\Filters\OpenSearch\SelectFilter;
 
 class FormSubmissionStatusFilter extends SelectFilter
 {

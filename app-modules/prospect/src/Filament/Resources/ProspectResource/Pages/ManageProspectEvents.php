@@ -37,8 +37,8 @@
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Filament\Tables\Table;
-use App\Filament\Columns\IdColumn;
 use Filament\Tables\Columns\TextColumn;
+use App\Filament\Tables\Columns\IdColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;

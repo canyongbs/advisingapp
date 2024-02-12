@@ -155,7 +155,7 @@ class ViewServiceRequest extends ViewRecord
                         TextEntry::make('serviceRequestFormSubmission.submitted_at')
                             ->dateTime(),
                         ViewEntry::make('serviceRequestFormSubmission')
-                            ->view('filament.infolists.entries.submission-entry'),
+                            ->view('filament.infolists.components.submission-entry'),
                     ]),
             ]);
     }

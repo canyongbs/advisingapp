@@ -39,10 +39,10 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Relatio
 use Filament\Tables\Table;
 use Carbon\CarbonInterface;
 use Filament\Infolists\Infolist;
-use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;

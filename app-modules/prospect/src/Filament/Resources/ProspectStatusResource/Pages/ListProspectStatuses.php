@@ -38,10 +38,10 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
 use Filament\Actions;
 use Filament\Tables\Table;
-use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;

@@ -49,7 +49,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
-use App\Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class CampaignActionsRelationManager extends RelationManager
 {

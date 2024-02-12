@@ -48,8 +48,14 @@ class GeneratePortalEmbedCode
             PortalType::KnowledgeManagement => (function () {
                 $scriptUrl = url('js/portals/knowledge-management/advising-app-knowledge-management-portal.js?');
                 $portalAccessUrl = route('portals.knowledge-management.show');
-                $portalDefinitionUrl = URL::signedRoute('portal.knowledge-management.define');
-                $portalSearchUrl = URL::signedRoute('portal.knowledge-management.search');
+                $portalDefinitionUrl = URL::signedRoute(
+                    name: 'portal.knowledge-management.define',
+                    absolute: false,
+                );
+                $portalSearchUrl = URL::signedRoute(
+                    name: 'portal.knowledge-management.search',
+                    absolute: false,
+                );
                 $appUrl = parse_url(config('app.url'))['host'];
                 $apiUrl = route('portal.knowledge-management.define');
 

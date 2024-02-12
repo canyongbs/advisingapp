@@ -50,16 +50,16 @@ Route::prefix('api')
             ->name('applications.')
             ->group(function () {
                 Route::get('/{application}', [ApplicationWidgetController::class, 'view'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('define');
                 Route::post('/{application}/authenticate/request', [ApplicationWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('request-authentication');
                 Route::post('/{application}/authenticate/{authentication}', [ApplicationWidgetController::class, 'authenticate'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('authenticate');
                 Route::post('/{application}/submit', [ApplicationWidgetController::class, 'store'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('submit');
             });
     });
