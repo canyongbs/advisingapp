@@ -37,7 +37,10 @@
     $notifications = $this->getNotifications();
 @endphp
 
-<div wire:poll.10s>
+<div
+    class="flex"
+    wire:poll.10s
+>
     <x-filament::modal slide-over>
         <x-slot name="trigger">
             <x-filament::icon-button
