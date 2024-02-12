@@ -37,16 +37,16 @@
 namespace AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceResource\Pages;
 
 use Filament\Tables\Table;
-use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use App\Filament\Filters\OpenSearch\SelectFilter;
+use App\Filament\Tables\Filters\OpenSearch\SelectFilter;
 use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceResource;
 
 class ListAnalyticsResources extends ListRecords

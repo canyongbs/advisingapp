@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Columns\OpenSearch;
+namespace App\Filament\Tables\Filters\OpenSearch;
 
-use App\Filament\Columns\OpenSearch\Concerns\OpenSearchQueryDefault;
+use OpenSearch\ScoutDriverPlus\Builders\QueryBuilderInterface;
 
-class TextColumn extends \Filament\Tables\Columns\TextColumn implements OpenSearchColumn
+interface OpenSearchFilter
 {
-    use OpenSearchQueryDefault;
+    public function openSearchQuery(mixed $state): ?QueryBuilderInterface;
 }

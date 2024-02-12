@@ -38,10 +38,10 @@ namespace App\Filament\Resources\NotificationSettingResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
-use App\Filament\Fields\ColorSelect;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\Forms\Components\ColorSelect;
 use App\Filament\Resources\NotificationSettingResource;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 

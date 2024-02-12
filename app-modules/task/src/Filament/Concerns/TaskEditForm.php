@@ -39,8 +39,8 @@ namespace AdvisingApp\Task\Filament\Concerns;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Fields\EducatableSelect;
 use Filament\Forms\Components\DateTimePicker;
+use App\Filament\Forms\Components\EducatableSelect;
 
 trait TaskEditForm
 {

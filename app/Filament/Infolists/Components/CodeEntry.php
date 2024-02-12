@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Columns\OpenSearch;
+namespace App\Filament\Infolists\Components;
 
-use OpenSearch\ScoutDriverPlus\Builders\QueryBuilderInterface;
+use Filament\Infolists\Components\Entry;
 
-interface OpenSearchColumn
+class CodeEntry extends Entry
 {
-    public function openSearchQuery(string $search): ?QueryBuilderInterface;
+    protected string $view = 'filament.infolists.components.code-entry';
 }

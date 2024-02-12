@@ -34,11 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Filters\OpenSearch;
+namespace App\Filament\Tables\Filters\OpenSearch;
 
+use OpenSearch\ScoutDriverPlus\Support\Query;
 use OpenSearch\ScoutDriverPlus\Builders\QueryBuilderInterface;
 
-interface OpenSearchFilter
+class SelectFilter extends \Filament\Tables\Filters\SelectFilter implements OpenSearchFilter
 {
-    public function openSearchQuery(mixed $state): ?QueryBuilderInterface;
+    public function openSearchQuery(mixed $state): ?QueryBuilderInterface
+    {
+        return ! empty($state['values']) ? Query::terms()
+            ->field($this->getName())
+            ->values($state['values']) : null;
+    }
 }

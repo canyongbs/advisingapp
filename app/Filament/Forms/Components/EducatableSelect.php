@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Fields;
+namespace App\Filament\Forms\Components;
 
 use Closure;
 use App\Models\Authenticatable;

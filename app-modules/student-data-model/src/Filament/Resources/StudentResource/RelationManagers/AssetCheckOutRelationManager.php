@@ -39,7 +39,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Relati
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Illuminate\Database\Eloquent\Model;
-use App\Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages\ListAssetCheckOuts;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Concerns\HasAssetCheckOutInfolist;
 

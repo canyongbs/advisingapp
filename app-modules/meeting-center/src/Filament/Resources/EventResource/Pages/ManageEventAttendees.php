@@ -37,8 +37,8 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
 use Filament\Tables\Table;
-use App\Filament\Columns\IdColumn;
 use Filament\Tables\Columns\TextColumn;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 use AdvisingApp\MeetingCenter\Filament\Actions\InviteEventAttendeesAction;

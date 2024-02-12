@@ -41,7 +41,7 @@ use Filament\Resources\Resource;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\ServiceManagement\Models\Sla;
-use App\Filament\Fields\SecondsDurationInput;
+use App\Filament\Forms\Components\SecondsDurationInput;
 use App\Filament\Clusters\ServiceManagementAdministration;
 use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource\Pages\EditSla;
 use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource\Pages\ListSlas;
