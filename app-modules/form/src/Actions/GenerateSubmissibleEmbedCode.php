@@ -53,7 +53,11 @@ class GenerateSubmissibleEmbedCode
         return match ($submissible::class) {
             Form::class => (function () use ($submissible) {
                 $scriptUrl = url('js/widgets/form/advising-app-form-widget.js?');
-                $formDefinitionUrl = URL::signedRoute('forms.define', ['form' => $submissible]);
+                $formDefinitionUrl = URL::signedRoute(
+                    name: 'forms.define',
+                    parameters: ['form' => $submissible],
+                    absolute: false,
+                );
 
                 return <<<EOD
                 <form-embed url="{$formDefinitionUrl}"></form-embed>
@@ -62,7 +66,11 @@ class GenerateSubmissibleEmbedCode
             })(),
             Application::class => (function () use ($submissible) {
                 $scriptUrl = url('js/widgets/application/advising-app-application-widget.js?');
-                $applicationDefinitionUrl = URL::signedRoute('applications.define', ['application' => $submissible]);
+                $applicationDefinitionUrl = URL::signedRoute(
+                    name: 'applications.define',
+                    parameters: ['application' => $submissible],
+                    absolute: false,
+                );
 
                 return <<<EOD
                 <application-embed url="{$applicationDefinitionUrl}"></application-embed>
@@ -71,7 +79,11 @@ class GenerateSubmissibleEmbedCode
             })(),
             Survey::class => (function () use ($submissible) {
                 $scriptUrl = url('js/widgets/survey/advising-app-survey-widget.js?');
-                $surveyDefinitionUrl = URL::signedRoute('surveys.define', ['survey' => $submissible]);
+                $surveyDefinitionUrl = URL::signedRoute(
+                    name: 'surveys.define',
+                    parameters: ['survey' => $submissible],
+                    absolute: false,
+                );
 
                 return <<<EOD
                 <survey-embed url="{$surveyDefinitionUrl}"></survey-embed>
@@ -81,7 +93,11 @@ class GenerateSubmissibleEmbedCode
             EventRegistrationForm::class => (function () use ($submissible) {
                 /** @var EventRegistrationForm $submissible */
                 $scriptUrl = url('js/widgets/events/advising-app-event-registration-form-widget.js?');
-                $formDefinitionUrl = URL::signedRoute('event-registration.define', ['event' => $submissible->event]);
+                $formDefinitionUrl = URL::signedRoute(
+                    name: 'event-registration.define',
+                    parameters: ['event' => $submissible->event],
+                    absolute: false,
+                );
 
                 return <<<EOD
                 <event-registration-embed url="{$formDefinitionUrl}"></event-registration-embed>
@@ -91,7 +107,11 @@ class GenerateSubmissibleEmbedCode
             ServiceRequestForm::class => (function () use ($submissible) {
                 /** @var ServiceRequestForm $submissible */
                 $scriptUrl = url('js/widgets/service-request-form/advising-app-service-request-form-widget.js?');
-                $formDefinitionUrl = URL::signedRoute('service-request-forms.define', ['serviceRequestForm' => $submissible]);
+                $formDefinitionUrl = URL::signedRoute(
+                    name: 'service-request-forms.define',
+                    parameters: ['serviceRequestForm' => $submissible],
+                    absolute: false,
+                );
 
                 return <<<EOD
                 <service-request-form-embed url="{$formDefinitionUrl}"></service-request-form-embed>

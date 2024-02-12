@@ -68,9 +68,17 @@ class ServiceRequestFormWidgetController extends Controller
                 'description' => $serviceRequestForm->description,
                 'is_authenticated' => $serviceRequestForm->is_authenticated,
                 ...($serviceRequestForm->is_authenticated ? [
-                    'authentication_url' => URL::signedRoute('service-request-forms.request-authentication', ['serviceRequestForm' => $serviceRequestForm]),
+                    'authentication_url' => URL::signedRoute(
+                        name: 'service-request-forms.request-authentication',
+                        parameters: ['serviceRequestForm' => $serviceRequestForm],
+                        absolute: false
+                    ),
                 ] : [
-                    'submission_url' => URL::signedRoute('service-request-forms.submit', ['serviceRequestForm' => $serviceRequestForm]),
+                    'submission_url' => URL::signedRoute(
+                        name: 'service-request-forms.submit',
+                        parameters: ['serviceRequestForm' => $serviceRequestForm],
+                        absolute: false
+                    ),
                 ]),
                 'recaptcha_enabled' => $serviceRequestForm->recaptcha_enabled,
                 ...($serviceRequestForm->recaptcha_enabled ? [
@@ -111,10 +119,14 @@ class ServiceRequestFormWidgetController extends Controller
 
         return response()->json([
             'message' => "We've sent an authentication code to {$data['email']}.",
-            'authentication_url' => URL::signedRoute('service-request-forms.authenticate', [
-                'serviceRequestForm' => $serviceRequestForm,
-                'authentication' => $authentication,
-            ]),
+            'authentication_url' => URL::signedRoute(
+                name: 'service-request-forms.authenticate',
+                parameters: [
+                    'serviceRequestForm' => $serviceRequestForm,
+                    'authentication' => $authentication,
+                ],
+                absolute: false
+            ),
         ]);
     }
 
@@ -137,10 +149,14 @@ class ServiceRequestFormWidgetController extends Controller
         ]);
 
         return response()->json([
-            'submission_url' => URL::signedRoute('service-request-forms.submit', [
-                'authentication' => $authentication,
-                'serviceRequestForm' => $authentication->submissible,
-            ]),
+            'submission_url' => URL::signedRoute(
+                name: 'service-request-forms.submit',
+                parameters: [
+                    'authentication' => $authentication,
+                    'serviceRequestForm' => $authentication->submissible,
+                ],
+                absolute: false
+            ),
         ]);
     }
 

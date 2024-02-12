@@ -62,7 +62,11 @@ test('define is protected with proper feature access control', function () {
 
     $application = Application::factory()->create();
 
-    get(URL::signedRoute('applications.define', ['application' => $application]))
+    get(URL::signedRoute(
+        name: 'applications.define',
+        parameters: ['application' => $application],
+        absolute: false,
+    ))
         ->assertForbidden()
         ->assertJson([
             'error' => 'Online Admissions is not enabled.',
@@ -72,7 +76,11 @@ test('define is protected with proper feature access control', function () {
 
     $settings->save();
 
-    get(URL::signedRoute('applications.define', ['application' => $application]))
+    get(URL::signedRoute(
+        name: 'applications.define',
+        parameters: ['application' => $application],
+        absolute: false,
+    ))
         ->assertSuccessful();
 });
 
@@ -91,7 +99,11 @@ test('request-authentication is protected with proper feature access control', f
 
     $prospect = Prospect::factory()->create();
 
-    post(URL::signedRoute('applications.request-authentication', ['application' => $application, 'email' => $prospect->email]))
+    post(URL::signedRoute(
+        name: 'applications.request-authentication',
+        parameters: ['application' => $application, 'email' => $prospect->email],
+        absolute: false,
+    ))
         ->assertForbidden()
         ->assertJson([
             'error' => 'Online Admissions is not enabled.',
@@ -101,7 +113,11 @@ test('request-authentication is protected with proper feature access control', f
 
     $settings->save();
 
-    post(URL::signedRoute('applications.request-authentication', ['application' => $application, 'email' => $prospect->email]))
+    post(URL::signedRoute(
+        name: 'applications.request-authentication',
+        parameters: ['application' => $application, 'email' => $prospect->email],
+        absolute: false,
+    ))
         ->assertSuccessful();
 });
 
@@ -125,7 +141,11 @@ test('authenticate is protected with proper feature access control', function ()
         'code' => Hash::make($code),
     ]);
 
-    post(URL::signedRoute('applications.authenticate', ['application' => $application, 'authentication' => $authorization,  'code' => $code]))
+    post(URL::signedRoute(
+        name: 'applications.authenticate',
+        parameters: ['application' => $application, 'authentication' => $authorization,  'code' => $code],
+        absolute: false,
+    ))
         ->assertForbidden()
         ->assertJson([
             'error' => 'Online Admissions is not enabled.',
@@ -135,7 +155,11 @@ test('authenticate is protected with proper feature access control', function ()
 
     $settings->save();
 
-    post(URL::signedRoute('applications.authenticate', ['application' => $application, 'authentication' => $authorization, 'code' => $code]))
+    post(URL::signedRoute(
+        name: 'applications.authenticate',
+        parameters: ['application' => $application, 'authentication' => $authorization, 'code' => $code],
+        absolute: false,
+    ))
         ->assertSuccessful();
 });
 
@@ -162,7 +186,11 @@ test('submit is protected with proper feature access control', function () {
         'application_id' => $application->id,
     ]);
 
-    post(URL::signedRoute('applications.submit', ['application' => $application, 'authentication' => $authorization]))
+    post(URL::signedRoute(
+        name: 'applications.submit',
+        parameters: ['application' => $application, 'authentication' => $authorization],
+        absolute: false,
+    ))
         ->assertForbidden()
         ->assertJson([
             'error' => 'Online Admissions is not enabled.',
@@ -172,6 +200,10 @@ test('submit is protected with proper feature access control', function () {
 
     $settings->save();
 
-    post(URL::signedRoute('applications.submit', ['application' => $application, 'authentication' => $authorization]))
+    post(URL::signedRoute(
+        name: 'applications.submit',
+        parameters: ['application' => $application, 'authentication' => $authorization],
+        absolute: false,
+    ))
         ->assertSuccessful();
 });

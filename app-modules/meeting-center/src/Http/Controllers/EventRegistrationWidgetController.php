@@ -70,7 +70,11 @@ class EventRegistrationWidgetController extends Controller
                 'name' => $form->event->title,
                 'description' => $form->event->description,
                 'is_authenticated' => true,
-                'authentication_url' => URL::signedRoute('event-registration.request-authentication', ['event' => $event]),
+                'authentication_url' => URL::signedRoute(
+                    name: 'event-registration.request-authentication',
+                    parameters: ['event' => $event],
+                    absolute: false,
+                ),
                 'recaptcha_enabled' => $form->recaptcha_enabled,
                 ...($form->recaptcha_enabled ? [
                     'recaptcha_site_key' => app(GoogleRecaptchaSettings::class)->site_key,
@@ -116,10 +120,14 @@ class EventRegistrationWidgetController extends Controller
 
         return response()->json([
             'message' => "We've sent an authentication code to {$attendee->email}.",
-            'authentication_url' => URL::signedRoute('event-registration.authenticate', [
-                'event' => $event,
-                'authentication' => $authentication,
-            ]),
+            'authentication_url' => URL::signedRoute(
+                name: 'event-registration.authenticate',
+                parameters: [
+                    'event' => $event,
+                    'authentication' => $authentication,
+                ],
+                absolute: false,
+            ),
         ]);
     }
 
@@ -142,10 +150,14 @@ class EventRegistrationWidgetController extends Controller
         ]);
 
         return response()->json([
-            'submission_url' => URL::signedRoute('event-registration.submit', [
-                'authentication' => $authentication,
-                'event' => $authentication->submissible->event,
-            ]),
+            'submission_url' => URL::signedRoute(
+                name: 'event-registration.submit',
+                parameters: [
+                    'authentication' => $authentication,
+                    'event' => $authentication->submissible->event,
+                ],
+                absolute: false,
+            ),
         ]);
     }
 

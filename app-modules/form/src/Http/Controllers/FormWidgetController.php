@@ -68,9 +68,17 @@ class FormWidgetController extends Controller
                 'description' => $form->description,
                 'is_authenticated' => $form->is_authenticated,
                 ...($form->is_authenticated ? [
-                    'authentication_url' => URL::signedRoute('forms.request-authentication', ['form' => $form]),
+                    'authentication_url' => URL::signedRoute(
+                        name: 'forms.request-authentication',
+                        parameters: ['form' => $form],
+                        absolute: false,
+                    ),
                 ] : [
-                    'submission_url' => URL::signedRoute('forms.submit', ['form' => $form]),
+                    'submission_url' => URL::signedRoute(
+                        name: 'forms.submit',
+                        parameters: ['form' => $form],
+                        absolute: false,
+                    ),
                 ]),
                 'recaptcha_enabled' => $form->recaptcha_enabled,
                 ...($form->recaptcha_enabled ? [
@@ -112,10 +120,14 @@ class FormWidgetController extends Controller
 
         return response()->json([
             'message' => "We've sent an authentication code to {$data['email']}.",
-            'authentication_url' => URL::signedRoute('forms.authenticate', [
-                'form' => $form,
-                'authentication' => $authentication,
-            ]),
+            'authentication_url' => URL::signedRoute(
+                name: 'forms.authenticate',
+                parameters: [
+                    'form' => $form,
+                    'authentication' => $authentication,
+                ],
+                absolute: false,
+            ),
         ]);
     }
 
@@ -138,10 +150,14 @@ class FormWidgetController extends Controller
         ]);
 
         return response()->json([
-            'submission_url' => URL::signedRoute('forms.submit', [
-                'authentication' => $authentication,
-                'form' => $authentication->submissible,
-            ]),
+            'submission_url' => URL::signedRoute(
+                name: 'forms.submit',
+                parameters: [
+                    'authentication' => $authentication,
+                    'form' => $authentication->submissible,
+                ],
+                absolute: false,
+            ),
         ]);
     }
 

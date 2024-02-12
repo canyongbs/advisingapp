@@ -50,16 +50,16 @@ Route::prefix('api')
             ->name('service-request-forms.')
             ->group(function () {
                 Route::get('/{serviceRequestForm}', [ServiceRequestFormWidgetController::class, 'view'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('define');
                 Route::post('/{serviceRequestForm}/authenticate/request', [ServiceRequestFormWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('request-authentication');
                 Route::post('/{serviceRequestForm}/authenticate/{authentication}', [ServiceRequestFormWidgetController::class, 'authenticate'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('authenticate');
                 Route::post('/{serviceRequestForm}/submit', [ServiceRequestFormWidgetController::class, 'store'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:relative'])
                     ->name('submit');
             });
     });
