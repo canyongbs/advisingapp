@@ -39,7 +39,6 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\EditEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ViewEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ListEvents;

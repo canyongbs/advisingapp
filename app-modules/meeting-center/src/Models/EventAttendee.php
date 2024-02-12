@@ -37,7 +37,6 @@
 namespace AdvisingApp\MeetingCenter\Models;
 
 use App\Models\BaseModel;
-use App\Models\Attributes\NoPermissions;
 use Illuminate\Notifications\Notifiable;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;

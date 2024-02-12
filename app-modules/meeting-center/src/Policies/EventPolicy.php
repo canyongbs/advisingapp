@@ -2,14 +2,14 @@
 
 namespace AdvisingApp\MeetingCenter\Policies;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\MeetingCenter\Models\Event;
-use App\Concerns\PerformsFeatureChecks;
-use App\Concerns\PerformsLicenseChecks;
 use App\Enums\Feature;
 use App\Models\Authenticatable;
-use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 use Illuminate\Auth\Access\Response;
+use App\Concerns\PerformsFeatureChecks;
+use App\Concerns\PerformsLicenseChecks;
+use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 
 class EventPolicy implements PerformsChecksBeforeAuthorization
 {
