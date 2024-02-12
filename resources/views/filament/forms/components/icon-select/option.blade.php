@@ -31,7 +31,7 @@
 
 </COPYRIGHT>
 --}}
-<div class="flex items-center gap-x-4 h-8">
+<div class="flex h-8 items-center gap-x-4">
     @svg($icon, 'h-6 w-6')
 
     <span>{{ $label }}</span>
