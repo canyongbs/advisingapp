@@ -22,7 +22,7 @@ jobs:
   pool:
     num_workers: 2
     max_worker_memory: 256
-  consume: {  }
+  consume: []
 kv:
   local:
     driver: memory
