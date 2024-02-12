@@ -34,60 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
-
-use App\Models\BaseModel;
-use App\Models\Attributes\NoPermissions;
-use Illuminate\Notifications\Notifiable;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
-
-/**
- * @mixin IdeHelperEventAttendee
- */
-class EventAttendee extends BaseModel implements NotifiableInterface
-{
-    use Notifiable;
-
-    protected $fillable = [
-        'status',
-        'email',
-        'event_id',
-    ];
-
-    protected $casts = [
-        'status' => EventAttendeeStatus::class,
-    ];
-
-    public function event(): BelongsTo
-    {
-        return $this->belongsTo(Event::class, 'event_id');
-    }
-
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(EventRegistrationFormSubmission::class, 'event_attendee_id');
-    }
-
-    public function prospects(): HasMany
-    {
-        return $this->hasMany(
-            related: Prospect::class,
-            foreignKey: 'email',
-            localKey: 'email',
-        );
-    }
-
-    public function students(): HasMany
-    {
-        return $this->hasMany(
-            related: Student::class,
-            foreignKey: 'email',
-            localKey: 'email',
-        );
-    }
-}
+return [
+    'model' => [
+        'event' => [
+            '*',
+        ],
+        'event_attendee' => [
+            '*',
+        ],
+    ],
+];
