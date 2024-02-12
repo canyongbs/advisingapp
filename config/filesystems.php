@@ -86,7 +86,7 @@ return [
             'endpoint' => env('AWS_S3_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_S3_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
-            'root' => null,
+            'root' => env('AWS_S3_ROOT'),
         ],
 
         's3-public' => [
@@ -99,7 +99,7 @@ return [
             'endpoint' => env('AWS_S3_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_S3_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
-            'root' => 'PUBLIC',
+            'root' => env('AWS_S3_PUBLIC_ROOT', env('AWS_S3_ROOT') . '/PUBLIC'),
         ],
     ],
 
