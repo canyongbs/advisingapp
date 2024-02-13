@@ -43,9 +43,9 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use App\Filament\Tables\Filters\ArchivedFilter;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
 
@@ -72,7 +72,7 @@ class ListServiceRequestStatuses extends ListRecords
                     ->label('# of Service Requests')
                     ->counts('serviceRequests')
                     ->sortable(),
-                TextColumn::make('archived_at')
+                TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -87,7 +87,7 @@ class ListServiceRequestStatuses extends ListRecords
                 ]),
             ])
             ->filters([
-                ArchivedFilter::make(),
+                TrashedFilter::make(),
             ]);
     }
 

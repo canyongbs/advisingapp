@@ -47,7 +47,6 @@ return new class () extends Migration {
             $table->string('name');
             $table->string('classification');
 
-            $table->timestamp('archived_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

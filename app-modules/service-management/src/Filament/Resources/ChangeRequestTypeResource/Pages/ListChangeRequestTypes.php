@@ -43,9 +43,9 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use App\Filament\Tables\Filters\ArchivedFilter;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource;
 
 class ListChangeRequestTypes extends ListRecords
@@ -67,7 +67,7 @@ class ListChangeRequestTypes extends ListRecords
                     ->label('# of Change Requests')
                     ->counts('changeRequests')
                     ->sortable(),
-                TextColumn::make('archived_at')
+                TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -82,7 +82,7 @@ class ListChangeRequestTypes extends ListRecords
                 ]),
             ])
             ->filters([
-                ArchivedFilter::make(),
+                TrashedFilter::make(),
             ]);
     }
 

@@ -52,6 +52,7 @@ use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
+use Illuminate\Support\Collection;
 
 class CreateServiceRequest extends CreateRecord
 {
@@ -69,13 +70,18 @@ class CreateServiceRequest extends CreateRecord
                 Select::make('status_id')
                     ->relationship('status', 'name')
                     ->label('Status')
-                    ->options(fn () => ServiceRequestStatus::optionsByClassification())
+                    ->options(fn () => ServiceRequestStatus::query()
+                        ->orderBy('classification')
+                        ->orderBy('name')
+                        ->get(['id', 'name', 'classification'])
+                        ->groupBy(fn (ServiceRequestStatus $status) => $status->classification->getlabel())
+                        ->map(fn (Collection $group) => $group->pluck('name', 'id')))
                     ->required()
                     ->exists((new ServiceRequestStatus())->getTable(), 'id'),
                 Grid::make()
                     ->schema([
                         Select::make('type_id')
-                            ->options(ServiceRequestType::unarchived()->pluck('name', 'id'))
+                            ->options(ServiceRequestType::pluck('name', 'id'))
                             ->afterStateUpdated(fn (Set $set) => $set('priority_id', null))
                             ->label('Type')
                             ->required()

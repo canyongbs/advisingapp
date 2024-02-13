@@ -97,10 +97,6 @@ class ChangeRequestTypePolicy implements PerformsChecksBeforeAuthorization
 
     public function delete(Authenticatable $authenticatable, ChangeRequestType $changeRequestType): Response
     {
-        if ($changeRequestType->changeRequests()->exists()) {
-            return Response::deny('You cannot delete this change request type because it has associated change requests.');
-        }
-
         return $authenticatable->canOrElse(
             abilities: ['change_request_type.*.delete', "change_request_type.{$changeRequestType->id}.delete"],
             denyResponse: 'You do not have permission to delete this change request type.'
@@ -117,6 +113,10 @@ class ChangeRequestTypePolicy implements PerformsChecksBeforeAuthorization
 
     public function forceDelete(Authenticatable $authenticatable, ChangeRequestType $changeRequestType): Response
     {
+        if ($changeRequestType->changeRequests()->exists()) {
+            return Response::deny('You cannot force delete this change request type because it has associated change requests.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['change_request_type.*.force-delete', "change_request_type.{$changeRequestType->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this change request type.'

@@ -97,10 +97,6 @@ class ChangeRequestStatusPolicy implements PerformsChecksBeforeAuthorization
 
     public function delete(Authenticatable $authenticatable, ChangeRequestStatus $changeRequestStatus): Response
     {
-        if ($changeRequestStatus->changeRequests()->exists()) {
-            return Response::deny('You cannot delete this change request status because it has associated change requests.');
-        }
-
         return $authenticatable->canOrElse(
             abilities: ['change_request_status.*.delete', "change_request_status.{$changeRequestStatus->id}.delete"],
             denyResponse: 'You do not have permission to delete this change request status.'
@@ -117,6 +113,10 @@ class ChangeRequestStatusPolicy implements PerformsChecksBeforeAuthorization
 
     public function forceDelete(Authenticatable $authenticatable, ChangeRequestStatus $changeRequestStatus): Response
     {
+        if ($changeRequestStatus->changeRequests()->exists()) {
+            return Response::deny('You cannot force delete this change request status because it has associated change requests.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['change_request_status.*.force-delete', "change_request_status.{$changeRequestStatus->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this change request status.'

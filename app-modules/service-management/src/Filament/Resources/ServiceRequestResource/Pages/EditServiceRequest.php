@@ -47,10 +47,12 @@ use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\Division\Models\Division;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Forms\Components\EducatableSelect;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
+use Illuminate\Support\Collection;
 
 class EditServiceRequest extends EditRecord
 {
@@ -58,8 +60,8 @@ class EditServiceRequest extends EditRecord
 
     public function form(Form $form): Form
     {
-        $disabledStatuses = ServiceRequestStatus::archived()->pluck('id');
-        $disabledTypes = ServiceRequestType::archived()->pluck('id');
+        $disabledStatuses = ServiceRequestStatus::onlyTrashed()->pluck('id');
+        $disabledTypes = ServiceRequestType::onlyTrashed()->pluck('id');
 
         return $form
             ->schema([
@@ -71,14 +73,27 @@ class EditServiceRequest extends EditRecord
                 Select::make('status_id')
                     ->relationship('status', 'name')
                     ->label('Status')
-                    ->options(fn () => ServiceRequestStatus::optionsByClassification(true))
+                    ->options(fn (ServiceRequest $record) => ServiceRequestStatus::withTrashed()
+                        ->whereKey($record->status_id)
+                        ->orWhereNull('deleted_at')
+                        ->orderBy('classification')
+                        ->orderBy('name')
+                        ->get(['id', 'name', 'classification'])
+                        ->groupBy(fn (ServiceRequestStatus $status) => $status->classification->getlabel())
+                        ->map(fn (Collection $group) => $group->pluck('name', 'id')))
                     ->required()
                     ->exists((new ServiceRequestStatus())->getTable(), 'id')
                     ->disableOptionWhen(fn (string $value) => $disabledStatuses->contains($value)),
                 Grid::make()
                     ->schema([
                         Select::make('type_id')
-                            ->options(ServiceRequestType::query()->pluck('name', 'id'))
+                            ->options(
+                                fn (ServiceRequest $record) => ServiceRequestType::withTrashed()
+                                    ->whereKey($record->priority?->type_id)
+                                    ->orWhereNull('deleted_at')
+                                    ->orderBy('name')
+                                    ->pluck('name', 'id')
+                            )
                             ->afterStateUpdated(fn (Set $set) => $set('priority_id', null))
                             ->label('Type')
                             ->required()

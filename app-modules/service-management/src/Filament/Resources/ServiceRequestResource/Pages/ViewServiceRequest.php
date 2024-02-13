@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
 
+use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 use Carbon\CarbonInterval;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
@@ -48,6 +49,7 @@ use Filament\Infolists\Components\ViewEntry;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\ServiceManagement\Enums\SlaComplianceStatus;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
@@ -65,31 +67,31 @@ class ViewServiceRequest extends ViewRecord
                 Section::make()
                     ->schema([
                         TextEntry::make('service_request_number')
-                            ->label('Service Request Number')
-                            ->translateLabel(),
+                            ->label('Service Request Number'),
                         TextEntry::make('division.name')
-                            ->label('Division')
-                            ->translateLabel(),
+                            ->label('Division'),
                         TextEntry::make('status.name')
                             ->label('Status')
-                            ->translateLabel(),
+                            ->state(
+                                fn (ServiceRequest $record) => $record->status()->withTrashed()->first()?->name
+                            ),
                         TextEntry::make('priority.name')
-                            ->label('Priority')
-                            ->translateLabel(),
+                            ->label('Priority'),
                         TextEntry::make('priority.type.name')
-                            ->label('Type')
-                            ->translateLabel(),
+                            ->state(
+                                fn (ServiceRequest $record) => $record->priority->type()->withTrashed()->first()?->name
+                            )
+                            ->label('Type'),
                         TextEntry::make('close_details')
                             ->label('Close Details/Description')
-                            ->translateLabel()
+
                             ->columnSpanFull(),
                         TextEntry::make('res_details')
                             ->label('Internal Service Request Details')
-                            ->translateLabel()
+
                             ->columnSpanFull(),
                         TextEntry::make('respondent')
                             ->label('Related To')
-                            ->translateLabel()
                             ->color('primary')
                             ->state(function (ServiceRequest $record): string {
                                 /** @var Student|Prospect $respondent */

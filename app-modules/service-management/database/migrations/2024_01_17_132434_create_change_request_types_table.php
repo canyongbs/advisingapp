@@ -47,7 +47,6 @@ return new class () extends Migration {
             $table->string('name');
             $table->integer('number_of_required_approvals');
 
-            $table->timestamp('archived_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

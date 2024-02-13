@@ -48,7 +48,6 @@ return new class () extends Migration {
             $table->string('name');
             $table->string('color');
 
-            $table->timestamp('archived_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

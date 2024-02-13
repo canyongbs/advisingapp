@@ -36,6 +36,10 @@
 
 namespace AdvisingApp\ServiceManagement\Providers;
 
+use AdvisingApp\ServiceManagement\Observers\ChangeRequestStatusObserver;
+use AdvisingApp\ServiceManagement\Observers\ChangeRequestTypeObserver;
+use AdvisingApp\ServiceManagement\Observers\ServiceRequestStatusObserver;
+use AdvisingApp\ServiceManagement\Observers\ServiceRequestTypeObserver;
 use Filament\Panel;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
@@ -111,14 +115,19 @@ class ServiceManagementServiceProvider extends ServiceProvider
     protected function registerObservers(): void
     {
         ChangeRequest::observe(ChangeRequestObserver::class);
+        ChangeRequestStatus::observe(ChangeRequestStatusObserver::class);
+        ChangeRequestType::observe(ChangeRequestTypeObserver::class);
+
         ServiceRequest::observe(ServiceRequestObserver::class);
-        ServiceRequestUpdate::observe(ServiceRequestUpdateObserver::class);
         ServiceRequestAssignment::observe(ServiceRequestAssignmentObserver::class);
-        ServiceRequestHistory::observe(ServiceRequestHistoryObserver::class);
         ServiceRequestFormSubmission::observe(ServiceRequestFormSubmissionObserver::class);
+        ServiceRequestHistory::observe(ServiceRequestHistoryObserver::class);
+        ServiceRequestStatus::observe(ServiceRequestStatusObserver::class);
+        ServiceRequestType::observe(ServiceRequestTypeObserver::class);
+        ServiceRequestUpdate::observe(ServiceRequestUpdateObserver::class);
     }
 
-    protected function registerRolesAndPermissions()
+    protected function registerRolesAndPermissions(): void
     {
         $permissionRegistry = app(AuthorizationPermissionRegistry::class);
 

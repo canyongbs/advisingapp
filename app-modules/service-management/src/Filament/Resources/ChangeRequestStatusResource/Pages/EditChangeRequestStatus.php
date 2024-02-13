@@ -36,14 +36,17 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource\Pages;
 
+use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
+use Filament\Actions\Action;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
 use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
-use App\Filament\Actions\ArchiveAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use App\Filament\Actions\UnarchiveAction;
 use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource;
 
@@ -67,15 +70,21 @@ class EditChangeRequestStatus extends EditRecord
                             ->required()
                             ->enum(SystemChangeRequestClassification::class),
                     ]),
-            ]);
+            ])->disabled(fn (ChangeRequestStatus $record) => $record->trashed());
+    }
+
+    protected function getSaveFormAction(): Action
+    {
+        return parent::getSaveFormAction()
+            ->hidden(fn (ChangeRequestStatus $record) => $record->trashed());
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            ArchiveAction::make(),
-            UnarchiveAction::make(),
             DeleteAction::make(),
+            RestoreAction::make(),
+            ForceDeleteAction::make(),
         ];
     }
 }

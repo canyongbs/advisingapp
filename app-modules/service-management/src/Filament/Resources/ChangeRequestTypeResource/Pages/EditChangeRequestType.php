@@ -36,15 +36,18 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource\Pages;
 
+use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
 use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
-use App\Filament\Actions\ArchiveAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use App\Filament\Actions\UnarchiveAction;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource;
 
 class EditChangeRequestType extends EditRecord
@@ -75,15 +78,21 @@ class EditChangeRequestType extends EditRecord
                             ->multiple()
                             ->exists((new User())->getTable(), 'id'),
                     ]),
-            ]);
+            ])->disabled(fn (ChangeRequestType $record) => $record->trashed());
+    }
+
+    protected function getSaveFormAction(): Action
+    {
+        return parent::getSaveFormAction()
+            ->hidden(fn (ChangeRequestType $record) => $record->trashed());
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            ArchiveAction::make(),
-            UnarchiveAction::make(),
             DeleteAction::make(),
+            RestoreAction::make(),
+            ForceDeleteAction::make(),
         ];
     }
 }

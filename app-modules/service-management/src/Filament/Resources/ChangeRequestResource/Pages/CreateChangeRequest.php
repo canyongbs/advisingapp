@@ -66,7 +66,8 @@ class CreateChangeRequest extends CreateRecord
                             ->columnSpanFull(),
                         Select::make('change_request_type_id')
                             ->label('Type')
-                            ->options(ChangeRequestType::unarchived()->pluck('name', 'id'))
+                            ->relationship('type', 'name')
+                            ->preload()
                             ->required()
                             ->columnSpan(1),
                         Textarea::make('reason')

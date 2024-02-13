@@ -43,6 +43,8 @@ use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource\P
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource\Pages\ViewChangeRequestType;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource\Pages\ListChangeRequestTypes;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource\Pages\CreateChangeRequestType;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ChangeRequestTypeResource extends Resource
 {
@@ -53,6 +55,14 @@ class ChangeRequestTypeResource extends Resource
     protected static ?int $navigationSort = 40;
 
     protected static ?string $cluster = ServiceManagementAdministration::class;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
 
     public static function getPages(): array
     {

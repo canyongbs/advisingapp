@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource\Pages;
 
+use AdvisingApp\ServiceManagement\Models\ChangeRequest;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
@@ -62,8 +63,10 @@ class ListChangeRequests extends ListRecords
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('type.name')
+                    ->state(fn (ChangeRequest $record) => $record->type()->withTrashed()->first()->name)
                     ->searchable(),
                 TextColumn::make('status.name')
+                    ->state(fn (ChangeRequest $record) => $record->status()->withTrashed()->first()->name)
                     ->searchable(),
                 ViewColumn::make('risk_score')
                     ->searchable()
