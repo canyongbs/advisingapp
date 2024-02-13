@@ -150,13 +150,7 @@ class EditProfile extends Page
                         Toggle::make('has_enabled_public_profile')
                             ->label('Enable public profile')
                             ->live()
-                            ->afterStateHydrated(function ($component) {
-                                $component->lockedWithoutAnyLicenses(
-                                    component: $component,
-                                    user: auth()->user(),
-                                    licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]
-                                );
-                            }),
+                            ->lockedWithoutAnyLicenses(user: auth()->user(), licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]),
                         TextInput::make('public_profile_slug')
                             ->label('Url')
                             ->visible(fn (Get $get) => $get('has_enabled_public_profile'))
@@ -200,13 +194,7 @@ class EditProfile extends Page
                         Checkbox::make('is_bio_visible_on_profile')
                             ->label('Show Bio on profile')
                             ->live()
-                            ->afterStateHydrated(function ($component) {
-                                $component->lockedWithoutAnyLicenses(
-                                    component: $component,
-                                    user: auth()->user(),
-                                    licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]
-                                );
-                            }),
+                            ->lockedWithoutAnyLicenses(user: auth()->user(), licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]),
                         TextInput::make('phone_number')
                             ->label('Contact phone number')
                             ->integer()
@@ -214,26 +202,14 @@ class EditProfile extends Page
                         Checkbox::make('is_phone_number_visible_on_profile')
                             ->label('Show phone number on profile')
                             ->live()
-                            ->afterStateHydrated(function ($component) {
-                                $component->lockedWithoutAnyLicenses(
-                                    component: $component,
-                                    user: auth()->user(),
-                                    licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]
-                                );
-                            }),
+                            ->lockedWithoutAnyLicenses(user: auth()->user(), licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]),
                         Select::make('pronouns_id')
                             ->relationship('pronouns', 'label')
                             ->hint(fn (Get $get): string => $get('are_pronouns_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
                         Checkbox::make('are_pronouns_visible_on_profile')
                             ->label('Show Pronouns on profile')
                             ->live()
-                            ->afterStateHydrated(function ($component) {
-                                $component->lockedWithoutAnyLicenses(
-                                    component: $component,
-                                    user: auth()->user(),
-                                    licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]
-                                );
-                            }),
+                            ->lockedWithoutAnyLicenses(user: auth()->user(), licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]),
                         Placeholder::make('teams')
                             ->label(str('Team')->plural($user->teams->count()))
                             ->content($user->teams->pluck('name')->join(', ', ' and '))
@@ -263,13 +239,7 @@ class EditProfile extends Page
                         Checkbox::make('is_email_visible_on_profile')
                             ->label('Show Email on profile')
                             ->live()
-                            ->afterStateHydrated(function ($component) {
-                                $component->lockedWithoutAnyLicenses(
-                                    component: $component,
-                                    user: auth()->user(),
-                                    licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]
-                                );
-                            }),
+                            ->lockedWithoutAnyLicenses(user: auth()->user(), licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]),
                         $this->getPasswordFormComponent()
                             ->hidden($user->is_external),
                         $this->getPasswordConfirmationFormComponent()
@@ -290,13 +260,7 @@ class EditProfile extends Page
                             ->label('Set Working Hours')
                             ->live()
                             ->hint(fn (Get $get): string => $get('are_working_hours_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile')
-                            ->afterStateHydrated(function ($component) {
-                                $component->lockedWithoutAnyLicenses(
-                                    component: $component,
-                                    user: auth()->user(),
-                                    licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]
-                                );
-                            }),
+                            ->lockedWithoutAnyLicenses(user: auth()->user(), licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]),
                         Checkbox::make('are_working_hours_visible_on_profile')
                             ->label('Show Working Hours on profile')
                             ->visible(fn (Get $get) => $get('working_hours_are_enabled'))
@@ -311,13 +275,7 @@ class EditProfile extends Page
                         Toggle::make('office_hours_are_enabled')
                             ->label('Enable Office Hours')
                             ->live()
-                            ->afterStateHydrated(function ($component) {
-                                $component->lockedWithoutAnyLicenses(
-                                    component: $component,
-                                    user: auth()->user(),
-                                    licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]
-                                );
-                            }),
+                            ->lockedWithoutAnyLicenses(user: auth()->user(), licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]),
                         Checkbox::make('appointments_are_restricted_to_existing_students')
                             ->label('Restrict appointments to existing students')
                             ->visible(fn (Get $get) => $get('office_hours_are_enabled')),

@@ -45,7 +45,6 @@ use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Checkbox;
 use Illuminate\Support\ServiceProvider;
-use Filament\Forms\Components\Component;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Actions\Exports\Models\Export as BaseExport;
@@ -182,15 +181,17 @@ class FilamentServiceProvider extends ServiceProvider
             fn (): View => view('filament.footer'),
         );
 
-        Toggle::macro('lockedWithoutAnyLicenses', function (Component $component, User $user, array $licenses) {
-            $component->disabled(! $user->hasAnyLicense($licenses))
-                ->hintIcon(fn ($component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+        Toggle::macro('lockedWithoutAnyLicenses', function (User $user, array $licenses) {
+            /** @var Toggle $this */
+            return $this->disabled(! $user->hasAnyLicense($licenses))
+                ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                 ->hintIconTooltip('A CRM license is required for our public profile features.');
         });
 
-        Checkbox::macro('lockedWithoutAnyLicenses', function (Component $component, User $user, array $licenses) {
-            $component->disabled(! $user->hasAnyLicense($licenses))
-                ->hintIcon(fn ($component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+        Checkbox::macro('lockedWithoutAnyLicenses', function (User $user, array $licenses) {
+            /** @var Checkbox $this */
+            return $this->disabled(! $user->hasAnyLicense($licenses))
+                ->hintIcon(fn (Checkbox $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                 ->hintIconTooltip('A CRM license is required for our public profile features.');
         });
     }
