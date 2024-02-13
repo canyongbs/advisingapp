@@ -131,22 +131,39 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 NavigationGroup::make()
-                    ->label('Artificial Intelligence'),
+                    ->label('Artificial Intelligence')
+                    ->icon('heroicon-o-sparkles')
+                    ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Retention CRM'),
+                    ->label('Retention CRM')
+                    ->icon('heroicon-o-academic-cap')
+                    ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Recruitment CRM'),
+                    ->label('Recruitment CRM')
+                    ->icon('heroicon-o-magnifying-glass')
+                    ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Engagement Features'),
+                    ->label('Engagement Features')
+                    ->icon('heroicon-o-signal')
+                    ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Premium Features'),
+                    ->label('Premium Features')
+                    ->icon('heroicon-o-rocket-launch')
+                    ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Reporting'),
+                    ->label('Reporting')
+                    ->icon('heroicon-o-document-chart-bar')
+                    ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Users and Permissions'),
+                    ->label('Users and Permissions')
+                    ->icon('heroicon-o-users')
+                    ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Product Administration'),
+                    ->label('Product Administration')
+                    ->icon('heroicon-o-wrench-screwdriver')
+                    ->collapsed(),
             ])
+            ->sidebarCollapsibleOnDesktop()
             ->plugins([
                 FilamentSpatieLaravelHealthPlugin::make()
                     ->usingPage(ProductHealth::class),
