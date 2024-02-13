@@ -40,7 +40,7 @@ namespace Filament\Forms\Components {
     class Checkbox
     {
         /**
-         * @source app/Providers/FilamentServiceProvider.php
+         * @see app/Providers/FilamentServiceProvider.php
          */
         public function lockedWithoutAnyLicenses(User $user, array $licenses): self
         {
@@ -51,7 +51,7 @@ namespace Filament\Forms\Components {
     class Toggle
     {
         /**
-         * @source app/Providers/FilamentServiceProvider.php
+         * @see app/Providers/FilamentServiceProvider.php
          */
         public function lockedWithoutAnyLicenses(User $user, array $licenses): self
         {
