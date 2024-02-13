@@ -172,7 +172,6 @@ document.addEventListener('alpine:init', () => {
             }
 
             if (selectedConversation) {
-                console.log('selectedConversation');
                 this.loadingMessage = 'Loading conversation…';
 
                 this.conversation = await conversationsClient
@@ -244,14 +243,13 @@ document.addEventListener('alpine:init', () => {
 
             window.addEventListener('click', (event) => {
                 const target = event.target;
-                console.log('click', target);
+
                 if (target.matches('[data-safe-link]')) {
                     this.openConfirmationModal(target.getAttribute('href'));
                 }
             });
         },
         openConfirmationModal(href) {
-            console.log('openConfirmationModal', href);
             this.$dispatch('open-modal', { id: 'confirmSafeLink', href: href });
         },
         async getMessages() {
@@ -262,10 +260,7 @@ document.addEventListener('alpine:init', () => {
                 .then((messages) => {
                     this.messagePaginator = messages;
 
-                    console.log('getMessages', messages.items);
-
                     messages.items.forEach(async (message) => {
-                        console.log('message', message);
                         this.messages.push({
                             avatar: await this.getAvatarUrl(message.author),
                             author: await this.getAuthorName(message.author),
@@ -333,7 +328,6 @@ document.addEventListener('alpine:init', () => {
                 SafeLink.configure({
                     openOnClick: false,
                     HTMLAttributes: {
-                        rel: 'noopener noreferrer nofollow',
                         class: 'underline font-medium text-primary-600 dark:text-primary-500',
                     },
                 }),
