@@ -7,6 +7,7 @@ services:
       SSL_MODE: "mixed"
       LARAVEL_SCHEDULER_ENABLED: '${LARAVEL_SCHEDULER_ENABLED:-true}'
       LARAVEL_QUEUE_ENABLED: '${LARAVEL_QUEUE_ENABLED:-true}'
+      LARAVEL_OCTANE_WATCH: '${LARAVEL_OCTANE_WATCH:-false}'
     labels:
       - dev.orbstack.domains=*.advisingapp.local
     extra_hosts:
