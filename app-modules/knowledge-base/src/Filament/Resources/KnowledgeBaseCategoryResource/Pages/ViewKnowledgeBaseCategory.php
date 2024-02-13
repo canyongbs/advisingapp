@@ -41,6 +41,7 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
 
 class ViewKnowledgeBaseCategory extends ViewRecord
@@ -55,8 +56,13 @@ class ViewKnowledgeBaseCategory extends ViewRecord
                     ->schema([
                         TextEntry::make('name')
                             ->label('Name'),
+                        TextEntry::make('icon')
+                            ->state(fn (KnowledgeBaseCategory $record): string => (string) str($record->icon)->after('heroicon-o-')->headline())
+                            ->icon(fn (KnowledgeBaseCategory $record): string => $record->icon)
+                            ->hidden(fn (KnowledgeBaseCategory $record): bool => blank($record->icon)),
                         TextEntry::make('description')
-                            ->label('Description'),
+                            ->label('Description')
+                            ->columnSpanFull(),
                     ])
                     ->columns(),
             ]);
