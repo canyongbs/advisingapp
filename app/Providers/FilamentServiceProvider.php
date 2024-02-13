@@ -36,12 +36,16 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use App\Models\Export;
 use App\Models\Import;
 use Illuminate\View\View;
 use App\Models\FailedImportRow;
 use Filament\Support\Colors\Color;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Checkbox;
 use Illuminate\Support\ServiceProvider;
+use Filament\Forms\Components\Component;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Actions\Exports\Models\Export as BaseExport;
@@ -177,5 +181,17 @@ class FilamentServiceProvider extends ServiceProvider
             'panels::footer',
             fn (): View => view('filament.footer'),
         );
+
+        Toggle::macro('lockedWithoutAnyLicenses', function (Component $component, User $user, array $licenses) {
+            $component->disabled(! $user->hasAnyLicense($licenses))
+                ->hintIcon(fn ($component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                ->hintIconTooltip('A CRM license is required for our public profile features.');
+        });
+
+        Checkbox::macro('lockedWithoutAnyLicenses', function (Component $component, User $user, array $licenses) {
+            $component->disabled(! $user->hasAnyLicense($licenses))
+                ->hintIcon(fn ($component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                ->hintIconTooltip('A CRM license is required for our public profile features.');
+        });
     }
 }
