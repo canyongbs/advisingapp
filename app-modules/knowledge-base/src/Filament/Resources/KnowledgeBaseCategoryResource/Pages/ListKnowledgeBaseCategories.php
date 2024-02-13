@@ -40,6 +40,7 @@ use Filament\Actions;
 use Filament\Tables\Table;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
@@ -64,6 +65,9 @@ class ListKnowledgeBaseCategories extends ListRecords
                     ->label('# of Knowledge Base Items')
                     ->counts('knowledgeBaseItems')
                     ->sortable(),
+                IconColumn::make('icon')
+                    ->icon(fn (string $state): string => $state)
+                    ->tooltip(fn (?string $state): ?string => filled($state) ? (string) str($state)->after('heroicon-o-')->headline() : null),
             ])
             ->actions([
                 ViewAction::make(),

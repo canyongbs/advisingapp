@@ -46,6 +46,7 @@ class CreateKnowledgeBaseCategoriesTable extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->longText('description')->nullable();
+            $table->string('icon')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
