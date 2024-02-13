@@ -61,15 +61,15 @@ class ProspectStats extends StatsOverviewWidget
                 maxPrecision: 2,
             )),
             Stat::make('Subscriptions', Cache::tags(['{prospects}', "{user-{$user->getKey()}-prospect-subscriptions}"])
-                ->remember('{prospect-subscriptions-count}', now()->addHour(), function () use ($user): int {
+                ->remember("{user-{$user->getKey()}-prospect-subscriptions-count}", now()->addHour(), function () use ($user): int {
                     return $user->prospectSubscriptions()->count();
                 })),
             Stat::make('Alerts', Cache::tags(['{prospects}', "{user-{$user->getKey()}-prospect-alerts}"])
-                ->remember('{prospect-alerts-count}', now()->addHour(), function () use ($user): int {
+                ->remember("{user-{$user->getKey()}-prospect-alerts-count}", now()->addHour(), function () use ($user): int {
                     return $user->prospectAlerts()->status(AlertStatus::Active)->count();
                 })),
             Stat::make('Caseloads', Cache::tags(["{user-{$user->getKey()}-prospect-caseloads}"])
-                ->remember('{prospect-caseloads-count}', now()->addHour(), function () use ($user): int {
+                ->remember("{user-{$user->getKey()}-prospect-caseloads-count}", now()->addHour(), function () use ($user): int {
                     return $user->caseloads()->model(CaseloadModel::Prospect)->count();
                 })),
         ];
