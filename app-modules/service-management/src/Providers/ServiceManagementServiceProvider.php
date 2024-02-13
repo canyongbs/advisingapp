@@ -36,10 +36,6 @@
 
 namespace AdvisingApp\ServiceManagement\Providers;
 
-use AdvisingApp\ServiceManagement\Observers\ChangeRequestStatusObserver;
-use AdvisingApp\ServiceManagement\Observers\ChangeRequestTypeObserver;
-use AdvisingApp\ServiceManagement\Observers\ServiceRequestStatusObserver;
-use AdvisingApp\ServiceManagement\Observers\ServiceRequestTypeObserver;
 use Filament\Panel;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
@@ -65,6 +61,10 @@ use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
 use AdvisingApp\ServiceManagement\Observers\ChangeRequestObserver;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestObserver;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestFormSubmission;
+use AdvisingApp\ServiceManagement\Observers\ChangeRequestTypeObserver;
+use AdvisingApp\ServiceManagement\Observers\ServiceRequestTypeObserver;
+use AdvisingApp\ServiceManagement\Observers\ChangeRequestStatusObserver;
+use AdvisingApp\ServiceManagement\Observers\ServiceRequestStatusObserver;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestUpdateObserver;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestFormAuthentication;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestHistoryObserver;

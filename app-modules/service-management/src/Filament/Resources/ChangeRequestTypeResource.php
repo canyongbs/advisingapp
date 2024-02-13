@@ -37,14 +37,14 @@
 namespace AdvisingApp\ServiceManagement\Filament\Resources;
 
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Clusters\ServiceManagementAdministration;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource\Pages\EditChangeRequestType;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource\Pages\ViewChangeRequestType;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource\Pages\ListChangeRequestTypes;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource\Pages\CreateChangeRequestType;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ChangeRequestTypeResource extends Resource
 {

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource\Pages;
 
-use AdvisingApp\ServiceManagement\Models\ChangeRequest;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
@@ -48,6 +47,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\ServiceManagement\Models\ChangeRequest;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource;
 
 class ListChangeRequests extends ListRecords

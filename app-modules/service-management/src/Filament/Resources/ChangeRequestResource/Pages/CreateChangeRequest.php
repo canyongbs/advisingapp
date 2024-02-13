@@ -44,7 +44,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms\Components\DateTimePicker;
-use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource;
 
 class CreateChangeRequest extends CreateRecord

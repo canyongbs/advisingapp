@@ -38,7 +38,6 @@ namespace AdvisingApp\ServiceManagement\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
-use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
