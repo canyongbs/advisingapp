@@ -37,6 +37,7 @@
 namespace AdvisingApp\ServiceManagement\Providers;
 
 use Filament\Panel;
+use App\Registries\RbacRegistry;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\ServiceManagement\Models\Sla;
@@ -64,6 +65,7 @@ use AdvisingApp\ServiceManagement\Models\ServiceRequestFormSubmission;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestUpdateObserver;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestFormAuthentication;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestHistoryObserver;
+use AdvisingApp\ServiceManagement\Registries\ServiceManagementRbacRegistry;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestAssignmentObserver;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestFormSubmissionObserver;
 use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
@@ -102,7 +104,12 @@ class ServiceManagementServiceProvider extends ServiceProvider
             'sla' => Sla::class,
         ]);
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(ServiceManagementRbacRegistry::class);
+        }
+
         $this->registerObservers();
 
         $this->discoverSchema(__DIR__ . '/../../graphql/service-management.graphql');

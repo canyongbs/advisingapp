@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Notification\Providers;
 
+use App\Registries\RbacRegistry;
 use Illuminate\Support\Facades\Event;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
@@ -53,6 +54,7 @@ use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\Notification\Listeners\CreateAutoSubscription;
 use AdvisingApp\Notification\Listeners\HandleNotificationSent;
 use AdvisingApp\Notification\Listeners\HandleNotificationFailed;
+use AdvisingApp\Notification\Registries\NotificationRbacRegistry;
 use AdvisingApp\Notification\Observers\OutboundDeliverableObserver;
 use AdvisingApp\Notification\Listeners\NotifyUserOfSubscriptionCreated;
 use AdvisingApp\Notification\Listeners\NotifyUserOfSubscriptionDeleted;
@@ -70,7 +72,12 @@ class NotificationServiceProvider extends ServiceProvider
             'outbound_deliverable' => OutboundDeliverable::class,
         ]);
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(NotificationRbacRegistry::class);
+        }
+
         $this->registerObservers();
         $this->registerEvents();
 

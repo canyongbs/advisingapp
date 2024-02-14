@@ -37,12 +37,14 @@
 namespace AdvisingApp\IntegrationAI\Providers;
 
 use Filament\Panel;
+use App\Registries\RbacRegistry;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\IntegrationAI\Client\AzureOpenAI;
 use AdvisingApp\IntegrationAI\IntegrationAIPlugin;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\IntegrationAI\Client\Contracts\AIChatClient;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\IntegrationAI\Registries\IntegrationAIRbacRegistry;
 use AdvisingApp\IntegrationAI\Client\Playground\AzureOpenAI as PlaygroundAzureOpenAI;
 
 class IntegrationAIServiceProvider extends ServiceProvider
@@ -62,7 +64,11 @@ class IntegrationAIServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(IntegrationAIRbacRegistry::class);
+        }
     }
 
     protected function registerRolesAndPermissions()

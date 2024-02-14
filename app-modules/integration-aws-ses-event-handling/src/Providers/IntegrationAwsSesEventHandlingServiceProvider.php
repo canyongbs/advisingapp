@@ -37,6 +37,7 @@
 namespace AdvisingApp\IntegrationAwsSesEventHandling\Providers;
 
 use Filament\Panel;
+use App\Registries\RbacRegistry;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Mail\Events\MessageSending;
@@ -45,6 +46,7 @@ use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\IntegrationAwsSesEventHandling\IntegrationAwsSesEventHandlingPlugin;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\EnsureSesConfigurationSetHeadersArePresent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Registries\IntegrationAwsSesEventHandlingRbacRegistry;
 
 class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
 {
@@ -57,8 +59,13 @@ class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
     {
         Relation::morphMap([]);
 
-        $this->registerRolesAndPermissions();
         $this->registerEvents();
+
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(IntegrationAwsSesEventHandlingRbacRegistry::class);
+        }
     }
 
     public function registerEvents(): void

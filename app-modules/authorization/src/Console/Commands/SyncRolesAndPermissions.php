@@ -38,6 +38,7 @@ namespace AdvisingApp\Authorization\Console\Commands;
 
 use App\Models\Tenant;
 use Illuminate\Console\Command;
+use App\Registries\RbacRegistry;
 use Illuminate\Support\Facades\Artisan;
 use AdvisingApp\Authorization\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -55,8 +56,17 @@ class SyncRolesAndPermissions extends Command
 
     public function handle(): int
     {
+        ray()->measure()->label('START');
+
         // TODO Put handling in place to prevent this from being run in production IF it has already been run once
         // We are going to introduce a convention for "one-time" operations similar to Laravel migrations in order to handle this
+
+        if (config('app.enable_rbac_registry')) {
+            ray('Registry Enabled');
+            $this->populateRegistries();
+        } else {
+            ray('Registry Disabled');
+        }
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
@@ -80,17 +90,28 @@ class SyncRolesAndPermissions extends Command
         );
 
         $this->line('Syncing Web permissions...');
+        ray()->measure()->label('Start syncWebPermissions');
         $this->syncWebPermissions();
+        ray()->measure()->label('End syncWebPermissions');
         $this->info('Web permissions synced successfully!');
 
         $this->line('Syncing API permissions...');
+        ray()->measure()->label('Start syncApiPermissions');
         $this->syncApiPermissions();
+        ray()->measure()->label('End syncApiPermissions');
         $this->info('API permissions synced successfully!');
 
-        // TODO We might just leave this command out for now, and just allow for manual creation of role groups per org
         // Artisan::call(SetupRoleGroups::class);
 
+        ray()->measure()->label('END');
+
         return self::SUCCESS;
+    }
+
+    protected function populateRegistries(): void
+    {
+        RbacRegistry::getRegistries()
+            ->each(fn ($registry) => resolve($registry)->registerRolesAndPermissions());
     }
 
     protected function syncWebPermissions(): void
@@ -121,8 +142,7 @@ class SyncRolesAndPermissions extends Command
 
     protected function syncPermissionFor(string $guard, Role $role): void
     {
-        // This is assuming that our roles are named in the following convention
-        // {module}.{role}
+        // This is assuming that our roles are named in the following convention: {module}.{role}
         [$module, $roleFileName] = explode('.', $role->name);
 
         $permissions = resolve(ApplicationModules::class)

@@ -219,7 +219,6 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         LandlordPanelProvider::class,
@@ -247,4 +246,6 @@ return [
     ])->toArray(),
 
     'landlord_api_key' => env('LANDLORD_API_KEY'),
+
+    'enable_rbac_registry' => env('ENABLE_RBAC_REGISTRY', true),
 ];

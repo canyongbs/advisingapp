@@ -37,11 +37,13 @@
 namespace AdvisingApp\Report\Providers;
 
 use Filament\Panel;
+use App\Registries\RbacRegistry;
 use AdvisingApp\Report\ReportPlugin;
 use AdvisingApp\Report\Models\Report;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Report\Observers\ReportObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Report\Registries\ReportRbacRegistry;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
@@ -58,7 +60,11 @@ class ReportServiceProvider extends ServiceProvider
             'report' => Report::class,
         ]);
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(ReportRbacRegistry::class);
+        }
 
         $this->registerObservers();
     }

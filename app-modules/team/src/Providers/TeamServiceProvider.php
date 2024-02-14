@@ -38,10 +38,12 @@ namespace AdvisingApp\Team\Providers;
 
 use Filament\Panel;
 use AdvisingApp\Team\TeamPlugin;
+use App\Registries\RbacRegistry;
 use AdvisingApp\Team\Models\Team;
 use AdvisingApp\Team\Models\TeamUser;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Team\Observers\TeamUserObserver;
+use AdvisingApp\Team\Registries\TeamRbacRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
@@ -59,7 +61,11 @@ class TeamServiceProvider extends ServiceProvider
             'team' => Team::class,
         ]);
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(TeamRbacRegistry::class);
+        }
 
         $this->registerObservers();
     }

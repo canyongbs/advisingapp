@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Providers;
 
 use Filament\Panel;
 use App\Models\Tenant;
+use App\Registries\RbacRegistry;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Multitenancy\TenantCollection;
 use Illuminate\Console\Scheduling\Schedule;
@@ -57,6 +58,7 @@ use AdvisingApp\Engagement\Models\EngagementFileEntities;
 use AdvisingApp\Engagement\Observers\SmsTemplateObserver;
 use AdvisingApp\Engagement\Observers\EmailTemplateObserver;
 use AdvisingApp\Engagement\Observers\EngagementBatchObserver;
+use AdvisingApp\Engagement\Registries\EngagementRbacRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Engagement\Observers\EngagementFileEntitiesObserver;
 
@@ -98,7 +100,11 @@ class EngagementServiceProvider extends ServiceProvider
 
         $this->registerObservers();
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(EngagementRbacRegistry::class);
+        }
     }
 
     public function registerObservers(): void
@@ -110,7 +116,7 @@ class EngagementServiceProvider extends ServiceProvider
         SmsTemplate::observe(SmsTemplateObserver::class);
     }
 
-    protected function registerRolesAndPermissions()
+    protected function registerRolesAndPermissions(): void
     {
         $permissionRegistry = app(AuthorizationPermissionRegistry::class);
 

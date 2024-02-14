@@ -38,6 +38,7 @@ namespace AdvisingApp\InAppCommunication\Providers;
 
 use Filament\Panel;
 use Filament\Support\Assets\Js;
+use App\Registries\RbacRegistry;
 use Illuminate\Support\ServiceProvider;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -45,6 +46,7 @@ use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\InAppCommunication\InAppCommunicationPlugin;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\InAppCommunication\Registries\InAppCommunicationRbacRegistry;
 
 class InAppCommunicationServiceProvider extends ServiceProvider
 {
@@ -61,8 +63,13 @@ class InAppCommunicationServiceProvider extends ServiceProvider
             ]
         );
 
-        $this->registerRolesAndPermissions();
         $this->registerAssets();
+
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(InAppCommunicationRbacRegistry::class);
+        }
     }
 
     public function registerAssets(): void

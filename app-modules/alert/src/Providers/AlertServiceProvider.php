@@ -37,6 +37,7 @@
 namespace AdvisingApp\Alert\Providers;
 
 use Filament\Panel;
+use App\Registries\RbacRegistry;
 use AdvisingApp\Alert\AlertPlugin;
 use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Support\Facades\Event;
@@ -46,6 +47,7 @@ use AdvisingApp\Alert\Enums\AlertStatus;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Events\AlertCreated;
 use AdvisingApp\Alert\Observers\AlertObserver;
+use AdvisingApp\Alert\Registries\AlertRbacRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
@@ -66,7 +68,11 @@ class AlertServiceProvider extends ServiceProvider
             'alert' => Alert::class,
         ]);
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(AlertRbacRegistry::class);
+        }
 
         $this->registerObservers();
 

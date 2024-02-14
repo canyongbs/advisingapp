@@ -38,6 +38,7 @@ namespace AdvisingApp\Campaign\Providers;
 
 use Filament\Panel;
 use App\Models\Tenant;
+use App\Registries\RbacRegistry;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Campaign\CampaignPlugin;
 use AdvisingApp\Campaign\Models\Campaign;
@@ -48,6 +49,7 @@ use AdvisingApp\Campaign\Observers\CampaignObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Campaign\Actions\ExecuteCampaignActions;
+use AdvisingApp\Campaign\Registries\CampaignRbacRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class CampaignServiceProvider extends ServiceProvider
@@ -81,7 +83,11 @@ class CampaignServiceProvider extends ServiceProvider
                 ->withoutOverlapping();
         });
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(CampaignRbacRegistry::class);
+        }
 
         $this->registerObservers();
     }

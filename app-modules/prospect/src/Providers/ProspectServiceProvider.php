@@ -37,6 +37,7 @@
 namespace AdvisingApp\Prospect\Providers;
 
 use Filament\Panel;
+use App\Registries\RbacRegistry;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Prospect\ProspectPlugin;
@@ -46,6 +47,7 @@ use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Observers\ProspectObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Prospect\Registries\ProspectRbacRegistry;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
@@ -67,7 +69,11 @@ class ProspectServiceProvider extends ServiceProvider
             'prospect_status' => ProspectStatus::class,
         ]);
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(ProspectRbacRegistry::class);
+        }
 
         Prospect::observe(ProspectObserver::class);
 

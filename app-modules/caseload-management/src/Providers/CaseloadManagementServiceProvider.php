@@ -37,6 +37,7 @@
 namespace AdvisingApp\CaseloadManagement\Providers;
 
 use Filament\Panel;
+use App\Registries\RbacRegistry;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -45,6 +46,7 @@ use AdvisingApp\CaseloadManagement\Models\CaseloadSubject;
 use AdvisingApp\CaseloadManagement\CaseloadManagementPlugin;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\CaseloadManagement\Observers\CaseloadObserver;
+use AdvisingApp\CaseloadManagement\Registries\CaseloadManagementRbacRegistry;
 
 class CaseloadManagementServiceProvider extends ServiceProvider
 {
@@ -60,7 +62,11 @@ class CaseloadManagementServiceProvider extends ServiceProvider
             'caseload_subject' => CaseloadSubject::class,
         ]);
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(CaseloadManagementRbacRegistry::class);
+        }
 
         $this->registerObservers();
     }

@@ -37,9 +37,11 @@
 namespace AdvisingApp\Portal\Providers;
 
 use Filament\Panel;
+use App\Registries\RbacRegistry;
 use AdvisingApp\Portal\PortalPlugin;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Portal\Registries\PortalRbacRegistry;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
@@ -54,7 +56,11 @@ class PortalServiceProvider extends ServiceProvider
     {
         Relation::morphMap([]);
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(PortalRbacRegistry::class);
+        }
     }
 
     protected function registerRolesAndPermissions()

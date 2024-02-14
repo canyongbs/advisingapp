@@ -38,10 +38,12 @@ namespace AdvisingApp\Webhook\Providers;
 
 use Filament\Panel;
 use Aws\Sns\MessageValidator;
+use App\Registries\RbacRegistry;
 use AdvisingApp\Webhook\WebhookPlugin;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Webhook\Models\InboundWebhook;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Webhook\Registries\WebhookRbacRegistry;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
@@ -63,7 +65,11 @@ class WebhookServiceProvider extends ServiceProvider
             'inbound_webhook' => InboundWebhook::class,
         ]);
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(WebhookRbacRegistry::class);
+        }
     }
 
     protected function registerRolesAndPermissions(): void

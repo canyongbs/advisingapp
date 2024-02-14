@@ -37,6 +37,7 @@
 namespace AdvisingApp\KnowledgeBase\Providers;
 
 use Filament\Panel;
+use App\Registries\RbacRegistry;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\KnowledgeBase\KnowledgeBasePlugin;
@@ -48,6 +49,7 @@ use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\KnowledgeBase\Observers\KnowledgeBaseItemObserver;
+use AdvisingApp\KnowledgeBase\Registries\KnowledgeBaseRbacRegistry;
 
 class KnowledgeBaseServiceProvider extends ServiceProvider
 {
@@ -67,7 +69,12 @@ class KnowledgeBaseServiceProvider extends ServiceProvider
             'knowledge_base_status' => KnowledgeBaseStatus::class,
         ]);
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(KnowledgeBaseRbacRegistry::class);
+        }
+
         $this->registerObservers();
         $this->discoverSchema(__DIR__ . '/../../graphql/knowledge-base-item.graphql');
     }

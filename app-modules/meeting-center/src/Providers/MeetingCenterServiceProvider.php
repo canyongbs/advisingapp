@@ -39,6 +39,7 @@ namespace AdvisingApp\MeetingCenter\Providers;
 use Filament\Panel;
 use App\Models\Tenant;
 use Livewire\Livewire;
+use App\Registries\RbacRegistry;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Multitenancy\TenantCollection;
 use AdvisingApp\MeetingCenter\Models\Event;
@@ -55,6 +56,7 @@ use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\MeetingCenter\Observers\CalendarEventObserver;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
+use AdvisingApp\MeetingCenter\Registries\MeetingCenterRbacRegistry;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use AdvisingApp\MeetingCenter\Livewire\EventAttendeeSubmissionsManager;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
@@ -97,7 +99,11 @@ class MeetingCenterServiceProvider extends ServiceProvider
                 ->withoutOverlapping();
         });
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(MeetingCenterRbacRegistry::class);
+        }
 
         $this->registerObservers();
 

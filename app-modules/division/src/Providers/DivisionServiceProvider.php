@@ -37,6 +37,7 @@
 namespace AdvisingApp\Division\Providers;
 
 use Filament\Panel;
+use App\Registries\RbacRegistry;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Division\DivisionPlugin;
@@ -44,6 +45,7 @@ use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Division\Observers\DivisionObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Division\Registries\DivisionRbacRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class DivisionServiceProvider extends ServiceProvider
@@ -61,7 +63,11 @@ class DivisionServiceProvider extends ServiceProvider
             'division' => Division::class,
         ]);
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(DivisionRbacRegistry::class);
+        }
 
         $this->registerObservers();
         $this->discoverSchema(__DIR__ . '/../../graphql/division.graphql');

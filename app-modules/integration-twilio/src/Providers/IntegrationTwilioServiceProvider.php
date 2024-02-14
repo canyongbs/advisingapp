@@ -38,12 +38,14 @@ namespace AdvisingApp\IntegrationTwilio\Providers;
 
 use Filament\Panel;
 use Twilio\Rest\Client;
+use App\Registries\RbacRegistry;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\IntegrationTwilio\IntegrationTwilioPlugin;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Engagement\Actions\FindEngagementResponseSender;
+use AdvisingApp\IntegrationTwilio\Registries\IntegrationTwilioRbacRegistry;
 use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
 use AdvisingApp\IntegrationTwilio\Actions\Playground\FindEngagementResponseSender as PlaygroundFindEngagementResponseSender;
 
@@ -71,7 +73,11 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(IntegrationTwilioRbacRegistry::class);
+        }
     }
 
     protected function registerRolesAndPermissions(): void

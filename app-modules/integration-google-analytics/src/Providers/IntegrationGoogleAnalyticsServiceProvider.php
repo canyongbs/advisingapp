@@ -37,11 +37,13 @@
 namespace AdvisingApp\IntegrationGoogleAnalytics\Providers;
 
 use Filament\Panel;
+use App\Registries\RbacRegistry;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\IntegrationGoogleAnalytics\IntegrationGoogleAnalyticsPlugin;
+use AdvisingApp\IntegrationGoogleAnalytics\Registries\IntegrationGoogleAnalyticsRbacRegistry;
 
 class IntegrationGoogleAnalyticsServiceProvider extends ServiceProvider
 {
@@ -54,7 +56,11 @@ class IntegrationGoogleAnalyticsServiceProvider extends ServiceProvider
     {
         Relation::morphMap([]);
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(IntegrationGoogleAnalyticsRbacRegistry::class);
+        }
     }
 
     protected function registerRolesAndPermissions()

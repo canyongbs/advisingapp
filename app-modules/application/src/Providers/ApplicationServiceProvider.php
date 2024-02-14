@@ -37,6 +37,7 @@
 namespace AdvisingApp\Application\Providers;
 
 use Filament\Panel;
+use App\Registries\RbacRegistry;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Application\ApplicationPlugin;
@@ -49,6 +50,7 @@ use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Application\Registries\ApplicationRbacRegistry;
 use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
 use AdvisingApp\Application\Observers\ApplicationSubmissionObserver;
 use AdvisingApp\Application\Listeners\NotifySubscribersOfApplicationSubmission;
@@ -71,7 +73,12 @@ class ApplicationServiceProvider extends ServiceProvider
             'application_submission_state' => ApplicationSubmissionState::class,
         ]);
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(ApplicationRbacRegistry::class);
+        }
+
         $this->registerObservers();
         $this->registerEvents();
     }

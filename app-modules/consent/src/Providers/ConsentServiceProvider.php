@@ -37,11 +37,13 @@
 namespace AdvisingApp\Consent\Providers;
 
 use Filament\Panel;
+use App\Registries\RbacRegistry;
 use AdvisingApp\Consent\ConsentPlugin;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Consent\Models\UserConsentAgreement;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Consent\Registries\ConsentRbacRegistry;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Consent\Observers\ConsentAgreementObserver;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
@@ -60,7 +62,11 @@ class ConsentServiceProvider extends ServiceProvider
             'user_consent_agreement' => UserConsentAgreement::class,
         ]);
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(ConsentRbacRegistry::class);
+        }
 
         $this->registerObservers();
     }

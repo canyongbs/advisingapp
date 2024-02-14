@@ -38,12 +38,14 @@ namespace AdvisingApp\Form\Providers;
 
 use Filament\Panel;
 use AdvisingApp\Form\FormPlugin;
+use App\Registries\RbacRegistry;
 use AdvisingApp\Form\Models\Form;
 use Illuminate\Support\Facades\Event;
 use AdvisingApp\Form\Models\FormField;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Form\Observers\FormObserver;
+use AdvisingApp\Form\Registries\FormRbacRegistry;
 use AdvisingApp\Form\Events\FormSubmissionCreated;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Form\Observers\FormSubmissionObserver;
@@ -67,9 +69,14 @@ class FormServiceProvider extends ServiceProvider
             'form_submission' => FormSubmission::class,
         ]);
 
-        $this->registerRolesAndPermissions();
         $this->registerObservers();
         $this->registerEvents();
+
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(FormRbacRegistry::class);
+        }
     }
 
     public function registerObservers(): void

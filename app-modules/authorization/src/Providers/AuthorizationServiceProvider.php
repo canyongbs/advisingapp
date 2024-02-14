@@ -37,6 +37,7 @@
 namespace AdvisingApp\Authorization\Providers;
 
 use Filament\Panel;
+use App\Registries\RbacRegistry;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Authorization\Models\Role;
@@ -51,6 +52,7 @@ use SocialiteProviders\Google\GoogleExtendSocialite;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\Observers\LicenseObserver;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\Registries\AuthorizationRbacRegistry;
 use AdvisingApp\Authorization\Http\Controllers\Auth\LogoutController;
 use Filament\Http\Controllers\Auth\LogoutController as FilamentLogoutController;
 
@@ -86,25 +88,11 @@ class AuthorizationServiceProvider extends ServiceProvider
 
         $this->registerObservers();
 
-        $permissionRegistry->registerApiPermissions(
-            module: 'authorization',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'authorization',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry->registerApiRoles(
-            module: 'authorization',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'authorization',
-            path: 'roles/web'
-        );
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(AuthorizationRbacRegistry::class);
+        }
 
         Event::listen(
             events: SocialiteWasCalled::class,
@@ -120,5 +108,32 @@ class AuthorizationServiceProvider extends ServiceProvider
     public function registerObservers(): void
     {
         License::observe(LicenseObserver::class);
+    }
+
+    protected function registerRolesAndPermissions(): void
+    {
+        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
+
+        $permissionRegistry->registerApiPermissions(
+            module: 'authorization',
+            path: 'permissions/api/custom'
+        );
+
+        $permissionRegistry->registerWebPermissions(
+            module: 'authorization',
+            path: 'permissions/web/custom'
+        );
+
+        $roleRegistry = app(AuthorizationRoleRegistry::class);
+
+        $roleRegistry->registerApiRoles(
+            module: 'authorization',
+            path: 'roles/api'
+        );
+
+        $roleRegistry->registerWebRoles(
+            module: 'authorization',
+            path: 'roles/web'
+        );
     }
 }

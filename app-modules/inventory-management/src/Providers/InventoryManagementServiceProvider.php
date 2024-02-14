@@ -37,6 +37,7 @@
 namespace AdvisingApp\InventoryManagement\Providers;
 
 use Filament\Panel;
+use App\Registries\RbacRegistry;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\InventoryManagement\Models\Asset;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -53,6 +54,7 @@ use AdvisingApp\InventoryManagement\Models\MaintenanceProvider;
 use AdvisingApp\InventoryManagement\Observers\AssetCheckInObserver;
 use AdvisingApp\InventoryManagement\Observers\AssetCheckOutObserver;
 use AdvisingApp\InventoryManagement\Observers\MaintenanceActivityObserver;
+use AdvisingApp\InventoryManagement\Registries\InventoryManagementRbacRegistry;
 
 class InventoryManagementServiceProvider extends ServiceProvider
 {
@@ -76,7 +78,11 @@ class InventoryManagementServiceProvider extends ServiceProvider
 
         $this->registerObservers();
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(InventoryManagementRbacRegistry::class);
+        }
     }
 
     public function registerObservers(): void

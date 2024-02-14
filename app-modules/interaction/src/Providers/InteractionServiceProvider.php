@@ -37,6 +37,7 @@
 namespace AdvisingApp\Interaction\Providers;
 
 use Filament\Panel;
+use App\Registries\RbacRegistry;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Interaction\InteractionPlugin;
@@ -51,6 +52,7 @@ use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Interaction\Observers\InteractionObserver;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Interaction\Registries\InteractionRbacRegistry;
 use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
 
 class InteractionServiceProvider extends ServiceProvider
@@ -74,7 +76,12 @@ class InteractionServiceProvider extends ServiceProvider
             'interaction_type' => InteractionType::class,
         ]);
 
-        $this->registerRolesAndPermissions();
+        if (config('app.enable_rbac_registry') !== true) {
+            $this->registerRolesAndPermissions();
+        } else {
+            RbacRegistry::register(InteractionRbacRegistry::class);
+        }
+
         $this->registerObservers();
 
         $this->discoverSchema(__DIR__ . '/../../graphql/interaction.graphql');
