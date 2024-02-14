@@ -34,26 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace StubModuleNamespace\StubClassNamePrefix\Providers;
+namespace StubModuleNamespace\StubClassNamePrefix\Registries;
 
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use App\Registries\RoleBasedAccessControlRegistry;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use StubModuleNamespace\StubClassNamePrefix\StubClassNamePrefixPlugin;
-use StubModuleNamespace\StubClassNamePrefix\Registries\StubClassNamePrefixRbacRegistry;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use App\Registries\Contracts\RegistersRolesAndPermissions;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
-class StubClassNamePrefixServiceProvider extends ServiceProvider
+class StubClassNamePrefixRbacRegistry implements RegistersRolesAndPermissions
 {
-    public function register()
+    public function registerRolesAndPermissions(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new StubClassNamePrefixPlugin()));
-    }
+        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
+        $roleRegistry = app(AuthorizationRoleRegistry::class);
 
-    public function boot()
-    {
-        Relation::morphMap([]);
+        $permissionRegistry->registerApiPermissions(
+            module: '',
+            path: ''
+        );
 
-        RoleBasedAccessControlRegistry::register(StubClassNamePrefixRbacRegistry::class);
+        $permissionRegistry->registerWebPermissions(
+            module: '',
+            path: ''
+        );
+
+        $roleRegistry->registerApiRoles(
+            module: '',
+            path: ''
+        );
+
+        $roleRegistry->registerWebRoles(
+            module: '',
+            path: ''
+        );
     }
 }
