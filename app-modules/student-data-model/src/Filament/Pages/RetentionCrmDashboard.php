@@ -40,11 +40,8 @@ use App\Models\User;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Filament\Widgets\StudentCount;
+use AdvisingApp\StudentDataModel\Filament\Widgets\StudentStats;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentTasks;
-use AdvisingApp\StudentDataModel\Filament\Widgets\StudentAlertCount;
-use AdvisingApp\StudentDataModel\Filament\Widgets\StudentCaseloadCount;
-use AdvisingApp\StudentDataModel\Filament\Widgets\StudentSubscriptionCount;
 
 class RetentionCrmDashboard extends BaseDashboard
 {
@@ -77,22 +74,8 @@ class RetentionCrmDashboard extends BaseDashboard
     public function getWidgets(): array
     {
         return [
-            //1
-            StudentCount::class,
-            StudentSubscriptionCount::class,
-            StudentAlertCount::class,
-            StudentCaseloadCount::class,
-            //2
+            StudentStats::class,
             StudentTasks::class,
-        ];
-    }
-
-    public function getColumns(): int | string | array
-    {
-        return [
-            'sm' => 1,
-            'md' => 2,
-            'lg' => 4,
         ];
     }
 }

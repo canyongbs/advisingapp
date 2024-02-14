@@ -34,13 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Widgets;
+namespace AdvisingApp\Prospect\Filament\Widgets;
 
 use App\Models\User;
-use App\Filament\Widgets\StatsOverviewWidget;
+use Illuminate\Support\Number;
+use Illuminate\Support\Facades\Cache;
+use AdvisingApp\Alert\Enums\AlertStatus;
+use AdvisingApp\Prospect\Models\Prospect;
+use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
 
-class StudentSubscriptionCount extends StatsOverviewWidget
+class ProspectStats extends StatsOverviewWidget
 {
     protected function getStats(): array
     {
@@ -48,7 +53,25 @@ class StudentSubscriptionCount extends StatsOverviewWidget
         $user = auth()->user();
 
         return [
-            Stat::make('Subscriptions', $user->studentSubscriptions()->count()),
+            Stat::make('Prospects', Number::abbreviate(
+                Cache::tags(['{prospects}'])
+                    ->remember('{prospects-count}', now()->addHour(), function (): int {
+                        return Prospect::count();
+                    }),
+                maxPrecision: 2,
+            )),
+            Stat::make('Subscriptions', Cache::tags(['{prospects}', "{user-{$user->getKey()}-prospect-subscriptions}"])
+                ->remember("{user-{$user->getKey()}-prospect-subscriptions-count}", now()->addHour(), function () use ($user): int {
+                    return $user->prospectSubscriptions()->count();
+                })),
+            Stat::make('Alerts', Cache::tags(['{prospects}', "{user-{$user->getKey()}-prospect-alerts}"])
+                ->remember("{user-{$user->getKey()}-prospect-alerts-count}", now()->addHour(), function () use ($user): int {
+                    return $user->prospectAlerts()->status(AlertStatus::Active)->count();
+                })),
+            Stat::make('Caseloads', Cache::tags(["{user-{$user->getKey()}-prospect-caseloads}"])
+                ->remember("{user-{$user->getKey()}-prospect-caseloads-count}", now()->addHour(), function () use ($user): int {
+                    return $user->caseloads()->model(CaseloadModel::Prospect)->count();
+                })),
         ];
     }
 }
