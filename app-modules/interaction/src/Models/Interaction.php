@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\Interaction\Models;
 
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\Authenticatable;
 use Exception;
 use App\Models\User;
 use App\Models\BaseModel;
+use App\Models\Authenticatable;
 use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
