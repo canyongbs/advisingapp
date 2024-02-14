@@ -37,20 +37,18 @@
 namespace AdvisingApp\ServiceManagement\Providers;
 
 use Filament\Panel;
-use App\Registries\RbacRegistry;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\ServiceManagement\Models\Sla;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\ServiceManagement\Models\ChangeRequest;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\ServiceManagement\ServiceManagementPlugin;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestForm;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestResponse;
@@ -108,7 +106,7 @@ class ServiceManagementServiceProvider extends ServiceProvider
 
         $this->discoverSchema(__DIR__ . '/../../graphql/service-management.graphql');
 
-        RbacRegistry::register(ServiceManagementRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(ServiceManagementRbacRegistry::class);
     }
 
     protected function registerObservers(): void

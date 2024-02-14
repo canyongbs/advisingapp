@@ -37,15 +37,13 @@
 namespace AdvisingApp\CareTeam\Providers;
 
 use Filament\Panel;
-use App\Registries\RbacRegistry;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\CareTeam\CareTeamPlugin;
 use AdvisingApp\CareTeam\Models\CareTeam;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\CareTeam\Registries\CareTeamRbacRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class CareTeamServiceProvider extends ServiceProvider
 {
@@ -64,6 +62,6 @@ class CareTeamServiceProvider extends ServiceProvider
 
         $this->discoverSchema(__DIR__ . '/../../graphql/care-team.graphql');
 
-        RbacRegistry::register(CareTeamRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(CareTeamRbacRegistry::class);
     }
 }

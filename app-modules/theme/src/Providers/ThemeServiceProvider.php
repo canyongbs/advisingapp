@@ -37,9 +37,9 @@
 namespace AdvisingApp\Theme\Providers;
 
 use Filament\Panel;
-use App\Registries\RbacRegistry;
 use AdvisingApp\Theme\ThemePlugin;
 use Illuminate\Support\ServiceProvider;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Theme\Registries\ThemeRbacRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
@@ -58,6 +58,6 @@ class ThemeServiceProvider extends ServiceProvider
             [],
         );
 
-        RbacRegistry::register(ThemeRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(ThemeRbacRegistry::class);
     }
 }

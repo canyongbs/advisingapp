@@ -37,11 +37,11 @@
 namespace AdvisingApp\Interaction\Providers;
 
 use Filament\Panel;
-use App\Registries\RbacRegistry;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Interaction\InteractionPlugin;
 use AdvisingApp\Interaction\Models\Interaction;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Interaction\Models\InteractionType;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Interaction\Models\InteractionDriver;
@@ -49,9 +49,7 @@ use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionRelation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Interaction\Observers\InteractionObserver;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Interaction\Registries\InteractionRbacRegistry;
 use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
 
@@ -82,7 +80,7 @@ class InteractionServiceProvider extends ServiceProvider
 
         $this->registerEnum(InteractionStatusColorOptions::class);
 
-        RbacRegistry::register(InteractionRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(InteractionRbacRegistry::class);
     }
 
     protected function registerObservers(): void

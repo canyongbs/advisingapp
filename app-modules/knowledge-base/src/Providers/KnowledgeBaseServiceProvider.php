@@ -37,10 +37,10 @@
 namespace AdvisingApp\KnowledgeBase\Providers;
 
 use Filament\Panel;
-use App\Registries\RbacRegistry;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\KnowledgeBase\KnowledgeBasePlugin;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
@@ -70,7 +70,7 @@ class KnowledgeBaseServiceProvider extends ServiceProvider
         $this->registerObservers();
         $this->discoverSchema(__DIR__ . '/../../graphql/knowledge-base-item.graphql');
 
-        RbacRegistry::register(KnowledgeBaseRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(KnowledgeBaseRbacRegistry::class);
     }
 
     public function registerObservers(): void

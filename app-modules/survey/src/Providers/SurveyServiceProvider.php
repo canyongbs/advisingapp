@@ -37,18 +37,16 @@
 namespace AdvisingApp\Survey\Providers;
 
 use Filament\Panel;
-use App\Registries\RbacRegistry;
 use AdvisingApp\Survey\SurveyPlugin;
 use AdvisingApp\Survey\Models\Survey;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Survey\Models\SurveyStep;
 use AdvisingApp\Survey\Models\SurveyField;
 use AdvisingApp\Survey\Models\SurveySubmission;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Survey\Models\SurveyAuthentication;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Survey\Registries\SurveyRbacRegistry;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class SurveyServiceProvider extends ServiceProvider
 {
@@ -67,6 +65,6 @@ class SurveyServiceProvider extends ServiceProvider
             'survey' => Survey::class,
         ]);
 
-        RbacRegistry::register(SurveyRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(SurveyRbacRegistry::class);
     }
 }

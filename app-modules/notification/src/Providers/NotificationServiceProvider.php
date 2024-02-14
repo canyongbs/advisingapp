@@ -36,20 +36,18 @@
 
 namespace AdvisingApp\Notification\Providers;
 
-use App\Registries\RbacRegistry;
 use Illuminate\Support\Facades\Event;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Notification\Models\Subscription;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Notifications\Events\NotificationFailed;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Notification\Events\SubscriptionCreated;
 use AdvisingApp\Notification\Events\SubscriptionDeleted;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Observers\SubscriptionObserver;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\Notification\Listeners\CreateAutoSubscription;
 use AdvisingApp\Notification\Listeners\HandleNotificationSent;
@@ -77,7 +75,7 @@ class NotificationServiceProvider extends ServiceProvider
 
         $this->discoverSchema(__DIR__ . '/../../graphql/subscription.graphql');
 
-        RbacRegistry::register(NotificationRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(NotificationRbacRegistry::class);
     }
 
     protected function registerObservers(): void

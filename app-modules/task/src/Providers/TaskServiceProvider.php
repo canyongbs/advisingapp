@@ -39,15 +39,13 @@ namespace AdvisingApp\Task\Providers;
 use Filament\Panel;
 use Filament\Support\Assets\Js;
 use AdvisingApp\Task\TaskPlugin;
-use App\Registries\RbacRegistry;
 use AdvisingApp\Task\Models\Task;
 use Illuminate\Support\ServiceProvider;
 use Filament\Support\Facades\FilamentAsset;
 use AdvisingApp\Task\Observers\TaskObserver;
 use AdvisingApp\Task\Registries\TaskRbacRegistry;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class TaskServiceProvider extends ServiceProvider
 {
@@ -68,7 +66,7 @@ class TaskServiceProvider extends ServiceProvider
 
         $this->registerAssets();
 
-        RbacRegistry::register(TaskRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(TaskRbacRegistry::class);
     }
 
     protected function registerObservers(): void

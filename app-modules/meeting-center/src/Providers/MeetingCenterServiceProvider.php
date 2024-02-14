@@ -39,7 +39,6 @@ namespace AdvisingApp\MeetingCenter\Providers;
 use Filament\Panel;
 use App\Models\Tenant;
 use Livewire\Livewire;
-use App\Registries\RbacRegistry;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Multitenancy\TenantCollection;
 use AdvisingApp\MeetingCenter\Models\Event;
@@ -47,12 +46,11 @@ use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
 use AdvisingApp\MeetingCenter\MeetingCenterPlugin;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\MeetingCenter\Observers\CalendarEventObserver;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
@@ -103,7 +101,7 @@ class MeetingCenterServiceProvider extends ServiceProvider
 
         Livewire::component('event-attendee-submissions-manager', EventAttendeeSubmissionsManager::class);
 
-        RbacRegistry::register(MeetingCenterRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(MeetingCenterRbacRegistry::class);
     }
 
     protected function registerObservers(): void

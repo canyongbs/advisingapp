@@ -38,7 +38,6 @@ namespace AdvisingApp\Engagement\Providers;
 
 use Filament\Panel;
 use App\Models\Tenant;
-use App\Registries\RbacRegistry;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Multitenancy\TenantCollection;
 use Illuminate\Console\Scheduling\Schedule;
@@ -48,6 +47,7 @@ use AdvisingApp\Engagement\Models\SmsTemplate;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Engagement\Models\EngagementBatch;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Actions\DeliverEngagements;
@@ -98,7 +98,7 @@ class EngagementServiceProvider extends ServiceProvider
 
         $this->registerObservers();
 
-        RbacRegistry::register(EngagementRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(EngagementRbacRegistry::class);
     }
 
     public function registerObservers(): void

@@ -38,7 +38,6 @@ namespace AdvisingApp\Assistant\Providers;
 
 use Filament\Panel;
 use Filament\Support\Assets\Js;
-use App\Registries\RbacRegistry;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Assistant\Models\Prompt;
@@ -46,15 +45,14 @@ use AdvisingApp\Assistant\AssistantPlugin;
 use Filament\Support\Facades\FilamentAsset;
 use AdvisingApp\Assistant\Models\PromptType;
 use AdvisingApp\Assistant\Models\AssistantChat;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Assistant\Models\AssistantChatFolder;
 use AdvisingApp\Assistant\Models\AssistantChatMessage;
 use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 use AdvisingApp\Assistant\Registries\AssistantRbacRegistry;
 use AdvisingApp\Assistant\Listeners\LogAssistantChatMessage;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class AssistantServiceProvider extends ServiceProvider
 {
@@ -77,7 +75,7 @@ class AssistantServiceProvider extends ServiceProvider
         $this->registerEvents();
         $this->registerAssets();
 
-        RbacRegistry::register(AssistantRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(AssistantRbacRegistry::class);
     }
 
     public function registerAssets(): void

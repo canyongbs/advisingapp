@@ -37,13 +37,11 @@
 namespace AdvisingApp\Portal\Providers;
 
 use Filament\Panel;
-use App\Registries\RbacRegistry;
 use AdvisingApp\Portal\PortalPlugin;
 use Illuminate\Support\ServiceProvider;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Portal\Registries\PortalRbacRegistry;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class PortalServiceProvider extends ServiceProvider
 {
@@ -56,6 +54,6 @@ class PortalServiceProvider extends ServiceProvider
     {
         Relation::morphMap([]);
 
-        RbacRegistry::register(PortalRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(PortalRbacRegistry::class);
     }
 }

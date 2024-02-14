@@ -37,7 +37,6 @@
 namespace AdvisingApp\Authorization\Providers;
 
 use Filament\Panel;
-use App\Registries\RbacRegistry;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Authorization\Models\Role;
@@ -45,6 +44,7 @@ use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\RoleGroup;
 use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\AuthorizationPlugin;
+use App\Registries\RoleBasedAccessControlRegistry;
 use SocialiteProviders\Azure\AzureExtendSocialite;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -98,7 +98,7 @@ class AuthorizationServiceProvider extends ServiceProvider
             listener: GoogleExtendSocialite::class . '@handle'
         );
 
-        RbacRegistry::register(AuthorizationRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(AuthorizationRbacRegistry::class);
     }
 
     public function registerObservers(): void

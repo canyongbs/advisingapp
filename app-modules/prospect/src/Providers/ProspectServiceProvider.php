@@ -37,13 +37,13 @@
 namespace AdvisingApp\Prospect\Providers;
 
 use Filament\Panel;
-use App\Registries\RbacRegistry;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Prospect\ProspectPlugin;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Prospect\Observers\ProspectObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Prospect\Registries\ProspectRbacRegistry;
@@ -73,6 +73,6 @@ class ProspectServiceProvider extends ServiceProvider
         $this->registerEnum(ProspectStatusColorOptions::class);
         $this->registerEnum(SystemProspectClassification::class);
 
-        RbacRegistry::register(ProspectRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(ProspectRbacRegistry::class);
     }
 }

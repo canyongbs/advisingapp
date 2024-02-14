@@ -37,19 +37,17 @@
 namespace AdvisingApp\Timeline\Providers;
 
 use Filament\Panel;
-use App\Registries\RbacRegistry;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Timeline\TimelinePlugin;
 use AdvisingApp\Timeline\Models\Timeline;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Timeline\Listeners\AddRecordToTimeline;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Timeline\Registries\TimelineRbacRegistry;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
 use AdvisingApp\Timeline\Listeners\RemoveRecordFromTimeline;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class TimelineServiceProvider extends ServiceProvider
 {
@@ -66,7 +64,7 @@ class TimelineServiceProvider extends ServiceProvider
 
         $this->registerEvents();
 
-        RbacRegistry::register(TimelineRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(TimelineRbacRegistry::class);
     }
 
     protected function registerEvents(): void

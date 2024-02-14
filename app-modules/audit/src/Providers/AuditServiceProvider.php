@@ -37,10 +37,10 @@
 namespace AdvisingApp\Audit\Providers;
 
 use Filament\Panel;
-use App\Registries\RbacRegistry;
 use AdvisingApp\Audit\AuditPlugin;
 use AdvisingApp\Audit\Models\Audit;
 use Illuminate\Support\ServiceProvider;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Audit\Registries\AuditRbacRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
@@ -61,6 +61,6 @@ class AuditServiceProvider extends ServiceProvider
             'audit' => Audit::class,
         ]);
 
-        RbacRegistry::register(AuditRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(AuditRbacRegistry::class);
     }
 }

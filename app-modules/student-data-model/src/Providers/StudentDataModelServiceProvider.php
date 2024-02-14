@@ -37,17 +37,15 @@
 namespace AdvisingApp\StudentDataModel\Providers;
 
 use Filament\Panel;
-use App\Registries\RbacRegistry;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Performance;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\StudentDataModel\Registries\StudentDataModelRbacRegistry;
 
 class StudentDataModelServiceProvider extends ServiceProvider
@@ -70,6 +68,6 @@ class StudentDataModelServiceProvider extends ServiceProvider
 
         $this->discoverSchema(__DIR__ . '/../../graphql/student.graphql');
 
-        RbacRegistry::register(StudentDataModelRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(StudentDataModelRbacRegistry::class);
     }
 }

@@ -4,7 +4,7 @@ namespace App\Registries;
 
 use Illuminate\Support\Collection;
 
-class RbacRegistry
+class RoleBasedAccessControlRegistry
 {
     public static array $registries = [];
 

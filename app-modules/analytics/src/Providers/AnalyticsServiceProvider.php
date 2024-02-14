@@ -37,16 +37,14 @@
 namespace AdvisingApp\Analytics\Providers;
 
 use Filament\Panel;
-use App\Registries\RbacRegistry;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Analytics\AnalyticsPlugin;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Analytics\Models\AnalyticsResource;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Analytics\Models\AnalyticsResourceSource;
 use AdvisingApp\Analytics\Models\AnalyticsResourceCategory;
 use AdvisingApp\Analytics\Registries\AnalyticsRbacRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class AnalyticsServiceProvider extends ServiceProvider
 {
@@ -63,6 +61,6 @@ class AnalyticsServiceProvider extends ServiceProvider
             'analytics_resource' => AnalyticsResource::class,
         ]);
 
-        RbacRegistry::register(AnalyticsRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(AnalyticsRbacRegistry::class);
     }
 }

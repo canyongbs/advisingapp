@@ -38,12 +38,12 @@ namespace AdvisingApp\Authorization\Console\Commands;
 
 use App\Models\Tenant;
 use Illuminate\Console\Command;
-use App\Registries\RbacRegistry;
 use Illuminate\Support\Facades\Artisan;
 use AdvisingApp\Authorization\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 use App\Actions\Finders\ApplicationModules;
 use AdvisingApp\Authorization\Models\Permission;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class SyncRolesAndPermissions extends Command
@@ -105,7 +105,7 @@ class SyncRolesAndPermissions extends Command
 
     protected function populateRegistries(): void
     {
-        RbacRegistry::getRegistries()
+        RoleBasedAccessControlRegistry::getRegistries()
             ->each(fn ($registry) => resolve($registry)->registerRolesAndPermissions());
     }
 

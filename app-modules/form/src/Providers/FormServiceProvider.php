@@ -38,7 +38,6 @@ namespace AdvisingApp\Form\Providers;
 
 use Filament\Panel;
 use AdvisingApp\Form\FormPlugin;
-use App\Registries\RbacRegistry;
 use AdvisingApp\Form\Models\Form;
 use Illuminate\Support\Facades\Event;
 use AdvisingApp\Form\Models\FormField;
@@ -47,6 +46,7 @@ use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Form\Observers\FormObserver;
 use AdvisingApp\Form\Registries\FormRbacRegistry;
 use AdvisingApp\Form\Events\FormSubmissionCreated;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Form\Observers\FormSubmissionObserver;
 use AdvisingApp\Form\Listeners\NotifySubscribersOfFormSubmission;
@@ -70,7 +70,7 @@ class FormServiceProvider extends ServiceProvider
         $this->registerObservers();
         $this->registerEvents();
 
-        RbacRegistry::register(FormRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(FormRbacRegistry::class);
     }
 
     public function registerObservers(): void

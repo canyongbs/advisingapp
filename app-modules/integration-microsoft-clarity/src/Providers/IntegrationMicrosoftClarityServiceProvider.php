@@ -37,11 +37,9 @@
 namespace AdvisingApp\IntegrationMicrosoftClarity\Providers;
 
 use Filament\Panel;
-use App\Registries\RbacRegistry;
 use Illuminate\Support\ServiceProvider;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\IntegrationMicrosoftClarity\IntegrationMicrosoftClarityPlugin;
 use AdvisingApp\IntegrationMicrosoftClarity\Registries\IntegrationMicrosoftClarityRbacRegistry;
 
@@ -56,6 +54,6 @@ class IntegrationMicrosoftClarityServiceProvider extends ServiceProvider
     {
         Relation::morphMap([]);
 
-        RbacRegistry::register(IntegrationMicrosoftClarityRbacRegistry::class);
+        RoleBasedAccessControlRegistry::register(IntegrationMicrosoftClarityRbacRegistry::class);
     }
 }
