@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Audit\Providers;
 
-use App\Concerns\GraphSchemaDiscovery;
+use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use AdvisingApp\Audit\AuditPlugin;
 use AdvisingApp\Audit\Models\Audit;
@@ -47,7 +47,7 @@ use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class AuditServiceProvider extends ServiceProvider
 {
-    use GraphSchemaDiscovery;
+    use ImplementsGraphQL;
 
     public function register(): void
     {

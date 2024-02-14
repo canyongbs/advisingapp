@@ -37,7 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Providers;
 
 use Filament\Panel;
-use App\Concerns\GraphSchemaDiscovery;
+use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -50,7 +50,7 @@ use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class StudentDataModelServiceProvider extends ServiceProvider
 {
-    use GraphSchemaDiscovery;
+    use ImplementsGraphQL;
 
     public function register(): void
     {

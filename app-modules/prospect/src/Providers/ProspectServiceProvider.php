@@ -37,7 +37,7 @@
 namespace AdvisingApp\Prospect\Providers;
 
 use Filament\Panel;
-use App\Concerns\GraphSchemaDiscovery;
+use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Prospect\ProspectPlugin;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -52,7 +52,7 @@ use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class ProspectServiceProvider extends ServiceProvider
 {
-    use GraphSchemaDiscovery;
+    use ImplementsGraphQL;
 
     public function register(): void
     {

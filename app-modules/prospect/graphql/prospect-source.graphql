@@ -59,7 +59,7 @@ type ProspectSourceQueries {
             @rules(apply: ["required", "uuid", "exists:prospect_sources"])
     ): ProspectSource @find @softDeletes @canResolved(ability: "view")
 
-    "List multiple prospects sources."
+    "List multiple prospect sources."
     list(
         "Filter by the prospect sources attributes and relations."
         where: ProspectSourcesQuery @searchBy

@@ -37,7 +37,7 @@
 namespace AdvisingApp\Interaction\Providers;
 
 use Filament\Panel;
-use App\Concerns\GraphSchemaDiscovery;
+use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Interaction\InteractionPlugin;
 use AdvisingApp\Interaction\Models\Interaction;
@@ -55,7 +55,7 @@ use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
 
 class InteractionServiceProvider extends ServiceProvider
 {
-    use GraphSchemaDiscovery;
+    use ImplementsGraphQL;
 
     public function register()
     {

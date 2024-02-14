@@ -38,6 +38,8 @@ namespace App\Filament\Resources\SystemUserResource\RelationManagers;
 
 use Filament\Forms\Form;
 use App\Models\SystemUser;
+use Filament\Tables\Actions\DetachAction;
+use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
@@ -88,8 +90,10 @@ class PermissionsRelationManager extends RelationManager
                     ->recordSelect(fn (Select $select) => $select->multiple()),
             ])
             ->actions([
+                DetachAction::make(),
             ])
             ->bulkActions([
+                DetachBulkAction::make(),
             ]);
     }
 }

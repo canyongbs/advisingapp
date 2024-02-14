@@ -1,0 +1,52 @@
+type Prompt
+    @model(class: "AdvisingApp\\Assistant\\Models\\Prompt") {
+    id: UUID!
+
+    title: String!
+
+    description: String
+
+    prompt: String!
+
+    created_at: DateTime
+
+    updated_at: DateTime
+
+    type: PromptType @belongsTo
+}
+
+input PromptsQuery {
+    id: UUID
+
+    title: String
+
+    description: String
+
+    prompt: String
+
+    created_at: DateTime
+
+    updated_at: DateTime
+
+    type: PromptTypesQuery
+}
+
+type PromptQueries {
+    "Get a specific prompt by ID."
+    find(
+        id: UUID!
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:prompts"])
+    ): Prompt @find @softDeletes @canResolved(ability: "view")
+
+    "List multiple prompts."
+    list(
+        "Filter by the prompts attributes and relations."
+        where: PromptsQuery @searchBy
+        order: PromptsQuery @sortBy
+    ): [Prompt!]! @paginate @softDeletes @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    prompt: PromptQueries! @namespaced
+}

@@ -43,7 +43,7 @@ use Nuwave\Lighthouse\Events\BuildSchemaString;
 use Nuwave\Lighthouse\Schema\Source\SchemaStitcher;
 use Nuwave\Lighthouse\Exceptions\DefinitionException;
 
-trait GraphSchemaDiscovery
+trait ImplementsGraphQL
 {
     public function discoverSchema(string $path): void
     {

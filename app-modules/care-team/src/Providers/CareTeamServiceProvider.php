@@ -37,7 +37,7 @@
 namespace AdvisingApp\CareTeam\Providers;
 
 use Filament\Panel;
-use App\Concerns\GraphSchemaDiscovery;
+use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\CareTeam\CareTeamPlugin;
 use AdvisingApp\CareTeam\Models\CareTeam;
@@ -47,7 +47,7 @@ use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class CareTeamServiceProvider extends ServiceProvider
 {
-    use GraphSchemaDiscovery;
+    use ImplementsGraphQL;
 
     public function register(): void
     {

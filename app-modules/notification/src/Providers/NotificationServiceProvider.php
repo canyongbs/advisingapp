@@ -37,7 +37,7 @@
 namespace AdvisingApp\Notification\Providers;
 
 use Illuminate\Support\Facades\Event;
-use App\Concerns\GraphSchemaDiscovery;
+use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Notification\Models\Subscription;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -59,7 +59,7 @@ use AdvisingApp\Notification\Listeners\NotifyUserOfSubscriptionDeleted;
 
 class NotificationServiceProvider extends ServiceProvider
 {
-    use GraphSchemaDiscovery;
+    use ImplementsGraphQL;
 
     public function register(): void {}
 

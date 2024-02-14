@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Assistant\Providers;
 
+use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use Filament\Support\Assets\Js;
 use Illuminate\Support\Facades\Event;
@@ -56,6 +57,8 @@ use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class AssistantServiceProvider extends ServiceProvider
 {
+    use ImplementsGraphQL;
+
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AssistantPlugin()));
@@ -75,6 +78,8 @@ class AssistantServiceProvider extends ServiceProvider
         $this->registerEvents();
         $this->registerRolesAndPermissions();
         $this->registerAssets();
+
+        $this->discoverSchema(__DIR__ . '/../../graphql/*');
     }
 
     public function registerAssets(): void
