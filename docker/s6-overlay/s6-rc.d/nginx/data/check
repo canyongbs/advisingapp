@@ -2,7 +2,7 @@
 response=$(curl -I --location --insecure --silent http://localhost | awk '/^HTTP/{print $2}')
 
 if [[ $response == "302
-200" ]]; then
+200" ]] || [[ $response == "302" ]]; then
 	exit 0
 else
 	echo "❌ There seems to be a failure in checking the web server. Here's the response:"
