@@ -65,7 +65,7 @@ trait DefinesPermissions
             return [];
         }
 
-        return Cache::remember('application.model.web.permissions', $this->SECONDS_TO_CACHE, function () {
+        return Cache::remember('application.model.web.permissions', self::SECONDS_TO_CACHE, function () {
             return resolve(ApplicationModules::class)
                 ->moduleConfig(
                     module: 'authorization',
@@ -80,7 +80,7 @@ trait DefinesPermissions
             return [];
         }
 
-        return Cache::remember('application.model.api.permissions', $this->SECONDS_TO_CACHE, function () {
+        return Cache::remember('application.model.api.permissions', self::SECONDS_TO_CACHE, function () {
             return resolve(ApplicationModules::class)
                 ->moduleConfig(
                     module: 'authorization',
