@@ -56,8 +56,6 @@ class SyncRolesAndPermissions extends Command
 
     public function handle(): int
     {
-        ray()->measure()->label('START');
-
         // TODO Put handling in place to prevent this from being run in production IF it has already been run once
         // We are going to introduce a convention for "one-time" operations similar to Laravel migrations in order to handle this
 
@@ -67,7 +65,6 @@ class SyncRolesAndPermissions extends Command
 
         $currentTenant = Tenant::current();
 
-        // Seed roles and permissions
         Artisan::call(
             command: SetupRoles::class,
             parameters: [
@@ -85,20 +82,12 @@ class SyncRolesAndPermissions extends Command
         );
 
         $this->line('Syncing Web permissions...');
-        ray()->measure()->label('Start syncWebPermissions');
         $this->syncWebPermissions();
-        ray()->measure()->label('End syncWebPermissions');
         $this->info('Web permissions synced successfully!');
 
         $this->line('Syncing API permissions...');
-        ray()->measure()->label('Start syncApiPermissions');
         $this->syncApiPermissions();
-        ray()->measure()->label('End syncApiPermissions');
         $this->info('API permissions synced successfully!');
-
-        // Artisan::call(SetupRoleGroups::class);
-
-        ray()->measure()->label('END');
 
         return self::SUCCESS;
     }
@@ -119,6 +108,7 @@ class SyncRolesAndPermissions extends Command
                 $this->syncPermissionFor('web', $role);
             }
         );
+
         $this->newLine();
     }
 
@@ -132,6 +122,7 @@ class SyncRolesAndPermissions extends Command
                 $this->syncPermissionFor('api', $role);
             }
         );
+
         $this->newLine();
     }
 
@@ -146,13 +137,13 @@ class SyncRolesAndPermissions extends Command
                 path: "roles/{$guard}/{$roleFileName}"
             );
 
-        collect($permissions)->each(function ($specificPermissions, $permissionConvention) use ($role, $guard) {
+        collect($permissions)->map(function ($specificPermissions, $permissionConvention) use ($role, $guard) {
             if (blank($specificPermissions)) {
                 return;
             }
 
             collect($specificPermissions)
-                ->each(function ($specificPermission, $resource) use ($role, $guard) {
+                ->map(function ($specificPermission, $resource) use ($role, $guard) {
                     if (! is_array($specificPermission)) {
                         $this->syncCustomPermissions($role, $specificPermission, $guard);
                     } else {
@@ -162,31 +153,34 @@ class SyncRolesAndPermissions extends Command
         });
     }
 
-    protected function syncCustomPermissions(Role $role, string $specificPermission, string $permissionType): void
+    protected function syncCustomPermissions(Role $role, string $specificPermission, string $guard): void
     {
         $foundPermissions = Permission::firstWhere([
             'name' => $specificPermission,
-            'guard_name' => $permissionType,
+            'guard_name' => $guard,
         ])->name;
 
         $role->syncPermissions([$role->permissions, $foundPermissions]);
     }
 
-    protected function syncModelPermissions(Role $role, string $resource, array $specificPermission, string $permissionType): void
+    protected function syncModelPermissions(Role $role, string $resource, array $specificPermission, string $guard): void
     {
         if (count($specificPermission) === 1 && $specificPermission[0] === '*') {
             $foundPermissions = Permission::where('name', 'like', "{$resource}.%")
-                ->where('guard_name', $permissionType)
+                ->where('guard_name', $guard)
                 ->pluck('name');
         } else {
-            $foundPermissions = collect($specificPermission)->map(function ($permission) use ($resource, $permissionType) {
-                return Permission::firstWhere([
-                    'name' => "{$resource}.{$permission}",
-                    'guard_name' => $permissionType,
-                ])->name;
+            $permissionNames = collect($specificPermission)->map(function ($permission) use ($resource) {
+                return "{$resource}.{$permission}";
+            });
+
+            $foundPermissions = collect($specificPermission)->map(function () use ($permissionNames, $guard) {
+                return Permission::where('guard_name', $guard)
+                    ->whereIn('name', $permissionNames)
+                    ->pluck('name');
             });
         }
 
-        $role->syncPermissions([$role->permissions, $foundPermissions]);
+        $role->givePermissionTo($foundPermissions);
     }
 }
