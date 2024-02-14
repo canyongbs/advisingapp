@@ -11,9 +11,9 @@ type Audit
 
     event: String!
 
-    auditable_type: String!
+#    auditable_type: String!
 
-    auditable_id: String!
+#    auditable_id: String!
 
     old_values: JSON
 
@@ -35,6 +35,19 @@ type Audit
 
     user: Authenticatable @morphTo
 }
+#
+
+input AuditableablesQuery {
+    student: StudentsQuery
+    prospect: ProspectsQuery
+    user: UsersQuery
+    system_user: SystemUsersQuery
+}
+
+input AuthenticatablesQuery {
+    user: UsersQuery
+    system_user: SystemUsersQuery
+}
 
 input AuditsQuery {
     id: UUID
@@ -45,9 +58,9 @@ input AuditsQuery {
 
     event: String
 
-    auditable_type: String
+#    auditable_type: String
 
-    auditable_id: String
+#    auditable_id: String
 
     old_values: JSON
 
@@ -64,6 +77,10 @@ input AuditsQuery {
     created_at: DateTime
 
     updated_at: DateTime
+
+    auditable: AuditableablesQuery @morphToRelation
+
+    user: AuthenticatablesQuery @morphToRelation
 }
 
 type AuditQueries {

@@ -71,7 +71,7 @@ input InteractionsQuery {
     id: UUID
     subject: String
     description: String
-    user: UserQuery
+    user: UsersQuery
     interactable: InteractionInteractablesQuery @morphToRelation
     interactable_id: InteractableId
     interactable_type: InteractableType

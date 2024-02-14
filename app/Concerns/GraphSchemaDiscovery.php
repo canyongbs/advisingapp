@@ -47,9 +47,11 @@ trait GraphSchemaDiscovery
 {
     public function discoverSchema(string $path): void
     {
-        Event::listen(function (BuildSchemaString $event) use ($path) {
-            return (new SchemaStitcher($path))->getSchemaString();
-        });
+        foreach (glob($path) as $schema) {
+            Event::listen(function (BuildSchemaString $event) use ($schema) {
+                return (new SchemaStitcher($schema))->getSchemaString();
+            });
+        }
     }
 
     /**
@@ -59,7 +61,6 @@ trait GraphSchemaDiscovery
      */
     public function registerEnum(string $enumClass): void
     {
-        $typeRegistry = app(TypeRegistry::class);
-        $typeRegistry->register(new PhpEnumType($enumClass));
+        app(TypeRegistry::class)->register(new PhpEnumType($enumClass));
     }
 }

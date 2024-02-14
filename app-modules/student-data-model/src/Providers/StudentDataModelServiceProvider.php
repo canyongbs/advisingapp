@@ -68,7 +68,7 @@ class StudentDataModelServiceProvider extends ServiceProvider
 
         $this->registerRolesAndPermissions();
 
-        $this->discoverSchema(__DIR__ . '/../../graphql/student.graphql');
+        $this->discoverSchema(__DIR__ . '/../../graphql/*');
     }
 
     protected function registerRolesAndPermissions(): void

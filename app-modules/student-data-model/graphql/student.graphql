@@ -1,13 +1,26 @@
-type Student {
+type Student
+    @model(class: "AdvisingApp\\StudentDataModel\\Models\\Student") {
     sisid: ID!
 
-    otherid: String
+    otherid: String @canRoot(ability: "viewAny" action: RETURN_VALUE returnValue: null)
 
-    first: String
+    first: String @canRoot(ability: "viewAny" action: RETURN_VALUE returnValue: null)
 
-    last: String
+    last: String @canRoot(ability: "viewAny" action: RETURN_VALUE returnValue: null)
 
-    full_name: String
+    full_name: String @canRoot(ability: "viewAny" action: RETURN_VALUE returnValue: null)
+
+    enrollments: [Enrollment!] @hasMany
+
+    enrollments_count: Int @count(relation: "enrollments")
+
+    performances: [Performance!] @hasMany
+
+    performances_count: Int @count(relation: "performances")
+
+    programs: [Program!] @hasMany
+
+    programs_count: Int @count(relation: "programs")
 }
 
 input StudentsQuery {
@@ -20,4 +33,30 @@ input StudentsQuery {
     last: String
 
     full_name: String
+
+    enrollments: EnrollmentsQuery
+
+    performances: PerformancesQuery
+
+    programs: ProgramsQuery
+}
+
+type StudentQueries {
+    "Get a specific student by ID."
+    find(
+        sisid: ID!
+        @whereKey
+        @rules(apply: ["required", "string", "exists:students"])
+    ): Student @find @canResolved(ability: "view")
+
+    "List multiple students."
+    list(
+        "Filter by the students attributes and relations."
+        where: StudentsQuery @searchBy
+        order: StudentsQuery @sortBy
+    ): [Student!]! @paginate @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    student: StudentQueries! @namespaced
 }

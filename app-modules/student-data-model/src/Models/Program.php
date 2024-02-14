@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -61,6 +62,11 @@ class Program extends Model
 
     public $timestamps = false;
 
+    protected $casts = [
+        'change_dt' => 'datetime',
+        'declare_dt' => 'datetime',
+    ];
+
     public function getWebPermissions(): Collection
     {
         return collect(['view-any', '*.view']);
@@ -68,6 +74,11 @@ class Program extends Model
 
     public function getApiPermissions(): Collection
     {
-        return collect();
+        return collect(['view-any', '*.view']);
+    }
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'sisid', 'sisid');
     }
 }

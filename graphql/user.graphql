@@ -7,7 +7,7 @@ type User @model(class: "App\\Models\\User") {
     email: String!
 }
 
-input UserQuery {
+input UsersQuery {
     "Unique primary key."
     id: UUID!
 
