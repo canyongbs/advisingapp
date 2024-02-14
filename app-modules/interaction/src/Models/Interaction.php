@@ -36,6 +36,9 @@
 
 namespace AdvisingApp\Interaction\Models;
 
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\Authenticatable;
 use Exception;
 use App\Models\User;
 use App\Models\BaseModel;
@@ -173,13 +176,34 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
+            if (! auth()->check()) {
+                return;
+            }
+
+            /** @var Authenticatable $user */
+            $user = auth()->user();
+
+            $serviceRequestRespondentTypeColumn = app(ServiceRequest::class)->respondent()->getMorphType();
+
             $builder
-                ->tap(new LicensedToEducatable('interactable'))
-                ->orWhereHasMorph(
-                    'interactable',
-                    ServiceRequest::class,
-                    fn (Builder $builder) => $builder->tap(new LicensedToEducatable('respondent')),
-                );
+                ->where(fn (Builder $query) => $query
+                    ->tap(new LicensedToEducatable('interactable'))
+                    ->when(
+                        ! $user->hasLicense(Student::getLicenseType()),
+                        fn (Builder $query) => $query->whereHasMorph(
+                            'interactable',
+                            ServiceRequest::class,
+                            fn (Builder $query) => $query->where($serviceRequestRespondentTypeColumn, '!=', app(Student::class)->getMorphClass()),
+                        ),
+                    )
+                    ->when(
+                        ! $user->hasLicense(Prospect::getLicenseType()),
+                        fn (Builder $query) => $query->whereHasMorph(
+                            'interactable',
+                            ServiceRequest::class,
+                            fn (Builder $query) => $query->where($serviceRequestRespondentTypeColumn, '!=', app(Prospect::class)->getMorphClass()),
+                        ),
+                    ));
         });
     }
 }

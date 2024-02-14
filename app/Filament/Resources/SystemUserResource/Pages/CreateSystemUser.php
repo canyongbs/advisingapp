@@ -45,7 +45,7 @@ class CreateSystemUser extends CreateRecord
 {
     protected static string $resource = SystemUserResource::class;
 
-    protected ?string $heading = 'Creat Programmatic (API) User';
+    protected ?string $heading = 'Create Programmatic (API) User';
 
     public function form(Form $form): Form
     {
