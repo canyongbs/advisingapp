@@ -60,40 +60,9 @@ class ReportServiceProvider extends ServiceProvider
             'report' => Report::class,
         ]);
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(ReportRbacRegistry::class);
-        }
-
         $this->registerObservers();
-    }
 
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'report',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'report',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'report',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'report',
-            path: 'roles/web'
-        );
+        RbacRegistry::register(ReportRbacRegistry::class);
     }
 
     protected function registerObservers(): void

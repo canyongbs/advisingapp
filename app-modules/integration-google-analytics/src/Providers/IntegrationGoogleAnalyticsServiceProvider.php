@@ -40,8 +40,6 @@ use Filament\Panel;
 use App\Registries\RbacRegistry;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\IntegrationGoogleAnalytics\IntegrationGoogleAnalyticsPlugin;
 use AdvisingApp\IntegrationGoogleAnalytics\Registries\IntegrationGoogleAnalyticsRbacRegistry;
 
@@ -56,37 +54,6 @@ class IntegrationGoogleAnalyticsServiceProvider extends ServiceProvider
     {
         Relation::morphMap([]);
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(IntegrationGoogleAnalyticsRbacRegistry::class);
-        }
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'integration-google-analytics',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'integration-google-analytics',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'integration-google-analytics',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'integration-google-analytics',
-            path: 'roles/web'
-        );
+        RbacRegistry::register(IntegrationGoogleAnalyticsRbacRegistry::class);
     }
 }

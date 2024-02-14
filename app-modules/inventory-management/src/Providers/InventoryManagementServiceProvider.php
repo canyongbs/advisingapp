@@ -78,11 +78,7 @@ class InventoryManagementServiceProvider extends ServiceProvider
 
         $this->registerObservers();
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(InventoryManagementRbacRegistry::class);
-        }
+        RbacRegistry::register(InventoryManagementRbacRegistry::class);
     }
 
     public function registerObservers(): void
@@ -90,32 +86,5 @@ class InventoryManagementServiceProvider extends ServiceProvider
         AssetCheckIn::observe(AssetCheckInObserver::class);
         AssetCheckOut::observe(AssetCheckOutObserver::class);
         MaintenanceActivity::observe(MaintenanceActivityObserver::class);
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'inventory-management',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'inventory-management',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'inventory-management',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'inventory-management',
-            path: 'roles/web'
-        );
     }
 }

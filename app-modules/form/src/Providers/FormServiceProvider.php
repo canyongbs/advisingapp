@@ -49,8 +49,6 @@ use AdvisingApp\Form\Registries\FormRbacRegistry;
 use AdvisingApp\Form\Events\FormSubmissionCreated;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Form\Observers\FormSubmissionObserver;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Form\Listeners\NotifySubscribersOfFormSubmission;
 use AdvisingApp\Form\Listeners\SendFormSubmissionAutoReplyEmailToSubmitter;
 
@@ -72,11 +70,7 @@ class FormServiceProvider extends ServiceProvider
         $this->registerObservers();
         $this->registerEvents();
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(FormRbacRegistry::class);
-        }
+        RbacRegistry::register(FormRbacRegistry::class);
     }
 
     public function registerObservers(): void
@@ -95,33 +89,6 @@ class FormServiceProvider extends ServiceProvider
         Event::listen(
             events: FormSubmissionCreated::class,
             listener: SendFormSubmissionAutoReplyEmailToSubmitter::class,
-        );
-    }
-
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'form',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'form',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'form',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'form',
-            path: 'roles/web'
         );
     }
 }

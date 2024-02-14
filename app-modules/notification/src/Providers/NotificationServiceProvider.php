@@ -72,16 +72,12 @@ class NotificationServiceProvider extends ServiceProvider
             'outbound_deliverable' => OutboundDeliverable::class,
         ]);
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(NotificationRbacRegistry::class);
-        }
-
         $this->registerObservers();
         $this->registerEvents();
 
         $this->discoverSchema(__DIR__ . '/../../graphql/subscription.graphql');
+
+        RbacRegistry::register(NotificationRbacRegistry::class);
     }
 
     protected function registerObservers(): void
@@ -119,33 +115,6 @@ class NotificationServiceProvider extends ServiceProvider
         Event::listen(
             TriggeredAutoSubscription::class,
             CreateAutoSubscription::class,
-        );
-    }
-
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'notification',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'notification',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'notification',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'notification',
-            path: 'roles/web'
         );
     }
 }

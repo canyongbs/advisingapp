@@ -62,40 +62,9 @@ class CaseloadManagementServiceProvider extends ServiceProvider
             'caseload_subject' => CaseloadSubject::class,
         ]);
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(CaseloadManagementRbacRegistry::class);
-        }
-
         $this->registerObservers();
-    }
 
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'caseload-management',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'caseload-management',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'caseload-management',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'caseload-management',
-            path: 'roles/web'
-        );
+        RbacRegistry::register(CaseloadManagementRbacRegistry::class);
     }
 
     protected function registerObservers(): void

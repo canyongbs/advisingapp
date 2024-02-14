@@ -99,42 +99,11 @@ class MeetingCenterServiceProvider extends ServiceProvider
                 ->withoutOverlapping();
         });
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(MeetingCenterRbacRegistry::class);
-        }
-
         $this->registerObservers();
 
         Livewire::component('event-attendee-submissions-manager', EventAttendeeSubmissionsManager::class);
-    }
 
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'meeting-center',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'meeting-center',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'meeting-center',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'meeting-center',
-            path: 'roles/web'
-        );
+        RbacRegistry::register(MeetingCenterRbacRegistry::class);
     }
 
     protected function registerObservers(): void

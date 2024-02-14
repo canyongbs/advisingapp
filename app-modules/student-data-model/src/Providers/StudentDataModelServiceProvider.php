@@ -68,39 +68,8 @@ class StudentDataModelServiceProvider extends ServiceProvider
             'program' => Program::class,
         ]);
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(StudentDataModelRbacRegistry::class);
-        }
-
         $this->discoverSchema(__DIR__ . '/../../graphql/student.graphql');
-    }
 
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'student-data-model',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'student-data-model',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'student-data-model',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'student-data-model',
-            path: 'roles/web'
-        );
+        RbacRegistry::register(StudentDataModelRbacRegistry::class);
     }
 }

@@ -39,8 +39,6 @@ namespace AdvisingApp\IntegrationGoogleRecaptcha\Providers;
 use Filament\Panel;
 use App\Registries\RbacRegistry;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\IntegrationGoogleRecaptcha\IntegrationGoogleRecaptchaPlugin;
 use AdvisingApp\IntegrationGoogleRecaptcha\Registries\IntegrationGoogleRecaptchaRbacRegistry;
 
@@ -53,37 +51,6 @@ class IntegrationGoogleRecaptchaServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(IntegrationGoogleRecaptchaRbacRegistry::class);
-        }
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'integration-google-recaptcha',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'integration-google-recaptcha',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'integration-google-recaptcha',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'integration-google-recaptcha',
-            path: 'roles/web'
-        );
+        RbacRegistry::register(IntegrationGoogleRecaptchaRbacRegistry::class);
     }
 }

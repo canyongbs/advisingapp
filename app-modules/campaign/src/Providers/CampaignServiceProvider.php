@@ -83,44 +83,13 @@ class CampaignServiceProvider extends ServiceProvider
                 ->withoutOverlapping();
         });
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(CampaignRbacRegistry::class);
-        }
-
         $this->registerObservers();
+
+        RbacRegistry::register(CampaignRbacRegistry::class);
     }
 
     public function registerObservers(): void
     {
         Campaign::observe(CampaignObserver::class);
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'campaign',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'campaign',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'campaign',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'campaign',
-            path: 'roles/web'
-        );
     }
 }

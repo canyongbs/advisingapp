@@ -73,14 +73,10 @@ class ApplicationServiceProvider extends ServiceProvider
             'application_submission_state' => ApplicationSubmissionState::class,
         ]);
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(ApplicationRbacRegistry::class);
-        }
-
         $this->registerObservers();
         $this->registerEvents();
+
+        RbacRegistry::register(ApplicationRbacRegistry::class);
     }
 
     public function registerObservers(): void
@@ -93,33 +89,6 @@ class ApplicationServiceProvider extends ServiceProvider
         Event::listen(
             events: ApplicationSubmissionCreated::class,
             listener: NotifySubscribersOfApplicationSubmission::class
-        );
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'application',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'application',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'application',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'application',
-            path: 'roles/web'
         );
     }
 }

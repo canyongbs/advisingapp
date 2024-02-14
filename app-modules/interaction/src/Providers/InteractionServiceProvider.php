@@ -76,44 +76,13 @@ class InteractionServiceProvider extends ServiceProvider
             'interaction_type' => InteractionType::class,
         ]);
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(InteractionRbacRegistry::class);
-        }
-
         $this->registerObservers();
 
         $this->discoverSchema(__DIR__ . '/../../graphql/interaction.graphql');
 
         $this->registerEnum(InteractionStatusColorOptions::class);
-    }
 
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'interaction',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'interaction',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'interaction',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'interaction',
-            path: 'roles/web'
-        );
+        RbacRegistry::register(InteractionRbacRegistry::class);
     }
 
     protected function registerObservers(): void

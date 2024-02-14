@@ -62,44 +62,13 @@ class ConsentServiceProvider extends ServiceProvider
             'user_consent_agreement' => UserConsentAgreement::class,
         ]);
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(ConsentRbacRegistry::class);
-        }
-
         $this->registerObservers();
+
+        RbacRegistry::register(ConsentRbacRegistry::class);
     }
 
     public function registerObservers(): void
     {
         ConsentAgreement::observe(ConsentAgreementObserver::class);
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'consent',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'consent',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'consent',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'consent',
-            path: 'roles/web'
-        );
     }
 }

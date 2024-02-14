@@ -61,11 +61,7 @@ class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
 
         $this->registerEvents();
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(IntegrationAwsSesEventHandlingRbacRegistry::class);
-        }
+        RbacRegistry::register(IntegrationAwsSesEventHandlingRbacRegistry::class);
     }
 
     public function registerEvents(): void
@@ -73,33 +69,6 @@ class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
         Event::listen(
             MessageSending::class,
             EnsureSesConfigurationSetHeadersArePresent::class
-        );
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'integration-aws-ses-event-handling',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'integration-aws-ses-event-handling',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'integration-aws-ses-event-handling',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'integration-aws-ses-event-handling',
-            path: 'roles/web'
         );
     }
 }

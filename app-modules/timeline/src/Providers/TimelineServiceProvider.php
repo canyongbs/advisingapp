@@ -64,13 +64,9 @@ class TimelineServiceProvider extends ServiceProvider
             'timeline' => Timeline::class,
         ]);
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(TimelineRbacRegistry::class);
-        }
-
         $this->registerEvents();
+
+        RbacRegistry::register(TimelineRbacRegistry::class);
     }
 
     protected function registerEvents(): void
@@ -83,33 +79,6 @@ class TimelineServiceProvider extends ServiceProvider
         Event::listen(
             TimelineableRecordDeleted::class,
             RemoveRecordFromTimeline::class
-        );
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'timeline',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'timeline',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'timeline',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'timeline',
-            path: 'roles/web'
         );
     }
 }

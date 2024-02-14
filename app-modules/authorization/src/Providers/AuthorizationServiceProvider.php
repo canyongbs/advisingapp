@@ -88,12 +88,6 @@ class AuthorizationServiceProvider extends ServiceProvider
 
         $this->registerObservers();
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(AuthorizationRbacRegistry::class);
-        }
-
         Event::listen(
             events: SocialiteWasCalled::class,
             listener: AzureExtendSocialite::class . '@handle'
@@ -103,37 +97,12 @@ class AuthorizationServiceProvider extends ServiceProvider
             events: SocialiteWasCalled::class,
             listener: GoogleExtendSocialite::class . '@handle'
         );
+
+        RbacRegistry::register(AuthorizationRbacRegistry::class);
     }
 
     public function registerObservers(): void
     {
         License::observe(LicenseObserver::class);
-    }
-
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'authorization',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'authorization',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'authorization',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'authorization',
-            path: 'roles/web'
-        );
     }
 }

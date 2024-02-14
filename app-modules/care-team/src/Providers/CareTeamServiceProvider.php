@@ -62,39 +62,8 @@ class CareTeamServiceProvider extends ServiceProvider
             'care_team' => CareTeam::class,
         ]);
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(CareTeamRbacRegistry::class);
-        }
-
         $this->discoverSchema(__DIR__ . '/../../graphql/care-team.graphql');
-    }
 
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'care-team',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'care-team',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'care-team',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'care-team',
-            path: 'roles/web'
-        );
+        RbacRegistry::register(CareTeamRbacRegistry::class);
     }
 }

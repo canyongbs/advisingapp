@@ -51,7 +51,6 @@ use AdvisingApp\Engagement\Models\EngagementBatch;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Actions\DeliverEngagements;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
 use AdvisingApp\Engagement\Models\EngagementFileEntities;
@@ -59,7 +58,6 @@ use AdvisingApp\Engagement\Observers\SmsTemplateObserver;
 use AdvisingApp\Engagement\Observers\EmailTemplateObserver;
 use AdvisingApp\Engagement\Observers\EngagementBatchObserver;
 use AdvisingApp\Engagement\Registries\EngagementRbacRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Engagement\Observers\EngagementFileEntitiesObserver;
 
 class EngagementServiceProvider extends ServiceProvider
@@ -100,11 +98,7 @@ class EngagementServiceProvider extends ServiceProvider
 
         $this->registerObservers();
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(EngagementRbacRegistry::class);
-        }
+        RbacRegistry::register(EngagementRbacRegistry::class);
     }
 
     public function registerObservers(): void
@@ -114,32 +108,5 @@ class EngagementServiceProvider extends ServiceProvider
         EngagementBatch::observe(EngagementBatchObserver::class);
         EngagementFileEntities::observe(EngagementFileEntitiesObserver::class);
         SmsTemplate::observe(SmsTemplateObserver::class);
-    }
-
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'engagement',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'engagement',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'engagement',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'engagement',
-            path: 'roles/web'
-        );
     }
 }

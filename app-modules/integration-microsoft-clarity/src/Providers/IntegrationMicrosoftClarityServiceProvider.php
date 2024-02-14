@@ -56,37 +56,6 @@ class IntegrationMicrosoftClarityServiceProvider extends ServiceProvider
     {
         Relation::morphMap([]);
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(IntegrationMicrosoftClarityRbacRegistry::class);
-        }
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'integration-microsoft-clarity',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'integration-microsoft-clarity',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'integration-microsoft-clarity',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'integration-microsoft-clarity',
-            path: 'roles/web'
-        );
+        RbacRegistry::register(IntegrationMicrosoftClarityRbacRegistry::class);
     }
 }

@@ -46,11 +46,9 @@ use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Observers\ProspectObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Prospect\Registries\ProspectRbacRegistry;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class ProspectServiceProvider extends ServiceProvider
 {
@@ -69,43 +67,12 @@ class ProspectServiceProvider extends ServiceProvider
             'prospect_status' => ProspectStatus::class,
         ]);
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(ProspectRbacRegistry::class);
-        }
-
         Prospect::observe(ProspectObserver::class);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/prospect.graphql');
         $this->registerEnum(ProspectStatusColorOptions::class);
         $this->registerEnum(SystemProspectClassification::class);
-    }
 
-    public function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'prospect',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'prospect',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'prospect',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'prospect',
-            path: 'roles/web'
-        );
+        RbacRegistry::register(ProspectRbacRegistry::class);
     }
 }

@@ -64,42 +64,11 @@ class TaskServiceProvider extends ServiceProvider
             ]
         );
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(TaskRbacRegistry::class);
-        }
-
         $this->registerObservers();
 
         $this->registerAssets();
-    }
 
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'task',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'task',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'task',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'task',
-            path: 'roles/web'
-        );
+        RbacRegistry::register(TaskRbacRegistry::class);
     }
 
     protected function registerObservers(): void

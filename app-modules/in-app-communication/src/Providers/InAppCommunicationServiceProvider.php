@@ -65,11 +65,7 @@ class InAppCommunicationServiceProvider extends ServiceProvider
 
         $this->registerAssets();
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(InAppCommunicationRbacRegistry::class);
-        }
+        RbacRegistry::register(InAppCommunicationRbacRegistry::class);
     }
 
     public function registerAssets(): void
@@ -77,32 +73,5 @@ class InAppCommunicationServiceProvider extends ServiceProvider
         FilamentAsset::register([
             Js::make('userToUserChat', __DIR__ . '/../../resources/js/dist/userToUserChat.js')->loadedOnRequest(),
         ], 'canyon-gbs/in-app-communication');
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'in-app-communication',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'in-app-communication',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'in-app-communication',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'in-app-communication',
-            path: 'roles/web'
-        );
     }
 }

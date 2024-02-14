@@ -61,12 +61,7 @@ class SyncRolesAndPermissions extends Command
         // TODO Put handling in place to prevent this from being run in production IF it has already been run once
         // We are going to introduce a convention for "one-time" operations similar to Laravel migrations in order to handle this
 
-        if (config('app.enable_rbac_registry')) {
-            ray('Registry Enabled');
-            $this->populateRegistries();
-        } else {
-            ray('Registry Disabled');
-        }
+        $this->populateRegistries();
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 

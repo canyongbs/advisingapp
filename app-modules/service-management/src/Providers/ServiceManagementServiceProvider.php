@@ -104,15 +104,11 @@ class ServiceManagementServiceProvider extends ServiceProvider
             'sla' => Sla::class,
         ]);
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(ServiceManagementRbacRegistry::class);
-        }
-
         $this->registerObservers();
 
         $this->discoverSchema(__DIR__ . '/../../graphql/service-management.graphql');
+
+        RbacRegistry::register(ServiceManagementRbacRegistry::class);
     }
 
     protected function registerObservers(): void
@@ -123,32 +119,5 @@ class ServiceManagementServiceProvider extends ServiceProvider
         ServiceRequestAssignment::observe(ServiceRequestAssignmentObserver::class);
         ServiceRequestHistory::observe(ServiceRequestHistoryObserver::class);
         ServiceRequestFormSubmission::observe(ServiceRequestFormSubmissionObserver::class);
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'service-management',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'service-management',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'service-management',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'service-management',
-            path: 'roles/web'
-        );
     }
 }

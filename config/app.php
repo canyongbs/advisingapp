@@ -246,6 +246,4 @@ return [
     ])->toArray(),
 
     'landlord_api_key' => env('LANDLORD_API_KEY'),
-
-    'enable_rbac_registry' => env('ENABLE_RBAC_REGISTRY', true),
 ];

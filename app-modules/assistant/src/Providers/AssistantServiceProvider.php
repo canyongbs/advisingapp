@@ -77,11 +77,7 @@ class AssistantServiceProvider extends ServiceProvider
         $this->registerEvents();
         $this->registerAssets();
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(AssistantRbacRegistry::class);
-        }
+        RbacRegistry::register(AssistantRbacRegistry::class);
     }
 
     public function registerAssets(): void
@@ -94,32 +90,5 @@ class AssistantServiceProvider extends ServiceProvider
     protected function registerEvents(): void
     {
         Event::listen(AIPromptInitiated::class, LogAssistantChatMessage::class);
-    }
-
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'assistant',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'assistant',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'assistant',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'assistant',
-            path: 'roles/web'
-        );
     }
 }

@@ -44,8 +44,6 @@ use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Webhook\Models\InboundWebhook;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Webhook\Registries\WebhookRbacRegistry;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class WebhookServiceProvider extends ServiceProvider
 {
@@ -65,37 +63,6 @@ class WebhookServiceProvider extends ServiceProvider
             'inbound_webhook' => InboundWebhook::class,
         ]);
 
-        if (config('app.enable_rbac_registry') !== true) {
-            $this->registerRolesAndPermissions();
-        } else {
-            RbacRegistry::register(WebhookRbacRegistry::class);
-        }
-    }
-
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'webhook',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'webhook',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'webhook',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'webhook',
-            path: 'roles/web'
-        );
+        RbacRegistry::register(WebhookRbacRegistry::class);
     }
 }
