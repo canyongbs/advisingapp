@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Audit\Providers;
 
+use App\Concerns\GraphSchemaDiscovery;
 use Filament\Panel;
 use AdvisingApp\Audit\AuditPlugin;
 use AdvisingApp\Audit\Models\Audit;
@@ -46,6 +47,8 @@ use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class AuditServiceProvider extends ServiceProvider
 {
+    use GraphSchemaDiscovery;
+
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AuditPlugin()));
@@ -53,13 +56,20 @@ class AuditServiceProvider extends ServiceProvider
         app('config')->set('audit', require base_path('app-modules/audit/config/audit.php'));
     }
 
-    public function boot(AuthorizationPermissionRegistry $permissionRegistry, AuthorizationRoleRegistry $roleRegistry): void
+    public function boot(): void
     {
-        Relation::morphMap(
-            [
-                'audit' => Audit::class,
-            ]
-        );
+        Relation::morphMap([
+            'audit' => Audit::class,
+        ]);
+
+        $this->discoverSchema(__DIR__ . '/../../graphql/audit.graphql');
+
+        $this->registerRolesAndPermissions();
+    }
+
+    public function registerRolesAndPermissions(): void
+    {
+        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
 
         $permissionRegistry->registerApiPermissions(
             module: 'audit',
@@ -70,6 +80,8 @@ class AuditServiceProvider extends ServiceProvider
             module: 'audit',
             path: 'permissions/web/custom'
         );
+
+        $roleRegistry = app(AuthorizationRoleRegistry::class);
 
         $roleRegistry->registerApiRoles(
             module: 'audit',

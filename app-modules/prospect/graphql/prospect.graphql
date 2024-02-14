@@ -61,6 +61,14 @@ type Prospect @model(class: "AdvisingApp\\Prospect\\Models\\Prospect") {
 
     "The deleted date of the prospect."
     deleted_at: DateTime
+
+    audits: [Audit!] @hasMany
+
+    audits_count: Int @count(relation: "audits")
+
+    created_by: User @belongsTo
+
+    assigned_to: User @belongsTo
 }
 
 input ProspectsQuery {

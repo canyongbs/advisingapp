@@ -1,5 +1,5 @@
 "Account of a person who utilizes this application."
-type User @model(class: "user") {
+type User @model(class: "App\\Models\\User") {
     "Unique primary key."
     id: UUID!
 

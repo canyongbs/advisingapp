@@ -3,11 +3,8 @@ type ProspectStatus
     "Unique primary key."
     id: UUID!
 
-    "The name of the prospect driver."
+    "The name of the prospect status."
     name: String!
-
-    "Prospects related to this prospect driver."
-    prospects: [Prospect!] @hasMany
 
     "The classification of the prospect status."
     classification: SystemProspectClassification!
@@ -15,14 +12,26 @@ type ProspectStatus
     "The color of the prospect status."
     color: ProspectStatusColorOptions!
 
-    "The created date of the prospect driver."
+    "The created date of the prospect status."
     created_at: DateTime
 
-    "The updated date of the prospect driver."
+    "The updated date of the prospect status."
     updated_at: DateTime
 
-    "The deleted date of the prospect driver."
+    "The deleted date of the prospect status."
     deleted_at: DateTime
+
+    "Prospects related to this prospect status."
+    prospects: [Prospect!] @hasMany
+
+    "The count of prospects related to this prospect status."
+    prospects_count: Int @count(relation: "prospects")
+
+    "The audits related to this prospect status."
+    audits: [Audit!] @hasMany
+
+    "The count of audits related to this prospect status."
+    audits_count: Int @count(relation: "audits")
 }
 
 input ProspectStatusesQuery {
@@ -31,9 +40,6 @@ input ProspectStatusesQuery {
 
     "The name of the prospect status."
     name: String
-
-    "The prospects related to this prospect status."
-    prospects: ProspectsQuery
 
     "The classification of the prospect status."
     classification: SystemProspectClassification
@@ -49,6 +55,12 @@ input ProspectStatusesQuery {
 
     "The deleted date of the prospect status."
     deleted_at: DateTime
+
+    "The prospects related to this prospect status."
+    prospects: ProspectsQuery
+
+    "The audits related to this prospect status."
+    audits: AuditsQuery
 }
 
 type ProspectStatusQueries {
@@ -63,6 +75,7 @@ type ProspectStatusQueries {
     list(
         "Filter by the prospect statuses attributes and relations."
         where: ProspectStatusesQuery @searchBy
+        order: ProspectStatusesQuery @sortBy
     ): [ProspectStatus!]! @paginate @softDeletes @canModel(ability: "viewAny")
 }
 
@@ -94,7 +107,6 @@ input UpdateProspectStatusInput {
     name: String
         @rules(
             apply: [
-                "required"
                 "string"
                 "max:255"
                 "unique:prospect_statuses,name"

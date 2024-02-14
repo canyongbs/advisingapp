@@ -40,10 +40,12 @@ use App\Models\Tenant;
 use GraphQL\Type\Introspection;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Stringable;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
 use Nuwave\Lighthouse\Schema\AST\ASTCache;
 use Nuwave\Lighthouse\Schema\SchemaBuilder;
+use Barryvdh\LaravelIdeHelper\Console\ModelsCommand;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 
 class ValidateGraphQL extends Command implements PromptsForMissingInput
@@ -51,9 +53,14 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
     /**
      * @var string
      */
-    protected $signature = 'dev:validate-graphql {--descriptions} {--details= : Show details: list, table}';
+    protected $signature = 'dev:validate-graphql {--descriptions} {--details= : Show details: list, table} {--model=* : The model to validate}';
 
+    /**
+     * @var string
+     */
     protected $description = 'Validate graphql implementation.';
+
+    protected string $filename = '_temp_graphql_parse_ide_helper_models.php';
 
     public function __construct()
     {
@@ -67,7 +74,13 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
     public function handle(ASTCache $cache, SchemaBuilder $schemaBuilder): int
     {
         if (app()->isProduction()) {
-            $this->error('This command is not available in the production.');
+            $this->error('This command is not available in production.');
+
+            return self::FAILURE;
+        }
+
+        if ($this->option('details') && ! in_array($this->option('details'), ['list', 'table'])) {
+            $this->error('The --details option must be one of: list, table.');
 
             return self::FAILURE;
         }
@@ -80,25 +93,16 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
             return self::FAILURE;
         }
 
-        if ($this->option('details') && ! in_array($this->option('details'), ['list', 'table'])) {
-            $this->error('The --details option must be one of: list, table.');
-
-            return self::FAILURE;
-        }
-
-        Artisan::call(GenerateHelperFiles::class, outputBuffer: $this->output);
-
         $tenant->makeCurrent();
 
-        $contents = str(File::get('_ide_helper_models.php'))
+        Artisan::call(ModelsCommand::class, [
+            '--filename' => $this->filename,
+            '--nowrite' => true,
+        ], $this->output);
+
+        $contents = str(File::get($this->filename))
             ->explode("\n")
-            ->splice(13);
-
-        if (! str($contents->first())->contains('namespace')) {
-            $this->error('The first line did not contain "namespace". Please check the "_ide_helper_models.php" file structure.');
-
-            return self::FAILURE;
-        }
+            ->skipUntil(fn (string $line) => str($line)->contains('namespace'));
 
         $cache->clear();
 
@@ -115,6 +119,7 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
                     '@mixin',
                     'AllowDynamicProperties',
                     'class IdeHelper',
+                    'extends \Eloquent',
                     '/*',
                     '*/',
                 ])) {
@@ -153,23 +158,36 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
             })
             ->filter();
 
+        $models = collect($this->option('model'));
+
         $fail = false;
 
-        foreach ($contents as $model) {
-            $this->checkModel($model, $types, $fail);
+        foreach ($contents as $block) {
+            $this->checkModel($block, $types, $fail, $models);
         }
+
+        File::delete($this->filename);
 
         return $fail ? self::FAILURE : self::SUCCESS;
     }
 
-    private function checkModel(string $model, Collection $types, &$fail): void
+    private function checkModel(string $block, Collection $types, &$fail, Collection $models): void
     {
-        $lines = str($model)
+        $lines = str($block)
             ->explode("\n");
 
         $class = str($lines->shift());
+        $model = $class->afterLast('\\')->before('::class')->trim();
 
-        $type = $types->where('name', $class->afterLast('\\')->before('::class')->trim())->first();
+        $type = $types->where('name', $model)->first();
+
+        if ($models->doesntContain($model)) {
+            return;
+        }
+
+        // ray($types, $type);
+
+        // ray($lines);
 
         if ($type) {
             $this->info("Type found: {$class}");
@@ -181,7 +199,22 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
             $fields = [];
 
             foreach ($lines as $line) {
-                $property = str($line)->afterLast('$')->trim();
+                $line = str($line)->trim();
+                $property = $line->afterLast('$')->trim();
+
+                // if($line->contains('@property-read'))
+                // {
+                //     $field = $this->findMatchingRelationship($property, $type);
+                //     ray($property, $type, $field);
+                // }
+                // elseif($line->contains('@property'))
+                // {
+                //     // $field = $this->findMatchingField($property, $type);
+                // }
+                // else
+                // {
+                //     throw new \Exception('Unknown line: ' . $line);
+                // }
 
                 $field = collect($type['fields'])->where('name', $property->snake())->first();
 
@@ -221,6 +254,18 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
         $this->newLine();
     }
 
+    // private function findMatchingField(Stringable $property, array $type)
+    // {
+    //
+    // }
+    //
+    // private function findMatchingRelationship(Stringable $property, array $type)
+    // {
+    //     if ($property->contains('_id')) {
+    //         return collect($type['fields'])->where('name', $property->snake())->first();
+    //     }
+    // }
+
     private function style(string $value, string $type = null): string
     {
         return match ($type) {
@@ -229,4 +274,11 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
             default => "\e[32m{$value}\e[39m",
         };
     }
+
+    // private function matchRelatedModel(Stringable $property, array $type)
+    // {
+    //     $property = $property->remove('_id')->camel();
+    //
+    //     return collect($type['fields'])->where('name', $property->snake())->first();
+    // }
 }
