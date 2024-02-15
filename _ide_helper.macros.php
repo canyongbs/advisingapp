@@ -34,22 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Widgets;
+namespace Filament\Forms\Components {
+    use App\Models\User;
 
-use App\Models\User;
-use App\Filament\Widgets\StatsOverviewWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
-
-class ProspectCaseloadCount extends StatsOverviewWidget
-{
-    protected function getStats(): array
+    class Checkbox
     {
-        /** @var User $user */
-        $user = auth()->user();
+        /**
+         * @see app/Providers/FilamentServiceProvider.php
+         */
+        public function lockedWithoutAnyLicenses(User $user, array $licenses): self
+        {
+            return $this;
+        }
+    }
 
-        return [
-            Stat::make('Caseloads', $user->caseloads()->model(CaseloadModel::Prospect)->count()),
-        ];
+    class Toggle
+    {
+        /**
+         * @see app/Providers/FilamentServiceProvider.php
+         */
+        public function lockedWithoutAnyLicenses(User $user, array $licenses): self
+        {
+            return $this;
+        }
     }
 }

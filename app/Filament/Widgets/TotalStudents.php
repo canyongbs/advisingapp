@@ -36,6 +36,8 @@
 
 namespace App\Filament\Widgets;
 
+use Illuminate\Support\Number;
+use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use AdvisingApp\StudentDataModel\Models\Student;
 
@@ -44,7 +46,7 @@ class TotalStudents extends StatsOverviewWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Students', $this->formatCount(Student::count())),
+            Stat::make('Total Students', Number::abbreviate(Student::count())),
         ];
     }
 }
