@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Models;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
@@ -69,5 +70,10 @@ class Enrollment extends Model
     public function getApiPermissions(): Collection
     {
         return collect();
+    }
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'sisid', 'sisid');
     }
 }

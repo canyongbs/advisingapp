@@ -49,15 +49,23 @@ class ProgramFactory extends Factory
     {
         return [
             'sisid' => Student::factory(),
-            'otherid' => $this->faker->randomNumber(9),
+            'otherid' => function (array $attributes) {
+                return Student::find($attributes['sisid'])->otherid;
+            },
             'acad_career' => $this->faker->randomElement(['NC', 'CRED']),
             'division' => $this->faker->randomElement(['ABC01', 'ABD02', 'ABE03']),
-            'acad_plan' => $this->faker->randomElement(['NONCREDIT', $this->faker->randomNumber(4)]),
+            'acad_plan' => $this->faker->randomElement(
+                [
+                    'NONCREDIT',
+                    $this->faker->numerify('####'),
+                    $this->faker->numerify('####N'),
+                ]
+            ),
             'prog_status' => 'AC',
             'cum_gpa' => $this->faker->randomFloat(3, 0, 4),
-            'semester' => $this->faker->randomNumber(4),
-            'descr' => $this->faker->words(2),
-            'foi' => 'FOI ' . $this->faker->words(),
+            'semester' => $this->faker->numerify('####'),
+            'descr' => $this->faker->words(2, true),
+            'foi' => $this->faker->randomElement(['', 'FOI ' . $this->faker->words(2, true)]),
             'change_dt' => $this->faker->dateTime(),
             'declare_dt' => $this->faker->dateTime(),
         ];

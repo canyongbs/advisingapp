@@ -38,21 +38,39 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Collection;
+use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
 
 class StudentSeeder extends Seeder
 {
     public function run(): void
     {
         ray()->measure();
+
         /** @var Collection $students */
-        $students = Student::factory(100000)
+        $students = Student::factory(100)
             ->make();
 
         $chunks = $students->chunk(1000);
 
         $chunks->each(function ($chunk) {
             Student::insert($chunk->toArray());
+
+            $chunk->each(function ($student) {
+                $student->enrollments()->saveMany(
+                    Enrollment::factory(5)->make(['sisid' => $student->sisid])
+                );
+
+                $student->programs()->save(
+                    Program::factory()->make(
+                        [
+                            'sisid' => $student->sisid,
+                            'otherid' => $student->otherid,
+                        ]
+                    )
+                );
+            });
         });
 
         ray()->measure();
