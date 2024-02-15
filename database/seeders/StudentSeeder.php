@@ -41,6 +41,7 @@ use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Models\Performance;
 
 class StudentSeeder extends Seeder
 {
@@ -69,6 +70,10 @@ class StudentSeeder extends Seeder
                             'otherid' => $student->otherid,
                         ]
                     )
+                );
+
+                $student->performances()->save(
+                    Performance::factory()->make(['sisid' => $student->sisid])
                 );
             });
         });
