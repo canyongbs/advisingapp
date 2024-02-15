@@ -112,10 +112,11 @@ class ServiceManagementServiceProvider extends ServiceProvider
     protected function registerObservers(): void
     {
         ChangeRequest::observe(ChangeRequestObserver::class);
+
         ServiceRequest::observe(ServiceRequestObserver::class);
-        ServiceRequestUpdate::observe(ServiceRequestUpdateObserver::class);
         ServiceRequestAssignment::observe(ServiceRequestAssignmentObserver::class);
-        ServiceRequestHistory::observe(ServiceRequestHistoryObserver::class);
         ServiceRequestFormSubmission::observe(ServiceRequestFormSubmissionObserver::class);
+        ServiceRequestHistory::observe(ServiceRequestHistoryObserver::class);
+        ServiceRequestUpdate::observe(ServiceRequestUpdateObserver::class);
     }
 }

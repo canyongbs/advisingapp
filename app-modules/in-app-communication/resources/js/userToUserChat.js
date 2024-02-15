@@ -36,7 +36,7 @@ document.addEventListener('alpine:init', () => {
     const { generateHTML } = require('@tiptap/html');
     const { Color } = require('@tiptap/extension-color');
     const { Editor } = require('@tiptap/core');
-    const { Link } = require('@tiptap/extension-link');
+    const { SafeLink } = require('./TipTap/Extentions/SafeLink');
     const { Mention } = require('./TipTap/Extentions/Mention');
     const { Placeholder } = require('@tiptap/extension-placeholder');
     const { StarterKit } = require('@tiptap/starter-kit');
@@ -240,6 +240,17 @@ document.addEventListener('alpine:init', () => {
             window.addEventListener('chatTyping', () => {
                 this.conversation?.typing();
             });
+
+            window.addEventListener('click', (event) => {
+                const target = event.target;
+
+                if (target.matches('[data-safe-link]')) {
+                    this.openConfirmationModal(target.getAttribute('href'));
+                }
+            });
+        },
+        openConfirmationModal(href) {
+            this.$dispatch('open-modal', { id: 'confirmSafeLink', href: href });
         },
         async getMessages() {
             this.loadingMessage = 'Loading messages…';
@@ -314,11 +325,9 @@ document.addEventListener('alpine:init', () => {
         generateHTML: (content) => {
             return generateHTML(content, [
                 Color,
-                Link.configure({
+                SafeLink.configure({
                     openOnClick: false,
                     HTMLAttributes: {
-                        target: '_blank',
-                        rel: 'noopener noreferrer nofollow',
                         class: 'underline font-medium text-primary-600 dark:text-primary-500',
                     },
                 }),
@@ -351,11 +360,9 @@ document.addEventListener('alpine:init', () => {
                     element: this.$refs.element,
                     extensions: [
                         Color,
-                        Link.configure({
+                        SafeLink.configure({
                             openOnClick: false,
                             HTMLAttributes: {
-                                target: '_blank',
-                                rel: 'noopener noreferrer nofollow',
                                 class: 'underline font-medium text-primary-600 dark:text-primary-500',
                             },
                         }),

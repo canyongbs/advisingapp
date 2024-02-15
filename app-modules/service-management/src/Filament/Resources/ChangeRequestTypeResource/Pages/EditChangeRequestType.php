@@ -34,25 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource\Pages;
 
-use Filament\Forms\Get;
+use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\RestoreAction;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
+use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource;
 
-class EditServiceRequestType extends EditRecord
+class EditChangeRequestType extends EditRecord
 {
-    protected static string $resource = ServiceRequestTypeResource::class;
+    protected static string $resource = ChangeRequestTypeResource::class;
 
     public function form(Form $form): Form
     {
@@ -62,30 +61,29 @@ class EditServiceRequestType extends EditRecord
                     ->columns()
                     ->schema([
                         TextInput::make('name')
-                            ->label('Name')
                             ->required()
                             ->string(),
-                        Group::make()
-                            ->schema([
-                                Toggle::make('has_enabled_feedback_collection')
-                                    ->label('Enable feedback collection')
-                                    ->live(),
-                                Toggle::make('has_enabled_csat')
-                                    ->label('CSAT')
-                                    ->visible(fn (Get $get) => $get('has_enabled_feedback_collection')),
-                                Toggle::make('has_enabled_nps')
-                                    ->label('NPS')
-                                    ->visible(fn (Get $get) => $get('has_enabled_feedback_collection')),
-                            ]),
+                        Select::make('number_of_required_approvals')
+                            ->options([
+                                '0' => '0',
+                                '1' => '1',
+                                '2' => '2',
+                            ])
+                            ->required(),
+                        Select::make('userApprovers')
+                            ->label('User approvers')
+                            ->relationship('userApprovers', 'name')
+                            ->preload()
+                            ->multiple()
+                            ->exists((new User())->getTable(), 'id'),
                     ]),
-            ])
-            ->disabled(fn (ServiceRequestType $record) => $record->trashed());
+            ])->disabled(fn (ChangeRequestType $record) => $record->trashed());
     }
 
     protected function getSaveFormAction(): Action
     {
         return parent::getSaveFormAction()
-            ->hidden(fn (ServiceRequestType $record) => $record->trashed());
+            ->hidden(fn (ChangeRequestType $record) => $record->trashed());
     }
 
     protected function getHeaderActions(): array

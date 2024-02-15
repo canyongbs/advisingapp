@@ -109,22 +109,22 @@ class ChangeRequest extends BaseModel implements Auditable
 
     public function hasApproval(): bool
     {
-        return $this->approvals()->count() >= $this->type->number_of_required_approvals;
+        return $this->approvals()->count() >= $this->type()->withTrashed()->first()->number_of_required_approvals;
     }
 
     public function isApproved(): bool
     {
-        return $this->status->classification === SystemChangeRequestClassification::Approved;
+        return $this->status()->withTrashed()->first()->classification === SystemChangeRequestClassification::Approved;
     }
 
     public function isNotNew(): bool
     {
-        return $this->status->classification !== SystemChangeRequestClassification::New;
+        return $this->status()->withTrashed()->first()->classification !== SystemChangeRequestClassification::New;
     }
 
     public function canBeApprovedBy(User $user): bool
     {
-        return $this->type->userApprovers()->pluck('user_id')->contains($user->id) && ! $this->hasBeenApprovedBy($user);
+        return $this->type()->withTrashed()->first()->userApprovers()->pluck('user_id')->contains($user->id) && ! $this->hasBeenApprovedBy($user);
     }
 
     public function hasBeenApprovedBy(User $user): bool
@@ -134,7 +134,7 @@ class ChangeRequest extends BaseModel implements Auditable
 
     public function doesNotNeedExplicitApproval(): bool
     {
-        return $this->type->number_of_required_approvals === 0;
+        return $this->type()->withTrashed()->first()->number_of_required_approvals === 0;
     }
 
     public function getIcon(): string
