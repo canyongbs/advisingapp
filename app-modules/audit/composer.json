@@ -25,11 +25,5 @@
         "AdvisingApp\\Audit\\Providers\\AuditServiceProvider"
       ]
     }
-  },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/canyongbs/laravel-auditing"
-    }
-  ]
+  }
 }
