@@ -47,6 +47,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\ServiceManagement\Models\ChangeRequest;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource;
 
 class ListChangeRequests extends ListRecords
@@ -62,8 +63,10 @@ class ListChangeRequests extends ListRecords
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('type.name')
+                    ->state(fn (ChangeRequest $record) => $record->type()->withTrashed()->first()->name)
                     ->searchable(),
                 TextColumn::make('status.name')
+                    ->state(fn (ChangeRequest $record) => $record->status()->withTrashed()->first()->name)
                     ->searchable(),
                 ViewColumn::make('risk_score')
                     ->searchable()

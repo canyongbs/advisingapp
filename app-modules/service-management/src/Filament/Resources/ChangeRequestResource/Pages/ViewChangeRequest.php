@@ -67,7 +67,7 @@ class ViewChangeRequest extends ViewRecord
                     ->headerActions([
                         InfolistAction::make('approveChangeRequest')
                             ->requiresConfirmation()
-                            ->hidden(fn (ChangeRequest $record) => $record->type->number_of_required_approvals === 0 || $record->isNotNew())
+                            ->hidden(fn (ChangeRequest $record) => $record->type()->withTrashed()->first()->number_of_required_approvals === 0 || $record->isNotNew())
                             ->disabled(fn (ChangeRequest $record) => $record->isNotNew() || ! $record->canBeApprovedBy(auth()->user()))
                             ->action(fn (ChangeRequest $record) => resolve(ApproveChangeRequest::class, ['changeRequest' => $record, 'user' => auth()->user()])->handle()),
                     ])
@@ -80,7 +80,7 @@ class ViewChangeRequest extends ViewRecord
                             ->columnSpan(2),
                         RepeatableEntry::make('approvals')
                             ->label('Approved By')
-                            ->hidden(fn (ChangeRequest $record) => $record->type->number_of_required_approvals === 0)
+                            ->hidden(fn (ChangeRequest $record) => $record->type()->withTrashed()->first()->number_of_required_approvals === 0)
                             ->schema([
                                 TextEntry::make('user')
                                     ->formatStateUsing(fn ($state) => $state->name)
@@ -97,9 +97,11 @@ class ViewChangeRequest extends ViewRecord
                             ->columnSpan(3),
                         TextEntry::make('type.name')
                             ->label('Type')
+                            ->state(fn (ChangeRequest $record) => $record->type()->withTrashed()->first()->name)
                             ->columnSpan(3),
                         TextEntry::make('status.name')
                             ->label('Status')
+                            ->state(fn (ChangeRequest $record) => $record->status()->withTrashed()->first()->name)
                             ->columnSpan(3),
                         TextEntry::make('reason')
                             ->label('Reason for change')
