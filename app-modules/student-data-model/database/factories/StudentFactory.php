@@ -48,7 +48,7 @@ class StudentFactory extends Factory
     public function definition(): array
     {
         return [
-            'sisid' => $this->faker->numerify('########'),
+            'sisid' => $this->faker->unique()->numerify('########'),
             'otherid' => $this->faker->numerify('##########'),
             'first' => $this->faker->firstName(),
             'last' => $this->faker->lastName(),
