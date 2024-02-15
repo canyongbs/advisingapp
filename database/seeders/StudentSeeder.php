@@ -50,32 +50,36 @@ class StudentSeeder extends Seeder
         ray()->measure();
 
         /** @var Collection $students */
-        $students = Student::factory(100)
+        $students = Student::factory(100000)
             ->make();
 
-        $chunks = $students->chunk(1000);
+        $chunks = $students->chunk(2000);
+
+        $chunks->first()->each(function ($student) {
+            $student->enrollments()->saveMany(
+                Enrollment::factory(5)->make(['sisid' => $student->sisid])
+            );
+        });
 
         $chunks->each(function ($chunk) {
             Student::insert($chunk->toArray());
 
-            $chunk->each(function ($student) {
-                $student->enrollments()->saveMany(
-                    Enrollment::factory(5)->make(['sisid' => $student->sisid])
-                );
+            $programs = [];
+            $performances = [];
 
-                $student->programs()->save(
-                    Program::factory()->make(
-                        [
-                            'sisid' => $student->sisid,
-                            'otherid' => $student->otherid,
-                        ]
-                    )
-                );
+            $chunk->each(function (Student $student) use (&$programs, &$performances) {
+                $programs[] = Program::factory()->make(
+                    [
+                        'sisid' => $student->sisid,
+                        'otherid' => $student->otherid,
+                    ]
+                )->toArray();
 
-                $student->performances()->save(
-                    Performance::factory()->make(['sisid' => $student->sisid])
-                );
+                $performances[] = Performance::factory()->make(['sisid' => $student->sisid])->toArray();
             });
+
+            Program::insert($programs);
+            Performance::insert($performances);
         });
 
         ray()->measure();
