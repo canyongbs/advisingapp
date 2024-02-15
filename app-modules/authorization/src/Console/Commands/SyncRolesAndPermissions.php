@@ -56,8 +56,6 @@ class SyncRolesAndPermissions extends Command
 
     public function handle(): int
     {
-        ray()->measure()->label('START');
-
         // TODO Put handling in place to prevent this from being run in production IF it has already been run once
         // We are going to introduce a convention for "one-time" operations similar to Laravel migrations in order to handle this
 
@@ -85,20 +83,14 @@ class SyncRolesAndPermissions extends Command
         );
 
         $this->line('Syncing Web permissions...');
-        ray()->measure()->label('Start syncWebPermissions');
         $this->syncWebPermissions();
-        ray()->measure()->label('End syncWebPermissions');
         $this->info('Web permissions synced successfully!');
 
         $this->line('Syncing API permissions...');
-        ray()->measure()->label('Start syncApiPermissions');
         $this->syncApiPermissions();
-        ray()->measure()->label('End syncApiPermissions');
         $this->info('API permissions synced successfully!');
 
         // Artisan::call(SetupRoleGroups::class);
-
-        ray()->measure()->label('END');
 
         return self::SUCCESS;
     }
