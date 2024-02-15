@@ -89,6 +89,8 @@ class SyncRolesAndPermissions extends Command
         $this->syncApiPermissions();
         $this->info('API permissions synced successfully!');
 
+        // Artisan::call(SetupRoleGroups::class);
+
         return self::SUCCESS;
     }
 

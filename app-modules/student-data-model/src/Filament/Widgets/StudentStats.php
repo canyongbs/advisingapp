@@ -34,13 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Widgets;
+namespace AdvisingApp\StudentDataModel\Filament\Widgets;
 
 use App\Models\User;
-use App\Filament\Widgets\StatsOverviewWidget;
+use Illuminate\Support\Number;
+use Illuminate\Support\Facades\Cache;
+use AdvisingApp\Alert\Enums\AlertStatus;
+use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
 
-class ProspectSubscriptionCount extends StatsOverviewWidget
+class StudentStats extends StatsOverviewWidget
 {
     protected function getStats(): array
     {
@@ -48,7 +53,25 @@ class ProspectSubscriptionCount extends StatsOverviewWidget
         $user = auth()->user();
 
         return [
-            Stat::make('Subscriptions', $user->prospectSubscriptions()->count()),
+            Stat::make('Students', Number::abbreviate(
+                Cache::tags(['{students}'])
+                    ->remember('{students-count}', now()->addHour(), function (): int {
+                        return Student::count();
+                    }),
+                maxPrecision: 2,
+            )),
+            Stat::make('Subscriptions', Cache::tags(['{students', "{user-{$user->getKey()}-student-subscriptions}"])
+                ->remember("{user-{$user->getKey()}-student-subscriptions-count}", now()->addHour(), function () use ($user): int {
+                    return $user->studentSubscriptions()->count();
+                })),
+            Stat::make('Alerts', Cache::tags(['{students', "{user-{$user->getKey()}-student-alerts}"])
+                ->remember("{user-{$user->getKey()}-student-alerts-count}", now()->addHour(), function () use ($user): int {
+                    return $user->studentAlerts()->status(AlertStatus::Active)->count();
+                })),
+            Stat::make('Caseloads', Cache::tags(["{user-{$user->getKey()}-student-caseloads}"])
+                ->remember("{user-{$user->getKey()}-student-caseloads-count}", now()->addHour(), function () use ($user): int {
+                    return $user->caseloads()->model(CaseloadModel::Student)->count();
+                })),
         ];
     }
 }

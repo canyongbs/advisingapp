@@ -36,6 +36,8 @@
 
 namespace App\Filament\Widgets;
 
+use Illuminate\Support\Number;
+use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use AdvisingApp\StudentDataModel\Models\Student;
 
@@ -46,7 +48,7 @@ class MyStudents extends StatsOverviewWidget
         return [
             Stat::make(
                 'Students (Subscribed)',
-                $this->formatCount(
+                Number::abbreviate(
                     auth()->user()->subscriptions()->where('subscribable_type', (new Student())->getMorphClass())->count()
                 )
             ),

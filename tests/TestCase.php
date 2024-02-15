@@ -46,6 +46,7 @@ use Symfony\Component\Finder\SplFileInfo;
 use App\Multitenancy\Actions\CreateTenant;
 use Spatie\Permission\PermissionRegistrar;
 use Illuminate\Support\Facades\ParallelTesting;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
@@ -77,6 +78,13 @@ abstract class TestCase extends BaseTestCase
         Tenant::first()->makeCurrent();
 
         $this->beginDatabaseTransactionOnConnection($this->tenantDatabaseConnectionName());
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        RoleBasedAccessControlRegistry::clearRegistry();
     }
 
     public function createLandlordTestingEnvironment(): void
