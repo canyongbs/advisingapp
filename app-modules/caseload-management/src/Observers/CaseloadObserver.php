@@ -36,12 +36,41 @@
 
 namespace AdvisingApp\CaseloadManagement\Observers;
 
+use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
 
 class CaseloadObserver
 {
     public function creating(Caseload $caseload): void
     {
         $caseload->user()->associate($caseload->user ?? auth()->user());
+    }
+
+    public function created(Caseload $caseload): void
+    {
+        /** @var ?User $user */
+        $user = auth()->user();
+
+        if ($user) {
+            Cache::tags([match ($caseload->model) {
+                CaseloadModel::Prospect => "{user-{$user->getKey()}-prospect-caseloads}",
+                CaseloadModel::Student => "{user-{$user->getKey()}-student-caseloads}",
+            }])->flush();
+        }
+    }
+
+    public function deleted(Caseload $caseload): void
+    {
+        /** @var ?User $user */
+        $user = auth()->user();
+
+        if ($user) {
+            Cache::tags([match ($caseload->model) {
+                CaseloadModel::Prospect => "{user-{$user->getKey()}-prospect-caseloads}",
+                CaseloadModel::Student => "{user-{$user->getKey()}-student-caseloads}",
+            }])->flush();
+        }
     }
 }

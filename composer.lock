@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1f0e322afa72a490b1fe92e450ed9215",
+    "content-hash": "3aed3893c6e59c833eb65f8ec6b2527d",
     "packages": [
         {
             "name": "amphp/amp",
@@ -655,16 +655,16 @@
         },
         {
             "name": "amphp/socket",
-            "version": "v2.2.2",
+            "version": "v2.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/socket.git",
-                "reference": "eb6c5e6baae5aebd9a209f50e81bff38c7efef97"
+                "reference": "40c80bdc67a9f975ecb5f4083e3c84ef9f23eace"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/socket/zipball/eb6c5e6baae5aebd9a209f50e81bff38c7efef97",
-                "reference": "eb6c5e6baae5aebd9a209f50e81bff38c7efef97",
+                "url": "https://api.github.com/repos/amphp/socket/zipball/40c80bdc67a9f975ecb5f4083e3c84ef9f23eace",
+                "reference": "40c80bdc67a9f975ecb5f4083e3c84ef9f23eace",
                 "shasum": ""
             },
             "require": {
@@ -683,7 +683,7 @@
                 "amphp/phpunit-util": "^3",
                 "amphp/process": "^2",
                 "phpunit/phpunit": "^9",
-                "psalm/phar": "^5.4"
+                "psalm/phar": "5.20"
             },
             "type": "library",
             "autoload": {
@@ -727,7 +727,7 @@
             ],
             "support": {
                 "issues": "https://github.com/amphp/socket/issues",
-                "source": "https://github.com/amphp/socket/tree/v2.2.2"
+                "source": "https://github.com/amphp/socket/tree/v2.2.3"
             },
             "funding": [
                 {
@@ -735,7 +735,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-31T18:12:01+00:00"
+            "time": "2024-02-13T21:03:09+00:00"
         },
         {
             "name": "amphp/sync",
@@ -1128,16 +1128,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.298.8",
+            "version": "3.298.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "9d123669b14ccd0f87f7f7de77ace7e5d8fe9d13"
+                "reference": "db225c3a1c5dabfbb5071349cfb7e4c396c3d9ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9d123669b14ccd0f87f7f7de77ace7e5d8fe9d13",
-                "reference": "9d123669b14ccd0f87f7f7de77ace7e5d8fe9d13",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/db225c3a1c5dabfbb5071349cfb7e4c396c3d9ec",
+                "reference": "db225c3a1c5dabfbb5071349cfb7e4c396c3d9ec",
                 "shasum": ""
             },
             "require": {
@@ -1217,9 +1217,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.298.8"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.298.9"
             },
-            "time": "2024-02-12T19:07:29+00:00"
+            "time": "2024-02-13T19:08:16+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1728,12 +1728,12 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/audit",
-                "reference": "a2fe1d504e59ad769b314137e3335d96c56aa274"
+                "reference": "bee5ae926d1be5238688dc89057c85f513d4d24d"
             },
             "require": {
                 "filament/filament": "^3.0",
                 "filament/spatie-laravel-settings-plugin": "^3.0",
-                "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
+                "owen-it/laravel-auditing": "^13.6",
                 "spatie/laravel-settings": "^3.2"
             },
             "type": "library",
@@ -6576,27 +6576,27 @@
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
-            "version": "3.4.0",
+            "version": "3.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kirschbaum-development/eloquent-power-joins.git",
-                "reference": "9238fcb53d777265ee9d8d139810e2cadecde079"
+                "reference": "13feb3692ab6c0475b2c05de131d5f5822fb250a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kirschbaum-development/eloquent-power-joins/zipball/9238fcb53d777265ee9d8d139810e2cadecde079",
-                "reference": "9238fcb53d777265ee9d8d139810e2cadecde079",
+                "url": "https://api.github.com/repos/kirschbaum-development/eloquent-power-joins/zipball/13feb3692ab6c0475b2c05de131d5f5822fb250a",
+                "reference": "13feb3692ab6c0475b2c05de131d5f5822fb250a",
                 "shasum": ""
             },
             "require": {
-                "illuminate/database": "^8.0|^9.0|^10.0",
-                "illuminate/support": "^8.0|^9.0|^10.0",
+                "illuminate/database": "^8.0|^9.0|^10.0|^11.0",
+                "illuminate/support": "^8.0|^9.0|^10.0|^11.0",
                 "php": "^8.0"
             },
             "require-dev": {
                 "laravel/legacy-factories": "^1.0@dev",
-                "orchestra/testbench": "^4.0|^5.0|^6.0|^7.0|^8.0",
-                "phpunit/phpunit": "^8.0|^9.0"
+                "orchestra/testbench": "^4.0|^5.0|^6.0|^7.0|^8.0|^9.0",
+                "phpunit/phpunit": "^8.0|^9.0|^10.0"
             },
             "type": "library",
             "extra": {
@@ -6632,9 +6632,9 @@
             ],
             "support": {
                 "issues": "https://github.com/kirschbaum-development/eloquent-power-joins/issues",
-                "source": "https://github.com/kirschbaum-development/eloquent-power-joins/tree/3.4.0"
+                "source": "https://github.com/kirschbaum-development/eloquent-power-joins/tree/3.5.0"
             },
-            "time": "2023-12-07T10:44:41+00:00"
+            "time": "2024-02-13T15:40:14+00:00"
         },
         {
             "name": "lab404/laravel-impersonate",
@@ -6849,16 +6849,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v10.43.0",
+            "version": "v10.44.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "4f7802dfc9993cb57cf69615491ce1a7eb2e9529"
+                "reference": "1199dbe361787bbe9648131a79f53921b4148cf6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/4f7802dfc9993cb57cf69615491ce1a7eb2e9529",
-                "reference": "4f7802dfc9993cb57cf69615491ce1a7eb2e9529",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/1199dbe361787bbe9648131a79f53921b4148cf6",
+                "reference": "1199dbe361787bbe9648131a79f53921b4148cf6",
                 "shasum": ""
             },
             "require": {
@@ -6906,6 +6906,7 @@
             "conflict": {
                 "carbonphp/carbon-doctrine-types": ">=3.0",
                 "doctrine/dbal": ">=4.0",
+                "phpunit/phpunit": ">=11.0.0",
                 "tightenco/collect": "<5.5.33"
             },
             "provide": {
@@ -7050,20 +7051,20 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-01-30T16:25:02+00:00"
+            "time": "2024-02-13T16:01:16+00:00"
         },
         {
             "name": "laravel/octane",
-            "version": "v2.3.2",
+            "version": "v2.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/octane.git",
-                "reference": "ddb5e7fe33fe7aff24c61d262d7d9dc00918888f"
+                "reference": "8f9d0da559ba4366fecc5c106d1298abe6773396"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/octane/zipball/ddb5e7fe33fe7aff24c61d262d7d9dc00918888f",
-                "reference": "ddb5e7fe33fe7aff24c61d262d7d9dc00918888f",
+                "url": "https://api.github.com/repos/laravel/octane/zipball/8f9d0da559ba4366fecc5c106d1298abe6773396",
+                "reference": "8f9d0da559ba4366fecc5c106d1298abe6773396",
                 "shasum": ""
             },
             "require": {
@@ -7138,7 +7139,7 @@
                 "issues": "https://github.com/laravel/octane/issues",
                 "source": "https://github.com/laravel/octane"
             },
-            "time": "2024-01-30T03:05:25+00:00"
+            "time": "2024-02-04T15:49:02+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -7265,16 +7266,16 @@
         },
         {
             "name": "laravel/scout",
-            "version": "v10.8.2",
+            "version": "v10.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/scout.git",
-                "reference": "4b5766ac110ef116c6571f4b3a29193bfd01c27c"
+                "reference": "f2e20b0eb3355b555038581b52aec4bfe814c700"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/scout/zipball/4b5766ac110ef116c6571f4b3a29193bfd01c27c",
-                "reference": "4b5766ac110ef116c6571f4b3a29193bfd01c27c",
+                "url": "https://api.github.com/repos/laravel/scout/zipball/f2e20b0eb3355b555038581b52aec4bfe814c700",
+                "reference": "f2e20b0eb3355b555038581b52aec4bfe814c700",
                 "shasum": ""
             },
             "require": {
@@ -7338,7 +7339,7 @@
                 "issues": "https://github.com/laravel/scout/issues",
                 "source": "https://github.com/laravel/scout"
             },
-            "time": "2024-01-30T18:52:49+00:00"
+            "time": "2024-02-13T17:22:36+00:00"
         },
         {
             "name": "laravel/serializable-closure",
@@ -7402,16 +7403,16 @@
         },
         {
             "name": "laravel/socialite",
-            "version": "v5.11.0",
+            "version": "v5.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/socialite.git",
-                "reference": "4f6a8af6f3f7c18da03d19842dd0514315501c10"
+                "reference": "ffeeb2cdf723b4c88b25479968e2d3a61a83dbe5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/socialite/zipball/4f6a8af6f3f7c18da03d19842dd0514315501c10",
-                "reference": "4f6a8af6f3f7c18da03d19842dd0514315501c10",
+                "url": "https://api.github.com/repos/laravel/socialite/zipball/ffeeb2cdf723b4c88b25479968e2d3a61a83dbe5",
+                "reference": "ffeeb2cdf723b4c88b25479968e2d3a61a83dbe5",
                 "shasum": ""
             },
             "require": {
@@ -7468,7 +7469,7 @@
                 "issues": "https://github.com/laravel/socialite/issues",
                 "source": "https://github.com/laravel/socialite"
             },
-            "time": "2023-12-02T18:22:36+00:00"
+            "time": "2024-02-11T18:29:55+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -9252,16 +9253,16 @@
         },
         {
             "name": "maximebf/debugbar",
-            "version": "v1.20.0",
+            "version": "v1.20.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/maximebf/php-debugbar.git",
-                "reference": "72fea42726383318e44e80dd94c77f958274ef47"
+                "reference": "06ebf922ccedfa4cc43015825697ee8c1fb80f7e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maximebf/php-debugbar/zipball/72fea42726383318e44e80dd94c77f958274ef47",
-                "reference": "72fea42726383318e44e80dd94c77f958274ef47",
+                "url": "https://api.github.com/repos/maximebf/php-debugbar/zipball/06ebf922ccedfa4cc43015825697ee8c1fb80f7e",
+                "reference": "06ebf922ccedfa4cc43015825697ee8c1fb80f7e",
                 "shasum": ""
             },
             "require": {
@@ -9312,9 +9313,9 @@
             ],
             "support": {
                 "issues": "https://github.com/maximebf/php-debugbar/issues",
-                "source": "https://github.com/maximebf/php-debugbar/tree/v1.20.0"
+                "source": "https://github.com/maximebf/php-debugbar/tree/v1.20.1"
             },
-            "time": "2024-02-12T10:29:57+00:00"
+            "time": "2024-02-13T19:03:14+00:00"
         },
         {
             "name": "microsoft/microsoft-graph",
@@ -10385,11 +10386,17 @@
         },
         {
             "name": "owen-it/laravel-auditing",
-            "version": "dev-feature/queued-auditing",
+            "version": "v13.6.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/canyongbs/laravel-auditing",
-                "reference": "38afe2bd40f3165c7ec267e0d087408b2d0f4e88"
+                "url": "https://github.com/owen-it/laravel-auditing.git",
+                "reference": "42ebec8a5abfcc5d61b563eb95c77dd597be4185"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/owen-it/laravel-auditing/zipball/42ebec8a5abfcc5d61b563eb95c77dd597be4185",
+                "reference": "42ebec8a5abfcc5d61b563eb95c77dd597be4185",
+                "shasum": ""
             },
             "require": {
                 "ext-json": "*",
@@ -10423,11 +10430,7 @@
                     "OwenIt\\Auditing\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "OwenIt\\Auditing\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -10446,10 +10449,10 @@
                 }
             ],
             "description": "Audit changes of your Eloquent models in Laravel/Lumen",
-            "homepage": "http://laravel-auditing.com",
+            "homepage": "https://laravel-auditing.com",
             "keywords": [
-                "accountability",
-                "audit",
+                "Accountability",
+                "Audit",
                 "auditing",
                 "changes",
                 "eloquent",
@@ -10467,7 +10470,7 @@
                 "issues": "https://github.com/owen-it/laravel-auditing/issues",
                 "source": "https://github.com/owen-it/laravel-auditing"
             },
-            "time": "2023-12-07T13:41:13+00:00"
+            "time": "2023-12-31T09:17:11+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -22151,16 +22154,16 @@
         },
         {
             "name": "spatie/laravel-ray",
-            "version": "1.35.0",
+            "version": "1.35.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-ray.git",
-                "reference": "29298a4bc2038ba108abc283e96fb74991644774"
+                "reference": "f504d3787d88c7e5de7a4290658f7ad9b1352f22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-ray/zipball/29298a4bc2038ba108abc283e96fb74991644774",
-                "reference": "29298a4bc2038ba108abc283e96fb74991644774",
+                "url": "https://api.github.com/repos/spatie/laravel-ray/zipball/f504d3787d88c7e5de7a4290658f7ad9b1352f22",
+                "reference": "f504d3787d88c7e5de7a4290658f7ad9b1352f22",
                 "shasum": ""
             },
             "require": {
@@ -22170,7 +22173,7 @@
                 "illuminate/queue": "^7.20|^8.19|^9.0|^10.0|^11.0",
                 "illuminate/support": "^7.20|^8.19|^9.0|^10.0|^11.0",
                 "php": "^7.4|^8.0",
-                "rector/rector": "^0.19.2",
+                "rector/rector": "^0.19.2|^1.0",
                 "spatie/backtrace": "^1.0",
                 "spatie/ray": "^1.41.1",
                 "symfony/stopwatch": "4.2|^5.1|^6.0|^7.0",
@@ -22222,7 +22225,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-ray/issues",
-                "source": "https://github.com/spatie/laravel-ray/tree/1.35.0"
+                "source": "https://github.com/spatie/laravel-ray/tree/1.35.1"
             },
             "funding": [
                 {
@@ -22234,7 +22237,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2024-02-03T10:04:50+00:00"
+            "time": "2024-02-13T14:19:41+00:00"
         },
         {
             "name": "spatie/macroable",
@@ -22968,8 +22971,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "canyon-gbs/advising-app-audit": 20,
-        "owen-it/laravel-auditing": 20,
         "serversideup/spin": 10
     },
     "prefer-stable": true,

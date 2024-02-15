@@ -42,9 +42,9 @@ use AdvisingApp\Team\Models\Team;
 use AdvisingApp\Team\Models\TeamUser;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Team\Observers\TeamUserObserver;
+use AdvisingApp\Team\Registries\TeamRbacRegistry;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class TeamServiceProvider extends ServiceProvider
 {
@@ -59,36 +59,9 @@ class TeamServiceProvider extends ServiceProvider
             'team' => Team::class,
         ]);
 
-        $this->registerRolesAndPermissions();
-
         $this->registerObservers();
-    }
 
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'team',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'team',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'team',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'team',
-            path: 'roles/web'
-        );
+        RoleBasedAccessControlRegistry::register(TeamRbacRegistry::class);
     }
 
     protected function registerObservers(): void

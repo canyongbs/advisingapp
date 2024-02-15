@@ -40,19 +40,19 @@ use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Notification\Models\Subscription;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Notifications\Events\NotificationFailed;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Notification\Events\SubscriptionCreated;
 use AdvisingApp\Notification\Events\SubscriptionDeleted;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Observers\SubscriptionObserver;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\Notification\Listeners\CreateAutoSubscription;
 use AdvisingApp\Notification\Listeners\HandleNotificationSent;
 use AdvisingApp\Notification\Listeners\HandleNotificationFailed;
+use AdvisingApp\Notification\Registries\NotificationRbacRegistry;
 use AdvisingApp\Notification\Observers\OutboundDeliverableObserver;
 use AdvisingApp\Notification\Listeners\NotifyUserOfSubscriptionCreated;
 use AdvisingApp\Notification\Listeners\NotifyUserOfSubscriptionDeleted;
@@ -70,11 +70,12 @@ class NotificationServiceProvider extends ServiceProvider
             'outbound_deliverable' => OutboundDeliverable::class,
         ]);
 
-        $this->registerRolesAndPermissions();
         $this->registerObservers();
         $this->registerEvents();
 
         $this->discoverSchema(__DIR__ . '/../../graphql/subscription.graphql');
+
+        RoleBasedAccessControlRegistry::register(NotificationRbacRegistry::class);
     }
 
     protected function registerObservers(): void
@@ -112,33 +113,6 @@ class NotificationServiceProvider extends ServiceProvider
         Event::listen(
             TriggeredAutoSubscription::class,
             CreateAutoSubscription::class,
-        );
-    }
-
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'notification',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'notification',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'notification',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'notification',
-            path: 'roles/web'
         );
     }
 }

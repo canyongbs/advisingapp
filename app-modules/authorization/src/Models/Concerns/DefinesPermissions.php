@@ -38,6 +38,7 @@ namespace AdvisingApp\Authorization\Models\Concerns;
 
 use ReflectionClass;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Attributes\NoPermissions;
 use App\Actions\Finders\ApplicationModules;
 
@@ -46,6 +47,8 @@ use App\Actions\Finders\ApplicationModules;
 // Or override the functionality provided here.
 trait DefinesPermissions
 {
+    public const SECONDS_TO_CACHE = 600; // 10 minutes
+
     public function getWebPermissions(): Collection
     {
         return collect($this->webPermissions());
@@ -62,11 +65,13 @@ trait DefinesPermissions
             return [];
         }
 
-        return resolve(ApplicationModules::class)
-            ->moduleConfig(
-                module: 'authorization',
-                path: 'permissions/web/model'
-            );
+        return Cache::remember('application.model.web.permissions', self::SECONDS_TO_CACHE, function () {
+            return resolve(ApplicationModules::class)
+                ->moduleConfig(
+                    module: 'authorization',
+                    path: 'permissions/web/model'
+                );
+        });
     }
 
     protected function apiPermissions(): array
@@ -75,10 +80,12 @@ trait DefinesPermissions
             return [];
         }
 
-        return resolve(ApplicationModules::class)
-            ->moduleConfig(
-                module: 'authorization',
-                path: 'permissions/api/model'
-            );
+        return Cache::remember('application.model.api.permissions', self::SECONDS_TO_CACHE, function () {
+            return resolve(ApplicationModules::class)
+                ->moduleConfig(
+                    module: 'authorization',
+                    path: 'permissions/api/model'
+                );
+        });
     }
 }

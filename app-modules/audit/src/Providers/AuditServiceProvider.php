@@ -41,6 +41,8 @@ use AdvisingApp\Audit\AuditPlugin;
 use AdvisingApp\Audit\Models\Audit;
 use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
+use App\Registries\RoleBasedAccessControlRegistry;
+use AdvisingApp\Audit\Registries\AuditRbacRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
@@ -56,41 +58,14 @@ class AuditServiceProvider extends ServiceProvider
         app('config')->set('audit', require base_path('app-modules/audit/config/audit.php'));
     }
 
-    public function boot(): void
+    public function boot(AuthorizationPermissionRegistry $permissionRegistry, AuthorizationRoleRegistry $roleRegistry): void
     {
         Relation::morphMap([
             'audit' => Audit::class,
         ]);
 
+        RoleBasedAccessControlRegistry::register(AuditRbacRegistry::class);
+
         $this->discoverSchema(__DIR__ . '/../../graphql/audit.graphql');
-
-        $this->registerRolesAndPermissions();
-    }
-
-    public function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'audit',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'audit',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'audit',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'audit',
-            path: 'roles/web'
-        );
     }
 }

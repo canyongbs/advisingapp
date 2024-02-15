@@ -64,8 +64,8 @@ class CreateChangeRequest extends CreateRecord
                             ->required()
                             ->columnSpanFull(),
                         Select::make('change_request_type_id')
+                            ->label('Type')
                             ->relationship('type', 'name')
-                            ->searchable()
                             ->preload()
                             ->required()
                             ->columnSpan(1),
@@ -84,7 +84,7 @@ class CreateChangeRequest extends CreateRecord
                             ->required()
                             ->columnSpan(1),
                     ])
-                    ->columns(2),
+                    ->columns(),
                 Section::make('Risk Management')
                     ->aside()
                     ->schema([

@@ -38,10 +38,10 @@ namespace AdvisingApp\IntegrationGoogleAnalytics\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\IntegrationGoogleAnalytics\IntegrationGoogleAnalyticsPlugin;
+use AdvisingApp\IntegrationGoogleAnalytics\Registries\IntegrationGoogleAnalyticsRbacRegistry;
 
 class IntegrationGoogleAnalyticsServiceProvider extends ServiceProvider
 {
@@ -54,33 +54,6 @@ class IntegrationGoogleAnalyticsServiceProvider extends ServiceProvider
     {
         Relation::morphMap([]);
 
-        $this->registerRolesAndPermissions();
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'integration-google-analytics',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'integration-google-analytics',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'integration-google-analytics',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'integration-google-analytics',
-            path: 'roles/web'
-        );
+        RoleBasedAccessControlRegistry::register(IntegrationGoogleAnalyticsRbacRegistry::class);
     }
 }

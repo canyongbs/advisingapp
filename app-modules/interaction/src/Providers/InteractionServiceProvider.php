@@ -41,6 +41,7 @@ use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Interaction\InteractionPlugin;
 use AdvisingApp\Interaction\Models\Interaction;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Interaction\Models\InteractionType;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Interaction\Models\InteractionDriver;
@@ -48,9 +49,8 @@ use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionRelation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Interaction\Observers\InteractionObserver;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Interaction\Registries\InteractionRbacRegistry;
 use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
 
 class InteractionServiceProvider extends ServiceProvider
@@ -74,39 +74,13 @@ class InteractionServiceProvider extends ServiceProvider
             'interaction_type' => InteractionType::class,
         ]);
 
-        $this->registerRolesAndPermissions();
         $this->registerObservers();
 
         $this->discoverSchema(__DIR__ . '/../../graphql/interaction.graphql');
 
         $this->registerEnum(InteractionStatusColorOptions::class);
-    }
 
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'interaction',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'interaction',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'interaction',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'interaction',
-            path: 'roles/web'
-        );
+        RoleBasedAccessControlRegistry::register(InteractionRbacRegistry::class);
     }
 
     protected function registerObservers(): void

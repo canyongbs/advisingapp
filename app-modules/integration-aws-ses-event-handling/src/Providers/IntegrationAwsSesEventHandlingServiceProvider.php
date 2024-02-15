@@ -40,11 +40,11 @@ use Filament\Panel;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Mail\Events\MessageSending;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\IntegrationAwsSesEventHandling\IntegrationAwsSesEventHandlingPlugin;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\EnsureSesConfigurationSetHeadersArePresent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Registries\IntegrationAwsSesEventHandlingRbacRegistry;
 
 class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
 {
@@ -57,8 +57,9 @@ class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
     {
         Relation::morphMap([]);
 
-        $this->registerRolesAndPermissions();
         $this->registerEvents();
+
+        RoleBasedAccessControlRegistry::register(IntegrationAwsSesEventHandlingRbacRegistry::class);
     }
 
     public function registerEvents(): void
@@ -66,33 +67,6 @@ class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
         Event::listen(
             MessageSending::class,
             EnsureSesConfigurationSetHeadersArePresent::class
-        );
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'integration-aws-ses-event-handling',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'integration-aws-ses-event-handling',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'integration-aws-ses-event-handling',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'integration-aws-ses-event-handling',
-            path: 'roles/web'
         );
     }
 }

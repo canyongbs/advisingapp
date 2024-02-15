@@ -114,6 +114,7 @@ return [
     'stubs' => [
         'composer.json' => base_path('stubs/app-modules/composer-stub.json'),
         'src/Providers/StubClassNamePrefixServiceProvider.php' => base_path('stubs/app-modules/app/ServiceProvider.php'),
+        'src/Registries/StubClassNamePrefixRbacRegistry.php' => base_path('stubs/app-modules/app/Registries/RbacRegistry.php'),
         'src/StubClassNamePrefixPlugin.php' => base_path('stubs/app-modules/app/Plugin.php'),
         'src/Models/.gitkeep' => base_path('stubs/app-modules/.gitkeep'),
         'tests/.gitkeep' => base_path('stubs/app-modules/.gitkeep'),

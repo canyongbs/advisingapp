@@ -46,14 +46,14 @@ use AdvisingApp\Assistant\AssistantPlugin;
 use Filament\Support\Facades\FilamentAsset;
 use AdvisingApp\Assistant\Models\PromptType;
 use AdvisingApp\Assistant\Models\AssistantChat;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Assistant\Models\AssistantChatFolder;
 use AdvisingApp\Assistant\Models\AssistantChatMessage;
 use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
+use AdvisingApp\Assistant\Registries\AssistantRbacRegistry;
 use AdvisingApp\Assistant\Listeners\LogAssistantChatMessage;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class AssistantServiceProvider extends ServiceProvider
 {
@@ -76,8 +76,9 @@ class AssistantServiceProvider extends ServiceProvider
         ]);
 
         $this->registerEvents();
-        $this->registerRolesAndPermissions();
         $this->registerAssets();
+
+        RoleBasedAccessControlRegistry::register(AssistantRbacRegistry::class);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
     }
@@ -92,32 +93,5 @@ class AssistantServiceProvider extends ServiceProvider
     protected function registerEvents(): void
     {
         Event::listen(AIPromptInitiated::class, LogAssistantChatMessage::class);
-    }
-
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'assistant',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'assistant',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'assistant',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'assistant',
-            path: 'roles/web'
-        );
     }
 }

@@ -4,15 +4,15 @@ type User @model(class: "App\\Models\\User") {
     id: UUID!
 
     "Unique email address."
-    email: String!
+    email: String! @canRoot(ability: "viewEmail")
 }
 
 input UsersQuery {
     "Unique primary key."
-    id: UUID!
+    id: UUID
 
     "Users email address."
-    email: String!
+    email: String @canUseInQuery(ability: "viewEmail")
 }
 
 type UserQueries {
@@ -30,10 +30,9 @@ type UserQueries {
     ): User @find @canResolved(ability: "view")
 
     "List multiple users."
-    list(
-        "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
-        name: String @where(operator: "like")
-    ): [User!]! @paginate @canModel(ability: "viewAny")
+    list(where: UsersQuery @searchBy): [User!]!
+        @paginate
+        @canModel(ability: "viewAny")
 }
 
 extend type Query {

@@ -38,13 +38,13 @@ namespace AdvisingApp\CaseloadManagement\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\CaseloadManagement\Models\CaseloadSubject;
 use AdvisingApp\CaseloadManagement\CaseloadManagementPlugin;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\CaseloadManagement\Observers\CaseloadObserver;
+use AdvisingApp\CaseloadManagement\Registries\CaseloadManagementRbacRegistry;
 
 class CaseloadManagementServiceProvider extends ServiceProvider
 {
@@ -60,36 +60,9 @@ class CaseloadManagementServiceProvider extends ServiceProvider
             'caseload_subject' => CaseloadSubject::class,
         ]);
 
-        $this->registerRolesAndPermissions();
-
         $this->registerObservers();
-    }
 
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'caseload-management',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'caseload-management',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'caseload-management',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'caseload-management',
-            path: 'roles/web'
-        );
+        RoleBasedAccessControlRegistry::register(CaseloadManagementRbacRegistry::class);
     }
 
     protected function registerObservers(): void

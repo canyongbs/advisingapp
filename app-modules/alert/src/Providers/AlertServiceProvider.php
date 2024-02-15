@@ -46,9 +46,9 @@ use AdvisingApp\Alert\Enums\AlertStatus;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Events\AlertCreated;
 use AdvisingApp\Alert\Observers\AlertObserver;
+use App\Registries\RoleBasedAccessControlRegistry;
+use AdvisingApp\Alert\Registries\AlertRbacRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Alert\Listeners\NotifySubscribersOfAlertCreated;
 
 class AlertServiceProvider extends ServiceProvider
@@ -66,40 +66,13 @@ class AlertServiceProvider extends ServiceProvider
             'alert' => Alert::class,
         ]);
 
-        $this->registerRolesAndPermissions();
-
         $this->registerObservers();
 
         $this->registerEvents();
 
         $this->registerGraphQL();
-    }
 
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'alert',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'alert',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'alert',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'alert',
-            path: 'roles/web'
-        );
+        RoleBasedAccessControlRegistry::register(AlertRbacRegistry::class);
     }
 
     protected function registerObservers(): void

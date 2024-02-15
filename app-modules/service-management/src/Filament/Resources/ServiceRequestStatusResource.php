@@ -37,6 +37,8 @@
 namespace AdvisingApp\ServiceManagement\Filament\Resources;
 
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Clusters\ServiceManagementAdministration;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\EditServiceRequestStatus;
@@ -53,6 +55,14 @@ class ServiceRequestStatusResource extends Resource
     protected static ?int $navigationSort = 20;
 
     protected static ?string $cluster = ServiceManagementAdministration::class;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
 
     public static function getPages(): array
     {

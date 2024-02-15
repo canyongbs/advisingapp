@@ -35,7 +35,6 @@
 */
 
 use AdvisingApp\Audit\Models\Audit;
-use OwenIt\Auditing\Listeners\ProcessDispatchAudit;
 
 return [
     'enabled' => env('AUDITING_ENABLED', true),
@@ -203,7 +202,7 @@ return [
     */
 
     'queue' => [
-        'dispatch_listener' => ProcessDispatchAudit::class,
+        'enable' => true,
         'connection' => env('AUDIT_QUEUE_CONNECTION', 'sync'),
         'queue' => env('SQS_QUEUE', 'default'),
         'delay' => 0,

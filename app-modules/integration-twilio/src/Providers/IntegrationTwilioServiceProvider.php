@@ -39,11 +39,11 @@ namespace AdvisingApp\IntegrationTwilio\Providers;
 use Filament\Panel;
 use Twilio\Rest\Client;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\IntegrationTwilio\IntegrationTwilioPlugin;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Engagement\Actions\FindEngagementResponseSender;
+use AdvisingApp\IntegrationTwilio\Registries\IntegrationTwilioRbacRegistry;
 use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
 use AdvisingApp\IntegrationTwilio\Actions\Playground\FindEngagementResponseSender as PlaygroundFindEngagementResponseSender;
 
@@ -71,33 +71,6 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->registerRolesAndPermissions();
-    }
-
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'integration-twilio',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'integration-twilio',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'integration-twilio',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'integration-twilio',
-            path: 'roles/web'
-        );
+        RoleBasedAccessControlRegistry::register(IntegrationTwilioRbacRegistry::class);
     }
 }

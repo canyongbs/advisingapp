@@ -34,14 +34,8 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
-use App\Notifications\DemoNotification;
 use App\Http\Controllers\ViewPublicUserProfileController;
-
-Route::get('/test-embed', function () {
-    return view('test-embed');
-});
 
 Route::get('/profiles/{user:public_profile_slug}', ViewPublicUserProfileController::class)
     ->name('users.profile.view.public');
@@ -49,11 +43,3 @@ Route::get('/profiles/{user:public_profile_slug}', ViewPublicUserProfileControll
 Route::middleware(['auth', 'can:authorization.view_api_documentation'])
     ->get('/api-docs', fn () => File::get(storage_path('app/api-docs/index.html')))
     ->name('api-docs');
-
-//TODO: remove
-Route::get('/demo-notification', function () {
-    /** @var User $user */
-    $user = auth()->user();
-
-    return (new DemoNotification($user))->toMail(User::first())->render();
-})->middleware(['auth']);

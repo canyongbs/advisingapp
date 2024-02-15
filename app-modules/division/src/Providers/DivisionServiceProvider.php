@@ -41,10 +41,10 @@ use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Division\DivisionPlugin;
 use AdvisingApp\Division\Models\Division;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Division\Observers\DivisionObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Division\Registries\DivisionRbacRegistry;
 
 class DivisionServiceProvider extends ServiceProvider
 {
@@ -61,37 +61,10 @@ class DivisionServiceProvider extends ServiceProvider
             'division' => Division::class,
         ]);
 
-        $this->registerRolesAndPermissions();
-
         $this->registerObservers();
         $this->discoverSchema(__DIR__ . '/../../graphql/division.graphql');
-    }
 
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'division',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'division',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'division',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'division',
-            path: 'roles/web'
-        );
+        RoleBasedAccessControlRegistry::register(DivisionRbacRegistry::class);
     }
 
     protected function registerObservers(): void

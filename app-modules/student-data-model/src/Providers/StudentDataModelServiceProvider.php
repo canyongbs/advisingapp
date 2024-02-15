@@ -41,12 +41,12 @@ use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Performance;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\StudentDataModel\Registries\StudentDataModelRbacRegistry;
 
 class StudentDataModelServiceProvider extends ServiceProvider
 {
@@ -66,35 +66,8 @@ class StudentDataModelServiceProvider extends ServiceProvider
             'program' => Program::class,
         ]);
 
-        $this->registerRolesAndPermissions();
+        RoleBasedAccessControlRegistry::register(StudentDataModelRbacRegistry::class);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
-    }
-
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'student-data-model',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'student-data-model',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'student-data-model',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'student-data-model',
-            path: 'roles/web'
-        );
     }
 }

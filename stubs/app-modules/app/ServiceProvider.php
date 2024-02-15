@@ -38,10 +38,10 @@ namespace StubModuleNamespace\StubClassNamePrefix\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use StubModuleNamespace\StubClassNamePrefix\StubClassNamePrefixPlugin;
+use StubModuleNamespace\StubClassNamePrefix\Registries\StubClassNamePrefixRbacRegistry;
 
 class StubClassNamePrefixServiceProvider extends ServiceProvider
 {
@@ -54,33 +54,6 @@ class StubClassNamePrefixServiceProvider extends ServiceProvider
     {
         Relation::morphMap([]);
 
-        $this->registerRolesAndPermissions();
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'StubModuleName',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'StubModuleName',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'StubModuleName',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'StubModuleName',
-            path: 'roles/web'
-        );
+        RoleBasedAccessControlRegistry::register(StubClassNamePrefixRbacRegistry::class);
     }
 }

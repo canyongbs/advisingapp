@@ -39,7 +39,9 @@ namespace AdvisingApp\Alert\Observers;
 use App\Models\User;
 use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Support\Facades\Cache;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Alert\Events\AlertCreated;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
 
 class AlertObserver
@@ -51,6 +53,11 @@ class AlertObserver
         if ($user instanceof User) {
             // Creating the subscription directly so that the alert can be sent to this User as well
             resolve(SubscriptionCreate::class)->handle($user, $alert->getSubscribable(), false);
+
+            Cache::tags([match ($alert->concern_type) {
+                app(Prospect::class)->getMorphClass() => "{user-{$user->getKey()}-prospect-alerts}",
+                app(Student::class)->getMorphClass() => "{user-{$user->getKey()}-student-alerts}",
+            }])->flush();
         }
 
         AlertCreated::dispatch($alert);
@@ -64,5 +71,15 @@ class AlertObserver
     public function deleted(Alert $alert): void
     {
         Cache::tags('{alert-count}')->flush();
+
+        /** @var ?User $user */
+        $user = auth()->user();
+
+        if ($user) {
+            Cache::tags([match ($alert->concern_type) {
+                app(Prospect::class)->getMorphClass() => "{user-{$user->getKey()}-prospect-alerts}",
+                app(Student::class)->getMorphClass() => "{user-{$user->getKey()}-student-alerts}",
+            }])->flush();
+        }
     }
 }
