@@ -37,16 +37,24 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 class StudentSeeder extends Seeder
 {
     public function run(): void
     {
-        Student::factory()
-            ->create([
-                'full_name' => 'Twilio Tester',
-                'mobile' => config('services.twilio.test_from_number'),
-            ]);
+        ray()->measure();
+        /** @var Collection $students */
+        $students = Student::factory(100000)
+            ->make();
+
+        $chunks = $students->chunk(1000);
+
+        $chunks->each(function ($chunk) {
+            Student::insert($chunk->toArray());
+        });
+
+        ray()->measure();
     }
 }
