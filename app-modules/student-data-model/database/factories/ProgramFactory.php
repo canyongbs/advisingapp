@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Database\Factories;
 
 use AdvisingApp\StudentDataModel\Models\Program;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -47,8 +48,7 @@ class ProgramFactory extends Factory
     public function definition(): array
     {
         return [
-            // TODO: Determine if we can have a different ID as the primary
-            'sisid' => $this->faker->randomNumber(9),
+            'sisid' => Student::factory(),
             'otherid' => $this->faker->randomNumber(9),
             'acad_career' => $this->faker->randomElement(['NC', 'CRED']),
             'division' => $this->faker->randomElement(['ABC01', 'ABD02', 'ABE03']),

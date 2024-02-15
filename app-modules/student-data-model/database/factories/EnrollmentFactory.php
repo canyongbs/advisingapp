@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Database\Factories;
 
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -47,15 +48,14 @@ class EnrollmentFactory extends Factory
     public function definition(): array
     {
         return [
-            // TODO: Determine if we can have a different ID as the primary
-            'sisid' => $this->faker->randomNumber(9),
+            'sisid' => Student::factory(),
             'acad_career' => $this->faker->randomElement(['NC', 'CRED']),
             'division' => $this->faker->randomElement(['ABC01', 'ABD02', 'ABE03']),
             'semester' => $this->faker->randomNumber(4),
             'class_nbr' => $this->faker->randomNumber(5),
             'subject' => $this->faker->randomElement(['ACC', 'FITNESS', 'MATH']),
             'catalog_nbr' => $this->faker->randomNumber(3) . '-' . $this->faker->randomNumber(5),
-            'enrl_status' => $this->faker->randomElement(['DROP', 'ENRL']),
+            'enrl_status_reason' => $this->faker->randomElement(['DROP', 'ENRL']),
             'enrl_add_dt' => $this->faker->dateTime(),
             'enrl_drop_dt' => $this->faker->dateTime(),
             'crse_grade_off' => $this->faker->randomElement(['A', 'B', 'C', 'D', 'W']),
