@@ -61,13 +61,23 @@ class StudentSeeder extends Seeder
             );
         });
 
-        $chunks->each(function ($chunk) {
+        $totalEnrollments = 0;
+
+        $chunks->each(function ($chunk) use (&$totalEnrollments) {
             Student::insert($chunk->toArray());
 
             $programs = [];
             $performances = [];
 
-            $chunk->each(function (Student $student) use (&$programs, &$performances) {
+            $chunk->each(function (Student $student) use (&$programs, &$performances, &$totalEnrollments) {
+                if ($totalEnrollments < 100000) {
+                    $student->enrollments()->saveMany(
+                        Enrollment::factory(5)->make(['sisid' => $student->sisid])
+                    );
+
+                    $totalEnrollments += 5;
+                }
+
                 $programs[] = Program::factory()->make(
                     [
                         'sisid' => $student->sisid,
