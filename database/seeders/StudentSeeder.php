@@ -47,37 +47,55 @@ class StudentSeeder extends Seeder
 {
     public function run(): void
     {
-        ray()->measure();
+        /** @var Collection $students */
+        $students = Student::factory(20000)
+            ->make();
+
+        $students->chunk(200)
+            ->each(function ($chunk) {
+                Student::insert($chunk->toArray());
+
+                $enrollments = [];
+
+                $chunk->each(function (Student $student) use (&$enrollments) {
+                    foreach (Enrollment::factory(5)->make(['sisid' => $student->sisid])->toArray() as $enrollment) {
+                        $enrollments[] = $enrollment;
+                    }
+                });
+
+                Enrollment::insert($enrollments);
+
+                $programs = [];
+                $performances = [];
+
+                $chunk->each(function (Student $student) use (&$programs, &$performances) {
+                    $programs[] = Program::factory()->make(
+                        [
+                            'sisid' => $student->sisid,
+                            'otherid' => $student->otherid,
+                        ]
+                    )->toArray();
+
+                    $performances[] = Performance::factory()->make(['sisid' => $student->sisid])->toArray();
+                });
+
+                Program::insert($programs);
+                Performance::insert($performances);
+            });
 
         /** @var Collection $students */
-        $students = Student::factory(100000)
+        $students = Student::factory(80000)
             ->make();
 
         $chunks = $students->chunk(2000);
 
-        $chunks->first()->each(function ($student) {
-            $student->enrollments()->saveMany(
-                Enrollment::factory(5)->make(['sisid' => $student->sisid])
-            );
-        });
-
-        $totalEnrollments = 0;
-
-        $chunks->each(function ($chunk) use (&$totalEnrollments) {
+        $chunks->each(function ($chunk) {
             Student::insert($chunk->toArray());
 
             $programs = [];
             $performances = [];
 
-            $chunk->each(function (Student $student) use (&$programs, &$performances, &$totalEnrollments) {
-                if ($totalEnrollments < 100000) {
-                    $student->enrollments()->saveMany(
-                        Enrollment::factory(5)->make(['sisid' => $student->sisid])
-                    );
-
-                    $totalEnrollments += 5;
-                }
-
+            $chunk->each(function (Student $student) use (&$programs, &$performances) {
                 $programs[] = Program::factory()->make(
                     [
                         'sisid' => $student->sisid,
@@ -91,7 +109,5 @@ class StudentSeeder extends Seeder
             Program::insert($programs);
             Performance::insert($performances);
         });
-
-        ray()->measure();
     }
 }
