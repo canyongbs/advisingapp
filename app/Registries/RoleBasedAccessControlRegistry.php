@@ -40,7 +40,7 @@ use Illuminate\Support\Collection;
 
 class RoleBasedAccessControlRegistry
 {
-    public static array $registries = [];
+    protected static array $registries = [];
 
     public static function register($class): void
     {
@@ -50,5 +50,10 @@ class RoleBasedAccessControlRegistry
     public static function getRegistries(): Collection
     {
         return collect(static::$registries);
+    }
+
+    public static function clearRegistry(): void
+    {
+        static::$registries = [];
     }
 }
