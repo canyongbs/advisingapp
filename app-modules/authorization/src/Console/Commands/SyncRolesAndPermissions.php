@@ -38,6 +38,7 @@ namespace AdvisingApp\Authorization\Console\Commands;
 
 use App\Models\Tenant;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Artisan;
 use AdvisingApp\Authorization\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -90,6 +91,10 @@ class SyncRolesAndPermissions extends Command
         $this->info('API permissions synced successfully!');
 
         // Artisan::call(SetupRoleGroups::class);
+
+        // Remove api/web model permissions from cache
+        Cache::forget('application.model.web.permissions');
+        Cache::forget('application.model.api.permissions');
 
         return self::SUCCESS;
     }

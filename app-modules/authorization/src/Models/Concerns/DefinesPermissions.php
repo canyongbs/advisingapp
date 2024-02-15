@@ -47,7 +47,7 @@ use App\Actions\Finders\ApplicationModules;
 // Or override the functionality provided here.
 trait DefinesPermissions
 {
-    public const SECONDS_TO_CACHE = 3600; // 1 hour
+    public const SECONDS_TO_CACHE = 600; // 10 minutes
 
     public function getWebPermissions(): Collection
     {
