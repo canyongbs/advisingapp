@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Database\Factories;
 
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\StudentDataModel\Models\Performance;
 
@@ -47,13 +48,14 @@ class PerformanceFactory extends Factory
     public function definition(): array
     {
         return [
-            // TODO: Determine if we can have a different ID as the primary
-            'sisid' => $this->faker->randomNumber(9),
+            'sisid' => Student::factory(),
             'acad_career' => $this->faker->randomElement(['NC', 'CRED']),
             'division' => $this->faker->randomElement(['ABC01', 'ABD02', 'ABE03']),
             'first_gen' => $this->faker->boolean(),
-            'cum_att' => $this->faker->randomNumber(2),
-            'cum_ern' => $this->faker->randomNumber(2),
+            'cum_att' => $this->faker->numerify('##'),
+            'cum_ern' => function (array $attributes) {
+                return $attributes['cum_att'] - $this->faker->numberBetween(0, $attributes['cum_att']);
+            },
             'pct_ern' => 0,
             'cum_gpa' => $this->faker->randomFloat(3, 0, 4),
             'max_dt' => $this->faker->dateTime(),

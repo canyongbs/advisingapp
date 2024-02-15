@@ -76,7 +76,7 @@ class DemoDatabaseSeeder extends Seeder
         );
 
         $this->call([
-            SisDataSeeder::class,
+            StudentSeeder::class,
             SuperAdminProfileSeeder::class,
             UsersTableSeeder::class,
             DivisionSeeder::class,

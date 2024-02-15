@@ -38,36 +38,28 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRecordStudentItemsTable extends Migration
-{
-    public function up()
+return new class () extends Migration {
+    public function up(): void
     {
-        Schema::create('record_student_items', function (Blueprint $table) {
-            $table->bigIncrements('id');
+        if (Schema::hasTable('enrollments')) {
+            return;
+        }
+
+        Schema::create('enrollments', function (Blueprint $table) {
             $table->string('sisid');
-            $table->string('otherid')->nullable();
-            $table->string('first')->nullable();
-            $table->string('last')->nullable();
-            $table->string('full')->nullable();
-            $table->string('preferred')->nullable();
-            $table->string('email')->nullable();
-            $table->string('email_2')->nullable();
-            $table->integer('mobile')->nullable();
-            $table->string('sms_opt_out')->nullable();
-            $table->string('email_bounce')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('address')->nullable();
-            $table->string('address_2')->nullable();
-            $table->date('birthdate')->nullable();
-            $table->integer('hsgrad')->nullable();
-            $table->string('dual')->nullable();
-            $table->string('ferpa')->nullable();
-            $table->float('gpa', 4, 3)->nullable();
-            $table->string('dfw')->nullable();
-            $table->string('firstgen')->nullable();
-            $table->string('ethnicity')->nullable();
-            $table->datetime('lastlmslogin')->nullable();
-            $table->timestamps();
+            $table->string('acad_career');
+            $table->string('division');
+            $table->string('semester');
+            $table->string('class_nbr');
+            $table->string('subject');
+            $table->string('catalog_nbr');
+            $table->string('enrl_status_reason');
+            $table->dateTimeTz('enrl_add_dt');
+            $table->dateTimeTz('enrl_drop_dt');
+            $table->string('crse_grade_off');
+            $table->integer('unt_taken');
+            $table->integer('unt_earned');
+            $table->dateTimeTz('last_upd_dt_stmp');
         });
     }
-}
+};
