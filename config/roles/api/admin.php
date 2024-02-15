@@ -83,6 +83,7 @@ return [
         'report_prospect.access',
         'journey_menu.access',
         'license_settings.manage',
+        'user.view-email',
     ],
 
     'model' => [
