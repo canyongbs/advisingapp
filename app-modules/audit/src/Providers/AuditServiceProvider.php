@@ -40,6 +40,8 @@ use Filament\Panel;
 use AdvisingApp\Audit\AuditPlugin;
 use AdvisingApp\Audit\Models\Audit;
 use Illuminate\Support\ServiceProvider;
+use App\Registries\RoleBasedAccessControlRegistry;
+use AdvisingApp\Audit\Registries\AuditRbacRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
@@ -55,30 +57,10 @@ class AuditServiceProvider extends ServiceProvider
 
     public function boot(AuthorizationPermissionRegistry $permissionRegistry, AuthorizationRoleRegistry $roleRegistry): void
     {
-        Relation::morphMap(
-            [
-                'audit' => Audit::class,
-            ]
-        );
+        Relation::morphMap([
+            'audit' => Audit::class,
+        ]);
 
-        $permissionRegistry->registerApiPermissions(
-            module: 'audit',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'audit',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry->registerApiRoles(
-            module: 'audit',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'audit',
-            path: 'roles/web'
-        );
+        RoleBasedAccessControlRegistry::register(AuditRbacRegistry::class);
     }
 }

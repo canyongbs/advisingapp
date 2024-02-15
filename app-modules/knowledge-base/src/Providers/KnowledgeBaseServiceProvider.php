@@ -40,14 +40,14 @@ use Filament\Panel;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\KnowledgeBase\KnowledgeBasePlugin;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\KnowledgeBase\Observers\KnowledgeBaseItemObserver;
+use AdvisingApp\KnowledgeBase\Registries\KnowledgeBaseRbacRegistry;
 
 class KnowledgeBaseServiceProvider extends ServiceProvider
 {
@@ -67,40 +67,14 @@ class KnowledgeBaseServiceProvider extends ServiceProvider
             'knowledge_base_status' => KnowledgeBaseStatus::class,
         ]);
 
-        $this->registerRolesAndPermissions();
         $this->registerObservers();
         $this->discoverSchema(__DIR__ . '/../../graphql/knowledge-base-item.graphql');
+
+        RoleBasedAccessControlRegistry::register(KnowledgeBaseRbacRegistry::class);
     }
 
     public function registerObservers(): void
     {
         KnowledgeBaseItem::observe(KnowledgeBaseItemObserver::class);
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'knowledge-base',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'knowledge-base',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'knowledge-base',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'knowledge-base',
-            path: 'roles/web'
-        );
     }
 }

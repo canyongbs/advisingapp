@@ -40,9 +40,9 @@ use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\IntegrationAI\Client\AzureOpenAI;
 use AdvisingApp\IntegrationAI\IntegrationAIPlugin;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\IntegrationAI\Client\Contracts\AIChatClient;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\IntegrationAI\Registries\IntegrationAIRbacRegistry;
 use AdvisingApp\IntegrationAI\Client\Playground\AzureOpenAI as PlaygroundAzureOpenAI;
 
 class IntegrationAIServiceProvider extends ServiceProvider
@@ -62,33 +62,6 @@ class IntegrationAIServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->registerRolesAndPermissions();
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'integration-ai',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'integration-ai',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'integration-ai',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'integration-ai',
-            path: 'roles/web'
-        );
+        RoleBasedAccessControlRegistry::register(IntegrationAIRbacRegistry::class);
     }
 }

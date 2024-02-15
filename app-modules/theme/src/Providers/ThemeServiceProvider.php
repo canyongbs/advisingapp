@@ -39,6 +39,8 @@ namespace AdvisingApp\Theme\Providers;
 use Filament\Panel;
 use AdvisingApp\Theme\ThemePlugin;
 use Illuminate\Support\ServiceProvider;
+use App\Registries\RoleBasedAccessControlRegistry;
+use AdvisingApp\Theme\Registries\ThemeRbacRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
@@ -56,33 +58,6 @@ class ThemeServiceProvider extends ServiceProvider
             [],
         );
 
-        $this->registerRolesAndPermissions();
-    }
-
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'theme',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'theme',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'theme',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'theme',
-            path: 'roles/web'
-        );
+        RoleBasedAccessControlRegistry::register(ThemeRbacRegistry::class);
     }
 }

@@ -44,6 +44,7 @@ use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\RoleGroup;
 use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\AuthorizationPlugin;
+use App\Registries\RoleBasedAccessControlRegistry;
 use SocialiteProviders\Azure\AzureExtendSocialite;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -51,6 +52,7 @@ use SocialiteProviders\Google\GoogleExtendSocialite;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\Observers\LicenseObserver;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\Registries\AuthorizationRbacRegistry;
 use AdvisingApp\Authorization\Http\Controllers\Auth\LogoutController;
 use Filament\Http\Controllers\Auth\LogoutController as FilamentLogoutController;
 
@@ -86,26 +88,6 @@ class AuthorizationServiceProvider extends ServiceProvider
 
         $this->registerObservers();
 
-        $permissionRegistry->registerApiPermissions(
-            module: 'authorization',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'authorization',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry->registerApiRoles(
-            module: 'authorization',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'authorization',
-            path: 'roles/web'
-        );
-
         Event::listen(
             events: SocialiteWasCalled::class,
             listener: AzureExtendSocialite::class . '@handle'
@@ -115,6 +97,8 @@ class AuthorizationServiceProvider extends ServiceProvider
             events: SocialiteWasCalled::class,
             listener: GoogleExtendSocialite::class . '@handle'
         );
+
+        RoleBasedAccessControlRegistry::register(AuthorizationRbacRegistry::class);
     }
 
     public function registerObservers(): void

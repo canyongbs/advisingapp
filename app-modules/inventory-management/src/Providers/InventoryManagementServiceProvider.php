@@ -39,20 +39,20 @@ namespace AdvisingApp\InventoryManagement\Providers;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\InventoryManagement\Models\Asset;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\InventoryManagement\Models\AssetType;
 use AdvisingApp\InventoryManagement\Models\AssetStatus;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
 use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
 use AdvisingApp\InventoryManagement\Models\AssetLocation;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\InventoryManagement\InventoryManagementPlugin;
 use AdvisingApp\InventoryManagement\Models\MaintenanceActivity;
 use AdvisingApp\InventoryManagement\Models\MaintenanceProvider;
 use AdvisingApp\InventoryManagement\Observers\AssetCheckInObserver;
 use AdvisingApp\InventoryManagement\Observers\AssetCheckOutObserver;
 use AdvisingApp\InventoryManagement\Observers\MaintenanceActivityObserver;
+use AdvisingApp\InventoryManagement\Registries\InventoryManagementRbacRegistry;
 
 class InventoryManagementServiceProvider extends ServiceProvider
 {
@@ -76,7 +76,7 @@ class InventoryManagementServiceProvider extends ServiceProvider
 
         $this->registerObservers();
 
-        $this->registerRolesAndPermissions();
+        RoleBasedAccessControlRegistry::register(InventoryManagementRbacRegistry::class);
     }
 
     public function registerObservers(): void
@@ -84,32 +84,5 @@ class InventoryManagementServiceProvider extends ServiceProvider
         AssetCheckIn::observe(AssetCheckInObserver::class);
         AssetCheckOut::observe(AssetCheckOutObserver::class);
         MaintenanceActivity::observe(MaintenanceActivityObserver::class);
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'inventory-management',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'inventory-management',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'inventory-management',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'inventory-management',
-            path: 'roles/web'
-        );
     }
 }

@@ -43,6 +43,7 @@ use AdvisingApp\Authorization\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 use App\Actions\Finders\ApplicationModules;
 use AdvisingApp\Authorization\Models\Permission;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class SyncRolesAndPermissions extends Command
@@ -57,6 +58,8 @@ class SyncRolesAndPermissions extends Command
     {
         // TODO Put handling in place to prevent this from being run in production IF it has already been run once
         // We are going to introduce a convention for "one-time" operations similar to Laravel migrations in order to handle this
+
+        $this->populateRegistries();
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
@@ -87,10 +90,15 @@ class SyncRolesAndPermissions extends Command
         $this->syncApiPermissions();
         $this->info('API permissions synced successfully!');
 
-        // TODO We might just leave this command out for now, and just allow for manual creation of role groups per org
         // Artisan::call(SetupRoleGroups::class);
 
         return self::SUCCESS;
+    }
+
+    protected function populateRegistries(): void
+    {
+        RoleBasedAccessControlRegistry::getRegistries()
+            ->each(fn ($registry) => resolve($registry)->registerRolesAndPermissions());
     }
 
     protected function syncWebPermissions(): void
@@ -121,8 +129,7 @@ class SyncRolesAndPermissions extends Command
 
     protected function syncPermissionFor(string $guard, Role $role): void
     {
-        // This is assuming that our roles are named in the following convention
-        // {module}.{role}
+        // This is assuming that our roles are named in the following convention: {module}.{role}
         [$module, $roleFileName] = explode('.', $role->name);
 
         $permissions = resolve(ApplicationModules::class)
