@@ -41,9 +41,9 @@ use AdvisingApp\Report\ReportPlugin;
 use AdvisingApp\Report\Models\Report;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Report\Observers\ReportObserver;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Report\Registries\ReportRbacRegistry;
 
 class ReportServiceProvider extends ServiceProvider
 {
@@ -58,36 +58,9 @@ class ReportServiceProvider extends ServiceProvider
             'report' => Report::class,
         ]);
 
-        $this->registerRolesAndPermissions();
-
         $this->registerObservers();
-    }
 
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'report',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'report',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'report',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'report',
-            path: 'roles/web'
-        );
+        RoleBasedAccessControlRegistry::register(ReportRbacRegistry::class);
     }
 
     protected function registerObservers(): void

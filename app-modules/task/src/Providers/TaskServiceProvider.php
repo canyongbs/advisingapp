@@ -43,9 +43,9 @@ use AdvisingApp\Task\Models\Task;
 use Illuminate\Support\ServiceProvider;
 use Filament\Support\Facades\FilamentAsset;
 use AdvisingApp\Task\Observers\TaskObserver;
+use AdvisingApp\Task\Registries\TaskRbacRegistry;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class TaskServiceProvider extends ServiceProvider
 {
@@ -62,38 +62,11 @@ class TaskServiceProvider extends ServiceProvider
             ]
         );
 
-        $this->registerRolesAndPermissions();
-
         $this->registerObservers();
 
         $this->registerAssets();
-    }
 
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'task',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'task',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'task',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'task',
-            path: 'roles/web'
-        );
+        RoleBasedAccessControlRegistry::register(TaskRbacRegistry::class);
     }
 
     protected function registerObservers(): void

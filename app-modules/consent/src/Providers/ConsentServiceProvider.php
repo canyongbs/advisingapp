@@ -40,11 +40,11 @@ use Filament\Panel;
 use AdvisingApp\Consent\ConsentPlugin;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Consent\Models\ConsentAgreement;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Consent\Models\UserConsentAgreement;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Consent\Registries\ConsentRbacRegistry;
 use AdvisingApp\Consent\Observers\ConsentAgreementObserver;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class ConsentServiceProvider extends ServiceProvider
 {
@@ -60,40 +60,13 @@ class ConsentServiceProvider extends ServiceProvider
             'user_consent_agreement' => UserConsentAgreement::class,
         ]);
 
-        $this->registerRolesAndPermissions();
-
         $this->registerObservers();
+
+        RoleBasedAccessControlRegistry::register(ConsentRbacRegistry::class);
     }
 
     public function registerObservers(): void
     {
         ConsentAgreement::observe(ConsentAgreementObserver::class);
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'consent',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'consent',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'consent',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'consent',
-            path: 'roles/web'
-        );
     }
 }

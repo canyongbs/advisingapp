@@ -43,9 +43,11 @@ return new class () extends Migration {
     {
         Schema::create('service_request_statuses', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->string('classification');
             $table->string('name');
             $table->string('color');
+
             $table->timestamps();
             $table->softDeletes();
         });

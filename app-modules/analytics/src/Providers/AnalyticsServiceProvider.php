@@ -39,12 +39,12 @@ namespace AdvisingApp\Analytics\Providers;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Analytics\AnalyticsPlugin;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Analytics\Models\AnalyticsResource;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Analytics\Models\AnalyticsResourceSource;
 use AdvisingApp\Analytics\Models\AnalyticsResourceCategory;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Analytics\Registries\AnalyticsRbacRegistry;
 
 class AnalyticsServiceProvider extends ServiceProvider
 {
@@ -61,33 +61,6 @@ class AnalyticsServiceProvider extends ServiceProvider
             'analytics_resource' => AnalyticsResource::class,
         ]);
 
-        $this->registerRolesAndPermissions();
-    }
-
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'analytics',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'analytics',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'analytics',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'analytics',
-            path: 'roles/web'
-        );
+        RoleBasedAccessControlRegistry::register(AnalyticsRbacRegistry::class);
     }
 }

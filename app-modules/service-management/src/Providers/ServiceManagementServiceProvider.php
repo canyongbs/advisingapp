@@ -40,16 +40,15 @@ use Filament\Panel;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\ServiceManagement\Models\Sla;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\ServiceManagement\Models\ChangeRequest;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\ServiceManagement\ServiceManagementPlugin;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestForm;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestResponse;
@@ -64,6 +63,7 @@ use AdvisingApp\ServiceManagement\Models\ServiceRequestFormSubmission;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestUpdateObserver;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestFormAuthentication;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestHistoryObserver;
+use AdvisingApp\ServiceManagement\Registries\ServiceManagementRbacRegistry;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestAssignmentObserver;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestFormSubmissionObserver;
 use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
@@ -102,46 +102,21 @@ class ServiceManagementServiceProvider extends ServiceProvider
             'sla' => Sla::class,
         ]);
 
-        $this->registerRolesAndPermissions();
         $this->registerObservers();
 
         $this->discoverSchema(__DIR__ . '/../../graphql/service-management.graphql');
+
+        RoleBasedAccessControlRegistry::register(ServiceManagementRbacRegistry::class);
     }
 
     protected function registerObservers(): void
     {
         ChangeRequest::observe(ChangeRequestObserver::class);
+
         ServiceRequest::observe(ServiceRequestObserver::class);
-        ServiceRequestUpdate::observe(ServiceRequestUpdateObserver::class);
         ServiceRequestAssignment::observe(ServiceRequestAssignmentObserver::class);
-        ServiceRequestHistory::observe(ServiceRequestHistoryObserver::class);
         ServiceRequestFormSubmission::observe(ServiceRequestFormSubmissionObserver::class);
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'service-management',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'service-management',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'service-management',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'service-management',
-            path: 'roles/web'
-        );
+        ServiceRequestHistory::observe(ServiceRequestHistoryObserver::class);
+        ServiceRequestUpdate::observe(ServiceRequestUpdateObserver::class);
     }
 }

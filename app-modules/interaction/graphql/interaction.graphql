@@ -22,7 +22,7 @@ type Interaction
     description: String!
 
     "The User related to the interaction."
-    user: User @belongsTo
+    user: User @belongsTo @canResolved(ability: "view")
 
     "The Interactable related to the interaction."
     interactable: Interactable @morphTo
@@ -71,7 +71,7 @@ input InteractionsQuery {
     id: UUID
     subject: String
     description: String
-    user: UserQuery
+    user: UsersQuery
     interactable: InteractionInteractablesQuery @morphToRelation
     interactable_id: InteractableId
     interactable_type: InteractableType

@@ -40,11 +40,11 @@ use Filament\Panel;
 use Filament\Support\Assets\Js;
 use Illuminate\Support\ServiceProvider;
 use Filament\Support\Facades\FilamentAsset;
+use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\InAppCommunication\InAppCommunicationPlugin;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\InAppCommunication\Registries\InAppCommunicationRbacRegistry;
 
 class InAppCommunicationServiceProvider extends ServiceProvider
 {
@@ -61,8 +61,9 @@ class InAppCommunicationServiceProvider extends ServiceProvider
             ]
         );
 
-        $this->registerRolesAndPermissions();
         $this->registerAssets();
+
+        RoleBasedAccessControlRegistry::register(InAppCommunicationRbacRegistry::class);
     }
 
     public function registerAssets(): void
@@ -70,32 +71,5 @@ class InAppCommunicationServiceProvider extends ServiceProvider
         FilamentAsset::register([
             Js::make('userToUserChat', __DIR__ . '/../../resources/js/dist/userToUserChat.js')->loadedOnRequest(),
         ], 'canyon-gbs/in-app-communication');
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'in-app-communication',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'in-app-communication',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'in-app-communication',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'in-app-communication',
-            path: 'roles/web'
-        );
     }
 }

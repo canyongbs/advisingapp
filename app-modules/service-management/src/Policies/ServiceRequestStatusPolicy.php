@@ -112,6 +112,10 @@ class ServiceRequestStatusPolicy
 
     public function forceDelete(Authenticatable $authenticatable, ServiceRequestStatus $serviceRequestStatus): Response
     {
+        if ($serviceRequestStatus->serviceRequests()->exists()) {
+            return Response::deny('You cannot force delete this service request status because it has associated service requests.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['service_request_status.*.force-delete', "service_request_status.{$serviceRequestStatus->id}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this service request status.'

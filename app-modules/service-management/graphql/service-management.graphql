@@ -25,7 +25,7 @@ type ServiceRequestAssignment
     service_request: ServiceRequest @belongsTo
 
     "The user of the assignment."
-    user: User @belongsTo
+    user: User @belongsTo @canResolved(ability: "view")
 
     #    "The role of the assignment."
     #    role: ServiceRequestAssignmentRole @belongsTo

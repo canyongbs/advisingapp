@@ -46,15 +46,15 @@ use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
 use AdvisingApp\MeetingCenter\MeetingCenterPlugin;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\MeetingCenter\Observers\CalendarEventObserver;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
+use AdvisingApp\MeetingCenter\Registries\MeetingCenterRbacRegistry;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use AdvisingApp\MeetingCenter\Livewire\EventAttendeeSubmissionsManager;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
@@ -97,38 +97,11 @@ class MeetingCenterServiceProvider extends ServiceProvider
                 ->withoutOverlapping();
         });
 
-        $this->registerRolesAndPermissions();
-
         $this->registerObservers();
 
         Livewire::component('event-attendee-submissions-manager', EventAttendeeSubmissionsManager::class);
-    }
 
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'meeting-center',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'meeting-center',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'meeting-center',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'meeting-center',
-            path: 'roles/web'
-        );
+        RoleBasedAccessControlRegistry::register(MeetingCenterRbacRegistry::class);
     }
 
     protected function registerObservers(): void

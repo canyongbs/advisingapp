@@ -38,6 +38,7 @@ namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusR
 
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\ServiceManagement\Enums\ColumnColorOptions;
@@ -52,21 +53,25 @@ class CreateServiceRequestStatus extends CreateRecord
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Select::make('classification')
-                    ->searchable()
-                    ->options(SystemServiceRequestClassification::class)
-                    ->required()
-                    ->enum(SystemServiceRequestClassification::class),
-                Select::make('color')
-                    ->label('Color')
-                    ->searchable()
-                    ->options(ColumnColorOptions::class)
-                    ->required()
-                    ->enum(ColumnColorOptions::class),
+                Section::make()
+                    ->columns()
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Name')
+                            ->required()
+                            ->string(),
+                        Select::make('classification')
+                            ->searchable()
+                            ->options(SystemServiceRequestClassification::class)
+                            ->required()
+                            ->enum(SystemServiceRequestClassification::class),
+                        Select::make('color')
+                            ->label('Color')
+                            ->searchable()
+                            ->options(ColumnColorOptions::class)
+                            ->required()
+                            ->enum(ColumnColorOptions::class),
+                    ]),
             ]);
     }
 }

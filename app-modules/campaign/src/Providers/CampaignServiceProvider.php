@@ -44,11 +44,11 @@ use AdvisingApp\Campaign\Models\Campaign;
 use Spatie\Multitenancy\TenantCollection;
 use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\Campaign\Models\CampaignAction;
+use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Campaign\Observers\CampaignObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Campaign\Actions\ExecuteCampaignActions;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Campaign\Registries\CampaignRbacRegistry;
 
 class CampaignServiceProvider extends ServiceProvider
 {
@@ -81,40 +81,13 @@ class CampaignServiceProvider extends ServiceProvider
                 ->withoutOverlapping();
         });
 
-        $this->registerRolesAndPermissions();
-
         $this->registerObservers();
+
+        RoleBasedAccessControlRegistry::register(CampaignRbacRegistry::class);
     }
 
     public function registerObservers(): void
     {
         Campaign::observe(CampaignObserver::class);
-    }
-
-    protected function registerRolesAndPermissions()
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'campaign',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'campaign',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'campaign',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'campaign',
-            path: 'roles/web'
-        );
     }
 }

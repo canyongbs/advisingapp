@@ -38,12 +38,16 @@ namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeRes
 
 use Filament\Forms\Get;
 use Filament\Forms\Form;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\RestoreAction;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
+use Filament\Actions\ForceDeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
 
 class EditServiceRequestType extends EditRecord
@@ -74,13 +78,22 @@ class EditServiceRequestType extends EditRecord
                                     ->visible(fn (Get $get) => $get('has_enabled_feedback_collection')),
                             ]),
                     ]),
-            ]);
+            ])
+            ->disabled(fn (ServiceRequestType $record) => $record->trashed());
+    }
+
+    protected function getSaveFormAction(): Action
+    {
+        return parent::getSaveFormAction()
+            ->hidden(fn (ServiceRequestType $record) => $record->trashed());
     }
 
     protected function getHeaderActions(): array
     {
         return [
             DeleteAction::make(),
+            RestoreAction::make(),
+            ForceDeleteAction::make(),
         ];
     }
 }
