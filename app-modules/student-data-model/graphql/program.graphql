@@ -1,6 +1,4 @@
-type Program
-    @model(class: "AdvisingApp\\StudentDataModel\\Models\\Program") {
-
+type Program @model(class: "AdvisingApp\\StudentDataModel\\Models\\Program") {
     sisid: String!
 
     otherid: String!

@@ -1,14 +1,17 @@
-type Student
-    @model(class: "AdvisingApp\\StudentDataModel\\Models\\Student") {
+type Student @model(class: "AdvisingApp\\StudentDataModel\\Models\\Student") {
     sisid: ID!
 
-    otherid: String @canRoot(ability: "viewAny" action: RETURN_VALUE returnValue: null)
+    otherid: String
+        @canRoot(ability: "viewAny", action: RETURN_VALUE, returnValue: null)
 
-    first: String @canRoot(ability: "viewAny" action: RETURN_VALUE returnValue: null)
+    first: String
+        @canRoot(ability: "viewAny", action: RETURN_VALUE, returnValue: null)
 
-    last: String @canRoot(ability: "viewAny" action: RETURN_VALUE returnValue: null)
+    last: String
+        @canRoot(ability: "viewAny", action: RETURN_VALUE, returnValue: null)
 
-    full_name: String @canRoot(ability: "viewAny" action: RETURN_VALUE returnValue: null)
+    full_name: String
+        @canRoot(ability: "viewAny", action: RETURN_VALUE, returnValue: null)
 
     enrollments: [Enrollment!] @hasMany
 
@@ -45,8 +48,8 @@ type StudentQueries {
     "Get a specific student by ID."
     find(
         sisid: ID!
-        @whereKey
-        @rules(apply: ["required", "string", "exists:students"])
+            @whereKey
+            @rules(apply: ["required", "string", "exists:students"])
     ): Student @find @canResolved(ability: "view")
 
     "List multiple students."

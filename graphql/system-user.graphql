@@ -1,5 +1,4 @@
-type SystemUser
-    @model(class: "App\\Models\\SystemUser") {
+type SystemUser @model(class: "App\\Models\\SystemUser") {
     "Unique primary key."
     id: UUID!
 
@@ -30,12 +29,14 @@ input SystemUsersQuery {
 
 type SystemUserQueries {
     find(
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:system_users"])
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:system_users"])
     ): SystemUser @find @canResolved(ability: "view")
 
-    list(
-        where: SystemUsersQuery @searchBy
-    ): [SystemUser!]! @paginate @canModel(ability: "viewAny")
+    list(where: SystemUsersQuery @searchBy): [SystemUser!]!
+        @paginate
+        @canModel(ability: "viewAny")
 }
 
 extend type Query {

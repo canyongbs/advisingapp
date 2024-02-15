@@ -12,10 +12,6 @@ scalar EducatableId
     @scalar(class: "App\\GraphQL\\Scalars\\EducatableId")
     @searchByOperators(type: "ID")
 
-#scalar JSON
-#    @scalar(class: "MLL\\GraphQLScalars\\JSON")
-#    @searchByOperators(type: "ID")
-
 scalar JSON
     @scalar(class: "App\\GraphQL\\Scalars\\JSON")
     @searchByOperators(type: "ID")

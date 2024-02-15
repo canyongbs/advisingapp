@@ -1,7 +1,5 @@
 union Auditable = Student | Prospect | User | SystemUser #TODO: This can be basically any model that supports auditing
-
-type Audit
-    @model(class: "AdvisingApp\\Audit\\Models\\Audit") {
+type Audit @model(class: "AdvisingApp\\Audit\\Models\\Audit") {
     "Unique primary key."
     id: UUID!
 
@@ -11,9 +9,9 @@ type Audit
 
     event: String!
 
-#    auditable_type: String!
+    #    auditable_type: String!
 
-#    auditable_id: String!
+    #    auditable_id: String!
 
     old_values: JSON
 
@@ -58,9 +56,9 @@ input AuditsQuery {
 
     event: String
 
-#    auditable_type: String
+    #    auditable_type: String
 
-#    auditable_id: String
+    #    auditable_id: String
 
     old_values: JSON
 
@@ -88,9 +86,9 @@ type AuditQueries {
         id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:audits"])
     ): Audit @find @canResolved(ability: "view")
 
-    list(
-        where: AuditsQuery @searchBy
-    ): [Audit!]! @paginate @canModel(ability: "viewAny")
+    list(where: AuditsQuery @searchBy): [Audit!]!
+        @paginate
+        @canModel(ability: "viewAny")
 }
 
 extend type Query {

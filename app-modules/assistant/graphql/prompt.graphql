@@ -1,5 +1,4 @@
-type Prompt
-    @model(class: "AdvisingApp\\Assistant\\Models\\Prompt") {
+type Prompt @model(class: "AdvisingApp\\Assistant\\Models\\Prompt") {
     id: UUID!
 
     title: String!
@@ -49,4 +48,97 @@ type PromptQueries {
 
 extend type Query {
     prompt: PromptQueries! @namespaced
+}
+
+input CreatePromptInput {
+    "The title of the prompt."
+    title: String!
+        @rules(apply: [
+            "required",
+            "string",
+            "max:255",
+            "unique:prompts,title"
+        ])
+
+    "The description of the prompt."
+    description: String
+        @rules(apply: [
+            "nullable",
+            "string",
+            "max:65535"
+        ])
+
+    "The text of the prompt."
+    prompt: String!
+        @rules(apply: [
+            "required",
+            "string",
+            "max:65535"
+        ])
+}
+
+input UpdatePromptInput {
+    "The title of the prompt."
+    title: String
+        @rules(apply: [
+            "nullable",
+            "string",
+            "max:255",
+            "unique:prompts,title"
+        ])
+
+    "The description of the prompt."
+    description: String
+        @rules(apply: [
+            "nullable",
+            "string",
+            "max:65535"
+        ])
+
+    "The text of the prompt."
+    prompt: String
+        @rules(apply: [
+            "nullable",
+            "string",
+            "max:65535"
+        ])
+
+    "The type of the prompt."
+    type_id: UUID
+        @rules(apply: [
+            "nullable",
+            "uuid",
+            "exists:prompt_types,id"
+        ])
+}
+
+type PromptMutations {
+    "Create a new prompt."
+    create(
+        "The attributes to create a prompt."
+        input: CreatePromptInput! @spread
+    ): Prompt! @create @canModel(ability: "create")
+
+    "Update an existing prompt."
+    update(
+        "The identifier of the prompt you would like to update."
+        id: UUID!
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:prompts"])
+
+        "The attributes to update a prompt."
+        input: UpdatePromptInput! @spread
+    ): Prompt! @update @canFind(ability: "update" find: "id")
+
+    "Delete an existing prompt."
+    delete(
+        "The identifier of the prompt you would like to delete."
+        id: UUID!
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:prompts"])
+    ): Prompt @delete @canFind(ability: "delete" find: "id")
+}
+
+extend type Mutation {
+    prompt: PromptMutations! @namespaced
 }
