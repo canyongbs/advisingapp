@@ -41,6 +41,10 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     public function up(): void
     {
+        if (Schema::hasTable('enrollments')) {
+            return;
+        }
+
         Schema::create('enrollments', function (Blueprint $table) {
             $table->string('sisid');
             $table->string('acad_career');

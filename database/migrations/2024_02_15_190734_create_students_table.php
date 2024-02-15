@@ -41,6 +41,10 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     public function up(): void
     {
+        if (Schema::hasTable('students')) {
+            return;
+        }
+
         Schema::create('students', function (Blueprint $table) {
             $table->string('sisid')->primary();
             $table->string('otherid')->nullable();
