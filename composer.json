@@ -22,7 +22,7 @@
         "canyon-gbs/advising-app-analytics": "*",
         "canyon-gbs/advising-app-application": "*",
         "canyon-gbs/advising-app-assistant": "*",
-        "canyon-gbs/advising-app-audit": "*@dev",
+        "canyon-gbs/advising-app-audit": "*",
         "canyon-gbs/advising-app-authorization": "*",
         "canyon-gbs/advising-app-campaign": "*",
         "canyon-gbs/advising-app-care-team": "*",
@@ -80,7 +80,7 @@
         "microsoft/microsoft-graph": "^1.109",
         "mll-lab/graphql-php-scalars": "^6.2",
         "nuwave/lighthouse": "^6.29",
-        "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
+        "owen-it/laravel-auditing": "^13.6",
         "saade/filament-fullcalendar": "^3.1",
         "shuvroroy/filament-spatie-laravel-health": "^2.0",
         "socialiteproviders/google": "^4.1",
@@ -235,10 +235,6 @@
             "options": {
                 "symlink": true
             }
-        },
-        {
-            "type": "git",
-            "url": "https://github.com/canyongbs/laravel-auditing"
         }
     ]
 }
