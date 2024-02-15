@@ -44,8 +44,6 @@ use Illuminate\Support\ServiceProvider;
 use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Audit\Registries\AuditRbacRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class AuditServiceProvider extends ServiceProvider
 {
@@ -58,7 +56,7 @@ class AuditServiceProvider extends ServiceProvider
         app('config')->set('audit', require base_path('app-modules/audit/config/audit.php'));
     }
 
-    public function boot(AuthorizationPermissionRegistry $permissionRegistry, AuthorizationRoleRegistry $roleRegistry): void
+    public function boot(): void
     {
         Relation::morphMap([
             'audit' => Audit::class,

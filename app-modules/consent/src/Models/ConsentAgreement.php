@@ -38,9 +38,9 @@ namespace AdvisingApp\Consent\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
