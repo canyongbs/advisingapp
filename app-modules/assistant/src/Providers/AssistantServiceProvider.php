@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Assistant\Providers;
 
-use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use Filament\Support\Assets\Js;
+use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Assistant\Models\Prompt;

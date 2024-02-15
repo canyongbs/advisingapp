@@ -34,8 +34,8 @@ type PromptQueries {
     "Get a specific prompt by ID."
     find(
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:prompts"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:prompts"])
     ): Prompt @find @softDeletes @canResolved(ability: "view")
 
     "List multiple prompts."
@@ -53,63 +53,28 @@ extend type Query {
 input CreatePromptInput {
     "The title of the prompt."
     title: String!
-        @rules(apply: [
-            "required",
-            "string",
-            "max:255",
-            "unique:prompts,title"
-        ])
+        @rules(apply: ["required", "string", "max:255", "unique:prompts,title"])
 
     "The description of the prompt."
-    description: String
-        @rules(apply: [
-            "nullable",
-            "string",
-            "max:65535"
-        ])
+    description: String @rules(apply: ["nullable", "string", "max:65535"])
 
     "The text of the prompt."
-    prompt: String!
-        @rules(apply: [
-            "required",
-            "string",
-            "max:65535"
-        ])
+    prompt: String! @rules(apply: ["required", "string", "max:65535"])
 }
 
 input UpdatePromptInput {
     "The title of the prompt."
     title: String
-        @rules(apply: [
-            "nullable",
-            "string",
-            "max:255",
-            "unique:prompts,title"
-        ])
+        @rules(apply: ["nullable", "string", "max:255", "unique:prompts,title"])
 
     "The description of the prompt."
-    description: String
-        @rules(apply: [
-            "nullable",
-            "string",
-            "max:65535"
-        ])
+    description: String @rules(apply: ["nullable", "string", "max:65535"])
 
     "The text of the prompt."
-    prompt: String
-        @rules(apply: [
-            "nullable",
-            "string",
-            "max:65535"
-        ])
+    prompt: String @rules(apply: ["nullable", "string", "max:65535"])
 
     "The type of the prompt."
-    type_id: UUID
-        @rules(apply: [
-            "nullable",
-            "uuid",
-            "exists:prompt_types,id"
-        ])
+    type_id: UUID @rules(apply: ["nullable", "uuid", "exists:prompt_types,id"])
 }
 
 type PromptMutations {
@@ -123,20 +88,20 @@ type PromptMutations {
     update(
         "The identifier of the prompt you would like to update."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:prompts"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:prompts"])
 
         "The attributes to update a prompt."
         input: UpdatePromptInput! @spread
-    ): Prompt! @update @canFind(ability: "update" find: "id")
+    ): Prompt! @update @canFind(ability: "update", find: "id")
 
     "Delete an existing prompt."
     delete(
         "The identifier of the prompt you would like to delete."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:prompts"])
-    ): Prompt @delete @canFind(ability: "delete" find: "id")
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:prompts"])
+    ): Prompt @delete @canFind(ability: "delete", find: "id")
 }
 
 extend type Mutation {

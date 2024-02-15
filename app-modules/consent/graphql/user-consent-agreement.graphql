@@ -1,0 +1,92 @@
+type UserConsentAgreement
+    @model(class: "AdvisingApp\\Consent\\Models\\UserConsentAgreement") {
+    id: UUID!
+
+    ip_address: String!
+
+    created_at: DateTime
+
+    updated_at: DateTime
+
+    deleted_at: DateTime
+
+    user: User! @belongsTo
+
+    consent_agreement: ConsentAgreement! @belongsTo
+
+    audits: [Audit!] @hasMany
+
+    audits_count: Int @count(relation: "audits")
+}
+
+input UserConsentAgreementsQuery {
+    id: UUID
+
+    ip_address: String
+
+    created_at: DateTime
+
+    updated_at: DateTime
+
+    deleted_at: DateTime
+
+    user: UsersQuery
+
+    consent_agreement: ConsentAgreementsQuery
+
+    audits: AuditsQuery
+}
+
+type UserConsentAgreementQueries {
+    "Get a specific user consent agreement by ID."
+    find(
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:user_consent_agreements"])
+    ): UserConsentAgreement @find @softDeletes @canModel(model: "AdvisingApp\\Consent\\Models\\ConsentAgreement" ability: "viewAny")
+
+    "List multiple user consent agreements."
+    list(
+        "Filter by the user consent agreements attributes and relations."
+        where: UserConsentAgreementsQuery @searchBy
+        order: UserConsentAgreementsQuery @sortBy
+    ): [UserConsentAgreement!]! @paginate @softDeletes @canModel(model:"AdvisingApp\\Consent\\Models\\ConsentAgreement" ability: "viewAny")
+}
+
+extend type Query {
+    userConsentAgreement: UserConsentAgreementQueries! @namespaced
+}
+
+input CreateUserConsentAgreementInput {
+    "The IP address of the user."
+    ip_address: String!
+        @rules(apply: ["required", "string", "ip"])
+
+    "The user that consented."
+    user_id: UUID!
+        @rules(apply: ["required", "uuid", "exists:users,id"])
+
+    "The consent agreement that was consented to."
+    consent_agreement_id: UUID!
+        @rules(apply: ["required", "uuid", "exists:consent_agreements,id"])
+}
+
+type UserConsentAgreementMutations {
+    "Create a new user consent agreement."
+    create(
+        "The user consent agreement input."
+        input: CreateUserConsentAgreementInput! @spread
+    ): UserConsentAgreement @create @canModel(model: "AdvisingApp\\Consent\\Models\\ConsentAgreement" ability: "viewAny")
+
+    "Delete an existing user consent agreement."
+    delete(
+        "The user consent agreement ID."
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:user_consent_agreements"])
+    ): UserConsentAgreement @delete @softDeletes @canModel(model: "AdvisingApp\\Consent\\Models\\ConsentAgreement" ability: "viewAny")
+}
+
+extend type Mutation {
+    userConsentAgreement: UserConsentAgreementMutations! @namespaced
+}

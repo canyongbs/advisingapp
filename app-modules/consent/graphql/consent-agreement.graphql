@@ -1,0 +1,154 @@
+type ConsentAgreement
+    @model(class: "AdvisingApp\\Consent\\Models\\ConsentAgreement") {
+    id: UUID!
+
+    type: ConsentAgreementType!
+
+    title: String!
+
+    description: String!
+
+    body: String!
+
+    created_at: DateTime
+
+    updated_at: DateTime
+
+    deleted_at: DateTime
+
+    audits: [Audit!] @hasMany
+
+    audits_count: Int @count(relation: "audits")
+
+    user_consent_agreements: [UserConsentAgreement!] @hasMany
+
+    user_consent_agreements_count: Int @count(relation: "user_consent_agreements")
+
+    users: [User!]! @belongsToMany
+
+    users_count: Int @count(relation: "users")
+}
+
+input ConsentAgreementsQuery {
+    id: UUID
+
+    type: ConsentAgreementType
+
+    title: String
+
+    description: String
+
+    body: String
+
+    created_at: DateTime
+
+    updated_at: DateTime
+
+    deleted_at: DateTime
+
+    user_consent_agreements: UserConsentAgreementsQuery
+
+    users: UsersQuery
+
+    audits: AuditsQuery
+}
+
+type ConsentAgreementQueries {
+    "Get a specific consent agreement by ID."
+    find(
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:consent_agreements"])
+    ): ConsentAgreement @find @softDeletes @canResolved(ability: "view")
+
+    "List multiple consent agreements."
+    list(
+        "Filter by the consent agreements attributes and relations."
+        where: ConsentAgreementsQuery @searchBy
+        order: ConsentAgreementsQuery @sortBy
+    ): [ConsentAgreement!]! @paginate @softDeletes @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    consentAgreement: ConsentAgreementQueries! @namespaced
+}
+
+#input CreateConsentAgreementInput {
+#    "The type of the consent agreement."
+#    type: ConsentAgreementType!
+#        @rules(apply: ["required"])
+#
+#    "The title of the consent agreement."
+#    title: String!
+#        @rules(apply: ["required", "string", "max:255"])
+#
+#    "The description of the consent agreement."
+#    description: String!
+#        @rules(apply: ["required", "string", "max:65535"])
+#
+#    "The body of the consent agreement."
+#    body: String!
+#        @rules(apply: ["required", "string", "max:65535"])
+#}
+
+input UpdateConsentAgreementInput {
+#    "The type of the consent agreement."
+#    type: ConsentAgreementType
+#        @rules(apply: ["nullable"])
+
+    "The title of the consent agreement."
+    title: String
+        @rules(apply: ["nullable", "string", "max:255"])
+
+    "The description of the consent agreement."
+    description: String
+        @rules(apply: ["nullable", "string", "max:65535"])
+
+    "The body of the consent agreement."
+    body: String
+        @rules(apply: ["nullable", "string", "max:65535"])
+
+    users: UpdateUserConsentAgreementBelongsToManyInput
+}
+
+input UpdateUserConsentAgreementBelongsToManyInput {
+    consent: [ConnectUserConsentAgreementInput!] @rename(attribute: "connect")
+#    revoke: [UUID!] @rename(attribute: "disconnect")
+}
+
+input ConnectUserConsentAgreementInput {
+    id: UUID!
+        @rules(apply: ["required", "uuid", "exists:users,id"])
+    ip_address: String!
+        @rules(apply: ["required", "string", "ip"])
+}
+
+type ConsentAgreementMutations {
+#    "Create a new consent agreement."
+#    create(
+#        "The attributes to create a consent agreement."
+#        input: CreateConsentAgreementInput! @spread
+#    ): ConsentAgreement! @create @canModel(ability: "create")
+
+    "Update an existing consent agreement."
+    update(
+        "The identifier of the consent agreement you would like to update."
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:consent_agreements"])
+
+        "The attributes to update a consent agreement."
+        input: UpdateConsentAgreementInput! @spread
+    ): ConsentAgreement! @update @canFind(ability: "update", find: "id")
+
+#    "Delete an existing consent agreement."
+#    delete(
+#        "The identifier of the consent agreement you would like to delete."
+#        id: UUID!
+#            @rules(apply: ["required", "uuid", "exists:consent_agreements"])
+#    ): ConsentAgreement! @delete @canFind(ability: "delete", find: "id")
+}
+
+extend type Mutation {
+    consentAgreement: ConsentAgreementMutations! @namespaced
+}

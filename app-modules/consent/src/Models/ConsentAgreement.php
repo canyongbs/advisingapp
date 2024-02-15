@@ -38,6 +38,7 @@ namespace AdvisingApp\Consent\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -68,7 +69,7 @@ class ConsentAgreement extends BaseModel implements Auditable
             ->withTimestamps();
     }
 
-    public function userConsentAgreements()
+    public function userConsentAgreements(): HasMany
     {
         return $this->hasMany(UserConsentAgreement::class, 'consent_agreement_id');
     }

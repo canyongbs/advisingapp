@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Audit\Providers;
 
-use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use AdvisingApp\Audit\AuditPlugin;
 use AdvisingApp\Audit\Models\Audit;
+use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
