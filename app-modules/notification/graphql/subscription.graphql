@@ -19,7 +19,7 @@ input UserSubscriptionSubscribablesQuery {
 
 input SubscriptionsQuery {
     id: UUID
-    user: UserQuery
+    user: UsersQuery
     subscribable: UserSubscriptionSubscribablesQuery @morphToRelation
     subscribable_id: EducatableId
     subscribable_type: EducatableType

@@ -22,7 +22,7 @@ input CareTeamEducatablesQuery {
 
 input CareTeamsQuery {
     id: UUID
-    user: UserQuery
+    user: UsersQuery
     educatable: CareTeamEducatablesQuery @morphToRelation
     educatable_id: EducatableId
     educatable_type: EducatableType
