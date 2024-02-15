@@ -612,4 +612,55 @@
             }
         </style>
     </div>
+
+    <x-filament::modal
+        id="confirmSafeLink"
+        width="2xl"
+    >
+        <x-slot name="heading">
+            <h3 class="text-3xl">Link confirmation</h3>
+        </x-slot>
+
+        <x-slot name="description">
+            <div
+                class="mt-4 flex flex-col"
+                x-data="{ href: null }"
+                x-on:open-modal.window="href = $event.detail.href"
+            >
+                You are about to open another browser tab and visit:
+                <strong
+                    class="mt-2"
+                    x-text="href"
+                ></strong>
+            </div>
+        </x-slot>
+
+        <x-slot name="footerActions">
+            <div
+                class="flex w-full justify-between"
+                x-data="{ href: null }"
+                x-on:open-modal.window="href = $event.detail.href"
+            >
+                <x-filament::button
+                    x-on:click="close()"
+                    color="gray"
+                    outlined
+                >
+                    Cancel
+                </x-filament::button>
+                <a
+                    :href="href"
+                    target="_blank"
+                >
+                    <x-filament::button
+                        color="primary"
+                        x-on:click="close()"
+                    >
+                        Continue
+                    </x-filament::button>
+                </a>
+            </div>
+        </x-slot>
+    </x-filament::modal>
+
 </x-filament-panels::page>

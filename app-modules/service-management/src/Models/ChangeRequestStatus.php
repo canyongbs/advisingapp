@@ -38,6 +38,8 @@ namespace AdvisingApp\ServiceManagement\Models;
 
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
 
@@ -46,6 +48,7 @@ use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
  */
 class ChangeRequestStatus extends BaseModel implements Auditable
 {
+    use SoftDeletes;
     use AuditableTrait;
 
     protected $fillable = [
@@ -56,4 +59,9 @@ class ChangeRequestStatus extends BaseModel implements Auditable
     protected $casts = [
         'classification' => SystemChangeRequestClassification::class,
     ];
+
+    public function changeRequests(): HasMany
+    {
+        return $this->hasMany(ChangeRequest::class);
+    }
 }

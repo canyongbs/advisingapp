@@ -34,43 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource\Pages;
 
-use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Clusters\ServiceManagementAdministration;
-use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource\Pages\EditChangeRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource\Pages\ViewChangeRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource\Pages\CreateChangeRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource\Pages\ListChangeRequestStatuses;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource;
 
-class ChangeRequestStatusResource extends Resource
+class ViewChangeRequestStatus extends ViewRecord
 {
-    protected static ?string $model = ChangeRequestStatus::class;
+    protected static string $resource = ChangeRequestStatusResource::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
-
-    protected static ?int $navigationSort = 50;
-
-    protected static ?string $cluster = ServiceManagementAdministration::class;
-
-    public static function getEloquentQuery(): Builder
+    public function infolist(Infolist $infolist): Infolist
     {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name')
+                            ->label('Name'),
+                        TextEntry::make('classification')
+                            ->label('Classification'),
+                    ])
+                    ->columns(),
             ]);
     }
 
-    public static function getPages(): array
+    protected function getHeaderActions(): array
     {
         return [
-            'index' => ListChangeRequestStatuses::route('/'),
-            'create' => CreateChangeRequestStatus::route('/create'),
-            'view' => ViewChangeRequestStatus::route('/{record}'),
-            'edit' => EditChangeRequestStatus::route('/{record}/edit'),
+            EditAction::make(),
         ];
     }
 }

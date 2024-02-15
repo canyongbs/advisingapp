@@ -36,13 +36,14 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages;
 
-use Filament\Actions;
 use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
@@ -71,6 +72,10 @@ class ListServiceRequestStatuses extends ListRecords
                     ->label('# of Service Requests')
                     ->counts('serviceRequests')
                     ->sortable(),
+                TextColumn::make('deleted_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
                 ViewAction::make(),
@@ -80,13 +85,16 @@ class ListServiceRequestStatuses extends ListRecords
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
+            ])
+            ->filters([
+                TrashedFilter::make(),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

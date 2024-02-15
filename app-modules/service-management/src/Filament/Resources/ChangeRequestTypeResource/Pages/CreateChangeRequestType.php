@@ -34,43 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource\Pages;
 
-use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Clusters\ServiceManagementAdministration;
-use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource\Pages\EditChangeRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource\Pages\ViewChangeRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource\Pages\CreateChangeRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource\Pages\ListChangeRequestStatuses;
+use App\Models\User;
+use Filament\Forms\Form;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource;
 
-class ChangeRequestStatusResource extends Resource
+class CreateChangeRequestType extends CreateRecord
 {
-    protected static ?string $model = ChangeRequestStatus::class;
+    protected static string $resource = ChangeRequestTypeResource::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
-
-    protected static ?int $navigationSort = 50;
-
-    protected static ?string $cluster = ServiceManagementAdministration::class;
-
-    public static function getEloquentQuery(): Builder
+    public function form(Form $form): Form
     {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
+        return $form
+            ->schema([
+                Section::make()
+                    ->columns()
+                    ->schema([
+                        TextInput::make('name')
+                            ->required()
+                            ->string(),
+                        Select::make('number_of_required_approvals')
+                            ->options([
+                                '0' => '0',
+                                '1' => '1',
+                                '2' => '2',
+                            ])
+                            ->required(),
+                        Select::make('userApprovers')
+                            ->label('User approvers')
+                            ->relationship('userApprovers', 'name')
+                            ->preload()
+                            ->multiple()
+                            ->exists((new User())->getTable(), 'id'),
+                    ]),
             ]);
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListChangeRequestStatuses::route('/'),
-            'create' => CreateChangeRequestStatus::route('/create'),
-            'view' => ViewChangeRequestStatus::route('/{record}'),
-            'edit' => EditChangeRequestStatus::route('/{record}/edit'),
-        ];
     }
 }

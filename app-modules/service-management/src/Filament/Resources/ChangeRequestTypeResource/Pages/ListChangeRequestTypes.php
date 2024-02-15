@@ -43,6 +43,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource;
@@ -62,6 +63,14 @@ class ListChangeRequestTypes extends ListRecords
                 TextColumn::make('number_of_required_approvals')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('change_requests_count')
+                    ->label('# of Change Requests')
+                    ->counts('changeRequests')
+                    ->sortable(),
+                TextColumn::make('deleted_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
                 ViewAction::make(),
@@ -71,6 +80,9 @@ class ListChangeRequestTypes extends ListRecords
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
+            ])
+            ->filters([
+                TrashedFilter::make(),
             ]);
     }
 

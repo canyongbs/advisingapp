@@ -45,8 +45,10 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\ServiceManagement\Models\ChangeRequest;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource;
 
 class EditChangeRequest extends EditRecord
@@ -55,6 +57,8 @@ class EditChangeRequest extends EditRecord
 
     public function form(Form $form): Form
     {
+        $disabledTypes = ChangeRequestType::onlyTrashed()->pluck('id');
+
         return $form
             ->schema([
                 Section::make('Change Request Details')
@@ -74,14 +78,18 @@ class EditChangeRequest extends EditRecord
                             ->columnSpanFull()
                             ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         Select::make('change_request_type_id')
-                            ->relationship('type', 'name')
-                            ->searchable()
+                            ->relationship('type', 'name', fn (ChangeRequest $record, Builder $query) => $query->withTrashed()
+                                ->whereKey($record->change_request_type_id)
+                                ->orWhereNull('deleted_at'))
                             ->preload()
                             ->required()
                             ->columnSpan(1)
-                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew())
+                            ->disableOptionWhen(fn (string $value) => $disabledTypes->contains($value)),
                         Select::make('change_request_status_id')
-                            ->relationship('status', 'name')
+                            ->relationship('status', 'name', fn (ChangeRequest $record, Builder $query) => $query->withTrashed()
+                                ->whereKey($record->change_request_status_id)
+                                ->orWhereNull('deleted_at'))
                             ->searchable()
                             ->preload()
                             ->required()

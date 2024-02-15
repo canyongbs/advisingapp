@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,44 +31,25 @@
 
 </COPYRIGHT>
 */
+import Link from '@tiptap/extension-link';
+import { mergeAttributes } from '@tiptap/core';
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources;
+export const SafeLink = Link.extend({
+    renderHTML({ HTMLAttributes }) {
+        // This is directly pulled from the Link extension - leave as is.
+        // eslint-disable-next-line no-script-url
+        if (HTMLAttributes.href?.startsWith('javascript:')) {
+            return [
+                'button',
+                mergeAttributes(this.options.HTMLAttributes, { ...HTMLAttributes, 'data-safe-link': 'true', href: '' }),
+                0,
+            ];
+        }
 
-use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Clusters\ServiceManagementAdministration;
-use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource\Pages\EditChangeRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource\Pages\ViewChangeRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource\Pages\CreateChangeRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource\Pages\ListChangeRequestStatuses;
-
-class ChangeRequestStatusResource extends Resource
-{
-    protected static ?string $model = ChangeRequestStatus::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
-
-    protected static ?int $navigationSort = 50;
-
-    protected static ?string $cluster = ServiceManagementAdministration::class;
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
-    }
-
-    public static function getPages(): array
-    {
         return [
-            'index' => ListChangeRequestStatuses::route('/'),
-            'create' => CreateChangeRequestStatus::route('/create'),
-            'view' => ViewChangeRequestStatus::route('/{record}'),
-            'edit' => EditChangeRequestStatus::route('/{record}/edit'),
+            'button',
+            mergeAttributes(this.options.HTMLAttributes, { ...HTMLAttributes, 'data-safe-link': 'true' }),
+            0,
         ];
-    }
-}
+    },
+});

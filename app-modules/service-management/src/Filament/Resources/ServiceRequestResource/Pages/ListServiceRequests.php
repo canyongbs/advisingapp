@@ -123,7 +123,7 @@ class ListServiceRequests extends ListRecords
             ])
             ->filters([
                 SelectFilter::make('priority')
-                    ->relationship('priority', 'name', fn (Builder $query) => $query->with('type'))
+                    ->relationship('priority', 'name', fn (Builder $query) => $query->with('type')->whereRelation('type', 'deleted_at'))
                     ->getOptionLabelFromRecordUsing(fn (ServiceRequestPriority $record) => "{$record->type->name} - {$record->name}")
                     ->multiple()
                     ->preload(),
