@@ -63,12 +63,6 @@ return [
         'support_page.show',
         'support_page.delete',
         'support_page.access',
-        'record_enrollment_item.show',
-        'record_enrollment_item.access',
-        'record_program_item.show',
-        'record_program_item.access',
-        'record_student_item.show',
-        'record_student_item.access',
         'prospect_menu.access',
         'report_menu.access',
         'report_student.create',
@@ -162,15 +156,6 @@ return [
             '*',
         ],
         'prospect_status' => [
-            '*',
-        ],
-        'record_enrollment_item' => [
-            '*',
-        ],
-        'record_program_item' => [
-            '*',
-        ],
-        'record_student_item' => [
             '*',
         ],
         'support_page' => [
