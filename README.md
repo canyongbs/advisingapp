@@ -107,13 +107,20 @@ For DIY customers, please open your feature request or issue using [GitHub Issue
 
 The software for this project is created and managed by a professional engineering team inside Canyon GBS LLC.\
 \
-All contributions to the project must be pre-approved in order to ensure product integrity. Create an issue with the "enhancement" tag, and include the details of your proposed change. A member of the product team at Canyon GBS will review, and if approved, you may fork the repo and create a pull request. Once complete, engineering at Canyon GBS will review for quality assurance prior to merging the PR. You may be asked to make changes in order to meet our quality standards for the project.
+All contributions to the project must be pre-approved in order to ensure product integrity. Create an issue with the correct "Change Type" label, and include the details of your proposed change. A member of the product team at Canyon GBS will review, and if approved, you may fork the repo and create a pull request. Once complete, engineering at Canyon GBS will review for quality assurance prior to merging the PR. You may be asked to make changes in order to meet our quality standards for the project.
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+When opening your Pull Request please ensure you are compliant with the following requirements:
+
+* Title the PR with the ticket/issue number and a short description of the changes made. Or if no ticket/issue exists, title the PR with a detailed description of the changes made
+* Linked a relevant ticket or issue or describe the issue/feature which this PR resolves/implements.
+* Resolved all conflicts, if any.
+* Before opening your PR make sure to rebase your branch PR on top of the latest upstream `main` branch.
 
 _Don't forget to ⭐ the project to show your support! Thanks again!_
 
