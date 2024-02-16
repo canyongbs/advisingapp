@@ -20,10 +20,10 @@ type ConsentAgreement
 
     audits_count: Int @count(relation: "audits")
 
-    user_consent_agreements: [UserConsentAgreement!] @hasMany
+    user_consent_agreements: [UserConsentAgreement!] @hasMany(relation: "userConsentAgreements")
 
     user_consent_agreements_count: Int
-        @count(relation: "user_consent_agreements")
+        @count(relation: "userConsentAgreements")
 
     users: [User!]! @belongsToMany
 
