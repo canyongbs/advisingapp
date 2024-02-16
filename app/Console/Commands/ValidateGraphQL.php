@@ -46,6 +46,7 @@ use Illuminate\Support\Facades\Artisan;
 use Nuwave\Lighthouse\Schema\AST\ASTCache;
 use Nuwave\Lighthouse\Schema\SchemaBuilder;
 use Barryvdh\LaravelIdeHelper\Console\ModelsCommand;
+use Nuwave\Lighthouse\Console\ValidateSchemaCommand;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 
 class ValidateGraphQL extends Command implements PromptsForMissingInput
@@ -53,7 +54,11 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
     /**
      * @var string
      */
-    protected $signature = 'dev:validate-graphql {--descriptions} {--details= : Show details: list, table} {--model=* : The model to validate}';
+    protected $signature = 'dev:validate-graphql
+        {--descriptions}
+        {--details= : Show details: list, table}
+        {--model=* : The model to validate}
+        {--skip-schema : Skip schema validation}';
 
     /**
      * @var string
@@ -95,6 +100,15 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
 
         $tenant->makeCurrent();
 
+        if (! $this->option('skip-schema')) {
+            Artisan::call(ValidateSchemaCommand::class, outputBuffer: $this->output);
+        } else {
+            $cache->clear();
+        }
+        $schema = $schemaBuilder->schema();
+
+        $types = collect(Introspection::fromSchema($schema)['__schema']['types'])->where('kind', 'OBJECT');
+
         Artisan::call(ModelsCommand::class, [
             '--filename' => $this->filename,
             '--nowrite' => true,
@@ -103,12 +117,6 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
         $contents = str(File::get($this->filename))
             ->explode("\n")
             ->skipUntil(fn (string $line) => str($line)->contains('namespace'));
-
-        $cache->clear();
-
-        $schema = $schemaBuilder->schema();
-
-        $types = collect(Introspection::fromSchema($schema)['__schema']['types'])->where('kind', 'OBJECT');
 
         $contents = $contents
             ->map(function (String $line) {
@@ -184,10 +192,6 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
         if ($models->doesntContain($model)) {
             return;
         }
-
-        // ray($types, $type);
-
-        // ray($lines);
 
         if ($type) {
             $this->info("Type found: {$class}");

@@ -1,5 +1,11 @@
 #TODO: This can be basically any model that supports auditing
-union Auditable = Student | Prospect | User | SystemUser | ConsentAgreement | UserConsentAgreement
+union Auditable =
+    | Student
+    | Prospect
+    | User
+    | SystemUser
+    | ConsentAgreement
+    | UserConsentAgreement
 
 type Audit @model(class: "AdvisingApp\\Audit\\Models\\Audit") {
     "Unique primary key."

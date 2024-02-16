@@ -54,6 +54,7 @@ use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 use AdvisingApp\Assistant\Registries\AssistantRbacRegistry;
 use AdvisingApp\Assistant\Listeners\LogAssistantChatMessage;
+use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 
 class AssistantServiceProvider extends ServiceProvider
 {
@@ -81,6 +82,7 @@ class AssistantServiceProvider extends ServiceProvider
         RoleBasedAccessControlRegistry::register(AssistantRbacRegistry::class);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
+        $this->registerEnum(AIChatMessageFrom::class);
     }
 
     public function registerAssets(): void

@@ -60,6 +60,9 @@ input CreatePromptInput {
 
     "The text of the prompt."
     prompt: String! @rules(apply: ["required", "string", "max:65535"])
+
+    "The type of the prompt."
+    type_id: UUID! @rules(apply: ["nullable", "uuid", "exists:prompt_types,id"])
 }
 
 input UpdatePromptInput {

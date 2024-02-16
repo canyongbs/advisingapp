@@ -54,8 +54,7 @@ directive @canUseInQuery(
   The ability to check permissions for.
   """
   ability: String!
-
-) repeatable on FIELD_DEFINITION
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 GRAPHQL;
     }
 

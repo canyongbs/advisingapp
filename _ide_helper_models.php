@@ -942,7 +942,7 @@ namespace AdvisingApp\Assistant\Models{
  * @property array $metadata
  * @property string $user_id
  * @property array $request
- * @property int $sent_at
+ * @property \Illuminate\Support\Carbon $sent_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User $user
