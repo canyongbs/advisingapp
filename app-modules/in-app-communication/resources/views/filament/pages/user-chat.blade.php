@@ -159,7 +159,7 @@ type="button" @class([
                 /** @var TwilioConversation $conversation */
             @endphp
             @if ($conversation)
-                <div
+<div
 class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3" x-data="userToUserChat({ selectedConversation: @js($conversation->getKey()), users: @js($users) })" wire:key="conversation-{{ $conversation->getKey() }}">
                     <div
 class="flex flex-col items-center self-center" x-show="loading" x-transition.delay.800ms>
@@ -455,7 +455,7 @@ class="h-2 w-2 animate-bounce rounded-full bg-primary-500 text-primary-500 anima
 <div class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3">
                     <p class="text-center text-xl">Select or create a new Chat</p>
                 </div>
-            @endif
+@endif
         </div>
         <script src="{{ FilamentAsset::getScriptSrc('userToUserChat', 'canyon-gbs/in-app-communication') }}"></script>
         <style>
