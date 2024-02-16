@@ -39,11 +39,11 @@
     @capture($form)
     <x-filament-panels::form
     :wire:key="$this->getId() . '.forms.' . $this->getFormStatePath()" wire:submit="save">
-                {{ $this->form }}
+                    {{ $this->form }}
 
-                <x-filament-panels::form.actions
+                    <x-filament-panels::form.actions
     :actions="$this->getCachedFormActions()" :full-width="$this->hasFullWidthFormActions()"/>
-            </x-filament-panels::form>
+                </x-filament-panels::form>
 @endcapture
 
     @php
@@ -56,7 +56,7 @@
 @endif
 
     @if (count($relationManagers))
-        <x-filament-panels::resources.relation-managers
+<x-filament-panels::resources.relation-managers
 :active-locale="isset($activeLocale) ? $activeLocale : null" :active-manager="$activeRelationManager ??
     ($hasCombinedRelationManagerTabsWithContent ? null : array_key_first($relationManagers))" :content-tab-label="$this->getContentTabLabel()" :managers="$relationManagers" :owner-record="$record" :page-class="static::class">
             @if ($hasCombinedRelationManagerTabsWithContent)
@@ -65,7 +65,7 @@
                 </x-slot>
 @endif
         </x-filament-panels::resources.relation-managers>
-    @endif
+@endif
 
     @if ($data['model'])
 {{ $this->table }}

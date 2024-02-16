@@ -430,14 +430,14 @@ class="h-2 w-2 animate-bounce rounded-full bg-primary-500 text-primary-500 anima
 
                         <div class="{{ $isManager ? 'justify-between' : 'justify-end' }} flex items-center">
                             @if ($conversation->type === ConversationType::Channel)
-                                @if ($isManager)
+@if ($isManager)
 <div class="flex gap-3">
                                         {{ $this->editChannelAction }}
 
                                         {{ $this->deleteChannelAction }}
                                     </div>
 @endif
-                            @endif
+@endif
 
                             <div class="flex gap-3">
                                 {{ $this->updateNotificationPreferenceAction }}

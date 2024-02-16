@@ -43,7 +43,7 @@
     {{-- TODO: Determine the best way to check if calendar is set up --}}
     @empty(auth()->user()->calendar?->oauth_token)
     <div wire:init="mountAction('setupCalendarProviderAction')">
-            </div>
+                </div>
 @endempty
 
     @if (auth()->user()->calendar?->oauth_token && !auth()->user()->calendar?->provider_id)
@@ -81,7 +81,7 @@ class="h-6 w-6" icon="heroicon-m-calendar-days"/>
     @if ($viewType === 'table')
         <div class="flex flex-col gap-y-6">
             @if (count($tabs = $this->getTabs()))
-                <x-filament::tabs>
+<x-filament::tabs>
                     {{ FilamentView::renderHook('panels::resource.pages.list-records.tabs.start', scopes: $this->getRenderHookScopes()) }}
 
                     @foreach ($tabs as $tabKey => $tab)
@@ -98,7 +98,7 @@ class="h-6 w-6" icon="heroicon-m-calendar-days"/>
 
                     {{ FilamentView::renderHook('panels::resource.pages.list-records.tabs.end', scopes: $this->getRenderHookScopes()) }}
                 </x-filament::tabs>
-            @endif
+@endif
 
             {{ FilamentView::renderHook('panels::resource.pages.list-records.table.before', scopes: $this->getRenderHookScopes()) }}
 
