@@ -38,15 +38,23 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEngagementStudentFilesTable extends Migration
-{
-    public function up()
+return new class () extends Migration {
+    public function up(): void
     {
-        Schema::create('engagement_student_files', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('description')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
+        if (Schema::hasTable('performance')) {
+            return;
+        }
+
+        Schema::create('performance', function (Blueprint $table) {
+            $table->string('sisid');
+            $table->string('acad_career');
+            $table->string('division');
+            $table->boolean('first_gen');
+            $table->integer('cum_att');
+            $table->integer('cum_ern');
+            $table->integer('pct_ern');
+            $table->float('cum_gpa', 4, 3);
+            $table->timestampTz('max_dt');
         });
     }
-}
+};

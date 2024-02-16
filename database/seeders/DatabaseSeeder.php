@@ -116,7 +116,7 @@ class DatabaseSeeder extends Seeder
             // EngagementResponseSeeder::class,
             // DemoEducatableEngagementSeeder::class,
             SuperAdminSeeder::class,
-            StudentSeeder::class,
+            TwilioStudentSeeder::class,
             ApplicationSubmissionStateSeeder::class,
             EventSeeder::class,
 

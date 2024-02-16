@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Database\Factories;
 
+use Faker\Provider\en_US\Address;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -47,23 +48,23 @@ class StudentFactory extends Factory
     public function definition(): array
     {
         return [
-            'sisid' => $this->faker->randomNumber(9),
-            'otherid' => $this->faker->randomNumber(9),
+            'sisid' => $this->faker->unique()->numerify('########'),
+            'otherid' => $this->faker->numerify('##########'),
             'first' => $this->faker->firstName(),
             'last' => $this->faker->lastName(),
-            'full_name' => $this->faker->name(),
-            'preferred' => $this->faker->firstName(),
+            'full_name' => fn (array $attributes) => "{$attributes['first']} {$attributes['last']}",
+            'preferred' => $this->faker->randomElement([$this->faker->firstName(), null]),
             'email' => $this->faker->email(),
             'email_2' => $this->faker->email(),
-            'mobile' => $this->faker->phoneNumber(),
+            'mobile' => $this->faker->numerify('+1 ### ### ####'),
             'sms_opt_out' => $this->faker->boolean(),
             'email_bounce' => $this->faker->boolean(),
-            'phone' => $this->faker->phoneNumber(),
-            'address' => $this->faker->address(),
-            'address2' => $this->faker->address(),
-            'address3' => $this->faker->address(),
+            'phone' => $this->faker->numerify('+1 ### ### ####'),
+            'address' => $this->faker->buildingNumber() . ' ' . $this->faker->streetName(),
+            'address2' => $this->faker->randomElement([null, Address::secondaryAddress()]),
+            'address3' => null,
             'city' => $this->faker->city(),
-            'state' => $this->faker->locale(),
+            'state' => Address::stateAbbr(),
             'postal' => $this->faker->postcode(),
             'birthdate' => $this->faker->date(),
             'hsgrad' => $this->faker->year(),
@@ -71,12 +72,12 @@ class StudentFactory extends Factory
             'ferpa' => $this->faker->boolean(),
             'dfw' => $this->faker->date(),
             'sap' => $this->faker->boolean(),
-            'holds' => $this->faker->word(),
+            'holds' => $this->faker->regexify('[A-Z]{5}'),
             'firstgen' => $this->faker->boolean(),
             'ethnicity' => $this->faker->randomElement(['White', 'Black', 'Hispanic', 'Asian', 'Other']),
             'lastlmslogin' => $this->faker->dateTime(),
-            'f_e_term' => $this->faker->randomNumber(4),
-            'mr_e_term' => $this->faker->randomNumber(4),
+            'f_e_term' => $this->faker->numerify('####'),
+            'mr_e_term' => $this->faker->numerify('####'),
         ];
     }
 }
