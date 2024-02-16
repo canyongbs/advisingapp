@@ -4,13 +4,15 @@ type SystemUser @model(class: "App\\Models\\SystemUser") {
 
     name: String!
 
-    audits: [Audit!] @hasMany
-
     created_at: DateTime
 
     updated_at: DateTime
 
     deleted_at: DateTime
+
+    audits: [Audit!] @hasMany
+
+    audits_count: Int @count(relation: "audits")
 }
 
 input SystemUsersQuery {
@@ -25,6 +27,8 @@ input SystemUsersQuery {
     updated_at: DateTime
 
     deleted_at: DateTime
+
+    audits: AuditsQuery
 }
 
 type SystemUserQueries {

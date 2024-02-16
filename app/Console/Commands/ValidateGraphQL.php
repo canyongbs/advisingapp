@@ -206,20 +206,6 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
                 $line = str($line)->trim();
                 $property = $line->afterLast('$')->trim();
 
-                // if($line->contains('@property-read'))
-                // {
-                //     $field = $this->findMatchingRelationship($property, $type);
-                //     ray($property, $type, $field);
-                // }
-                // elseif($line->contains('@property'))
-                // {
-                //     // $field = $this->findMatchingField($property, $type);
-                // }
-                // else
-                // {
-                //     throw new \Exception('Unknown line: ' . $line);
-                // }
-
                 $field = collect($type['fields'])->where('name', $property->snake())->first();
 
                 if ($field) {
@@ -258,18 +244,6 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
         $this->newLine();
     }
 
-    // private function findMatchingField(Stringable $property, array $type)
-    // {
-    //
-    // }
-    //
-    // private function findMatchingRelationship(Stringable $property, array $type)
-    // {
-    //     if ($property->contains('_id')) {
-    //         return collect($type['fields'])->where('name', $property->snake())->first();
-    //     }
-    // }
-
     private function style(string $value, string $type = null): string
     {
         return match ($type) {
@@ -278,11 +252,4 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
             default => "\e[32m{$value}\e[39m",
         };
     }
-
-    // private function matchRelatedModel(Stringable $property, array $type)
-    // {
-    //     $property = $property->remove('_id')->camel();
-    //
-    //     return collect($type['fields'])->where('name', $property->snake())->first();
-    // }
 }

@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Consent\Enums;
 
-enum ConsentAgreementType: string
+use Filament\Support\Contracts\HasLabel;
+
+enum ConsentAgreementType: string implements HasLabel
 {
     case AzureOpenAI = 'azure_open_ai';
 
@@ -45,6 +47,14 @@ enum ConsentAgreementType: string
     {
         return match ($this) {
             self::AzureOpenAI => "Warning: Changing the AI Usage Agreement will reset everyone's consents, making them agree to your new terms all over again. There's no undoing this, so please make sure this is your intention.",
+        };
+    }
+
+    public function getLabel(): ?string
+    {
+        return match ($this) {
+            self::AzureOpenAI => 'Azure OpenAI',
+            default => str($this->name)->headline(),
         };
     }
 }

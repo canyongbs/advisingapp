@@ -2,16 +2,64 @@ type Student @model(class: "AdvisingApp\\StudentDataModel\\Models\\Student") {
     sisid: ID!
 
     otherid: String
-        @canRoot(ability: "viewAny", action: RETURN_VALUE, returnValue: null)
 
     first: String
-        @canRoot(ability: "viewAny", action: RETURN_VALUE, returnValue: null)
 
     last: String
-        @canRoot(ability: "viewAny", action: RETURN_VALUE, returnValue: null)
 
     full_name: String
-        @canRoot(ability: "viewAny", action: RETURN_VALUE, returnValue: null)
+
+    preferred: String
+
+    display_name: String
+
+    email: Email
+
+    email_2: Email
+
+    mobile: String
+
+    sms_opt_out: Boolean!
+
+    email_bounce: Boolean!
+
+    phone: String
+
+    address: String
+
+    address2: String
+
+    address3: String
+
+    city: String
+
+    state: String
+
+    postal: String
+
+    birthdate: Date
+
+    hsgrad: Year
+
+    dual: Boolean!
+
+    ferpa: Boolean!
+
+    dfw: Date
+
+    sap: Boolean!
+
+    holds: String
+
+    firstgen: Boolean!
+
+    ethnicity: String
+
+    lastlmslogin: DateTime
+
+    f_e_term: String
+
+    mr_e_term: String
 
     enrollments: [Enrollment!] @hasMany
 
@@ -24,6 +72,10 @@ type Student @model(class: "AdvisingApp\\StudentDataModel\\Models\\Student") {
     programs: [Program!] @hasMany
 
     programs_count: Int @count(relation: "programs")
+
+    audits: [Audit!] @hasMany
+
+    audits_count: Int @count(relation: "audits")
 }
 
 input StudentsQuery {
@@ -37,11 +89,65 @@ input StudentsQuery {
 
     full_name: String
 
+    preferred: String
+
+    display_name: String
+
+    email: Email
+
+    email_2: Email
+
+    mobile: String
+
+    sms_opt_out: Boolean
+
+    email_bounce: Boolean
+
+    phone: String
+
+    address: String
+
+    address2: String
+
+    address3: String
+
+    city: String
+
+    state: String
+
+    postal: String
+
+    birthdate: Date
+
+    hsgrad: Year
+
+    dual: Boolean
+
+    ferpa: Boolean
+
+    dfw: Date
+
+    sap: Boolean
+
+    holds: String
+
+    firstgen: Boolean
+
+    ethnicity: String
+
+    lastlmslogin: DateTime
+
+    f_e_term: String
+
+    mr_e_term: String
+
     enrollments: EnrollmentsQuery
 
     performances: PerformancesQuery
 
     programs: ProgramsQuery
+
+    audits: AuditsQuery
 }
 
 type StudentQueries {

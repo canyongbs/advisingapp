@@ -4,7 +4,15 @@ type User @model(class: "App\\Models\\User") {
     id: UUID!
 
     "Unique email address."
-    email: String! @canRoot(ability: "viewEmail")
+    email: Email! @canRoot(ability: "viewEmail")
+
+    consent_agreements: [ConsentAgreement!]! @belongsToMany(relation: "consentAgreements")
+
+    consent_agreements_count: Int @count(relation: "consentAgreements")
+
+    audits: [Audit!] @hasMany
+
+    audits_count: Int @count(relation: "audits")
 }
 
 input UsersQuery {
@@ -12,7 +20,11 @@ input UsersQuery {
     id: UUID
 
     "Users email address."
-    email: String @canUseInQuery(ability: "viewEmail")
+    email: Email @canUseInQuery(ability: "viewEmail")
+
+    consent_agreements: ConsentAgreementsQuery
+
+    audits: AuditsQuery
 }
 
 type UserQueries {

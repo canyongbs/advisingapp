@@ -143,6 +143,22 @@ type ConsentAgreementMutations {
     #        id: UUID!
     #            @rules(apply: ["required", "uuid", "exists:consent_agreements"])
     #    ): ConsentAgreement! @delete @canFind(ability: "delete", find: "id")
+
+    consentUserToAgreement(
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:consent_agreements"])
+        user_id: UUID!
+            @rules(apply: ["required", "uuid", "exists:users,id"])
+    ): ConsentAgreement! @canFind(ability: "update", find: "id") @field(resolver: "AdvisingApp\\Consent\\GraphQL\\Mutations\\Consent")
+
+#    revokeUserConsentFromAgreement(
+#        id: UUID!
+#            @whereKey
+#            @rules(apply: ["required", "uuid", "exists:consent_agreements"])
+#        user_id: UUID!
+#            @rules(apply: ["required", "uuid", "exists:users,id"])
+#    ): ConsentAgreement! @canFind(ability: "update", find: "id") @field(resolver: "AdvisingApp\\Consent\\GraphQL\\Mutations\\Revoke")
 }
 
 extend type Mutation {

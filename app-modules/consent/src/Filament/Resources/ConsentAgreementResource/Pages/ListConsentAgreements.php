@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 
+use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Tables\Actions\Action;
@@ -59,6 +60,7 @@ class ListConsentAgreements extends ListRecords
         return $form
             ->schema([
                 TextInput::make('type')
+                    ->formatStateUsing(fn ($state) => ConsentAgreementType::from($state)->getLabel())
                     ->disabled()
                     ->helperText('This field is not editable.'),
                 TextInput::make('title')
@@ -81,7 +83,8 @@ class ListConsentAgreements extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('type'),
+                TextColumn::make('type')
+                    ->formatStateUsing(fn (ConsentAgreementType $state) => $state->getLabel()),
                 TextColumn::make('title'),
             ])
             ->actions([
