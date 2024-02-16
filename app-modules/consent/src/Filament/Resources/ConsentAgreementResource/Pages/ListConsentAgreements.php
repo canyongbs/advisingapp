@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 
-use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Tables\Actions\Action;
@@ -47,6 +46,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
+use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource;
 
 class ListConsentAgreements extends ListRecords

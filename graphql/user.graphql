@@ -6,7 +6,8 @@ type User @model(class: "App\\Models\\User") {
     "Unique email address."
     email: Email! @canRoot(ability: "viewEmail")
 
-    consent_agreements: [ConsentAgreement!]! @belongsToMany(relation: "consentAgreements")
+    consent_agreements: [ConsentAgreement!]!
+        @belongsToMany(relation: "consentAgreements")
 
     consent_agreements_count: Int @count(relation: "consentAgreements")
 

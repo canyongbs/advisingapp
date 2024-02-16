@@ -20,10 +20,10 @@ type ConsentAgreement
 
     audits_count: Int @count(relation: "audits")
 
-    user_consent_agreements: [UserConsentAgreement!] @hasMany(relation: "userConsentAgreements")
+    user_consent_agreements: [UserConsentAgreement!]
+        @hasMany(relation: "userConsentAgreements")
 
-    user_consent_agreements_count: Int
-        @count(relation: "userConsentAgreements")
+    user_consent_agreements_count: Int @count(relation: "userConsentAgreements")
 
     users: [User!]! @belongsToMany
 
@@ -148,17 +148,18 @@ type ConsentAgreementMutations {
         id: UUID!
             @whereKey
             @rules(apply: ["required", "uuid", "exists:consent_agreements"])
-        user_id: UUID!
-            @rules(apply: ["required", "uuid", "exists:users,id"])
-    ): ConsentAgreement! @canFind(ability: "update", find: "id") @field(resolver: "AdvisingApp\\Consent\\GraphQL\\Mutations\\Consent")
+        user_id: UUID! @rules(apply: ["required", "uuid", "exists:users,id"])
+    ): ConsentAgreement!
+        @canFind(ability: "update", find: "id")
+        @field(resolver: "AdvisingApp\\Consent\\GraphQL\\Mutations\\Consent")
 
-#    revokeUserConsentFromAgreement(
-#        id: UUID!
-#            @whereKey
-#            @rules(apply: ["required", "uuid", "exists:consent_agreements"])
-#        user_id: UUID!
-#            @rules(apply: ["required", "uuid", "exists:users,id"])
-#    ): ConsentAgreement! @canFind(ability: "update", find: "id") @field(resolver: "AdvisingApp\\Consent\\GraphQL\\Mutations\\Revoke")
+    #    revokeUserConsentFromAgreement(
+    #        id: UUID!
+    #            @whereKey
+    #            @rules(apply: ["required", "uuid", "exists:consent_agreements"])
+    #        user_id: UUID!
+    #            @rules(apply: ["required", "uuid", "exists:users,id"])
+    #    ): ConsentAgreement! @canFind(ability: "update", find: "id") @field(resolver: "AdvisingApp\\Consent\\GraphQL\\Mutations\\Revoke")
 }
 
 extend type Mutation {

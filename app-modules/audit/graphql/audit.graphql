@@ -95,10 +95,7 @@ type AuditQueries {
         id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:audits"])
     ): Audit @find @canResolved(ability: "view")
 
-    list(
-        where: AuditsQuery @searchBy
-        order: AuditsQuery @sortBy
-    ): [Audit!]!
+    list(where: AuditsQuery @searchBy, order: AuditsQuery @sortBy): [Audit!]!
         @paginate
         @canModel(ability: "viewAny")
 }

@@ -12,7 +12,8 @@ type UserConsentAgreement
 
     user: User! @belongsTo
 
-    consent_agreement: ConsentAgreement! @belongsTo(relation: "consentAgreement")
+    consent_agreement: ConsentAgreement!
+        @belongsTo(relation: "consentAgreement")
 
     audits: [Audit!] @hasMany
 

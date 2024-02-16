@@ -167,9 +167,7 @@ type ProspectQueries {
     list(
         where: ProspectsQuery @searchBy
         order: ProspectsQuery @sortBy
-    ): [Prospect!]!
-        @paginate
-        @canModel(ability: "viewAny")
+    ): [Prospect!]! @paginate @canModel(ability: "viewAny")
 }
 
 extend type Query {

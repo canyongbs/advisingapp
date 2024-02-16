@@ -40,7 +40,6 @@ use App\Models\Tenant;
 use GraphQL\Type\Introspection;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Stringable;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
 use Nuwave\Lighthouse\Schema\AST\ASTCache;
