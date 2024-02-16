@@ -56,21 +56,19 @@
                     </x-filament::badge>
                 </a>
             @elseif ($authorType === Prospect::class)
-                <a
-                    href="{{ ProspectResource::getUrl('view', ['record' => $authorKey]) }}"
-                    target="_blank"
-                >
+<a
+href="{{ ProspectResource::getUrl('view', ['record' => $authorKey]) }}" target="_blank">
                     <x-filament::badge color="success">
                         Prospect
                     </x-filament::badge>
                 </a>
-            @else
-                <x-filament::badge color="danger">
+@else
+<x-filament::badge color="danger">
                     Not found
                 </x-filament::badge>
-            @endif
+@endif
         </div>
-    @else
-        <span class="text-gray-500">No response</span>
+@else
+<span class="text-gray-500">No response</span>
     @endif
 </x-form::blocks.field-wrapper>

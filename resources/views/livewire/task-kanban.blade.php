@@ -112,48 +112,38 @@
                                                             Done
                                                         </div>
                                                     @elseif (!empty($task->due))
-                                                        <div @class([
-                                                            'flex items-center justify-center px-3 text-sm font-medium rounded-lg',
-                                                            'text-danger-800 bg-danger-100 dark:bg-danger-200' => $task->due->isPast(),
-                                                            'text-warning-800 bg-warning-100 dark:bg-warning-200' => $task->due->isFuture(),
-                                                        ])>
+<div @class([
+    'flex items-center justify-center px-3 text-sm font-medium rounded-lg',
+    'text-danger-800 bg-danger-100 dark:bg-danger-200' => $task->due->isPast(),
+    'text-warning-800 bg-warning-100 dark:bg-warning-200' => $task->due->isFuture(),
+])>
                                                             <svg
-                                                                class="mr-1 h-4 w-4"
-                                                                fill="currentColor"
-                                                                viewBox="0 0 20 20"
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                            >
+class="mr-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                                                 <path
-                                                                    fill-rule="evenodd"
-                                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                                                                    clip-rule="evenodd"
-                                                                ></path>
+fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
                                                             </svg>
                                                             {{ now()->diffForHumans($task->due) }} due
                                                         </div>
-                                                    @endif
+@endif
                                                 </div>
                                             </div>
                                         </div>
-                                    @endforeach
+@endforeach
 
                                     <div
-                                        class="absolute flex h-20 w-full flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-200 py-2 font-semibold text-gray-500 hover:border-gray-300 dark:border-gray-800">
+class="absolute flex h-20 w-full flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-200 py-2 font-semibold text-gray-500 hover:border-gray-300 dark:border-gray-800">
                                         <div>
                                             Drag tasks here
                                         </div>
 
                                         <button
-                                            class="hover:underline"
-                                            tag="button"
-                                            wire:click="mountAction('createTask', { status: '{{ $status->value }}' })"
-                                        >
+class="hover:underline" tag="button" wire:click="mountAction('createTask', { status: '{{ $status->value }}' })">
                                             or add a new one
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
+@endforeach
                     </div>
                 </div>
             </div>

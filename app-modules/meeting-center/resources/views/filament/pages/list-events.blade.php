@@ -113,7 +113,7 @@
             {{ FilamentView::renderHook('panels::resource.pages.list-records.table.after', scopes: $this->getRenderHookScopes()) }}
         </div>
     @elseif($viewType === 'calendar')
-        <div>
+<div>
             @livewire(CalendarWidget::class)
         </div>
     @endif

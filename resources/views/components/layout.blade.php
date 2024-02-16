@@ -61,8 +61,8 @@
 
     <style>
         :root {
-            --font-family: {!! filament()->getFontFamily() !!};
-        }
+        --font-family: {!! filament()->getFontFamily() !!};
+    }
     </style>
 
     @if (!filament()->hasDarkMode())
@@ -70,23 +70,23 @@
             localStorage.setItem('theme', 'light')
         </script>
     @elseif (filament()->hasDarkModeForced())
-        <script>
-            localStorage.setItem('theme', 'dark')
-        </script>
-    @else
-        <script>
-            const theme = localStorage.getItem('theme') ?? 'system'
+<script>
+    localStorage.setItem('theme', 'dark')
+</script>
+@else
+<script>
+    const theme = localStorage.getItem('theme') ?? 'system'
 
-            if (
-                theme === 'dark' ||
-                (theme === 'system' &&
-                    window.matchMedia('(prefers-color-scheme: dark)')
-                    .matches)
-            ) {
-                document.documentElement.classList.add('dark')
-            }
-        </script>
-    @endif
+    if (
+        theme === 'dark' ||
+        (theme === 'system' &&
+            window.matchMedia('(prefers-color-scheme: dark)')
+            .matches)
+    ) {
+        document.documentElement.classList.add('dark')
+    }
+</script>
+@endif
 
 </head>
 

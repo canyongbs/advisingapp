@@ -37,18 +37,14 @@
     'fi-resource-record-' . $record->getKey(),
 ])>
     @capture($form)
-        <x-filament-panels::form
-            :wire:key="$this->getId() . '.forms.' . $this->getFormStatePath()"
-            wire:submit="save"
-        >
-            {{ $this->form }}
+    <x-filament-panels::form
+    :wire:key="$this->getId() . '.forms.' . $this->getFormStatePath()" wire:submit="save">
+                {{ $this->form }}
 
-            <x-filament-panels::form.actions
-                :actions="$this->getCachedFormActions()"
-                :full-width="$this->hasFullWidthFormActions()"
-            />
-        </x-filament-panels::form>
-    @endcapture
+                <x-filament-panels::form.actions
+    :actions="$this->getCachedFormActions()" :full-width="$this->hasFullWidthFormActions()"/>
+            </x-filament-panels::form>
+@endcapture
 
     @php
         $relationManagers = $this->getRelationManagers();
@@ -56,28 +52,22 @@
     @endphp
 
     @if (!$hasCombinedRelationManagerTabsWithContent || !count($relationManagers))
-        {{ $form() }}
-    @endif
+{{ $form() }}
+@endif
 
     @if (count($relationManagers))
         <x-filament-panels::resources.relation-managers
-            :active-locale="isset($activeLocale) ? $activeLocale : null"
-            :active-manager="$activeRelationManager ??
-                ($hasCombinedRelationManagerTabsWithContent ? null : array_key_first($relationManagers))"
-            :content-tab-label="$this->getContentTabLabel()"
-            :managers="$relationManagers"
-            :owner-record="$record"
-            :page-class="static::class"
-        >
+:active-locale="isset($activeLocale) ? $activeLocale : null" :active-manager="$activeRelationManager ??
+    ($hasCombinedRelationManagerTabsWithContent ? null : array_key_first($relationManagers))" :content-tab-label="$this->getContentTabLabel()" :managers="$relationManagers" :owner-record="$record" :page-class="static::class">
             @if ($hasCombinedRelationManagerTabsWithContent)
-                <x-slot name="content">
+<x-slot name="content">
                     {{ $form() }}
                 </x-slot>
-            @endif
+@endif
         </x-filament-panels::resources.relation-managers>
     @endif
 
     @if ($data['model'])
-        {{ $this->table }}
-    @endif
+{{ $this->table }}
+@endif
 </x-filament-panels::page>
