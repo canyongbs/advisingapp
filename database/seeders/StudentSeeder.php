@@ -37,16 +37,77 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Collection;
+use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Models\Performance;
 
 class StudentSeeder extends Seeder
 {
     public function run(): void
     {
-        Student::factory()
-            ->create([
-                'full_name' => 'Twilio Tester',
-                'mobile' => config('services.twilio.test_from_number'),
-            ]);
+        /** @var Collection $students */
+        $students = Student::factory(20000)
+            ->make();
+
+        $students->chunk(200)
+            ->each(function ($chunk) {
+                Student::insert($chunk->toArray());
+
+                $enrollments = [];
+
+                $chunk->each(function (Student $student) use (&$enrollments) {
+                    foreach (Enrollment::factory(5)->make(['sisid' => $student->sisid])->toArray() as $enrollment) {
+                        $enrollments[] = $enrollment;
+                    }
+                });
+
+                Enrollment::insert($enrollments);
+
+                $programs = [];
+                $performances = [];
+
+                $chunk->each(function (Student $student) use (&$programs, &$performances) {
+                    $programs[] = Program::factory()->make(
+                        [
+                            'sisid' => $student->sisid,
+                            'otherid' => $student->otherid,
+                        ]
+                    )->toArray();
+
+                    $performances[] = Performance::factory()->make(['sisid' => $student->sisid])->toArray();
+                });
+
+                Program::insert($programs);
+                Performance::insert($performances);
+            });
+
+        /** @var Collection $students */
+        $students = Student::factory(80000)
+            ->make();
+
+        $chunks = $students->chunk(2000);
+
+        $chunks->each(function ($chunk) {
+            Student::insert($chunk->toArray());
+
+            $programs = [];
+            $performances = [];
+
+            $chunk->each(function (Student $student) use (&$programs, &$performances) {
+                $programs[] = Program::factory()->make(
+                    [
+                        'sisid' => $student->sisid,
+                        'otherid' => $student->otherid,
+                    ]
+                )->toArray();
+
+                $performances[] = Performance::factory()->make(['sisid' => $student->sisid])->toArray();
+            });
+
+            Program::insert($programs);
+            Performance::insert($performances);
+        });
     }
 }

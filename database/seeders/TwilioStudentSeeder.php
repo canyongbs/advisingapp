@@ -34,17 +34,19 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace Database\Seeders;
 
-class AddRelationshipFieldsToEngagementStudentFilesTable extends Migration
+use Illuminate\Database\Seeder;
+use AdvisingApp\StudentDataModel\Models\Student;
+
+class TwilioStudentSeeder extends Seeder
 {
-    public function up()
+    public function run(): void
     {
-        Schema::table('engagement_student_files', function (Blueprint $table) {
-            $table->unsignedBigInteger('student_id')->nullable();
-            $table->foreign('student_id', 'student_fk_8136688')->references('id')->on('record_student_items');
-        });
+        Student::factory()
+            ->create([
+                'full_name' => 'Twilio Tester',
+                'mobile' => config('services.twilio.test_from_number'),
+            ]);
     }
 }

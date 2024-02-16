@@ -38,21 +38,26 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRecordProgramItemsTable extends Migration
-{
-    public function up()
+return new class () extends Migration {
+    public function up(): void
     {
-        Schema::create('record_program_items', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('institution')->nullable();
-            $table->string('plan')->nullable();
-            $table->string('career')->nullable();
-            $table->string('term')->nullable();
-            $table->string('status')->nullable();
-            $table->string('foi')->nullable();
-            $table->float('gpa', 4, 3)->nullable();
-            $table->timestamps();
+        if (Schema::hasTable('programs')) {
+            return;
+        }
+
+        Schema::create('programs', function (Blueprint $table) {
+            $table->string('sisid');
+            $table->string('otherid');
+            $table->string('acad_career');
+            $table->string('division');
+            $table->string('acad_plan');
+            $table->string('prog_status');
+            $table->float('cum_gpa', 4, 3);
+            $table->string('semester');
+            $table->string('descr');
+            $table->string('foi');
+            $table->timestampTz('change_dt');
+            $table->timestampTz('declare_dt');
         });
     }
-}
+};

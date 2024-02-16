@@ -82,4 +82,9 @@ class Enrollment extends Model
     {
         return $this->belongsTo(Student::class, 'sisid', 'sisid');
     }
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+    }
 }
