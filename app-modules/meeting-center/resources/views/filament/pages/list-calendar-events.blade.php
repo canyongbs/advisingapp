@@ -43,7 +43,7 @@
     {{-- TODO: Determine the best way to check if calendar is set up --}}
     @empty(auth()->user()->calendar?->oauth_token)
     <div wire:init="mountAction('setupCalendarProviderAction')">
-                        </div>
+                            </div>
 @endempty
 
     @if (auth()->user()->calendar?->oauth_token && !auth()->user()->calendar?->provider_id)
