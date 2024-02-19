@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Http\JsonResponse;
 use Filament\Support\Colors\Color;
 use App\Http\Controllers\Controller;
@@ -55,11 +57,12 @@ class KnowledgeManagementPortalController extends Controller
             'categories' => KnowledgeBaseCategoryData::collection(
                 KnowledgeBaseCategory::query()
                     ->get()
-                    ->map(function ($category) {
+                    ->map(function (KnowledgeBaseCategory $category) {
                         return [
                             'id' => $category->getKey(),
                             'name' => $category->name,
                             'description' => $category->description,
+                            'icon' => $category->icon ? svg($category->icon, 'h-6 w-6')->toHtml() : null,
                         ];
                     })
                     ->toArray()

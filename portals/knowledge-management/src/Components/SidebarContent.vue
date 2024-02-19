@@ -55,6 +55,12 @@ defineProps({
                 <div
                     class="bg-gray-100 text-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                 >
+                    <span v-if="category.icon"
+                          v-html="category.icon"
+                          class="text-primary-600 dark:text-primary-400"
+                          aria-hidden="true"
+                    >
+                    </span>
                     <router-link
                         :to="{ name: 'view-category', params: { categoryId: category.id } }"
                         active-class="font-bold"

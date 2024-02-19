@@ -181,7 +181,7 @@ async function getKnowledgeManagementPortal() {
 
                 <div class="lg:pl-72">
                     <div class="px-4 sm:px-6 lg:px-8">
-                        <router-view :search-url="searchUrl" :api-url="apiUrl" :categories="categories"></router-view>
+                        <RouterView :search-url="searchUrl" :api-url="apiUrl" :categories="categories"></RouterView>
                     </div>
                 </div>
             </div>
