@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
-use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Http\JsonResponse;
 use Filament\Support\Colors\Color;
 use App\Http\Controllers\Controller;
