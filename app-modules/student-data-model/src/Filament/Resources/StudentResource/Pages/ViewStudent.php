@@ -55,7 +55,21 @@ class ViewStudent extends ViewRecord
     {
         return $infolist
             ->schema([
-                Section::make()
+                Section::make('Characteristics')
+                    ->schema([
+                        TextEntry::make('sisid')
+                            ->label('Student ID'),
+                        TextEntry::make('otherid')
+                            ->label('Other ID'),
+                        TextEntry::make('f_e_term')
+                            ->label('First Enrollment Term')
+                            ->default('N/A'),
+                        TextEntry::make('mr_e_term')
+                            ->label('Most Recent Enrollment Term')
+                            ->default('N/A'),
+                    ])
+                    ->columns(2),
+                Section::make('Demographics')
                     ->schema([
                         TextEntry::make('first')
                             ->label('First Name'),
@@ -66,22 +80,27 @@ class ViewStudent extends ViewRecord
                         TextEntry::make('preferred')
                             ->label('Preferred Name')
                             ->default('N/A'),
-                        TextEntry::make('sisid')
-                            ->label('Student ID'),
-                        TextEntry::make('otherid')
-                            ->label('Other ID'),
+                        TextEntry::make('birthdate'),
+                        TextEntry::make('hsgrad')
+                            ->label('High School Graduation')
+                            ->default('N/A'),
+                        IconEntry::make('firstgen')
+                            ->label('First Generation')
+                            ->boolean(),
+                        TextEntry::make('ethnicity'),
+                        IconEntry::make('dual')
+                            ->label('Dual')
+                            ->boolean(),
+                    ])
+                    ->columns(2),
+                Section::make('Contact Information')
+                    ->schema([
                         TextEntry::make('email')
                             ->label('Email Address'),
                         TextEntry::make('email_2')
                             ->label('Email Address 2')
                             ->default('N/A'),
                         TextEntry::make('mobile'),
-                        IconEntry::make('sms_opt_out')
-                            ->label('SMS Opt Out')
-                            ->boolean(),
-                        IconEntry::make('email_bounce')
-                            ->label('Email Bounce')
-                            ->boolean(),
                         TextEntry::make('phone'),
                         TextEntry::make('address'),
                         TextEntry::make('address2')
@@ -93,37 +112,31 @@ class ViewStudent extends ViewRecord
                         TextEntry::make('city'),
                         TextEntry::make('state'),
                         TextEntry::make('postal'),
-                        TextEntry::make('birthdate'),
-                        TextEntry::make('hsgrad')
-                            ->label('High School Graduation')
-                            ->default('N/A'),
-                        IconEntry::make('dual')
-                            ->label('Dual')
+                    ])
+                    ->columns(2),
+                Section::make('Engagement Restrictions')
+                    ->schema([
+                        IconEntry::make('sms_opt_out')
+                            ->label('SMS Opt Out')
+                            ->boolean(),
+                        IconEntry::make('email_bounce')
+                            ->label('Email Bounce')
                             ->boolean(),
                         IconEntry::make('ferpa')
                             ->label('FERPA')
                             ->boolean(),
+                    ])
+                    ->columns(2),
+                Section::make('Impediments')
+                    ->schema([
                         TextEntry::make('dfw')
                             ->label('DFW'),
                         IconEntry::make('sap')
                             ->label('SAP')
                             ->boolean(),
                         TextEntry::make('holds'),
-                        IconEntry::make('firstgen')
-                            ->label('First Generation')
-                            ->boolean(),
-                        TextEntry::make('ethnicity'),
-                        TextEntry::make('lastlsmlogin')
-                            ->label('Last LMS Login')
-                            ->default('N/A'),
-                        TextEntry::make('f_e_term')
-                            ->label('First Enrollment Term')
-                            ->default('N/A'),
-                        TextEntry::make('mr_e_term')
-                            ->label('Most Recent Enrollment Term')
-                            ->default('N/A'),
                     ])
-                    ->columns(),
+                    ->columns(2),
             ]);
     }
 

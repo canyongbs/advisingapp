@@ -41,6 +41,7 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
@@ -56,14 +57,8 @@ class ViewProspect extends ViewRecord
     {
         return $infolist
             ->schema([
-                Section::make()
+                Section::make('Demographics')
                     ->schema([
-                        TextEntry::make('status.name')
-                            ->label('Status')
-                            ->translateLabel(),
-                        TextEntry::make('source.name')
-                            ->label('Source')
-                            ->translateLabel(),
                         TextEntry::make('first_name')
                             ->label('First Name')
                             ->translateLabel(),
@@ -76,9 +71,16 @@ class ViewProspect extends ViewRecord
                         TextEntry::make('preferred')
                             ->label('Preferred Name')
                             ->translateLabel(),
-                        TextEntry::make('description')
-                            ->label('Description')
+                        TextEntry::make('birthdate')
+                            ->label('Birthdate')
                             ->translateLabel(),
+                        TextEntry::make('hsgrad')
+                            ->label('High School Grad')
+                            ->translateLabel(),
+                    ])
+                    ->columns(2),
+                Section::make('Contact Information')
+                    ->schema([
                         TextEntry::make('email')
                             ->label('Email')
                             ->translateLabel(),
@@ -88,14 +90,6 @@ class ViewProspect extends ViewRecord
                         TextEntry::make('mobile')
                             ->label('Mobile')
                             ->translateLabel(),
-                        TextEntry::make('sms_opt_out')
-                            ->label('SMS Opt Out')
-                            ->translateLabel()
-                            ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No'),
-                        TextEntry::make('email_bounce')
-                            ->label('Email Bounce')
-                            ->translateLabel()
-                            ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No'),
                         TextEntry::make('phone')
                             ->label('Phone')
                             ->translateLabel(),
@@ -105,20 +99,42 @@ class ViewProspect extends ViewRecord
                         TextEntry::make('address_2')
                             ->label('Address 2')
                             ->translateLabel(),
-                        TextEntry::make('birthdate')
-                            ->label('Birthdate')
+                    ])
+                    ->columns(2),
+                Section::make('Classification')
+                    ->schema([
+                        TextEntry::make('status.name')
+                            ->label('Status')
                             ->translateLabel(),
-                        TextEntry::make('hsgrad')
-                            ->label('High School Grad')
+                        TextEntry::make('source.name')
+                            ->label('Source')
+                            ->translateLabel(),
+                        TextEntry::make('description')
+                            ->label('Description')
+                            ->translateLabel()
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(2),
+                Section::make('Engagement Restrictions')
+                    ->schema([
+                        IconEntry::make('sms_opt_out')
+                            ->label('SMS Opt Out')
+                            ->boolean(),
+                        IconEntry::make('email_bounce')
+                            ->label('Email Bounce')
+                            ->boolean(),
+                    ])
+                    ->columns(2),
+                Section::make('Record Details')
+                    ->schema([
+                        TextEntry::make('createdBy.name')
+                            ->label('Created By')
                             ->translateLabel(),
                         TextEntry::make('assignedTo.name')
                             ->label('Assigned To')
                             ->translateLabel(),
-                        TextEntry::make('createdBy.name')
-                            ->label('Created By')
-                            ->translateLabel(),
                     ])
-                    ->columns(),
+                    ->columns(2),
             ]);
     }
 
