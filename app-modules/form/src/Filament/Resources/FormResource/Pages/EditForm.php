@@ -86,7 +86,8 @@ class EditForm extends EditRecord
                             ->copyable()
                             ->copyableState(fn (Form $form) => resolve(GenerateSubmissibleEmbedCode::class)->handle($form))
                             ->copyMessage('Copied!')
-                            ->copyMessageDuration(1500),
+                            ->copyMessageDuration(1500)
+                            ->extraAttributes(['class' => 'embed-code-snippet']),
                     ]
                 )
                 ->modalSubmitAction(false)

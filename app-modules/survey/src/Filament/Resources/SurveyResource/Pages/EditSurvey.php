@@ -86,7 +86,8 @@ class EditSurvey extends EditRecord
                             ->copyable()
                             ->copyableState(fn (Survey $survey) => resolve(GenerateSubmissibleEmbedCode::class)->handle($survey))
                             ->copyMessage('Copied!')
-                            ->copyMessageDuration(1500),
+                            ->copyMessageDuration(1500)
+                            ->extraAttributes(['class' => 'embed-code-snippet']),
                     ]
                 )
                 ->modalSubmitAction(false)
