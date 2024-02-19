@@ -103,7 +103,9 @@ type ConsentAgreementMutations {
         input: UpdateConsentAgreementInput! @spread
     ): ConsentAgreement!
         @canFind(ability: "update", find: "id")
-        @field(resolver: "AdvisingApp\\Consent\\GraphQL\\Mutations\\UpdateConsentAgreement")
+        @field(
+            resolver: "AdvisingApp\\Consent\\GraphQL\\Mutations\\UpdateConsentAgreement"
+        )
 
     "Consent a user to a consent agreement."
     consent(
@@ -113,7 +115,9 @@ type ConsentAgreementMutations {
         user_id: UUID! @rules(apply: ["required", "uuid", "exists:users,id"])
     ): ConsentAgreement!
         @canFind(ability: "update", find: "id")
-        @field(resolver: "AdvisingApp\\Consent\\GraphQL\\Mutations\\ConsentUserToConsentAgreement")
+        @field(
+            resolver: "AdvisingApp\\Consent\\GraphQL\\Mutations\\ConsentUserToConsentAgreement"
+        )
 }
 
 extend type Mutation {

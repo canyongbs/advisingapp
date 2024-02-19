@@ -102,7 +102,7 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
         if (! $this->option('skip-schema')) {
             Artisan::call(ValidateSchemaCommand::class, outputBuffer: $this->output);
         } else {
-            $this->line($this->style("Schema validation skipped.", "warning"));
+            $this->line($this->style('Schema validation skipped.', 'warning'));
             $cache->clear();
         }
         $schema = $schemaBuilder->schema();
