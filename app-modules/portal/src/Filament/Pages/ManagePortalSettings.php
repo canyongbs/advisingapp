@@ -212,7 +212,8 @@ class ManagePortalSettings extends SettingsPage
                                             ->copyable()
                                             ->copyableState(fn () => resolve(GeneratePortalEmbedCode::class)->handle(PortalType::KnowledgeManagement))
                                             ->copyMessage('Copied!')
-                                            ->copyMessageDuration(1500),
+                                            ->copyMessageDuration(1500)
+                                            ->extraAttributes(['class' => 'embed-code-snippet']),
                                     ]
                                 )
                                 ->modalSubmitAction(false)

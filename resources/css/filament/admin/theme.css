@@ -69,6 +69,10 @@
     @apply hidden;
 }
 
+.embed-code-snippet code {
+    @apply text-wrap;
+}
+
 /* TipTap rendering */
 
 .tiptap-rendered-content {

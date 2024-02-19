@@ -86,7 +86,8 @@ class EditApplication extends EditRecord
                             ->copyable()
                             ->copyableState(fn (Application $application) => resolve(GenerateSubmissibleEmbedCode::class)->handle($application))
                             ->copyMessage('Copied!')
-                            ->copyMessageDuration(1500),
+                            ->copyMessageDuration(1500)
+                            ->extraAttributes(['class' => 'embed-code-snippet']),
                     ]
                 )
                 ->modalSubmitAction(false)
