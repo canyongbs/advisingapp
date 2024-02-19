@@ -20,14 +20,17 @@ type Prospect @model(class: "AdvisingApp\\Prospect\\Models\\Prospect") {
     "The preferred name of the prospect."
     preferred: String
 
+    "The display name of the prospect."
+    display_name: String
+
     "The description of the prospect."
     description: String
 
     "The email of the prospect."
-    email: String
+    email: Email
 
     "The email 2 of the prospect."
-    email_2: String
+    email_2: Email
 
     "The mobile number of the prospect."
     mobile: String
@@ -61,6 +64,14 @@ type Prospect @model(class: "AdvisingApp\\Prospect\\Models\\Prospect") {
 
     "The deleted date of the prospect."
     deleted_at: DateTime
+
+    audits: [Audit!] @hasMany
+
+    audits_count: Int @count(relation: "audits")
+
+    created_by: User @belongsTo(relation: "createdBy")
+
+    assigned_to: User @belongsTo(relation: "assignedTo")
 }
 
 input ProspectsQuery {
@@ -95,10 +106,10 @@ input ProspectsQuery {
     description: String
 
     "The email of the prospect."
-    email: String
+    email: Email
 
     "The email 2 of the prospect."
-    email_2: String
+    email_2: Email
 
     "The mobile number of the prospect."
     mobile: String
@@ -132,6 +143,12 @@ input ProspectsQuery {
 
     "The deleted date of the prospect."
     deleted_at: DateTime
+
+    audits: AuditsQuery
+
+    created_by: UsersQuery
+
+    assigned_to: UsersQuery
 }
 
 type ProspectQueries {
@@ -144,9 +161,10 @@ type ProspectQueries {
     ): Prospect @find @canResolved(ability: "view")
 
     "List multiple prospects."
-    list(where: ProspectsQuery @searchBy): [Prospect!]!
-        @paginate
-        @canModel(ability: "viewAny")
+    list(
+        where: ProspectsQuery @searchBy
+        order: ProspectsQuery @sortBy
+    ): [Prospect!]! @paginate @canModel(ability: "viewAny")
 }
 
 extend type Query {
@@ -176,10 +194,10 @@ input CreateProspectInput {
     description: String @rules(apply: ["string", "max:4294967295"])
 
     "The email of the prospect."
-    email: String @rules(apply: ["string", "email", "max:255"])
+    email: Email @rules(apply: ["string", "email", "max:255"])
 
     "The email 2 of the prospect."
-    email_2: String @rules(apply: ["string", "email", "max:255"])
+    email_2: Email @rules(apply: ["string", "email", "max:255"])
 
     "The mobile number of the prospect."
     mobile: String @rules(apply: ["string", "max:255"])
@@ -203,7 +221,13 @@ input CreateProspectInput {
     birthdate: Date @rules(apply: ["date_format:Y-m-d"])
 
     "The High School graduation year of the prospect."
-    hsgrad: String @rules(apply: ["string", "max:255"])
+    hsgrad: Year @rules(apply: ["integer", "date_format:Y"])
+
+    "The user that created the prospect."
+    created_by_id: UUID @rules(apply: ["exists:users,id"])
+
+    "The user the prospect is assigned to."
+    assigned_to_id: UUID @rules(apply: ["exists:users,id"])
 }
 
 input UpdateProspectInput {
@@ -229,10 +253,10 @@ input UpdateProspectInput {
     description: String @rules(apply: ["string", "max:4294967295"])
 
     "The email of the prospect."
-    email: String @rules(apply: ["string", "email", "max:255"])
+    email: Email @rules(apply: ["string", "email", "max:255"])
 
     "The email 2 of the prospect."
-    email_2: String @rules(apply: ["string", "email", "max:255"])
+    email_2: Email @rules(apply: ["string", "email", "max:255"])
 
     "The mobile number of the prospect."
     mobile: String @rules(apply: ["string", "max:255"])
@@ -256,7 +280,13 @@ input UpdateProspectInput {
     birthdate: Date @rules(apply: ["date_format:Y-m-d"])
 
     "The High School graduation year of the prospect."
-    hsgrad: String @rules(apply: ["string", "max:255"])
+    hsgrad: Year @rules(apply: ["integer", "date_format:Y"])
+
+    "The user that created the prospect."
+    created_by_id: UUID @rules(apply: ["exists:users,id"])
+
+    "The user the prospect is assigned to."
+    assigned_to_id: UUID @rules(apply: ["exists:users,id"])
 }
 
 type ProspectMutations {
@@ -288,6 +318,3 @@ type ProspectMutations {
 extend type Mutation {
     prospect: ProspectMutations! @namespaced
 }
-
-#import ./prospect-source.graphql
-#import ./prospect-status.graphql

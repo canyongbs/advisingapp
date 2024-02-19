@@ -62,6 +62,10 @@ class Performance extends Model
 
     public $timestamps = false;
 
+    protected $casts = [
+        'max_dt' => 'datetime',
+    ];
+
     public function getWebPermissions(): Collection
     {
         return collect(['view-any', '*.view']);
@@ -69,7 +73,7 @@ class Performance extends Model
 
     public function getApiPermissions(): Collection
     {
-        return collect();
+        return collect(['view-any', '*.view']);
     }
 
     public function student(): BelongsTo

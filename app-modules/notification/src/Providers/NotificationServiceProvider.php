@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Notification\Providers;
 
+use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\Facades\Event;
-use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Notification\Models\Subscription;
 use App\Registries\RoleBasedAccessControlRegistry;
@@ -59,7 +59,7 @@ use AdvisingApp\Notification\Listeners\NotifyUserOfSubscriptionDeleted;
 
 class NotificationServiceProvider extends ServiceProvider
 {
-    use GraphSchemaDiscovery;
+    use ImplementsGraphQL;
 
     public function register(): void {}
 

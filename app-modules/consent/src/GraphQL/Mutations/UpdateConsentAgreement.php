@@ -34,67 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+namespace AdvisingApp\Consent\GraphQL\Mutations;
 
 use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Audit\Settings\AuditSettings;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use Nuwave\Lighthouse\Execution\ResolveInfo;
+use AdvisingApp\Consent\Models\ConsentAgreement;
+use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-/**
- * @mixin IdeHelperAssistantChatMessageLog
- */
-class AssistantChatMessageLog extends BaseModel
+class UpdateConsentAgreement
 {
-    use CanAddAssistantLicenseGlobalScope;
-    use MassPrunable;
-
-    protected $fillable = [
-        'message',
-        'metadata',
-        'request',
-        'sent_at',
-    ];
-
-    protected $casts = [
-        'metadata' => 'encrypted:array',
-        'request' => 'encrypted:array',
-        'sent_at' => 'datetime',
-    ];
-
-    public function user(): BelongsTo
+    public function __invoke(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): ConsentAgreement
     {
-        return $this->belongsTo(User::class);
-    }
+        $consentAgreement = ConsentAgreement::find($args['id']);
+        $consentAgreement->update($args);
 
-    public function prunable(): Builder
-    {
-        return static::where(
-            'sent_at',
-            '<=',
-            now()->subDays(
-                app(AuditSettings::class)
-                    ->assistant_chat_message_logs_retention_duration_in_days
-            ),
-        );
-    }
+        foreach (data_get($args, 'users.consent', []) as $userId) {
+            $user = User::find($userId);
+            $user->consentTo($consentAgreement);
+        }
 
-    public function getWebPermissions(): Collection
-    {
-        return collect(['view-any', '*.view']);
-    }
-
-    public function getApiPermissions(): Collection
-    {
-        return collect(['view-any', '*.view']);
-    }
-
-    protected static function booted(): void
-    {
-        static::addAssistantLicenseGlobalScope();
+        return $consentAgreement;
     }
 }

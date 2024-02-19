@@ -37,10 +37,12 @@
 namespace AdvisingApp\Consent\Providers;
 
 use Filament\Panel;
+use App\Concerns\ImplementsGraphQL;
 use AdvisingApp\Consent\ConsentPlugin;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use App\Registries\RoleBasedAccessControlRegistry;
+use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Consent\Models\UserConsentAgreement;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Consent\Registries\ConsentRbacRegistry;
@@ -48,6 +50,8 @@ use AdvisingApp\Consent\Observers\ConsentAgreementObserver;
 
 class ConsentServiceProvider extends ServiceProvider
 {
+    use ImplementsGraphQL;
+
     public function register()
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ConsentPlugin()));
@@ -63,6 +67,9 @@ class ConsentServiceProvider extends ServiceProvider
         $this->registerObservers();
 
         RoleBasedAccessControlRegistry::register(ConsentRbacRegistry::class);
+
+        $this->discoverSchema(__DIR__ . '/../../graphql/*');
+        $this->registerEnum(ConsentAgreementType::class);
     }
 
     public function registerObservers(): void

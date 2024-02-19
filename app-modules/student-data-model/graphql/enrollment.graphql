@@ -1,0 +1,77 @@
+type Enrollment
+    @model(class: "AdvisingApp\\StudentDataModel\\Models\\Enrollment") {
+    sisid: String!
+
+    acad_career: String!
+
+    division: String!
+
+    semester: String!
+
+    class_nbr: String!
+
+    subject: String!
+
+    catalog_nbr: String!
+
+    enrl_status_reason: String!
+
+    enrl_add_dt: DateTime!
+
+    enrl_drop_dt: DateTime!
+
+    crse_grade_off: String!
+
+    unt_taken: Int!
+
+    unt_earned: Int!
+
+    last_upd_dt_stmp: DateTime!
+
+    student: Student @belongsTo
+}
+
+input EnrollmentsQuery {
+    sisid: String
+
+    acad_career: String
+
+    division: String
+
+    semester: String
+
+    class_nbr: String
+
+    subject: String
+
+    catalog_nbr: String
+
+    enrl_status_reason: String
+
+    enrl_add_dt: DateTime
+
+    enrl_drop_dt: DateTime
+
+    crse_grade_off: String
+
+    unt_taken: Int
+
+    unt_earned: Int
+
+    last_upd_dt_stmp: DateTime
+
+    student: StudentsQuery
+}
+
+type EnrollmentQueries {
+    "List multiple enrollments."
+    list(
+        "Filter by the enrollments attributes and relations."
+        where: EnrollmentsQuery @searchBy
+        order: EnrollmentsQuery @sortBy
+    ): [Enrollment!]! @paginate @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    enrollment: EnrollmentQueries! @namespaced
+}

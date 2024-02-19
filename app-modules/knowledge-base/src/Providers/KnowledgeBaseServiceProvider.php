@@ -37,7 +37,7 @@
 namespace AdvisingApp\KnowledgeBase\Providers;
 
 use Filament\Panel;
-use App\Concerns\GraphSchemaDiscovery;
+use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\KnowledgeBase\KnowledgeBasePlugin;
 use App\Registries\RoleBasedAccessControlRegistry;
@@ -51,7 +51,7 @@ use AdvisingApp\KnowledgeBase\Registries\KnowledgeBaseRbacRegistry;
 
 class KnowledgeBaseServiceProvider extends ServiceProvider
 {
-    use GraphSchemaDiscovery;
+    use ImplementsGraphQL;
 
     public function register(): void
     {

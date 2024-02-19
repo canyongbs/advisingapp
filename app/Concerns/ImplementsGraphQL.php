@@ -34,67 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+namespace App\Concerns;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Audit\Settings\AuditSettings;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use Illuminate\Support\Facades\Event;
+use GraphQL\Type\Definition\PhpEnumType;
+use Nuwave\Lighthouse\Schema\TypeRegistry;
+use Nuwave\Lighthouse\Events\BuildSchemaString;
+use Nuwave\Lighthouse\Schema\Source\SchemaStitcher;
+use Nuwave\Lighthouse\Exceptions\DefinitionException;
 
-/**
- * @mixin IdeHelperAssistantChatMessageLog
- */
-class AssistantChatMessageLog extends BaseModel
+trait ImplementsGraphQL
 {
-    use CanAddAssistantLicenseGlobalScope;
-    use MassPrunable;
-
-    protected $fillable = [
-        'message',
-        'metadata',
-        'request',
-        'sent_at',
-    ];
-
-    protected $casts = [
-        'metadata' => 'encrypted:array',
-        'request' => 'encrypted:array',
-        'sent_at' => 'datetime',
-    ];
-
-    public function user(): BelongsTo
+    public function discoverSchema(string $path): void
     {
-        return $this->belongsTo(User::class);
+        foreach (glob($path) as $schema) {
+            Event::listen(function (BuildSchemaString $event) use ($schema) {
+                return (new SchemaStitcher($schema))->getSchemaString();
+            });
+        }
     }
 
-    public function prunable(): Builder
+    /**
+     * @param class-string $enumClass
+     *
+     * @throws DefinitionException
+     */
+    public function registerEnum(string $enumClass): void
     {
-        return static::where(
-            'sent_at',
-            '<=',
-            now()->subDays(
-                app(AuditSettings::class)
-                    ->assistant_chat_message_logs_retention_duration_in_days
-            ),
-        );
-    }
-
-    public function getWebPermissions(): Collection
-    {
-        return collect(['view-any', '*.view']);
-    }
-
-    public function getApiPermissions(): Collection
-    {
-        return collect(['view-any', '*.view']);
-    }
-
-    protected static function booted(): void
-    {
-        static::addAssistantLicenseGlobalScope();
+        app(TypeRegistry::class)->register(new PhpEnumType($enumClass));
     }
 }

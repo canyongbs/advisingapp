@@ -37,7 +37,7 @@
 namespace AdvisingApp\Division\Providers;
 
 use Filament\Panel;
-use App\Concerns\GraphSchemaDiscovery;
+use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Division\DivisionPlugin;
 use AdvisingApp\Division\Models\Division;
@@ -48,7 +48,7 @@ use AdvisingApp\Division\Registries\DivisionRbacRegistry;
 
 class DivisionServiceProvider extends ServiceProvider
 {
-    use GraphSchemaDiscovery;
+    use ImplementsGraphQL;
 
     public function register(): void
     {

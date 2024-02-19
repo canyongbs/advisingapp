@@ -976,7 +976,7 @@ namespace AdvisingApp\Assistant\Models{
  * @property array $metadata
  * @property string $user_id
  * @property array $request
- * @property int $sent_at
+ * @property \Illuminate\Support\Carbon $sent_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User $user
@@ -1495,6 +1495,8 @@ namespace AdvisingApp\Consent\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\Consent\Models\ConsentAgreement $consentAgreement
+ * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement onlyTrashed()
@@ -4128,12 +4130,13 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string $subject
  * @property string $catalog_nbr
  * @property string $enrl_status_reason
- * @property string $enrl_add_dt
- * @property string $enrl_drop_dt
+ * @property \Illuminate\Support\Carbon $enrl_add_dt
+ * @property \Illuminate\Support\Carbon $enrl_drop_dt
  * @property string $crse_grade_off
  * @property int $unt_taken
  * @property int $unt_earned
- * @property string $last_upd_dt_stmp
+ * @property \Illuminate\Support\Carbon $last_upd_dt_stmp
+ * @property-read \AdvisingApp\StudentDataModel\Models\Student|null $student
  * @method static \AdvisingApp\StudentDataModel\Database\Factories\EnrollmentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment newQuery()
@@ -4170,7 +4173,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property int $cum_ern
  * @property int $pct_ern
  * @property string $cum_gpa
- * @property string $max_dt
+ * @property \Illuminate\Support\Carbon $max_dt
  * @property-read \AdvisingApp\StudentDataModel\Models\Student|null $student
  * @method static \AdvisingApp\StudentDataModel\Database\Factories\PerformanceFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Performance newModelQuery()
@@ -4205,8 +4208,9 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string $semester
  * @property string $descr
  * @property string $foi
- * @property string $change_dt
- * @property string $declare_dt
+ * @property \Illuminate\Support\Carbon $change_dt
+ * @property \Illuminate\Support\Carbon $declare_dt
+ * @property-read \AdvisingApp\StudentDataModel\Models\Student|null $student
  * @method static \AdvisingApp\StudentDataModel\Database\Factories\ProgramFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Program newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Program newQuery()

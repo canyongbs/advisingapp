@@ -34,67 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+namespace App\GraphQL\Scalars;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Audit\Settings\AuditSettings;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use GraphQL\Language\AST\Node;
+use Illuminate\Support\Carbon;
+use GraphQL\Type\Definition\ScalarType;
 
-/**
- * @mixin IdeHelperAssistantChatMessageLog
- */
-class AssistantChatMessageLog extends BaseModel
+class Year extends ScalarType
 {
-    use CanAddAssistantLicenseGlobalScope;
-    use MassPrunable;
-
-    protected $fillable = [
-        'message',
-        'metadata',
-        'request',
-        'sent_at',
-    ];
-
-    protected $casts = [
-        'metadata' => 'encrypted:array',
-        'request' => 'encrypted:array',
-        'sent_at' => 'datetime',
-    ];
-
-    public function user(): BelongsTo
+    public function serialize($value): ?int
     {
-        return $this->belongsTo(User::class);
+        return $value;
     }
 
-    public function prunable(): Builder
+    public function parseValue($value): int
     {
-        return static::where(
-            'sent_at',
-            '<=',
-            now()->subDays(
-                app(AuditSettings::class)
-                    ->assistant_chat_message_logs_retention_duration_in_days
-            ),
-        );
+        return Carbon::parse($value)->year;
     }
 
-    public function getWebPermissions(): Collection
+    public function parseLiteral(Node $valueNode, array $variables = null): int
     {
-        return collect(['view-any', '*.view']);
-    }
-
-    public function getApiPermissions(): Collection
-    {
-        return collect(['view-any', '*.view']);
-    }
-
-    protected static function booted(): void
-    {
-        static::addAssistantLicenseGlobalScope();
+        return Carbon::parse($valueNode->value)->year;
     }
 }

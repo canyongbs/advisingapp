@@ -37,7 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Providers;
 
 use Filament\Panel;
-use App\Concerns\GraphSchemaDiscovery;
+use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -50,7 +50,7 @@ use AdvisingApp\StudentDataModel\Registries\StudentDataModelRbacRegistry;
 
 class StudentDataModelServiceProvider extends ServiceProvider
 {
-    use GraphSchemaDiscovery;
+    use ImplementsGraphQL;
 
     public function register(): void
     {
@@ -66,8 +66,8 @@ class StudentDataModelServiceProvider extends ServiceProvider
             'program' => Program::class,
         ]);
 
-        $this->discoverSchema(__DIR__ . '/../../graphql/student.graphql');
-
         RoleBasedAccessControlRegistry::register(StudentDataModelRbacRegistry::class);
+
+        $this->discoverSchema(__DIR__ . '/../../graphql/*');
     }
 }

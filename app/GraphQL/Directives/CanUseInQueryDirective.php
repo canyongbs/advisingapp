@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Builder;
 use Nuwave\Lighthouse\Schema\Directives\BaseDirective;
 
-final class CanUseInQueryDirective extends BaseDirective
+class CanUseInQueryDirective extends BaseDirective
 {
     public static function definition(): string
     {
@@ -54,8 +54,7 @@ directive @canUseInQuery(
   The ability to check permissions for.
   """
   ability: String!
-
-) repeatable on FIELD_DEFINITION
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 GRAPHQL;
     }
 

@@ -53,7 +53,7 @@ use Nuwave\Lighthouse\Support\Contracts\TypeManipulator;
 use Nuwave\Lighthouse\Support\Contracts\FieldManipulator;
 use Nuwave\Lighthouse\Support\Contracts\TypeExtensionManipulator;
 
-final class FeatureDirective extends BaseDirective implements TypeManipulator, TypeExtensionManipulator, FieldManipulator
+class FeatureDirective extends BaseDirective implements TypeManipulator, TypeExtensionManipulator, FieldManipulator
 {
     public static function definition(): string
     {

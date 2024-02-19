@@ -38,8 +38,10 @@ namespace AdvisingApp\Consent\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
@@ -68,8 +70,18 @@ class ConsentAgreement extends BaseModel implements Auditable
             ->withTimestamps();
     }
 
-    public function userConsentAgreements()
+    public function userConsentAgreements(): HasMany
     {
         return $this->hasMany(UserConsentAgreement::class, 'consent_agreement_id');
+    }
+
+    public function getWebPermissions(): Collection
+    {
+        return collect(['view-any', '*.view', 'update']);
+    }
+
+    public function getApiPermissions(): Collection
+    {
+        return collect(['view-any', '*.view', 'update']);
     }
 }

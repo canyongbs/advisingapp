@@ -34,67 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+namespace AdvisingApp\Assistant\Rules;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Audit\Settings\AuditSettings;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use Closure;
+use Illuminate\Contracts\Validation\DataAwareRule;
+use Illuminate\Contracts\Validation\ValidationRule;
+use AdvisingApp\Assistant\Models\AssistantChatFolder;
 
-/**
- * @mixin IdeHelperAssistantChatMessageLog
- */
-class AssistantChatMessageLog extends BaseModel
+class UniqueAssistantChatFolderRule implements DataAwareRule, ValidationRule
 {
-    use CanAddAssistantLicenseGlobalScope;
-    use MassPrunable;
+    protected array $data = [];
 
-    protected $fillable = [
-        'message',
-        'metadata',
-        'request',
-        'sent_at',
-    ];
-
-    protected $casts = [
-        'metadata' => 'encrypted:array',
-        'request' => 'encrypted:array',
-        'sent_at' => 'datetime',
-    ];
-
-    public function user(): BelongsTo
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        return $this->belongsTo(User::class);
+        $user_id = $this->data['input']['user_id'] ?? AssistantChatFolder::find($this->data['id'])->user_id;
+
+        if (
+            AssistantChatFolder::query()
+                ->where('name', $value)
+                ->where('user_id', $user_id)
+                ->exists()
+        ) {
+            $fail("This user already has a folder named {$value}.");
+        }
     }
 
-    public function prunable(): Builder
+    public function setData(array $data): static
     {
-        return static::where(
-            'sent_at',
-            '<=',
-            now()->subDays(
-                app(AuditSettings::class)
-                    ->assistant_chat_message_logs_retention_duration_in_days
-            ),
-        );
-    }
+        $this->data = $data;
 
-    public function getWebPermissions(): Collection
-    {
-        return collect(['view-any', '*.view']);
-    }
-
-    public function getApiPermissions(): Collection
-    {
-        return collect(['view-any', '*.view']);
-    }
-
-    protected static function booted(): void
-    {
-        static::addAssistantLicenseGlobalScope();
+        return $this;
     }
 }
