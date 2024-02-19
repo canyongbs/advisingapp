@@ -102,6 +102,7 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
         if (! $this->option('skip-schema')) {
             Artisan::call(ValidateSchemaCommand::class, outputBuffer: $this->output);
         } else {
+            $this->line($this->style("Schema validation skipped.", "warning"));
             $cache->clear();
         }
         $schema = $schemaBuilder->schema();
@@ -174,6 +175,8 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
         }
 
         File::delete($this->filename);
+
+        $this->line($this->style("File {$this->filename} deleted."));
 
         return $fail ? self::FAILURE : self::SUCCESS;
     }

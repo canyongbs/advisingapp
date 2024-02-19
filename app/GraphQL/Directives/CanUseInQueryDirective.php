@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Builder;
 use Nuwave\Lighthouse\Schema\Directives\BaseDirective;
 
-final class CanUseInQueryDirective extends BaseDirective
+class CanUseInQueryDirective extends BaseDirective
 {
     public static function definition(): string
     {

@@ -11,7 +11,7 @@ type Prompt @model(class: "AdvisingApp\\Assistant\\Models\\Prompt") {
 
     updated_at: DateTime
 
-    type: PromptType @belongsTo
+    type: PromptType! @belongsTo
 }
 
 input PromptsQuery {

@@ -76,10 +76,6 @@ input UpdateAssistantChatFolderInput {
                 "AdvisingApp\\Assistant\\Rules\\UniqueAssistantChatFolderRule"
             ]
         )
-
-    #    "The ID of the user that the assistant chat folder belongs to."
-    #    user_id: UUID
-    #        @rules(apply: ["nullable", "uuid", "exists:users,id"])
 }
 
 type AssistantChatFolderMutations {

@@ -34,23 +34,24 @@
 </COPYRIGHT>
 */
 
-declare(strict_types = 1);
-
 namespace AdvisingApp\Consent\GraphQL\Mutations;
 
+use App\Models\User;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-final readonly class Revoke
+class UpdateConsentAgreement
 {
     public function __invoke(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): ConsentAgreement
     {
         $consentAgreement = ConsentAgreement::find($args['id']);
+        $consentAgreement->update($args);
 
-        $consentAgreement->userConsentAgreements()
-            ->whereRelation('user', 'id', $args['user_id'])
-            ->delete();
+        foreach (data_get($args, 'users.consent', []) as $userId) {
+            $user = User::find($userId);
+            $user->consentTo($consentAgreement);
+        }
 
         return $consentAgreement;
     }

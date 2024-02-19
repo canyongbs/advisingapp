@@ -91,8 +91,6 @@ input StudentsQuery {
 
     preferred: String
 
-    display_name: String
-
     email: Email
 
     email_2: Email

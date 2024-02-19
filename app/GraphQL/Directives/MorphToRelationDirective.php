@@ -57,7 +57,7 @@ use LastDragon_ru\LaraASP\GraphQL\Builder\Exceptions\OperatorUnsupportedBuilder;
 use LastDragon_ru\LaraASP\GraphQL\SearchBy\Exceptions\OperatorInvalidArgumentValue;
 use LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByOperatorPropertyDirective;
 
-final class MorphToRelationDirective extends BaseOperator
+class MorphToRelationDirective extends BaseOperator
 {
     public function __construct(
         protected SearchByOperatorPropertyDirective $property,

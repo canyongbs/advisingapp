@@ -102,9 +102,6 @@ input ProspectsQuery {
     "The preferred name of the prospect."
     preferred: String
 
-    "The display name of the prospect."
-    display_name: String
-
     "The description of the prospect."
     description: String
 

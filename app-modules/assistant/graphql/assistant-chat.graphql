@@ -70,16 +70,6 @@ input UpdateAssistantChatInput {
     "The name of the assistant chat."
     name: String @rules(apply: ["string", "max:255"])
 
-    #    "The user that owns the chat."
-    #    user_id: UUID
-    #        @rules(
-    #            apply: [
-    #                "nullable"
-    #                "uuid"
-    #                "exists:users,id"
-    #            ]
-    #        )
-
     "The folder that the assistant chat belongs to."
     folder_id: UUID
         @rename(attribute: "assistant_chat_folder_id")

@@ -26,10 +26,6 @@ type Audit @model(class: "AdvisingApp\\Audit\\Models\\Audit") {
 
     event: String!
 
-    #    auditable_type: String!
-
-    #    auditable_id: String!
-
     old_values: JSON
 
     new_values: JSON
@@ -64,10 +60,6 @@ input AuditsQuery {
     change_agent_id: UUID
 
     event: String
-
-    #    auditable_type: String
-
-    #    auditable_id: String
 
     old_values: JSON
 
