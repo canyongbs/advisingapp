@@ -38,11 +38,11 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateKnowledgeBaseItemsTable extends Migration
+class CreateKnowledgeBaseArticlesTable extends Migration
 {
     public function up(): void
     {
-        Schema::create('knowledge_base_items', function (Blueprint $table) {
+        Schema::create('knowledge_base_articles', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->boolean('public');
             $table->string('title');
