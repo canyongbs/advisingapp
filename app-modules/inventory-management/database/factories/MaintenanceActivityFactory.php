@@ -85,11 +85,11 @@ class MaintenanceActivityFactory extends Factory
         });
     }
 
-    public function cancelled(): self
+    public function canceled(): self
     {
         return $this->state(function (array $attributes) {
             return [
-                'status' => MaintenanceActivityStatus::Cancelled,
+                'status' => MaintenanceActivityStatus::Canceled,
                 'completed_date' => null,
                 'scheduled_date' => now()->subDays(7),
             ];

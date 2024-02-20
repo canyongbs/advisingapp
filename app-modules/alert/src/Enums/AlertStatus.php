@@ -44,7 +44,7 @@ enum AlertStatus: string implements HasLabel
 
     case Resolved = 'resolved';
 
-    case Cancelled = 'cancelled';
+    case Canceled = 'canceled';
 
     public function getLabel(): ?string
     {

@@ -45,6 +45,7 @@ use AdvisingApp\MeetingCenter\Models\Event;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Notifications\SendRegistrationLinkToEventAttendeeNotification;
 
@@ -56,24 +57,19 @@ class CreateEventAttendee implements ShouldQueue
     use SerializesModels;
     use Batchable;
 
-    /**
-     * Create a new job instance.
-     */
     public function __construct(
         protected Event $event,
         protected string $email,
         protected User $sender
     ) {}
 
-    /**
-     * Execute the job.
-     */
+    public function middleware(): array
+    {
+        return [new SkipIfBatchCancelled()];
+    }
+
     public function handle(): void
     {
-        if ($this->batch()->cancelled()) {
-            return;
-        }
-
         if ($this->event->attendees()->where('email', $this->email)->exists()) {
             $this->fail("{$this->email} has already been invited to this event.");
 
