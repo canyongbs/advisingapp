@@ -66,7 +66,7 @@ it('busts the timeline cache for the associated educatable', function () {
 
     // The cache key for the educatable should be busted
     expect(Cache::has(
-        "{timeline.synced.{$initialResponse->sender->getMorphClass()}.{$initialResponse->sender->getKey()}}"
+        "timeline.synced.{$initialResponse->sender->getMorphClass()}.{$initialResponse->sender->getKey()}"
     ))->toBeFalse();
 });
 
