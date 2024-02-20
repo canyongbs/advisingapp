@@ -12,7 +12,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
-use AdvisingApp\KnowledgeBase\Exceptions\KnowledgeBaseItemExternalMediaContentValidationException;
+use AdvisingApp\KnowledgeBase\Exceptions\KnowledgeBaseExternalMediaFileAccessException;
+use AdvisingApp\KnowledgeBase\Exceptions\KnowledgeBaseExternalMediaValidationException;
 
 class KnowledgeBaseItemDownloadExternalMedia implements ShouldQueue
 {
@@ -70,7 +71,7 @@ class KnowledgeBaseItemDownloadExternalMedia implements ShouldQueue
             if (! Storage::disk($disk)->exists($path)) {
                 try {
                     if (! $stream = @fopen($content, 'r')) {
-                        throw new Exception('Unable to open stream for ' . $content);
+                        throw new KnowledgeBaseExternalMediaFileAccessException('Unable to open stream for ' . $content);
                     }
 
                     $tempFile = tempnam(sys_get_temp_dir(), 'url-file-');
@@ -80,11 +81,11 @@ class KnowledgeBaseItemDownloadExternalMedia implements ShouldQueue
                     $tmpFile = new UploadedFile($tempFile, basename($content));
 
                     if (! in_array($tmpFile->getMimeType(), config('filament-tiptap-editor.accepted_file_types'))) {
-                        throw new KnowledgeBaseItemExternalMediaContentValidationException('The file type is not allowed.');
+                        throw new KnowledgeBaseExternalMediaValidationException('The file type is not allowed.');
                     }
 
                     if (($tmpFile->getSize() / 1000) > config('filament-tiptap-editor.max_file_size')) {
-                        throw new KnowledgeBaseItemExternalMediaContentValidationException('The file size is too large.');
+                        throw new KnowledgeBaseExternalMediaValidationException('The file size is too large.');
                     }
 
                     $media = $this->knowledgeBaseItem->addMedia($tmpFile)
