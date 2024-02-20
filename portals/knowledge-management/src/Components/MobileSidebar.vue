@@ -64,7 +64,7 @@ defineProps({
                     </button>
                 </div>
 
-                <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-primary-700 px-6 pb-4">
+                <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
                     <SidebarContent :categories="categories"></SidebarContent>
                 </div>
             </div>
