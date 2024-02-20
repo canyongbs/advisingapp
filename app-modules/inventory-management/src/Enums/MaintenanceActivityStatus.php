@@ -43,7 +43,7 @@ enum MaintenanceActivityStatus: string implements HasLabel
     case Scheduled = 'scheduled';
     case InProgress = 'in_progress';
     case Completed = 'completed';
-    case Cancelled = 'cancelled';
+    case Canceled = 'canceled';
     case Delayed = 'delayed';
 
     public function getLabel(): ?string
