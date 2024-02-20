@@ -55,8 +55,8 @@ class SubscriptionObserver
 
         if ($user) {
             Cache::tags([match ($subscription->subscribable_type) {
-                app(Prospect::class)->getMorphClass() => "{user-{$user->getKey()}-prospect-subscriptions‘",
-                app(Student::class)->getMorphClass() => "{user-{$user->getKey()}-student-subscriptions‘",
+                app(Prospect::class)->getMorphClass() => "user-{$user->getKey()}-prospect-subscriptions",
+                app(Student::class)->getMorphClass() => "user-{$user->getKey()}-student-subscriptions",
             }])->flush();
         }
     }
@@ -70,8 +70,8 @@ class SubscriptionObserver
 
         if ($user) {
             Cache::tags([match ($subscription->subscribable_type) {
-                app(Prospect::class)->getMorphClass() => "{user-{$user->getKey()}-prospect-subscriptions‘",
-                app(Student::class)->getMorphClass() => "{user-{$user->getKey()}-student-subscriptions‘",
+                app(Prospect::class)->getMorphClass() => "user-{$user->getKey()}-prospect-subscriptions",
+                app(Student::class)->getMorphClass() => "user-{$user->getKey()}-student-subscriptions",
             }])->flush();
         }
     }
