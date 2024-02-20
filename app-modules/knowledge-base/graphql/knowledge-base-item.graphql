@@ -10,7 +10,9 @@ type KnowledgeBaseItemQueries @feature(feature: "knowledge-management") {
         "The value of the attribute to match."
         id: UUID!
             @whereKey
-            @rules(apply: ["required", "uuid", "exists:knowledge_base_items"])
+            @rules(
+                apply: ["required", "uuid", "exists:knowledge_base_articles"]
+            )
     ): KnowledgeBaseItem @find @canResolved(ability: "view")
 
     "Get all knowledge base items."

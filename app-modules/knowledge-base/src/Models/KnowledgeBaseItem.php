@@ -56,6 +56,8 @@ class KnowledgeBaseItem extends BaseModel implements Auditable, HasMedia
     use HasUuids;
     use InteractsWithMedia;
 
+    protected $table = 'knowledge_base_articles';
+
     protected $casts = [
         'public' => 'boolean',
         'article_details' => 'array',

@@ -42,7 +42,7 @@ class AddRelationshipFieldsToKnowledgeBaseItemsTable extends Migration
 {
     public function up(): void
     {
-        Schema::table('knowledge_base_items', function (Blueprint $table) {
+        Schema::table('knowledge_base_articles', function (Blueprint $table) {
             $table->foreign('quality_id')->references('id')->on('knowledge_base_qualities');
             $table->foreign('status_id')->references('id')->on('knowledge_base_statuses');
             $table->foreign('category_id')->references('id')->on('knowledge_base_categories');
