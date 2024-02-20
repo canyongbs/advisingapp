@@ -99,6 +99,14 @@ class ViewProspect extends ViewRecord
                         TextEntry::make('address_2')
                             ->label('Address 2')
                             ->translateLabel(),
+                        TextEntry::make('address_3')
+                            ->label('Address 3'),
+                        TextEntry::make('city')
+                            ->label('City'),
+                        TextEntry::make('state')
+                            ->label('State'),
+                        TextEntry::make('postal')
+                            ->label('Postal'),
                     ])
                     ->columns(2),
                 Section::make('Classification')

@@ -70,18 +70,22 @@ class EditProspect extends EditRecord
                         TextInput::make('first_name')
                             ->label('First Name')
                             ->required()
-                            ->string(),
+                            ->string()
+                            ->maxLength(255),
                         TextInput::make('last_name')
                             ->label('Last Name')
                             ->required()
-                            ->string(),
+                            ->string()
+                            ->maxLength(255),
                         TextInput::make(Prospect::displayNameKey())
                             ->label('Full Name')
                             ->required()
-                            ->string(),
+                            ->string()
+                            ->maxLength(255),
                         TextInput::make('preferred')
                             ->label('Preferred Name')
-                            ->string(),
+                            ->string()
+                            ->maxLength(255),
                         // TODO: Display this based on system configurable data format
                         DatePicker::make('birthdate')
                             ->label('Birthdate')
@@ -102,22 +106,44 @@ class EditProspect extends EditRecord
                     ->schema([
                         TextInput::make('email')
                             ->label('Primary Email')
-                            ->email(),
+                            ->email()
+                            ->maxLength(255),
                         TextInput::make('email_2')
                             ->label('Other Email')
-                            ->email(),
+                            ->email()
+                            ->maxLength(255),
                         TextInput::make('mobile')
                             ->label('Mobile')
-                            ->string(),
+                            ->string()
+                            ->maxLength(255),
                         TextInput::make('phone')
                             ->label('Other Phone')
-                            ->string(),
+                            ->string()
+                            ->maxLength(255),
                         TextInput::make('address')
                             ->label('Address')
-                            ->string(),
+                            ->string()
+                            ->maxLength(255),
                         TextInput::make('address_2')
                             ->label('Address 2')
-                            ->string(),
+                            ->string()
+                            ->maxLength(255),
+                        TextInput::make('address_3')
+                            ->label('Address 3')
+                            ->string()
+                            ->maxLength(255),
+                        TextInput::make('city')
+                            ->label('City')
+                            ->string()
+                            ->maxLength(255),
+                        TextInput::make('state')
+                            ->label('State')
+                            ->string()
+                            ->maxLength(255),
+                        TextInput::make('postal')
+                            ->label('Postal')
+                            ->string()
+                            ->maxLength(255),
                     ])
                     ->columns(2),
                 Section::make('Classification')

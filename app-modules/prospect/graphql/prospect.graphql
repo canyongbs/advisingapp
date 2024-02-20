@@ -50,6 +50,18 @@ type Prospect @model(class: "AdvisingApp\\Prospect\\Models\\Prospect") {
     "The address 2 of the prospect."
     address_2: String
 
+    "The address 3 of the prospect."
+    address_3: String
+
+    "The city of the prospect."
+    city: String
+
+    "The state of the prospect."
+    state: String
+
+    "The postal code of the prospect."
+    postal: String
+
     "The birthdate of the prospect."
     birthdate: Date
 
@@ -128,6 +140,18 @@ input ProspectsQuery {
 
     "The address 2 of the prospect."
     address_2: String
+
+    "The address 3 of the prospect."
+    address_3: String
+
+    "The city of the prospect."
+    city: String
+
+    "The state of the prospect."
+    state: String
+
+    "The postal code of the prospect."
+    postal: String
 
     "The birthdate of the prospect."
     birthdate: Date
@@ -217,6 +241,18 @@ input CreateProspectInput {
     "The address 2 of the prospect."
     address_2: String @rules(apply: ["string", "max:255"])
 
+    "The address 3 of the prospect."
+    address_3: String @rules(apply: ["string", "max:255"])
+
+    "The city of the prospect."
+    city: String @rules(apply: ["string", "max:255"])
+
+    "The state of the prospect."
+    state: String @rules(apply: ["string", "max:255"])
+
+    "The postal code of the prospect."
+    postal: String @rules(apply: ["string", "max:255"])
+
     "The birthdate of the prospect."
     birthdate: Date @rules(apply: ["date_format:Y-m-d"])
 
@@ -275,6 +311,18 @@ input UpdateProspectInput {
 
     "The address 2 of the prospect."
     address_2: String @rules(apply: ["string", "max:255"])
+
+    "The address 3 of the prospect."
+    address_3: String @rules(apply: ["string", "max:255"])
+
+    "The city of the prospect."
+    city: String @rules(apply: ["string", "max:255"])
+
+    "The state of the prospect."
+    state: String @rules(apply: ["string", "max:255"])
+
+    "The postal code of the prospect."
+    postal: String @rules(apply: ["string", "max:255"])
 
     "The birthdate of the prospect."
     birthdate: Date @rules(apply: ["date_format:Y-m-d"])

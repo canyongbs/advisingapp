@@ -49,8 +49,9 @@ class ProspectFactory extends Factory
 {
     public function definition(): array
     {
-        $firstName = $this->faker->firstName();
-        $lastName = $this->faker->lastName();
+        $firstName = fake()->firstName();
+        $lastName = fake()->lastName();
+        $address3 = fake()->optional()->words(asText: true);
 
         return [
             'status_id' => ProspectStatus::inRandomOrder()->first() ?? ProspectStatus::factory(),
@@ -58,18 +59,22 @@ class ProspectFactory extends Factory
             'first_name' => $firstName,
             'last_name' => $lastName,
             'full_name' => "{$firstName} {$lastName}",
-            'preferred' => $this->faker->firstName(),
-            'description' => $this->faker->paragraph(),
-            'email' => $this->faker->email(),
-            'email_2' => $this->faker->email(),
-            'mobile' => $this->faker->phoneNumber(),
-            'sms_opt_out' => $this->faker->boolean(),
-            'email_bounce' => $this->faker->boolean(),
-            'phone' => $this->faker->phoneNumber(),
-            'address' => $this->faker->address(),
-            'address_2' => $this->faker->address(),
-            'birthdate' => $this->faker->date(),
-            'hsgrad' => $this->faker->year(),
+            'preferred' => fake()->firstName(),
+            'description' => fake()->paragraph(),
+            'email' => fake()->unique()->email(),
+            'email_2' => fake()->email(),
+            'mobile' => fake()->phoneNumber(),
+            'sms_opt_out' => fake()->boolean(),
+            'email_bounce' => fake()->boolean(),
+            'phone' => fake()->phoneNumber(),
+            'address' => fake()->streetAddress(),
+            'address_2' => fake()->secondaryAddress(),
+            'address_3' => $address3 ? str($address3)->headline()->toString() : null,
+            'city' => fake()->city(),
+            'state' => fake()->stateAbbr(),
+            'postal' => str(fake()->postcode())->before('-')->toString(),
+            'birthdate' => fake()->date(),
+            'hsgrad' => fake()->year(),
             'assigned_to_id' => User::factory(),
             'created_by_id' => User::factory(),
         ];
