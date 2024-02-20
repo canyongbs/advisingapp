@@ -6,7 +6,7 @@
     "license": "proprietary",
     "require": {
         "filament/filament": "^3.0.0",
-        "openai-php/client": "^0.7.3",
+        "openai-php/client": "^0.8.4",
         "spatie/laravel-settings": "^3.2"
     },
     "autoload": {

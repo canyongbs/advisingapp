@@ -57,6 +57,8 @@ enum Feature: string
 
     case MobileApps = 'mobile-apps';
 
+    case ExperimentalReporting = 'experimental-reporting';
+
     public function generateGate(): void
     {
         // If features are added that are not based on a License Addon we will need to update this

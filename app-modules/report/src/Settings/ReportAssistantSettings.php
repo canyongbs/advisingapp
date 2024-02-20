@@ -34,39 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+namespace AdvisingApp\Report\Settings;
 
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use Spatie\LaravelSettings\Settings;
 
-/**
- * @mixin IdeHelperAssistantChatMessage
- */
-class AssistantChatMessage extends BaseModel
+class ReportAssistantSettings extends Settings
 {
-    use CanAddAssistantLicenseGlobalScope;
+    public string $prompt_system_context;
 
-    protected $fillable = [
-        'message',
-        'from',
-        'name',
-        'function_call',
-    ];
-
-    protected $casts = [
-        'from' => AIChatMessageFrom::class,
-        'function_call' => 'array',
-    ];
-
-    public function chat(): BelongsTo
+    public static function group(): string
     {
-        return $this->belongsTo(AssistantChat::class, 'assistant_chat_id');
-    }
-
-    protected static function booted(): void
-    {
-        static::addAssistantLicenseGlobalScope();
+        return 'report_assistant';
     }
 }

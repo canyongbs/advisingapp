@@ -43,4 +43,6 @@ enum AIChatMessageFrom: string
     case Assistant = 'assistant';
 
     case System = 'system';
+
+    case Function = 'function';
 }

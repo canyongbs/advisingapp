@@ -44,8 +44,10 @@ return new class () extends Migration {
         Schema::create('assistant_chat_messages', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('assistant_chat_id')->constrained('assistant_chats')->onDelete('cascade');
-            $table->longText('message');
             $table->string('from');
+            $table->longText('message')->nullable();
+            $table->string('name')->nullable();
+            $table->json('function_call')->nullable();
             $table->timestamps();
         });
     }
