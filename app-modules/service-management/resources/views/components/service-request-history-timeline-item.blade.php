@@ -62,5 +62,6 @@
                     <span class="font-semibold">{{ $value }}</span>
                 </li>
             @endforeach
+        </ul>
     </div>
 </div>
