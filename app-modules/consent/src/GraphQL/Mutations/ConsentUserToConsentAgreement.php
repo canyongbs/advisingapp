@@ -34,32 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Concerns;
+namespace AdvisingApp\Consent\GraphQL\Mutations;
 
-use Illuminate\Support\Facades\Event;
-use GraphQL\Type\Definition\PhpEnumType;
-use Nuwave\Lighthouse\Schema\TypeRegistry;
-use Nuwave\Lighthouse\Events\BuildSchemaString;
-use Nuwave\Lighthouse\Schema\Source\SchemaStitcher;
-use Nuwave\Lighthouse\Exceptions\DefinitionException;
+use App\Models\User;
+use Nuwave\Lighthouse\Execution\ResolveInfo;
+use AdvisingApp\Consent\Models\ConsentAgreement;
+use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-trait GraphSchemaDiscovery
+class ConsentUserToConsentAgreement
 {
-    public function discoverSchema(string $path): void
+    public function __invoke(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): ConsentAgreement
     {
-        Event::listen(function (BuildSchemaString $event) use ($path) {
-            return (new SchemaStitcher($path))->getSchemaString();
-        });
-    }
+        $consentAgreement = ConsentAgreement::find($args['id']);
+        $user = User::find($args['user_id']);
 
-    /**
-     * @param class-string $enumClass
-     *
-     * @throws DefinitionException
-     */
-    public function registerEnum(string $enumClass): void
-    {
-        $typeRegistry = app(TypeRegistry::class);
-        $typeRegistry->register(new PhpEnumType($enumClass));
+        $user->consentTo($consentAgreement);
+
+        return $consentAgreement;
     }
 }

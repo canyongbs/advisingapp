@@ -39,15 +39,16 @@ namespace AdvisingApp\Audit\Providers;
 use Filament\Panel;
 use AdvisingApp\Audit\AuditPlugin;
 use AdvisingApp\Audit\Models\Audit;
+use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Audit\Registries\AuditRbacRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class AuditServiceProvider extends ServiceProvider
 {
+    use ImplementsGraphQL;
+
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AuditPlugin()));
@@ -55,12 +56,14 @@ class AuditServiceProvider extends ServiceProvider
         app('config')->set('audit', require base_path('app-modules/audit/config/audit.php'));
     }
 
-    public function boot(AuthorizationPermissionRegistry $permissionRegistry, AuthorizationRoleRegistry $roleRegistry): void
+    public function boot(): void
     {
         Relation::morphMap([
             'audit' => Audit::class,
         ]);
 
         RoleBasedAccessControlRegistry::register(AuditRbacRegistry::class);
+
+        $this->discoverSchema(__DIR__ . '/../../graphql/audit.graphql');
     }
 }

@@ -37,7 +37,7 @@
 namespace AdvisingApp\Prospect\Providers;
 
 use Filament\Panel;
-use App\Concerns\GraphSchemaDiscovery;
+use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Prospect\ProspectPlugin;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -52,7 +52,7 @@ use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 
 class ProspectServiceProvider extends ServiceProvider
 {
-    use GraphSchemaDiscovery;
+    use ImplementsGraphQL;
 
     public function register(): void
     {
@@ -69,7 +69,7 @@ class ProspectServiceProvider extends ServiceProvider
 
         Prospect::observe(ProspectObserver::class);
 
-        $this->discoverSchema(__DIR__ . '/../../graphql/prospect.graphql');
+        $this->discoverSchema(__DIR__ . '/../../graphql/*');
         $this->registerEnum(ProspectStatusColorOptions::class);
         $this->registerEnum(SystemProspectClassification::class);
 

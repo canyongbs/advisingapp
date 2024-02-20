@@ -53,7 +53,7 @@ use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\TypeSource;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\TypeDefinition;
 
 /** Read more about scalars here: https://webonyx.github.io/graphql-php/type-definitions/scalars. */
-final class UUID extends ScalarType implements TypeDefinition
+class UUID extends ScalarType implements TypeDefinition
 {
     public string $name = 'UUID';
 

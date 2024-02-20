@@ -44,7 +44,9 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\AttachAction;
+use Filament\Tables\Actions\DetachAction;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class PermissionsRelationManager extends RelationManager
@@ -88,8 +90,10 @@ class PermissionsRelationManager extends RelationManager
                     ->recordSelect(fn (Select $select) => $select->multiple()),
             ])
             ->actions([
+                DetachAction::make(),
             ])
             ->bulkActions([
+                DetachBulkAction::make(),
             ]);
     }
 }

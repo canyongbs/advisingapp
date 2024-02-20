@@ -253,7 +253,7 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
 
     public function getApiPermissions(): Collection
     {
-        return collect([]);
+        return collect(['view-any', '*.view']);
     }
 
     public static function getLicenseType(): LicenseType

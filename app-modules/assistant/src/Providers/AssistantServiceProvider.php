@@ -38,6 +38,7 @@ namespace AdvisingApp\Assistant\Providers;
 
 use Filament\Panel;
 use Filament\Support\Assets\Js;
+use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Assistant\Models\Prompt;
@@ -53,9 +54,12 @@ use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 use AdvisingApp\Assistant\Registries\AssistantRbacRegistry;
 use AdvisingApp\Assistant\Listeners\LogAssistantChatMessage;
+use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 
 class AssistantServiceProvider extends ServiceProvider
 {
+    use ImplementsGraphQL;
+
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AssistantPlugin()));
@@ -76,6 +80,9 @@ class AssistantServiceProvider extends ServiceProvider
         $this->registerAssets();
 
         RoleBasedAccessControlRegistry::register(AssistantRbacRegistry::class);
+
+        $this->discoverSchema(__DIR__ . '/../../graphql/*');
+        $this->registerEnum(AIChatMessageFrom::class);
     }
 
     public function registerAssets(): void

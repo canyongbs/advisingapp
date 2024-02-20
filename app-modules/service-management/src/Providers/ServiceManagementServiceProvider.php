@@ -37,7 +37,7 @@
 namespace AdvisingApp\ServiceManagement\Providers;
 
 use Filament\Panel;
-use App\Concerns\GraphSchemaDiscovery;
+use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\ServiceManagement\Models\Sla;
 use App\Registries\RoleBasedAccessControlRegistry;
@@ -71,7 +71,7 @@ use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\SqidPlusSixServi
 
 class ServiceManagementServiceProvider extends ServiceProvider
 {
-    use GraphSchemaDiscovery;
+    use ImplementsGraphQL;
 
     public function register(): void
     {

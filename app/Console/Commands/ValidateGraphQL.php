@@ -44,6 +44,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
 use Nuwave\Lighthouse\Schema\AST\ASTCache;
 use Nuwave\Lighthouse\Schema\SchemaBuilder;
+use Barryvdh\LaravelIdeHelper\Console\ModelsCommand;
+use Nuwave\Lighthouse\Console\ValidateSchemaCommand;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 
 class ValidateGraphQL extends Command implements PromptsForMissingInput
@@ -51,9 +53,18 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
     /**
      * @var string
      */
-    protected $signature = 'dev:validate-graphql {--descriptions} {--details= : Show details: list, table}';
+    protected $signature = 'dev:validate-graphql
+        {--descriptions}
+        {--details= : Show details: list, table}
+        {--model=* : The model to validate}
+        {--skip-schema : Skip schema validation}';
 
+    /**
+     * @var string
+     */
     protected $description = 'Validate graphql implementation.';
+
+    protected string $filename = '_temp_graphql_parse_ide_helper_models.php';
 
     public function __construct()
     {
@@ -67,7 +78,13 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
     public function handle(ASTCache $cache, SchemaBuilder $schemaBuilder): int
     {
         if (app()->isProduction()) {
-            $this->error('This command is not available in the production.');
+            $this->error('This command is not available in production.');
+
+            return self::FAILURE;
+        }
+
+        if ($this->option('details') && ! in_array($this->option('details'), ['list', 'table'])) {
+            $this->error('The --details option must be one of: list, table.');
 
             return self::FAILURE;
         }
@@ -80,31 +97,26 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
             return self::FAILURE;
         }
 
-        if ($this->option('details') && ! in_array($this->option('details'), ['list', 'table'])) {
-            $this->error('The --details option must be one of: list, table.');
-
-            return self::FAILURE;
-        }
-
-        Artisan::call(GenerateHelperFiles::class, outputBuffer: $this->output);
-
         $tenant->makeCurrent();
 
-        $contents = str(File::get('_ide_helper_models.php'))
-            ->explode("\n")
-            ->splice(13);
-
-        if (! str($contents->first())->contains('namespace')) {
-            $this->error('The first line did not contain "namespace". Please check the "_ide_helper_models.php" file structure.');
-
-            return self::FAILURE;
+        if (! $this->option('skip-schema')) {
+            Artisan::call(ValidateSchemaCommand::class, outputBuffer: $this->output);
+        } else {
+            $this->line($this->style('Schema validation skipped.', 'warning'));
+            $cache->clear();
         }
-
-        $cache->clear();
-
         $schema = $schemaBuilder->schema();
 
         $types = collect(Introspection::fromSchema($schema)['__schema']['types'])->where('kind', 'OBJECT');
+
+        Artisan::call(ModelsCommand::class, [
+            '--filename' => $this->filename,
+            '--nowrite' => true,
+        ], $this->output);
+
+        $contents = str(File::get($this->filename))
+            ->explode("\n")
+            ->skipUntil(fn (string $line) => str($line)->contains('namespace'));
 
         $contents = $contents
             ->map(function (String $line) {
@@ -115,6 +127,7 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
                     '@mixin',
                     'AllowDynamicProperties',
                     'class IdeHelper',
+                    'extends \Eloquent',
                     '/*',
                     '*/',
                 ])) {
@@ -153,23 +166,34 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
             })
             ->filter();
 
+        $models = collect($this->option('model'));
+
         $fail = false;
 
-        foreach ($contents as $model) {
-            $this->checkModel($model, $types, $fail);
+        foreach ($contents as $block) {
+            $this->checkModel($block, $types, $fail, $models);
         }
+
+        File::delete($this->filename);
+
+        $this->line($this->style("File {$this->filename} deleted."));
 
         return $fail ? self::FAILURE : self::SUCCESS;
     }
 
-    private function checkModel(string $model, Collection $types, &$fail): void
+    private function checkModel(string $block, Collection $types, &$fail, Collection $models): void
     {
-        $lines = str($model)
+        $lines = str($block)
             ->explode("\n");
 
         $class = str($lines->shift());
+        $model = $class->afterLast('\\')->before('::class')->trim();
 
-        $type = $types->where('name', $class->afterLast('\\')->before('::class')->trim())->first();
+        $type = $types->where('name', $model)->first();
+
+        if ($models->doesntContain($model)) {
+            return;
+        }
 
         if ($type) {
             $this->info("Type found: {$class}");
@@ -181,7 +205,8 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
             $fields = [];
 
             foreach ($lines as $line) {
-                $property = str($line)->afterLast('$')->trim();
+                $line = str($line)->trim();
+                $property = $line->afterLast('$')->trim();
 
                 $field = collect($type['fields'])->where('name', $property->snake())->first();
 

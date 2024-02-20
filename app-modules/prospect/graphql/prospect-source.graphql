@@ -3,31 +3,8 @@ type ProspectSource
     "Unique primary key."
     id: UUID!
 
-    "The name of the prospect driver."
-    name: String!
-
-    "Prospects related to this prospect driver."
-    prospects: [Prospect!] @hasMany
-
-    "The created date of the prospect driver."
-    created_at: DateTime
-
-    "The updated date of the prospect driver."
-    updated_at: DateTime
-
-    "The deleted date of the prospect driver."
-    deleted_at: DateTime
-}
-
-input ProspectSourcesQuery {
-    "The unique primary key of the prospect source."
-    id: UUID
-
     "The name of the prospect source."
-    name: String
-
-    "The prospects related to this prospect source."
-    prospects: ProspectsQuery
+    name: String!
 
     "The created date of the prospect source."
     created_at: DateTime
@@ -37,6 +14,41 @@ input ProspectSourcesQuery {
 
     "The deleted date of the prospect source."
     deleted_at: DateTime
+
+    "Prospects related to this prospect source."
+    prospects: [Prospect!] @hasMany
+
+    "The count of prospects related to this prospect source."
+    prospects_count: Int @count(relation: "prospects")
+
+    "The audits related to this prospect source."
+    audits: [Audit!] @hasMany
+
+    "The count of audits related to this prospect source."
+    audits_count: Int @count(relation: "audits")
+}
+
+input ProspectSourcesQuery {
+    "The unique primary key of the prospect source."
+    id: UUID
+
+    "The name of the prospect source."
+    name: String
+
+    "The created date of the prospect source."
+    created_at: DateTime
+
+    "The updated date of the prospect source."
+    updated_at: DateTime
+
+    "The deleted date of the prospect source."
+    deleted_at: DateTime
+
+    "The prospects related to this prospect source."
+    prospects: ProspectsQuery
+
+    "The audits related to this prospect source."
+    audits: AuditsQuery
 }
 
 type ProspectSourceQueries {
@@ -47,10 +59,11 @@ type ProspectSourceQueries {
             @rules(apply: ["required", "uuid", "exists:prospect_sources"])
     ): ProspectSource @find @softDeletes @canResolved(ability: "view")
 
-    "List multiple prospects sources."
+    "List multiple prospect sources."
     list(
         "Filter by the prospect sources attributes and relations."
         where: ProspectSourcesQuery @searchBy
+        order: ProspectSourcesQuery @sortBy
     ): [ProspectSource!]! @paginate @softDeletes @canModel(ability: "viewAny")
 }
 

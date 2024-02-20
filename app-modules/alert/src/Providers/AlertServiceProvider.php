@@ -39,8 +39,8 @@ namespace AdvisingApp\Alert\Providers;
 use Filament\Panel;
 use AdvisingApp\Alert\AlertPlugin;
 use AdvisingApp\Alert\Models\Alert;
+use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\Facades\Event;
-use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Alert\Enums\AlertStatus;
 use AdvisingApp\Alert\Enums\AlertSeverity;
@@ -53,7 +53,7 @@ use AdvisingApp\Alert\Listeners\NotifySubscribersOfAlertCreated;
 
 class AlertServiceProvider extends ServiceProvider
 {
-    use GraphSchemaDiscovery;
+    use ImplementsGraphQL;
 
     public function register(): void
     {

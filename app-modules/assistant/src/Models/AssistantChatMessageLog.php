@@ -63,7 +63,7 @@ class AssistantChatMessageLog extends BaseModel
     protected $casts = [
         'metadata' => 'encrypted:array',
         'request' => 'encrypted:array',
-        'sent_at' => 'timestamp',
+        'sent_at' => 'datetime',
     ];
 
     public function user(): BelongsTo
@@ -90,7 +90,7 @@ class AssistantChatMessageLog extends BaseModel
 
     public function getApiPermissions(): Collection
     {
-        return collect([]);
+        return collect(['view-any', '*.view']);
     }
 
     protected static function booted(): void

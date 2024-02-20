@@ -137,7 +137,7 @@ return [
     |
     */
 
-    'empty_values' => true,
+    'empty_values' => env('AUDIT_EMPTY_VALUES', true),
     'allowed_empty_values' => [
         'retrieved',
     ],
@@ -151,7 +151,7 @@ return [
     |
     */
 
-    'timestamps' => true,
+    'timestamps' => env('AUDIT_TIMESTAMPS', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -217,5 +217,5 @@ return [
     |
     */
 
-    'console' => true,
+    'console' => env('AUDIT_CONSOLE', true),
 ];

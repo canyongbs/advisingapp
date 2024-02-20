@@ -84,7 +84,8 @@ class EditServiceRequestForm extends EditRecord
                             ->copyable()
                             ->copyableState(fn (ServiceRequestForm $serviceRequestForm) => resolve(GenerateSubmissibleEmbedCode::class)->handle($serviceRequestForm))
                             ->copyMessage('Copied!')
-                            ->copyMessageDuration(1500),
+                            ->copyMessageDuration(1500)
+                            ->extraAttributes(['class' => 'embed-code-snippet']),
                     ]
                 )
                 ->modalSubmitAction(false)
