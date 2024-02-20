@@ -94,7 +94,7 @@ abstract class BaseAIChatClient implements AIChatClient
 
     public function provideDynamicContext(DynamicContext $context): self
     {
-        $this->setDynamicContext($context->context);
+        $this->setDynamicContext($context->getContext());
 
         return $this;
     }

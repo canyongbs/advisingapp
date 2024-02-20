@@ -93,6 +93,9 @@ class UserResource extends Resource
                             ->email()
                             ->required()
                             ->maxLength(255),
+                        TextInput::make('job_title')
+                            ->string()
+                            ->maxLength(255),
                         Toggle::make('is_external')
                             ->label('User can only log in via a social provider.'),
                         TextInput::make('created_at')
@@ -122,6 +125,7 @@ class UserResource extends Resource
                 TextColumn::make('name'),
                 TextColumn::make('email')
                     ->label('Email address'),
+                TextColumn::make('job_title'),
                 TextColumn::make('created_at')
                     ->label('Created At')
                     ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
