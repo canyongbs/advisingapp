@@ -59,6 +59,10 @@ class CreateProspectsTable extends Migration
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
             $table->string('address_2')->nullable();
+            $table->string('address_3')->nullable();
+            $table->string('city')->nullable();
+            $table->string('state')->nullable();
+            $table->string('postal')->nullable();
             $table->date('birthdate')->nullable();
             $table->string('hsgrad')->nullable();
             // TODO Determine if there can be more than one assignment to a prospect
