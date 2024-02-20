@@ -57,18 +57,17 @@ class KnowledgeBaseItemDownloadExternalMedia implements ShouldQueue
 
             $diskConfig = Storage::disk($disk)->getConfig();
 
-            $bucket = $diskConfig['bucket'] ?? null;
-            $bucketPath = $bucket ? "/{$bucket}/" : '';
+            $domains = [];
 
-            $path = parse_url($content, PHP_URL_PATH);
-
-            if (! $path) {
-                $path = '';
+            if (Str::isUrl($diskConfig['url'])) {
+                $domains[] = parse_url($diskConfig['url'])['host'];
             }
 
-            $path = Str::of($path)->replaceFirst($bucketPath, '');
+            if (Str::isUrl($diskConfig['endpoint'])) {
+                $domains[] = parse_url($diskConfig['endpoint'])['host'];
+            }
 
-            if (! Storage::disk($disk)->exists($path)) {
+            if (! in_array(parse_url($content)['host'], $domains)) {
                 try {
                     if (! $stream = @fopen($content, 'r')) {
                         throw new KnowledgeBaseExternalMediaFileAccessException('Unable to open stream for ' . $content);
