@@ -67,7 +67,7 @@ class KnowledgeBaseItemDownloadExternalMedia implements ShouldQueue
         $this->knowledgeBaseItem::withoutEvents(fn () => $this->knowledgeBaseItem->save());
     }
 
-    public function processContentItem(array $content): array
+    public function processContentItem(string | array | null $content): array
     {
         if (isset($content['type']) && $content['type'] === 'image') {
             $content['attrs']['src'] = $this->downloadExternalMedia($content['attrs']['src']);
