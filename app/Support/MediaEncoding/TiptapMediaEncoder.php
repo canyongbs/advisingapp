@@ -120,7 +120,7 @@ class TiptapMediaEncoder
 
         $defaultDirectory = config('filament-tiptap-editor.directory');
 
-        if (! empty($path) && ! Storage::disk($disk)->exists($path) && Str::isUrl($content)) {
+        if (! Storage::disk($disk)->exists($path) && Str::isUrl($content)) {
             return $content;
         }
 
