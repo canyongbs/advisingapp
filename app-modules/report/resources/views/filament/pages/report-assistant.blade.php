@@ -66,14 +66,17 @@ use Illuminate\Support\Facades\Vite;
                                     @case(AIChatMessageFrom::Assistant)
                                         <div x-data="{ isCollapsed: @js(blank($message->message)) }">
                                             <button
+                                                class="w-full bg-white px-4 text-left text-sm dark:bg-gray-900"
                                                 x-show="isCollapsed"
                                                 x-on:click="isCollapsed = false"
-                                                class="px-4 text-sm text-left w-full bg-white dark:bg-gray-900"
                                             >
                                                 Collapsed function call
                                             </button>
 
-                                            <div x-show="! isCollapsed" class="group w-full bg-white dark:bg-gray-900">
+                                            <div
+                                                class="group w-full bg-white dark:bg-gray-900"
+                                                x-show="! isCollapsed"
+                                            >
                                                 <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
                                                     <div
                                                         class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
@@ -89,12 +92,15 @@ use Illuminate\Support\Facades\Vite;
                                                         <div
                                                             class="agent-turn relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
                                                             <div class="flex max-w-full flex-grow flex-col gap-3">
-                                                                <div class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
+                                                                <div
+                                                                    class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
                                                                     <div class="prose dark:prose-invert">
                                                                         @if (filled($message->message))
                                                                             {!! str($message->message)->markdown()->sanitizeHtml() !!}
                                                                         @elseif (filled($message->functionCall))
-                                                                            <p>Function called: <code>{{ $message->functionCall['name'] }}</code></p>
+                                                                            <p>Function called:
+                                                                                <code>{{ $message->functionCall['name'] }}</code>
+                                                                            </p>
 
                                                                             <code>
                                                                                 {{ $message->functionCall['arguments'] }}
@@ -138,14 +144,17 @@ use Illuminate\Support\Facades\Vite;
                                     @case(AIChatMessageFrom::Function)
                                         <div x-data="{ isCollapsed: true }">
                                             <button
+                                                class="w-full bg-white px-4 text-left text-sm dark:bg-gray-900"
                                                 x-show="isCollapsed"
                                                 x-on:click="isCollapsed = false"
-                                                class="px-4 text-sm text-left w-full bg-white dark:bg-gray-900"
                                             >
                                                 Collapsed function results
                                             </button>
 
-                                            <div x-show="! isCollapsed" class="group w-full bg-white dark:bg-gray-900">
+                                            <div
+                                                class="group w-full bg-white dark:bg-gray-900"
+                                                x-show="! isCollapsed"
+                                            >
                                                 <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
                                                     <div
                                                         class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
@@ -161,7 +170,8 @@ use Illuminate\Support\Facades\Vite;
                                                         <div
                                                             class="agent-turn relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
                                                             <div class="flex max-w-full flex-grow flex-col gap-3">
-                                                                <div class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
+                                                                <div
+                                                                    class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
                                                                     <div class="prose dark:prose-invert">
                                                                         <p>Function results:</p>
 
@@ -204,6 +214,7 @@ use Illuminate\Support\Facades\Vite;
                                     @break
 
                                     @case(AIChatMessageFrom::User)
+
                                         @default
                                             <div class="group w-full dark:bg-gray-800">
                                                 <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
