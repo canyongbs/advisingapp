@@ -34,4 +34,7 @@
 </COPYRIGHT>
 */
 
-return [];
+return [
+    'access_assistant',
+    'access_assistant_settings',
+];

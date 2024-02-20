@@ -1728,7 +1728,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/audit",
-                "reference": "bee5ae926d1be5238688dc89057c85f513d4d24d"
+                "reference": "3184523d994ca0f555c17fadf276cb9726096294"
             },
             "require": {
                 "filament/filament": "^3.0",
@@ -2083,11 +2083,11 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-ai",
-                "reference": "b4618bdcf425db54c7e09b379f42f6b622072a2a"
+                "reference": "1b7f6604684eb504370d3ad9e2cb8014b243075a"
             },
             "require": {
                 "filament/filament": "^3.0.0",
-                "openai-php/client": "^0.7.3",
+                "openai-php/client": "^0.8.4",
                 "spatie/laravel-settings": "^3.2"
             },
             "type": "library",
@@ -10134,21 +10134,21 @@
         },
         {
             "name": "openai-php/client",
-            "version": "v0.7.10",
+            "version": "v0.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/openai-php/client.git",
-                "reference": "f9af25d7d7bd8e58f60ada6c30f1c93d65c73833"
+                "reference": "00470f5fedd7b08ee4860959d6952f0be0ec48a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/openai-php/client/zipball/f9af25d7d7bd8e58f60ada6c30f1c93d65c73833",
-                "reference": "f9af25d7d7bd8e58f60ada6c30f1c93d65c73833",
+                "url": "https://api.github.com/repos/openai-php/client/zipball/00470f5fedd7b08ee4860959d6952f0be0ec48a0",
+                "reference": "00470f5fedd7b08ee4860959d6952f0be0ec48a0",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.1.0",
-                "php-http/discovery": "^1.19.1",
+                "php-http/discovery": "^1.19.2",
                 "php-http/multipart-stream-builder": "^1.3.0",
                 "psr/http-client": "^1.0.3",
                 "psr/http-client-implementation": "^1.0.1",
@@ -10156,17 +10156,17 @@
                 "psr/http-message": "^1.1.0|^2.0.0"
             },
             "require-dev": {
-                "guzzlehttp/guzzle": "^7.8.0",
-                "guzzlehttp/psr7": "^2.6.1",
-                "laravel/pint": "^1.13.2",
-                "nunomaduro/collision": "^7.9.0",
-                "pestphp/pest": "^2.19.2",
-                "pestphp/pest-plugin-arch": "^2.3.3",
-                "pestphp/pest-plugin-mock": "^2.0.0",
-                "pestphp/pest-plugin-type-coverage": "^2.2.0",
-                "phpstan/phpstan": "^1.10.35",
+                "guzzlehttp/guzzle": "^7.8.1",
+                "guzzlehttp/psr7": "^2.6.2",
+                "laravel/pint": "^1.13.7",
+                "mockery/mockery": "^1.6.7",
+                "nunomaduro/collision": "^7.10.0",
+                "pestphp/pest": "^2.30.0",
+                "pestphp/pest-plugin-arch": "^2.6",
+                "pestphp/pest-plugin-type-coverage": "^2.7.0",
+                "phpstan/phpstan": "^1.10.55",
                 "rector/rector": "^0.16.0",
-                "symfony/var-dumper": "^6.3.4"
+                "symfony/var-dumper": "^6.4.2"
             },
             "type": "library",
             "autoload": {
@@ -10206,7 +10206,7 @@
             ],
             "support": {
                 "issues": "https://github.com/openai-php/client/issues",
-                "source": "https://github.com/openai-php/client/tree/v0.7.10"
+                "source": "https://github.com/openai-php/client/tree/v0.8.4"
             },
             "funding": [
                 {
@@ -10222,7 +10222,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-11-14T13:39:26+00:00"
+            "time": "2024-02-07T07:57:38+00:00"
         },
         {
             "name": "opensearch-project/opensearch-php",

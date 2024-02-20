@@ -148,18 +148,20 @@ abstract class BaseAIChatClient implements AIChatClient
     protected function formatMessagesFromChat(Chat $chat): array
     {
         return [
-            ['role' => 'system', 'content' => $this->addContextToMessages()],
+            ['role' => 'system', 'content' => $this->getContext()],
             ...$chat->messages->toCollection()->map(function (ChatMessage $message) {
                 return [
                     'role' => $message->from,
-                    'content' => $message->message,
+                    'content' => $message->message ?? '',
+                    ...($message->name ? ['name' => $message->name] : []),
+                    ...($message->functionCall ? ['function_call' => $message->functionCall] : []),
                 ];
             }),
             ['role' => 'system', 'content' => 'When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.'],
         ];
     }
 
-    protected function addContextToMessages(): string
+    protected function getContext(): string
     {
         return "{$this->systemContext} {$this->dynamicContext}";
     }
