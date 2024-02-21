@@ -36,6 +36,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Filament\Actions\Exports\Models\Export as BaseExport;
 
@@ -45,4 +46,5 @@ use Filament\Actions\Exports\Models\Export as BaseExport;
 class Export extends BaseExport
 {
     use HasUuids;
+    use SoftDeletes;
 }
