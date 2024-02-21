@@ -43,6 +43,7 @@ return new class () extends Migration {
     {
         Schema::create('assets', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->string('serial_number');
             $table->string('name');
             $table->longText('description');
@@ -50,6 +51,7 @@ return new class () extends Migration {
             $table->foreignUuid('status_id')->constrained('asset_statuses');
             $table->foreignUuid('location_id')->constrained('asset_locations');
             $table->timestamp('purchase_date');
+
             $table->timestamps();
             $table->softDeletes();
         });

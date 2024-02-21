@@ -63,6 +63,7 @@ return new class () extends Migration {
             $table->timestamp('end_datetime')->nullable();
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

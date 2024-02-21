@@ -43,9 +43,10 @@ return new class () extends Migration {
     {
         Schema::create('engagement_batches', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            // TODO Figure out how we're going to identify the batches
+
             $table->string('identifier')->unique()->nullable();
             $table->foreignUuid('user_id')->constrained('users');
+
             $table->timestamps();
         });
     }

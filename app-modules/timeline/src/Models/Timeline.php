@@ -39,6 +39,7 @@ namespace AdvisingApp\Timeline\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
@@ -46,6 +47,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class Timeline extends BaseModel
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'entity_type',
         'entity_id',

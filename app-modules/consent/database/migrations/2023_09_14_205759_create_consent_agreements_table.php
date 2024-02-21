@@ -43,10 +43,12 @@ return new class () extends Migration {
     {
         Schema::create('consent_agreements', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->string('type');
             $table->string('title');
             $table->longText('description');
             $table->longText('body');
+
             $table->timestamps();
             $table->softDeletes();
         });

@@ -50,6 +50,7 @@ return new class () extends Migration {
             $table->integer('sort');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Models;
 
 use AdvisingApp\Form\Models\SubmissibleField;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -44,6 +45,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class EventRegistrationFormField extends SubmissibleField
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'config',
         'label',

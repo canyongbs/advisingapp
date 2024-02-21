@@ -44,6 +44,7 @@ return new class () extends Migration {
     {
         Schema::create('engagement_deliverables', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->foreignUuid('engagement_id')->constrained('engagements')->unique();
             $table->string('channel');
             $table->string('external_reference_id')->nullable()->unique();
@@ -52,6 +53,7 @@ return new class () extends Migration {
             $table->timestamp('delivered_at')->nullable();
             $table->timestamp('last_delivery_attempt')->nullable();
             $table->longText('delivery_response')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });

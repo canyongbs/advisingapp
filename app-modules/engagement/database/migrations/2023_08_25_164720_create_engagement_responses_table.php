@@ -43,11 +43,14 @@ return new class () extends Migration {
     {
         Schema::create('engagement_responses', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->string('sender_id')->nullable();
             $table->string('sender_type')->nullable();
             $table->longText('content')->nullable();
             $table->timestamp('sent_at')->nullable();
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

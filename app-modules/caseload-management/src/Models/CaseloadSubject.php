@@ -37,6 +37,7 @@
 namespace AdvisingApp\CaseloadManagement\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -45,6 +46,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class CaseloadSubject extends BaseModel
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'subject_id',
         'subject_type',

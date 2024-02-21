@@ -37,6 +37,7 @@
 namespace AdvisingApp\Assistant\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
@@ -47,6 +48,7 @@ use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 class AssistantChatMessage extends BaseModel
 {
     use CanAddAssistantLicenseGlobalScope;
+    use SoftDeletes;
 
     protected $fillable = [
         'message',

@@ -52,6 +52,7 @@ return new class () extends Migration {
             $table->index(['subject_type', 'subject_id']);
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

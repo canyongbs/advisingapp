@@ -53,6 +53,7 @@ return new class () extends Migration {
             $table->foreignUuid('step_id')->nullable()->constrained('event_registration_form_steps')->cascadeOnDelete();
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

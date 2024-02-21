@@ -43,10 +43,13 @@ return new class () extends Migration {
     {
         Schema::create('service_request_histories', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->foreignUuid('service_request_id')->constrained('service_requests');
             $table->json('original_values');
             $table->json('new_values');
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

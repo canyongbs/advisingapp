@@ -42,6 +42,7 @@ use Spatie\MediaLibrary\HasMedia;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Division\Models\Division;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -55,6 +56,7 @@ class KnowledgeBaseItem extends BaseModel implements Auditable, HasMedia
     use AuditableTrait;
     use HasUuids;
     use InteractsWithMedia;
+    use SoftDeletes;
 
     protected $table = 'knowledge_base_articles';
 

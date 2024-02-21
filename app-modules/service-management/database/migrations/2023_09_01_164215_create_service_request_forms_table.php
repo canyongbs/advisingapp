@@ -43,6 +43,7 @@ return new class () extends Migration {
     {
         Schema::create('service_request_forms', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->foreignUuid('service_request_type_id')->nullable()->constrained('service_request_types');
             $table->string('name')->unique();
             $table->text('description')->nullable();
@@ -54,6 +55,7 @@ return new class () extends Migration {
             $table->boolean('is_wizard')->default(false);
             $table->boolean('recaptcha_enabled')->default(false);
             $table->json('content')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });

@@ -49,6 +49,7 @@ return new class () extends Migration {
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
 
             $table->timestamps();
+            $table->softDeletes();
 
             $table->unique(['name', 'user_id']);
         });

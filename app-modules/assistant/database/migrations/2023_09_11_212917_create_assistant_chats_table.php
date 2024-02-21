@@ -50,6 +50,7 @@ return new class () extends Migration {
             $table->foreignUuid('assistant_chat_folder_id')->nullable()->constrained('assistant_chat_folders')->cascadeOnDelete();
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

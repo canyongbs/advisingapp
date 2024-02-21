@@ -44,7 +44,9 @@ class CreateKnowledgeBaseStatusesTable extends Migration
     {
         Schema::create('knowledge_base_statuses', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->string('name');
+
             $table->timestamps();
             $table->softDeletes();
         });

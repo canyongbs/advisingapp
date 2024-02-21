@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -45,6 +46,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Event extends BaseModel
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'title',
         'description',

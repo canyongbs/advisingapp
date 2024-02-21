@@ -43,6 +43,7 @@ return new class () extends Migration {
     {
         Schema::create('service_request_form_submissions', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->foreignUuid('service_request_form_id')->constrained('service_request_forms')->cascadeOnDelete();
             $table->foreignUuid('service_request_priority_id')->nullable()->constrained('service_request_priorities');
             $table->string('author_id')->nullable();
@@ -52,6 +53,7 @@ return new class () extends Migration {
             $table->string('request_method')->nullable();
             $table->text('request_note')->nullable();
             $table->foreignUuid('requester_id')->nullable()->constrained('users')->nullOnDelete();
+
             $table->timestamps();
             $table->softDeletes();
 

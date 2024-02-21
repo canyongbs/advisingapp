@@ -46,7 +46,6 @@ return new class () extends Migration {
 
             $table->foreignUuid('team_id')->constrained('teams');
             $table->foreignUuid('user_id')
-                //TODO: remove this if we support multiple teams
                 ->unique()
                 ->constrained('users');
 

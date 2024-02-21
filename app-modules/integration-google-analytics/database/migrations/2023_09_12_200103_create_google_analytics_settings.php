@@ -45,12 +45,4 @@ return new class () extends SettingsMigration {
             $blueprint->add('id');
         });
     }
-
-    public function down(): void
-    {
-        $this->migrator->inGroup('google-analytics', function (SettingsBlueprint $blueprint): void {
-            $blueprint->delete('is_enabled');
-            $blueprint->delete('id');
-        });
-    }
 };

@@ -43,11 +43,13 @@ return new class () extends Migration {
     {
         Schema::create('assistant_chat_message_logs', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->longText('message');
             $table->longText('metadata');
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->longText('request');
             $table->timestamp('sent_at');
+
             $table->timestamps();
         });
     }

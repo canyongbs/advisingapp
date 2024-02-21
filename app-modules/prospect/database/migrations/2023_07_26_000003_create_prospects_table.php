@@ -44,6 +44,7 @@ class CreateProspectsTable extends Migration
     {
         Schema::create('prospects', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->foreignUuid('status_id')->references('id')->on('prospect_statuses');
             $table->foreignUuid('source_id')->references('id')->on('prospect_sources');
             $table->string('first_name');
@@ -65,9 +66,9 @@ class CreateProspectsTable extends Migration
             $table->string('postal')->nullable();
             $table->date('birthdate')->nullable();
             $table->string('hsgrad')->nullable();
-            // TODO Determine if there can be more than one assignment to a prospect
             $table->foreignUuid('assigned_to_id')->nullable()->references('id')->on('users');
             $table->foreignUuid('created_by_id')->nullable()->references('id')->on('users');
+
             $table->timestamps();
             $table->softDeletes();
         });

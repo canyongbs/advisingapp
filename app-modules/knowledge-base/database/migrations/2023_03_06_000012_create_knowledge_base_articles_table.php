@@ -44,6 +44,7 @@ class CreateKnowledgeBaseArticlesTable extends Migration
     {
         Schema::create('knowledge_base_articles', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->boolean('public');
             $table->string('title');
             $table->json('article_details')->nullable();
@@ -51,7 +52,9 @@ class CreateKnowledgeBaseArticlesTable extends Migration
             $table->uuid('quality_id')->nullable();
             $table->uuid('status_id')->nullable();
             $table->uuid('category_id')->nullable();
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 }

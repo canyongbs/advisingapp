@@ -45,6 +45,7 @@ return new class () extends Migration {
             $table->foreignUuid('engagement_file_id')->constrained('engagement_files')->cascadeOnDelete();
             $table->string('entity_id');
             $table->string('entity_type');
+
             $table->timestamps();
 
             $table->index(['entity_id', 'entity_type']);

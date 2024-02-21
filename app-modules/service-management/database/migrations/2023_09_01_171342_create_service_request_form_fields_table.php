@@ -53,6 +53,7 @@ return new class () extends Migration {
             $table->foreignUuid('service_request_form_step_id')->nullable()->constrained('service_request_form_steps')->cascadeOnDelete();
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

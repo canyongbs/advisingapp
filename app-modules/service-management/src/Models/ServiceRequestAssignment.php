@@ -41,6 +41,7 @@ use App\Models\BaseModel;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
@@ -55,6 +56,7 @@ use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 class ServiceRequestAssignment extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline
 {
     use AuditableTrait;
+    use SoftDeletes;
 
     protected $casts = [
         'assigned_at' => 'datetime',
