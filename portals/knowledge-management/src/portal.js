@@ -38,6 +38,8 @@ import { createMemoryHistory, createRouter, createWebHistory } from 'vue-router'
 import Home from '@/Pages/Home.vue';
 import ViewCategory from '@/Pages/ViewCategory.vue';
 import ViewArticle from '@/Pages/ViewArticle.vue';
+import { defaultConfig, plugin } from '@formkit/vue';
+import config from './formkit.config.js';
 
 customElements.define(
     'knowledge-management-portal-embed',
@@ -46,23 +48,23 @@ customElements.define(
             const app = createApp();
 
             function getAppContext() {
-                const url = window.location.href;
-
-                const isEmbeddedInOwnApp = url.replace(/\/$/, '') === props.accessUrl.replace(/\/$/, '');
+                const host = window.location.hostname;
+                const expectedHost = new URL(props.accessUrl).hostname;
+                const isEmbedddedInAdvisingApp = host.replace(/\/$/, '') === expectedHost.replace(/\/$/, '');
 
                 let baseUrl = '/';
 
-                if (isEmbeddedInOwnApp) {
+                if (isEmbedddedInAdvisingApp) {
                     baseUrl = '/portals/knowledge-management';
                 }
 
-                return { isEmbeddedInOwnApp, baseUrl };
+                return { isEmbedddedInAdvisingApp, baseUrl };
             }
 
-            const { isEmbeddedInOwnApp, baseUrl } = getAppContext();
+            const { isEmbedddedInAdvisingApp, baseUrl } = getAppContext();
 
             const router = createRouter({
-                history: isEmbeddedInOwnApp ? createWebHistory() : createMemoryHistory(),
+                history: isEmbedddedInAdvisingApp ? createWebHistory() : createMemoryHistory(),
                 routes: [
                     {
                         path: baseUrl + '/',
@@ -85,6 +87,9 @@ customElements.define(
             app.use(router);
 
             app.config.devtools = true;
+
+            // FormKit plugin
+            app.use(plugin, defaultConfig(config));
 
             const inst = getCurrentInstance();
             Object.assign(inst.appContext, app._context);

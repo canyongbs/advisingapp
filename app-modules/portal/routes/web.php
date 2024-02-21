@@ -36,13 +36,20 @@
 
 use Illuminate\Support\Facades\Route;
 use AdvisingApp\Portal\Livewire\RenderKnowledgeManagementPortal;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
+use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalController;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized;
+
+Route::post('/kmp/authenticate/{authentication}', [KnowledgeManagementPortalController::class, 'authenticate'])
+    ->middleware(['signed:relative', 'web'])
+    ->name('kmp.authenticate');
 
 Route::prefix('portals')
     ->name('portals.')
     ->middleware([
         'web',
+        EnsureFrontendRequestsAreStateful::class,
     ])
     ->group(function () {
         Route::middleware([

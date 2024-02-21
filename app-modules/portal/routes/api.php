@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
 use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalController;
@@ -49,12 +50,30 @@ Route::prefix('api')
         EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
     ])
     ->group(function () {
+        Route::middleware(['auth:sanctum'])->group(function () {
+            Route::get('/user', function (Request $request) {
+                ray('request', $request);
+                ray('student?', $request->user('student'));
+                ray('prospect?', $request->user('prospect'));
+
+                if ($request->user('student') || $request->user('prospect')) {
+                    return response()->json();
+                }
+
+                return response()->json(null, 401);
+            });
+        });
+
         Route::prefix('portal/knowledge-management')
             ->name('portal.knowledge-management.')
             ->group(function () {
                 Route::get('/', [KnowledgeManagementPortalController::class, 'show'])
                     ->middleware(['signed:relative'])
                     ->name('define');
+                Route::post('/authenticate/request', [KnowledgeManagementPortalController::class, 'requestAuthentication'])
+                    ->middleware(['signed:relative'])
+                    ->name('request-authentication');
+
                 Route::post('/search', [KnowledgeManagementPortalSearchController::class, 'get'])
                     ->middleware(['signed:relative'])
                     ->name('search');

@@ -36,12 +36,24 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
+use Closure;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Filament\Support\Colors\Color;
+use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use AdvisingApp\Portal\Enums\PortalType;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Validation\ValidationException;
 use AdvisingApp\Portal\Settings\PortalSettings;
+use AdvisingApp\Portal\Models\PortalAuthentication;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
+use AdvisingApp\Portal\Notifications\AuthenticatePortalNotification;
+use AdvisingApp\StudentDataModel\Actions\ResolveEducatableFromEmail;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
+use AdvisingApp\Portal\Http\Requests\KnowledgeManagementPortalAuthenticationRequest;
 
 class KnowledgeManagementPortalController extends Controller
 {
@@ -52,6 +64,12 @@ class KnowledgeManagementPortalController extends Controller
         return response()->json([
             'primary_color' => Color::all()[$settings->knowledge_management_portal_primary_color ?? 'blue'],
             'rounding' => $settings->knowledge_management_portal_rounding,
+            // TODO If service management is enabled, we will provide an authentication URL
+            'service_management_enabled' => $settings->knowledge_management_portal_service_management,
+            'authentication_url' => URL::signedRoute(
+                name: 'portal.knowledge-management.request-authentication',
+                absolute: false,
+            ),
             'categories' => KnowledgeBaseCategoryData::collection(
                 KnowledgeBaseCategory::query()
                     ->get()
@@ -64,6 +82,81 @@ class KnowledgeManagementPortalController extends Controller
                     })
                     ->toArray()
             ),
+        ]);
+    }
+
+    // TODO Extract to invokeable controller
+    public function requestAuthentication(KnowledgeManagementPortalAuthenticationRequest $request, ResolveEducatableFromEmail $resolveEducatableFromEmail): JsonResponse
+    {
+        $email = $request->safe()->email;
+
+        $educatable = $resolveEducatableFromEmail($email);
+
+        if (! $educatable) {
+            throw ValidationException::withMessages([
+                'email' => 'A student with that email address could not be found. Please contact your system administrator.',
+            ]);
+        }
+
+        $code = random_int(100000, 999999);
+
+        $authentication = new PortalAuthentication();
+        $authentication->educatable()->associate($educatable);
+        $authentication->portal_type = PortalType::KnowledgeManagement;
+        $authentication->code = Hash::make($code);
+        $authentication->save();
+
+        Notification::route('mail', [
+            $email => $educatable->getAttributeValue($educatable::displayNameKey()),
+        ])->notify(new AuthenticatePortalNotification($authentication, $code));
+
+        return response()->json([
+            'message' => "We've sent an authentication code to {$email}.",
+            'authentication_url' => URL::signedRoute(
+                name: 'kmp.authenticate',
+                parameters: [
+                    'authentication' => $authentication,
+                ],
+                absolute: false,
+            ),
+        ]);
+    }
+
+    // TODO Extract to invokeable controller
+    public function authenticate(Request $request, PortalAuthentication $authentication): JsonResponse
+    {
+        ray('authenticate()', $authentication);
+
+        if ($authentication->isExpired()) {
+            return response()->json([
+                'is_expired' => true,
+            ]);
+        }
+
+        $request->validate([
+            'code' => ['required', 'integer', 'digits:6', function (string $attribute, int $value, Closure $fail) use ($authentication) {
+                if (Hash::check($value, $authentication->code)) {
+                    return;
+                }
+
+                $fail('The provided code is invalid.');
+            }],
+        ]);
+
+        $educatable = $authentication->educatable;
+
+        // TODO Authenticate via the correct guard (can be student or prospect)
+        Auth::guard('student')->login($educatable);
+
+        $token = $educatable->createToken('knowledge-management-portal-access-token');
+
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
+
+        return response()->json([
+            'success' => true,
+            'token' => $token->plainTextToken,
         ]);
     }
 }

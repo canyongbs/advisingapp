@@ -222,8 +222,7 @@ class ManagePortalSettings extends SettingsPage
                             ->visible(
                                 fn (Get $get) => $get('knowledge_management_portal_enabled') &&
                             ! is_null($get('knowledge_management_portal_primary_color')) &&
-                            ! is_null($get('knowledge_management_portal_rounding')) &&
-                            ! is_null($get('knowledge_management_portal_authorized_domain'))
+                            ! is_null($get('knowledge_management_portal_rounding'))
                             )
                             ->columnSpanFull(),
                     ])->columns(2),

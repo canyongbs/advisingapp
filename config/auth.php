@@ -1,5 +1,8 @@
 <?php
 
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+
 /*
 <COPYRIGHT>
 
@@ -79,6 +82,16 @@ return [
             'provider' => 'system-users',
             'hash' => false,
         ],
+
+        'student' => [
+            'driver' => 'session',
+            'provider' => 'students',
+        ],
+
+        'prospect' => [
+            'driver' => 'session',
+            'provider' => 'prospects',
+        ],
     ],
 
     /*
@@ -107,6 +120,16 @@ return [
         'system-users' => [
             'driver' => 'eloquent',
             'model' => App\Models\SystemUser::class,
+        ],
+
+        'students' => [
+            'driver' => 'eloquent',
+            'model' => Student::class,
+        ],
+
+        'prospects' => [
+            'driver' => 'eloquent',
+            'model' => Prospect::class,
         ],
 
         // 'users' => [

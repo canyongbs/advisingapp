@@ -40,9 +40,9 @@ use App\Models\User;
 use App\Models\Authenticatable;
 use AdvisingApp\Task\Models\Task;
 use App\Models\Scopes\HasLicense;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Collection;
 use AdvisingApp\Alert\Models\Alert;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\CareTeam\Models\CareTeam;
@@ -63,6 +63,7 @@ use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Engagement\Models\EngagementFileEntities;
 use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use AdvisingApp\Notification\Models\Concerns\HasSubscriptions;
@@ -71,7 +72,6 @@ use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
 use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
@@ -82,8 +82,9 @@ use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  *
  * @mixin IdeHelperStudent
  */
-class Student extends Model implements Auditable, Subscribable, Educatable, HasFilamentResource, NotifiableInterface
+class Student extends BaseAuthenticatable implements Auditable, Subscribable, Educatable, HasFilamentResource, NotifiableInterface
 {
+    use HasApiTokens;
     use AuditableTrait;
     use HasFactory;
     use DefinesPermissions;
