@@ -49,6 +49,7 @@ return new class () extends Migration {
             $table->text('validation_error')->nullable();
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

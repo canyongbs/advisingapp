@@ -36,6 +36,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
 
@@ -45,4 +46,5 @@ use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
 class FailedImportRow extends BaseFailedImportRow
 {
     use HasUuids;
+    use SoftDeletes;
 }
