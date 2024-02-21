@@ -54,8 +54,6 @@ class TiptapEditor extends BaseTiptapEditor
             }
 
             $component->state(TiptapMediaEncoder::decode($state));
-
-            $component->state($component->getHTML());
         });
 
         $this->dehydrateStateUsing(function (BaseTiptapEditor $component, string | array | null $state) {

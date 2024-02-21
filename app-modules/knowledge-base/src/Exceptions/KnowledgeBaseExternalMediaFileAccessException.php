@@ -34,26 +34,8 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Observers;
+namespace AdvisingApp\KnowledgeBase\Exceptions;
 
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
-use App\Support\MediaEncoding\Concerns\ImplementsEncodedMediaProcessing;
-use AdvisingApp\KnowledgeBase\Jobs\KnowledgeBaseItemDownloadExternalMedia;
+use Exception;
 
-class KnowledgeBaseItemObserver
-{
-    use ImplementsEncodedMediaProcessing;
-
-    public function saved(KnowledgeBaseItem $knowledgeBaseItem): void
-    {
-        if (is_string($knowledgeBaseItem->article_details)) {
-            $knowledgeBaseItem->article_details = json_decode($knowledgeBaseItem->article_details, true);
-        }
-
-        $this->convertPathShortcodesToIdShortcodes($knowledgeBaseItem, ['solution', 'notes']);
-
-        $this->cleanupMediaItems($knowledgeBaseItem, ['solution', 'notes']);
-
-        KnowledgeBaseItemDownloadExternalMedia::dispatch($knowledgeBaseItem);
-    }
-}
+class KnowledgeBaseExternalMediaFileAccessException extends Exception {}
