@@ -72,7 +72,7 @@ class SeedTenantDatabase implements ShouldQueue, NotTenantAware
             config(['queue.failed.database' => 'landlord']);
 
             Artisan::call(
-                command: 'db:seed --class=DemoDatabaseSeeder --force'
+                command: 'db:seed --class=NewTenantSeeder --force'
             );
 
             config(['queue.failed.database' => $currentQueueFailedConnection]);
