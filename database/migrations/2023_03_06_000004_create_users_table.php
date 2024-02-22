@@ -73,6 +73,7 @@ class CreateUsersTable extends Migration
             $table->boolean('working_hours_are_enabled')->default(false);
             $table->boolean('are_working_hours_visible_on_profile')->default(false);
             $table->jsonb('working_hours')->nullable();
+            $table->string('job_title')->nullable();
 
             $table->foreignUuid('pronouns_id')->nullable()->constrained('pronouns')->nullOnDelete();
             $table->boolean('are_pronouns_visible_on_profile')->default(false);

@@ -62,11 +62,12 @@ class KnowledgeManagementPortalController extends Controller
             'categories' => KnowledgeBaseCategoryData::collection(
                 KnowledgeBaseCategory::query()
                     ->get()
-                    ->map(function ($category) {
+                    ->map(function (KnowledgeBaseCategory $category) {
                         return [
                             'id' => $category->getKey(),
                             'name' => $category->name,
                             'description' => $category->description,
+                            'icon' => $category->icon ? svg($category->icon, 'h-6 w-6')->toHtml() : null,
                         ];
                     })
                     ->toArray()

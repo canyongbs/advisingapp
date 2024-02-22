@@ -38,6 +38,7 @@ namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Support\MediaEncoding\TiptapMediaEncoder;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
@@ -58,7 +59,7 @@ class KnowledgeManagementPortalArticleController extends Controller
                 'categoryId' => $article->category_id,
                 'name' => $article->title,
                 'lastUpdated' => $article->updated_at->format('M d Y, h:m a'),
-                'content' => tiptap_converter()->asHTML($article->article_details),
+                'content' => tiptap_converter()->asHTML(TiptapMediaEncoder::decode($article->article_details)),
             ]),
         ]);
     }

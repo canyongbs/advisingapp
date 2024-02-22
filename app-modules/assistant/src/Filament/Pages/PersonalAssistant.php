@@ -64,6 +64,7 @@ use AdvisingApp\Assistant\Jobs\ShareAssistantChatsJob;
 use AdvisingApp\Assistant\Enums\AssistantChatShareWith;
 use AdvisingApp\IntegrationAI\Client\Contracts\AIChatClient;
 use AdvisingApp\IntegrationAI\Exceptions\ContentFilterException;
+use AdvisingApp\IntegrationAI\DataTransferObjects\DynamicContext;
 use AdvisingApp\IntegrationAI\Exceptions\TokensExceededException;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
@@ -220,9 +221,14 @@ class PersonalAssistant extends Page
     public function ask(AIChatClient $ai): void
     {
         try {
-            $this->currentResponse = $ai->ask($this->chat, function (string $partial) {
-                $this->stream('currentResponse', nl2br($partial));
-            });
+            /** @var User $user */
+            $user = auth()->user();
+
+            $this->currentResponse = $ai
+                ->provideDynamicContext(new DynamicContext($user))
+                ->ask($this->chat, function (string $partial) {
+                    $this->stream('currentResponse', nl2br($partial));
+                });
         } catch (ContentFilterException|TokensExceededException $e) {
             $this->renderError = true;
             $this->error = $e->getMessage();

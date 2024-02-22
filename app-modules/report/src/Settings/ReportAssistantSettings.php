@@ -34,24 +34,16 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\Report\Settings;
 
-class CreateKnowledgeBaseItemsTable extends Migration
+use Spatie\LaravelSettings\Settings;
+
+class ReportAssistantSettings extends Settings
 {
-    public function up(): void
+    public string $prompt_system_context;
+
+    public static function group(): string
     {
-        Schema::create('knowledge_base_items', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->boolean('public');
-            $table->string('title');
-            $table->json('article_details')->nullable();
-            $table->longText('notes')->nullable();
-            $table->uuid('quality_id')->nullable();
-            $table->uuid('status_id')->nullable();
-            $table->uuid('category_id')->nullable();
-            $table->timestamps();
-        });
+        return 'report_assistant';
     }
 }

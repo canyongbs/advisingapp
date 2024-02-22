@@ -61,11 +61,11 @@ class TaskViewAction extends ViewAction
                 ->action(fn (Task $record) => $record->getStateMachine('status')->transitionTo(TaskStatus::Completed))
                 ->cancelParentActions()
                 ->hidden(fn (Task $record) => $record->getStateMachine('status')->getStateTransitions()->doesntContain(TaskStatus::Completed->value) || auth()?->user()?->cannot("task.{$record->id}.update")),
-            Action::make('mark_as_cancelled')
-                ->label('Mark as Cancelled')
-                ->action(fn (Task $record) => $record->getStateMachine('status')->transitionTo(TaskStatus::Cancelled))
+            Action::make('mark_as_canceled')
+                ->label('Mark as Canceled')
+                ->action(fn (Task $record) => $record->getStateMachine('status')->transitionTo(TaskStatus::Canceled))
                 ->cancelParentActions()
-                ->hidden(fn (Task $record) => $record->getStateMachine('status')->getStateTransitions()->doesntContain(TaskStatus::Cancelled->value) || auth()?->user()?->cannot("task.{$record->id}.update")),
+                ->hidden(fn (Task $record) => $record->getStateMachine('status')->getStateTransitions()->doesntContain(TaskStatus::Canceled->value) || auth()?->user()?->cannot("task.{$record->id}.update")),
         ])->infolist($this->taskInfoList());
     }
 }

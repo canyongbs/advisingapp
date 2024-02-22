@@ -44,6 +44,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Assistant\Models\AssistantChat;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 use AdvisingApp\Assistant\Enums\AssistantChatShareVia;
 use AdvisingApp\Assistant\Models\AssistantChatMessage;
 use AdvisingApp\Assistant\Notifications\SendAssistantTranscriptNotification;
@@ -63,15 +64,13 @@ class ShareAssistantChatJob implements ShouldQueue
         protected User $sender
     ) {}
 
-    /**
-     * Execute the job.
-     */
+    public function middleware(): array
+    {
+        return [new SkipIfBatchCancelled()];
+    }
+
     public function handle(): void
     {
-        if ($this->batch()?->cancelled()) {
-            return;
-        }
-
         switch ($this->via) {
             case AssistantChatShareVia::Email:
                 $this->user->notify(new SendAssistantTranscriptNotification($this->chat, $this->sender));

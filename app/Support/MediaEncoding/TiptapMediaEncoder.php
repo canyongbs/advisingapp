@@ -120,6 +120,10 @@ class TiptapMediaEncoder
 
         $defaultDirectory = config('filament-tiptap-editor.directory');
 
+        if (! Storage::disk($disk)->exists($path) && Str::isUrl($content)) {
+            return $content;
+        }
+
         return Str::contains($path, $defaultDirectory)
             ? "{{media|path:{$path};disk:{$disk};}}"
             : self::encodeExistingMedia($path);

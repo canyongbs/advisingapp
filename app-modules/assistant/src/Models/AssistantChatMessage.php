@@ -51,10 +51,13 @@ class AssistantChatMessage extends BaseModel
     protected $fillable = [
         'message',
         'from',
+        'name',
+        'function_call',
     ];
 
     protected $casts = [
         'from' => AIChatMessageFrom::class,
+        'function_call' => 'array',
     ];
 
     public function chat(): BelongsTo

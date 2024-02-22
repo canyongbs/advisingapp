@@ -59,6 +59,12 @@ defineProps({
                 'group relative bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary-500',
             ]"
         >
+            <span v-if="category.icon"
+                  v-html="category.icon"
+                  class="pointer-events-none absolute top-6 text-primary-600 dark:text-primary-400"
+                  aria-hidden="true"
+            >
+            </span>
             <div class="mt-8">
                 <h3 class="text-base font-semibold leading-6 text-gray-900">
                     <router-link :to="{ name: 'view-category', params: { categoryId: category.id } }">

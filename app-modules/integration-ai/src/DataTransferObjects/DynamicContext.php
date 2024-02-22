@@ -37,16 +37,20 @@
 namespace AdvisingApp\IntegrationAI\DataTransferObjects;
 
 use Spatie\LaravelData\Data;
-use AdvisingApp\IntegrationAi\Models\Concerns\ProvidesDynamicContext;
+use AdvisingApp\IntegrationAI\Models\Concerns\ProvidesDynamicContext;
 
 class DynamicContext extends Data
 {
-    public ProvidesDynamicContext $record;
+    private ?string $context;
 
-    public ?string $context;
-
-    public function __construct()
-    {
+    public function __construct(
+        protected ProvidesDynamicContext $record
+    ) {
         $this->context = $this->record->getDynamicContext();
+    }
+
+    public function getContext(): ?string
+    {
+        return $this->context;
     }
 }

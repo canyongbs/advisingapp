@@ -91,12 +91,13 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
+use AdvisingApp\IntegrationAI\Models\Concerns\ProvidesDynamicContext;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 
 /**
  * @mixin IdeHelperUser
  */
-class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, NotifiableInterface, HasFilamentResource
+class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, NotifiableInterface, HasFilamentResource, ProvidesDynamicContext
 {
     use DefinesPermissions;
     use HasFactory;
@@ -169,6 +170,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'working_hours_are_enabled',
         'are_working_hours_visible_on_profile',
         'working_hours',
+        'job_title',
     ];
 
     public $orderable = [
@@ -496,6 +498,17 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function getApiPermissions(): Collection
     {
         return collect(['view-email', ...$this->apiPermissions()]);
+    }
+
+    public function getDynamicContext(): string
+    {
+        $context = "My name is {$this->name}";
+
+        if ($this->job_title) {
+            $context .= " and I am a {$this->job_title}";
+        }
+
+        return "{$context}. When you respond please use this information about me to tailor your response.";
     }
 
     protected function serializeDate(DateTimeInterface $date): string

@@ -46,31 +46,42 @@ class GenerateHelperFiles extends Command
 
     protected $description = 'Generate helper files.';
 
-    public function handle(): void
+    public function handle(): int
     {
-        $tenant = Tenant::query()->first();
+        $tenant = Tenant::first();
 
         if (! $tenant) {
             $this->error('No tenant found.');
 
-            return;
+            return self::FAILURE;
         }
 
+        $tenant->makeCurrent();
+
         Artisan::call(
-            command: "tenants:artisan \"ide-helper:generate\" --tenant={$tenant->id}",
+            command: 'ide-helper:generate',
             outputBuffer: $this->output,
         );
 
         Artisan::call(
-            command: "tenants:artisan \"ide-helper:models -M\" --tenant={$tenant->id}",
+            command: 'ide-helper:models -M',
             outputBuffer: $this->output,
         );
 
         Artisan::call(
-            command: "tenants:artisan \"ide-helper:meta\" --tenant={$tenant->id}",
+            command: 'ide-helper:meta',
+            outputBuffer: $this->output,
+        );
+
+        $this->info('Generating GraphQL helper files...');
+
+        Artisan::call(
+            command: 'lighthouse:ide-helper',
             outputBuffer: $this->output,
         );
 
         $this->info('Helper files generated!');
+
+        return self::SUCCESS;
     }
 }
