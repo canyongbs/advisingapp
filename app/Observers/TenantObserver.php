@@ -50,20 +50,12 @@ class TenantObserver
 {
     public function created(Tenant $tenant): void
     {
-        $setupChain = [
-            new MigrateTenantDatabase($tenant),
-        ];
-
-        if (config('multitenancy.seed_on_tenant_creation')) {
-            $setupChain = [
-                ...$setupChain,
-                new SeedTenantDatabase($tenant),
-            ];
-        }
-
         Bus::batch(
             [
-                $setupChain,
+                [
+                    new MigrateTenantDatabase($tenant),
+                    new SeedTenantDatabase($tenant),
+                ],
             ]
         )
             ->onQueue(config('queue.landlord_queue'))

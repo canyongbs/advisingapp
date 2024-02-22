@@ -164,6 +164,4 @@ return [
     'not_tenant_aware_jobs' => [
         // ...
     ],
-
-    'seed_on_tenant_creation' => env('SEED_ON_TENANT_CREATION', false),
 ];

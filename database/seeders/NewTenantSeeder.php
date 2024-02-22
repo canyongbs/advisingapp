@@ -58,7 +58,7 @@ use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
 use AdvisingApp\InventoryManagement\Database\Seeders\MaintenanceProviderSeeder;
 
-class DemoDatabaseSeeder extends Seeder
+class NewTenantSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -76,9 +76,7 @@ class DemoDatabaseSeeder extends Seeder
         );
 
         $this->call([
-            StudentSeeder::class,
             SuperAdminProfileSeeder::class,
-            UsersTableSeeder::class,
             DivisionSeeder::class,
             ServiceRequestStatusSeeder::class,
             ServiceRequestTypeSeeder::class,

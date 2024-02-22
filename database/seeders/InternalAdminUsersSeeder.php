@@ -34,48 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace App\Jobs;
+namespace Database\Seeders;
 
-use App\Models\Tenant;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
-use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
+use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use AdvisingApp\Authorization\Models\RoleGroup;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
-class SeedTenantDatabase implements ShouldQueue, NotTenantAware
+class InternalAdminUsersSeeder extends Seeder
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public int $timeout = 1200;
-
-    public function __construct(public Tenant $tenant) {}
-
-    public function middleware(): array
+    public function run(): void
     {
-        return [new SkipIfBatchCancelled()];
-    }
+        $superAdminRoleGroup = RoleGroup::where('name', 'Super Administrator')->firstOrFail();
 
-    public function handle(): void
-    {
-        $this->tenant->execute(function () {
-            $currentQueueFailedConnection = config('queue.failed.database');
+        if (app()->environment('local')) {
+            $superAdmin = User::factory()->licensed(LicenseType::cases())->create([
+                'name' => 'Super Admin',
+                'email' => config('local_development.super_admin.email'),
+                'password' => Hash::make('password'),
+            ]);
 
-            config(['queue.failed.database' => 'landlord']);
+            $superAdmin->roleGroups()->sync($superAdminRoleGroup);
+        }
 
-            Artisan::call(
-                command: 'db:seed --class=NewTenantSeeder --force'
-            );
+        collect(config('internal-users.emails'))->each(function ($email) use ($superAdminRoleGroup) {
+            $user = User::where('email', $email)->first();
 
-            config(['queue.failed.database' => $currentQueueFailedConnection]);
+            if (is_null($user)) {
+                $user = User::factory()->create([
+                    'name' => Str::title(Str::replace('.', ' ', Str::before($email, '@'))),
+                    'email' => $email,
+                    'password' => Hash::make('password'),
+                    'is_external' => true,
+                ]);
+            }
+
+            $user->roleGroups()->sync($superAdminRoleGroup);
         });
     }
 }

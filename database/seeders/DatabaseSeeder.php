@@ -89,9 +89,9 @@ class DatabaseSeeder extends Seeder
         );
 
         $this->call([
-            SisDataSeeder::class,
             SuperAdminProfileSeeder::class,
-            UsersTableSeeder::class,
+            SampleSuperAdminUserSeeder::class,
+            InternalAdminUsersSeeder::class,
             DivisionSeeder::class,
             ServiceRequestStatusSeeder::class,
             ServiceRequestTypeSeeder::class,
