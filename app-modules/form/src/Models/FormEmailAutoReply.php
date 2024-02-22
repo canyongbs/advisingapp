@@ -38,6 +38,7 @@ namespace AdvisingApp\Form\Models;
 
 use App\Models\BaseModel;
 use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Engagement\Actions\GenerateEmailMarkdownContent;
@@ -47,6 +48,8 @@ use AdvisingApp\Engagement\Actions\GenerateEmailMarkdownContent;
  */
 class FormEmailAutoReply extends BaseModel
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'subject',
         'body',

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Form\Models;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -43,6 +44,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class FormField extends SubmissibleField
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'config',
         'label',

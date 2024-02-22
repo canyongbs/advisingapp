@@ -49,6 +49,7 @@ return new class () extends Migration {
             $table->foreignUuid('submission_id')->constrained('application_submissions')->cascadeOnDelete();
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

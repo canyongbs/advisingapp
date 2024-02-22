@@ -44,7 +44,9 @@ class CreateKnowledgeBaseQualitiesTable extends Migration
     {
         Schema::create('knowledge_base_qualities', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->string('name');
+
             $table->timestamps();
             $table->softDeletes();
         });

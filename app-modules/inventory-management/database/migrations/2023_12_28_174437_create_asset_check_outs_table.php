@@ -43,6 +43,7 @@ return new class () extends Migration {
     {
         Schema::create('asset_check_outs', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->foreignUuid('asset_id')->constrained('assets');
             $table->foreignUuid('asset_check_in_id')->nullable()->constrained('asset_check_ins');
             $table->string('checked_out_by_type')->nullable();
@@ -52,6 +53,7 @@ return new class () extends Migration {
             $table->timestamp('checked_out_at');
             $table->timestamp('expected_check_in_at')->nullable();
             $table->longText('notes')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });

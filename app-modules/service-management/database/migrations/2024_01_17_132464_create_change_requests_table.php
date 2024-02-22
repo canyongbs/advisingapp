@@ -43,6 +43,7 @@ return new class () extends Migration {
     {
         Schema::create('change_requests', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->foreignUuid('created_by')->nullable()->constrained('users');
             $table->foreignUuid('change_request_type_id')->constrained('change_request_types');
             $table->foreignUuid('change_request_status_id')->constrained('change_request_statuses');
@@ -55,6 +56,7 @@ return new class () extends Migration {
             $table->integer('risk_score');
             $table->timestamp('start_time');
             $table->timestamp('end_time');
+
             $table->timestamps();
             $table->softDeletes();
         });

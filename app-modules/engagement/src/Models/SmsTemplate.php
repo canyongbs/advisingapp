@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -45,6 +46,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class SmsTemplate extends BaseModel
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'name',
         'description',

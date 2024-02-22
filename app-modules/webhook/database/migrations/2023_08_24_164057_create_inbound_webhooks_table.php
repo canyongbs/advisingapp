@@ -43,10 +43,12 @@ return new class () extends Migration {
     {
         Schema::create('inbound_webhooks', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->string('source');
             $table->string('event');
             $table->longText('url');
             $table->longText('payload');
+
             $table->timestamps();
             $table->softDeletes();
         });

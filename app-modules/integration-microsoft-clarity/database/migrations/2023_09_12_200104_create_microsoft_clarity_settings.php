@@ -45,12 +45,4 @@ return new class () extends SettingsMigration {
             $blueprint->add('id');
         });
     }
-
-    public function down(): void
-    {
-        $this->migrator->inGroup('microsoft-clarity', function (SettingsBlueprint $blueprint): void {
-            $blueprint->delete('is_enabled');
-            $blueprint->delete('id');
-        });
-    }
 };

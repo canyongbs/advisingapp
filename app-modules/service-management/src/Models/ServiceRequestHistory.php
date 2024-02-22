@@ -43,6 +43,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -54,6 +55,8 @@ use AdvisingApp\Timeline\Timelines\ServiceRequestHistoryTimeline;
  */
 class ServiceRequestHistory extends BaseModel implements ProvidesATimeline
 {
+    use SoftDeletes;
+
     protected $casts = [
         'original_values' => 'array',
         'new_values' => 'array',

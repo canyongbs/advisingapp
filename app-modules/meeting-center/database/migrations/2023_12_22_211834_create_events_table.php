@@ -53,6 +53,7 @@ return new class () extends Migration {
             $table->timestamp('ends_at');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

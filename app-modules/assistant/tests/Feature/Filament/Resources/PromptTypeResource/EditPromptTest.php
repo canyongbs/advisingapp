@@ -44,7 +44,7 @@ use function Pest\Livewire\livewire;
 use AdvisingApp\Assistant\Models\PromptType;
 
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Laravel\assertModelMissing;
+use function PHPUnit\Framework\assertNotNull;
 use function Pest\Laravel\assertDatabaseCount;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -141,7 +141,8 @@ it('can delete a record', function () use ($licenses, $roles) {
         ->assertActionEnabled(DeleteAction::class)
         ->callAction(DeleteAction::class);
 
-    assertDatabaseCount(PromptType::class, 0);
+    // TODO: Bring back when we propagate soft deletes
+    //assertDatabaseCount(PromptType::class, 0);
 
-    assertModelMissing($record);
+    assertNotNull($record->refresh()->deleted_at);
 });

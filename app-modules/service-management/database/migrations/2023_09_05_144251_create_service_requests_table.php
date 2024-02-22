@@ -55,8 +55,8 @@ return new class () extends Migration {
             $table->foreignUuid('status_id')->nullable()->constrained('service_request_statuses');
             $table->foreignUuid('priority_id')->nullable()->constrained('service_request_priorities');
             $table->foreignUuid('created_by_id')->nullable()->constrained('users');
-
             $table->timestamp('status_updated_at')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });

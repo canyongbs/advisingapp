@@ -43,6 +43,7 @@ return new class () extends Migration {
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->string('title');
             $table->longText('description');
             $table->string('status');
@@ -51,6 +52,7 @@ return new class () extends Migration {
             $table->foreignUuid('created_by')->nullable()->constrained('users');
             $table->string('concern_type')->nullable();
             $table->string('concern_id')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
 

@@ -37,6 +37,7 @@
 namespace App\Models;
 
 use App\Casts\LandlordEncrypted;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Spatie\Multitenancy\Models\Tenant as SpatieTenant;
 use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
@@ -48,6 +49,7 @@ class Tenant extends SpatieTenant
 {
     use UsesLandlordConnection;
     use HasUuids;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',

@@ -43,11 +43,14 @@ return new class () extends Migration {
     {
         Schema::create('tenants', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->string('name');
             $table->string('domain')->unique();
             $table->text('key');
             $table->text('config');
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

@@ -43,6 +43,7 @@ return new class () extends Migration {
     {
         Schema::create('asset_check_ins', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->foreignUuid('asset_id')->constrained('assets');
             $table->string('checked_in_by_type')->nullable();
             $table->string('checked_in_by_id')->nullable();
@@ -50,6 +51,7 @@ return new class () extends Migration {
             $table->string('checked_in_from_id');
             $table->timestamp('checked_in_at');
             $table->longText('notes')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });

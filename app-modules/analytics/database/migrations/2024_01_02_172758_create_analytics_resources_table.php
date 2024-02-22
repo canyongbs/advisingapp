@@ -54,6 +54,7 @@ return new class () extends Migration {
             $table->foreignUuid('category_id')->constrained('analytics_resource_categories');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

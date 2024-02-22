@@ -63,6 +63,7 @@ return new class () extends Migration {
             $table->timestamp('last_delivery_attempt')->nullable();
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

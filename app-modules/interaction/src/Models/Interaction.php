@@ -45,6 +45,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -65,6 +66,7 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
 {
     use AuditableTrait;
     use BelongsToEducatable;
+    use SoftDeletes;
 
     protected $fillable = [
         'user_id',

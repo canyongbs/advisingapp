@@ -38,6 +38,7 @@ namespace AdvisingApp\ServiceManagement\Models;
 
 use App\Models\Attributes\NoPermissions;
 use AdvisingApp\Form\Models\SubmissibleStep;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -47,6 +48,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[NoPermissions]
 class ServiceRequestFormStep extends SubmissibleStep
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'label',
         'content',

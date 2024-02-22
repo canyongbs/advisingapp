@@ -51,6 +51,7 @@ return new class () extends Migration {
             $table->foreignUuid('form_id')->constrained()->cascadeOnDelete();
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

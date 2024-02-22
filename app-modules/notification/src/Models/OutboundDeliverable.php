@@ -39,6 +39,7 @@ namespace AdvisingApp\Notification\Models;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Notification\Drivers\SmsDriver;
 use AdvisingApp\Timeline\Models\CustomTimeline;
 use AdvisingApp\Notification\Drivers\EmailDriver;
@@ -55,6 +56,8 @@ use AdvisingApp\Timeline\Timelines\OutboundDeliverableTimeline;
  */
 class OutboundDeliverable extends BaseModel implements ProvidesATimeline
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'channel',
         'content',

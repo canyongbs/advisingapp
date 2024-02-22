@@ -43,12 +43,15 @@ return new class () extends Migration {
     {
         Schema::create('timelines', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->string('entity_type');
             $table->string('entity_id');
             $table->string('timelineable_type');
             $table->foreignUuid('timelineable_id');
             $table->timestamp('record_sortable_date');
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

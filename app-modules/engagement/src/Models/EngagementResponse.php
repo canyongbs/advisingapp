@@ -42,6 +42,7 @@ use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Timeline\Models\Timeline;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -56,6 +57,7 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeline
 {
     use AuditableTrait;
+    use SoftDeletes;
 
     protected $fillable = [
         'sender_id',

@@ -43,11 +43,13 @@ return new class () extends Migration {
     {
         Schema::create('slas', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->string('name');
             $table->text('description')->nullable();
             $table->unsignedInteger('response_seconds')->nullable();
             $table->unsignedInteger('resolution_seconds')->nullable();
             $table->text('terms')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });
