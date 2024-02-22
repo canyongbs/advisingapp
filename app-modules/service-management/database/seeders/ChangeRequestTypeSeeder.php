@@ -50,7 +50,7 @@ class ChangeRequestTypeSeeder extends Seeder
         ];
 
         foreach ($types as $type) {
-            $changeRequestType = ChangeRequestType::factory()
+            ChangeRequestType::factory()
                 ->create([
                     'name' => $type[0],
                     'number_of_required_approvals' => $type[1],
