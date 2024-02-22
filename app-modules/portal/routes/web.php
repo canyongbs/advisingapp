@@ -41,10 +41,6 @@ use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
 use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalController;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized;
 
-Route::post('/kmp/authenticate/{authentication}', [KnowledgeManagementPortalController::class, 'authenticate'])
-    ->middleware(['signed:relative', 'web'])
-    ->name('kmp.authenticate');
-
 Route::prefix('portals')
     ->name('portals.')
     ->middleware([
@@ -56,6 +52,10 @@ Route::prefix('portals')
             EnsureKnowledgeManagementPortalIsEnabled::class,
             EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
         ])->group(function () {
+            Route::post('/knowledge-management/authenticate/{authentication}', [KnowledgeManagementPortalController::class, 'authenticate'])
+                ->middleware(['signed:relative', 'web', EnsureFrontendRequestsAreStateful::class])
+                ->name('knowledge-management.authenticate');
+
             Route::get('/knowledge-management', RenderKnowledgeManagementPortal::class)
                 ->name('knowledge-management.show');
             Route::get('/knowledge-management/categories/{category}', RenderKnowledgeManagementPortal::class)

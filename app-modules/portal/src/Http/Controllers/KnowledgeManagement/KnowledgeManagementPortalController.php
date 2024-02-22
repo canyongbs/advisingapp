@@ -113,7 +113,7 @@ class KnowledgeManagementPortalController extends Controller
         return response()->json([
             'message' => "We've sent an authentication code to {$email}.",
             'authentication_url' => URL::signedRoute(
-                name: 'kmp.authenticate',
+                name: 'portals.knowledge-management.authenticate',
                 parameters: [
                     'authentication' => $authentication,
                 ],

@@ -251,7 +251,7 @@ async function authenticate(formData, node) {
             '--rounding-full': portalRounding.full,
         }"
     >
-        <div>
+        <div class="hidden">
             <link rel="stylesheet" v-bind:href="hostUrl + '/js/portals/knowledge-management/style.css'" />
         </div>
 
@@ -262,35 +262,37 @@ async function authenticate(formData, node) {
         <div v-else>
             <div
                 v-if="requiresAuthentication && userIsAuthenticated === false"
-                class="flex flex-col items-center justify-center"
+                class="flex flex-col items-center justify-center min-h-screen"
             >
-                <h1 class="text-black">This portal requires authentication...</h1>
+                <h1 class="text-black text-3xl font-bold">Please log in to the Knowledge Management Portal</h1>
 
-                <FormKit type="form" @submit="authenticate" v-model="authentication">
-                    <FormKit
-                        type="email"
-                        label="Your email address"
-                        name="email"
-                        validation="required|email"
-                        validation-visibility="submit"
-                        :disabled="authentication.isRequested"
-                    />
+                <div class="mt-4 flex flex-col">
+                    <FormKit type="form" @submit="authenticate" v-model="authentication">
+                        <FormKit
+                            type="email"
+                            label="Enter your email address to receive a login code."
+                            name="email"
+                            validation="required|email"
+                            validation-visibility="submit"
+                            :disabled="authentication.isRequested"
+                        />
 
-                    <p v-if="authentication.requestedMessage" class="text-sm">
-                        {{ authentication.requestedMessage }}
-                    </p>
+                        <p v-if="authentication.requestedMessage" class="text-sm">
+                            {{ authentication.requestedMessage }}
+                        </p>
 
-                    <FormKit
-                        type="otp"
-                        digits="6"
-                        label="Authentication code"
-                        name="code"
-                        help="We’ve sent a code to your email address."
-                        validation="required"
-                        validation-visibility="submit"
-                        v-if="authentication.isRequested"
-                    />
-                </FormKit>
+                        <FormKit
+                            type="otp"
+                            digits="6"
+                            label="Authentication code"
+                            name="code"
+                            help="We’ve sent a code to your email address."
+                            validation="required"
+                            validation-visibility="submit"
+                            v-if="authentication.isRequested"
+                        />
+                    </FormKit>
+                </div>
             </div>
             <div v-else>
                 <div v-if="errorLoading" class="text-center">
