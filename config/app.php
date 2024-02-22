@@ -246,4 +246,6 @@ return [
     ])->toArray(),
 
     'landlord_api_key' => env('LANDLORD_API_KEY'),
+
+    'allow_super_admin_creation' => env('ALLOW_SUPER_ADMIN_CREATION', false),
 ];
