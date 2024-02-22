@@ -1,10 +1,12 @@
 import axios from '@/Globals/Axios.js';
+import { useTokenStore } from '@/Stores/token.js';
 
 async function determineIfUserIsAuthenticated() {
     console.log('determineIfUserIsAuthenticated()');
 
-    // TODO Retrieve the token from the local storage...
-    let token = null;
+    const { getToken } = useTokenStore();
+    let token = await getToken();
+    console.log('token', token);
 
     // TODO Remove hardcoded endpoint
     return await axios

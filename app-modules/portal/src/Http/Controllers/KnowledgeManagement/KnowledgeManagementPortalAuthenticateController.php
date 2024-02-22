@@ -36,41 +36,52 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
+use Closure;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Filament\Support\Colors\Color;
-use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
-use AdvisingApp\Portal\Settings\PortalSettings;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use AdvisingApp\Portal\Models\PortalAuthentication;
 
-class KnowledgeManagementPortalController extends Controller
+class KnowledgeManagementPortalAuthenticateController extends Controller
 {
-    public function show(): JsonResponse
+    public function __invoke(Request $request, PortalAuthentication $authentication): JsonResponse
     {
-        $settings = resolve(PortalSettings::class);
+        if ($authentication->isExpired()) {
+            return response()->json([
+                'is_expired' => true,
+            ]);
+        }
+
+        $request->validate([
+            'code' => ['required', 'integer', 'digits:6', function (string $attribute, int $value, Closure $fail) use ($authentication) {
+                if (Hash::check($value, $authentication->code)) {
+                    return;
+                }
+
+                $fail('The provided code is invalid.');
+            }],
+        ]);
+
+        $educatable = $authentication->educatable;
+
+        ray('authenticating ' . $educatable->getMorphClass());
+
+        match ($educatable->getMorphClass()) {
+            'student' => Auth::guard('student')->login($educatable),
+            'prospect' => Auth::guard('prospect')->login($educatable),
+        };
+
+        $token = $educatable->createToken('knowledge-management-portal-access-token');
+
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
 
         return response()->json([
-            'primary_color' => Color::all()[$settings->knowledge_management_portal_primary_color ?? 'blue'],
-            'rounding' => $settings->knowledge_management_portal_rounding,
-            'authentication_url' => URL::to(
-                URL::signedRoute(
-                    name: 'portal.knowledge-management.request-authentication',
-                    absolute: false,
-                )
-            ),
-            'categories' => KnowledgeBaseCategoryData::collection(
-                KnowledgeBaseCategory::query()
-                    ->get()
-                    ->map(function ($category) {
-                        return [
-                            'id' => $category->getKey(),
-                            'name' => $category->name,
-                            'description' => $category->description,
-                        ];
-                    })
-                    ->toArray()
-            ),
+            'success' => true,
+            'token' => $token->plainTextToken,
         ]);
     }
 }

@@ -40,31 +40,24 @@ import ViewCategory from '@/Pages/ViewCategory.vue';
 import ViewArticle from '@/Pages/ViewArticle.vue';
 import { defaultConfig, plugin } from '@formkit/vue';
 import config from './formkit.config.js';
+import getAppContext from '@/Services/GetAppContext.js';
+import { createPinia } from 'pinia';
 
 customElements.define(
     'knowledge-management-portal-embed',
     defineCustomElement({
         setup(props) {
             const app = createApp();
+            const pinia = createPinia();
 
-            function getAppContext() {
-                const host = window.location.hostname;
-                const expectedHost = new URL(props.accessUrl).hostname;
-                const isEmbedddedInAdvisingApp = host.replace(/\/$/, '') === expectedHost.replace(/\/$/, '');
+            app.use(pinia);
 
-                let baseUrl = '/';
-
-                if (isEmbedddedInAdvisingApp) {
-                    baseUrl = '/portals/knowledge-management';
-                }
-
-                return { isEmbedddedInAdvisingApp, baseUrl };
-            }
-
-            const { isEmbedddedInAdvisingApp, baseUrl } = getAppContext();
+            const { isEmbeddedInAdvisingApp, baseUrl } = getAppContext(props.accessUrl);
+            console.log('isEmbeddedInAdvisingApp', isEmbeddedInAdvisingApp);
+            console.log('baseUrl', baseUrl);
 
             const router = createRouter({
-                history: isEmbedddedInAdvisingApp ? createWebHistory() : createMemoryHistory(),
+                history: isEmbeddedInAdvisingApp ? createWebHistory() : createMemoryHistory(),
                 routes: [
                     {
                         path: baseUrl + '/',

@@ -40,13 +40,14 @@ import MobileSidebar from '@/Components/MobileSidebar.vue';
 import DesktopSidebar from '@/Components/DesktopSidebar.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import determineIfUserIsAuthenticated from '@/Services/DetermineIfUserIsAuthenticated.js';
+import getAppContext from '@/Services/GetAppContext.js';
 import axios from '@/Globals/Axios.js';
+import { useTokenStore } from '@/Stores/token.js';
 
 const errorLoading = ref(false);
 const loading = ref(true);
 const showMobileMenu = ref(false);
 
-const requiresAuthentication = ref(false);
 const userIsAuthenticated = ref(false);
 
 onMounted(async () => {
@@ -75,6 +76,10 @@ const props = defineProps({
         required: true,
     },
     apiUrl: {
+        type: String,
+        required: true,
+    },
+    accessUrl: {
         type: String,
         required: true,
     },
@@ -114,8 +119,8 @@ async function getKnowledgeManagementPortal() {
 
             portalPrimaryColor.value = response.data.primary_color;
 
-            requiresAuthentication.value = response.data.service_management_enabled;
             authentication.value.requestUrl = response.data.authentication_url ?? null;
+            console.log('authentication.value.requestUrl', authentication.value.requestUrl);
 
             portalRounding.value = {
                 none: {
@@ -164,15 +169,18 @@ async function getKnowledgeManagementPortal() {
 async function authenticate(formData, node) {
     node.clearErrors();
 
+    const { setToken } = useTokenStore();
+
+    await axios.get('/sanctum/csrf-cookie');
+
     if (authentication.value.isRequested) {
-        await axios.get('/sanctum/csrf-cookie');
-        console.log('authenticate() url', authentication.value.url);
         axios
             .post(authentication.value.url, {
                 code: formData.code,
             })
             .then((response) => {
                 console.log('response', response);
+
                 if (response.errors) {
                     node.setErrors([], response.errors);
 
@@ -188,8 +196,9 @@ async function authenticate(formData, node) {
                     return;
                 }
 
-                //    TODO Redirect because user is authenticated
                 if (response.data.success === true) {
+                    setToken(response.data.token);
+
                     userIsAuthenticated.value = true;
                 }
             })
@@ -200,11 +209,14 @@ async function authenticate(formData, node) {
         return;
     }
 
-    await axios.get('/sanctum/csrf-cookie');
+    const { isEmbeddedInAdvisingApp } = getAppContext(props.accessUrl);
+
+    console.log('isEmbeddedInAdvisingApp', isEmbeddedInAdvisingApp);
 
     axios
         .post(authentication.value.requestUrl, {
             email: formData.email,
+            isSpa: isEmbeddedInAdvisingApp,
         })
         .then((response) => {
             console.log('response', response);
@@ -260,10 +272,7 @@ async function authenticate(formData, node) {
         </div>
 
         <div v-else>
-            <div
-                v-if="requiresAuthentication && userIsAuthenticated === false"
-                class="flex flex-col items-center justify-center min-h-screen"
-            >
+            <div v-if="userIsAuthenticated === false" class="flex flex-col items-center justify-center min-h-screen">
                 <h1 class="text-black text-3xl font-bold">Please log in to the Knowledge Management Portal</h1>
 
                 <div class="mt-4 flex flex-col">

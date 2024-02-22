@@ -58,11 +58,9 @@ const loadingResults = ref(true);
 const category = ref(null);
 const articles = ref(null);
 
-// TODO Add auth checks
 watch(
     route,
     function (newRouteValue) {
-        console.log('route changed', newRouteValue);
         getData();
     },
     {
@@ -71,12 +69,10 @@ watch(
 );
 
 onMounted(function () {
-    console.log('mounted');
     getData();
 });
 
 function getData() {
-    console.log('getData()');
     loadingResults.value = true;
 
     fetch(props.apiUrl + '/categories/' + route.params.categoryId)

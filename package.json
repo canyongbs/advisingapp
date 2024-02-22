@@ -68,6 +68,7 @@
         "esbuild-plugin-polyfill-node": "^0.3.0",
         "flowbite": "^1.8.1",
         "marked": "^11.1.1",
+        "pinia": "^2.1.7",
         "showdown": "^2.1.0",
         "sortablejs": "^1.15.0",
         "spectaql": "^2.3.0",

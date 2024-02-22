@@ -59,7 +59,6 @@ const loading = ref(true);
 const category = ref(null);
 const article = ref(null);
 
-// TODO Add auth checks
 watch(
     route,
     function (newRouteValue) {
