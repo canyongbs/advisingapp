@@ -38,7 +38,6 @@ namespace AdvisingApp\Prospect\Models;
 
 use App\Models\User;
 use DateTimeInterface;
-use App\Models\BaseModel;
 use App\Models\Authenticatable;
 use AdvisingApp\Task\Models\Task;
 use App\Models\Scopes\HasLicense;
@@ -59,6 +58,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
@@ -66,11 +66,14 @@ use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Engagement\Models\EngagementFileEntities;
 use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use AdvisingApp\Notification\Models\Concerns\HasSubscriptions;
 use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
+use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
@@ -82,17 +85,20 @@ use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  *
  * @mixin IdeHelperProspect
  */
-class Prospect extends BaseModel implements Auditable, Subscribable, Educatable, HasFilamentResource, NotifiableInterface
+class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, Educatable, HasFilamentResource, NotifiableInterface
 {
-    use HasUuids;
-    use SoftDeletes;
     use AuditableTrait;
-    use Notifiable;
-    use HasManyMorphedEngagements;
+    use DefinesPermissions;
+    use HasFactory;
     use HasManyMorphedEngagementResponses;
+    use HasManyMorphedEngagements;
     use HasManyMorphedInteractions;
     use HasSubscriptions;
+    use HasUuids;
+    use Notifiable;
     use NotifiableViaSms;
+    use SoftDeletes;
+    use UsesTenantConnection;
 
     protected $fillable = [
         'first_name',

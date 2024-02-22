@@ -37,13 +37,13 @@
 namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
 use Closure;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use AdvisingApp\Portal\Models\PortalAuthentication;
+use AdvisingApp\Portal\Exceptions\EducatableIsNotAuthenticatable;
 
 class KnowledgeManagementPortalAuthenticateController extends Controller
 {
@@ -70,11 +70,9 @@ class KnowledgeManagementPortalAuthenticateController extends Controller
         match ($educatable->getMorphClass()) {
             'student' => Auth::guard('student')->login($educatable),
             'prospect' => Auth::guard('prospect')->login($educatable),
-            // TODO Custom exception
-            default => throw new Exception('The educatable type is not supported.'),
+            default => throw new EducatableIsNotAuthenticatable('The educatable type is not supported.'),
         };
 
-        // Scope token permissions
         $token = $educatable->createToken('knowledge-management-portal-access-token');
 
         if ($request->hasSession()) {

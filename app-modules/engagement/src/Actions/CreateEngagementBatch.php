@@ -73,7 +73,6 @@ class CreateEngagementBatch implements ShouldQueue
             /** @var Engagement $engagement */
             $engagement = $engagementBatch->engagements()->create([
                 'user_id' => $engagementBatch->user_id,
-                // TODO Replace with getKey()
                 'recipient_id' => $record->identifier(),
                 'recipient_type' => $record->getMorphClass(),
                 'subject' => $this->data->subject,

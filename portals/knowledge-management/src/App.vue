@@ -53,12 +53,10 @@ const userIsAuthenticated = ref(false);
 onMounted(async () => {
     await axios.get('/sanctum/csrf-cookie');
 
-    // Determine if the user is authenticated by session or token...
     await determineIfUserIsAuthenticated(props.userAuthenticationUrl).then((response) => {
         userIsAuthenticated.value = response;
     });
 
-    // Load the portal contents...
     await getKnowledgeManagementPortal().then(() => {
         loading.value = false;
     });
@@ -259,7 +257,7 @@ async function authenticate(formData, node) {
             '--rounding-full': portalRounding.full,
         }"
     >
-        <div class="hidden">
+        <div>
             <link rel="stylesheet" v-bind:href="hostUrl + '/js/portals/knowledge-management/style.css'" />
         </div>
 
