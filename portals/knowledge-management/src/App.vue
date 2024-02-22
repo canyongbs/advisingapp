@@ -54,7 +54,7 @@ onMounted(async () => {
     await axios.get('/sanctum/csrf-cookie');
 
     // Determine if the user is authenticated by session or token...
-    await determineIfUserIsAuthenticated().then((response) => {
+    await determineIfUserIsAuthenticated(props.userAuthenticationUrl).then((response) => {
         userIsAuthenticated.value = response;
     });
 
@@ -78,6 +78,10 @@ const props = defineProps({
         required: true,
     },
     accessUrl: {
+        type: String,
+        required: true,
+    },
+    userAuthenticationUrl: {
         type: String,
         required: true,
     },

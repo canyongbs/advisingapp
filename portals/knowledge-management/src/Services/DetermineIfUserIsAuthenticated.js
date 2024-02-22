@@ -5,7 +5,6 @@ async function determineIfUserIsAuthenticated(endpoint) {
     const { getToken } = useTokenStore();
     let token = await getToken();
 
-    // TODO Remove hardcoded endpoint
     return await axios
         .get(endpoint, {
             headers: { Authorization: `Bearer ${token}` },
