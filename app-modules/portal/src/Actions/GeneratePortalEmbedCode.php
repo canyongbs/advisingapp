@@ -66,7 +66,7 @@ class GeneratePortalEmbedCode
                     )
                 );
 
-                $appUrl = parse_url(config('app.url'))['host'];
+                $appUrl = config('app.url');
 
                 $apiUrl = route('portal.knowledge-management.define');
 
