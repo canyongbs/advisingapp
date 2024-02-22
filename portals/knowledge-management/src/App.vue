@@ -51,8 +51,6 @@ const showMobileMenu = ref(false);
 const userIsAuthenticated = ref(false);
 
 onMounted(async () => {
-    console.log('onMounted');
-
     await axios.get('/sanctum/csrf-cookie');
 
     // Determine if the user is authenticated by session or token...
@@ -120,7 +118,6 @@ async function getKnowledgeManagementPortal() {
             portalPrimaryColor.value = response.data.primary_color;
 
             authentication.value.requestUrl = response.data.authentication_url ?? null;
-            console.log('authentication.value.requestUrl', authentication.value.requestUrl);
 
             portalRounding.value = {
                 none: {
@@ -179,8 +176,6 @@ async function authenticate(formData, node) {
                 code: formData.code,
             })
             .then((response) => {
-                console.log('response', response);
-
                 if (response.errors) {
                     node.setErrors([], response.errors);
 
@@ -211,15 +206,12 @@ async function authenticate(formData, node) {
 
     const { isEmbeddedInAdvisingApp } = getAppContext(props.accessUrl);
 
-    console.log('isEmbeddedInAdvisingApp', isEmbeddedInAdvisingApp);
-
     axios
         .post(authentication.value.requestUrl, {
             email: formData.email,
             isSpa: isEmbeddedInAdvisingApp,
         })
         .then((response) => {
-            console.log('response', response);
             if (response.errors) {
                 node.setErrors([], response.errors);
 

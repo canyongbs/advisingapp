@@ -42,7 +42,7 @@ use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddab
 use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalAuthenticateController;
 
 Route::prefix('portals')
-    ->name('portals.')
+    ->name('portal.')
     ->middleware([
         'web',
         EnsureFrontendRequestsAreStateful::class,

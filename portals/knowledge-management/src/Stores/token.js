@@ -5,7 +5,6 @@ export const useTokenStore = defineStore('token', () => {
     const token = ref(null);
 
     async function setToken(tokenToSet) {
-        console.log('setToken', tokenToSet);
         token.value = tokenToSet;
         localStorage.setItem('token', token.value);
     }

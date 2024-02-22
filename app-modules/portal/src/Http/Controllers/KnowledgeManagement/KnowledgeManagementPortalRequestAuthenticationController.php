@@ -52,8 +52,6 @@ class KnowledgeManagementPortalRequestAuthenticationController extends Controlle
 {
     public function __invoke(KnowledgeManagementPortalAuthenticationRequest $request, ResolveEducatableFromEmail $resolveEducatableFromEmail): JsonResponse
     {
-        ray($request->all());
-
         $email = $request->safe()->email;
 
         $educatable = $resolveEducatableFromEmail($email);
@@ -79,7 +77,7 @@ class KnowledgeManagementPortalRequestAuthenticationController extends Controlle
         $authenticationUrl = match ($request->safe()->isSpa) {
             true => URL::to(
                 URL::signedRoute(
-                    name: 'portals.knowledge-management.authenticate',
+                    name: 'portal.knowledge-management.authenticate',
                     parameters: [
                         'authentication' => $authentication,
                     ],

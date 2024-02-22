@@ -37,10 +37,6 @@ import HelpCenter from '../Components/HelpCenter.vue';
 import SearchResults from '../Components/SearchResults.vue';
 import { defineProps, ref, watch, onMounted } from 'vue';
 
-onMounted(() => {
-    console.log('Home mounted()');
-});
-
 const props = defineProps({
     searchUrl: {
         type: String,

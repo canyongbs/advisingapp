@@ -188,7 +188,7 @@ class ManagePortalSettings extends SettingsPage
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null),
                         Actions::make([
                             Action::make('view')
-                                ->url(fn () => route('portals.knowledge-management.show'))
+                                ->url(fn () => route('portal.knowledge-management.show'))
                                 ->icon('heroicon-m-arrow-top-right-on-square')
                                 ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
                                 ->openUrlInNewTab(),

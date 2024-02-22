@@ -53,8 +53,6 @@ customElements.define(
             app.use(pinia);
 
             const { isEmbeddedInAdvisingApp, baseUrl } = getAppContext(props.accessUrl);
-            console.log('isEmbeddedInAdvisingApp', isEmbeddedInAdvisingApp);
-            console.log('baseUrl', baseUrl);
 
             const router = createRouter({
                 history: isEmbeddedInAdvisingApp ? createWebHistory() : createMemoryHistory(),
