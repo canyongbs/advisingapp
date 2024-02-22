@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Models;
 
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Engagement\Drivers\EngagementSmsDriver;
 use AdvisingApp\Engagement\Drivers\EngagementEmailDriver;
@@ -52,6 +53,7 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 class EngagementDeliverable extends BaseModel implements Auditable
 {
     use AuditableTrait;
+    use SoftDeletes;
 
     protected $fillable = [
         'external_reference_id',
