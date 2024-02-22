@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,9 +33,44 @@
 
 </COPYRIGHT>
 */
-import preset from './tailwind.config.preset.js';
 
-export default {
-    presets: [preset],
-    content: ['./src/**/*.vue', '../../widgets/form/src/FormKit/theme.js'],
-};
+namespace AdvisingApp\Portal\Models;
+
+use App\Models\BaseModel;
+use Illuminate\Support\Carbon;
+use AdvisingApp\Portal\Enums\PortalType;
+use App\Models\Attributes\NoPermissions;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\MassPrunable;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+
+/**
+ * @property Carbon|null $created_at
+ *
+ * @mixin IdeHelperPortalAuthentication
+ */
+#[NoPermissions]
+class PortalAuthentication extends BaseModel
+{
+    use MassPrunable;
+
+    protected $casts = [
+        'portal_type' => PortalType::class,
+    ];
+
+    public function isExpired(): bool
+    {
+        return $this->created_at->addDay()->isPast();
+    }
+
+    public function prunable(): Builder
+    {
+        return static::query()
+            ->where('created_at', '<', now()->subMonth());
+    }
+
+    public function educatable(): MorphTo
+    {
+        return $this->morphTo();
+    }
+}

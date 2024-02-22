@@ -46,7 +46,7 @@ defineProps({
     <nav class="flex flex-1 flex-col mt-4">
         <div class="flex justify-center">
             <router-link :to="{ name: 'home' }">
-                <h3 class="text-xl text-white">Help Center</h3>
+                <h3 class="text-xl text-primary-700">Help Center</h3>
             </router-link>
         </div>
 
@@ -55,10 +55,11 @@ defineProps({
                 <div
                     class="bg-gray-100 text-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                 >
-                    <span v-if="category.icon"
-                          v-html="category.icon"
-                          class="text-primary-600 dark:text-primary-400"
-                          aria-hidden="true"
+                    <span
+                        v-if="category.icon"
+                        v-html="category.icon"
+                        class="text-primary-600 dark:text-primary-400"
+                        aria-hidden="true"
                     >
                     </span>
                     <router-link

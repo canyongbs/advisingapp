@@ -31,9 +31,25 @@
 
 </COPYRIGHT>
 */
-import preset from './tailwind.config.preset.js';
+import { ref } from 'vue';
+import { defineStore } from 'pinia';
 
-export default {
-    presets: [preset],
-    content: ['./src/**/*.vue', '../../widgets/form/src/FormKit/theme.js'],
-};
+export const useTokenStore = defineStore('token', () => {
+    const token = ref(null);
+
+    async function setToken(tokenToSet) {
+        token.value = tokenToSet;
+        localStorage.setItem('token', token.value);
+    }
+
+    async function getToken() {
+        return localStorage.getItem('token');
+    }
+
+    async function removeToken() {
+        token.value = null;
+        localStorage.removeItem('token');
+    }
+
+    return { token, getToken, setToken, removeToken };
+});

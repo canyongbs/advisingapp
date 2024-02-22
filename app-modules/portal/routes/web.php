@@ -36,19 +36,26 @@
 
 use Illuminate\Support\Facades\Route;
 use AdvisingApp\Portal\Livewire\RenderKnowledgeManagementPortal;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized;
+use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalAuthenticateController;
 
 Route::prefix('portals')
-    ->name('portals.')
+    ->name('portal.')
     ->middleware([
         'web',
+        EnsureFrontendRequestsAreStateful::class,
     ])
     ->group(function () {
         Route::middleware([
             EnsureKnowledgeManagementPortalIsEnabled::class,
             EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
         ])->group(function () {
+            Route::post('/knowledge-management/authenticate/{authentication}', KnowledgeManagementPortalAuthenticateController::class)
+                ->middleware(['signed:relative', EnsureFrontendRequestsAreStateful::class])
+                ->name('knowledge-management.authenticate');
+
             Route::get('/knowledge-management', RenderKnowledgeManagementPortal::class)
                 ->name('knowledge-management.show');
             Route::get('/knowledge-management/categories/{category}', RenderKnowledgeManagementPortal::class)

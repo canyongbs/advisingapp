@@ -31,9 +31,14 @@
 
 </COPYRIGHT>
 */
-import preset from './tailwind.config.preset.js';
+import axios from 'axios';
 
-export default {
-    presets: [preset],
-    content: ['./src/**/*.vue', '../../widgets/form/src/FormKit/theme.js'],
-};
+const axiosInstance = axios.create({
+    withCredentials: true,
+});
+
+axiosInstance.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axiosInstance.defaults.headers.common['Accept'] = 'application/json';
+axiosInstance.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+
+export default axiosInstance;

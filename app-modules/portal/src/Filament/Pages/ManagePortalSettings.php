@@ -188,7 +188,7 @@ class ManagePortalSettings extends SettingsPage
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null),
                         Actions::make([
                             Action::make('view')
-                                ->url(fn () => route('portals.knowledge-management.show'))
+                                ->url(fn () => route('portal.knowledge-management.show'))
                                 ->icon('heroicon-m-arrow-top-right-on-square')
                                 ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
                                 ->openUrlInNewTab(),
@@ -222,8 +222,7 @@ class ManagePortalSettings extends SettingsPage
                             ->visible(
                                 fn (Get $get) => $get('knowledge_management_portal_enabled') &&
                             ! is_null($get('knowledge_management_portal_primary_color')) &&
-                            ! is_null($get('knowledge_management_portal_rounding')) &&
-                            ! is_null($get('knowledge_management_portal_authorized_domain'))
+                            ! is_null($get('knowledge_management_portal_rounding'))
                             )
                             ->columnSpanFull(),
                     ])->columns(2),

@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,9 +33,40 @@
 
 </COPYRIGHT>
 */
-import preset from './tailwind.config.preset.js';
 
-export default {
-    presets: [preset],
-    content: ['./src/**/*.vue', '../../widgets/form/src/FormKit/theme.js'],
-};
+namespace AdvisingApp\StudentDataModel\Actions;
+
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+
+class ResolveEducatableFromEmail
+{
+    public function __invoke(?string $email): Student | Prospect | null
+    {
+        if (blank($email)) {
+            return null;
+        }
+
+        /** @var Student $student */
+        $student = Student::query()
+            ->where('email', $email)
+            ->orWhere('email_2', $email)
+            ->first();
+
+        if ($student) {
+            return $student;
+        }
+
+        /** @var Prospect $prospect */
+        $prospect = Prospect::query()
+            ->where('email', $email)
+            ->orWhere('email_2', $email)
+            ->first();
+
+        if ($prospect) {
+            return $prospect;
+        }
+
+        return null;
+    }
+}

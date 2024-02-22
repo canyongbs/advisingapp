@@ -38,31 +38,24 @@ import { createMemoryHistory, createRouter, createWebHistory } from 'vue-router'
 import Home from '@/Pages/Home.vue';
 import ViewCategory from '@/Pages/ViewCategory.vue';
 import ViewArticle from '@/Pages/ViewArticle.vue';
+import { defaultConfig, plugin } from '@formkit/vue';
+import config from './formkit.config.js';
+import getAppContext from '@/Services/GetAppContext.js';
+import { createPinia } from 'pinia';
 
 customElements.define(
     'knowledge-management-portal-embed',
     defineCustomElement({
         setup(props) {
             const app = createApp();
+            const pinia = createPinia();
 
-            function getAppContext() {
-                const url = window.location.href;
+            app.use(pinia);
 
-                const isEmbeddedInOwnApp = url.replace(/\/$/, '') === props.accessUrl.replace(/\/$/, '');
-
-                let baseUrl = '/';
-
-                if (isEmbeddedInOwnApp) {
-                    baseUrl = '/portals/knowledge-management';
-                }
-
-                return { isEmbeddedInOwnApp, baseUrl };
-            }
-
-            const { isEmbeddedInOwnApp, baseUrl } = getAppContext();
+            const { isEmbeddedInAdvisingApp, baseUrl } = getAppContext(props.accessUrl);
 
             const router = createRouter({
-                history: isEmbeddedInOwnApp ? createWebHistory() : createMemoryHistory(),
+                history: isEmbeddedInAdvisingApp ? createWebHistory() : createMemoryHistory(),
                 routes: [
                     {
                         path: baseUrl + '/',
@@ -86,12 +79,15 @@ customElements.define(
 
             app.config.devtools = true;
 
+            // FormKit plugin
+            app.use(plugin, defaultConfig(config));
+
             const inst = getCurrentInstance();
             Object.assign(inst.appContext, app._context);
             Object.assign(inst.provides, app._context.provides);
 
             return () => h(App, props);
         },
-        props: ['url', 'accessUrl', 'searchUrl', 'appUrl', 'apiUrl'],
+        props: ['url', 'userAuthenticationUrl', 'accessUrl', 'searchUrl', 'appUrl', 'apiUrl'],
     }),
 );

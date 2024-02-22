@@ -31,9 +31,17 @@
 
 </COPYRIGHT>
 */
-import preset from './tailwind.config.preset.js';
+import { generateClasses } from '@formkit/themes';
+import { genesisIcons } from '@formkit/icons';
+import theme from '../../../widgets/form/src/FormKit/theme.js';
+import inputs from '../../../widgets/form/src/FormKit/Inputs/index.js';
 
 export default {
-    presets: [preset],
-    content: ['./src/**/*.vue', '../../widgets/form/src/FormKit/theme.js'],
+    icons: {
+        ...genesisIcons,
+    },
+    inputs,
+    config: {
+        classes: generateClasses(theme),
+    },
 };

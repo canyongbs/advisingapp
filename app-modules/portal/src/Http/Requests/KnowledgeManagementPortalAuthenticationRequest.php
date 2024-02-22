@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,9 +33,18 @@
 
 </COPYRIGHT>
 */
-import preset from './tailwind.config.preset.js';
 
-export default {
-    presets: [preset],
-    content: ['./src/**/*.vue', '../../widgets/form/src/FormKit/theme.js'],
-};
+namespace AdvisingApp\Portal\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class KnowledgeManagementPortalAuthenticationRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'email' => ['required', 'email'],
+            'isSpa' => ['required', 'boolean'],
+        ];
+    }
+}

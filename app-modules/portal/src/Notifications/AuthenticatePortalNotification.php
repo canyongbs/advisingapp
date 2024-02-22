@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,9 +33,39 @@
 
 </COPYRIGHT>
 */
-import preset from './tailwind.config.preset.js';
 
-export default {
-    presets: [preset],
-    content: ['./src/**/*.vue', '../../widgets/form/src/FormKit/theme.js'],
-};
+namespace AdvisingApp\Portal\Notifications;
+
+use AdvisingApp\Portal\Models\PortalAuthentication;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Notifications\OnDemandNotification;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+
+class AuthenticatePortalNotification extends BaseNotification implements EmailNotification, OnDemandNotification
+{
+    use EmailChannelTrait;
+
+    public function __construct(
+        public PortalAuthentication $authentication,
+        public int $code,
+    ) {}
+
+    public function toEmail(object $notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->subject("Your authentication code for {$this->authentication->portal_type->getLabel()}")
+            ->line("Your code is: {$this->code}.")
+            ->line('You should type this code into the portal to authenticate yourself.')
+            ->line('For security reasons, the code will expire in 24 hours, but you can always request another.');
+    }
+
+    public function identifyRecipient(): array
+    {
+        return [
+            $this->authentication->educatable->getKey(),
+            $this->authentication->educatable->getMorphClass(),
+        ];
+    }
+}

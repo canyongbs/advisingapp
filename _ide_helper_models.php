@@ -398,6 +398,7 @@ namespace App\Models{
  * @property bool $working_hours_are_enabled
  * @property bool $are_working_hours_visible_on_profile
  * @property array|null $working_hours
+ * @property string|null $job_title
  * @property string|null $pronouns_id
  * @property bool $are_pronouns_visible_on_profile
  * @property bool $default_assistant_chat_folders_created
@@ -502,6 +503,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsEmailVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsExternal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsPhoneNumberVisibleOnProfile($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereJobTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLocale($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOfficeHours($value)
@@ -947,8 +949,10 @@ namespace AdvisingApp\Assistant\Models{
  *
  * @property string $id
  * @property string $assistant_chat_id
- * @property string $message
  * @property \AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom $from
+ * @property string|null $message
+ * @property string|null $name
+ * @property array|null $function_call
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \AdvisingApp\Assistant\Models\AssistantChat $chat
@@ -958,8 +962,10 @@ namespace AdvisingApp\Assistant\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereAssistantChatId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereFunctionCall($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereMessage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -3241,6 +3247,35 @@ namespace AdvisingApp\Notification\Models{
  class IdeHelperSubscription {}
 }
 
+namespace AdvisingApp\Portal\Models{
+/**
+ * AdvisingApp\Portal\Models\PortalAuthentication
+ *
+ * @property Carbon|null $created_at
+ * @property string $id
+ * @property string|null $educatable_id
+ * @property string|null $educatable_type
+ * @property string|null $code
+ * @property \AdvisingApp\Portal\Enums\PortalType|null $portal_type
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $educatable
+ * @method static \AdvisingApp\Portal\Database\Factories\PortalAuthenticationFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|PortalAuthentication newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PortalAuthentication newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PortalAuthentication query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PortalAuthentication whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PortalAuthentication whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PortalAuthentication whereEducatableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PortalAuthentication whereEducatableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PortalAuthentication whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PortalAuthentication wherePortalType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PortalAuthentication whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperPortalAuthentication {}
+}
+
 namespace AdvisingApp\Prospect\Models{
 /**
  * AdvisingApp\Prospect\Models\Prospect
@@ -3262,6 +3297,10 @@ namespace AdvisingApp\Prospect\Models{
  * @property string|null $phone
  * @property string|null $address
  * @property string|null $address_2
+ * @property string|null $address_3
+ * @property string|null $city
+ * @property string|null $state
+ * @property string|null $postal
  * @property \Illuminate\Support\Carbon|null $birthdate
  * @property string|null $hsgrad
  * @property string|null $assigned_to_id
@@ -3318,8 +3357,10 @@ namespace AdvisingApp\Prospect\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect query()
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereAddress2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereAddress3($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereAssignedToId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereBirthdate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereCity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereCreatedById($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereDeletedAt($value)
@@ -3334,9 +3375,11 @@ namespace AdvisingApp\Prospect\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereLastName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereMobile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prospect wherePostal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect wherePreferred($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereSmsOptOut($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereSourceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereState($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereStatusId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect withTrashed()
@@ -4312,6 +4355,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Task\Models\Task> $tasks
  * @property-read int|null $tasks_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
+ * @property-read int|null $tokens_count
  * @method static \AdvisingApp\StudentDataModel\Database\Factories\StudentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Student newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Student newQuery()

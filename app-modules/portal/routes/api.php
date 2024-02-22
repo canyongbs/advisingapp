@@ -34,13 +34,17 @@
 </COPYRIGHT>
 */
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
 use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalController;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized;
 use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalSearchController;
 use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalArticleController;
 use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalCategoryController;
+use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalAuthenticateController;
+use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalRequestAuthenticationController;
 
 Route::prefix('api')
     ->middleware([
@@ -49,12 +53,27 @@ Route::prefix('api')
         EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
     ])
     ->group(function () {
+        Route::middleware(['auth:sanctum'])->group(function () {
+            Route::get('/user', function (Request $request) {
+                return $request->user();
+            })->name('api.user.auth-check');
+        });
+
         Route::prefix('portal/knowledge-management')
             ->name('portal.knowledge-management.')
             ->group(function () {
                 Route::get('/', [KnowledgeManagementPortalController::class, 'show'])
                     ->middleware(['signed:relative'])
                     ->name('define');
+
+                Route::post('/authenticate/request', KnowledgeManagementPortalRequestAuthenticationController::class)
+                    ->middleware(['signed:relative'])
+                    ->name('request-authentication');
+
+                Route::post('/authenticate/{authentication}', KnowledgeManagementPortalAuthenticateController::class)
+                    ->middleware(['signed:relative', EnsureFrontendRequestsAreStateful::class])
+                    ->name('authenticate.embedded');
+
                 Route::post('/search', [KnowledgeManagementPortalSearchController::class, 'get'])
                     ->middleware(['signed:relative'])
                     ->name('search');

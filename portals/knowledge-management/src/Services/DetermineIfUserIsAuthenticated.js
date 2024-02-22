@@ -31,9 +31,25 @@
 
 </COPYRIGHT>
 */
-import preset from './tailwind.config.preset.js';
+import axios from '@/Globals/Axios.js';
+import { useTokenStore } from '@/Stores/token.js';
 
-export default {
-    presets: [preset],
-    content: ['./src/**/*.vue', '../../widgets/form/src/FormKit/theme.js'],
-};
+async function determineIfUserIsAuthenticated(endpoint) {
+    const { getToken } = useTokenStore();
+    let token = await getToken();
+
+    return await axios
+        .get(endpoint, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+            const isAuthenticated = response.status === 200;
+
+            return isAuthenticated;
+        })
+        .catch((error) => {
+            return false;
+        });
+}
+
+export default determineIfUserIsAuthenticated;

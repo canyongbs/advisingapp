@@ -39,12 +39,28 @@ import AppLoading from '@/Components/AppLoading.vue';
 import MobileSidebar from '@/Components/MobileSidebar.vue';
 import DesktopSidebar from '@/Components/DesktopSidebar.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
+import determineIfUserIsAuthenticated from '@/Services/DetermineIfUserIsAuthenticated.js';
+import getAppContext from '@/Services/GetAppContext.js';
+import axios from '@/Globals/Axios.js';
+import { useTokenStore } from '@/Stores/token.js';
 
 const errorLoading = ref(false);
 const loading = ref(true);
 const showMobileMenu = ref(false);
 
+const userIsAuthenticated = ref(false);
+
 onMounted(async () => {
+    const { isEmbeddedInAdvisingApp } = getAppContext(props.accessUrl);
+
+    if (isEmbeddedInAdvisingApp) {
+        await axios.get(props.appUrl + '/sanctum/csrf-cookie');
+    }
+
+    await determineIfUserIsAuthenticated(props.userAuthenticationUrl).then((response) => {
+        userIsAuthenticated.value = response;
+    });
+
     await getKnowledgeManagementPortal().then(() => {
         loading.value = false;
     });
@@ -63,6 +79,18 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    accessUrl: {
+        type: String,
+        required: true,
+    },
+    userAuthenticationUrl: {
+        type: String,
+        required: true,
+    },
+    appUrl: {
+        type: String,
+        required: true,
+    },
 });
 
 const scriptUrl = new URL(document.currentScript.getAttribute('src'));
@@ -76,19 +104,30 @@ const portalPrimaryColor = ref('');
 const portalRounding = ref('');
 const categories = ref({});
 
+const authentication = ref({
+    code: null,
+    email: null,
+    isRequested: false,
+    requestedMessage: null,
+    requestUrl: null,
+    url: null,
+});
+
 async function getKnowledgeManagementPortal() {
-    await fetch(props.url)
-        .then((response) => response.json())
-        .then((json) => {
+    await axios
+        .get(props.url)
+        .then((response) => {
             errorLoading.value = false;
 
-            if (json.error) {
-                throw new Error(json.error);
+            if (response.error) {
+                throw new Error(response.error);
             }
 
-            categories.value = json.categories;
+            categories.value = response.data.categories;
 
-            portalPrimaryColor.value = json.primary_color;
+            portalPrimaryColor.value = response.data.primary_color;
+
+            authentication.value.requestUrl = response.data.authentication_url ?? null;
 
             portalRounding.value = {
                 none: {
@@ -126,11 +165,83 @@ async function getKnowledgeManagementPortal() {
                     lg: '9999px',
                     full: '9999px',
                 },
-            }[json.rounding ?? 'md'];
+            }[response.data.rounding ?? 'md'];
         })
         .catch((error) => {
             errorLoading.value = true;
             console.error(`Knowledge Management Portal Embed ${error}`);
+        });
+}
+
+async function authenticate(formData, node) {
+    node.clearErrors();
+
+    const { setToken } = useTokenStore();
+
+    const { isEmbeddedInAdvisingApp } = getAppContext(props.accessUrl);
+
+    if (isEmbeddedInAdvisingApp) {
+        await axios.get(props.appUrl + '/sanctum/csrf-cookie');
+    }
+
+    if (authentication.value.isRequested) {
+        axios
+            .post(authentication.value.url, {
+                code: formData.code,
+            })
+            .then((response) => {
+                if (response.errors) {
+                    node.setErrors([], response.errors);
+
+                    return;
+                }
+
+                if (response.data.is_expired) {
+                    node.setErrors(['The authentication code expires after 24 hours. Please authenticate again.']);
+
+                    authentication.value.isRequested = false;
+                    authentication.value.requestedMessage = null;
+
+                    return;
+                }
+
+                if (response.data.success === true) {
+                    setToken(response.data.token);
+
+                    userIsAuthenticated.value = true;
+                }
+            })
+            .catch((error) => {
+                node.setErrors([error]);
+            });
+
+        return;
+    }
+
+    axios
+        .post(authentication.value.requestUrl, {
+            email: formData.email,
+            isSpa: isEmbeddedInAdvisingApp,
+        })
+        .then((response) => {
+            if (response.errors) {
+                node.setErrors([], response.errors);
+
+                return;
+            }
+
+            if (!response.data.authentication_url) {
+                node.setErrors([response.data.message]);
+
+                return;
+            }
+
+            authentication.value.isRequested = true;
+            authentication.value.requestedMessage = response.data.message;
+            authentication.value.url = response.data.authentication_url;
+        })
+        .catch((error) => {
+            node.setErrors([error]);
         });
 }
 </script>
@@ -165,23 +276,56 @@ async function getKnowledgeManagementPortal() {
         </div>
 
         <div v-else>
-            <div v-if="errorLoading" class="text-center">
-                <h1 class="text-3xl font-bold text-red-500">Error Loading Portal</h1>
-                <p class="text-lg text-red-500">Please try again later</p>
+            <div v-if="userIsAuthenticated === false" class="flex flex-col items-center justify-center min-h-screen">
+                <h1 class="text-black text-3xl font-bold">Please log in to the Knowledge Management Portal</h1>
+
+                <div class="mt-4 flex flex-col">
+                    <FormKit type="form" @submit="authenticate" v-model="authentication">
+                        <FormKit
+                            type="email"
+                            label="Enter your email address to receive a login code."
+                            name="email"
+                            validation="required|email"
+                            validation-visibility="submit"
+                            :disabled="authentication.isRequested"
+                        />
+
+                        <p v-if="authentication.requestedMessage" class="text-sm">
+                            {{ authentication.requestedMessage }}
+                        </p>
+
+                        <FormKit
+                            type="otp"
+                            digits="6"
+                            label="Authentication code"
+                            name="code"
+                            help="We’ve sent a code to your email address."
+                            validation="required"
+                            validation-visibility="submit"
+                            v-if="authentication.isRequested"
+                        />
+                    </FormKit>
+                </div>
             </div>
-
             <div v-else>
-                <MobileSidebar
-                    v-if="showMobileMenu"
-                    @sidebar-closed="showMobileMenu = !showMobileMenu"
-                    :categories="categories"
-                ></MobileSidebar>
+                <div v-if="errorLoading" class="text-center">
+                    <h1 class="text-3xl font-bold text-red-500">Error Loading Portal</h1>
+                    <p class="text-lg text-red-500">Please try again later</p>
+                </div>
 
-                <DesktopSidebar :categories="categories"></DesktopSidebar>
+                <div v-else>
+                    <MobileSidebar
+                        v-if="showMobileMenu"
+                        @sidebar-closed="showMobileMenu = !showMobileMenu"
+                        :categories="categories"
+                    ></MobileSidebar>
 
-                <div class="lg:pl-72">
-                    <div class="px-4 sm:px-6 lg:px-8">
-                        <RouterView :search-url="searchUrl" :api-url="apiUrl" :categories="categories"></RouterView>
+                    <DesktopSidebar :categories="categories"></DesktopSidebar>
+
+                    <div class="lg:pl-72">
+                        <div class="px-4 sm:px-6 lg:px-8">
+                            <RouterView :search-url="searchUrl" :api-url="apiUrl" :categories="categories"></RouterView>
+                        </div>
                     </div>
                 </div>
             </div>

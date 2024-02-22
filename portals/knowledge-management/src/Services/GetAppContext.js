@@ -31,9 +31,18 @@
 
 </COPYRIGHT>
 */
-import preset from './tailwind.config.preset.js';
+function getAppContext(accessUrl) {
+    const host = window.location.hostname;
+    const expectedHost = new URL(accessUrl).hostname;
+    const isEmbeddedInAdvisingApp = host.replace(/\/$/, '') === expectedHost.replace(/\/$/, '');
 
-export default {
-    presets: [preset],
-    content: ['./src/**/*.vue', '../../widgets/form/src/FormKit/theme.js'],
-};
+    let baseUrl = '/';
+
+    if (isEmbeddedInAdvisingApp) {
+        baseUrl = '/portals/knowledge-management';
+    }
+
+    return { isEmbeddedInAdvisingApp, baseUrl };
+}
+
+export default getAppContext;

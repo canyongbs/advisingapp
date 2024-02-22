@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,9 +33,9 @@
 
 </COPYRIGHT>
 */
-import preset from './tailwind.config.preset.js';
 
-export default {
-    presets: [preset],
-    content: ['./src/**/*.vue', '../../widgets/form/src/FormKit/theme.js'],
-};
+namespace AdvisingApp\Portal\Exceptions;
+
+use Exception;
+
+class EducatableIsNotAuthenticatable extends Exception {}

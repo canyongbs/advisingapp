@@ -1,4 +1,4 @@
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,10 +30,18 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-import preset from './tailwind.config.preset.js';
-
-export default {
-    presets: [preset],
-    content: ['./src/**/*.vue', '../../widgets/form/src/FormKit/theme.js'],
-};
+--}}
+<div>
+    <knowledge-management-portal-embed
+        url="http://test.advisingapp.local/api/portal/knowledge-management?signature=a9425eb754fc360f36635d850c3140013ff0391c2a80e1496c34ec41bfbc63f6"
+        user-authentication-url=http://test.advisingapp.local/api/user
+        access-url=http://test.advisingapp.local/portals/knowledge-management
+        search-url="http://test.advisingapp.local/api/portal/knowledge-management/search?signature=b08da80e30779c24d2a3ad41f4f43b2d31bf5feefa9a81f50f683621daf871b3"
+        app-url="http://test.advisingapp.local"
+        api-url="http://test.advisingapp.local/api/portal/knowledge-management"
+    >
+    </knowledge-management-portal-embed>
+    <script
+        src="http://test.advisingapp.local/js/portals/knowledge-management/advising-app-knowledge-management-portal.js?">
+    </script>
+</div>
