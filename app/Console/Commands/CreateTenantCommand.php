@@ -135,7 +135,14 @@ class CreateTenantCommand extends Command
 
             if ($this->option('seed') || $this->confirm('Seed students in the tenant database?')) {
                 Artisan::call(
-                    command: "tenants:artisan \"db:seed --database=tenant --class=StudentSeeder\" --tenant={$tenant->id}",
+                    command: "tenants:artisan \"db:seed --database=tenant --class=SisDataSeeder\" --tenant={$tenant->id}",
+                    outputBuffer: $this->output,
+                );
+            }
+
+            if ($this->confirm('Would you like to seed sample super admin?')) {
+                Artisan::call(
+                    command: "tenants:artisan \"db:seed --database=tenant --class=SampleSuperAdminUserSeeder\" --tenant={$tenant->id}",
                     outputBuffer: $this->output,
                 );
             }

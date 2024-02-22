@@ -37,13 +37,12 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use AdvisingApp\Authorization\Models\RoleGroup;
 use AdvisingApp\Authorization\Enums\LicenseType;
 
-class UsersTableSeeder extends Seeder
+class SampleSuperAdminUserSeeder extends Seeder
 {
     public function run(): void
     {
@@ -58,20 +57,5 @@ class UsersTableSeeder extends Seeder
 
             $superAdmin->roleGroups()->sync($superAdminRoleGroup);
         }
-
-        collect(config('internal-users.emails'))->each(function ($email) use ($superAdminRoleGroup) {
-            $user = User::where('email', $email)->first();
-
-            if (is_null($user)) {
-                $user = User::factory()->create([
-                    'name' => Str::title(Str::replace('.', ' ', Str::before($email, '@'))),
-                    'email' => $email,
-                    'password' => Hash::make('password'),
-                    'is_external' => true,
-                ]);
-            }
-
-            $user->roleGroups()->sync($superAdminRoleGroup);
-        });
     }
 }
