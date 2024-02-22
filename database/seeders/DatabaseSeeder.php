@@ -89,7 +89,6 @@ class DatabaseSeeder extends Seeder
         );
 
         $this->call([
-            SisDataSeeder::class,
             SuperAdminProfileSeeder::class,
             UsersTableSeeder::class,
             DivisionSeeder::class,
