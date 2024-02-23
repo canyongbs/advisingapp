@@ -37,8 +37,10 @@
 namespace AdvisingApp\Assistant\Filament\Pages;
 
 use App\Models\User;
+use Exception;
 use Filament\Forms\Get;
 use Filament\Pages\Page;
+use Illuminate\Http\JsonResponse;
 use Livewire\Attributes\On;
 use Filament\Actions\Action;
 use Livewire\Attributes\Rule;
@@ -70,6 +72,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\Chat;
 use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @property EloquentCollection $chats
@@ -252,14 +255,14 @@ class PersonalAssistant extends Page
             ->icon('heroicon-s-bookmark')
             ->link()
             ->size(ActionSize::Small)
-            ->form(
-                [
-                    TextInput::make('name')
-                        ->label('Name')
-                        ->placeholder('Name this chat')
-                        ->required(),
-                ]
-            )
+            ->form([
+                TextInput::make('name')
+                    ->label('Name')
+                    ->autocomplete(false)
+                    ->placeholder('Name this chat')
+                    ->required(),
+                $this->folderSelect(),
+            ])
             ->modalWidth('md')
             ->action(function (array $data) {
                 if (filled($this->chat->id)) {
@@ -277,6 +280,10 @@ class PersonalAssistant extends Page
                 });
 
                 $this->chat->id = $assistantChat->id;
+
+                $folder = AssistantChatFolder::find($data['folder']);
+
+                $this->moveChat($assistantChat, $folder);
             });
     }
 
@@ -305,6 +312,7 @@ class PersonalAssistant extends Page
             ->modalWidth('md')
             ->form([
                 TextInput::make('name')
+                    ->autocomplete(false)
                     ->required()
                     ->unique(AssistantChatFolder::class, modifyRuleUsing: function (Unique $rule) {
                         return $rule->where('user_id', auth()->id());
@@ -332,6 +340,7 @@ class PersonalAssistant extends Page
             ->form([
                 TextInput::make('name')
                     ->label('Name')
+                    ->autocomplete(false)
                     ->placeholder('Rename this folder')
                     ->required()
                     ->unique(AssistantChatFolder::class, modifyRuleUsing: function (Unique $rule) {
@@ -381,33 +390,13 @@ class PersonalAssistant extends Page
             ->modalWidth('md')
             ->size(ActionSize::ExtraSmall)
             ->form([
-                Select::make('folder')
-                    ->options(function () {
-                        /** @var User $user */
-                        $user = auth()->user();
-
-                        return $user
-                            ->assistantChatFolders()
-                            ->orderBy('name')
-                            ->pluck('name', 'id');
-                    })
-                    ->placeholder('-'),
+                $this->folderSelect(),
             ])
             ->action(function (array $arguments, array $data) {
                 $chat = AssistantChat::find($arguments['chat']);
                 $folder = AssistantChatFolder::find($data['folder']);
 
-                if ($folder) {
-                    $chat->folder()
-                        ->associate($folder)
-                        ->save();
-                } else {
-                    $chat->folder()
-                        ->disassociate()
-                        ->save();
-                }
-
-                unset($this->folders, $this->chats);
+                $this->moveChat($chat, $folder);
             })
             ->icon('heroicon-o-arrow-up-tray')
             ->color('warning')
@@ -416,6 +405,30 @@ class PersonalAssistant extends Page
             ->extraAttributes([
                 'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
             ]);
+    }
+
+    public function movedChat(string $chatId, ?string $folderId): JsonResponse
+    {
+        ray($chatId, $folderId);
+
+        $chat = AssistantChat::find($chatId);
+        $folder = $folderId ? AssistantChatFolder::find($folderId) : null;
+
+        try {
+            $this->moveChat($chat, $folder);
+        } catch (Exception $e) {
+            report($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Chat could not be moved. Something went wrong, if this continues please contact support.',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Chat moved successfully.',
+        ], Response::HTTP_OK);
     }
 
     public function deleteChatAction(): Action
@@ -449,6 +462,7 @@ class PersonalAssistant extends Page
             ->form([
                 TextInput::make('name')
                     ->label('Name')
+                    ->autocomplete(false)
                     ->placeholder('Rename this chat')
                     ->required(),
             ])
@@ -583,5 +597,35 @@ class PersonalAssistant extends Page
             message: $message,
             from: $from,
         );
+    }
+
+    private function folderSelect(): Select
+    {
+        return Select::make('folder')
+            ->options(function () {
+                /** @var User $user */
+                $user = auth()->user();
+
+                return $user
+                    ->assistantChatFolders()
+                    ->orderBy('name')
+                    ->pluck('name', 'id');
+            })
+            ->placeholder('-');
+    }
+
+    private function moveChat(AssistantChat $chat, ?AssistantChatFolder $folder): void
+    {
+        if ($folder) {
+            $chat->folder()
+                ->associate($folder)
+                ->save();
+        } else {
+            $chat->folder()
+                ->disassociate()
+                ->save();
+        }
+
+        unset($this->folders, $this->chats);
     }
 }

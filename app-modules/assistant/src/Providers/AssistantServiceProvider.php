@@ -90,6 +90,10 @@ class AssistantServiceProvider extends ServiceProvider
         FilamentAsset::register([
             Js::make('assistantCurrentResponse', __DIR__ . '/../../resources/js/dist/assistantCurrentResponse.js')->loadedOnRequest(),
         ], 'canyon-gbs/assistant');
+
+        FilamentAsset::register([
+            Js::make('dragAndDrop', __DIR__ . '/../../resources/js/dist/dragAndDrop.js')->loadedOnRequest(),
+        ], 'canyon-gbs/assistant');
     }
 
     protected function registerEvents(): void

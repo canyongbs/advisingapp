@@ -47,7 +47,9 @@ use Illuminate\Support\Facades\Vite;
         @if ($consentedToTerms === true && $loading === false)
             <div class="grid flex-1 grid-cols-1 gap-6 md:grid-cols-4">
                 <div class="col-span-1">
-                    <div class="flex flex-col gap-y-2">
+                    <div class="flex flex-col gap-y-2"
+                         x-data="assistant($wire)"
+                    >
                         <x-filament::button
                             icon="heroicon-m-plus"
                             wire:click="newChat"
@@ -59,12 +61,19 @@ use Illuminate\Support\Facades\Vite;
 
                         @if (count($this->chats))
                             <ul
+                                id="folder-{{ null }}"
+                                data-folder="{{ null }}"
                                 class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
                                 @foreach ($this->chats as $chatItem)
-                                    <li @class([
-                                        'px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
-                                        'bg-gray-100 dark:bg-white/5' => $chat->id === $chatItem->id,
-                                    ])>
+                                    <li
+                                        data-folder="{{ null }}"
+                                        data-chat="{{ $chatItem->id }}"
+                                        draggable="true"
+                                        wire:key="chat-{{ $chatItem->id }}"
+                                        @class([
+                                            'px-2 group cursor-move flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
+                                            'bg-gray-100 dark:bg-white/5' => $chat->id === $chatItem->id,
+                                        ])>
                                         <a
                                             @class([
                                                 'fi-sidebar-item-button relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm',
@@ -94,10 +103,12 @@ use Illuminate\Support\Facades\Vite;
                             @foreach ($this->folders as $folder)
                                 <ul
                                     class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
+                                    id="folder-{{ $folder->id }}"
+                                    data-folder="{{ $folder->id }}"
                                     x-data="{ expanded: false }"
                                 >
                                     <span
-                                        class='group flex w-full cursor-pointer items-center rounded-lg px-2 outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5'
+                                        class='group flex w-full cursor-move items-center rounded-lg px-2 outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5'
                                     >
                                         <x-filament::icon-button
                                             icon="heroicon-o-folder-open"
@@ -134,9 +145,12 @@ use Illuminate\Support\Facades\Vite;
                                     @foreach ($folder->chats as $chatItem)
                                         <li
                                             @class([
-                                                'px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
+                                                'px-2 group cursor-move flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
                                                 'bg-gray-100 dark:bg-white/5' => $chat->id === $chatItem->id,
                                             ])
+                                            data-folder="{{ $folder->id }}"
+                                            data-chat="{{ $chatItem->id }}"
+                                            wire:key="chat-{{ $chatItem->id }}"
                                             x-show="expanded"
                                         >
                                             <a
@@ -226,256 +240,257 @@ use Illuminate\Support\Facades\Vite;
                                                 </div>
                                             </div>
                                         </div>
-                                    @break
+                                        @break
 
                                     @case(AIChatMessageFrom::User)
 
-                                        @default
-                                            <div class="group w-full dark:bg-gray-800">
-                                                <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
+                                    @default
+                                        <div class="group w-full dark:bg-gray-800">
+                                            <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
+                                                <div
+                                                    class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
+                                                    <div class="relative flex flex-shrink-0 flex-col items-end">
+                                                        <div>
+                                                            <x-filament-panels::avatar.user :user="auth()->user()"/>
+                                                        </div>
+                                                    </div>
                                                     <div
-                                                        class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
-                                                        <div class="relative flex flex-shrink-0 flex-col items-end">
-                                                            <div>
-                                                                <x-filament-panels::avatar.user :user="auth()->user()" />
-                                                            </div>
-                                                        </div>
-                                                        <div
-                                                            class="relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
-                                                            <div class="flex max-w-full flex-grow flex-col gap-3">
-                                                                <div
-                                                                    class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
-                                                                    <div>{{ $message->message }}</div>
-                                                                </div>
+                                                        class="relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
+                                                        <div class="flex max-w-full flex-grow flex-col gap-3">
+                                                            <div
+                                                                class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
+                                                                <div>{{ $message->message }}</div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
                                         @break
-                                    @endswitch
-                                @endforeach
+                                @endswitch
+                            @endforeach
 
-                                @if ($showCurrentResponse)
-                                    <div
-                                        class="group w-full bg-white dark:bg-gray-900"
-                                        x-data="currentResponseData"
-                                    >
-                                        <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
-                                            <div
-                                                class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
-                                                <div class="relative flex flex-shrink-0 flex-col items-end">
-                                                    <div>
-                                                        <x-filament::avatar
-                                                            class="rounded-full"
-                                                            alt="AI Assistant avatar"
-                                                            :src="Vite::asset(
+                            @if ($showCurrentResponse)
+                                <div
+                                    class="group w-full bg-white dark:bg-gray-900"
+                                    x-data="currentResponseData"
+                                >
+                                    <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
+                                        <div
+                                            class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
+                                            <div class="relative flex flex-shrink-0 flex-col items-end">
+                                                <div>
+                                                    <x-filament::avatar
+                                                        class="rounded-full"
+                                                        alt="AI Assistant avatar"
+                                                        :src="Vite::asset(
                                                                 'resources/images/canyon-ai-headshot.jpg',
                                                             )"
-                                                        />
-                                                    </div>
+                                                    />
                                                 </div>
-                                                <div
-                                                    class="agent-turn relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
-                                                    <div class="flex max-w-full flex-grow flex-col gap-3">
+                                            </div>
+                                            <div
+                                                class="agent-turn relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
+                                                <div class="flex max-w-full flex-grow flex-col gap-3">
+                                                    <div
+                                                        class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
                                                         <div
-                                                            class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
-                                                            <div
-                                                                class="hidden"
-                                                                id="hidden_current_response"
-                                                                wire:stream="currentResponse"
-                                                            >{{ $currentResponse }}</div>
-                                                            <div
-                                                                class="markdown light prose w-full break-words dark:prose-invert"
-                                                                id="current_response"
-                                                            ></div>
-                                                        </div>
+                                                            class="hidden"
+                                                            id="hidden_current_response"
+                                                            wire:stream="currentResponse"
+                                                        >{{ $currentResponse }}</div>
+                                                        <div
+                                                            class="markdown light prose w-full break-words dark:prose-invert"
+                                                            id="current_response"
+                                                        ></div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                @endif
+                                </div>
+                            @endif
 
-                                @if ($renderError)
-                                    <div class="my-4 w-full rounded-lg bg-gray-200 p-4 sm:p-6 lg:px-8">
-                                        <h1 class="text-2xl font-bold text-red-400">Something went wrong</h1>
-                                        <p class="text-black">{{ $error }}</p>
-                                    </div>
+                            @if ($renderError)
+                                <div class="my-4 w-full rounded-lg bg-gray-200 p-4 sm:p-6 lg:px-8">
+                                    <h1 class="text-2xl font-bold text-red-400">Something went wrong</h1>
+                                    <p class="text-black">{{ $error }}</p>
+                                </div>
 
-                                    <div
-                                        class="group w-full border-b border-black/10 bg-white dark:border-gray-900/50 dark:bg-gray-900">
-                                        <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
-                                            <div
-                                                class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
-                                                <div class="relative flex flex-shrink-0 flex-col items-end">
-                                                    <div>
-                                                        <x-filament::avatar
-                                                            class="rounded-full"
-                                                            alt="AI Assistant avatar"
-                                                            :src="Vite::asset(
+                                <div
+                                    class="group w-full border-b border-black/10 bg-white dark:border-gray-900/50 dark:bg-gray-900">
+                                    <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
+                                        <div
+                                            class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
+                                            <div class="relative flex flex-shrink-0 flex-col items-end">
+                                                <div>
+                                                    <x-filament::avatar
+                                                        class="rounded-full"
+                                                        alt="AI Assistant avatar"
+                                                        :src="Vite::asset(
                                                                 'resources/images/canyon-ai-headshot.jpg',
                                                             )"
-                                                        />
-                                                    </div>
+                                                    />
                                                 </div>
-                                                <div
-                                                    class="agent-turn relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
-                                                    <div class="flex max-w-full flex-grow flex-col gap-3">
-                                                        <div
-                                                            class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
-                                                            <h1 class="text-2xl font-bold text-red-400">Something went wrong
-                                                            </h1>
-                                                            <p class="text-black">{{ $error }}</p>
-                                                        </div>
+                                            </div>
+                                            <div
+                                                class="agent-turn relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
+                                                <div class="flex max-w-full flex-grow flex-col gap-3">
+                                                    <div
+                                                        class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
+                                                        <h1 class="text-2xl font-bold text-red-400">Something went wrong
+                                                        </h1>
+                                                        <p class="text-black">{{ $error }}</p>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                @endif
-                            </div>
+                                </div>
+                            @endif
                         </div>
+                    </div>
 
-                        <form wire:submit.prevent="sendMessage">
-                            <div
-                                class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
-                                <div class="bg-white dark:bg-gray-800">
-                                    <label
-                                        class="sr-only"
-                                        for="message_input"
-                                    >Type here</label>
-                                    <textarea
-                                        class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
-                                        id="message_input"
-                                        rows="4"
-                                        placeholder="Type here..."
-                                        required
-                                        wire:model.debounce="message"
-                                        wire:loading.attr="disabled"
+                    <form wire:submit.prevent="sendMessage">
+                        <div
+                            class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
+                            <div class="bg-white dark:bg-gray-800">
+                                <label
+                                    class="sr-only"
+                                    for="message_input"
+                                >Type here</label>
+                                <textarea
+                                    class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                                    id="message_input"
+                                    rows="4"
+                                    placeholder="Type here..."
+                                    required
+                                    wire:model.debounce="message"
+                                    wire:loading.attr="disabled"
                                         {{-- TODO: For some reason this causes issues with the response streaming --}}
-                                        {{-- @keydown.cmd.enter='$wire.sendMessage' --}}
+                                    {{-- @keydown.cmd.enter='$wire.sendMessage' --}}
                                     >
                                     </textarea>
-                                </div>
-                                <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
-                                    <div class="flex items-center gap-3">
-                                        @if (!$showCurrentResponse)
-                                            <x-filament::button
-                                                form="sendMessage,ask"
-                                                type="submit"
-                                                wire:loading.remove
-                                            >
-                                                Post
-                                            </x-filament::button>
-                                        @endif
-
-                                        <div
-                                            class="py-2"
-                                            wire:loading
-                                        >
-                                            <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
-                                        </div>
-
-                                        @error('message')
-                                            <p class="ml-auto text-xs text-red-500">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-
-                                    @if (!$showCurrentResponse && !$chat->id && $chat->messages->count() > 0)
-                                        <div
-                                            class="flex pl-0 sm:pl-2"
+                            </div>
+                            <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
+                                <div class="flex items-center gap-3">
+                                    @if (!$showCurrentResponse)
+                                        <x-filament::button
+                                            form="sendMessage,ask"
+                                            type="submit"
                                             wire:loading.remove
                                         >
-                                            {{ $this->saveChatAction }}
-                                        </div>
-                                    @elseif ($chat->id)
-                                        <div class="flex gap-3">
-                                            {{ ($this->cloneChatAction)(['chat' => $chat->id]) }}
-                                            {{ ($this->emailChatAction)(['chat' => $chat->id]) }}
-                                        </div>
+                                            Post
+                                        </x-filament::button>
                                     @endif
+
+                                    <div
+                                        class="py-2"
+                                        wire:loading
+                                    >
+                                        <x-filament::loading-indicator class="h-5 w-5 text-primary-500"/>
+                                    </div>
+
+                                    @error('message')
+                                    <p class="ml-auto text-xs text-red-500">{{ $message }}</p>
+                                    @enderror
                                 </div>
+
+                                @if (!$showCurrentResponse && !$chat->id && $chat->messages->count() > 0)
+                                    <div
+                                        class="flex pl-0 sm:pl-2"
+                                        wire:loading.remove
+                                    >
+                                        {{ $this->saveChatAction }}
+                                    </div>
+                                @elseif ($chat->id)
+                                    <div class="flex gap-3">
+                                        {{ ($this->cloneChatAction)(['chat' => $chat->id]) }}
+                                        {{ ($this->emailChatAction)(['chat' => $chat->id]) }}
+                                    </div>
+                                @endif
                             </div>
-                        </form>
-                    </div>
-                </div>
-            @elseif($consentedToTerms === false && $loading === false)
-                <div class="flex flex-col justify-center">
-                    <p class="mb-4">
-                        You must agree to the terms and conditions before continuing use of this feature.
-                    </p>
-                </div>
-            @else
-                <div class="flex h-full w-full items-center justify-center">
-                    <x-filament::loading-indicator class="h-12 w-12" />
-                </div>
-            @endif
-
-            @if ($consentedToTerms === false)
-                {{-- TODO potentially prevent closure of modal by pressing escape --}}
-                <x-filament::modal
-                    id="consent-agreement"
-                    width="5xl"
-                    alignment="left"
-                    :close-by-clicking-away="false"
-                    :close-button="false"
-                >
-                    @if ($loading === false)
-                        <x-slot name="trigger">
-                            <x-filament::button>
-                                Terms and Conditions
-                            </x-filament::button>
-                        </x-slot>
-                    @endif
-
-                    <x-slot name="header">
-                        <h2 class="text-left text-xl font-semibold text-gray-950 dark:text-white">
-                            {{ $consentAgreement->title }}
-                        </h2>
-                    </x-slot>
-
-                    <div class="prose max-w-none text-left dark:prose-invert">
-                        {{ str($consentAgreement->description)->markdown()->sanitizeHtml()->toHtmlString() }}
-                    </div>
-
-                    <x-filament::section>
-                        <div class="prose max-w-none text-left text-[.7rem] leading-4 dark:prose-invert">
-                            {{ str($consentAgreement->body)->markdown()->sanitizeHtml()->toHtmlString() }}
                         </div>
-                    </x-filament::section>
+                    </form>
+                </div>
+            </div>
+        @elseif($consentedToTerms === false && $loading === false)
+            <div class="flex flex-col justify-center">
+                <p class="mb-4">
+                    You must agree to the terms and conditions before continuing use of this feature.
+                </p>
+            </div>
+        @else
+            <div class="flex h-full w-full items-center justify-center">
+                <x-filament::loading-indicator class="h-12 w-12"/>
+            </div>
+        @endif
 
-                    <x-slot name="footer">
-                        <form
-                            class="flex w-full flex-col gap-6"
-                            wire:submit="confirmConsent"
-                        >
-                            <label>
-                                <x-filament::input.checkbox
-                                    wire:model="consentedToTerms"
-                                    required="true"
-                                />
+        @if ($consentedToTerms === false)
+            {{-- TODO potentially prevent closure of modal by pressing escape --}}
+            <x-filament::modal
+                id="consent-agreement"
+                width="5xl"
+                alignment="left"
+                :close-by-clicking-away="false"
+                :close-button="false"
+            >
+                @if ($loading === false)
+                    <x-slot name="trigger">
+                        <x-filament::button>
+                            Terms and Conditions
+                        </x-filament::button>
+                    </x-slot>
+                @endif
 
-                                <span class="ml-2 text-sm font-medium">
+                <x-slot name="header">
+                    <h2 class="text-left text-xl font-semibold text-gray-950 dark:text-white">
+                        {{ $consentAgreement->title }}
+                    </h2>
+                </x-slot>
+
+                <div class="prose max-w-none text-left dark:prose-invert">
+                    {{ str($consentAgreement->description)->markdown()->sanitizeHtml()->toHtmlString() }}
+                </div>
+
+                <x-filament::section>
+                    <div class="prose max-w-none text-left text-[.7rem] leading-4 dark:prose-invert">
+                        {{ str($consentAgreement->body)->markdown()->sanitizeHtml()->toHtmlString() }}
+                    </div>
+                </x-filament::section>
+
+                <x-slot name="footer">
+                    <form
+                        class="flex w-full flex-col gap-6"
+                        wire:submit="confirmConsent"
+                    >
+                        <label>
+                            <x-filament::input.checkbox
+                                wire:model="consentedToTerms"
+                                required="true"
+                            />
+
+                            <span class="ml-2 text-sm font-medium">
                                     I agree to the terms and conditions
                                 </span>
-                            </label>
+                        </label>
 
-                            <div class="flex justify-start gap-3">
-                                <x-filament::button
-                                    wire:click="denyConsent"
-                                    outlined
-                                >
-                                    Cancel
-                                </x-filament::button>
-                                <x-filament::button type="submit">
-                                    Continue
-                                </x-filament::button>
-                            </div>
-                        </form>
-                    </x-slot>
-                </x-filament::modal>
-            @endif
-            <script src="{{ FilamentAsset::getScriptSrc('assistantCurrentResponse', 'canyon-gbs/assistant') }}"></script>
-        </div>
-    </x-filament-panels::page>
+                        <div class="flex justify-start gap-3">
+                            <x-filament::button
+                                wire:click="denyConsent"
+                                outlined
+                            >
+                                Cancel
+                            </x-filament::button>
+                            <x-filament::button type="submit">
+                                Continue
+                            </x-filament::button>
+                        </div>
+                    </form>
+                </x-slot>
+            </x-filament::modal>
+        @endif
+        <script src="{{ FilamentAsset::getScriptSrc('assistantCurrentResponse', 'canyon-gbs/assistant') }}"></script>
+        <script src="{{ FilamentAsset::getScriptSrc('dragAndDrop', 'canyon-gbs/assistant') }}"></script>
+    </div>
+</x-filament-panels::page>

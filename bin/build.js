@@ -92,6 +92,12 @@ compile({
 
 compile({
     ...defaultOptions,
+    entryPoints: ['./app-modules/assistant/resources/js/dragAndDrop.js'],
+    outfile: './app-modules/assistant/resources/js/dist/dragAndDrop.js',
+})
+
+compile({
+    ...defaultOptions,
     entryPoints: ['./app-modules/in-app-communication/resources/js/userToUserChat.js'],
     outfile: './app-modules/in-app-communication/resources/js/dist/userToUserChat.js',
 })
