@@ -37,6 +37,7 @@
 namespace AdvisingApp\IntegrationAI\Client;
 
 use OpenAI;
+use AdvisingApp\Report\Client\AIReportChatClient;
 
 class AzureOpenAI extends BaseAIChatClient
 {
@@ -44,8 +45,14 @@ class AzureOpenAI extends BaseAIChatClient
     {
         $this->baseEndpoint = config('services.azure_open_ai.endpoint');
         $this->apiKey = config('services.azure_open_ai.api_key');
-        $this->apiVersion = config('services.azure_open_ai.api_version');
-        $this->deployment = config('services.azure_open_ai.deployment_name');
+
+        if (get_class($this) === AIReportChatClient::class) {
+            $this->apiVersion = config('services.azure_open_ai.report_assistant_api_version');
+            $this->deployment = config('services.azure_open_ai.report_assistant_deployment_name');
+        } else {
+            $this->apiVersion = config('services.azure_open_ai.personal_assistant_api_version');
+            $this->deployment = config('services.azure_open_ai.personal_assistant_deployment_name');
+        }
 
         $this->client = OpenAI::factory()
             ->withBaseUri("{$this->baseEndpoint}/openai/deployments/{$this->deployment}")
