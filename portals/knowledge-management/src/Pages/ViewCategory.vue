@@ -91,12 +91,12 @@ function getData() {
             <Loading />
         </div>
         <div v-else>
-            <Breadcrumbs
-                :currentCrumb="category.name"
-                :breadcrumbs="[{ name: 'Help Center', route: 'home' }]"
-            ></Breadcrumbs>
-
             <main class="py-10">
+                <Breadcrumbs
+                    :currentCrumb="category.name"
+                    :breadcrumbs="[{ name: 'Help Center', route: 'home' }]"
+                ></Breadcrumbs>
+
                 <div class="border border-gray-200 rounded p-4 shadow">
                     <h4 class="text-lg font-bold text-gray-900">Articles</h4>
                     <div v-if="articles.length > 0">

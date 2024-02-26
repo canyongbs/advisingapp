@@ -38,7 +38,6 @@ import getRecaptchaToken from '../../../app-modules/integration-google-recaptcha
 import AppLoading from '@/Components/AppLoading.vue';
 import MobileSidebar from '@/Components/MobileSidebar.vue';
 import DesktopSidebar from '@/Components/DesktopSidebar.vue';
-import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import determineIfUserIsAuthenticated from '@/Services/DetermineIfUserIsAuthenticated.js';
 import getAppContext from '@/Services/GetAppContext.js';
 import axios from '@/Globals/Axios.js';

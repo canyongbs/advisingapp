@@ -48,7 +48,7 @@ defineProps({
 </script>
 
 <template>
-    <div class="flex flex-row text-gray-800 space-x-2 mt-4">
+    <div class="flex flex-row text-gray-800 space-x-2 mb-4">
         <div v-for="crumb in breadcrumbs" :key="crumb.route" class="flex flex-row items-center space-x-2">
             <router-link :to="{ name: crumb.route }">
                 <h3 class="text-md">{{ crumb.name }}</h3>
