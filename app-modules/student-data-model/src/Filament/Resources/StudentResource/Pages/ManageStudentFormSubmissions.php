@@ -115,7 +115,7 @@ class ManageStudentFormSubmissions extends ManageRelatedRecords
         $ownerRecord = $urlParameters['record'];
 
         /** @var Prospect $ownerRecord */
-        $formSubmissionsCount = Cache::tags('{form-submission-count}')
+        $formSubmissionsCount = Cache::tags('form-submission-count')
             ->remember(
                 "form-submission-count-{$ownerRecord->getKey()}",
                 now()->addMinutes(5),
