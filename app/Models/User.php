@@ -502,10 +502,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function getDynamicContext(): string
     {
-        $context = "My name is {$this->name}";
+        $context = "My name is \"{$this->name}\"";
 
         if ($this->job_title) {
-            $context .= " and I am a {$this->job_title}";
+            $context .= " and I am a \"{$this->job_title}\"";
         }
 
         return "{$context}. When you respond please use this information about me to tailor your response.";

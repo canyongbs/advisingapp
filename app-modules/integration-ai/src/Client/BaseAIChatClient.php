@@ -180,7 +180,7 @@ abstract class BaseAIChatClient implements AIChatClient
             'timestamp' => now(),
             'message' => $chat->messages->last()->message,
             'metadata' => [
-                'systemContext' => $this->systemContext,
+                'systemContext' => $this->getContext(),
             ],
         ]));
     }
