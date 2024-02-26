@@ -92,7 +92,7 @@ class AssistantServiceProvider extends ServiceProvider
         ], 'canyon-gbs/assistant');
 
         FilamentAsset::register([
-            Js::make('dragAndDrop', __DIR__ . '/../../resources/js/dist/dragAndDrop.js')->loadedOnRequest(),
+            Js::make('chats', __DIR__ . '/../../resources/js/chats.js')->loadedOnRequest(),
         ], 'canyon-gbs/assistant');
     }
 

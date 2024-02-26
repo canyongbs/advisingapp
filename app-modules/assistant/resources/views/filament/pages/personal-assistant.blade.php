@@ -45,11 +45,11 @@ use Illuminate\Support\Facades\Vite;
         wire:init="determineIfConsentWasGiven"
     >
         @if ($consentedToTerms === true && $loading === false)
-            <div class="grid flex-1 grid-cols-1 gap-6 md:grid-cols-4">
+            <div class="grid flex-1 grid-cols-1 gap-6 md:grid-cols-4"
+                 x-data="chats($wire)"
+            >
                 <div class="col-span-1">
-                    <div class="flex flex-col gap-y-2"
-                         x-data="assistant($wire)"
-                    >
+                    <div class="flex flex-col gap-y-2">
                         <x-filament::button
                             icon="heroicon-m-plus"
                             wire:click="newChat"
@@ -62,13 +62,16 @@ use Illuminate\Support\Facades\Vite;
                         @if (count($this->chats))
                             <ul
                                 id="folder-{{ null }}"
-                                data-folder="{{ null }}"
+                                @drop.prevent="drop('{{ null }}')"
+                                @dragenter.prevent
+                                @dragover.prevent
                                 class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
                                 @foreach ($this->chats as $chatItem)
                                     <li
-                                        data-folder="{{ null }}"
-                                        data-chat="{{ $chatItem->id }}"
                                         draggable="true"
+                                        @dragstart="start('{{ $chatItem->id }}', '{{ null }}')"
+                                        @dragend="end"
+                                        id="chat-{{ $chatItem->id }}"
                                         wire:key="chat-{{ $chatItem->id }}"
                                         @class([
                                             'px-2 group cursor-move flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
@@ -97,6 +100,18 @@ use Illuminate\Support\Facades\Vite;
                                     </li>
                                 @endforeach
                             </ul>
+                        @else
+                            <div
+                                x-show="dragging"
+                                class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 border-dashed bg-white text-gray-500 p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
+                                @drop.prevent="drop('{{ null }}')"
+                                @dragenter.prevent
+                                @dragover.prevent
+                            >
+                                <div>
+                                    Drag chats here to uncategorize them
+                                </div>
+                            </div>
                         @endif
 
                         @if (count($this->folders))
@@ -104,26 +119,27 @@ use Illuminate\Support\Facades\Vite;
                                 <ul
                                     class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
                                     id="folder-{{ $folder->id }}"
-                                    data-folder="{{ $folder->id }}"
-                                    x-data="{ expanded: false }"
+                                    @drop.prevent="drop('{{ $folder->id }}')"
+                                    @dragenter.prevent
+                                    @dragover.prevent
                                 >
                                     <span
                                         class='group flex w-full cursor-move items-center rounded-lg px-2 outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5'
                                     >
                                         <x-filament::icon-button
                                             icon="heroicon-o-folder-open"
-                                            x-show="expanded"
+                                            x-show="expanded('{{ $folder->id }}')"
                                         />
                                         <x-filament::icon-button
                                             icon="heroicon-o-folder"
-                                            x-show="expanded === false"
+                                            x-show="expanded('{{ $folder->id }}') === false"
                                         />
                                         <span
                                             class='group flex w-full cursor-pointer items-center space-x-1 rounded-lg px-2 outline-none transition duration-75 focus:bg-gray-100 dark:focus:bg-white/5'
                                         >
                                             <span
                                                 class='fi-sidebar-item-button relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm'
-                                                @click="expanded = ! expanded"
+                                                @click="expand('{{ $folder->id }}')"
                                             >
                                                 @if ($folder->chats->count())
                                                     <span class='fi-sidebar-item-label flex-1 truncate'>
@@ -148,10 +164,12 @@ use Illuminate\Support\Facades\Vite;
                                                 'px-2 group cursor-move flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
                                                 'bg-gray-100 dark:bg-white/5' => $chat->id === $chatItem->id,
                                             ])
-                                            data-folder="{{ $folder->id }}"
-                                            data-chat="{{ $chatItem->id }}"
+                                            draggable="true"
+                                            @dragstart="start('{{ $chatItem->id }}', '{{ $folder->id }}')"
+                                            @dragend="end"
+                                            id="chat-{{ $chatItem->id }}"
                                             wire:key="chat-{{ $chatItem->id }}"
-                                            x-show="expanded"
+                                            x-show="expanded('{{ $folder->id }}')"
                                         >
                                             <a
                                                 @class([
@@ -491,6 +509,6 @@ use Illuminate\Support\Facades\Vite;
             </x-filament::modal>
         @endif
         <script src="{{ FilamentAsset::getScriptSrc('assistantCurrentResponse', 'canyon-gbs/assistant') }}"></script>
-        <script src="{{ FilamentAsset::getScriptSrc('dragAndDrop', 'canyon-gbs/assistant') }}"></script>
+        <script src="{{ FilamentAsset::getScriptSrc('chats', 'canyon-gbs/assistant') }}"></script>
     </div>
 </x-filament-panels::page>

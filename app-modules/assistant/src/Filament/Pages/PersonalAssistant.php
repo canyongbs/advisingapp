@@ -409,8 +409,6 @@ class PersonalAssistant extends Page
 
     public function movedChat(string $chatId, ?string $folderId): JsonResponse
     {
-        ray($chatId, $folderId);
-
         $chat = AssistantChat::find($chatId);
         $folder = $folderId ? AssistantChatFolder::find($folderId) : null;
 
