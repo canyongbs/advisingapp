@@ -33,21 +33,40 @@
 -->
 <script setup>
 import { defineProps } from 'vue';
+import axios from '@/Globals/Axios.js';
+import { useTokenStore } from '@/Stores/token.js';
 
-defineProps({
+const props = defineProps({
     categories: {
         type: Object,
         default: {},
     },
+    apiUrl: {
+        type: String,
+        required: true,
+    },
 });
+
+const { removeToken } = useTokenStore();
+
+const logout = () => {
+    axios.post(props.apiUrl + '/authenticate/logout')
+        .then((response) => {
+            removeToken();
+            window.location.href = response.data.redirect_url;
+        });
+};
 </script>
 
 <template>
     <nav class="flex flex-1 flex-col mt-4">
-        <div class="flex justify-center">
+        <div class="grid gap-y-2 justify-center">
             <router-link :to="{ name: 'home' }">
                 <h3 class="text-xl text-primary-700">Help Center</h3>
             </router-link>
+            <button @click="logout" type="button" class="p-2 font-bold rounded border-2 bg-white text-primary-600 dark:text-primary-400 border-primary-600 dark:border-primary-400">
+                Logout
+            </button>
         </div>
 
         <ul role="list" class="flex flex-1 flex-col gap-y-7 mt-4">

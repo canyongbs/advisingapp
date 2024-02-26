@@ -317,9 +317,13 @@ async function authenticate(formData, node) {
                         v-if="showMobileMenu"
                         @sidebar-closed="showMobileMenu = !showMobileMenu"
                         :categories="categories"
+                        :api-url="apiUrl"
                     ></MobileSidebar>
 
-                    <DesktopSidebar :categories="categories"></DesktopSidebar>
+                    <DesktopSidebar
+                        :categories="categories"
+                        :api-url="apiUrl"
+                    ></DesktopSidebar>
 
                     <div class="lg:pl-72">
                         <div class="px-4 sm:px-6 lg:px-8">

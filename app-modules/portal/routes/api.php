@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalLogoutController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
@@ -69,6 +70,10 @@ Route::prefix('api')
                 Route::post('/authenticate/request', KnowledgeManagementPortalRequestAuthenticationController::class)
                     ->middleware(['signed:relative'])
                     ->name('request-authentication');
+
+                Route::post('/authenticate/logout', KnowledgeManagementPortalLogoutController::class)
+                    ->middleware(['auth:sanctum'])
+                    ->name('knowledge-management.logout');
 
                 Route::post('/authenticate/{authentication}', KnowledgeManagementPortalAuthenticateController::class)
                     ->middleware(['signed:relative', EnsureFrontendRequestsAreStateful::class])
