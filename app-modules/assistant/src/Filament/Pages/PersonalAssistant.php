@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Assistant\Filament\Pages;
 
-use App\Models\User;
 use Exception;
+use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Pages\Page;
-use Illuminate\Http\JsonResponse;
 use Livewire\Attributes\On;
 use Filament\Actions\Action;
 use Livewire\Attributes\Rule;
 use AdvisingApp\Team\Models\Team;
 use App\Filament\Pages\Dashboard;
+use Illuminate\Http\JsonResponse;
 use Livewire\Attributes\Computed;
 use Filament\Actions\StaticAction;
 use Illuminate\Support\Collection;
@@ -55,6 +55,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Validation\Rules\Unique;
 use Filament\Forms\Components\TextInput;
+use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\Assistant\Models\AssistantChat;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
@@ -72,7 +73,6 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\Chat;
 use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @property EloquentCollection $chats
