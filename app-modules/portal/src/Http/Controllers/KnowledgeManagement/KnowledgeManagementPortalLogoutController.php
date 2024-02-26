@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 
 class KnowledgeManagementPortalLogoutController extends Controller
 {
