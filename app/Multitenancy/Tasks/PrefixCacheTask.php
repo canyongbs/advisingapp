@@ -34,35 +34,55 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Observers;
+namespace App\Multitenancy\Tasks;
 
+use Illuminate\Cache\Repository;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Event;
-use AdvisingApp\Application\Models\ApplicationSubmission;
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
-use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use Spatie\Multitenancy\Models\Tenant;
+use Spatie\Multitenancy\Tasks\SwitchTenantTask;
 
-class ApplicationSubmissionObserver
+class PrefixCacheTask implements SwitchTenantTask
 {
-    public function creating(ApplicationSubmission $submission): void
-    {
-        $submission->state()->associate(
-            ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)->firstOrFail()
-        );
+    protected ?string $originalPrefix;
+
+    public function __construct(
+        protected ?string $storeName = null,
+        protected ?string $cacheKeyBase = null
+    ) {
+        $this->originalPrefix = config('cache.prefix');
+
+        $this->storeName ??= config('cache.default');
+
+        $this->cacheKeyBase ??= 'tenant_id_';
     }
 
-    public function created(ApplicationSubmission $submission): void
+    public function makeCurrent(Tenant $tenant): void
     {
-        Event::dispatch(
-            event: new ApplicationSubmissionCreated(submission: $submission)
-        );
+        $this->setCachePrefix("{{$this->cacheKeyBase}{$tenant->id}}");
+    }
 
-        if (! is_null($submission->author)) {
-            Cache::tags('application-submission-count')
-                ->forget(
-                    "application-submission-count-{$submission->author->getKey()}"
-                );
-        }
+    public function forgetCurrent(): void
+    {
+        $this->setCachePrefix($this->originalPrefix);
+    }
+
+    protected function setCachePrefix(string $prefix)
+    {
+        config()->set('cache.prefix', $prefix);
+
+        app('cache')->forgetDriver($this->storeName);
+
+        // This is important because the `CacheManager` will have the `$app['config']` array cached
+        // with old prefixes on the `cache` instance. Simply calling `forgetDriver` only removes
+        // the `$store` but doesn't update the `$app['config']`.
+        app()->forgetInstance('cache');
+
+        //This is important because the Cache Repository is using an old version of the CacheManager
+        app()->forgetInstance('cache.store');
+
+        // Forget the cache repository in the container
+        app()->forgetInstance(Repository::class);
+
+        Cache::clearResolvedInstances();
     }
 }
