@@ -3,6 +3,7 @@
 namespace AdvisingApp\DataMigration\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use AdvisingApp\DataMigration\OneTimeOperationManager;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use AdvisingApp\DataMigration\Database\Factories\OperationFactory;
@@ -10,6 +11,7 @@ use AdvisingApp\DataMigration\Database\Factories\OperationFactory;
 class Operation extends Model
 {
     use HasFactory;
+    use HasUuids;
 
     public const DISPATCHED_ASYNC = 'async';
 

@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use AdvisingApp\DataMigration\OneTimeOperationManager;
-use TimoKoerber\LaravelOneTimeOperations\Models\Operation;
 
 class CreateOneTimeOperationsTable extends Migration
 {
@@ -15,18 +14,13 @@ class CreateOneTimeOperationsTable extends Migration
         $this->name = OneTimeOperationManager::getTableName();
     }
 
-    public function up()
+    public function up(): void
     {
         Schema::create($this->name, function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->uuid('id')->primary();
             $table->string('name');
-            $table->enum('dispatched', [Operation::DISPATCHED_SYNC, Operation::DISPATCHED_ASYNC]);
+            $table->string('dispatched');
             $table->timestamp('processed_at')->nullable();
         });
-    }
-
-    public function down()
-    {
-        Schema::dropIfExists($this->name);
     }
 }

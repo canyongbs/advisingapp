@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use AdvisingApp\DataMigration\Models\Operation;
 use AdvisingApp\DataMigration\OneTimeOperationManager;
 
 class CreateOneTimeOperationsTable extends Migration
@@ -18,9 +17,9 @@ class CreateOneTimeOperationsTable extends Migration
     public function up(): void
     {
         Schema::create($this->name, function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->uuid('id')->primary();
             $table->string('name');
-            $table->enum('dispatched', [Operation::DISPATCHED_SYNC, Operation::DISPATCHED_ASYNC]);
+            $table->string('dispatched');
             $table->timestamp('processed_at')->nullable();
         });
     }

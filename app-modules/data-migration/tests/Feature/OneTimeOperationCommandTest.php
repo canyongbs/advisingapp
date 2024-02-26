@@ -2,16 +2,24 @@
 
 namespace TimoKoerber\LaravelOneTimeOperations\Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
+use Feature\OneTimeOperationCase;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Str;
-use TimoKoerber\LaravelOneTimeOperations\Jobs\OneTimeOperationProcessJob;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use TimoKoerber\LaravelOneTimeOperations\Models\Operation;
+use TimoKoerber\LaravelOneTimeOperations\Jobs\OneTimeOperationProcessJob;
 
 class OneTimeOperationCommandTest extends OneTimeOperationCase
 {
     use RefreshDatabase;
+
+    protected function tearDown(): void
+    {
+        File::deleteDirectory(base_path(config('one-time-operations.directory')));
+
+        parent::tearDown();
+    }
 
     public function test_make_command_with_attributes()
     {
@@ -430,14 +438,7 @@ class OneTimeOperationCommandTest extends OneTimeOperationCase
 
     protected function filepath(string $filename): string
     {
-        return base_path(config('one-time-operations.directory')).DIRECTORY_SEPARATOR.$filename;
-    }
-
-    protected function tearDown(): void
-    {
-        File::deleteDirectory(base_path(config('one-time-operations.directory')));
-
-        parent::tearDown();
+        return base_path(config('one-time-operations.directory')) . DIRECTORY_SEPARATOR . $filename;
     }
 
     protected function editFile(string $filename, string $search, string $replace)
