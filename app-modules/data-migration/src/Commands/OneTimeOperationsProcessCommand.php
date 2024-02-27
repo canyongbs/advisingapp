@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\DataMigration\Commands;
 
+use Throwable;
 use App\Models\Tenant;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -71,7 +72,7 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
     protected function process(): int
     {
         if ($operationName = $this->argument('name')) {
-            return $this->proccessSingleOperation($operationName);
+            return $this->processSingleOperation($operationName);
         }
 
         return $this->processNextOperations();
@@ -96,7 +97,7 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
         return in_array($this->argument('type'), ['landlord', 'tenant']);
     }
 
-    protected function proccessSingleOperation(string $providedOperationName): int
+    protected function processSingleOperation(string $providedOperationName): int
     {
         $providedOperationName = str($providedOperationName)->rtrim('.php')->toString();
 
@@ -108,7 +109,7 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
             $operationsFile = OneTimeOperationManager::getOperationFileByName($providedOperationName);
 
             return $this->processOperationFile($operationsFile);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->components->error($e->getMessage());
 
             return self::FAILURE;
@@ -196,7 +197,7 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
         Operation::storeOperation($operationFile->getOperationName(), $this->isAsyncMode($operationFile));
     }
 
-    protected function dispatchOperationJob(OneTimeOperationFile $operationFile)
+    protected function dispatchOperationJob(OneTimeOperationFile $operationFile): void
     {
         $job = match ($this->argument('type')) {
             'landlord' => new LandlordOneTimeOperationProcessJob($operationFile->getOperationName()),
