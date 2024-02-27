@@ -1,6 +1,6 @@
 <?php
 
-use TimoKoerber\LaravelOneTimeOperations\OneTimeOperation;
+use AdvisingApp\DataMigration\OneTimeOperation;
 
 return new class extends OneTimeOperation
 {

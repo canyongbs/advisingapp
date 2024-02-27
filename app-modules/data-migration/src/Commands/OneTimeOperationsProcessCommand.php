@@ -2,23 +2,27 @@
 
 namespace AdvisingApp\DataMigration\Commands;
 
+use App\Models\Tenant;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Console\Isolatable;
 use AdvisingApp\DataMigration\Models\Operation;
 use AdvisingApp\DataMigration\OneTimeOperationFile;
 use AdvisingApp\DataMigration\OneTimeOperationManager;
-use AdvisingApp\DataMigration\Jobs\OneTimeOperationProcessJob;
+use AdvisingApp\DataMigration\Jobs\TenantOneTimeOperationProcessJob;
+use AdvisingApp\DataMigration\Jobs\LandlordOneTimeOperationProcessJob;
 
 class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implements Isolatable
 {
     protected $signature = 'operations:process
+                            {type : Type of operation to process: landlord|tenant}
                             {name? : Name of specific operation}
                             {--test : Process operation without tagging it as processed, so you can call it again}
                             {--async : Ignore setting in operation and process all operations asynchronously}
                             {--sync : Ignore setting in operation and process all operations synchronously}
                             {--queue= : Set the queue, that all jobs will be dispatched to}
-                            {--tag=* : Process only operations, that have one of the given tag}';
+                            {--tag=* : Process only operations, that have one of the given tag}
+                            {--tenant=* : Process the operation for specific or all tenants}';
 
     protected $description = 'Process all unprocessed one-time operations';
 
@@ -39,6 +43,12 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
         $this->queue = $this->option('queue');
         $this->tags = $this->option('tag');
 
+        if (! $this->typeArgumentIsValid()) {
+            $this->components->error('Abort! Type must be either landlord or tenant!');
+
+            return self::FAILURE;
+        }
+
         if (! $this->tagOptionsAreValid()) {
             $this->components->error('Abort! Do not provide empty tags!');
 
@@ -51,11 +61,40 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
             return self::FAILURE;
         }
 
+        return match ($this->argument('type')) {
+            'landlord' => $this->process(),
+            'tenant' => $this->processForTenants(),
+        };
+    }
+
+    protected function process(): int
+    {
         if ($operationName = $this->argument('name')) {
             return $this->proccessSingleOperation($operationName);
         }
 
         return $this->processNextOperations();
+    }
+
+    protected function processForTenants(): int
+    {
+        if ($this->options('tenant') === '*') {
+            Tenant::all()->eachCurrent(function (Tenant $tenant) {
+                // the passed tenant has been made current
+                Tenant::current()->is($tenant); // returns true;
+            });
+        }
+
+        if ($operationName = $this->argument('name')) {
+            return $this->proccessSingleOperation($operationName);
+        }
+
+        return $this->processNextOperations();
+    }
+
+    protected function typeArgumentIsValid(): bool
+    {
+        return in_array($this->argument('type'), ['landlord', 'tenant']);
     }
 
     protected function proccessSingleOperation(string $providedOperationName): int
@@ -160,13 +199,18 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
 
     protected function dispatchOperationJob(OneTimeOperationFile $operationFile)
     {
+        $job = match ($this->argument('type')) {
+            'landlord' => new LandlordOneTimeOperationProcessJob($operationFile->getOperationName()),
+            'tenant' => new TenantOneTimeOperationProcessJob($operationFile->getOperationName()),
+        };
+
         if ($this->isAsyncMode($operationFile)) {
-            OneTimeOperationProcessJob::dispatch($operationFile->getOperationName())->onQueue($this->getQueue($operationFile));
+            $job->dispatch()->onQueue($this->getQueue($operationFile));
 
             return;
         }
 
-        OneTimeOperationProcessJob::dispatchSync($operationFile->getOperationName());
+        $job->dispatchSync();
     }
 
     protected function testModeEnabled(): bool

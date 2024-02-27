@@ -23,10 +23,12 @@ class Operation extends Model
         'name',
         'dispatched',
         'processed_at',
+        'completed_at',
     ];
 
     protected $casts = [
         'processed_at' => 'datetime',
+        'completed_at' => 'datetime',
     ];
 
     public function __construct(array $attributes = [])

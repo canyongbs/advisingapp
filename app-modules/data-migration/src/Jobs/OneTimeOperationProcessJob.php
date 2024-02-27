@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\DataMigration\OneTimeOperationManager;
 
-class OneTimeOperationProcessJob implements ShouldQueue
+abstract class OneTimeOperationProcessJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

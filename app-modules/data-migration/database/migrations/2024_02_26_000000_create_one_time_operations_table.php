@@ -21,6 +21,7 @@ class CreateOneTimeOperationsTable extends Migration
             $table->string('name');
             $table->string('dispatched');
             $table->timestamp('processed_at')->nullable();
+            $table->timestamp('completed_at')->nullable();
         });
     }
 }

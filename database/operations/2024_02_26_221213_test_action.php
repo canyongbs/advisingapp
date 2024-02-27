@@ -2,8 +2,7 @@
 
 use AdvisingApp\DataMigration\OneTimeOperation;
 
-return new class extends OneTimeOperation
-{
+return new class () extends OneTimeOperation {
     /**
      * Determine if the operation is being processed asynchronously.
      */
@@ -17,13 +16,13 @@ return new class extends OneTimeOperation
     /**
      * A tag name, that this operation can be filtered by.
      */
-    protected ?string $tag = null;
+    protected ?string $tag = 'landlord';
 
     /**
      * Process the operation.
      */
     public function process(): void
     {
-        //
+        ray('hi');
     }
 };

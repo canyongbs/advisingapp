@@ -41,21 +41,16 @@ use Illuminate\Support\ServiceProvider;
 use AdvisingApp\DataMigration\DataMigrationPlugin;
 use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\DataMigration\Commands\OneTimeOperationShowCommand;
 use AdvisingApp\DataMigration\Registries\DataMigrationRbacRegistry;
-use TimoKoerber\LaravelOneTimeOperations\Commands\OneTimeOperationShowCommand;
-use TimoKoerber\LaravelOneTimeOperations\Commands\OneTimeOperationsMakeCommand;
-use TimoKoerber\LaravelOneTimeOperations\Commands\OneTimeOperationsProcessCommand;
+use AdvisingApp\DataMigration\Commands\OneTimeOperationsMakeCommand;
+use AdvisingApp\DataMigration\Commands\OneTimeOperationsProcessCommand;
 
 class DataMigrationServiceProvider extends ServiceProvider
 {
     public function register()
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new DataMigrationPlugin()));
-
-        $this->mergeConfigFrom(
-            __DIR__ . '/../../config/one-time-operations.php',
-            'one-time-operations'
-        );
     }
 
     public function boot()
@@ -63,12 +58,6 @@ class DataMigrationServiceProvider extends ServiceProvider
         Relation::morphMap([]);
 
         RoleBasedAccessControlRegistry::register(DataMigrationRbacRegistry::class);
-
-        $this->loadMigrationsFrom([__DIR__ . '/../../database/migrations']);
-
-        $this->publishes([
-            __DIR__ . '/../../config/one-time-operations.php' => config_path('one-time-operations.php'),
-        ]);
 
         if ($this->app->runningInConsole()) {
             $this->commands(OneTimeOperationsMakeCommand::class);
