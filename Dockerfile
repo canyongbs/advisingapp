@@ -21,7 +21,8 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | b
     && nvm install "$NODE_VERSION" \
     && nvm alias default "$NODE_VERSION" \
     && nvm use default \
-    && nvm install-latest-npm
+    && nvm install-latest-npm \
+    && npm install -g ip@2.0.1
 
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
