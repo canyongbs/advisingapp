@@ -3,7 +3,9 @@
 namespace AdvisingApp\DataMigration\Commands;
 
 use Throwable;
+use App\Models\Tenant;
 use Illuminate\Support\Collection;
+use Spatie\Multitenancy\TenantCollection;
 use AdvisingApp\DataMigration\Models\Operation;
 use AdvisingApp\DataMigration\OneTimeOperationFile;
 use AdvisingApp\DataMigration\OneTimeOperationManager;
@@ -11,7 +13,10 @@ use AdvisingApp\DataMigration\Commands\Utils\OperationsLineElement;
 
 class OneTimeOperationShowCommand extends OneTimeOperationsCommand
 {
-    protected $signature = 'operations:show {filter?* : List of filters: pending|processed|disposed}';
+    protected $signature = 'operations:show
+                            {type : Type of operation to process: landlord|tenant}
+                            {filter?* : List of filters: pending|processed|disposed}
+                            {--tenant=* : Process the operation for specific or all tenants}';
 
     protected $description = 'List of all one-time operations';
 
@@ -27,19 +32,10 @@ class OneTimeOperationShowCommand extends OneTimeOperationsCommand
             $this->validateFilters();
             $this->newLine();
 
-            $operationOutputLines = $this->getOperationLinesForOutput();
-            $operationOutputLines = $this->filterOperationLinesByStatus($operationOutputLines);
-
-            if ($operationOutputLines->isEmpty()) {
-                $this->components->info('No operations found.');
-            }
-
-            /** @var OperationsLineElement $lineElement */
-            foreach ($operationOutputLines as $lineElement) {
-                $lineElement->output($this->components);
-            }
-
-            $this->newLine();
+            match ($this->argument('type')) {
+                'landlord' => $this->outputOperations(),
+                'tenant' => $this->outputOperationsForTenants(),
+            };
 
             return self::SUCCESS;
         } catch (Throwable $e) {
@@ -47,6 +43,37 @@ class OneTimeOperationShowCommand extends OneTimeOperationsCommand
 
             return self::FAILURE;
         }
+    }
+
+    protected function outputOperations(): void
+    {
+        $operationOutputLines = $this->getOperationLinesForOutput();
+        $operationOutputLines = $this->filterOperationLinesByStatus($operationOutputLines);
+
+        if ($operationOutputLines->isEmpty()) {
+            $this->components->info('No operations found.');
+        }
+
+        /** @var OperationsLineElement $lineElement */
+        foreach ($operationOutputLines as $lineElement) {
+            $lineElement->output($this->components);
+        }
+
+        $this->newLine();
+    }
+
+    protected function outputOperationsForTenants(): void
+    {
+        /** @var TenantCollection $tenants */
+        $tenants = empty($this->option('tenant')) ? Tenant::all() : Tenant::whereIn('id', $this->option('tenant'))->get();
+
+        $tenants->eachCurrent(function (Tenant $tenant) {
+            $this->info(sprintf('Operations for tenant %s', $tenant->getKey()));
+
+            $this->newLine();
+
+            $this->outputOperations();
+        });
     }
 
     /**
@@ -79,6 +106,8 @@ class OneTimeOperationShowCommand extends OneTimeOperationsCommand
         $operationFiles = OneTimeOperationManager::getAllOperationFiles();
         $operationOutputLines = collect();
 
+        $operationFiles = $this->filterOperationsByType($operationFiles);
+
         // add disposed operations
         foreach ($operationModels as $operation) {
             if (OneTimeOperationManager::fileExistsByName($operation->name)) {
@@ -106,5 +135,17 @@ class OneTimeOperationShowCommand extends OneTimeOperationsCommand
         return $operationOutputLines->filter(function (OperationsLineElement $lineElement) {
             return $this->shouldDisplayByFilter($lineElement->getStatus());
         })->collect();
+    }
+
+    protected function filterOperationsByType(Collection $unprocessedOperationFiles): Collection
+    {
+        return $unprocessedOperationFiles->filter(function (OneTimeOperationFile $operationFile) {
+            return $this->typeMatched($operationFile);
+        })->collect();
+    }
+
+    protected function typeMatched(OneTimeOperationFile $operationFile): bool
+    {
+        return $operationFile->getClassObject()->getType()->value === $this->argument('type');
     }
 }
