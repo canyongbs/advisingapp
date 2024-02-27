@@ -42,6 +42,9 @@ use AdvisingApp\DataMigration\OneTimeOperationManager;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use AdvisingApp\DataMigration\Database\Factories\OperationFactory;
 
+/**
+ * @mixin IdeHelperOperation
+ */
 class Operation extends Model
 {
     use HasFactory;
