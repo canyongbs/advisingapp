@@ -5,6 +5,7 @@ namespace AdvisingApp\DataMigration\Commands;
 use App\Models\Tenant;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Spatie\Multitenancy\TenantCollection;
 use Illuminate\Contracts\Console\Isolatable;
 use AdvisingApp\DataMigration\Models\Operation;
 use AdvisingApp\DataMigration\OneTimeOperationFile;
@@ -78,18 +79,16 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
 
     protected function processForTenants(): int
     {
-        if ($this->options('tenant') === '*') {
-            Tenant::all()->eachCurrent(function (Tenant $tenant) {
-                // the passed tenant has been made current
-                Tenant::current()->is($tenant); // returns true;
-            });
-        }
+        /** @var TenantCollection $tenants */
+        $tenants = empty($this->option('tenant')) ? Tenant::all() : Tenant::whereIn('id', $this->option('tenant'))->get();
 
-        if ($operationName = $this->argument('name')) {
-            return $this->proccessSingleOperation($operationName);
-        }
+        $tenants->eachCurrent(function (Tenant $tenant) {
+            $this->info(sprintf('Processing operations for tenant %s', $tenant->getKey()));
 
-        return $this->processNextOperations();
+            $this->process();
+        });
+
+        return self::SUCCESS;
     }
 
     protected function typeArgumentIsValid(): bool
@@ -205,12 +204,12 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
         };
 
         if ($this->isAsyncMode($operationFile)) {
-            $job->dispatch()->onQueue($this->getQueue($operationFile));
+            $job->dispatch($operationFile->getOperationName())->onQueue($this->getQueue($operationFile));
 
             return;
         }
 
-        $job->dispatchSync();
+        $job->dispatchSync($operationFile->getOperationName());
     }
 
     protected function testModeEnabled(): bool

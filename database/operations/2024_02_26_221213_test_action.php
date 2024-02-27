@@ -16,7 +16,7 @@ return new class () extends OneTimeOperation {
     /**
      * A tag name, that this operation can be filtered by.
      */
-    protected ?string $tag = 'landlord';
+    protected ?string $tag = null;
 
     /**
      * Process the operation.

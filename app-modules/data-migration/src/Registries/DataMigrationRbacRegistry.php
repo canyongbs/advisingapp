@@ -48,23 +48,23 @@ class DataMigrationRbacRegistry implements RegistersRolesAndPermissions
         $roleRegistry = app(AuthorizationRoleRegistry::class);
 
         $permissionRegistry->registerApiPermissions(
-            module: '',
-            path: ''
+            module: 'data-migration',
+            path: 'permissions/api/custom'
         );
 
         $permissionRegistry->registerWebPermissions(
-            module: '',
-            path: ''
+            module: 'data-migration',
+            path: 'permissions/web/custom'
         );
 
         $roleRegistry->registerApiRoles(
-            module: '',
-            path: ''
+            module: 'data-migration',
+            path: 'roles/api'
         );
 
         $roleRegistry->registerWebRoles(
-            module: '',
-            path: ''
+            module: 'data-migration',
+            path: 'roles/web'
         );
     }
 }
