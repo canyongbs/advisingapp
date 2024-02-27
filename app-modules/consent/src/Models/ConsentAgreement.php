@@ -77,11 +77,11 @@ class ConsentAgreement extends BaseModel implements Auditable
 
     public function getWebPermissions(): Collection
     {
-        return collect(['view-any', '*.view', 'update']);
+        return collect(['view-any', '*.view', '*.update']);
     }
 
     public function getApiPermissions(): Collection
     {
-        return collect(['view-any', '*.view', 'update']);
+        return collect(['view-any', '*.view', '*.update']);
     }
 }
