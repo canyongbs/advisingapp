@@ -119,8 +119,8 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
     protected function processOperationFile(OneTimeOperationFile $operationFile): int
     {
         $this->components->task($operationFile->getOperationName(), function () use ($operationFile) {
-            $this->dispatchOperationJob($operationFile);
-            $this->storeOperation($operationFile);
+            $operation = $this->storeOperation($operationFile);
+            $this->dispatchOperationJob($operationFile, $operation);
         });
 
         $this->newLine();
@@ -142,8 +142,8 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
         $this->components->task($operationModel->name, function () use ($operationModel) {
             $operationFile = OneTimeOperationManager::getOperationFileByModel($operationModel);
 
-            $this->dispatchOperationJob($operationFile);
-            $this->storeOperation($operationFile);
+            $operation = $this->storeOperation($operationFile);
+            $this->dispatchOperationJob($operationFile, $operation);
         });
 
         $this->newLine();
@@ -172,8 +172,8 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
 
         foreach ($unprocessedOperationFiles as $operationFile) {
             $this->components->task($operationFile->getOperationName(), function () use ($operationFile) {
-                $this->dispatchOperationJob($operationFile);
-                $this->storeOperation($operationFile);
+                $operation = $this->storeOperation($operationFile);
+                $this->dispatchOperationJob($operationFile, $operation);
             });
         }
 
@@ -188,29 +188,29 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
         return in_array($operationFile->getClassObject()->getTag(), $this->tags);
     }
 
-    protected function storeOperation(OneTimeOperationFile $operationFile): void
+    protected function storeOperation(OneTimeOperationFile $operationFile): ?Operation
     {
         if ($this->testModeEnabled()) {
-            return;
+            return null;
         }
 
-        Operation::storeOperation($operationFile->getOperationName(), $this->isAsyncMode($operationFile));
+        return Operation::storeOperation($operationFile->getOperationName(), $this->isAsyncMode($operationFile));
     }
 
-    protected function dispatchOperationJob(OneTimeOperationFile $operationFile): void
+    protected function dispatchOperationJob(OneTimeOperationFile $operationFile, ?Operation $operation): void
     {
         $job = match ($this->argument('type')) {
-            'landlord' => new LandlordOneTimeOperationProcessJob($operationFile->getOperationName()),
-            'tenant' => new TenantOneTimeOperationProcessJob($operationFile->getOperationName()),
+            'landlord' => new LandlordOneTimeOperationProcessJob($operationFile->getOperationName(), $operation),
+            'tenant' => new TenantOneTimeOperationProcessJob($operationFile->getOperationName(), $operation),
         };
 
         if ($this->isAsyncMode($operationFile)) {
-            $job->dispatch($operationFile->getOperationName())->onQueue($this->getQueue($operationFile));
+            $job->dispatch($operationFile->getOperationName(), $operation)->onQueue($this->getQueue($operationFile));
 
             return;
         }
 
-        $job->dispatchSync($operationFile->getOperationName());
+        $job->dispatchSync($operationFile->getOperationName(), $operation);
     }
 
     protected function testModeEnabled(): bool

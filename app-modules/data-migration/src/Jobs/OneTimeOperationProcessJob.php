@@ -7,6 +7,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use AdvisingApp\DataMigration\Models\Operation;
 use AdvisingApp\DataMigration\OneTimeOperationManager;
 
 abstract class OneTimeOperationProcessJob implements ShouldQueue
@@ -16,15 +17,17 @@ abstract class OneTimeOperationProcessJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public string $operationName;
-
-    public function __construct(string $operationName)
-    {
-        $this->operationName = $operationName;
-    }
+    public function __construct(
+        public string $operationName,
+        public ?Operation $operation = null
+    ) {}
 
     public function handle(): void
     {
         OneTimeOperationManager::getClassObjectByName($this->operationName)->process();
+
+        ray($this->operation);
+
+        $this->operation?->update(['completed_at' => now()]);
     }
 }
