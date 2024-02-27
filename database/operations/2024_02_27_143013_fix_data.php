@@ -1,11 +1,9 @@
 <?php
 
-namespace AdvisingApp\DataMigration;
-
+use AdvisingApp\DataMigration\OneTimeOperation;
 use AdvisingApp\DataMigration\Enums\OperationType;
 
-abstract class OneTimeOperation
-{
+return new class () extends OneTimeOperation {
     /**
      * The type to determine where it will be run. OperationType::Tenant or OperationType::Landlord.
      */
@@ -29,25 +27,5 @@ abstract class OneTimeOperation
     /**
      * Process the operation.
      */
-    abstract public function process(): void;
-
-    public function isAsync(): bool
-    {
-        return $this->async;
-    }
-
-    public function getQueue(): string
-    {
-        return $this->queue;
-    }
-
-    public function getTag(): ?string
-    {
-        return $this->tag;
-    }
-
-    public function getType(): OperationType
-    {
-        return $this->type;
-    }
-}
+    public function process(): void {}
+};

@@ -2,6 +2,8 @@
 
 namespace AdvisingApp\DataMigration;
 
+use Throwable;
+use SplFileInfo;
 use ErrorException;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
@@ -23,7 +25,7 @@ class OneTimeOperationCreator
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public static function createOperationFile(string $name, bool $essential = false): OneTimeOperationFile
     {
@@ -35,9 +37,9 @@ class OneTimeOperationCreator
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
-    public function createFile(): \SplFileInfo
+    public function createFile(): SplFileInfo
     {
         $path = $this->getPath();
         $stub = $this->getStubFilepath();
@@ -47,7 +49,7 @@ class OneTimeOperationCreator
 
         File::put($path, $stub);
 
-        return new \SplFileInfo($path);
+        return new SplFileInfo($path);
     }
 
     public function getOperationName(): string

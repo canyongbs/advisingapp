@@ -162,6 +162,8 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
             $unprocessedOperationFiles = $this->filterOperationsByTags($unprocessedOperationFiles);
         }
 
+        $unprocessedOperationFiles = $this->filterOperationsByType($unprocessedOperationFiles);
+
         if ($unprocessedOperationFiles->isEmpty()) {
             $this->components->info('No operations to process.');
 
@@ -186,6 +188,11 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
     protected function tagMatched(OneTimeOperationFile $operationFile): bool
     {
         return in_array($operationFile->getClassObject()->getTag(), $this->tags);
+    }
+
+    protected function typeMatched(OneTimeOperationFile $operationFile): bool
+    {
+        return $operationFile->getClassObject()->getType()->value === $this->argument('type');
     }
 
     protected function storeOperation(OneTimeOperationFile $operationFile): ?Operation
@@ -251,6 +258,13 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
     {
         return $unprocessedOperationFiles->filter(function (OneTimeOperationFile $operationFile) {
             return $this->tagMatched($operationFile);
+        })->collect();
+    }
+
+    protected function filterOperationsByType(Collection $unprocessedOperationFiles): Collection
+    {
+        return $unprocessedOperationFiles->filter(function (OneTimeOperationFile $operationFile) {
+            return $this->typeMatched($operationFile);
         })->collect();
     }
 
