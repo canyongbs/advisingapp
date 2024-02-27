@@ -39,7 +39,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use AdvisingApp\DataMigration\OneTimeOperationManager;
 
-class CreateOneTimeOperationsTable extends Migration
+class CreateOneTimeOperationsLandlordTable extends Migration
 {
     protected string $name;
 
