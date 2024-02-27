@@ -43,7 +43,7 @@ class AzureOpenAI extends BaseAIChatClient
 {
     protected function initializeClient(): void
     {
-        $this->baseEndpoint = config('services.azure_open_ai.endpoint');
+        $this->baseEndpoint = rtrim(config('services.azure_open_ai.endpoint'), '/');
         $this->apiKey = config('services.azure_open_ai.api_key');
 
         if (get_class($this) === AIReportChatClient::class) {
