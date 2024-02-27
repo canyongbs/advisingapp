@@ -133,7 +133,7 @@ class ManageStudentApplicationSubmissions extends ManageRelatedRecords
         $ownerRecord = $urlParameters['record'];
 
         /** @var Student $ownerRecord */
-        $applicationSubmissionsCount = Cache::tags('{application-submission-count}')
+        $applicationSubmissionsCount = Cache::tags('application-submission-count')
             ->remember(
                 "application-submission-count-{$ownerRecord->getKey()}",
                 now()->addMinutes(5),
