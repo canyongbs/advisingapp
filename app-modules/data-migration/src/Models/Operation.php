@@ -40,7 +40,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use AdvisingApp\DataMigration\OneTimeOperationManager;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use AdvisingApp\DataMigration\Database\Factories\OperationFactory;
 
 /**
  * @mixin IdeHelperOperation
@@ -87,10 +86,5 @@ class Operation extends Model
     public function getFilePathAttribute(): string
     {
         return OneTimeOperationManager::pathToFileByName($this->name);
-    }
-
-    protected static function newFactory(): OperationFactory
-    {
-        return new OperationFactory();
     }
 }
