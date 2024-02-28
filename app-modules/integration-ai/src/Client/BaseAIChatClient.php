@@ -157,13 +157,18 @@ abstract class BaseAIChatClient implements AIChatClient
                     ...($message->functionCall ? ['function_call' => $message->functionCall] : []),
                 ];
             }),
-            ['role' => 'system', 'content' => 'When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.'],
         ];
     }
 
     protected function getContext(): string
     {
-        return "{$this->systemContext} {$this->dynamicContext}";
+        $context = $this->systemContext;
+
+        if ($this->dynamicContext) {
+            $context .= rtrim($this->dynamicContext, '.') . '.';
+        }
+
+        return "{$context} When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.";
     }
 
     protected function dispatchPromptInitiatedEvent(Chat $chat): void
@@ -180,7 +185,7 @@ abstract class BaseAIChatClient implements AIChatClient
             'timestamp' => now(),
             'message' => $chat->messages->last()->message,
             'metadata' => [
-                'systemContext' => $this->systemContext,
+                'systemContext' => $this->getContext(),
             ],
         ]));
     }
