@@ -52,7 +52,7 @@ class CreateOneTimeOperationsTable extends Migration
     {
         Schema::create($this->name, function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->string('dispatched');
             $table->timestamp('processed_at')->nullable();
             $table->timestamp('completed_at')->nullable();
