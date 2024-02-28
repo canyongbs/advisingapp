@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -65,6 +67,7 @@ class KnowledgeManagementPortalAuthenticateController extends Controller
             }],
         ]);
 
+        /** @var Student|Prospect $educatable */
         $educatable = $authentication->educatable;
 
         match ($educatable->getMorphClass()) {
@@ -81,7 +84,7 @@ class KnowledgeManagementPortalAuthenticateController extends Controller
 
         return response()->json([
             'success' => true,
-            'token' => $token->plainTextToken,
+            'token' => str($token->plainTextToken)->after('|')->toString(),
         ]);
     }
 }

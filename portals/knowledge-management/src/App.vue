@@ -42,6 +42,7 @@ import determineIfUserIsAuthenticated from '@/Services/DetermineIfUserIsAuthenti
 import getAppContext from '@/Services/GetAppContext.js';
 import axios from '@/Globals/Axios.js';
 import { useTokenStore } from '@/Stores/token.js';
+import {useRoute} from "vue-router";
 
 const errorLoading = ref(false);
 const loading = ref(true);
@@ -102,6 +103,7 @@ const hostUrl = `${protocol}//${scriptHostname}`;
 const portalPrimaryColor = ref('');
 const portalRounding = ref('');
 const categories = ref({});
+const route = useRoute();
 
 const authentication = ref({
     code: null,
@@ -243,6 +245,10 @@ async function authenticate(formData, node) {
             node.setErrors([error]);
         });
 }
+
+watch(route, () => {
+    showMobileMenu.value = !showMobileMenu;
+});
 </script>
 
 <template>
@@ -317,17 +323,22 @@ async function authenticate(formData, node) {
                         v-if="showMobileMenu"
                         @sidebar-closed="showMobileMenu = !showMobileMenu"
                         :categories="categories"
-                        :api-url="apiUrl"
-                    ></MobileSidebar>
+                        :api-url="apiUrl">
+
+                    </MobileSidebar>
 
                     <DesktopSidebar
                         :categories="categories"
-                        :api-url="apiUrl"
-                    ></DesktopSidebar>
+                        :api-url="apiUrl">
+                    </DesktopSidebar>
 
                     <div class="lg:pl-72">
                         <div class="px-4 sm:px-6 lg:px-8">
-                            <RouterView :search-url="searchUrl" :api-url="apiUrl" :categories="categories"></RouterView>
+                            <RouterView @sidebar-opened="showMobileMenu = !showMobileMenu"
+                                        :search-url="searchUrl"
+                                        :api-url="apiUrl"
+                                        :categories="categories">
+                            </RouterView>
                         </div>
                     </div>
                 </div>
