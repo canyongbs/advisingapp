@@ -60,8 +60,6 @@ abstract class OneTimeOperationProcessJob implements ShouldQueue
     {
         OneTimeOperationManager::getClassObjectByName($this->operationName)->process();
 
-        ray($this->operation);
-
         $this->operation?->update(['completed_at' => now()]);
     }
 }
