@@ -1,0 +1,17 @@
+<?php
+
+use AdvisingApp\DataMigration\OneTimeOperation;
+use AdvisingApp\DataMigration\Enums\OperationType;
+
+return new class extends OneTimeOperation
+{
+    /**
+     * The type to determine where it will be run. OperationType::Tenant or OperationType::Landlord.
+     */
+    protected OperationType $type = OperationType::Tenant;
+
+    public function process(): void
+    {
+        //
+    }
+};

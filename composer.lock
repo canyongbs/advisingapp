@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e717f0895c9223b38431efeffdd8e0d8",
+    "content-hash": "2d42f6899e2815f3fa6cfe5006a29cd4",
     "packages": [
         {
             "name": "amphp/amp",
@@ -2847,6 +2847,41 @@
                     "AdvisingApp\\Webhook\\Tests\\": "tests/",
                     "AdvisingApp\\Webhook\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\Webhook\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/data-migration",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/data-migration",
+                "reference": "5725fc8ddf4bf25f19cd609939472744f8e49dc1"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\DataMigration\\Providers\\DataMigrationServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\DataMigration\\": "src/",
+                    "AdvisingApp\\DataMigration\\Tests\\": "tests/",
+                    "AdvisingApp\\DataMigration\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\DataMigration\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
