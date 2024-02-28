@@ -505,10 +505,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         $context = "My name is \"{$this->name}\"";
 
         if ($this->job_title) {
-            $context .= " and I am a \"{$this->job_title}\"";
+            $context .= " and my job title is \"{$this->job_title}\"";
         }
 
-        return "{$context}. When you respond please use this information about me to tailor your response.";
+        return "{$context}. When you respond please use this information about me to tailor your response. You should refer to me by my name and remember what my name and job title are, using it in your responses when appropriate.";
     }
 
     protected function serializeDate(DateTimeInterface $date): string
