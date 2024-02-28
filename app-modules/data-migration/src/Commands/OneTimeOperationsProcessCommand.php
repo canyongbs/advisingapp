@@ -72,7 +72,7 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
 
     public function handle(): int
     {
-        $this->displayTestmodeWarning();
+        $this->displayTestModeWarning();
 
         $this->forceAsync = (bool) $this->option('async');
         $this->forceSync = (bool) $this->option('sync');
@@ -259,10 +259,10 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
         return $this->option('test');
     }
 
-    protected function displayTestmodeWarning(): void
+    protected function displayTestModeWarning(): void
     {
         if ($this->testModeEnabled()) {
-            $this->components->warn('Testmode! Operation won\'t be tagged as `processed`');
+            $this->components->warn('Test mode! Operation won\'t be tagged as `processed`');
         }
     }
 
