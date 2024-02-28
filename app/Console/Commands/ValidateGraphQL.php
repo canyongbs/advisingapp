@@ -105,6 +105,9 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
             $this->line($this->style('Schema validation skipped.', 'warning'));
             $cache->clear();
         }
+
+        $this->newLine();
+
         $schema = $schemaBuilder->schema();
 
         $types = collect(Introspection::fromSchema($schema)['__schema']['types'])->where('kind', 'OBJECT');
@@ -113,6 +116,8 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
             '--filename' => $this->filename,
             '--nowrite' => true,
         ], $this->output);
+
+        $this->newLine();
 
         $contents = str(File::get($this->filename))
             ->explode("\n")
@@ -191,7 +196,7 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
 
         $type = $types->where('name', $model)->first();
 
-        if ($models->doesntContain($model)) {
+        if ($this->option('model') && $models->isNotEmpty() && $models->doesntContain($model)) {
             return;
         }
 
@@ -222,7 +227,10 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
 
                     if ($this->option('details') === 'list') {
                         $this->info("Field found: {$property}");
-                        $this->line("Description: {$description}");
+
+                        if ($this->option('descriptions')) {
+                            $this->line("Description: {$description}");
+                        }
                     }
                 } else {
                     $fail = true;
@@ -231,7 +239,10 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
 
                     if ($this->option('details') === 'list') {
                         $this->warn("Field not found: {$property}");
-                        $this->line('Description: ' . $this->style('Missing', 'error'));
+
+                        if ($this->option('descriptions')) {
+                            $this->line('Description: ' . $this->style('Missing', 'error'));
+                        }
                     }
                 }
             }

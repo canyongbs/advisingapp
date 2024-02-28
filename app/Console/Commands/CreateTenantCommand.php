@@ -50,7 +50,7 @@ use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
 
 class CreateTenantCommand extends Command
 {
-    protected $signature = 'tenants:create {name} {domain} {--m|run-queue} {--s|seed}';
+    protected $signature = 'tenants:create {name} {domain} {--m|run-queue} {--s|seed} {--a|admin}';
 
     protected $description = 'Temporary command to test the tenant creation process.';
 
@@ -140,7 +140,7 @@ class CreateTenantCommand extends Command
                 );
             }
 
-            if ($this->confirm('Would you like to seed sample super admin?')) {
+            if ($this->option('admin') || $this->confirm('Would you like to seed sample super admin?')) {
                 Artisan::call(
                     command: "tenants:artisan \"db:seed --database=tenant --class=SampleSuperAdminUserSeeder\" --tenant={$tenant->id}",
                     outputBuffer: $this->output,
