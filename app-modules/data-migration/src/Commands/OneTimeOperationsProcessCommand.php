@@ -37,12 +37,14 @@
 namespace AdvisingApp\DataMigration\Commands;
 
 use Throwable;
+use ValueError;
 use App\Models\Tenant;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\Multitenancy\TenantCollection;
 use Illuminate\Contracts\Console\Isolatable;
 use AdvisingApp\DataMigration\Models\Operation;
+use AdvisingApp\DataMigration\Enums\OperationType;
 use AdvisingApp\DataMigration\OneTimeOperationFile;
 use AdvisingApp\DataMigration\OneTimeOperationManager;
 use AdvisingApp\DataMigration\Jobs\TenantOneTimeOperationProcessJob;
@@ -70,6 +72,8 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
 
     protected array $tags = [];
 
+    protected OperationType $type;
+
     public function handle(): int
     {
         $this->displayTestModeWarning();
@@ -79,8 +83,10 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
         $this->queue = $this->option('queue');
         $this->tags = $this->option('tag');
 
-        if (! $this->typeArgumentIsValid()) {
-            $this->components->error('Abort! Type must be either landlord or tenant!');
+        try {
+            $this->type = OperationType::from($this->argument('type'));
+        } catch (ValueError $e) {
+            $this->components->error('Abort! Type must be one of the following options: ' . collect(OperationType::cases())->map(fn (OperationType $type) => $type->value)->join('|'));
 
             return self::FAILURE;
         }
@@ -97,9 +103,9 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
             return self::FAILURE;
         }
 
-        return match ($this->argument('type')) {
-            'landlord' => $this->process(),
-            'tenant' => $this->processForTenants(),
+        return match ($this->type) {
+            OperationType::Landlord => $this->process(),
+            OperationType::Tenant => $this->processForTenants(),
         };
     }
 
@@ -124,11 +130,6 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
         });
 
         return self::SUCCESS;
-    }
-
-    protected function typeArgumentIsValid(): bool
-    {
-        return in_array($this->argument('type'), ['landlord', 'tenant']);
     }
 
     protected function processSingleOperation(string $providedOperationName): int
@@ -226,7 +227,7 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
 
     protected function typeMatched(OneTimeOperationFile $operationFile): bool
     {
-        return $operationFile->getClassObject()->getType()->value === $this->argument('type');
+        return $operationFile->getClassObject()->getType() === $this->type;
     }
 
     protected function storeOperation(OneTimeOperationFile $operationFile): ?Operation
@@ -240,9 +241,9 @@ class OneTimeOperationsProcessCommand extends OneTimeOperationsCommand implement
 
     protected function dispatchOperationJob(OneTimeOperationFile $operationFile, ?Operation $operation): void
     {
-        $job = match ($this->argument('type')) {
-            'landlord' => new LandlordOneTimeOperationProcessJob($operationFile->getOperationName(), $operation),
-            'tenant' => new TenantOneTimeOperationProcessJob($operationFile->getOperationName(), $operation),
+        $job = match ($this->type) {
+            OperationType::Landlord => new LandlordOneTimeOperationProcessJob($operationFile->getOperationName(), $operation),
+            OperationType::Tenant => new TenantOneTimeOperationProcessJob($operationFile->getOperationName(), $operation),
         };
 
         if ($this->isAsyncMode($operationFile)) {
