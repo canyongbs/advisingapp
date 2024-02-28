@@ -38,6 +38,7 @@ namespace AdvisingApp\DataMigration\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
+use AdvisingApp\DataMigration\Models\Operation;
 use AdvisingApp\DataMigration\DataMigrationPlugin;
 use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -55,7 +56,11 @@ class DataMigrationServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        Relation::morphMap([]);
+        Relation::morphMap(
+            [
+                'operation' => Operation::class,
+            ]
+        );
 
         RoleBasedAccessControlRegistry::register(DataMigrationRbacRegistry::class);
 
