@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Portal\Models\PortalAuthentication;
 use AdvisingApp\Portal\Exceptions\EducatableIsNotAuthenticatable;
 
