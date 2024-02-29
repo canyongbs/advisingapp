@@ -1,4 +1,6 @@
-<!--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,32 +32,31 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
--->
-<script setup>
-import { ChevronRightIcon } from '@heroicons/vue/24/outline';
-import { defineProps } from 'vue';
+*/
 
-defineProps({
-    currentCrumb: {
-        type: String,
-        required: true,
-    },
-    breadcrumbs: {
-        type: Object,
-        default: {},
-    },
-});
-</script>
+namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
-<template>
-    <div class="flex flex-row text-gray-800 space-x-2 mb-4 items-center">
-        <div v-for="crumb in breadcrumbs" :key="crumb.route" class="flex flex-row items-center space-x-2">
-            <router-link :to="{ name: crumb.route }">
-                <h3 class="text-md">{{ crumb.name }}</h3>
-            </router-link>
-            <ChevronRightIcon class="h-4 w-4" />
-        </div>
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-        <h3 class="text-md font-semibold">{{ currentCrumb }}</h3>
-    </div>
-</template>
+class KnowledgeManagementPortalLogoutController extends Controller
+{
+    public function __invoke(Request $request)
+    {
+        /** @var Student|Prospect $user */
+        $user = $request->user();
+
+        $user->tokens()->where('name', 'knowledge-management-portal-access-token')->delete();
+
+        if ($request->hasSession()) {
+            $request->session()->invalidate();
+        }
+
+        return response()->json([
+            'success' => true,
+            'redirect_url' => route('portal.knowledge-management.show'),
+        ]);
+    }
+}

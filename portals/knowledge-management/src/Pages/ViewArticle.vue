@@ -91,20 +91,20 @@ function getData() {
         <Loading />
     </div>
     <div v-else>
-        <Breadcrumbs
-            :currentCrumb="article.name"
-            :breadcrumbs="[
+        <main class="py-10">
+            <Breadcrumbs
+                :currentCrumb="article.name"
+                :breadcrumbs="[
                 { name: 'Help Center', route: 'home' },
                 { name: category.name, route: 'view-category', params: { categoryId: category.id } },
             ]"
-        ></Breadcrumbs>
+            ></Breadcrumbs>
 
-        <div class="w-full mt-4 flex justify-center">
             <div class="prose">
                 <h1 class="text-3xl font-semibold mt-4">{{ article.name }}</h1>
                 <span>Last Updated: {{ article.lastUpdated }}</span>
                 <div v-html="DOMPurify.sanitize(article.content)"></div>
             </div>
-        </div>
+        </main>
     </div>
 </template>

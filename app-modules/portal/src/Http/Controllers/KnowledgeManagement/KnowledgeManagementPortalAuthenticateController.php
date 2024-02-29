@@ -42,6 +42,8 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Portal\Models\PortalAuthentication;
 use AdvisingApp\Portal\Exceptions\EducatableIsNotAuthenticatable;
 
@@ -65,6 +67,7 @@ class KnowledgeManagementPortalAuthenticateController extends Controller
             }],
         ]);
 
+        /** @var Student|Prospect $educatable */
         $educatable = $authentication->educatable;
 
         match ($educatable->getMorphClass()) {
@@ -81,7 +84,7 @@ class KnowledgeManagementPortalAuthenticateController extends Controller
 
         return response()->json([
             'success' => true,
-            'token' => $token->plainTextToken,
+            'token' => str($token->plainTextToken)->after('|')->toString(),
         ]);
     }
 }

@@ -56,6 +56,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const searchParameter = urlParams.get('q');
 const searchQuery = ref(null);
 const loadingResults = ref(false);
+const searchResults = ref(null);
 
 const debounceSearch = debounce((value) => {
     if (!value) {
@@ -84,8 +85,6 @@ watch(searchQuery, (value) => {
     debounceSearch(value);
 });
 
-const searchResults = ref(null);
-
 function debounce(func, delay) {
     let timerId;
     return function (...args) {
@@ -103,7 +102,7 @@ function debounce(func, delay) {
     <div
         class="sticky top-0 z-40 flex flex-col items-center border-b border-gray-100 bg-white px-4 py-4 shadow-sm sm:px-6 lg:px-8"
     >
-        <button class="w-full p-2.5 lg:hidden" type="button" v-on:click="showMobileMenu = !showMobileMenu">
+        <button class="w-full p-2.5 lg:hidden" type="button" @click="$emit('sidebarOpened')">
             <span class="sr-only">Open sidebar</span>
             <Bars3Icon class="h-6 w-6 text-gray-900"></Bars3Icon>
         </button>

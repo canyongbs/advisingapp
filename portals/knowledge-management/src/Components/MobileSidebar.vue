@@ -40,6 +40,10 @@ defineProps({
         type: Object,
         default: {},
     },
+    apiUrl: {
+        type: String,
+        required: true,
+    },
 });
 </script>
 
@@ -65,7 +69,10 @@ defineProps({
                 </div>
 
                 <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
-                    <SidebarContent :categories="categories"></SidebarContent>
+                    <SidebarContent
+                        :categories="categories"
+                        :api-url="apiUrl"
+                    ></SidebarContent>
                 </div>
             </div>
         </div>
