@@ -40,4 +40,9 @@ return [
 
     // Table name - name of the table that stores your operation entries
     'table' => 'operations',
+
+    'default_queues' => [
+        'tenant' => env('TENANT_OPERATIONS_QUEUE', env('SQS_QUEUE', 'default')),
+        'landlord' => env('LANDLORD_OPERATIONS_QUEUE', env('LANDLORD_SQS_QUEUE', 'landlord')),
+    ],
 ];

@@ -53,7 +53,7 @@ abstract class OneTimeOperation
     /**
      * The queue that the job will be dispatched to.
      */
-    protected string $queue = 'default';
+    protected ?string $queue = null;
 
     /**
      * A tag name, that this operation can be filtered by.
@@ -72,7 +72,10 @@ abstract class OneTimeOperation
 
     public function getQueue(): string
     {
-        return $this->queue;
+        return $this->queue ?? match ($this->type) {
+            OperationType::Tenant => config('one-time-operations.default_queues.tenant'),
+            OperationType::Landlord => config('one-time-operations.default_queues.landlord'),
+        };
     }
 
     public function getTag(): ?string
