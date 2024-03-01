@@ -39,7 +39,9 @@ namespace AdvisingApp\Assistant\Filament\Pages;
 use Exception;
 use App\Models\User;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Pages\Page;
+use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use Filament\Actions\Action;
 use Livewire\Attributes\Rule;
@@ -50,11 +52,16 @@ use Livewire\Attributes\Computed;
 use Filament\Actions\StaticAction;
 use Illuminate\Support\Collection;
 use Filament\Forms\Components\Radio;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Validation\Rules\Unique;
+use AdvisingApp\Assistant\Models\Prompt;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
+use AdvisingApp\Assistant\Models\PromptType;
 use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\Assistant\Models\AssistantChat;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -449,6 +456,58 @@ class PersonalAssistant extends Page
             ->extraAttributes([
                 'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
             ]);
+    }
+
+    public function insertFromPromptLibraryAction(): Action
+    {
+        return Action::make('insertFromPromptLibrary')
+            ->color('gray')
+            ->form([
+                Select::make('typeId')
+                    ->label('Filter by type')
+                    ->hint('Optional')
+                    ->options(fn (): array => PromptType::query()
+                        ->orderBy('title')
+                        ->pluck('title', 'id')
+                        ->all())
+                    ->afterStateUpdated(fn (Get $get, Set $set, $state) => (Prompt::find($get('promptId'))?->type_id !== $state) ?
+                        $set('promptId', null) :
+                        null)
+                    ->live(),
+                Select::make('promptId')
+                    ->label('Select a prompt')
+                    ->searchable()
+                    ->options(fn (Get $get): array => Prompt::query()
+                        ->limit(50)
+                        ->when(
+                            filled($get('typeId')),
+                            fn (Builder $query) => $query->where('type_id', $get('typeId'))
+                        )
+                        ->pluck('title', 'id')
+                        ->all())
+                    ->getSearchResultsUsing(function (Get $get, string $search): array {
+                        $search = Str::lower($search);
+
+                        return Prompt::query()
+                            ->limit(50)
+                            ->where(fn (Builder $query) => $query
+                                ->where(new Expression('lower(title)'), 'like', $search)
+                                ->orWhere(new Expression('lower(description)'), 'like', $search)
+                                ->orWhere(new Expression('lower(prompt)'), 'like', $search))
+                            ->when(
+                                filled($get('typeId')),
+                                fn (Builder $query) => $query->where('type_id', $get('typeId'))
+                            )
+                            ->pluck('title', 'id')
+                            ->all();
+                    })
+                    ->getOptionLabelUsing(fn ($value): ?string => Prompt::find($value)?->title)
+                    ->required(),
+            ])
+            ->modalWidth(MaxWidth::Medium)
+            ->action(function (array $data) {
+                $this->message = Prompt::find($data['promptId'])?->prompt;
+            });
     }
 
     public function editChatAction(): Action

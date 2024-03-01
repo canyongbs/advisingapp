@@ -403,6 +403,8 @@ use Illuminate\Support\Facades\Vite;
                                             >
                                                 Post
                                             </x-filament::button>
+
+                                            {{ $this->insertFromPromptLibraryAction }}
                                         @endif
 
                                         <div
