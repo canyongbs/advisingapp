@@ -14,17 +14,21 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
-ARG NODE_VERSION=21.6.0
+ENV NVM_VERSION v0.39.7
+ENV NODE_VERSION 21.6.0
+ENV NVM_DIR /usr/local/nvm
+RUN mkdir "$NVM_DIR"
 
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash \
-    && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" \
-    && nvm install "$NODE_VERSION" \
-    && nvm alias default "$NODE_VERSION" \
-    && nvm use default \
-    && nvm install-latest-npm
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+RUN echo "source $NVM_DIR/nvm.sh && \
+    nvm install $NODE_VERSION && \
+    nvm alias default $NODE_VERSION && \
+    nvm use default && \
+    nvm install-latest-npm" | bash
 
 COPY ./docker/s6-overlay/scripts/ /etc/s6-overlay/scripts/
 COPY docker/s6-overlay/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
@@ -50,3 +54,9 @@ FROM base AS development
 FROM base AS deploy
 
 COPY --chown=$PUID:$PGID . /var/www/html
+
+RUN npm ci \
+    && npm run build \
+    && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader \
+    && rm -rf /var/www/html/node_modules
+
