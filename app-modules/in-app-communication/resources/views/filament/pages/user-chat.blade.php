@@ -227,11 +227,12 @@
                                                         />
 
                                                         <div
+                                                            class="absolute bottom-0 end-0 h-3 w-3 rounded-full"
                                                             x-bind:class="{
-                                                                'bg-success-500': activeUsers.includes(message.authorId),
+                                                                'bg-success-500': activeUsers.includes(message
+                                                                    .authorId),
                                                                 'bg-gray-500': !activeUsers.includes(message.authorId),
                                                             }"
-                                                            class="absolute h-3 w-3 rounded-full bottom-0 end-0"
                                                         ></div>
                                                     </div>
                                                 </div>
