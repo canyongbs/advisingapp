@@ -73,6 +73,10 @@ class ListPrompts extends ListRecords
                 TextColumn::make('type.title')
                     ->sortable()
                     ->url(fn (Prompt $record) => PromptTypeResource::getUrl('view', ['record' => $record->type])),
+                TextColumn::make('uses_count')
+                    ->label('Uses')
+                    ->counts('uses')
+                    ->sortable(),
             ])
             ->actions([
                 ViewAction::make(),

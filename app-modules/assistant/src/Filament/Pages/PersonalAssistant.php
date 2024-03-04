@@ -41,7 +41,6 @@ use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Pages\Page;
-use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use Filament\Actions\Action;
 use Livewire\Attributes\Rule;
@@ -460,6 +459,16 @@ class PersonalAssistant extends Page
 
     public function insertFromPromptLibraryAction(): Action
     {
+        $getPromptOptions = fn (Builder $query): array => $query
+            ->select(['title', 'id'])
+            ->withCount('uses')
+            ->orderByDesc('uses_count')
+            ->get()
+            ->mapWithKeys(fn (Prompt $prompt) => [
+                $prompt->id => $prompt->title . ' (' . $prompt->uses_count . ' ' . str('use')->plural($prompt->uses_count) . ')',
+            ])
+            ->all();
+
         return Action::make('insertFromPromptLibrary')
             ->color('gray')
             ->form([
@@ -477,18 +486,16 @@ class PersonalAssistant extends Page
                 Select::make('promptId')
                     ->label('Select a prompt')
                     ->searchable()
-                    ->options(fn (Get $get): array => Prompt::query()
+                    ->options(fn (Get $get): array => $getPromptOptions(Prompt::query()
                         ->limit(50)
                         ->when(
                             filled($get('typeId')),
                             fn (Builder $query) => $query->where('type_id', $get('typeId'))
-                        )
-                        ->pluck('title', 'id')
-                        ->all())
-                    ->getSearchResultsUsing(function (Get $get, string $search): array {
-                        $search = Str::lower($search);
+                        )))
+                    ->getSearchResultsUsing(function (Get $get, string $search) use ($getPromptOptions): array {
+                        $search = (string) str($search)->wrap('%');
 
-                        return Prompt::query()
+                        return $getPromptOptions(Prompt::query()
                             ->limit(50)
                             ->where(fn (Builder $query) => $query
                                 ->where(new Expression('lower(title)'), 'like', $search)
@@ -497,16 +504,34 @@ class PersonalAssistant extends Page
                             ->when(
                                 filled($get('typeId')),
                                 fn (Builder $query) => $query->where('type_id', $get('typeId'))
-                            )
-                            ->pluck('title', 'id')
-                            ->all();
+                            ));
                     })
-                    ->getOptionLabelUsing(fn ($value): ?string => Prompt::find($value)?->title)
+                    ->getOptionLabelUsing(function ($value): ?string {
+                        $prompt = Prompt::find($value);
+
+                        if (! $prompt) {
+                            return null;
+                        }
+
+                        $promptUsesCount = $prompt->uses()->count();
+
+                        return $prompt->title . ' (' . $promptUsesCount . ' ' . str('use')->plural($promptUsesCount) . ')';
+                    })
                     ->required(),
             ])
             ->modalWidth(MaxWidth::Medium)
             ->action(function (array $data) {
-                $this->message = Prompt::find($data['promptId'])?->prompt;
+                $prompt = Prompt::find($data['promptId']);
+
+                if (! $prompt) {
+                    return;
+                }
+
+                $this->message = $prompt->prompt;
+
+                $prompt->uses()->create([
+                    'user_id' => auth()->id(),
+                ]);
             });
     }
 

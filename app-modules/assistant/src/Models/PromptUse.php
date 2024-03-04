@@ -34,45 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Resources\PromptResource\Pages;
+namespace AdvisingApp\Assistant\Models;
 
-use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
-use AdvisingApp\Assistant\Models\Prompt;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\Assistant\Filament\Resources\PromptResource;
-use AdvisingApp\Assistant\Filament\Resources\PromptTypeResource;
+use App\Models\User;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ViewPrompt extends ViewRecord
+class PromptUse extends BaseModel
 {
-    protected static string $resource = PromptResource::class;
+    protected $fillable = [
+        'user_id',
+    ];
 
-    public function infolist(Infolist $infolist): Infolist
+    public function prompt(): BelongsTo
     {
-        return $infolist
-            ->schema([
-                Section::make()
-                    ->columns()
-                    ->schema([
-                        TextEntry::make('title'),
-                        TextEntry::make('type.title')
-                            ->url(fn (Prompt $record) => PromptTypeResource::getUrl('view', ['record' => $record->type])),
-                        TextEntry::make('uses')
-                            ->state(fn (Prompt $record): int => $record->uses()->count()),
-                        TextEntry::make('description')
-                            ->columnSpanFull(),
-                        TextEntry::make('prompt')
-                            ->columnSpanFull(),
-                    ]),
-            ]);
+        return $this->belongsTo(Prompt::class);
     }
 
-    protected function getHeaderActions(): array
+    public function user(): BelongsTo
     {
-        return [
-            EditAction::make(),
-        ];
+        return $this->belongsTo(User::class);
     }
 }
