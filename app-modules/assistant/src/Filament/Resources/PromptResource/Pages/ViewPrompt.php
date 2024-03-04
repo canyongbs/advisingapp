@@ -59,6 +59,8 @@ class ViewPrompt extends ViewRecord
                         TextEntry::make('title'),
                         TextEntry::make('type.title')
                             ->url(fn (Prompt $record) => PromptTypeResource::getUrl('view', ['record' => $record->type])),
+                        TextEntry::make('uses')
+                            ->state(fn (Prompt $record): int => $record->uses()->count()),
                         TextEntry::make('description')
                             ->columnSpanFull(),
                         TextEntry::make('prompt')

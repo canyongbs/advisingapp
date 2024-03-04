@@ -37,6 +37,7 @@
 namespace AdvisingApp\Assistant\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -54,5 +55,10 @@ class Prompt extends BaseModel
     public function type(): BelongsTo
     {
         return $this->belongsTo(PromptType::class);
+    }
+
+    public function uses(): HasMany
+    {
+        return $this->hasMany(PromptUse::class);
     }
 }
