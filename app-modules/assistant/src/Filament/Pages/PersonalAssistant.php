@@ -468,7 +468,7 @@ class PersonalAssistant extends Page
             ->get()
             ->mapWithKeys(fn (Prompt $prompt) => [
                 // The `prompt-upvotes-count` class is used to hide the upvote count when the prompt is selected.
-                $prompt->id => "<span class=\"prompt-upvotes-count\">[{$prompt->upvotes_count}]</span> " . strip_tags($prompt->title) . " ({$prompt->uses_count} " . str('use')->plural($prompt->uses_count) . ')',
+                $prompt->id => "<span class=\"prompt-upvotes-count\">[{$prompt->upvotes_count}]</span> " . e($prompt->title) . " ({$prompt->uses_count} " . str('use')->plural($prompt->uses_count) . ')',
             ])
             ->all();
 
