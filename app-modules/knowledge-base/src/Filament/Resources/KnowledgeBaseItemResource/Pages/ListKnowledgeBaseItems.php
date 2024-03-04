@@ -84,6 +84,10 @@ class ListKnowledgeBaseItems extends ListRecords
                     ->label('Category')
                     ->translateLabel()
                     ->sortable(),
+                TextColumn::make('views_count')
+                    ->label('Views')
+                    ->counts('views')
+                    ->sortable(),
                 TextColumn::make('upvotes_count')
                     ->label('Upvotes')
                     ->counts([
