@@ -50,7 +50,7 @@ document.addEventListener('alpine:init', () => {
 
     let conversationsClient = null;
 
-    Alpine.data('userToUserChat', ({ selectedConversation, users }) => ({
+    Alpine.data('userToUserChat', ({ selectedConversation, users, activeUsers }) => ({
         loading: true,
         loadingMessage: 'Loading chat…',
         error: false,
@@ -61,6 +61,7 @@ document.addEventListener('alpine:init', () => {
         messages: [],
         message: '',
         usersTyping: [],
+        activeUsers,
         submit: function () {
             if (this.conversation === null) return;
 
@@ -187,6 +188,7 @@ document.addEventListener('alpine:init', () => {
                     this.messages.push({
                         avatar: await this.getAvatarUrl(message.author),
                         author: await this.getAuthorName(message.author),
+                        authorId: message.author,
                         date: message.dateCreated,
                         message: message,
                     });
@@ -205,6 +207,7 @@ document.addEventListener('alpine:init', () => {
                         this.messages[index] = {
                             avatar: await this.getAvatarUrl(data.message.author),
                             author: await this.getAuthorName(data.message.author),
+                            authorId: data.message.author,
                             data: data.message.dateCreated,
                             message: data.message,
                         };
@@ -264,6 +267,7 @@ document.addEventListener('alpine:init', () => {
                         this.messages.push({
                             avatar: await this.getAvatarUrl(message.author),
                             author: await this.getAuthorName(message.author),
+                            authorId: message.author,
                             date: message.dateCreated,
                             message: message,
                         });
@@ -291,6 +295,7 @@ document.addEventListener('alpine:init', () => {
                             this.messages.unshift({
                                 avatar: await this.getAvatarUrl(message.author),
                                 author: await this.getAuthorName(message.author),
+                                authorId: message.author,
                                 date: message.dateCreated,
                                 message: message,
                             });
