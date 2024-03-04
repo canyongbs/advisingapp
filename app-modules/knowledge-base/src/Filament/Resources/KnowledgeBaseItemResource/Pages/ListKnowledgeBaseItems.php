@@ -44,9 +44,11 @@ use Illuminate\Database\Eloquent\Model;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
 
 class ListKnowledgeBaseItems extends ListRecords
@@ -82,6 +84,17 @@ class ListKnowledgeBaseItems extends ListRecords
                     ->label('Category')
                     ->translateLabel()
                     ->sortable(),
+                TextColumn::make('upvotes_count')
+                    ->label('Upvotes')
+                    ->counts([
+                        'upvotes',
+                        'upvotes as my_upvotes_count' => fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
+                    ])
+                    ->sortable()
+                    ->action(fn (KnowledgeBaseItem $record) => $record->toggleUpvote())
+                    ->color(fn (KnowledgeBaseItem $record): string => $record->my_upvotes_count ? 'success' : 'gray')
+                    ->tooltip(fn (KnowledgeBaseItem $record): string => $record->my_upvotes_count ? 'Click to remove upvote' : 'Click to upvote')
+                    ->formatStateUsing(fn (KnowledgeBaseItem $record, int $state): string => ($record->my_upvotes_count ? 'Upvoted ' : 'Upvote ') . "({$state})"),
             ])
             ->filters([
                 SelectFilter::make('quality')

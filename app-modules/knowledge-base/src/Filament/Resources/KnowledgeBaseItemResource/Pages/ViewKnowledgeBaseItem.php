@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages;
 
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\Actions\DeleteAction;
@@ -96,7 +97,14 @@ class ViewKnowledgeBaseItem extends ViewRecord
 
     protected function getHeaderActions(): array
     {
+        $knowledgeBaseItem = $this->getRecord();
+
         return [
+            Action::make('upvote')
+                ->label(fn (): string => ($knowledgeBaseItem->isUpvoted() ? 'Upvoted ' : 'Upvote ') . "({$knowledgeBaseItem->upvotes()->count()})")
+                ->color(fn (): string => $knowledgeBaseItem->isUpvoted() ? 'success' : 'gray')
+                ->icon(fn (): ?string => $knowledgeBaseItem->isUpvoted() ? 'heroicon-m-chevron-up' : null)
+                ->action(fn () => $knowledgeBaseItem->toggleUpvote()),
             EditAction::make(),
             DeleteAction::make(),
         ];
