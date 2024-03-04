@@ -76,6 +76,7 @@ use AdvisingApp\IntegrationAI\Exceptions\ContentFilterException;
 use AdvisingApp\IntegrationAI\DataTransferObjects\DynamicContext;
 use AdvisingApp\IntegrationAI\Exceptions\TokensExceededException;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Filament\Forms\Components\Actions\Action as FormComponentAction;
 use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\Chat;
 use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
@@ -461,11 +462,13 @@ class PersonalAssistant extends Page
     {
         $getPromptOptions = fn (Builder $query): array => $query
             ->select(['title', 'id'])
+            ->withCount('upvotes')
             ->withCount('uses')
-            ->orderByDesc('uses_count')
+            ->orderByDesc('upvotes_count')
             ->get()
             ->mapWithKeys(fn (Prompt $prompt) => [
-                $prompt->id => $prompt->title . ' (' . $prompt->uses_count . ' ' . str('use')->plural($prompt->uses_count) . ')',
+                // The `prompt-upvotes-count` class is used to hide the upvote count when the prompt is selected.
+                $prompt->id => "<span class=\"prompt-upvotes-count\">[{$prompt->upvotes_count}]</span> " . strip_tags($prompt->title) . " ({$prompt->uses_count} " . str('use')->plural($prompt->uses_count) . ')',
             ])
             ->all();
 
@@ -486,6 +489,7 @@ class PersonalAssistant extends Page
                 Select::make('promptId')
                     ->label('Select a prompt')
                     ->searchable()
+                    ->allowHtml()
                     ->options(fn (Get $get): array => $getPromptOptions(Prompt::query()
                         ->limit(50)
                         ->when(
@@ -515,11 +519,30 @@ class PersonalAssistant extends Page
 
                         $promptUsesCount = $prompt->uses()->count();
 
-                        return $prompt->title . ' (' . $promptUsesCount . ' ' . str('use')->plural($promptUsesCount) . ')';
+                        return '[' . $prompt->upvotes()->count() . '] ' . $prompt->title . ' (' . $promptUsesCount . ' ' . str('use')->plural($promptUsesCount) . ')';
+                    })
+                    ->live()
+                    ->suffixAction(function ($state): ?FormComponentAction {
+                        if (blank($state)) {
+                            return null;
+                        }
+
+                        $prompt = Prompt::find($state);
+
+                        if (! $prompt) {
+                            return null;
+                        }
+
+                        return FormComponentAction::make('upvote')
+                            ->label(fn (): string => ($prompt->isUpvoted() ? 'Upvoted ' : 'Upvote ') . "({$prompt->upvotes()->count()})")
+                            ->color(fn (): string => $prompt->isUpvoted() ? 'success' : 'gray')
+                            ->link()
+                            ->icon('heroicon-m-chevron-up')
+                            ->action(fn () => $prompt->toggleUpvote());
                     })
                     ->required(),
             ])
-            ->modalWidth(MaxWidth::Medium)
+            ->modalWidth(MaxWidth::ExtraLarge)
             ->action(function (array $data) {
                 $prompt = Prompt::find($data['promptId']);
 

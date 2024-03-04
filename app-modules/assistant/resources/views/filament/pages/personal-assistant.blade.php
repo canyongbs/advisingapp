@@ -515,5 +515,10 @@ use Illuminate\Support\Facades\Vite;
             @endif
             <script src="{{ FilamentAsset::getScriptSrc('assistantCurrentResponse', 'canyon-gbs/assistant') }}"></script>
             <script src="{{ FilamentAsset::getScriptSrc('chats', 'canyon-gbs/assistant') }}"></script>
+            <style>
+                .choices__inner .prompt-upvotes-count {
+                    display: none;
+                }
+            </style>
         </div>
     </x-filament-panels::page>
