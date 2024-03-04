@@ -24,11 +24,11 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | b
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
-RUN echo "source $NVM_DIR/nvm.sh && \
-    nvm install $NODE_VERSION && \
-    nvm alias default $NODE_VERSION && \
-    nvm use default && \
-    nvm install-latest-npm" | bash
+RUN echo "source $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default \
+    && nvm install-latest-npm" | bash
 
 COPY ./docker/s6-overlay/scripts/ /etc/s6-overlay/scripts/
 COPY docker/s6-overlay/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
@@ -57,6 +57,6 @@ COPY --chown=$PUID:$PGID . /var/www/html
 
 RUN npm ci \
     && npm run build \
+    && rm -rf /var/www/html/vendor \
     && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader \
     && rm -rf /var/www/html/node_modules
-
