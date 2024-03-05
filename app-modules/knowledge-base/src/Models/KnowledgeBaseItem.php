@@ -44,6 +44,7 @@ use AdvisingApp\Division\Models\Division;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -75,6 +76,8 @@ class KnowledgeBaseItem extends BaseModel implements Auditable, HasMedia
         'title',
     ];
 
+    protected ?bool $isUpvoted = null;
+
     public function quality(): BelongsTo
     {
         return $this->belongsTo(KnowledgeBaseQuality::class);
@@ -104,6 +107,41 @@ class KnowledgeBaseItem extends BaseModel implements Auditable, HasMedia
     public function scopePublic($query)
     {
         return $query->where('public', true);
+    }
+
+    public function upvotes(): HasMany
+    {
+        return $this->hasMany(KnowledgeBaseItemUpvote::class);
+    }
+
+    public function isUpvoted(): bool
+    {
+        return $this->isUpvoted ??= $this->upvotes()->whereBelongsTo(auth()->user())->exists();
+    }
+
+    public function upvote(): void
+    {
+        $this->upvotes()->create(['user_id' => auth()->id()]);
+
+        $this->isUpvoted = true;
+    }
+
+    public function cancelUpvote(): void
+    {
+        $this->upvotes()->whereBelongsTo(auth()->user())->delete();
+
+        $this->isUpvoted = false;
+    }
+
+    public function toggleUpvote(): void
+    {
+        if ($this->isUpvoted()) {
+            $this->cancelUpvote();
+
+            return;
+        }
+
+        $this->upvote();
     }
 
     protected function serializeDate(DateTimeInterface $date): string
