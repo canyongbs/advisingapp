@@ -43,4 +43,10 @@ else
     echo "Skipping tenant migrations because it was specifically disabled..."
 fi
 
+# Queue all migrations and one time operations
+
+# Make landlord and tenant migrations / one time operations run in parallel NOT dependent on each other
+
+# Batch and chain tenant migrations and one time operations
+
 exit 0
