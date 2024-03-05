@@ -6,7 +6,7 @@ LABEL maintainer="CanyonGBS"
 ARG POSTGRES_VERSION=15
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git gnupg zip unzip php8.2-pgsql php8.2-imagick php8.2-redis php8.2-pcov php8.2-xdebug \
+    && apt-get install -y --no-install-recommends git s6 gnupg zip unzip php8.2-pgsql php8.2-imagick php8.2-redis php8.2-pcov php8.2-xdebug \
     && curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/keyrings/pgdg.gpg >/dev/null \
     && echo "deb [signed-by=/etc/apt/keyrings/pgdg.gpg] https://apt.postgresql.org/pub/repos/apt jammy-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
