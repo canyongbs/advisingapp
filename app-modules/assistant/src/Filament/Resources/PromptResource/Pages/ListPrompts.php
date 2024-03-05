@@ -45,6 +45,7 @@ use AdvisingApp\Assistant\Models\Prompt;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Assistant\Filament\Resources\PromptResource;
@@ -77,6 +78,17 @@ class ListPrompts extends ListRecords
                     ->label('Uses')
                     ->counts('uses')
                     ->sortable(),
+                TextColumn::make('upvotes_count')
+                    ->label('Upvotes')
+                    ->counts([
+                        'upvotes',
+                        'upvotes as my_upvotes_count' => fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
+                    ])
+                    ->sortable()
+                    ->action(fn (Prompt $record) => $record->toggleUpvote())
+                    ->color(fn (Prompt $record): string => $record->my_upvotes_count ? 'success' : 'gray')
+                    ->tooltip(fn (Prompt $record): string => $record->my_upvotes_count ? 'Click to remove upvote' : 'Click to upvote')
+                    ->formatStateUsing(fn (Prompt $record, int $state): string => ($record->my_upvotes_count ? 'Upvoted ' : 'Upvote ') . "({$state})"),
             ])
             ->actions([
                 ViewAction::make(),

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Assistant\Filament\Resources\PromptResource\Pages;
 
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use AdvisingApp\Assistant\Models\Prompt;
@@ -71,7 +72,14 @@ class ViewPrompt extends ViewRecord
 
     protected function getHeaderActions(): array
     {
+        $prompt = $this->getRecord();
+
         return [
+            Action::make('upvote')
+                ->label(fn (): string => ($prompt->isUpvoted() ? 'Upvoted ' : 'Upvote ') . "({$prompt->upvotes()->count()})")
+                ->color(fn (): string => $prompt->isUpvoted() ? 'success' : 'gray')
+                ->icon(fn (): ?string => $prompt->isUpvoted() ? 'heroicon-m-chevron-up' : null)
+                ->action(fn () => $prompt->toggleUpvote()),
             EditAction::make(),
         ];
     }
