@@ -7,6 +7,8 @@ set -e
 if [ -f "$WEBUSER_HOME/artisan" ] && [ "${LARAVEL_SCHEDULER_ENABLED:="true"}" == "true" ]; then
         echo "Starting Laravel Scheduler..."
 
+        cd "$WEBUSER_HOME"
+
         USERNAME=$(id -nu "$PUID")
 
         s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" schedule:work

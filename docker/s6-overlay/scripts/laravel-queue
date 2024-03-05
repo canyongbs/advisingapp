@@ -11,7 +11,7 @@ if [ -f "$WEBUSER_HOME/artisan" ] && [ "${LARAVEL_QUEUE_ENABLED:="true"}" == "tr
 
         USERNAME=$(id -nu "$PUID")
 
-        s6-setuidgid "$USERNAME" php "$WEBUSER_HOME"/artisan queue:work
+        s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" queue:work
 else
     echo "👉 Skipping Laravel Queue Worker because we could not detect a Laravel install or it was specifically disabled..."
 

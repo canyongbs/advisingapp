@@ -4,10 +4,10 @@
 set -e
 
 # Check to see if an Artisan file exists and assume it means Laravel is configured.
-if [ -f $WEBUSER_HOME/artisan ] && [ ${LANDLORD_MIGRATE:="true"} == "true" ]; then
+if [ -f "$WEBUSER_HOME/artisan" ] && [ "${LANDLORD_MIGRATE:="true"}" == "true" ]; then
   echo "Running landlord migrations..."
 
-  s6-setuidgid webuser php $WEBUSER_HOME/artisan migrate --database=landlord --path=database/landlord --force --isolated
+  s6-setuidgid webuser php "$WEBUSER_HOME/artisan" migrate --database=landlord --path=database/landlord --force --isolated
 
   echo "Landlord migrations complete!"
 else
