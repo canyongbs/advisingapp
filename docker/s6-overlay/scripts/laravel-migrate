@@ -1,0 +1,46 @@
+#!/command/with-contenv bash
+
+if [ ! -f "$WEBUSER_HOME/artisan" ]; then
+  echo "Skipping migrations because we could not detect a Laravel install..."
+  exit 0
+fi
+
+LANDLORD_MIGRATION_FAILED=false
+
+if [ "${LANDLORD_MIGRATE:="true"}" == "true" ]; then
+  echo "Running landlord migrations..."
+
+  {
+    s6-setuidgid webuser php "$WEBUSER_HOME/artisan" migrate --database=landlord --path=database/landlord --force --isolated \
+    && echo "Landlord migrations complete!"
+  } || {
+    echo "Landlord migrations failed!"
+
+    LANDLORD_MIGRATION_FAILED=true
+
+    # TODO: Do something to send an alert that migrations failed. Currently this will NOT stop the container.
+  }
+else
+    echo "Skipping landlord migrations because it was specifically disabled..."
+fi
+
+if [ "${TENANT_MIGRATE:="true"}" == "true" ]; then
+  if [ "$LANDLORD_MIGRATION_FAILED" == false ]; then
+    echo "Running tenant migrations..."
+
+      {
+        s6-setuidgid webuser php "$WEBUSER_HOME/artisan" tenants:artisan "migrate --database=tenant --force --isolated" \
+        && echo "Tenant migrations complete!"
+      } || {
+        echo "Tenant migrations failed!"
+
+        # TODO: Do something to send an alert that migrations failed. Currently this will NOT stop the container.
+      }
+  else
+    echo "Skipping tenant migrations because landlord migrations failed..."
+  fi
+else
+    echo "Skipping tenant migrations because it was specifically disabled..."
+fi
+
+exit 0

@@ -5,7 +5,7 @@ set -e
 
 if [ ! -f "$WEBUSER_HOME/artisan" ]; then
   echo "Skipping caching because we could not detect a Laravel install..."
-  exit 0
+  exit 1
 fi
 
 USERNAME=$(id -nu "$PUID")
