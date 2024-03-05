@@ -138,6 +138,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'working_hours_are_enabled' => 'boolean',
         'are_working_hours_visible_on_profile' => 'boolean',
         'working_hours' => 'array',
+        'last_chat_ping_at' => 'immutable_datetime',
     ];
 
     protected $fillable = [
@@ -171,6 +172,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'are_working_hours_visible_on_profile',
         'working_hours',
         'job_title',
+        'last_chat_ping_at',
     ];
 
     public $orderable = [

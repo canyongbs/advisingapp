@@ -164,8 +164,13 @@
             @if ($conversation)
                 <div
                     class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3"
-                    x-data="userToUserChat({ selectedConversation: @js($conversation->getKey()), users: @js($users) })"
+                    x-data="userToUserChat({
+                        selectedConversation: @js($conversation->getKey()),
+                        users: @js($users),
+                        activeUsers: $wire.$entangle('conversationActiveUsers'),
+                    })"
                     wire:key="conversation-{{ $conversation->getKey() }}"
+                    wire:poll.60s="loadConversationActiveUsers"
                 >
                     <div
                         class="flex flex-col items-center self-center"
@@ -213,12 +218,23 @@
                                             <div
                                                 class="mx-auto flex flex-1 gap-6 text-base md:max-w-2xl lg:max-w-[38rem] xl:max-w-3xl">
                                                 <div class="relative mt-1 flex flex-shrink-0 flex-col items-end">
-                                                    <x-filament::avatar
-                                                        class="rounded-full"
-                                                        alt="User Avatar"
-                                                        x-bind:src="message.avatar"
-                                                        size="lg"
-                                                    />
+                                                    <div class="relative">
+                                                        <x-filament::avatar
+                                                            class="rounded-full"
+                                                            alt="User Avatar"
+                                                            x-bind:src="message.avatar"
+                                                            size="lg"
+                                                        />
+
+                                                        <div
+                                                            class="absolute bottom-0 end-0 h-3 w-3 rounded-full"
+                                                            x-bind:class="{
+                                                                'bg-success-500': activeUsers.includes(message
+                                                                    .authorId),
+                                                                'bg-gray-500': !activeUsers.includes(message.authorId),
+                                                            }"
+                                                        ></div>
+                                                    </div>
                                                 </div>
                                                 <div
                                                     class="relative flex w-[calc(100%-50px)] flex-col lg:w-[calc(100%-115px)]">

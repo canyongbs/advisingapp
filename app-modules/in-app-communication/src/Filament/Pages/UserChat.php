@@ -92,6 +92,8 @@ class UserChat extends Page implements HasForms, HasActions
 
     public ?TwilioConversation $conversation = null;
 
+    public array $conversationActiveUsers = [];
+
     protected static ?string $navigationGroup = 'Premium Features';
 
     protected static ?int $navigationSort = 10;
@@ -613,8 +615,29 @@ class UserChat extends Page implements HasForms, HasActions
     {
         $this->conversationId = $conversation?->getKey();
         $this->conversation = $conversation;
+        $this->loadConversationActiveUsers();
 
         $this->clearNotifications();
+    }
+
+    #[Renderless]
+    public function loadConversationActiveUsers(): void
+    {
+        auth()->user()->update([
+            'last_chat_ping_at' => now(),
+        ]);
+
+        if (! $this->conversation) {
+            $this->conversationActiveUsers = [];
+
+            return;
+        }
+
+        $this->conversationActiveUsers = $this->conversation
+            ->participants()
+            ->where('last_chat_ping_at', '>', now()->subMinutes(3))
+            ->pluck('id')
+            ->all();
     }
 
     #[Renderless]
