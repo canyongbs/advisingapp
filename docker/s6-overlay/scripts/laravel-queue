@@ -4,7 +4,7 @@
 set -e
 
 # Check to see if an Artisan file exists and assume it means Laravel is configured.
-if [ -f "$WEBUSER_HOME"/artisan ] && [ "${LARAVEL_QUEUE_ENABLED:="true"}" == "true" ]; then
+if [ -f "$WEBUSER_HOME/artisan" ] && [ "${LARAVEL_QUEUE_ENABLED:="true"}" == "true" ]; then
         echo "Starting Laravel Queue Worker..."
 
         cd "$WEBUSER_HOME"
