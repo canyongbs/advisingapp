@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Bus;
 use App\Jobs\LandlordSchemaMigration;
 use App\Jobs\DispatchLandlordDataMigrations;
 use App\Events\LandlordMigrationBatchFailure;
+use App\Events\LandlordMigrationBatchSuccessful;
 use Symfony\Component\Console\Command\Command as CommandAlias;
 
 class DispatchLandlordMigrations extends DispatchMigrations
@@ -26,9 +27,12 @@ class DispatchLandlordMigrations extends DispatchMigrations
                 ],
             ]
         )
-            ->name($this->getVersionTag())
+            ->name('landlord-migrations-' . $this->getVersionTag())
             ->catch(function (Batch $batch, Throwable $e) {
                 event(new LandlordMigrationBatchFailure($batch, $e));
+            })
+            ->then(function (Batch $batch) {
+                event(new LandlordMigrationBatchSuccessful($batch));
             })
             ->dispatch();
 

@@ -36,6 +36,23 @@
 
 namespace AdvisingApp\DataMigration\Jobs;
 
+use DateTime;
 use Spatie\Multitenancy\Jobs\NotTenantAware;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 
-class LandlordOneTimeOperationProcessJob extends OneTimeOperationProcessJob implements NotTenantAware {}
+class LandlordOneTimeOperationProcessJob extends OneTimeOperationProcessJob implements NotTenantAware
+{
+    public function retryUntil(): DateTime
+    {
+        return now()->addHour();
+    }
+
+    public function middleware(): array
+    {
+        return [
+            (new WithoutOverlapping())
+                ->releaseAfter(60) // 1 minute
+                ->expireAfter(60 * 61), // 1 hour and 1 minute
+        ];
+    }
+}
