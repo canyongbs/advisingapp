@@ -46,6 +46,8 @@ class TenantSchemaMigration implements ShouldQueue
             command: 'migrate --database=tenant --force --isolated'
         );
 
-        Log::info(Artisan::output());
+        Log::info('Tenant schema migration finished', [
+            'output' => Artisan::output(),
+        ]);
     }
 }

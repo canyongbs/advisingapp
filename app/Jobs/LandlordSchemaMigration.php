@@ -5,6 +5,7 @@ namespace App\Jobs;
 use DateTime;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Queue\InteractsWithQueue;
@@ -50,5 +51,9 @@ class LandlordSchemaMigration implements ShouldQueue, NotTenantAware
         );
 
         config(['queue.failed.database' => $currentQueueFailedConnection]);
+
+        Log::info('Landlord schema migration finished', [
+            'output' => Artisan::output(),
+        ]);
     }
 }
