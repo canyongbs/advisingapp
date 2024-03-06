@@ -45,27 +45,29 @@ class DispatchLandlordDataMigrations implements ShouldQueue, NotTenantAware
 
     public function handle(): void
     {
-        OneTimeOperationManager::getUnprocessedOperationFiles()
-            ->filter(function (OneTimeOperationFile $operationFile) {
-                return $operationFile->getClassObject()->getType() == OperationType::Landlord;
-            })
-            ->filter(function (OneTimeOperationFile $operationFile) {
-                return $operationFile->getClassObject()->getTag() == 'after-deployment';
-            })
-            ->each(function (OneTimeOperationFile $operationFile) {
-                try {
-                    DB::beginTransaction();
+        try {
+            DB::beginTransaction();
 
+            $jobs = OneTimeOperationManager::getUnprocessedOperationFiles()
+                ->filter(function (OneTimeOperationFile $operationFile) {
+                    return $operationFile->getClassObject()->getType() == OperationType::Landlord;
+                })
+                ->filter(function (OneTimeOperationFile $operationFile) {
+                    return $operationFile->getClassObject()->getTag() == 'after-deployment';
+                })
+                ->map(function (OneTimeOperationFile $operationFile) {
                     $operation = Operation::storeOperation($operationFile->getOperationName(), true);
 
-                    $this->batch()->add(new LandlordOneTimeOperationProcessJob($operationFile->getOperationName(), $operation));
+                    return new LandlordOneTimeOperationProcessJob($operationFile->getOperationName(), $operation);
+                });
 
-                    DB::commit();
-                } catch (Exception $e) {
-                    DB::rollBack();
+            $this->batch()->add($jobs->toArray());
 
-                    throw $e;
-                }
-            });
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            throw $e;
+        }
     }
 }

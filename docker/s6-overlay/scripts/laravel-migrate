@@ -5,10 +5,10 @@ if [ ! -f "$WEBUSER_HOME/artisan" ]; then
   exit 0
 fi
 
+cd "$WEBUSER_HOME" || exit 1
+
 if [ "${LANDLORD_MIGRATE:="true"}" == "true" ]; then
   echo "Dispatching landlord migrations..."
-
-  cd "$WEBUSER_HOME" || exit
 
   {
     s6-setuidgid webuser php "$WEBUSER_HOME/artisan" app:dispatch-landlord-migrations \

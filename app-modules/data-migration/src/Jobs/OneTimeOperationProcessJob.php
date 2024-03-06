@@ -43,6 +43,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\DataMigration\Models\Operation;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 use AdvisingApp\DataMigration\OneTimeOperationManager;
 
 abstract class OneTimeOperationProcessJob implements ShouldQueue
@@ -57,6 +58,11 @@ abstract class OneTimeOperationProcessJob implements ShouldQueue
         public string $operationName,
         public ?Operation $operation = null
     ) {}
+
+    public function middleware(): array
+    {
+        return [new SkipIfBatchCancelled()];
+    }
 
     public function handle(): void
     {

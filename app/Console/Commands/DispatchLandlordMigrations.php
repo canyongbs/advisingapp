@@ -2,14 +2,15 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
+use Throwable;
+use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
 use App\Jobs\LandlordSchemaMigration;
-use Illuminate\Support\Facades\Process;
 use App\Jobs\DispatchLandlordDataMigrations;
+use App\Events\LandlordMigrationBatchFailure;
 use Symfony\Component\Console\Command\Command as CommandAlias;
 
-class DispatchLandlordMigrations extends Command
+class DispatchLandlordMigrations extends DispatchMigrations
 {
     protected $signature = 'app:dispatch-landlord-migrations';
 
@@ -17,27 +18,6 @@ class DispatchLandlordMigrations extends Command
 
     public function handle(): int
     {
-        $process = Process::run('git describe --tags --abbrev=0');
-
-        if ($process->successful()) {
-            $tag = rtrim($process->output());
-        } else {
-            $this->error($process->errorOutput());
-
-            return CommandAlias::FAILURE;
-        }
-
-        $process = Process::run('git log --pretty="%h" -n1 HEAD');
-
-        if ($process->successful()) {
-            $shortHash = rtrim($process->output());
-        } else {
-            $this->error($process->errorOutput());
-
-            return CommandAlias::FAILURE;
-        }
-
-        // TODO: Add a catch to notify someone if the batch failed.
         Bus::batch(
             [
                 [
@@ -46,7 +26,10 @@ class DispatchLandlordMigrations extends Command
                 ],
             ]
         )
-            ->name("{$tag}-{$shortHash}")
+            ->name($this->getVersionTag())
+            ->catch(function (Batch $batch, Throwable $e) {
+                event(new LandlordMigrationBatchFailure($batch, $e));
+            })
             ->dispatch();
 
         return CommandAlias::SUCCESS;
