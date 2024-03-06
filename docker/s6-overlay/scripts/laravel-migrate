@@ -16,31 +16,25 @@ if [ "${LANDLORD_MIGRATE:="true"}" == "true" ]; then
   } || {
     echo "Landlord migrations failed to dispatch!"
 
-    # TODO: Do something to send an alert that migrations failed. Currently this will NOT stop the container.
+    # TODO: Do something to send an alert that migration dispatch failed. Currently this will NOT stop the container.
   }
 else
     echo "Skipping landlord migrations because it was specifically disabled..."
 fi
 
 if [ "${TENANT_MIGRATE:="true"}" == "true" ]; then
-  echo "Running tenant migrations..."
+  echo "Dispatching tenant migrations..."
 
   {
-    s6-setuidgid webuser php "$WEBUSER_HOME/artisan" tenants:artisan "migrate --database=tenant --force --isolated" \
-    && echo "Tenant migrations complete!"
+    s6-setuidgid webuser php "$WEBUSER_HOME/artisan" app:dispatch-tenant-migrations \
+    && echo "Tenant migrations dispatched!"
   } || {
-    echo "Tenant migrations failed!"
+    echo "Tenant migrations failed to dispatch!"
 
-    # TODO: Do something to send an alert that migrations failed. Currently this will NOT stop the container.
+    # TODO: Do something to send an alert that migration dispatch failed. Currently this will NOT stop the container.
   }
 else
     echo "Skipping tenant migrations because it was specifically disabled..."
 fi
-
-# Queue all migrations and one time operations
-
-# Make landlord and tenant migrations / one time operations run in parallel NOT dependent on each other
-
-# Batch and chain tenant migrations and one time operations
 
 exit 0
