@@ -59,7 +59,13 @@ spin exec -it php php composer install
 
 ---
 
-After cloning this project, execute the following commands to install php dependencies:
+After cloning this project, execute the following commands.
+
+Install NPM dependencies:
+
+```bash
+npm install
+```
 
 ```bash
 docker run --rm \
@@ -86,7 +92,6 @@ Finally, we will set up the application by running the following commands:
 ```bash
 spina key:generate
 spina migrate:landlord:fresh
-npm install
 npm run build
 ```
 
