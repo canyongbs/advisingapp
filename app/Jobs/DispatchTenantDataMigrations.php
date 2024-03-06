@@ -26,6 +26,8 @@ class DispatchTenantDataMigrations implements ShouldQueue
     use SerializesModels;
     use Batchable;
 
+    public int $maxExceptions = 2;
+
     public function __construct() {}
 
     public function retryUntil(): DateTime

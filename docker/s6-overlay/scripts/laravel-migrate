@@ -5,7 +5,7 @@ if [ ! -f "$WEBUSER_HOME/artisan" ]; then
   exit 0
 fi
 
-cd "$WEBUSER_HOME" || exit 1
+cd "$WEBUSER_HOME" || exit 0
 
 if [ "${LANDLORD_MIGRATE:="true"}" == "true" ]; then
   echo "Dispatching landlord migrations..."

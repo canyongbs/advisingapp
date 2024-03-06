@@ -54,6 +54,8 @@ abstract class OneTimeOperationProcessJob implements ShouldQueue
     use SerializesModels;
     use Batchable;
 
+    public int $maxExceptions = 2;
+
     public function __construct(
         public string $operationName,
         public ?Operation $operation = null
