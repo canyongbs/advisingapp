@@ -3,14 +3,17 @@
 namespace App\Jobs;
 
 use DateTime;
+use Exception;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Spatie\Multitenancy\Jobs\NotTenantAware;
 use AdvisingApp\DataMigration\Models\Operation;
+use AdvisingApp\DataMigration\Enums\OperationType;
 use AdvisingApp\DataMigration\OneTimeOperationFile;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use AdvisingApp\DataMigration\OneTimeOperationManager;
@@ -44,15 +47,25 @@ class DispatchLandlordDataMigrations implements ShouldQueue, NotTenantAware
     {
         OneTimeOperationManager::getUnprocessedOperationFiles()
             ->filter(function (OneTimeOperationFile $operationFile) {
-                return $operationFile->getClassObject()->getType() == 'landlord';
+                return $operationFile->getClassObject()->getType() == OperationType::Landlord;
             })
             ->filter(function (OneTimeOperationFile $operationFile) {
                 return $operationFile->getClassObject()->getTag() == 'after-deployment';
             })
             ->each(function (OneTimeOperationFile $operationFile) {
-                $operation = Operation::storeOperation($operationFile->getOperationName(), true);
+                try {
+                    DB::beginTransaction();
 
-                $this->batch()->add(new LandlordOneTimeOperationProcessJob($operationFile->getOperationName(), $operation));
+                    $operation = Operation::storeOperation($operationFile->getOperationName(), true);
+
+                    $this->batch()->add(new LandlordOneTimeOperationProcessJob($operationFile->getOperationName(), $operation));
+
+                    DB::commit();
+                } catch (Exception $e) {
+                    DB::rollBack();
+
+                    throw $e;
+                }
             });
     }
 }

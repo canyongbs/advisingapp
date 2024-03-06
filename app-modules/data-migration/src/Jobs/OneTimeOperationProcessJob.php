@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\DataMigration\Jobs;
 
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -50,6 +51,7 @@ abstract class OneTimeOperationProcessJob implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    use Batchable;
 
     public function __construct(
         public string $operationName,

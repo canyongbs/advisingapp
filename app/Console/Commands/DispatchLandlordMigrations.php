@@ -37,19 +37,17 @@ class DispatchLandlordMigrations extends Command
             return CommandAlias::FAILURE;
         }
 
-        $this->info("{$tag}-{$shortHash}");
-
-        //// TODO: Add a catch to notify someone if the batch failed.
-        //Bus::batch(
-        //    [
-        //        [
-        //            new LandlordSchemaMigration(),
-        //            new DispatchLandlordDataMigrations(),
-        //        ],
-        //    ]
-        //)
-        //    ->name('landlord-migrations')
-        //    ->dispatch();
+        // TODO: Add a catch to notify someone if the batch failed.
+        Bus::batch(
+            [
+                [
+                    new LandlordSchemaMigration(),
+                    new DispatchLandlordDataMigrations(),
+                ],
+            ]
+        )
+            ->name("{$tag}-{$shortHash}")
+            ->dispatch();
 
         return CommandAlias::SUCCESS;
     }

@@ -30,10 +30,10 @@ class LandlordSchemaMigration implements ShouldQueue, NotTenantAware
 
     public function middleware(): array
     {
-        // TODO: expireAfter?
         return [
             (new WithoutOverlapping())
-                ->releaseAfter(60),
+                ->releaseAfter(60)
+                ->expireAfter(60 * 30),
         ];
     }
 
@@ -43,7 +43,6 @@ class LandlordSchemaMigration implements ShouldQueue, NotTenantAware
 
         config(['queue.failed.database' => 'landlord']);
 
-        // TODO: Maybe setup the output buffer so we can log the output of the migration?
         Artisan::call(
             command: 'migrate --database=landlord --path=database/landlord'
         );
