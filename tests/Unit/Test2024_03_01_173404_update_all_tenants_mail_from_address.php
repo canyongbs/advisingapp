@@ -34,15 +34,40 @@
 </COPYRIGHT>
 */
 
-return [
-    // Directory name - the directory in which your operation files are being saved (based on root directory)
-    'directory' => 'database/operations',
+use App\Models\Tenant;
 
-    // Table name - name of the table that stores your operation entries
-    'table' => 'operations',
+use function Pest\Laravel\artisan;
 
-    'default_queues' => [
-        'tenant' => env('TENANT_OPERATIONS_QUEUE', env('SQS_QUEUE', 'default')),
-        'landlord' => env('LANDLORD_OPERATIONS_QUEUE', env('LANDLORD_SQS_QUEUE', 'landlord')),
-    ],
-];
+use Database\Factories\TenantFactory;
+
+it('changes tenant mail from address if it is hello@example.com', function () {
+    $tenant = Tenant::factory()
+        ->createQuietly(
+            [
+                'config' => tap(TenantFactory::defaultConfig(), fn ($config) => $config->mail->fromAddress = 'hello@example.com'),
+            ]
+        );
+
+    expect($tenant->config->mail->fromAddress)->toBe('hello@example.com');
+
+    artisan('operations:process landlord 2024_03_01_173404_update_all_tenants_mail_from_address --test');
+
+    expect($tenant->fresh()->config->mail->fromAddress)->toBe('no-reply@advising.app');
+});
+
+it('will not change tenant mail from address if it is not hello@example.com', function () {
+    $tenant = Tenant::factory()
+        ->createQuietly(
+            [
+                'config' => tap(TenantFactory::defaultConfig(), fn ($config) => $config->mail->fromAddress = fake()->email()),
+            ]
+        );
+
+    $email = $tenant->config->mail->fromAddress;
+
+    expect($tenant->config->mail->fromAddress)->not()->toBe('hello@example.com');
+
+    artisan('operations:process landlord 2024_03_01_173404_update_all_tenants_mail_from_address --test');
+
+    expect($tenant->fresh()->config->mail->fromAddress)->toBe($email);
+});

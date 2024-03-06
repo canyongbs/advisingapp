@@ -16,9 +16,9 @@ return new class extends OneTimeOperation
     protected bool $async = true;
 
     /**
-     * The queue that the job will be dispatched to.
+     * The queue that the job will be dispatched to. Will default to defaults in config.
      */
-    protected string $queue = 'default';
+    protected ?string $queue = null;
 
     /**
      * A tag name, that this operation can be filtered by.

@@ -34,15 +34,42 @@
 </COPYRIGHT>
 */
 
-return [
-    // Directory name - the directory in which your operation files are being saved (based on root directory)
-    'directory' => 'database/operations',
+use App\Models\Tenant;
+use AdvisingApp\DataMigration\OneTimeOperation;
+use AdvisingApp\DataMigration\Enums\OperationType;
+use App\Multitenancy\DataTransferObjects\TenantConfig;
 
-    // Table name - name of the table that stores your operation entries
-    'table' => 'operations',
+return new class () extends OneTimeOperation {
+    /**
+     * The type to determine where it will be run. OperationType::Tenant or OperationType::Landlord.
+     */
+    protected OperationType $type = OperationType::Landlord;
 
-    'default_queues' => [
-        'tenant' => env('TENANT_OPERATIONS_QUEUE', env('SQS_QUEUE', 'default')),
-        'landlord' => env('LANDLORD_OPERATIONS_QUEUE', env('LANDLORD_SQS_QUEUE', 'landlord')),
-    ],
-];
+    /**
+     * Determine if the operation is being processed asynchronously.
+     */
+    protected bool $async = true;
+
+    /**
+     * A tag name, that this operation can be filtered by.
+     */
+    protected ?string $tag = 'deployment';
+
+    /**
+     * Process the operation.
+     */
+    public function process(): void
+    {
+        Tenant::all()->each(function (Tenant $tenant) {
+            $config = TenantConfig::from($tenant->config);
+
+            if ($config->mail->fromAddress === 'hello@example.com') {
+                $config->mail->fromAddress = 'no-reply@advising.app';
+
+                $tenant->update([
+                    'config' => $config,
+                ]);
+            }
+        });
+    }
+};
