@@ -10,7 +10,7 @@ env:
 
 jobs:
   deploy:
-    name: Deploy Dev Environment
+    name: Deploy
     runs-on: ubuntu-22.04
     environment: staging
 
