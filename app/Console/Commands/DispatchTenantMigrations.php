@@ -34,25 +34,56 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\DataMigration\Jobs;
+namespace App\Console\Commands;
 
-use DateTime;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
+use Throwable;
+use App\Models\Tenant;
+use Illuminate\Bus\Batch;
+use App\Jobs\TenantSchemaMigration;
+use Illuminate\Support\Facades\Bus;
+use App\Jobs\DispatchTenantDataMigrations;
+use App\Events\TenantMigrationBatchFailure;
+use App\Events\TenantMigrationBatchSuccessful;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use Symfony\Component\Console\Command\Command as CommandAlias;
 
-class LandlordOneTimeOperationProcessJob extends OneTimeOperationProcessJob implements NotTenantAware
+class DispatchTenantMigrations extends DispatchMigrations
 {
-    public function retryUntil(): DateTime
-    {
-        return now()->addHour();
-    }
+    use TenantAware;
 
-    public function middleware(): array
+    protected $signature = 'app:dispatch-tenant-migrations {--tenant=*}';
+
+    protected $description = 'Dispatches Tenant schema and data migrations.';
+
+    public function handle(): int
     {
-        return [
-            (new WithoutOverlapping())
-                ->releaseAfter(60) // 1 minute
-                ->expireAfter(60 * 61), // 1 hour and 1 minute
-        ];
+        /** @var Tenant $tenant */
+        $tenant = Tenant::current();
+
+        Bus::batch(
+            [
+                [
+                    new TenantSchemaMigration(),
+                    new DispatchTenantDataMigrations(),
+                ],
+            ]
+        )
+            ->name("tenant-migrations-{$tenant->getKey()}-" . $this->getVersionTag())
+            ->catch(function (Batch $batch, Throwable $throwable) use ($tenant) {
+                event(new TenantMigrationBatchFailure(
+                    batch: $batch,
+                    tenant: $tenant,
+                    throwable: $throwable
+                ));
+            })
+            ->then(function (Batch $batch) use ($tenant) {
+                event(new TenantMigrationBatchSuccessful(
+                    batch: $batch,
+                    tenant: $tenant,
+                ));
+            })
+            ->dispatch();
+
+        return CommandAlias::SUCCESS;
     }
 }

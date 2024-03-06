@@ -34,19 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\DataMigration\Jobs;
+namespace App\Jobs;
 
+use DateTime;
+use Exception;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Spatie\Multitenancy\Jobs\NotTenantAware;
 use AdvisingApp\DataMigration\Models\Operation;
-use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
+use AdvisingApp\DataMigration\Enums\OperationType;
+use AdvisingApp\DataMigration\OneTimeOperationFile;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 use AdvisingApp\DataMigration\OneTimeOperationManager;
+use AdvisingApp\DataMigration\Jobs\LandlordOneTimeOperationProcessJob;
 
-abstract class OneTimeOperationProcessJob implements ShouldQueue
+class DispatchLandlordDataMigrations implements ShouldQueue, NotTenantAware
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -54,22 +61,47 @@ abstract class OneTimeOperationProcessJob implements ShouldQueue
     use SerializesModels;
     use Batchable;
 
-    public int $maxExceptions = 2;
+    public function __construct() {}
 
-    public function __construct(
-        public string $operationName,
-        public ?Operation $operation = null
-    ) {}
+    public function retryUntil(): DateTime
+    {
+        return now()->addMinutes(2);
+    }
 
     public function middleware(): array
     {
-        return [new SkipIfBatchCancelled()];
+        return [
+            (new WithoutOverlapping())
+                ->releaseAfter(30)
+                ->expireAfter(300),
+        ];
     }
 
     public function handle(): void
     {
-        OneTimeOperationManager::getClassObjectByName($this->operationName)->process();
+        try {
+            DB::beginTransaction();
 
-        $this->operation?->update(['completed_at' => now()]);
+            $jobs = OneTimeOperationManager::getUnprocessedOperationFiles()
+                ->filter(function (OneTimeOperationFile $operationFile) {
+                    return $operationFile->getClassObject()->getType() == OperationType::Landlord;
+                })
+                ->filter(function (OneTimeOperationFile $operationFile) {
+                    return $operationFile->getClassObject()->getTag() == 'after-deployment';
+                })
+                ->map(function (OneTimeOperationFile $operationFile) {
+                    $operation = Operation::storeOperation($operationFile->getOperationName(), true);
+
+                    return new LandlordOneTimeOperationProcessJob($operationFile->getOperationName(), $operation);
+                });
+
+            $this->batch()->add($jobs->toArray());
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            throw $e;
+        }
     }
 }

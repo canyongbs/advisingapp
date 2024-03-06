@@ -53,7 +53,7 @@ return new class () extends OneTimeOperation {
     /**
      * A tag name, that this operation can be filtered by.
      */
-    protected ?string $tag = 'deployment';
+    protected ?string $tag = 'after-deployment';
 
     /**
      * Process the operation.

@@ -34,25 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\DataMigration\Jobs;
+namespace App\Console\Commands;
 
-use DateTime;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Process;
+use Symfony\Component\Console\Command\Command as CommandAlias;
 
-class LandlordOneTimeOperationProcessJob extends OneTimeOperationProcessJob implements NotTenantAware
+abstract class DispatchMigrations extends Command
 {
-    public function retryUntil(): DateTime
+    protected function getVersionTag(): string
     {
-        return now()->addHour();
-    }
+        $tagProcess = Process::run('git describe --tags --abbrev=0');
 
-    public function middleware(): array
-    {
-        return [
-            (new WithoutOverlapping())
-                ->releaseAfter(60) // 1 minute
-                ->expireAfter(60 * 61), // 1 hour and 1 minute
-        ];
+        if ($tagProcess->successful()) {
+            $tag = rtrim($tagProcess->output());
+        } else {
+            $this->error($tagProcess->errorOutput());
+
+            return CommandAlias::FAILURE;
+        }
+
+        $commitProcess = Process::run('git log --pretty="%h" -n1 HEAD');
+
+        if ($commitProcess->successful()) {
+            $shortHash = rtrim($commitProcess->output());
+        } else {
+            $this->error($commitProcess->errorOutput());
+
+            return CommandAlias::FAILURE;
+        }
+
+        return "{$tag}-{$shortHash}";
     }
 }

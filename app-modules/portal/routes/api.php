@@ -48,6 +48,7 @@ use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementP
 use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalRequestAuthenticationController;
 
 Route::prefix('api')
+    ->name('api.')
     ->middleware([
         'api',
         EnsureKnowledgeManagementPortalIsEnabled::class,
@@ -57,7 +58,7 @@ Route::prefix('api')
         Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('/user', function (Request $request) {
                 return $request->user();
-            })->name('api.user.auth-check');
+            })->name('user.auth-check');
         });
 
         Route::prefix('portal/knowledge-management')

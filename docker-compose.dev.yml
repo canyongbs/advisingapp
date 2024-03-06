@@ -5,9 +5,17 @@ services:
       target: development
     environment:
       SSL_MODE: "mixed"
+      LANDLORD_MIGRATE: '${LANDLORD_MIGRATE:-true}'
+      TENANT_MIGRATE: '${TENANT_MIGRATE:-true}'
       LARAVEL_SCHEDULER_ENABLED: '${LARAVEL_SCHEDULER_ENABLED:-true}'
       LARAVEL_QUEUE_ENABLED: '${LARAVEL_QUEUE_ENABLED:-true}'
       LARAVEL_OCTANE_WATCH: '${LARAVEL_OCTANE_WATCH:-false}'
+      CACHE_CONFIG: '${CACHE_CONFIG:-false}'
+      CACHE_ROUTES: '${CACHE_ROUTES:-false}'
+      CACHE_VIEWS: '${CACHE_VIEWS:-false}'
+      CACHE_EVENTS: '${CACHE_EVENTS:-false}'
+      CACHE_ICONS: '${CACHE_ICONS:-false}'
+      CACHE_FILAMENT_COMPONENTS: '${CACHE_FILAMENT_COMPONENTS:-false}'
     labels:
       - dev.orbstack.domains=*.advisingapp.local
     extra_hosts:

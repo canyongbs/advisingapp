@@ -34,25 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\DataMigration\Jobs;
+namespace App\Console\Commands;
 
-use DateTime;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
+use Throwable;
+use Illuminate\Bus\Batch;
+use Illuminate\Support\Facades\Bus;
+use App\Jobs\LandlordSchemaMigration;
+use App\Jobs\DispatchLandlordDataMigrations;
+use App\Events\LandlordMigrationBatchFailure;
+use App\Events\LandlordMigrationBatchSuccessful;
+use Symfony\Component\Console\Command\Command as CommandAlias;
 
-class LandlordOneTimeOperationProcessJob extends OneTimeOperationProcessJob implements NotTenantAware
+class DispatchLandlordMigrations extends DispatchMigrations
 {
-    public function retryUntil(): DateTime
-    {
-        return now()->addHour();
-    }
+    protected $signature = 'app:dispatch-landlord-migrations';
 
-    public function middleware(): array
+    protected $description = 'Dispatches Landlord schema and data migrations.';
+
+    public function handle(): int
     {
-        return [
-            (new WithoutOverlapping())
-                ->releaseAfter(60) // 1 minute
-                ->expireAfter(60 * 61), // 1 hour and 1 minute
-        ];
+        Bus::batch(
+            [
+                [
+                    new LandlordSchemaMigration(),
+                    new DispatchLandlordDataMigrations(),
+                ],
+            ]
+        )
+            ->name('landlord-migrations-' . $this->getVersionTag())
+            ->catch(function (Batch $batch, Throwable $e) {
+                event(new LandlordMigrationBatchFailure($batch, $e));
+            })
+            ->then(function (Batch $batch) {
+                event(new LandlordMigrationBatchSuccessful($batch));
+            })
+            ->dispatch();
+
+        return CommandAlias::SUCCESS;
     }
 }

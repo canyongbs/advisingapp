@@ -1,3 +1,4 @@
+FROM ghcr.io/roadrunner-server/roadrunner:2023.3.12 AS roadrunner
 FROM serversideup/php:8.2-fpm-nginx-v2.2.1 AS base
 
 LABEL authors="CanyonGBS"
@@ -6,7 +7,7 @@ LABEL maintainer="CanyonGBS"
 ARG POSTGRES_VERSION=15
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git gnupg zip unzip php8.2-pgsql php8.2-imagick php8.2-redis php8.2-pcov php8.2-xdebug \
+    && apt-get install -y --no-install-recommends git s6 gnupg zip unzip php8.2-pgsql php8.2-imagick php8.2-redis php8.2-pcov php8.2-xdebug \
     && curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/keyrings/pgdg.gpg >/dev/null \
     && echo "deb [signed-by=/etc/apt/keyrings/pgdg.gpg] https://apt.postgresql.org/pub/repos/apt jammy-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
@@ -14,17 +15,21 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
-ARG NODE_VERSION=21.6.0
+ENV NVM_VERSION v0.39.7
+ENV NODE_VERSION 21.6.0
+ENV NVM_DIR /usr/local/nvm
+RUN mkdir "$NVM_DIR"
 
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash \
-    && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" \
-    && nvm install "$NODE_VERSION" \
-    && nvm alias default "$NODE_VERSION" \
-    && nvm use default \
-    && nvm install-latest-npm
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+RUN echo "source $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default \
+    && nvm install-latest-npm" | bash
 
 COPY ./docker/s6-overlay/scripts/ /etc/s6-overlay/scripts/
 COPY docker/s6-overlay/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
@@ -35,6 +40,9 @@ COPY ./docker/nginx/site-opts.d /etc/nginx/site-opts.d
 
 RUN rm /etc/s6-overlay/s6-rc.d/user/contents.d/php-fpm
 RUN rm -rf /etc/s6-overlay/s6-rc.d/php-fpm
+
+COPY --from=roadrunner /usr/bin/rr /var/www/html/rr
+RUN chmod 0755 /var/www/html/rr
 
 RUN apt-get update \
     && apt-get upgrade -y
@@ -50,3 +58,9 @@ FROM base AS development
 FROM base AS deploy
 
 COPY --chown=$PUID:$PGID . /var/www/html
+
+RUN npm ci --ignore-scripts \
+    && npm run build \
+    && rm -rf /var/www/html/vendor \
+    && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader \
+    && rm -rf /var/www/html/node_modules

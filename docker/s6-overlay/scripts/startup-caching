@@ -1,0 +1,85 @@
+#!/command/with-contenv bash
+
+# Exit on error
+set -e
+
+if [ ! -f "$WEBUSER_HOME/artisan" ]; then
+  echo "Skipping caching because we could not detect a Laravel install..."
+  exit 1
+fi
+
+USERNAME=$(id -nu "$PUID")
+
+# Config caching
+
+if [ "${CACHE_CONFIG:="false"}" == "true" ]; then
+  echo "Caching config..."
+
+  s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" config:cache
+
+  echo "Config cached!"
+else
+    echo "Skipping config caching because it was specifically disabled..."
+fi
+
+# Route caching
+
+if [ "${CACHE_ROUTES:="false"}" == "true" ]; then
+  echo "Caching routes..."
+
+  s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" route:cache
+
+  echo "Routes cached!"
+else
+    echo "Skipping route caching because it was specifically disabled..."
+fi
+
+# View caching
+
+if [ "${CACHE_VIEWS:="false"}" == "true" ]; then
+  echo "Caching views..."
+
+  s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" view:cache
+
+  echo "Views cached!"
+else
+    echo "Skipping view caching because it was specifically disabled..."
+fi
+
+# Event caching
+
+if [ "${CACHE_EVENTS:="false"}" == "true" ]; then
+  echo "Caching events..."
+
+  s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" event:cache
+
+  echo "Events cached!"
+else
+    echo "Skipping event caching because it was specifically disabled..."
+fi
+
+# Icon caching
+
+if [ "${CACHE_ICONS:="false"}" == "true" ]; then
+  echo "Caching icons..."
+
+  s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" icons:cache
+
+  echo "Icons cached!"
+else
+    echo "Skipping icon caching because it was specifically disabled..."
+fi
+
+# Filament Component caching
+
+if [ "${CACHE_FILAMENT_COMPONENTS:="false"}" == "true" ]; then
+  echo "Caching Filament components..."
+
+  s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" filament:cache-components
+
+  echo "Filament components cached!"
+else
+    echo "Skipping Filament component caching because it was specifically disabled..."
+fi
+
+exit 0

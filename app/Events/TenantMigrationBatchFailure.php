@@ -34,25 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\DataMigration\Jobs;
+namespace App\Events;
 
-use DateTime;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
+use Throwable;
+use App\Models\Tenant;
+use Illuminate\Bus\Batch;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Events\Dispatchable;
 
-class LandlordOneTimeOperationProcessJob extends OneTimeOperationProcessJob implements NotTenantAware
+class TenantMigrationBatchFailure
 {
-    public function retryUntil(): DateTime
-    {
-        return now()->addHour();
-    }
+    use Dispatchable;
+    use SerializesModels;
 
-    public function middleware(): array
-    {
-        return [
-            (new WithoutOverlapping())
-                ->releaseAfter(60) // 1 minute
-                ->expireAfter(60 * 61), // 1 hour and 1 minute
-        ];
-    }
+    public function __construct(
+        protected Batch $batch,
+        protected Tenant $tenant,
+        protected Throwable $throwable,
+    ) {}
 }

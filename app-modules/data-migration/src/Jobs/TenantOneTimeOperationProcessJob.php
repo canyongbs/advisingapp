@@ -36,4 +36,22 @@
 
 namespace AdvisingApp\DataMigration\Jobs;
 
-class TenantOneTimeOperationProcessJob extends OneTimeOperationProcessJob {}
+use DateTime;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
+
+class TenantOneTimeOperationProcessJob extends OneTimeOperationProcessJob
+{
+    public function retryUntil(): DateTime
+    {
+        return now()->addHour();
+    }
+
+    public function middleware(): array
+    {
+        return [
+            (new WithoutOverlapping())
+                ->releaseAfter(60) // 1 minute
+                ->expireAfter(60 * 61), // 1 hour and 1 minute
+        ];
+    }
+}
