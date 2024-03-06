@@ -44,7 +44,7 @@ return new class () extends Migration {
         Schema::create('knowledge_base_item_views', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('knowledge_base_item_id')->constrained('knowledge_base_articles')->cascadeOnDelete();
-            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('user_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });
