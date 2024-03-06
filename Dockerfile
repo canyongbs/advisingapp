@@ -1,3 +1,4 @@
+FROM ghcr.io/roadrunner-server/roadrunner:2023.3.12 AS roadrunner
 FROM serversideup/php:8.2-fpm-nginx-v2.2.1 AS base
 
 LABEL authors="CanyonGBS"
@@ -39,6 +40,9 @@ COPY ./docker/nginx/site-opts.d /etc/nginx/site-opts.d
 
 RUN rm /etc/s6-overlay/s6-rc.d/user/contents.d/php-fpm
 RUN rm -rf /etc/s6-overlay/s6-rc.d/php-fpm
+
+COPY --from=roadrunner /usr/bin/rr /var/www/html/rr
+RUN chmod 0755 /var/www/html/rr
 
 RUN apt-get update \
     && apt-get upgrade -y
