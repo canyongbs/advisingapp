@@ -8,6 +8,8 @@ fi
 if [ "${LANDLORD_MIGRATE:="true"}" == "true" ]; then
   echo "Dispatching landlord migrations..."
 
+  cd "$WEBUSER_HOME" || exit
+
   {
     s6-setuidgid webuser php "$WEBUSER_HOME/artisan" app:dispatch-landlord-migrations \
     && echo "Landlord migrations dispatched!"
