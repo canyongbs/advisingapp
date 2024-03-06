@@ -10,7 +10,11 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Spatie\Multitenancy\Jobs\NotTenantAware;
+use AdvisingApp\DataMigration\Models\Operation;
+use AdvisingApp\DataMigration\OneTimeOperationFile;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
+use AdvisingApp\DataMigration\OneTimeOperationManager;
+use AdvisingApp\DataMigration\Jobs\LandlordOneTimeOperationProcessJob;
 
 class DispatchLandlordDataMigrations implements ShouldQueue, NotTenantAware
 {
@@ -24,17 +28,31 @@ class DispatchLandlordDataMigrations implements ShouldQueue, NotTenantAware
 
     public function retryUntil(): DateTime
     {
-        return now()->addMinutes(30);
+        return now()->addMinutes(2);
     }
 
     public function middleware(): array
     {
-        // TODO: expireAfter?
         return [
             (new WithoutOverlapping())
-                ->releaseAfter(60),
+                ->releaseAfter(30)
+                ->expireAfter(300),
         ];
     }
 
-    public function handle(): void {}
+    public function handle(): void
+    {
+        OneTimeOperationManager::getUnprocessedOperationFiles()
+            ->filter(function (OneTimeOperationFile $operationFile) {
+                return $operationFile->getClassObject()->getType() == 'landlord';
+            })
+            ->filter(function (OneTimeOperationFile $operationFile) {
+                return $operationFile->getClassObject()->getTag() == 'after-deployment';
+            })
+            ->each(function (OneTimeOperationFile $operationFile) {
+                $operation = Operation::storeOperation($operationFile->getOperationName(), true);
+
+                $this->batch()->add(new LandlordOneTimeOperationProcessJob($operationFile->getOperationName(), $operation));
+            });
+    }
 }
