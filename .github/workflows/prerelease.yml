@@ -10,9 +10,9 @@ env:
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy Dev Environment
     runs-on: ubuntu-22.04
-    environment: production
+    environment: staging
 
     steps:
       - name: Checkout
