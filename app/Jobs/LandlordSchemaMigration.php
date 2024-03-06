@@ -44,7 +44,7 @@ class LandlordSchemaMigration implements ShouldQueue, NotTenantAware
         config(['queue.failed.database' => 'landlord']);
 
         Artisan::call(
-            command: 'migrate --database=landlord --path=database/landlord'
+            command: 'migrate --database=landlord --path=database/landlord --force --isolated'
         );
 
         config(['queue.failed.database' => $currentQueueFailedConnection]);
