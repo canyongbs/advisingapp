@@ -60,7 +60,7 @@ FROM base AS deploy
 COPY --chown=$PUID:$PGID . /var/www/html
 
 RUN npm ci --ignore-scripts \
-    && npm run build \
     && rm -rf /var/www/html/vendor \
     && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader \
+    && npm run build \
     && rm -rf /var/www/html/node_modules

@@ -12,7 +12,7 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-22.04
-    environment: production
+    environment: staging
 
     steps:
       - name: Checkout
