@@ -109,6 +109,11 @@ class KnowledgeBaseItem extends BaseModel implements Auditable, HasMedia
         return $query->where('public', true);
     }
 
+    public function views(): HasMany
+    {
+        return $this->hasMany(KnowledgeBaseItemView::class);
+    }
+
     public function upvotes(): HasMany
     {
         return $this->hasMany(KnowledgeBaseItemUpvote::class);

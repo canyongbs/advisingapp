@@ -43,8 +43,10 @@ use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\RateLimiter;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
 
 class ViewKnowledgeBaseItem extends ViewRecord
@@ -54,6 +56,19 @@ class ViewKnowledgeBaseItem extends ViewRecord
     public function getTitle(): string | Htmlable
     {
         return $this->record->title;
+    }
+
+    public function mount(int | string $record): void
+    {
+        parent::mount($record);
+
+        $knowledgeBaseItem = $this->getRecord();
+
+        RateLimiter::attempt(
+            "view-knowledge-base-item-{$knowledgeBaseItem->getKey()}-user-" . auth()->id(),
+            1,
+            fn () => $knowledgeBaseItem->views()->create(['user_id' => auth()->id()]),
+        );
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -72,7 +87,11 @@ class ViewKnowledgeBaseItem extends ViewRecord
                         TextEntry::make('public')
                             ->label('Public')
                             ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No'),
-                    ]),
+                        TextEntry::make('views_count')
+                            ->label('Views')
+                            ->state(fn (KnowledgeBaseItem $record): int => $record->views()->count()),
+                    ])
+                    ->columns(2),
                 Section::make()
                     ->schema([
                         ViewEntry::make('article_details')
