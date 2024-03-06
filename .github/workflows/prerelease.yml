@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Configure AWS credentials
         # SHA of release v4.0.2
@@ -43,3 +45,23 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --target deploy --platform linux/amd64 --build-arg USER_ID=9999 --build-arg GROUP_ID=9999 .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        # SHA of release v1.2.0
+        uses: aws-actions/amazon-ecs-render-task-definition@4225e0b507142a2e432b018bc3ccb728559b437a
+        with:
+          task-definition: "docker/task-definitions/advisingapp-task-definition.json"
+          container-name: "app"
+          image: ${{ steps.build-image.outputs.image }}
+          environment-variables: |
+            APP_NAME="Advising App Develop"
+
+      - name: Deploy Amazon ECS task definition
+        # SHA of release v1.4.11
+        uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: "advisingapp-dev-crm-ecs-service "
+          cluster: "advisingapp-dev"
+          wait-for-service-stability: true
