@@ -1,0 +1,3 @@
+[submodule "docker/devops"]
+	path = docker/devops
+	url = git@github.com:canyongbs/devops.git
