@@ -1,3 +1,0 @@
-[submodule "docker/task-definitions"]
-	path = docker/task-definitions
-	url = git@github.com:canyongbs/ecs-task-definition-advisingapp.git
