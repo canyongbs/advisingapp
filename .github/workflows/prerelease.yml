@@ -53,11 +53,9 @@ jobs:
         # SHA of release v1.2.0
         uses: aws-actions/amazon-ecs-render-task-definition@4225e0b507142a2e432b018bc3ccb728559b437a
         with:
-          task-definition: "docker/devops/ecs/advisingapp/advisingapp-task-definition.json"
+          task-definition: "docker/devops/ecs/advisingapp/advisingapp-dev-task-definition.json"
           container-name: "app"
           image: ${{ steps.build-image.outputs.image }}
-          environment-variables: |
-            APP_NAME="Advising App Develop"
 
       - name: Deploy Amazon ECS task definition
         # SHA of release v1.4.11
