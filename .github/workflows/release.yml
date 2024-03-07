@@ -1,8 +1,8 @@
-name: Deploy to Dev Environment
+name: Deploy to Production Environment
 
 on:
   release:
-    types: [prereleased]
+    types: [released]
 
 env:
   AWS_REGION: "us-west-2"
@@ -12,7 +12,7 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-22.04
-    environment: staging
+    environment: production
 
     steps:
       - name: Checkout
@@ -26,8 +26,8 @@ jobs:
         # SHA of release v4.0.2
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
         with:
-          aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
@@ -53,7 +53,7 @@ jobs:
         # SHA of release v1.2.0
         uses: aws-actions/amazon-ecs-render-task-definition@4225e0b507142a2e432b018bc3ccb728559b437a
         with:
-          task-definition: "docker/devops/ecs/advisingapp/advisingapp-dev-task-definition.json"
+          task-definition: "docker/devops/ecs/advisingapp/advisingapp-prod-task-definition.json"
           container-name: "app"
           image: ${{ steps.build-image.outputs.image }}
 
@@ -62,6 +62,6 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: "advisingapp-dev-crm-ecs-service"
-          cluster: "advisingapp-dev"
+          service: "advisingapp-p-crm-ecs-service"
+          cluster: "advisingapp-prod"
           wait-for-service-stability: true
