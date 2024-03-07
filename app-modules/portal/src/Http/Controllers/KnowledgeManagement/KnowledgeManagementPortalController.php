@@ -55,7 +55,7 @@ class KnowledgeManagementPortalController extends Controller
             'rounding' => $settings->knowledge_management_portal_rounding,
             'authentication_url' => URL::to(
                 URL::signedRoute(
-                    name: 'portal.knowledge-management.request-authentication',
+                    name: 'api.portal.knowledge-management.request-authentication',
                     absolute: false,
                 )
             ),

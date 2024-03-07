@@ -41,6 +41,7 @@ use DateTimeInterface;
 use App\Models\Authenticatable;
 use AdvisingApp\Task\Models\Task;
 use App\Models\Scopes\HasLicense;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Collection;
 use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Notifications\Notifiable;
@@ -87,6 +88,7 @@ use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  */
 class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, Educatable, HasFilamentResource, NotifiableInterface
 {
+    use HasApiTokens;
     use AuditableTrait;
     use DefinesPermissions;
     use HasFactory;
