@@ -68,6 +68,7 @@
         "kirschbaum-development/eloquent-power-joins": "^3.5",
         "laravel/framework": "^10.46",
         "laravel/octane": "^2.3",
+        "laravel/pennant": "^1.7",
         "laravel/sanctum": "^3.3",
         "laravel/scout": "^10.8",
         "laravel/socialite": "^5.12",
