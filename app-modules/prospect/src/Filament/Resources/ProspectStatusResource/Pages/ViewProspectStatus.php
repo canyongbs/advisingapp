@@ -37,11 +37,9 @@
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
 use Filament\Actions;
-use Laravel\Pennant\Feature;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
-use App\Features\ProspectStatusSortFeature;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
@@ -68,8 +66,7 @@ class ViewProspectStatus extends ViewRecord
                             ->badge()
                             ->color(fn (ProspectStatus $prospectStatus) => $prospectStatus->color->value),
                         TextEntry::make('sort')
-                            ->numeric()
-                            ->visible(Feature::active(ProspectStatusSortFeature::class)),
+                            ->numeric(),
                     ])
                     ->columns(),
             ]);
