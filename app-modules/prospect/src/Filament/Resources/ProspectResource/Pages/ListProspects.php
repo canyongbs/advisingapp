@@ -107,7 +107,7 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                     ->sortable(
                         Feature::active(
                             ProspectStatusSortFeature::class
-                        ) ? ['status.sort'] : null,
+                        ) ? ['sort'] : true,
                         query: Feature::active(
                             ProspectStatusSortFeature::class
                         ) ? null : function (Builder $query, string $direction): Builder {
