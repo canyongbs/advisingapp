@@ -57,11 +57,13 @@ class ProspectStatus extends BaseModel implements Auditable
         'classification',
         'name',
         'color',
+        'sort',
     ];
 
     protected $casts = [
         'classification' => SystemProspectClassification::class,
         'color' => ProspectStatusColorOptions::class,
+        'sort' => 'integer',
     ];
 
     public function prospects(): HasMany

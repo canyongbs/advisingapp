@@ -34,47 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Providers;
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Default Pennant Store
+    |--------------------------------------------------------------------------
+    |
+    | Here you will specify the default store that Pennant should use when
+    | storing and resolving feature flag values. Pennant ships with the
+    | ability to store flag values in an in-memory array or database.
+    |
+    | Supported: "array", "database"
+    |
+    */
 
-use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Prospect\ProspectPlugin;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Registries\RoleBasedAccessControlRegistry;
-use AdvisingApp\Prospect\Observers\ProspectObserver;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Prospect\Registries\ProspectRbacRegistry;
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Observers\ProspectStatusObserver;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+    'default' => env('PENNANT_STORE', 'database'),
 
-class ProspectServiceProvider extends ServiceProvider
-{
-    use ImplementsGraphQL;
+    /*
+    |--------------------------------------------------------------------------
+    | Pennant Stores
+    |--------------------------------------------------------------------------
+    |
+    | Here you may configure each of the stores that should be available to
+    | Pennant. These stores shall be used to store resolved feature flag
+    | values - you may configure as many as your application requires.
+    |
+    */
 
-    public function register(): void
-    {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ProspectPlugin()));
-    }
+    'stores' => [
+        'array' => [
+            'driver' => 'array',
+        ],
 
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'prospect' => Prospect::class,
-            'prospect_source' => ProspectSource::class,
-            'prospect_status' => ProspectStatus::class,
-        ]);
-
-        Prospect::observe(ProspectObserver::class);
-        ProspectStatus::observe(ProspectStatusObserver::class);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        $this->registerEnum(ProspectStatusColorOptions::class);
-        $this->registerEnum(SystemProspectClassification::class);
-
-        RoleBasedAccessControlRegistry::register(ProspectRbacRegistry::class);
-    }
-}
+        'database' => [
+            'driver' => 'database',
+            'connection' => null,
+            'table' => 'features',
+        ],
+    ],
+];

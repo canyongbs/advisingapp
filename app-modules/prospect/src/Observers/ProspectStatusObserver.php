@@ -34,42 +34,17 @@
 </COPYRIGHT>
 */
 
-use App\Models\Tenant;
-use AdvisingApp\DataMigration\OneTimeOperation;
-use AdvisingApp\DataMigration\Enums\OperationType;
-use App\Multitenancy\DataTransferObjects\TenantConfig;
+namespace AdvisingApp\Prospect\Observers;
 
-return new class () extends OneTimeOperation {
-    /**
-     * The type to determine where it will be run. OperationType::Tenant or OperationType::Landlord.
-     */
-    protected OperationType $type = OperationType::Landlord;
+use Illuminate\Support\Facades\Schema;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 
-    /**
-     * Determine if the operation is being processed asynchronously.
-     */
-    protected bool $async = true;
-
-    /**
-     * A tag name, that this operation can be filtered by.
-     */
-    protected ?string $tag = 'after-deployment';
-
-    /**
-     * Process the operation.
-     */
-    public function process(): void
+class ProspectStatusObserver
+{
+    public function creating(ProspectStatus $prospectStatus): void
     {
-        Tenant::all()->each(function (Tenant $tenant) {
-            $config = TenantConfig::from($tenant->config);
-
-            if ($config->mail->fromAddress === 'hello@example.com') {
-                $config->mail->fromAddress = 'no-reply@advising.app';
-
-                $tenant->update([
-                    'config' => $config,
-                ]);
-            }
-        });
+        if (Schema::hasColumn($prospectStatus->getTable(), 'sort')) {
+            $prospectStatus->sort = ProspectStatus::query()->max('sort') + 1;
+        }
     }
-};
+}

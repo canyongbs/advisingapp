@@ -34,47 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Providers;
+namespace App\Features;
 
-use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Prospect\ProspectPlugin;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Registries\RoleBasedAccessControlRegistry;
-use AdvisingApp\Prospect\Observers\ProspectObserver;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Prospect\Registries\ProspectRbacRegistry;
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Observers\ProspectStatusObserver;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-
-class ProspectServiceProvider extends ServiceProvider
+class ProspectStatusSortFeature
 {
-    use ImplementsGraphQL;
-
-    public function register(): void
+    public function resolve(mixed $scope): mixed
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ProspectPlugin()));
-    }
-
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'prospect' => Prospect::class,
-            'prospect_source' => ProspectSource::class,
-            'prospect_status' => ProspectStatus::class,
-        ]);
-
-        Prospect::observe(ProspectObserver::class);
-        ProspectStatus::observe(ProspectStatusObserver::class);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        $this->registerEnum(ProspectStatusColorOptions::class);
-        $this->registerEnum(SystemProspectClassification::class);
-
-        RoleBasedAccessControlRegistry::register(ProspectRbacRegistry::class);
+        return false;
     }
 }

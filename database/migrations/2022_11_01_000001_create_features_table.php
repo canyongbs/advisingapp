@@ -34,47 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Providers;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Prospect\ProspectPlugin;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Registries\RoleBasedAccessControlRegistry;
-use AdvisingApp\Prospect\Observers\ProspectObserver;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Prospect\Registries\ProspectRbacRegistry;
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Observers\ProspectStatusObserver;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-
-class ProspectServiceProvider extends ServiceProvider
-{
-    use ImplementsGraphQL;
-
-    public function register(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ProspectPlugin()));
+        Schema::create('features', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('scope');
+            $table->text('value');
+            $table->timestamps();
+
+            $table->unique(['name', 'scope']);
+        });
     }
 
-    public function boot(): void
+    public function down(): void
     {
-        Relation::morphMap([
-            'prospect' => Prospect::class,
-            'prospect_source' => ProspectSource::class,
-            'prospect_status' => ProspectStatus::class,
-        ]);
-
-        Prospect::observe(ProspectObserver::class);
-        ProspectStatus::observe(ProspectStatusObserver::class);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        $this->registerEnum(ProspectStatusColorOptions::class);
-        $this->registerEnum(SystemProspectClassification::class);
-
-        RoleBasedAccessControlRegistry::register(ProspectRbacRegistry::class);
+        Schema::dropIfExists('features');
     }
-}
+};
