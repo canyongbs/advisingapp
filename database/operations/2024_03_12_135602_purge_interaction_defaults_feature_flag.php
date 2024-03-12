@@ -35,7 +35,6 @@
 */
 
 use Laravel\Pennant\Feature;
-use App\Features\InteractionDefaultsFeature;
 use AdvisingApp\DataMigration\OneTimeOperation;
 use AdvisingApp\DataMigration\Enums\OperationType;
 
@@ -65,6 +64,6 @@ return new class () extends OneTimeOperation {
      */
     public function process(): void
     {
-        Feature::activate(InteractionDefaultsFeature::class);
+        Feature::purge('App\\Features\\InteractionDefaultsFeature');
     }
 };
