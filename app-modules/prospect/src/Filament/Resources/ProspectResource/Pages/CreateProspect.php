@@ -169,7 +169,7 @@ class CreateProspect extends CreateRecord
                             ->label('Status')
                             ->required()
                             ->relationship('status', 'name') // Future merge confilict: ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
-                            ->default(ProspectStatus::query()->first()?->getKey()) // Future merge confilict: ->default(ProspectStatus::query()->orderBy('sort')->first()?->getKey())
+                            ->default(fn () => ProspectStatus::query()->first()?->getKey()) // Future merge confilict: ->default(fn () => ProspectStatus::query()->orderBy('sort')->first()?->getKey())
                             ->exists(
                                 table: (new ProspectStatus())->getTable(),
                                 column: (new ProspectStatus())->getKeyName()
@@ -178,7 +178,7 @@ class CreateProspect extends CreateRecord
                             ->label('Source')
                             ->required()
                             ->relationship('source', 'name')
-                            ->default(ProspectSource::query()->orderBy('name')->first()?->getKey())
+                            ->default(fn () => ProspectSource::query()->orderBy('name')->first()?->getKey())
                             ->exists(
                                 table: (new ProspectSource())->getTable(),
                                 column: (new ProspectSource())->getKeyName()
