@@ -1,0 +1,36 @@
+<?php
+
+use Laravel\Pennant\Feature;
+use App\Features\InteractionDefaultsFeature;
+use AdvisingApp\DataMigration\OneTimeOperation;
+use AdvisingApp\DataMigration\Enums\OperationType;
+
+return new class () extends OneTimeOperation {
+    /**
+     * The type to determine where it will be run. OperationType::Tenant or OperationType::Landlord.
+     */
+    protected OperationType $type = OperationType::Tenant;
+
+    /**
+     * Determine if the operation is being processed asynchronously.
+     */
+    protected bool $async = true;
+
+    /**
+     * The queue that the job will be dispatched to. Will default to defaults in config.
+     */
+    protected ?string $queue = null;
+
+    /**
+     * A tag name, that this operation can be filtered by.
+     */
+    protected ?string $tag = null;
+
+    /**
+     * Process the operation.
+     */
+    public function process(): void
+    {
+        Feature::activate(InteractionDefaultsFeature::class);
+    }
+};

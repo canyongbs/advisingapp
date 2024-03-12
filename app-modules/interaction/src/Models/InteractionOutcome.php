@@ -53,5 +53,10 @@ class InteractionOutcome extends BaseModel implements Auditable
 
     protected $fillable = [
         'name',
+        'is_default',
+    ];
+
+    protected $casts = [
+        'is_default' => 'boolean',
     ];
 }

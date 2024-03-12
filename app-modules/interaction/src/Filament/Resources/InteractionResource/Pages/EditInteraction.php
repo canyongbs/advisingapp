@@ -128,8 +128,10 @@ class EditInteraction extends EditRecord
                 Fieldset::make('Time')
                     ->schema([
                         DateTimePicker::make('start_datetime')
+                            ->seconds(false)
                             ->required(),
                         DateTimePicker::make('end_datetime')
+                            ->seconds(false)
                             ->required(),
                     ]),
                 Fieldset::make('Notes')
