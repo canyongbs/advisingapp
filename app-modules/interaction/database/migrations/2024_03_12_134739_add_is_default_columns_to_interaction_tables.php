@@ -34,29 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('interaction_outcomes', function (Blueprint $table) {
+            $table->boolean('is_default')->default(false);
 
-/**
- * @mixin IdeHelperInteractionOutcome
- */
-class InteractionOutcome extends BaseModel implements Auditable
-{
-    use AuditableTrait;
-    use HasManyInteractions;
-    use SoftDeletes;
+            $table->unique(['is_default', 'deleted_at']);
+        });
 
-    protected $fillable = [
-        'name',
-        'is_default',
-    ];
+        Schema::table('interaction_relations', function (Blueprint $table) {
+            $table->boolean('is_default')->default(false);
 
-    protected $casts = [
-        'is_default' => 'boolean',
-    ];
-}
+            $table->unique(['is_default', 'deleted_at']);
+        });
+
+        Schema::table('interaction_statuses', function (Blueprint $table) {
+            $table->boolean('is_default')->default(false);
+
+            $table->unique(['is_default', 'deleted_at']);
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('interaction_outcomes', function (Blueprint $table) {
+            $table->dropColumn('is_default');
+        });
+
+        Schema::table('interaction_relations', function (Blueprint $table) {
+            $table->dropColumn('is_default');
+        });
+
+        Schema::table('interaction_statuses', function (Blueprint $table) {
+            $table->dropColumn('is_default');
+        });
+    }
+};

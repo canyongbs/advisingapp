@@ -34,29 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+namespace AdvisingApp\Interaction\Observers;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Laravel\Pennant\Feature;
+use App\Features\InteractionDefaultsFeature;
+use AdvisingApp\Interaction\Models\InteractionOutcome;
 
-/**
- * @mixin IdeHelperInteractionOutcome
- */
-class InteractionOutcome extends BaseModel implements Auditable
+class InteractionOutcomeObserver
 {
-    use AuditableTrait;
-    use HasManyInteractions;
-    use SoftDeletes;
-
-    protected $fillable = [
-        'name',
-        'is_default',
-    ];
-
-    protected $casts = [
-        'is_default' => 'boolean',
-    ];
+    public function saving(InteractionOutcome $interactionOutcome): void
+    {
+        if (Feature::active(InteractionDefaultsFeature::class) && $interactionOutcome->is_default) {
+            InteractionOutcome::query()
+                ->where('is_default', true)
+                ->update(['is_default' => false]);
+        }
+    }
 }
