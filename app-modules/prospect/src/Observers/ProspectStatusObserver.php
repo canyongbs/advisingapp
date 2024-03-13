@@ -34,29 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+namespace AdvisingApp\Prospect\Observers;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Illuminate\Support\Facades\Schema;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 
-/**
- * @mixin IdeHelperInteractionOutcome
- */
-class InteractionOutcome extends BaseModel implements Auditable
+class ProspectStatusObserver
 {
-    use AuditableTrait;
-    use HasManyInteractions;
-    use SoftDeletes;
-
-    protected $fillable = [
-        'name',
-        'is_default',
-    ];
-
-    protected $casts = [
-        'is_default' => 'boolean',
-    ];
+    public function creating(ProspectStatus $prospectStatus): void
+    {
+        if (Schema::hasColumn($prospectStatus->getTable(), 'sort')) {
+            $prospectStatus->sort = ProspectStatus::query()->max('sort') + 1;
+        }
+    }
 }

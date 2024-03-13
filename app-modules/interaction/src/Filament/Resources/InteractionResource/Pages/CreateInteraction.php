@@ -36,14 +36,20 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages;
 
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Forms\Form;
+use Laravel\Pennant\Feature;
+use Illuminate\Support\Carbon;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\CreateRecord;
+use App\Features\InteractionDefaultsFeature;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -64,6 +70,28 @@ class CreateInteraction extends CreateRecord
 
     public function form(Form $form): Form
     {
+        $calculateEndDateTime = function (Get $get, Set $set) {
+            $startDateTime = $get('start_datetime');
+
+            if (blank($startDateTime)) {
+                $set('end_datetime', null);
+
+                return;
+            }
+
+            $duration = $get('duration');
+
+            if (blank($duration)) {
+                $set('end_datetime', null);
+
+                return;
+            }
+
+            $set('end_datetime', Carbon::parse($startDateTime)
+                ->addMinutes($duration)
+                ->toDateTimeString());
+        };
+
         return $form
             ->schema([
                 MorphToSelect::make('interactable')
@@ -97,24 +125,46 @@ class CreateInteraction extends CreateRecord
                             ->exists((new InteractionDriver())->getTable(), 'id'),
                         Select::make('division_id')
                             ->relationship('division', 'name')
+                            ->default(fn () => auth()->user()->teams()->first()?->division?->getKey())
                             ->preload()
                             ->label('Division')
                             ->required()
                             ->exists((new Division())->getTable(), 'id'),
                         Select::make('interaction_outcome_id')
                             ->relationship('outcome', 'name')
+                            ->default(fn () => InteractionOutcome::query()
+                                ->when(
+                                    Feature::active(InteractionDefaultsFeature::class),
+                                    fn (Builder $query) => $query->where('is_default', true),
+                                )
+                                ->first()
+                                ?->getKey())
                             ->preload()
                             ->label('Outcome')
                             ->required()
                             ->exists((new InteractionOutcome())->getTable(), 'id'),
                         Select::make('interaction_relation_id')
                             ->relationship('relation', 'name')
+                            ->default(fn () => InteractionRelation::query()
+                                ->when(
+                                    Feature::active(InteractionDefaultsFeature::class),
+                                    fn (Builder $query) => $query->where('is_default', true),
+                                )
+                                ->first()
+                                ?->getKey())
                             ->preload()
                             ->label('Relation')
                             ->required()
                             ->exists((new InteractionRelation())->getTable(), 'id'),
                         Select::make('interaction_status_id')
                             ->relationship('status', 'name')
+                            ->default(fn () => InteractionStatus::query()
+                                ->when(
+                                    Feature::active(InteractionDefaultsFeature::class),
+                                    fn (Builder $query) => $query->where('is_default', true),
+                                )
+                                ->first()
+                                ?->getKey())
                             ->preload()
                             ->label('Status')
                             ->required()
@@ -129,8 +179,25 @@ class CreateInteraction extends CreateRecord
                 Fieldset::make('Time')
                     ->schema([
                         DateTimePicker::make('start_datetime')
-                            ->required(),
+                            ->label('Start Date and Time')
+                            ->seconds(false)
+                            ->default(fn () => now()->toDateTimeString())
+                            ->required()
+                            ->live(onBlur: true)
+                            ->afterStateUpdated($calculateEndDateTime),
+                        TextInput::make('duration')
+                            ->label('Duration (Minutes)')
+                            ->integer()
+                            ->minValue(0)
+                            ->required()
+                            ->dehydrated(false)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated($calculateEndDateTime),
                         DateTimePicker::make('end_datetime')
+                            ->label('End Date and Time')
+                            ->seconds(false)
+                            ->disabled()
+                            ->dehydrated()
                             ->required(),
                     ]),
                 Fieldset::make('Notes')
@@ -139,7 +206,8 @@ class CreateInteraction extends CreateRecord
                             ->required(),
                         Textarea::make('description')
                             ->required(),
-                    ]),
+                    ])
+                    ->columns(1),
             ]);
     }
 }
