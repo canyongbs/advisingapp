@@ -170,14 +170,9 @@ class CreateProspect extends CreateRecord
                         Select::make('status_id')
                             ->label('Status')
                             ->required()
-                            ->relationship('status', 'name', Feature::active(
-                                ProspectStatusSortFeature::class
-                            ) ? fn (Builder $query) => $query->orderBy('sort') : null)
+                            ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
                             ->default(fn () => ProspectStatus::query()
-                                ->when(
-                                    Feature::active(ProspectStatusSortFeature::class),
-                                    fn (Builder $query) => $query->orderBy('sort'),
-                                )
+                                ->orderBy('sort')
                                 ->first()
                                 ?->getKey())
                             ->exists(
