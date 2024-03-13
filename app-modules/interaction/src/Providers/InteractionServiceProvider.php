@@ -52,6 +52,9 @@ use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Observers\InteractionObserver;
 use AdvisingApp\Interaction\Registries\InteractionRbacRegistry;
 use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
+use AdvisingApp\Interaction\Observers\InteractionStatusObserver;
+use AdvisingApp\Interaction\Observers\InteractionOutcomeObserver;
+use AdvisingApp\Interaction\Observers\InteractionRelationObserver;
 
 class InteractionServiceProvider extends ServiceProvider
 {
@@ -86,5 +89,8 @@ class InteractionServiceProvider extends ServiceProvider
     protected function registerObservers(): void
     {
         Interaction::observe(InteractionObserver::class);
+        InteractionOutcome::observe(InteractionOutcomeObserver::class);
+        InteractionStatus::observe(InteractionStatusObserver::class);
+        InteractionRelation::observe(InteractionRelationObserver::class);
     }
 }

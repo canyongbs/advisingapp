@@ -37,9 +37,12 @@
 namespace AdvisingApp\Interaction\Filament\Resources;
 
 use Filament\Forms\Form;
+use Laravel\Pennant\Feature;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
+use App\Features\InteractionDefaultsFeature;
 use App\Filament\Clusters\InteractionManagement;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
@@ -75,6 +78,31 @@ class InteractionStatusResource extends Resource
                     ->options(InteractionStatusColorOptions::class)
                     ->required()
                     ->enum(InteractionStatusColorOptions::class),
+                Toggle::make('is_default')
+                    ->label('Default')
+                    ->live()
+                    ->hint(function (?InteractionStatus $record, $state): ?string {
+                        if ($record?->is_default) {
+                            return null;
+                        }
+
+                        if (! $state) {
+                            return null;
+                        }
+
+                        $currentDefault = InteractionStatus::query()
+                            ->where('is_default', true)
+                            ->value('name');
+
+                        if (blank($currentDefault)) {
+                            return null;
+                        }
+
+                        return "The current default status is '{$currentDefault}', you are replacing it.";
+                    })
+                    ->hintColor('danger')
+                    ->columnStart(1)
+                    ->visible(fn () => Feature::active(InteractionDefaultsFeature::class)),
             ]);
     }
 

@@ -117,8 +117,10 @@ class InteractionBlock extends CampaignActionBlock
             Fieldset::make('Time')
                 ->schema([
                     DateTimePicker::make($fieldPrefix . 'start_datetime')
+                        ->seconds(false)
                         ->required(),
                     DateTimePicker::make($fieldPrefix . 'end_datetime')
+                        ->seconds(false)
                         ->required(),
                 ]),
             Fieldset::make('Notes')

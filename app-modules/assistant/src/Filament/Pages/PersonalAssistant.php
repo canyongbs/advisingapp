@@ -473,6 +473,7 @@ class PersonalAssistant extends Page
             ->all();
 
         return Action::make('insertFromPromptLibrary')
+            ->label('Prompt library')
             ->color('gray')
             ->form([
                 Select::make('typeId')

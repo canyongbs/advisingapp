@@ -34,29 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+use Laravel\Pennant\Feature;
+use App\Features\InteractionDefaultsFeature;
+use AdvisingApp\DataMigration\OneTimeOperation;
+use AdvisingApp\DataMigration\Enums\OperationType;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+return new class () extends OneTimeOperation {
+    /**
+     * The type to determine where it will be run. OperationType::Tenant or OperationType::Landlord.
+     */
+    protected OperationType $type = OperationType::Tenant;
 
-/**
- * @mixin IdeHelperInteractionOutcome
- */
-class InteractionOutcome extends BaseModel implements Auditable
-{
-    use AuditableTrait;
-    use HasManyInteractions;
-    use SoftDeletes;
+    /**
+     * Determine if the operation is being processed asynchronously.
+     */
+    protected bool $async = true;
 
-    protected $fillable = [
-        'name',
-        'is_default',
-    ];
+    /**
+     * The queue that the job will be dispatched to. Will default to defaults in config.
+     */
+    protected ?string $queue = null;
 
-    protected $casts = [
-        'is_default' => 'boolean',
-    ];
-}
+    /**
+     * A tag name, that this operation can be filtered by.
+     */
+    protected ?string $tag = null;
+
+    /**
+     * Process the operation.
+     */
+    public function process(): void
+    {
+        Feature::activate(InteractionDefaultsFeature::class);
+    }
+};
