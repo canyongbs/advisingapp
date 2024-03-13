@@ -57,21 +57,13 @@ return new class () extends OneTimeOperation {
     /**
      * A tag name, that this operation can be filtered by.
      */
-<<<<<<<< HEAD:database/operations/2024_02_11_132431_purge_prospect_status_sort_feature_flag.php
     protected ?string $tag = 'after-deployment';
-========
-    protected ?string $tag = null;
->>>>>>>> advapp-392-cleanup:database/operations/2024_03_12_135602_purge_interaction_defaults_feature_flag.php
 
     /**
      * Process the operation.
      */
     public function process(): void
     {
-<<<<<<<< HEAD:database/operations/2024_02_11_132431_purge_prospect_status_sort_feature_flag.php
         Feature::purge('App\\Features\\ProspectStatusSortFeature');
-========
-        Feature::purge('App\\Features\\InteractionDefaultsFeature');
->>>>>>>> advapp-392-cleanup:database/operations/2024_03_12_135602_purge_interaction_defaults_feature_flag.php
     }
 };
