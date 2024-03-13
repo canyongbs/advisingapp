@@ -34,29 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('features', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('scope');
+            $table->text('value');
+            $table->timestamps();
 
-/**
- * @mixin IdeHelperInteractionOutcome
- */
-class InteractionOutcome extends BaseModel implements Auditable
-{
-    use AuditableTrait;
-    use HasManyInteractions;
-    use SoftDeletes;
+            $table->unique(['name', 'scope']);
+        });
+    }
 
-    protected $fillable = [
-        'name',
-        'is_default',
-    ];
-
-    protected $casts = [
-        'is_default' => 'boolean',
-    ];
-}
+    public function down(): void
+    {
+        Schema::dropIfExists('features');
+    }
+};

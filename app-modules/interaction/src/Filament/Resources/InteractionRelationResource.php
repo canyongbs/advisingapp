@@ -37,8 +37,11 @@
 namespace AdvisingApp\Interaction\Filament\Resources;
 
 use Filament\Forms\Form;
+use Laravel\Pennant\Feature;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
+use App\Features\InteractionDefaultsFeature;
 use App\Filament\Clusters\InteractionManagement;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource\Pages\EditInteractionRelation;
@@ -66,6 +69,31 @@ class InteractionRelationResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->placeholder('Interaction Relation Name'),
+                Toggle::make('is_default')
+                    ->label('Default')
+                    ->live()
+                    ->hint(function (?InteractionRelation $record, $state): ?string {
+                        if ($record?->is_default) {
+                            return null;
+                        }
+
+                        if (! $state) {
+                            return null;
+                        }
+
+                        $currentDefault = InteractionRelation::query()
+                            ->where('is_default', true)
+                            ->value('name');
+
+                        if (blank($currentDefault)) {
+                            return null;
+                        }
+
+                        return "The current default relation is '{$currentDefault}', you are replacing it.";
+                    })
+                    ->hintColor('danger')
+                    ->columnStart(1)
+                    ->visible(fn () => Feature::active(InteractionDefaultsFeature::class)),
             ]);
     }
 

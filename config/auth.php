@@ -78,7 +78,7 @@ return [
         ],
 
         'api' => [
-            'driver' => 'token',
+            'driver' => 'session',
             'provider' => 'system-users',
             'hash' => false,
         ],

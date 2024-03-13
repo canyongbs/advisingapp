@@ -34,16 +34,16 @@
 </COPYRIGHT>
 */
 
-use App\Models\Tenant;
+use Laravel\Pennant\Feature;
+use App\Features\InteractionDefaultsFeature;
 use AdvisingApp\DataMigration\OneTimeOperation;
 use AdvisingApp\DataMigration\Enums\OperationType;
-use App\Multitenancy\DataTransferObjects\TenantConfig;
 
 return new class () extends OneTimeOperation {
     /**
      * The type to determine where it will be run. OperationType::Tenant or OperationType::Landlord.
      */
-    protected OperationType $type = OperationType::Landlord;
+    protected OperationType $type = OperationType::Tenant;
 
     /**
      * Determine if the operation is being processed asynchronously.
@@ -51,25 +51,20 @@ return new class () extends OneTimeOperation {
     protected bool $async = true;
 
     /**
+     * The queue that the job will be dispatched to. Will default to defaults in config.
+     */
+    protected ?string $queue = null;
+
+    /**
      * A tag name, that this operation can be filtered by.
      */
-    protected ?string $tag = 'after-deployment';
+    protected ?string $tag = null;
 
     /**
      * Process the operation.
      */
     public function process(): void
     {
-        Tenant::all()->each(function (Tenant $tenant) {
-            $config = TenantConfig::from($tenant->config);
-
-            if ($config->mail->fromAddress === 'hello@example.com') {
-                $config->mail->fromAddress = 'no-reply@advising.app';
-
-                $tenant->update([
-                    'config' => $config,
-                ]);
-            }
-        });
+        Feature::activate(InteractionDefaultsFeature::class);
     }
 };

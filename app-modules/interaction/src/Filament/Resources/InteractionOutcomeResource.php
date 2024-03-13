@@ -37,8 +37,11 @@
 namespace AdvisingApp\Interaction\Filament\Resources;
 
 use Filament\Forms\Form;
+use Laravel\Pennant\Feature;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
+use App\Features\InteractionDefaultsFeature;
 use App\Filament\Clusters\InteractionManagement;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource\Pages\EditInteractionOutcome;
@@ -66,6 +69,31 @@ class InteractionOutcomeResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->placeholder('Interaction Outcome Name'),
+                Toggle::make('is_default')
+                    ->label('Default')
+                    ->live()
+                    ->hint(function (?InteractionOutcome $record, $state): ?string {
+                        if ($record?->is_default) {
+                            return null;
+                        }
+
+                        if (! $state) {
+                            return null;
+                        }
+
+                        $currentDefault = InteractionOutcome::query()
+                            ->where('is_default', true)
+                            ->value('name');
+
+                        if (blank($currentDefault)) {
+                            return null;
+                        }
+
+                        return "The current default outcome is '{$currentDefault}', you are replacing it.";
+                    })
+                    ->hintColor('danger')
+                    ->columnStart(1)
+                    ->visible(fn () => Feature::active(InteractionDefaultsFeature::class)),
             ]);
     }
 

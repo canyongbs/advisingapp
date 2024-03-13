@@ -55,9 +55,11 @@ class InteractionStatus extends BaseModel implements Auditable
     protected $fillable = [
         'name',
         'color',
+        'is_default',
     ];
 
     protected $casts = [
         'color' => InteractionStatusColorOptions::class,
+        'is_default' => 'boolean',
     ];
 }

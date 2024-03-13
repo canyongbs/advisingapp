@@ -38,6 +38,7 @@ namespace App\Providers;
 
 use App\Models\Tenant;
 use App\Models\SystemUser;
+use Laravel\Pennant\Feature;
 use App\Observers\TenantObserver;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -76,6 +77,8 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         Tenant::observe(TenantObserver::class);
+
+        Feature::resolveScopeUsing(fn ($driver) => null);
 
         if (config('app.force_https')) {
             URL::forceScheme('https');
