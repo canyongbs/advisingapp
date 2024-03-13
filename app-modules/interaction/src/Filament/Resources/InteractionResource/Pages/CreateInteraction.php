@@ -39,7 +39,6 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
 use Illuminate\Support\Carbon;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Fieldset;
@@ -47,9 +46,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\CreateRecord;
-use App\Features\InteractionDefaultsFeature;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -133,10 +130,7 @@ class CreateInteraction extends CreateRecord
                         Select::make('interaction_outcome_id')
                             ->relationship('outcome', 'name')
                             ->default(fn () => InteractionOutcome::query()
-                                ->when(
-                                    Feature::active(InteractionDefaultsFeature::class),
-                                    fn (Builder $query) => $query->where('is_default', true),
-                                )
+                                ->where('is_default', true)
                                 ->first()
                                 ?->getKey())
                             ->preload()
@@ -146,10 +140,7 @@ class CreateInteraction extends CreateRecord
                         Select::make('interaction_relation_id')
                             ->relationship('relation', 'name')
                             ->default(fn () => InteractionRelation::query()
-                                ->when(
-                                    Feature::active(InteractionDefaultsFeature::class),
-                                    fn (Builder $query) => $query->where('is_default', true),
-                                )
+                                ->where('is_default', true)
                                 ->first()
                                 ?->getKey())
                             ->preload()
@@ -159,10 +150,7 @@ class CreateInteraction extends CreateRecord
                         Select::make('interaction_status_id')
                             ->relationship('status', 'name')
                             ->default(fn () => InteractionStatus::query()
-                                ->when(
-                                    Feature::active(InteractionDefaultsFeature::class),
-                                    fn (Builder $query) => $query->where('is_default', true),
-                                )
+                                ->where('is_default', true)
                                 ->first()
                                 ?->getKey())
                             ->preload()
