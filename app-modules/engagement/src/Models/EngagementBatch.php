@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Engagement\Models;
 
-use Exception;
+use DOMXPath;
+use Throwable;
+use DOMDocument;
 use App\Models\User;
 use App\Models\BaseModel;
 use AdvisingApp\Campaign\Models\CampaignAction;
@@ -74,10 +76,28 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
             ]));
 
             return true;
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return $e->getMessage();
         }
 
         // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
+    }
+
+    public static function renderWithMergeTags(string $html): string
+    {
+        $dom = new DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
+        $xpath = new DOMXPath($dom);
+
+        $spans = $xpath->query("//span[@data-type='mergeTag']");
+
+        foreach ($spans as $span) {
+            $dataId = $span->getAttribute('data-id');
+            $span->nodeValue = "{{ {$dataId} }}";
+        }
+
+        return $dom->saveHTML();
     }
 }
