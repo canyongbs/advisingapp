@@ -34,6 +34,7 @@
 @php
     use Carbon\Carbon;
     use AdvisingApp\Campaign\Settings\CampaignSettings;
+    use AdvisingApp\Engagement\Models\EngagementBatch;
 @endphp
 
 <x-filament::fieldset>
@@ -54,10 +55,12 @@
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Subject</dt>
             <dd class="text-sm font-semibold">{{ $action['subject'] }}</dd>
         </div>
-        <div class="flex flex-col pt-3">
-            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Body</dt>
-            <dd class="text-sm font-semibold">{{ $action['body'] }}</dd>
-        </div>
+        @if($action['body'])
+            <div class="flex flex-col pt-3">
+                <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Body</dt>
+                <dd class="text-sm font-semibold">{!! EngagementBatch::renderWithMergeTags(tiptap_converter()->asHTML($action['body'])) !!}</dd>
+            </div>
+        @endif
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Execute At</dt>
             <dd class="text-sm font-semibold">{{ Carbon::parse($action['execute_at'])->format('M j, Y H:i:s') }}
