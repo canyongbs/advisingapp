@@ -228,17 +228,6 @@ class CreateProspect extends CreateRecord
                             ),
                     ])
                     ->columns(2),
-                Select::make('status_id')
-                    ->label('Status')
-                    ->required()
-                    ->relationship('status', 'name', Feature::active(
-                        ProspectStatusSortFeature::class
-                    ) ? fn (Builder $query) => $query->orderBy('sort') : null)
-                    ->default(ProspectStatus::query()->orderBy('sort')->first()?->getKey())
-                    ->exists(
-                        table: (new ProspectStatus())->getTable(),
-                        column: (new ProspectStatus())->getKeyName()
-                    ),
             ]);
     }
 }
