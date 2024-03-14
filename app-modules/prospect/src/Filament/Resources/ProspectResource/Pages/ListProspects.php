@@ -39,7 +39,6 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Tables\Table;
-use Laravel\Pennant\Feature;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
 use Filament\Tables\Filters\Filter;
@@ -57,7 +56,6 @@ use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use App\Features\ProspectStatusSortFeature;
 use Filament\Tables\Actions\BulkActionGroup;
 use Illuminate\Database\Eloquent\Collection;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -104,18 +102,7 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                     ->badge()
                     ->translateLabel()
                     ->color(fn (Prospect $record) => $record->status->color->value)
-                    ->sortable(
-                        Feature::active(
-                            ProspectStatusSortFeature::class
-                        ) ? ['sort'] : true,
-                        query: Feature::active(
-                            ProspectStatusSortFeature::class
-                        ) ? null : function (Builder $query, string $direction): Builder {
-                            return $query
-                                ->join('prospect_statuses', 'prospects.status_id', '=', 'prospect_statuses.id')
-                                ->orderBy('prospect_statuses.name', $direction);
-                        },
-                    ),
+                    ->sortable(['sort']),
                 TextColumn::make('source.name')
                     ->label('Source')
                     ->translateLabel()
@@ -147,9 +134,7 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                     ->optionsLimit(20)
                     ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
                 SelectFilter::make('status_id')
-                    ->relationship('status', 'name', Feature::active(
-                        ProspectStatusSortFeature::class
-                    ) ? fn (Builder $query) => $query->orderBy('sort') : null)
+                    ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
                     ->multiple()
                     ->preload(),
                 SelectFilter::make('source_id')
@@ -234,9 +219,7 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                                 ->visible(fn (Get $get) => $get('field') === 'source_id'),
                             Select::make('status_id')
                                 ->label('Status')
-                                ->relationship('status', 'name', Feature::active(
-                                    ProspectStatusSortFeature::class
-                                ) ? fn (Builder $query) => $query->orderBy('sort') : null)
+                                ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
                                 ->exists(
                                     table: (new ProspectStatus())->getTable(),
                                     column: (new ProspectStatus())->getKeyName()

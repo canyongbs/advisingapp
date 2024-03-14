@@ -40,7 +40,6 @@ use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
 use App\Models\Scopes\HasLicense;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
@@ -51,7 +50,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\CreateRecord;
-use App\Features\ProspectStatusSortFeature;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
@@ -170,14 +168,9 @@ class CreateProspect extends CreateRecord
                         Select::make('status_id')
                             ->label('Status')
                             ->required()
-                            ->relationship('status', 'name', Feature::active(
-                                ProspectStatusSortFeature::class
-                            ) ? fn (Builder $query) => $query->orderBy('sort') : null)
+                            ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
                             ->default(fn () => ProspectStatus::query()
-                                ->when(
-                                    Feature::active(ProspectStatusSortFeature::class),
-                                    fn (Builder $query) => $query->orderBy('sort'),
-                                )
+                                ->orderBy('sort')
                                 ->first()
                                 ?->getKey())
                             ->exists(
