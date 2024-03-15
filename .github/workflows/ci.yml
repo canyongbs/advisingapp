@@ -28,11 +28,18 @@ jobs:
     needs: [build-deps]
 
     steps:
-      - name: Checkout code
+      - name: Checkout code | Internal
+        if: github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.pat-token }}
+
+      - name: Checkout code | External
+        if: github.event.pull_request.head.repo.full_name != github.repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -41,10 +48,18 @@ jobs:
         run: ruby ./copyright.rb
 
       - name: Commit changes
+        if: github.event.pull_request.head.repo.full_name == github.repository
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: >
             chore: fix enforcement of copyright on all files
+
+      - name: Check for changes
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        uses: tj-actions/verify-changed-files@v19
+        with:
+          fail-if-changed: 'true'
+          files: '*'
   fix-code-style:
     runs-on: ubuntu-22.04
 
