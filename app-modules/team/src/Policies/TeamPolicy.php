@@ -46,7 +46,7 @@ class TeamPolicy
     {
         return $authenticatable->canOrElse(
             abilities: 'team.view-any',
-            denyResponse: 'You do not have permission to view interactions.'
+            denyResponse: 'You do not have permission to view teams.'
         );
     }
 
@@ -62,7 +62,7 @@ class TeamPolicy
     {
         return $authenticatable->canOrElse(
             abilities: 'team.create',
-            denyResponse: 'You do not have permission to create interactions.'
+            denyResponse: 'You do not have permission to create teams.'
         );
     }
 
