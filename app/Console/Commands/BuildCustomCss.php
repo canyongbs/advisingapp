@@ -39,6 +39,7 @@ namespace App\Console\Commands;
 use App\Settings\BrandSettings;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Facades\Schema;
 
 class BuildCustomCss extends Command
 {
@@ -59,11 +60,17 @@ class BuildCustomCss extends Command
     /**
      * Execute the console command.
      */
-    public function handle(BrandSettings $brandSettings): void
+    public function handle(): void
     {
+        if (! Schema::hasTable('settings')) {
+            $this->error('The settings table does not exist.');
+
+            return;
+        }
+
         file_put_contents(
             resource_path('css/filament/admin/custom.css'),
-            $brandSettings->custom_css ?? '',
+            app(BrandSettings::class)->custom_css ?? '',
         );
 
         $process = Process::run(
