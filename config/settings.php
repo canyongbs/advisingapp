@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use App\Models\LandlordSettingsProperty;
 use App\Models\SettingsProperty;
+use App\Models\LandlordSettingsProperty;
 use App\DataTransferObjects\Casts\DataCast;
 
 return [

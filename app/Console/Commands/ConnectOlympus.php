@@ -37,8 +37,8 @@
 namespace App\Console\Commands;
 
 use App\Settings\BrandSettings;
-use App\Settings\OlympusSettings;
 use Illuminate\Console\Command;
+use App\Settings\OlympusSettings;
 use Illuminate\Support\Facades\Http;
 
 class ConnectOlympus extends Command

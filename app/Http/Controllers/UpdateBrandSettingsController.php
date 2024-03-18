@@ -36,13 +36,12 @@
 
 namespace App\Http\Controllers;
 
-use AdvisingApp\Authorization\Settings\AzureSsoSettings;
-use App\Console\Commands\BuildCustomCss;
-use App\Http\Requests\SetAzureSsoSettingRequest;
 use App\Settings\BrandSettings;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Artisan;
+use App\Console\Commands\BuildCustomCss;
 use Symfony\Component\HttpFoundation\Response;
+use App\Http\Requests\SetAzureSsoSettingRequest;
 
 class UpdateBrandSettingsController extends Controller
 {

@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
-use App\Http\Controllers\UpdateBrandSettingsController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UpdateBrandSettingsController;
+use App\Http\Controllers\UpdateAzureSsoSettingsController;
 
 Route::post('azure-sso/update', UpdateAzureSsoSettingsController::class)
     ->name('azure-sso.update');

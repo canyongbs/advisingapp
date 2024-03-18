@@ -36,8 +36,6 @@
 
 namespace App\Settings;
 
-use App\DataTransferObjects\LicenseManagement\LicenseData;
-use Illuminate\Support\Arr;
 use Spatie\LaravelSettings\Settings;
 
 class BrandSettings extends Settings
