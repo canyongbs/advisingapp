@@ -1,0 +1,119 @@
+.fi-topbar {
+    @apply border-b-2 border-bright-sun-300;
+}
+
+.fi-topbar > nav {
+    @apply ring-0;
+}
+
+.fi-sidebar-nav {
+    @apply bg-white border-e border-e-gray-300 border-t-2 border-t-bright-sun-300 p-0;
+}
+
+.fi-sidebar-nav-groups {
+    @apply border-b border-gray-300 mx-0 divide-y divide-gray-300 gap-y-0 !important;
+}
+
+.fi-sidebar-group[data-group-label=''] .fi-sidebar-item-button {
+    @apply pl-3;
+}
+
+.fi-sidebar-group-button {
+    @apply px-3 py-4;
+}
+
+.fi-sidebar-group-label {
+    @apply font-semibold;
+}
+
+.fi-sidebar-group-icon {
+    @apply text-gray-500;
+}
+
+.fi-sidebar-group-items {
+    @apply divide-y gap-y-0 border-t;
+}
+
+.fi-sidebar-item-grouped-border {
+    @apply hidden;
+}
+
+.fi-sidebar-item-button {
+    @apply pl-12 py-4 rounded-none;
+}
+
+body {
+    @apply bg-gray-100 !important;
+}
+
+.fi-header-heading {
+    @apply text-gray-700 font-normal;
+}
+
+.fi-breadcrumbs-list > .fi-breadcrumbs-item:not(:last-of-type) > .fi-breadcrumbs-item-label {
+    @apply text-dodger-blue-600;
+}
+
+.fi-btn {
+    @apply text-black rounded-sm px-10 font-bold;
+}
+
+.fi-btn.fi-color-custom {
+    @apply bg-custom-500;
+}
+
+.fi-btn.fi-color-gray {
+    @apply ring-transparent border-2 border-bright-sun-400;
+}
+
+.fi-ac {
+    @apply gap-x-5;
+}
+
+.fi-section {
+    @apply rounded-sm;
+}
+
+.fi-input-wrp {
+    @apply rounded-sm;
+}
+
+.fi-ta-ctn {
+    @apply rounded-sm;
+}
+
+.fi-ta-table > thead > tr {
+    @apply bg-white;
+}
+
+.fi-pagination-items {
+    @apply rounded-sm;
+}
+
+.fi-tabs {
+    @apply rounded-none mx-0 p-0 ring-0 shadow-none border-b-2 border-bright-sun-400;
+}
+
+.fi-tabs-item {
+    @apply rounded-none;
+}
+
+.fi-tabs-item.fi-active {
+    @apply font-bold bg-bright-sun-100 border-s-2 border-t-2 border-e border-bright-sun-400 border-e-bright-sun-200 !important;
+}
+
+.fi-tabs-item.fi-active > .fi-tabs-item-label {
+    @apply text-black;
+}
+
+.fi-page > section > div {
+    @apply bg-white p-4 gap-x-4;
+}
+
+.fi-ta-header-heading {
+    @apply font-normal text-lg;
+}
+
+.fi-sidebar-nav > ul {
+    @apply gap-y-0 !important;
+}
