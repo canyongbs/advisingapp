@@ -53,6 +53,7 @@ class KnowledgeManagementPortalController extends Controller
         return response()->json([
             'primary_color' => Color::all()[$settings->knowledge_management_portal_primary_color ?? 'blue'],
             'rounding' => $settings->knowledge_management_portal_rounding,
+            'requires_authentication' => $settings->knowledge_management_portal_requires_authentication,
             'authentication_url' => URL::to(
                 URL::signedRoute(
                     name: 'api.portal.knowledge-management.request-authentication',
