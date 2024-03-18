@@ -38,8 +38,8 @@ namespace App\Console\Commands;
 
 use App\Settings\BrandSettings;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Process;
 
 class BuildCustomCss extends Command
 {
