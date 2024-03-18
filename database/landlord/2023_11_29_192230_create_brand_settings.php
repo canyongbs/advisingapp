@@ -34,9 +34,15 @@
 </COPYRIGHT>
 */
 
-use App\Multitenancy\Http\Middleware\CheckOlympusKey;
-use App\Multitenancy\Http\Controllers\CreateTenantController;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-Route::middleware([CheckOlympusKey::class])
-    ->post('tenants/create', CreateTenantController::class)
-    ->name('tenants.create');
+return new class () extends SettingsMigration {
+    public function up(): void
+    {
+        $this->migrator->repository('landlord_database');
+
+        $this->migrator->add('brand.color_overrides', []);
+        $this->migrator->add('brand.custom_css');
+        $this->migrator->add('brand.has_dark_mode', true);
+    }
+};

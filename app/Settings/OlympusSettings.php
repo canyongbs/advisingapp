@@ -34,9 +34,32 @@
 </COPYRIGHT>
 */
 
-use App\Multitenancy\Http\Middleware\CheckOlympusKey;
-use App\Multitenancy\Http\Controllers\CreateTenantController;
+namespace App\Settings;
 
-Route::middleware([CheckOlympusKey::class])
-    ->post('tenants/create', CreateTenantController::class)
-    ->name('tenants.create');
+use Spatie\LaravelSettings\Settings;
+
+class OlympusSettings extends Settings
+{
+    public ?string $application_id;
+
+    public ?string $key;
+
+    public ?string $url;
+
+    public static function repository(): ?string
+    {
+        return 'landlord_database';
+    }
+
+    public static function group(): string
+    {
+        return 'olympus';
+    }
+
+    public static function encrypted(): array
+    {
+        return [
+            'key',
+        ];
+    }
+}

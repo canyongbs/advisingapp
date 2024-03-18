@@ -34,9 +34,15 @@
 </COPYRIGHT>
 */
 
-use App\Multitenancy\Http\Middleware\CheckOlympusKey;
-use App\Multitenancy\Http\Controllers\CreateTenantController;
+namespace App\Models;
 
-Route::middleware([CheckOlympusKey::class])
-    ->post('tenants/create', CreateTenantController::class)
-    ->name('tenants.create');
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
+
+/**
+ * @mixin IdeHelperSettingsProperty
+ */
+class LandlordSettingsProperty extends BaseSettingsProperty
+{
+    use HasUuids;
+}

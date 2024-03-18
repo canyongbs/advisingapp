@@ -34,11 +34,12 @@
 </COPYRIGHT>
 */
 
-use App\Http\Controllers\SetAzureSsoSettingController;
-use App\Multitenancy\Http\Middleware\CheckLandlordApiKey;
+use App\Http\Controllers\UpdateAzureSsoSettingsController;
+use App\Http\Controllers\UpdateBrandSettingsController;
+use Illuminate\Support\Facades\Route;
 
-Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']], function () {});
-
-Route::middleware([CheckLandlordApiKey::class])
-    ->post('azure-sso/update', SetAzureSsoSettingController::class)
+Route::post('azure-sso/update', UpdateAzureSsoSettingsController::class)
     ->name('azure-sso.update');
+
+Route::post('brand/update', UpdateBrandSettingsController::class)
+    ->name('brand.update');

@@ -36,23 +36,24 @@
 
 namespace App\Multitenancy\Http\Middleware;
 
+use App\Settings\OlympusSettings;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckLandlordApiKey
+class CheckOlympusKey
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! Hash::check($request->bearerToken(), base64_decode(config('app.landlord_api_key')))) {
+        if ($request->bearerToken() !== app(OlympusSettings::class)->key) {
             if ($request->expectsJson()) {
                 return response()->json([
-                    'message' => 'Invalid API key',
+                    'message' => 'Invalid Olympus key',
                 ], Response::HTTP_FORBIDDEN);
             }
 
-            abort(Response::HTTP_FORBIDDEN, 'Invalid API key');
+            abort(Response::HTTP_FORBIDDEN, 'Invalid Olympus key');
         }
 
         return $next($request);

@@ -42,6 +42,7 @@ use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\TrustProxies;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\VerifyCsrfToken;
+use App\Multitenancy\Http\Middleware\CheckOlympusKey;
 use Illuminate\Auth\Middleware\Authorize;
 use App\Http\Middleware\ValidateSignature;
 use Illuminate\Http\Middleware\HandleCors;
@@ -112,6 +113,7 @@ class Kernel extends HttpKernel
         'landlord-api' => [
             // \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             SubstituteBindings::class,
+            CheckOlympusKey::class,
         ],
     ];
 

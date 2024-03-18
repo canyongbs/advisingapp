@@ -36,6 +36,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Settings\BrandSettings;
 use Filament\Panel;
 use Filament\PanelProvider;
 use App\Models\SettingsProperty;
@@ -57,6 +58,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use App\Multitenancy\Http\Middleware\NeedsTenant;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use AdvisingApp\Authorization\Filament\Pages\Auth\Login;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -111,6 +113,7 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
+            ->darkMode(Schema::hasTable('settings') ? app(BrandSettings::class)->has_dark_mode : true)
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([])
             ->middleware([

@@ -39,6 +39,8 @@ namespace App\Providers;
 use App\Models\User;
 use App\Models\Export;
 use App\Models\Import;
+use App\Settings\BrandSettings;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 use App\Models\FailedImportRow;
 use Filament\Support\Colors\Color;
@@ -62,24 +64,22 @@ class FilamentServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Changes to colors also need to be reflected in tailwind.config.js
-        FilamentColor::register([
+        $colors = [
             'danger' => Color::Red,
             'gray' => Color::Zinc,
             'info' => Color::Blue,
-            // Trout
             'primary' => [
-                50 => '#f6f7f9',
-                100 => '#ededf1',
-                200 => '#d7d9e0',
-                300 => '#b4b9c5',
-                400 => '#8b92a5',
-                500 => '#6d758a',
-                600 => '#575d72',
-                700 => '#4d5264',
-                800 => '#3e424e',
-                900 => '#363944',
-                950 => '#24252d',
+                50 => '#fffbeb',
+                100 => '#fff4c6',
+                200 => '#fee989',
+                300 => '#fed43f',
+                400 => '#fec321',
+                500 => '#f8a208',
+                600 => '#db7a04',
+                700 => '#b65607',
+                800 => '#94420c',
+                900 => '#79370e',
+                950 => '#461b02',
             ],
             'success' => Color::Green,
             'warning' => Color::Amber,
@@ -174,7 +174,14 @@ class FilamentServiceProvider extends ServiceProvider
                 900 => '#7c1f53',
                 950 => '#4b0c2f',
             ],
-        ]);
+        ];
+
+        // Changes to colors also need to be reflected in tailwind.config.js
+        FilamentColor::register(
+            Schema::hasTable('settings') ?
+                app(BrandSettings::class)->mergeColorOverrides($colors) :
+                $colors,
+        );
 
         FilamentView::registerRenderHook(
             'panels::footer',

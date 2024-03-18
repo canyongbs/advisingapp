@@ -34,9 +34,32 @@
 </COPYRIGHT>
 */
 
-use App\Multitenancy\Http\Middleware\CheckOlympusKey;
-use App\Multitenancy\Http\Controllers\CreateTenantController;
+namespace App\Settings;
 
-Route::middleware([CheckOlympusKey::class])
-    ->post('tenants/create', CreateTenantController::class)
-    ->name('tenants.create');
+use App\DataTransferObjects\LicenseManagement\LicenseData;
+use Illuminate\Support\Arr;
+use Spatie\LaravelSettings\Settings;
+
+class BrandSettings extends Settings
+{
+    public array $color_overrides = [];
+
+    public ?string $custom_css;
+
+    public bool $has_dark_mode = true;
+
+    public static function repository(): ?string
+    {
+        return 'landlord_database';
+    }
+
+    public static function group(): string
+    {
+        return 'brand';
+    }
+
+    public function mergeColorOverrides(array $colors): array
+    {
+        return array_merge_recursive($colors, $this->color_overrides);
+    }
+}
