@@ -181,11 +181,18 @@ class ManagePortalSettings extends SettingsPage
                             ->hintIcon(fn (TextInput $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Knowledge Management is not a part of your current subscription.')
                             ->columnSpanFull(),
+                        Toggle::make('knowledge_management_portal_requires_authentication')
+                            ->label('Require Authentication')
+                            ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled'))
+                            ->disabled(! Gate::check(Feature::ServiceManagement->getGateName()))
+                            ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->columnSpanFull(),
                         Toggle::make('knowledge_management_portal_service_management')
                             ->label('Service Management')
                             ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled'))
                             ->disabled(! Gate::check(Feature::ServiceManagement->getGateName()))
-                            ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null),
+                            ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->columnSpanFull(),
                         Actions::make([
                             Action::make('view')
                                 ->url(fn () => route('portal.knowledge-management.show'))
