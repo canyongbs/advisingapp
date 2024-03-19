@@ -4,6 +4,9 @@
 * [Docker](https://docs.docker.com/get-docker/)
 * [Docker Compose](https://docs.docker.com/compose/install/) (It is most likely that the way you installed Docker already came with Docker Compose, so on most systems you probably need not install this)
 * [NVM (Node Version Manager)](https://github.com/nvm-sh/nvm) (Optional, but recommended)
+* Spin CLI
+  * [Spin MacOS](https://serversideup.net/open-source/spin/docs/installation/install-macos#install-docker-desktop)
+  * [Spin Linux](https://serversideup.net/open-source/spin/docs/installation/install-linux)
 
 ### Pre-Setup
 
@@ -28,6 +31,8 @@ nvm use
 Details on how to automatically use the correct version of Node when entering the project directory can be found on the [NVM GitHub page | Deeper Shell Integration](https://github.com/nvm-sh/nvm#deeper-shell-integration)
 
 ### Setup
+
+#### 1. Set up the `.env` file
 First, create an `.env` file based on `.env.example`
 ```bash
 cp .env.example .env
@@ -35,14 +40,32 @@ cp .env.example .env
 
 ---
 
-This application makes use of [Spin](https://serversideup.net/open-source/spin/docs) for local development. Though not a requirement, it is highly recommended reading through the documentation on it.
+#### 2. Install Composer Dependencies
 
-Install the Spin CLI on your system by following the instructions on the Spin Installation page:
+```bash
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    laravelsail/php82-composer:latest \
+    composer install --ignore-platform-reqs --no-scripts
+```
 
-- [Spin MacOS](https://serversideup.net/open-source/spin/docs/installation/install-macos#install-docker-desktop)
-- [Spin Linux](https://serversideup.net/open-source/spin/docs/installation/install-linux)
+---
 
-After Spin is properly installed you can run the following command to start the containers:
+#### 3. Install NPM Dependencies
+
+```bash
+npm install
+```
+
+> **Note:** If you have properly installed NVM then nvm should automatically switch to the correct version of Node and NPM. If you have not installed NVM, then you will need to ensure that you are using the correct version of Node and NPM.
+
+---
+
+#### 4. Start the containers and open a shell into the main PHP container
+
+Run the following command to start the containers:
 
 ```bash
 spin up -d
@@ -51,38 +74,26 @@ spin up -d
 Once the containers are started you can now start a shell into the main PHP container by running the following command:
 
 ```bash
-spin exec -it php bash
+spin exec -it advisingapp-app bash
 ```
 
 All following commands will and should be run from within the PHP container.
 
 ---
 
-After cloning this project, execute the following commands.
+#### 5. Set up the application
 
-Install NPM dependencies:
-
-```bash
-npm install
-```
-
-Install PHP dependencies:
-
-```bash
-composer install
-```
-
-Finally, we will set up the application by running the following commands:
+We will set up the application by running the following commands:
 ```bash
 php artisan key:generate
 php artisan migrate:landlord:fresh
-npm run build
+php artisan app:build-assets
 ```
 
 The above commands will set up the application for the "landlord" database. The landlord database is in charge of holding all information on tenants. Next we will set up a tenant.
 
 ```bash
-php artisan tenant:create [A Name for the Tenant] [A domain for the tenant]
+php artisan tenants:create [A Name for the Tenant] [A domain for the tenant]
 ```
 
 These commands will create a new tenant with the name and domain you supplied and then refresh and seed the tenant's database.

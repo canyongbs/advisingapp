@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  php:
+  advisingapp-app:
     build:
       target: deploy
       args:

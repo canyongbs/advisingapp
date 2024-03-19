@@ -8,7 +8,7 @@ if [ ! -f "$WEBUSER_HOME/artisan" ]; then
   exit 1
 fi
 
-if [ "${BUILD_ASSETS:="true"}" == "true" ]; then
+if [ "${BUILD_ASSETS:="false"}" == "true" ]; then
     echo "👉 Building assets..."
 
     cd "$WEBUSER_HOME"
