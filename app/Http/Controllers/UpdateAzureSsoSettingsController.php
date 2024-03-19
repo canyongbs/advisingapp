@@ -34,10 +34,28 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use App\Multitenancy\Http\Middleware\CheckOlympusKey;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
+namespace App\Http\Controllers;
 
-Route::middleware([CheckOlympusKey::class])
-    ->post('azure-sso/update', UpdateAzureSsoSettingsController::class)
-    ->name('azure-sso.update');
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use App\Http\Requests\SetAzureSsoSettingRequest;
+use AdvisingApp\Authorization\Settings\AzureSsoSettings;
+
+class UpdateAzureSsoSettingsController extends Controller
+{
+    public function __invoke(SetAzureSsoSettingRequest $request): JsonResponse
+    {
+        $azureSsoSettings = app(AzureSsoSettings::class);
+
+        $azureSsoSettings->is_enabled = $request->input('enabled');
+        $azureSsoSettings->client_id = $request->input('client_id');
+        $azureSsoSettings->client_secret = $request->input('client_secret');
+        $azureSsoSettings->tenant_id = $request->input('tenant_id');
+
+        $azureSsoSettings->save();
+
+        return response()->json([
+            'message' => 'Azure SSO settings updated successfully!',
+        ], Response::HTTP_OK);
+    }
+}

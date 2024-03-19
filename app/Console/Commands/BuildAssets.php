@@ -34,10 +34,54 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use App\Multitenancy\Http\Middleware\CheckOlympusKey;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
+namespace App\Console\Commands;
 
-Route::middleware([CheckOlympusKey::class])
-    ->post('azure-sso/update', UpdateAzureSsoSettingsController::class)
-    ->name('azure-sso.update');
+use App\Settings\BrandSettings;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Process;
+
+class BuildAssets extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'app:build-assets {script?}';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Builds all assets, including custom CSS from the database.';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle(): void
+    {
+        if (Schema::hasTable('settings')) {
+            file_put_contents(
+                resource_path('css/filament/admin/custom.css'),
+                app(BrandSettings::class)->custom_css ?? '',
+            );
+        }
+
+        $script = $this->argument('script');
+        $script = filled($script) ? "build:{$script}" : 'build';
+
+        $process = Process::run(
+            <<<BASH
+                #!/bin/bash
+                [ -s "/usr/local/nvm/nvm.sh" ] && \. "/usr/local/nvm/nvm.sh"
+                npm run {$script}
+            BASH
+        )->throw();
+
+        $this->line($process->output());
+
+        $this->info('Assets have been built.');
+    }
+}

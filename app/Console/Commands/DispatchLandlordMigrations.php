@@ -40,6 +40,8 @@ use Throwable;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
 use App\Jobs\LandlordSchemaMigration;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Artisan;
 use App\Jobs\DispatchLandlordDataMigrations;
 use App\Events\LandlordMigrationBatchFailure;
 use App\Events\LandlordMigrationBatchSuccessful;
@@ -53,6 +55,12 @@ class DispatchLandlordMigrations extends DispatchMigrations
 
     public function handle(): int
     {
+        if (! Schema::hasTable('migrations')) {
+            Artisan::call(
+                command: 'migrate --database=landlord --path=database/landlord --force --isolated'
+            );
+        }
+
         Bus::batch(
             [
                 [

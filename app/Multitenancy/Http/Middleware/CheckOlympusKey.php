@@ -34,10 +34,27 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use App\Multitenancy\Http\Middleware\CheckOlympusKey;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
+namespace App\Multitenancy\Http\Middleware;
 
-Route::middleware([CheckOlympusKey::class])
-    ->post('azure-sso/update', UpdateAzureSsoSettingsController::class)
-    ->name('azure-sso.update');
+use Closure;
+use Illuminate\Http\Request;
+use App\Settings\OlympusSettings;
+use Symfony\Component\HttpFoundation\Response;
+
+class CheckOlympusKey
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        if ($request->bearerToken() !== app(OlympusSettings::class)->key) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Invalid Olympus key',
+                ], Response::HTTP_FORBIDDEN);
+            }
+
+            abort(Response::HTTP_FORBIDDEN, 'Invalid Olympus key');
+        }
+
+        return $next($request);
+    }
+}

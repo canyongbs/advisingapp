@@ -34,10 +34,32 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use App\Multitenancy\Http\Middleware\CheckOlympusKey;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
+namespace App\Settings;
 
-Route::middleware([CheckOlympusKey::class])
-    ->post('azure-sso/update', UpdateAzureSsoSettingsController::class)
-    ->name('azure-sso.update');
+use Spatie\LaravelSettings\Settings;
+
+class OlympusSettings extends Settings
+{
+    public ?string $application_id;
+
+    public ?string $key;
+
+    public ?string $url;
+
+    public static function repository(): ?string
+    {
+        return 'landlord_database';
+    }
+
+    public static function group(): string
+    {
+        return 'olympus';
+    }
+
+    public static function encrypted(): array
+    {
+        return [
+            'key',
+        ];
+    }
+}

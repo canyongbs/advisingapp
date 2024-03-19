@@ -608,7 +608,7 @@
                 </div>
             @endif
         </div>
-        <script src="{{ FilamentAsset::getScriptSrc('userToUserChat', 'canyon-gbs/in-app-communication') }}"></script>
+        <script src="{{ url('js/canyon-gbs/in-app-communication/userToUserChat.js') }}"></script>
         <style>
             .tiptap .is-editor-empty:first-child::before {
                 color: #adb5bd;

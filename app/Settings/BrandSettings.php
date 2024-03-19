@@ -34,10 +34,30 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use App\Multitenancy\Http\Middleware\CheckOlympusKey;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
+namespace App\Settings;
 
-Route::middleware([CheckOlympusKey::class])
-    ->post('azure-sso/update', UpdateAzureSsoSettingsController::class)
-    ->name('azure-sso.update');
+use Spatie\LaravelSettings\Settings;
+
+class BrandSettings extends Settings
+{
+    public array $color_overrides = [];
+
+    public ?string $custom_css;
+
+    public bool $has_dark_mode = true;
+
+    public static function repository(): ?string
+    {
+        return 'landlord_database';
+    }
+
+    public static function group(): string
+    {
+        return 'brand';
+    }
+
+    public function mergeColorOverrides(array $colors): array
+    {
+        return array_merge_recursive($colors, $this->color_overrides);
+    }
+}

@@ -34,10 +34,15 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use App\Multitenancy\Http\Middleware\CheckOlympusKey;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
+namespace App\Models;
 
-Route::middleware([CheckOlympusKey::class])
-    ->post('azure-sso/update', UpdateAzureSsoSettingsController::class)
-    ->name('azure-sso.update');
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
+
+/**
+ * @mixin IdeHelperSettingsProperty
+ */
+class LandlordSettingsProperty extends BaseSettingsProperty
+{
+    use HasUuids;
+}

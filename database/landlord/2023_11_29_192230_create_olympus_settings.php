@@ -34,10 +34,15 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use App\Multitenancy\Http\Middleware\CheckOlympusKey;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-Route::middleware([CheckOlympusKey::class])
-    ->post('azure-sso/update', UpdateAzureSsoSettingsController::class)
-    ->name('azure-sso.update');
+return new class () extends SettingsMigration {
+    public function up(): void
+    {
+        $this->migrator->repository('landlord_database');
+
+        $this->migrator->addEncrypted('olympus.application_id');
+        $this->migrator->addEncrypted('olympus.key');
+        $this->migrator->addEncrypted('olympus.url');
+    }
+};

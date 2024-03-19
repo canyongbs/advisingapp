@@ -41,8 +41,10 @@ use App\Models\Export;
 use App\Models\Import;
 use Illuminate\View\View;
 use App\Models\FailedImportRow;
+use App\Settings\BrandSettings;
 use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Toggle;
+use Illuminate\Support\Facades\Schema;
 use Filament\Forms\Components\Checkbox;
 use Illuminate\Support\ServiceProvider;
 use Filament\Support\Facades\FilamentView;
@@ -62,8 +64,7 @@ class FilamentServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Changes to colors also need to be reflected in tailwind.config.js
-        FilamentColor::register([
+        $colors = [
             'danger' => Color::Red,
             'gray' => Color::Zinc,
             'info' => Color::Blue,
@@ -174,7 +175,14 @@ class FilamentServiceProvider extends ServiceProvider
                 900 => '#7c1f53',
                 950 => '#4b0c2f',
             ],
-        ]);
+        ];
+
+        // Changes to colors also need to be reflected in tailwind.config.js
+        FilamentColor::register(
+            Schema::hasTable('settings') ?
+                app(BrandSettings::class)->mergeColorOverrides($colors) :
+                $colors,
+        );
 
         FilamentView::registerRenderHook(
             'panels::footer',

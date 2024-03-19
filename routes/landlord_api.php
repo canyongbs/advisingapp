@@ -34,9 +34,12 @@
 </COPYRIGHT>
 */
 
-use App\Multitenancy\Http\Middleware\CheckLandlordApiKey;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UpdateBrandSettingsController;
 use App\Multitenancy\Http\Controllers\CreateTenantController;
 
-Route::middleware([CheckLandlordApiKey::class])
-    ->post('tenants/create', CreateTenantController::class)
+Route::post('tenants/create', CreateTenantController::class)
     ->name('tenants.create');
+
+Route::post('brand/update', UpdateBrandSettingsController::class)
+    ->name('brand.update');

@@ -36,25 +36,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Settings\BrandSettings;
+use Illuminate\Http\JsonResponse;
+use App\Console\Commands\BuildAssets;
+use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\SetAzureSsoSettingRequest;
-use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 
-class SetAzureSsoSettingController extends Controller
+class UpdateBrandSettingsController extends Controller
 {
-    public function __invoke(SetAzureSsoSettingRequest $request)
+    public function __invoke(SetAzureSsoSettingRequest $request): JsonResponse
     {
-        $azureSsoSettings = app(AzureSsoSettings::class);
+        $brandSettings = app(BrandSettings::class);
 
-        $azureSsoSettings->is_enabled = $request->input('enabled');
-        $azureSsoSettings->client_id = $request->input('client_id');
-        $azureSsoSettings->client_secret = $request->input('client_secret');
-        $azureSsoSettings->tenant_id = $request->input('tenant_id');
+        $brandSettings->fill($request->all());
 
-        $azureSsoSettings->save();
+        $brandSettings->save();
+
+        if ($request->has('custom_css')) {
+            Artisan::queue(BuildAssets::class, [
+                'script' => 'vite',
+            ]);
+        }
 
         return response()->json([
-            'message' => 'Azure SSO settings updated successfully!',
+            'message' => 'Brand settings updated successfully!',
         ], Response::HTTP_OK);
     }
 }

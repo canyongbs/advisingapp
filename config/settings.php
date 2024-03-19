@@ -35,6 +35,7 @@
 */
 
 use App\Models\SettingsProperty;
+use App\Models\LandlordSettingsProperty;
 use App\DataTransferObjects\Casts\DataCast;
 
 return [
@@ -72,6 +73,12 @@ return [
         'database' => [
             'type' => Spatie\LaravelSettings\SettingsRepositories\DatabaseSettingsRepository::class,
             'model' => SettingsProperty::class,
+            'table' => null,
+            'connection' => null,
+        ],
+        'landlord_database' => [
+            'type' => Spatie\LaravelSettings\SettingsRepositories\DatabaseSettingsRepository::class,
+            'model' => LandlordSettingsProperty::class,
             'table' => null,
             'connection' => null,
         ],
