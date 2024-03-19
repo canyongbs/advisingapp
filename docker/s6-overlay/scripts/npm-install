@@ -1,0 +1,28 @@
+#!/command/with-contenv bash
+
+# Exit on error
+set -e
+
+if [ ! -f "$WEBUSER_HOME/artisan" ]; then
+  echo "Skipping npm dependency installation because we could not detect a Laravel install..."
+  exit 1
+fi
+
+if [ "${COMPOSER_INSTALL:="true"}" == "true" ]; then
+    if [ -d "$WEBUSER_HOME/node_modules" ]; then
+        echo "Skipping npm dependency installation because node_modules directory already exists. Please remove the node_modules directory if you want to reinstall dependencies"
+        exit 0
+    fi
+
+    echo "👉 Installing npm dependencies..."
+
+    cd "$WEBUSER_HOME"
+
+    USERNAME=$(id -nu "$PUID")
+
+    s6-setuidgid "$USERNAME" npm install
+
+    echo "npm dependencies installed!"
+fi
+
+exit 0

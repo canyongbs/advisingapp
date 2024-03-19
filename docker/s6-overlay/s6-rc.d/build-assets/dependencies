@@ -1,1 +1,3 @@
 runas-user
+composer-install
+npm-install

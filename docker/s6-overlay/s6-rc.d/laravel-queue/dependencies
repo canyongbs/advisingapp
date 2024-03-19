@@ -1,2 +1,4 @@
 runas-user
 startup-caching
+composer-install
+npm-install
