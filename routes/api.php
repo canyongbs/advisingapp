@@ -34,9 +34,8 @@
 </COPYRIGHT>
 */
 
-use App\Multitenancy\Http\Middleware\CheckOlympusKey;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UpdateBrandSettingsController;
+use App\Multitenancy\Http\Middleware\CheckOlympusKey;
 use App\Http\Controllers\UpdateAzureSsoSettingsController;
 
 Route::middleware([CheckOlympusKey::class])

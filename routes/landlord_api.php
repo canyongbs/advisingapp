@@ -34,10 +34,9 @@
 </COPYRIGHT>
 */
 
-use App\Http\Controllers\UpdateBrandSettingsController;
-use App\Multitenancy\Http\Middleware\CheckOlympusKey;
-use App\Multitenancy\Http\Controllers\CreateTenantController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UpdateBrandSettingsController;
+use App\Multitenancy\Http\Controllers\CreateTenantController;
 
 Route::post('tenants/create', CreateTenantController::class)
     ->name('tenants.create');
