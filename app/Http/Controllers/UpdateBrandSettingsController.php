@@ -38,8 +38,8 @@ namespace App\Http\Controllers;
 
 use App\Settings\BrandSettings;
 use Illuminate\Http\JsonResponse;
+use App\Console\Commands\BuildAssets;
 use Illuminate\Support\Facades\Artisan;
-use App\Console\Commands\BuildCustomCss;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\SetAzureSsoSettingRequest;
 
@@ -54,7 +54,9 @@ class UpdateBrandSettingsController extends Controller
         $brandSettings->save();
 
         if ($request->has('custom_css')) {
-            Artisan::queue(BuildCustomCss::class);
+            Artisan::queue(BuildAssets::class, [
+                'script' => 'vite',
+            ]);
         }
 
         return response()->json([
