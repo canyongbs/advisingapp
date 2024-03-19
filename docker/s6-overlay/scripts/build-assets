@@ -3,10 +3,19 @@
 # Exit on error
 set -e
 
+if [ ! -f "$WEBUSER_HOME/artisan" ]; then
+  echo "Skipping composer dependency installation because we could not detect a Laravel install..."
+  exit 1
+fi
+
 if [ "${BUILD_ASSETS:="true"}" == "true" ]; then
     echo "👉 Building assets..."
 
+    cd "$WEBUSER_HOME"
+
     source "$NVM_DIR/nvm.sh"
 
-    php -d variables_order=EGPCS "$WEBUSER_HOME"/artisan app:build-assets
+    USERNAME=$(id -nu "$PUID")
+
+    s6-setuidgid "$USERNAME" php -d variables_order=EGPCS "$WEBUSER_HOME"/artisan app:build-assets
 fi

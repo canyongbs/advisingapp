@@ -1,5 +1,3 @@
 runas-user
 startup-caching
 build-assets
-composer-install
-npm-install
