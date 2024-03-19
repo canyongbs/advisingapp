@@ -37,9 +37,7 @@
 namespace AdvisingApp\InAppCommunication\Providers;
 
 use Filament\Panel;
-use Filament\Support\Assets\Js;
 use Illuminate\Support\ServiceProvider;
-use Filament\Support\Facades\FilamentAsset;
 use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\InAppCommunication\InAppCommunicationPlugin;
@@ -61,15 +59,6 @@ class InAppCommunicationServiceProvider extends ServiceProvider
             ]
         );
 
-        $this->registerAssets();
-
         RoleBasedAccessControlRegistry::register(InAppCommunicationRbacRegistry::class);
-    }
-
-    public function registerAssets(): void
-    {
-        FilamentAsset::register([
-            Js::make('userToUserChat', __DIR__ . '/../../resources/js/dist/userToUserChat.js')->loadedOnRequest(),
-        ], 'canyon-gbs/in-app-communication');
     }
 }

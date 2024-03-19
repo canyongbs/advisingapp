@@ -37,11 +37,9 @@
 namespace AdvisingApp\Task\Providers;
 
 use Filament\Panel;
-use Filament\Support\Assets\Js;
 use AdvisingApp\Task\TaskPlugin;
 use AdvisingApp\Task\Models\Task;
 use Illuminate\Support\ServiceProvider;
-use Filament\Support\Facades\FilamentAsset;
 use AdvisingApp\Task\Observers\TaskObserver;
 use AdvisingApp\Task\Registries\TaskRbacRegistry;
 use App\Registries\RoleBasedAccessControlRegistry;
@@ -64,18 +62,11 @@ class TaskServiceProvider extends ServiceProvider
 
         $this->registerObservers();
 
-        $this->registerAssets();
-
         RoleBasedAccessControlRegistry::register(TaskRbacRegistry::class);
     }
 
     protected function registerObservers(): void
     {
         Task::observe(TaskObserver::class);
-    }
-
-    protected function registerAssets(): void
-    {
-        FilamentAsset::register([Js::make('kanban', __DIR__ . '/../../resources/js/kanban.js')->loadedOnRequest()], 'canyon-gbs/task');
     }
 }

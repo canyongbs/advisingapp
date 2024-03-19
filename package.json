@@ -4,10 +4,9 @@
     "type": "module",
     "scripts": {
         "api-docs:generate": "export NODE_OPTIONS=--max_old_space_size=4096 && env-cmd spectaql spectaql.yml",
-        "build": "npm run build:js-compile && npm run build:vite && npm run build:filament && npm run build:widgets && npm run build:portals",
+        "build": "npm run build:js-compile && npm run build:vite && npm run build:widgets && npm run build:portals",
         "build:application": "(cd widgets/application && vite build)",
         "build:event-registration": "(cd widgets/event-registration && vite build)",
-        "build:filament": "vendor/bin/spin exec -it php php artisan filament:assets",
         "build:form": "(cd widgets/form && vite build)",
         "build:js-compile": "node ./bin/build.js",
         "build:knowledge-management": "(cd portals/knowledge-management && vite build)",

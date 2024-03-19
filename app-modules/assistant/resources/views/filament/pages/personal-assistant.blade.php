@@ -513,8 +513,8 @@ use Illuminate\Support\Facades\Vite;
                     </x-slot>
                 </x-filament::modal>
             @endif
-            <script src="{{ FilamentAsset::getScriptSrc('assistantCurrentResponse', 'canyon-gbs/assistant') }}"></script>
-            <script src="{{ FilamentAsset::getScriptSrc('chats', 'canyon-gbs/assistant') }}"></script>
+            <script src="{{ url('js/canyon-gbs/assistant/assistantCurrentResponse.js') }}"></script>
+            <script src="{{ url('js/canyon-gbs/assistant/chats.js') }}"></script>
             <style>
                 .choices__inner .prompt-upvotes-count {
                     display: none;
