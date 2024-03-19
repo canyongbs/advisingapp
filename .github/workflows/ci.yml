@@ -141,6 +141,7 @@ jobs:
       DB_PASSWORD: root
       DB_DATABASE: testing_landlord
       SCOUT_PREFIX: test_
+      REDIS_HOST: redis
 
     timeout-minutes: 15
 
