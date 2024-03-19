@@ -28,34 +28,33 @@ nvm use
 Details on how to automatically use the correct version of Node when entering the project directory can be found on the [NVM GitHub page | Deeper Shell Integration](https://github.com/nvm-sh/nvm#deeper-shell-integration)
 
 ### Setup
+First, create an `.env` file based on `.env.example`
+```bash
+cp .env.example .env
+```
+
+---
+
 This application makes use of [Spin](https://serversideup.net/open-source/spin/docs) for local development. Though not a requirement, it is highly recommended reading through the documentation on it.
 
-The `spin` executable is within your vendor folder, so you would have to type the path to it everytime to use it. To make this better, Spin recommends adding the following Bash alias:
+Install the Spin CLI on your system by following the instructions on the Spin Installation page:
+
+- [Spin MacOS](https://serversideup.net/open-source/spin/docs/installation/install-macos#install-docker-desktop)
+- [Spin Linux](https://serversideup.net/open-source/spin/docs/installation/install-linux)
+
+After Spin is properly installed you can run the following command to start the containers:
 
 ```bash
-alias spin='[ -f node_modules/.bin/spin ] && bash node_modules/.bin/spin || bash vendor/bin/spin'
+spin up -d
 ```
 
-This documentation will assume you have done so. If not you can simply replace `spin` throughout with `./vendor/bin/spin`.
-
-It may also be helpful to add some aliases for quick artisan and composer commands.
+Once the containers are started you can now start a shell into the main PHP container by running the following command:
 
 ```bash
-alias spina='spin exec -it php php artisan'
-alias spinc='spin exec -it php composer'
+spin exec -it php bash
 ```
 
-Make sure to add these after the `spin` alias.
-
-If you choose not to add these aliases, you can execute commands using `exec` like so:
-
-```bash
-spin exec -it php php artisan key:generate
-
-# or
-
-spin exec -it php php composer install
-```
+All following commands will and should be run from within the PHP container.
 
 ---
 
@@ -67,49 +66,23 @@ Install NPM dependencies:
 npm install
 ```
 
-```bash
-docker run --rm \
-    -u "$(id -u):$(id -g)" \
-    -v "$(pwd):/var/www/html" \
-    -w /var/www/html \
-    laravelsail/php82-composer:latest \
-    composer install --ignore-platform-reqs
-```
-You can install the php dependencies by simple running `composer install` on your host machine which can be quicker. But it can be best to install these making sure that the correct PHP version is being used while doing so.
-
-Then, create a `.env` file based on `.env.example`
-```bash
-cp .env.example .env
-```
-
-Next we need to get Spin to set up the containers and start running:
+Install PHP dependencies:
 
 ```bash
-spin up -d
+composer install
 ```
 
 Finally, we will set up the application by running the following commands:
 ```bash
-spina key:generate
-spina migrate:landlord:fresh
+php artisan key:generate
+php artisan migrate:landlord:fresh
 npm run build
 ```
-
-> #### Note:
-> If you do not have `nvm` installed and set up or you would prefer to run `npm` commands inside the container, you will need to run bash within the container and run the commands from there:
->
-> ```bash
-> spin exec -it php bash
-> ```
->
-> You will then have an interactive bash session within the container that you can run all commands from.
 
 The above commands will set up the application for the "landlord" database. The landlord database is in charge of holding all information on tenants. Next we will set up a tenant.
 
 ```bash
-spina tenant:create [A Name for the Tenant] [A domain for the tenant]
-spina queue:work --queue=landlord --stop-when-empty
-spina tenants:artisan "db:seed --database=tenant"
+php artisan tenant:create [A Name for the Tenant] [A domain for the tenant]
 ```
 
 These commands will create a new tenant with the name and domain you supplied and then refresh and seed the tenant's database.
