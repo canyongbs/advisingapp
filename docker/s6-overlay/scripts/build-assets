@@ -3,7 +3,7 @@
 # Exit on error
 set -e
 
-if [ "${BUILD_CUSTOM_CSS:="false"}" == "true" ]; then
+if [ "${BUILD_ASSETS:="true"}" == "true" ]; then
     echo "👉 Building assets..."
 
     source "$NVM_DIR/nvm.sh"
