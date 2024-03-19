@@ -34,12 +34,11 @@
 </COPYRIGHT>
 */
 
+use App\Multitenancy\Http\Middleware\CheckOlympusKey;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UpdateBrandSettingsController;
 use App\Http\Controllers\UpdateAzureSsoSettingsController;
 
-Route::post('azure-sso/update', UpdateAzureSsoSettingsController::class)
+Route::middleware([CheckOlympusKey::class])
+    ->post('azure-sso/update', UpdateAzureSsoSettingsController::class)
     ->name('azure-sso.update');
-
-Route::post('brand/update', UpdateBrandSettingsController::class)
-    ->name('brand.update');
