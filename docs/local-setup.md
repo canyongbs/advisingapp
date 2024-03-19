@@ -53,17 +53,7 @@ docker run --rm \
 
 ---
 
-#### 3. Install NPM Dependencies
-
-```bash
-npm install --os linux
-```
-
-> **Note:** If you have properly installed NVM then nvm should automatically switch to the correct version of Node and NPM. If you have not installed NVM, then you will need to ensure that you are using the correct version of Node and NPM.
-
----
-
-#### 4. Start the containers and open a shell into the main PHP container
+#### 3. Start the containers and open a shell into the main PHP container
 
 Run the following command to start the containers:
 
@@ -81,7 +71,7 @@ All following commands will and should be run from within the PHP container.
 
 ---
 
-#### 5. Set up the application
+#### 4. Set up the application
 
 We will set up the application by running the following commands:
 ```bash
@@ -89,6 +79,7 @@ php artisan migrate:landlord:fresh
 php artisan key:generate
 php artisan queue:restart
 php artisan schedule:interrupt
+npm ci
 php artisan app:build-assets
 ```
 
