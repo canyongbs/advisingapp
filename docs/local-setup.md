@@ -85,8 +85,10 @@ All following commands will and should be run from within the PHP container.
 
 We will set up the application by running the following commands:
 ```bash
-php artisan key:generate
 php artisan migrate:landlord:fresh
+php artisan key:generate
+php artisan queue:restart
+php artisan schedule:interrupt
 php artisan app:build-assets
 ```
 
