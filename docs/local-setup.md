@@ -56,7 +56,7 @@ docker run --rm \
 #### 3. Install NPM Dependencies
 
 ```bash
-npm install
+npm install --os linux
 ```
 
 > **Note:** If you have properly installed NVM then nvm should automatically switch to the correct version of Node and NPM. If you have not installed NVM, then you will need to ensure that you are using the correct version of Node and NPM.
