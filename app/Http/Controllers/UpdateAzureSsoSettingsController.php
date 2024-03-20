@@ -34,65 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Settings;
+namespace App\Http\Controllers;
 
-use Spatie\LaravelSettings\Settings;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use App\Http\Requests\SetAzureSsoSettingRequest;
+use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 
-class PortalSettings extends Settings
+class UpdateAzureSsoSettingsController extends Controller
 {
-    public null $logo = null;
-
-    public ?string $primary_color = null;
-
-    public ?string $secondary_color = null;
-
-    public bool $has_applications = false;
-
-    public bool $has_message_center = false;
-
-    public bool $has_user_chat = false;
-
-    public bool $has_care_team = false;
-
-    public bool $has_performance_alerts = false;
-
-    public bool $has_emergency_alerts = false;
-
-    public bool $has_service_management = false;
-
-    public bool $has_notifications = false;
-
-    public bool $has_knowledge_base = false;
-
-    public bool $has_tasks = false;
-
-    public bool $has_files_and_documents = false;
-
-    public bool $has_forms = false;
-
-    public bool $has_surveys = false;
-
-    public ?string $footer_color = null;
-
-    public ?string $footer_copyright_statement;
-
-    /**
-    * Knowledge Base Portal
-    */
-    public bool $knowledge_management_portal_enabled = false;
-
-    public bool $knowledge_management_portal_service_management = false;
-
-    public bool $knowledge_management_portal_requires_authentication = false;
-
-    public ?string $knowledge_management_portal_primary_color = null;
-
-    public ?string $knowledge_management_portal_rounding = null;
-
-    public ?string $knowledge_management_portal_authorized_domain = null;
-
-    public static function group(): string
+    public function __invoke(SetAzureSsoSettingRequest $request): JsonResponse
     {
-        return 'portal';
+        $azureSsoSettings = app(AzureSsoSettings::class);
+
+        $azureSsoSettings->is_enabled = $request->input('enabled');
+        $azureSsoSettings->client_id = $request->input('client_id');
+        $azureSsoSettings->client_secret = $request->input('client_secret');
+        $azureSsoSettings->tenant_id = $request->input('tenant_id');
+
+        $azureSsoSettings->save();
+
+        return response()->json([
+            'message' => 'Azure SSO settings updated successfully!',
+        ], Response::HTTP_OK);
     }
 }

@@ -34,27 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace App\Multitenancy\Http\Middleware;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use Closure;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Symfony\Component\HttpFoundation\Response;
-
-class CheckLandlordApiKey
-{
-    public function handle(Request $request, Closure $next): Response
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        if (! Hash::check($request->bearerToken(), base64_decode(config('app.landlord_api_key')))) {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'message' => 'Invalid API key',
-                ], Response::HTTP_FORBIDDEN);
-            }
+        $this->migrator->repository('landlord_database');
 
-            abort(Response::HTTP_FORBIDDEN, 'Invalid API key');
-        }
-
-        return $next($request);
+        $this->migrator->add('brand.color_overrides', []);
+        $this->migrator->add('brand.custom_css');
+        $this->migrator->add('brand.has_dark_mode', true);
     }
-}
+};

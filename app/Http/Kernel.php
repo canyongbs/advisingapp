@@ -52,6 +52,7 @@ use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Multitenancy\Http\Middleware\NeedsTenant;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use App\Multitenancy\Http\Middleware\CheckOlympusKey;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
@@ -112,6 +113,7 @@ class Kernel extends HttpKernel
         'landlord-api' => [
             // \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             SubstituteBindings::class,
+            CheckOlympusKey::class,
         ],
     ];
 

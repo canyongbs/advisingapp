@@ -37,13 +37,11 @@
 namespace AdvisingApp\Assistant\Providers;
 
 use Filament\Panel;
-use Filament\Support\Assets\Js;
 use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Assistant\Models\Prompt;
 use AdvisingApp\Assistant\AssistantPlugin;
-use Filament\Support\Facades\FilamentAsset;
 use AdvisingApp\Assistant\Models\PromptType;
 use AdvisingApp\Assistant\Models\AssistantChat;
 use App\Registries\RoleBasedAccessControlRegistry;
@@ -77,23 +75,11 @@ class AssistantServiceProvider extends ServiceProvider
         ]);
 
         $this->registerEvents();
-        $this->registerAssets();
 
         RoleBasedAccessControlRegistry::register(AssistantRbacRegistry::class);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
         $this->registerEnum(AIChatMessageFrom::class);
-    }
-
-    public function registerAssets(): void
-    {
-        FilamentAsset::register([
-            Js::make('assistantCurrentResponse', __DIR__ . '/../../resources/js/dist/assistantCurrentResponse.js')->loadedOnRequest(),
-        ], 'canyon-gbs/assistant');
-
-        FilamentAsset::register([
-            Js::make('chats', __DIR__ . '/../../resources/js/chats.js')->loadedOnRequest(),
-        ], 'canyon-gbs/assistant');
     }
 
     protected function registerEvents(): void

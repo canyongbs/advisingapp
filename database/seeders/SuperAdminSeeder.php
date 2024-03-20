@@ -39,10 +39,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
 
 class SuperAdminSeeder extends Seeder
 {
@@ -53,7 +50,6 @@ class SuperAdminSeeder extends Seeder
 
         // Data for super admin
         $this->seedSubscribersFor($superAdmin);
-        // $this->seedEngagementsFor($superAdmin);
     }
 
     protected function seedSubscribersFor(User $user): void
@@ -64,7 +60,7 @@ class SuperAdminSeeder extends Seeder
             ->limit(25)
             ->get()
             ->each(function (Student $student) use ($user) {
-                $user->subscriptions()->create([
+                $user->subscriptions()->firstOrCreate([
                     'subscribable_id' => $student->sisid,
                     'subscribable_type' => resolve(Student::class)->getMorphClass(),
                 ]);
@@ -76,59 +72,10 @@ class SuperAdminSeeder extends Seeder
             ->limit(25)
             ->get()
             ->each(function (Prospect $prospect) use ($user) {
-                $user->subscriptions()->create([
+                $user->subscriptions()->firstOrCreate([
                     'subscribable_id' => $prospect->id,
                     'subscribable_type' => resolve(Prospect::class)->getMorphClass(),
                 ]);
-            });
-    }
-
-    protected function seedEngagementsFor(User $user): void
-    {
-        // Student Engagements
-        Student::query()
-            ->orderBy('sisid')
-            ->limit(25)
-            ->get()
-            ->each(function (Student $student) use ($user) {
-                $numberOfEngagements = rand(1, 10);
-
-                for ($i = 0; $i < $numberOfEngagements; $i++) {
-                    Engagement::factory()
-                        ->has(EngagementDeliverable::factory()->count(1)->randomizeState(['deliveryAwaiting', 'deliverySuccessful', 'deliveryFailed']), 'engagementDeliverable')
-                        ->for($student, 'recipient')
-                        ->create([
-                            'user_id' => $user->id,
-                        ]);
-                }
-
-                EngagementResponse::factory()
-                    ->count(rand(1, 10))
-                    ->for($student, 'sender')
-                    ->create();
-            });
-
-        // Prospect Engagements
-        Prospect::query()
-            ->orderBy('id')
-            ->limit(25)
-            ->get()
-            ->each(function (Prospect $prospect) use ($user) {
-                $numberOfEngagements = rand(1, 10);
-
-                for ($i = 0; $i < $numberOfEngagements; $i++) {
-                    Engagement::factory()
-                        ->has(EngagementDeliverable::factory()->count(1)->randomizeState(['deliveryAwaiting', 'deliverySuccessful', 'deliveryFailed']), 'engagementDeliverable')
-                        ->for($prospect, 'recipient')
-                        ->create([
-                            'user_id' => $user->id,
-                        ]);
-                }
-
-                EngagementResponse::factory()
-                    ->count(rand(1, 10))
-                    ->for($prospect, 'sender')
-                    ->create();
             });
     }
 }

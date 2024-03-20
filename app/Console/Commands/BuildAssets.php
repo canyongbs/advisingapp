@@ -34,65 +34,54 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Settings;
+namespace App\Console\Commands;
 
-use Spatie\LaravelSettings\Settings;
+use App\Settings\BrandSettings;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Process;
 
-class PortalSettings extends Settings
+class BuildAssets extends Command
 {
-    public null $logo = null;
-
-    public ?string $primary_color = null;
-
-    public ?string $secondary_color = null;
-
-    public bool $has_applications = false;
-
-    public bool $has_message_center = false;
-
-    public bool $has_user_chat = false;
-
-    public bool $has_care_team = false;
-
-    public bool $has_performance_alerts = false;
-
-    public bool $has_emergency_alerts = false;
-
-    public bool $has_service_management = false;
-
-    public bool $has_notifications = false;
-
-    public bool $has_knowledge_base = false;
-
-    public bool $has_tasks = false;
-
-    public bool $has_files_and_documents = false;
-
-    public bool $has_forms = false;
-
-    public bool $has_surveys = false;
-
-    public ?string $footer_color = null;
-
-    public ?string $footer_copyright_statement;
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'app:build-assets {script?}';
 
     /**
-    * Knowledge Base Portal
-    */
-    public bool $knowledge_management_portal_enabled = false;
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Builds all assets, including custom CSS from the database.';
 
-    public bool $knowledge_management_portal_service_management = false;
-
-    public bool $knowledge_management_portal_requires_authentication = false;
-
-    public ?string $knowledge_management_portal_primary_color = null;
-
-    public ?string $knowledge_management_portal_rounding = null;
-
-    public ?string $knowledge_management_portal_authorized_domain = null;
-
-    public static function group(): string
+    /**
+     * Execute the console command.
+     */
+    public function handle(): void
     {
-        return 'portal';
+        if (Schema::hasTable('settings')) {
+            file_put_contents(
+                resource_path('css/filament/admin/custom.css'),
+                app(BrandSettings::class)->custom_css ?? '',
+            );
+        }
+
+        $script = $this->argument('script');
+        $script = filled($script) ? "build:{$script}" : 'build';
+
+        $process = Process::run(
+            <<<BASH
+                #!/bin/bash
+                [ -s "/usr/local/nvm/nvm.sh" ] && \. "/usr/local/nvm/nvm.sh"
+                npm run {$script}
+            BASH
+        )->throw();
+
+        $this->line($process->output());
+
+        $this->info('Assets have been built.');
     }
 }
