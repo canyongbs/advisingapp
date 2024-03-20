@@ -17,22 +17,27 @@ services:
       CACHE_ICONS: '${CACHE_ICONS:-false}'
       CACHE_FILAMENT_COMPONENTS: '${CACHE_FILAMENT_COMPONENTS:-false}'
     labels:
-      - dev.orbstack.domains=*.advisingapp.local
+      - "traefik.enable=true"
+      - "traefik.http.routers.olympus.rule=HostRegexp(`advisingapp.local`, `{subdomain:[a-z]+}.advisingapp.local`)"
+      - "traefik.http.routers.olympus.entrypoints=websecure"
+      - "traefik.http.routers.olympus.tls=true"
+      - "traefik.http.services.olympus.loadbalancer.server.port=443"
+      - "traefik.http.services.olympus.loadbalancer.server.scheme=https"
     extra_hosts:
       - 'host.docker.internal:host-gateway'
-    ports:
-      - '${APP_PORT:-80}:80'
-      - '${APP_HTTPS_PORT:-443}:443'
-      - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+    # TODO: Look into how to best handle VITE ports, not needed now
+    #ports:
+    #  - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
     volumes:
       - '.:/var/www/html'
     networks:
-      - development
+      - cgbs-development
     depends_on:
       - advisingapp-redis
       - advisingapp-minio
       - advisingapp-mailpit
       - advisingapp-pgsql
+
   advisingapp-redis:
     image: 'redis:alpine'
     ports:
@@ -40,7 +45,7 @@ services:
     volumes:
       - 'advisingapp-redis:/data'
     networks:
-      - development
+      - cgbs-development
     healthcheck:
       test:
         - CMD
@@ -48,6 +53,7 @@ services:
         - ping
       retries: 3
       timeout: 5s
+
   advisingapp-minio:
     image: 'minio/minio:RELEASE.2023-07-07T07-13-57Z'
     ports:
@@ -59,7 +65,7 @@ services:
     volumes:
       - 'advisingapp-minio:/data/minio'
     networks:
-      - development
+      - cgbs-development
     command: 'minio server /data/minio --console-address ":8900"'
     healthcheck:
       test:
@@ -69,13 +75,19 @@ services:
         - 'http://localhost:9000/minio/health/live'
       retries: 3
       timeout: 5s
+
   advisingapp-mailpit:
     image: 'axllent/mailpit:latest'
-    ports:
-      - '${FORWARD_MAILPIT_PORT:-1025}:1025'
-      - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
     networks:
-      - development
+      - cgbs-development
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.advisingapp-mailpit.rule=Host(`mail.tools.advisingapp.local`)"
+      - "traefik.http.routers.advisingapp-mailpit.entrypoints=websecure"
+      - "traefik.http.routers.advisingapp-mailpit.tls=true"
+      - "traefik.http.services.advisingapp-mailpit.loadbalancer.server.port=8025"
+      - "traefik.http.services.advisingapp-mailpit.loadbalancer.server.scheme=http"
+
   advisingapp-pgsql:
     image: 'postgres:15'
     ports:
@@ -89,7 +101,7 @@ services:
       - 'advisingapp-pgsql:/var/lib/postgresql/data'
       - './docker/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
     networks:
-      - development
+      - cgbs-development
     healthcheck:
       test:
         - CMD
@@ -101,8 +113,11 @@ services:
         - '${DB_USERNAME}'
       retries: 3
       timeout: 5s
+
 networks:
-  development:
+  cgbs-development:
+    external: true
+
 volumes:
   advisingapp-redis:
     driver: local

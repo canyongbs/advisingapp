@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  cgbs-traefik:
+    image: traefik:v2.10
+    networks:
+      - cgbs-development
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config/traefik.yml:/traefik.yml:ro
+      - ./config/traefik-certs.yml:/traefik-certs.yml
+      - ./config/certificates/:/certificates
+
+networks:
+  cgbs-development:
+    external: true
