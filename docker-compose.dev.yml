@@ -38,7 +38,7 @@ services:
   advisingapp-redis:
     image: 'redis:alpine'
     ports:
-      - '${FORWARD_REDIS_PORT:-6379}:6379'
+      - '${FORWARD_REDIS_PORT:-63791}:6379'
     volumes:
       - 'advisingapp-redis:/data'
     networks:
@@ -50,11 +50,6 @@ services:
         - ping
       retries: 3
       timeout: 5s
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.advisingapp-redis.rule=Host(`redis.tools.advisingapp.local`)"
-      - "traefik.http.routers.advisingapp-redis.entrypoints=redis"
-      - "traefik.http.services.advisingapp-redis.loadbalancer.server.port=6379"
 
   advisingapp-minio:
     image: 'minio/minio:RELEASE.2023-07-07T07-13-57Z'

@@ -9,5 +9,3 @@ services:
                 GROUP_ID: ${SPIN_GROUP_ID:-9999}
         extra_hosts:
             - 'host.docker.internal:host-gateway'
-        ports:
-            - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
