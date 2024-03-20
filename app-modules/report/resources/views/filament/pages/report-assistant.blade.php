@@ -59,7 +59,9 @@ use Illuminate\Support\Facades\Vite;
 
                 <div class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3">
                     <div
-                        class="flex max-h-[calc(100vh-24rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
+                        class="flex max-h-[calc(100dvh-20rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
+                        x-ref="chatContainer"
+                    >
                         <div class="divide-y dark:divide-none">
                             @foreach ($chat->messages as $message)
                                 @switch($message->from)
@@ -96,7 +98,7 @@ use Illuminate\Support\Facades\Vite;
                                                                     class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
                                                                     <div class="prose dark:prose-invert">
                                                                         @if (filled($message->message))
-                                                                            {!! str($message->message)->markdown()->sanitizeHtml() !!}
+                                                                            {{ str($message->message)->markdown()->sanitizeHtml()->toHtmlString() }}
                                                                         @elseif (filled($message->functionCall))
                                                                             <p>Function called:
                                                                                 <code>{{ $message->functionCall['name'] }}</code>
@@ -230,7 +232,9 @@ use Illuminate\Support\Facades\Vite;
                                                             <div class="flex max-w-full flex-grow flex-col gap-3">
                                                                 <div
                                                                     class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
-                                                                    <div>{{ $message->message }}</div>
+                                                                    <div>
+                                                                        {{ str(nl2br($message->message))->stripTags(allowedTags: ['br'])->sanitizeHtml()->toHtmlString() }}
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -333,7 +337,28 @@ use Illuminate\Support\Facades\Vite;
                                     <textarea
                                         class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
                                         id="message_input"
-                                        rows="4"
+                                        x-data="{
+                                            init() {
+                                                    this.render()
+                                        
+                                                    setInterval(this.render, 500)
+                                                },
+                                        
+                                                render() {
+                                                    $refs.chatContainer.style.maxHeight = 'calc(100dvh - 20rem)'
+                                        
+                                                    if ($el.scrollHeight > 0) {
+                                                        $el.style.height = '5rem'
+                                                        $el.style.height = `min(${$el.scrollHeight}px, 35dvh)`
+                                        
+                                                        $refs.chatContainer.style.maxHeight = `calc(100dvh - 15rem - ${$el.style.height})`
+                                                    }
+                                                },
+                                        }"
+                                        x-on:input="render()"
+                                        x-intersect.once="render()"
+                                        x-on:resize.window="render()"
+                                        x-on:message-sent.window="$nextTick(render)"
                                         placeholder="Type here..."
                                         required
                                         wire:model.debounce="message"
