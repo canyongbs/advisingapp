@@ -21,6 +21,9 @@ entryPoints:
   websecure:
     address: ":443"
 
+  redis:
+    address: ":6379"
+
 accessLog: {}
 log:
   level: ERROR

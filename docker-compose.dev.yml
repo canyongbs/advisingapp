@@ -18,16 +18,13 @@ services:
       CACHE_FILAMENT_COMPONENTS: '${CACHE_FILAMENT_COMPONENTS:-false}'
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.olympus.rule=HostRegexp(`advisingapp.local`, `{subdomain:[a-z]+}.advisingapp.local`)"
-      - "traefik.http.routers.olympus.entrypoints=websecure"
-      - "traefik.http.routers.olympus.tls=true"
-      - "traefik.http.services.olympus.loadbalancer.server.port=443"
-      - "traefik.http.services.olympus.loadbalancer.server.scheme=https"
+      - "traefik.http.routers.advisingapp-app.rule=HostRegexp(`advisingapp.local`, `{subdomain:[a-z]+}.advisingapp.local`)"
+      - "traefik.http.routers.advisingapp-app.entrypoints=websecure"
+      - "traefik.http.routers.advisingapp-app.tls=true"
+      - "traefik.http.services.advisingapp-app.loadbalancer.server.port=443"
+      - "traefik.http.services.advisingapp-app.loadbalancer.server.scheme=https"
     extra_hosts:
       - 'host.docker.internal:host-gateway'
-    # TODO: Look into how to best handle VITE ports, not needed now
-    #ports:
-    #  - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
     volumes:
       - '.:/var/www/html'
     networks:
@@ -53,6 +50,11 @@ services:
         - ping
       retries: 3
       timeout: 5s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.advisingapp-redis.rule=Host(`redis.tools.olympus.local`)"
+      - "traefik.http.routers.advisingapp-redis.entrypoints=redis"
+      - "traefik.http.services.advisingapp-redis.loadbalancer.server.port=6379"
 
   advisingapp-minio:
     image: 'minio/minio:RELEASE.2023-07-07T07-13-57Z'
