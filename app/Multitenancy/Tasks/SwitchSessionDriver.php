@@ -44,9 +44,11 @@ class SwitchSessionDriver implements SwitchTenantTask
     public function __construct(
         protected ?string $originalSessionDriver = null,
         protected ?string $originalSessionConnection = null,
+        protected ?string $originalSessionDomain = null,
     ) {
         $this->originalSessionDriver ??= config('session.driver');
         $this->originalSessionConnection ??= config('session.connection');
+        $this->originalSessionDomain ??= config('session.domain');
     }
 
     public function makeCurrent(Tenant $tenant): void
@@ -56,7 +58,11 @@ class SwitchSessionDriver implements SwitchTenantTask
             return;
         }
 
-        $this->setSessionConfig('database', 'tenant');
+        $this->setSessionConfig(
+            driver: 'database',
+            connection: 'tenant',
+            domain: $tenant->domain,
+        );
     }
 
     public function forgetCurrent(): void
@@ -65,14 +71,22 @@ class SwitchSessionDriver implements SwitchTenantTask
             return;
         }
 
-        $this->setSessionConfig($this->originalSessionDriver, $this->originalSessionConnection);
+        $this->setSessionConfig(
+            driver: $this->originalSessionDriver,
+            connection: $this->originalSessionConnection,
+            domain: $this->originalSessionDomain,
+        );
     }
 
-    protected function setSessionConfig(string $driver, string $connection): void
+    protected function setSessionConfig(string $driver, string $connection, string $domain): void
     {
         config([
             'session.driver' => $driver,
             'session.connection' => $connection,
+            'session.domain' => $domain,
         ]);
+
+        app()->forgetInstance('session');
+        app()->forgetInstance('session.store');
     }
 }
