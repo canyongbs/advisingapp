@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Tenants;
 
-use App\Models\Tenant;
-use App\Models\User;
 use App\Multitenancy\Actions\CreateTenant;
 use App\Http\Requests\Tenants\CreateTenantRequest;
 use App\Multitenancy\DataTransferObjects\TenantConfig;

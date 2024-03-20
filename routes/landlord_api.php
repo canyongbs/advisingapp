@@ -41,5 +41,5 @@ use App\Http\Controllers\Tenants\CreateTenantController;
 Route::post('tenants', CreateTenantController::class)
     ->name('tenants.create');
 
-Route::post('brand/update', UpdateBrandSettingsController::class)
+Route::post('brand', UpdateBrandSettingsController::class)
     ->name('brand.update');

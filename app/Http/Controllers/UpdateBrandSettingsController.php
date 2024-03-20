@@ -40,16 +40,15 @@ use App\Settings\BrandSettings;
 use Illuminate\Http\JsonResponse;
 use App\Console\Commands\BuildAssets;
 use Illuminate\Support\Facades\Artisan;
-use Symfony\Component\HttpFoundation\Response;
-use App\Http\Requests\SetAzureSsoSettingRequest;
+use App\Http\Requests\UpdateBrandSettingsRequest;
 
 class UpdateBrandSettingsController extends Controller
 {
-    public function __invoke(SetAzureSsoSettingRequest $request): JsonResponse
+    public function __invoke(UpdateBrandSettingsRequest $request): JsonResponse
     {
         $brandSettings = app(BrandSettings::class);
 
-        $brandSettings->fill($request->all());
+        $brandSettings->fill($request->validated());
 
         $brandSettings->save();
 
@@ -61,6 +60,6 @@ class UpdateBrandSettingsController extends Controller
 
         return response()->json([
             'message' => 'Brand settings updated successfully!',
-        ], Response::HTTP_OK);
+        ]);
     }
 }

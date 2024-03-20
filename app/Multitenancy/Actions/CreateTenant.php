@@ -36,18 +36,17 @@
 
 namespace App\Multitenancy\Actions;
 
-use App\Jobs\MigrateTenantDatabase;
-use App\Jobs\SeedTenantDatabase;
-use App\Models\Tenant;
-use App\Models\User;
-use App\Multitenancy\Events\NewTenantSetupComplete;
-use App\Multitenancy\Events\NewTenantSetupFailure;
-use Illuminate\Bus\Batch;
-use Illuminate\Encryption\Encrypter;
-use App\Multitenancy\DataTransferObjects\TenantConfig;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Event;
 use Throwable;
+use App\Models\User;
+use App\Models\Tenant;
+use App\Jobs\SeedTenantDatabase;
+use App\Jobs\MigrateTenantDatabase;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Encryption\Encrypter;
+use Illuminate\Support\Facades\Event;
+use App\Multitenancy\Events\NewTenantSetupFailure;
+use App\Multitenancy\Events\NewTenantSetupComplete;
+use App\Multitenancy\DataTransferObjects\TenantConfig;
 
 class CreateTenant
 {
