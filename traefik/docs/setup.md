@@ -20,3 +20,19 @@ This document describes the setup of Traefik for the CanyonGBS development envir
     ```bash
     docker-compose up -d
     ```
+   
+## Self-Signed Certificate Renewal
+
+1. Create a new key
+   ```bash
+   openssl genrsa -out cgbs-local-dev-key.pem 2048
+   ```
+2. Create a new certificate signing request
+   ```bash
+   openssl req -new -out server.csr -key cgbs-local-dev-key.pem -config openssl.cnf
+   ```
+   > Note: Choose all defaults but the Common Name should be `*.advisingapp.local`
+3. Create a new certificate
+   ```bash
+   openssl x509 -req -days 3650 -in server.csr -signkey cgbs-local-dev-key.pem -out cgbs-local-dev.pem -extensions v3_req -extfile openssl.cnf
+   ```
