@@ -203,7 +203,10 @@ use Illuminate\Support\Facades\Vite;
                 </div>
 
                 <div class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3">
-                    <div x-ref="chatContainer" class="flex max-h-[calc(100dvh-20rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
+                    <div
+                        class="flex max-h-[calc(100dvh-20rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
+                        x-ref="chatContainer"
+                    >
                         <div class="divide-y dark:divide-none">
                             @foreach ($chat->messages as $message)
                                 @switch($message->from)
@@ -358,7 +361,8 @@ use Illuminate\Support\Facades\Vite;
                                                     <div class="flex max-w-full flex-grow flex-col gap-3">
                                                         <div
                                                             class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
-                                                            <h1 class="text-2xl font-bold text-red-400">Something went wrong
+                                                            <h1 class="text-2xl font-bold text-red-400">Something went
+                                                                wrong
                                                             </h1>
                                                             <p class="text-black">{{ $error }}</p>
                                                         </div>
@@ -384,21 +388,21 @@ use Illuminate\Support\Facades\Vite;
                                         id="message_input"
                                         x-data="{
                                             init() {
-                                                this.render()
-
-                                                setInterval(this.render, 500)
-                                            },
-
-                                            render() {
-                                                $refs.chatContainer.style.maxHeight = 'calc(100dvh - 20rem)'
-
-                                                if ($el.scrollHeight > 0) {
-                                                    $el.style.height = '5rem'
-                                                    $el.style.height = `min(${$el.scrollHeight}px, 35dvh)`
-
-                                                    $refs.chatContainer.style.maxHeight = `calc(100dvh - 15rem - ${$el.style.height})`
-                                                }
-                                            },
+                                                    this.render()
+                                        
+                                                    setInterval(this.render, 500)
+                                                },
+                                        
+                                                render() {
+                                                    $refs.chatContainer.style.maxHeight = 'calc(100dvh - 20rem)'
+                                        
+                                                    if ($el.scrollHeight > 0) {
+                                                        $el.style.height = '5rem'
+                                                        $el.style.height = `min(${$el.scrollHeight}px, 35dvh)`
+                                        
+                                                        $refs.chatContainer.style.maxHeight = `calc(100dvh - 15rem - ${$el.style.height})`
+                                                    }
+                                                },
                                         }"
                                         x-on:input="render()"
                                         x-intersect.once="render()"
