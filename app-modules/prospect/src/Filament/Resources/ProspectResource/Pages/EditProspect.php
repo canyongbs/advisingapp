@@ -38,7 +38,6 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use App\Models\User;
 use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
 use Filament\Actions\ViewAction;
 use App\Models\Scopes\HasLicense;
 use Filament\Actions\DeleteAction;
@@ -51,7 +50,6 @@ use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
-use App\Features\ProspectStatusSortFeature;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
@@ -153,9 +151,7 @@ class EditProspect extends EditRecord
                         Select::make('status_id')
                             ->label('Status')
                             ->required()
-                            ->relationship('status', 'name', Feature::active(
-                                ProspectStatusSortFeature::class
-                            ) ? fn (Builder $query) => $query->orderBy('sort') : null)
+                            ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
                             ->exists(
                                 table: (new ProspectStatus())->getTable(),
                                 column: (new ProspectStatus())->getKeyName()

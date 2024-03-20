@@ -38,13 +38,11 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
 use Filament\Actions;
 use Filament\Tables\Table;
-use Laravel\Pennant\Feature;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
-use App\Features\ProspectStatusSortFeature;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Prospect\Models\ProspectStatus;
@@ -76,12 +74,8 @@ class ListProspectStatuses extends ListRecords
                     ->counts('prospects')
                     ->sortable(),
             ])
-            ->when(
-                Feature::active(ProspectStatusSortFeature::class),
-                fn (Table $table) => $table
-                    ->defaultSort('sort')
-                    ->reorderable('sort'),
-            )
+            ->defaultSort('sort')
+            ->reorderable('sort')
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),

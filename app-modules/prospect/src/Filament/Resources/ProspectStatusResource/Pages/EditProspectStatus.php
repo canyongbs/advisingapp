@@ -38,11 +38,9 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use App\Features\ProspectStatusSortFeature;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
@@ -75,8 +73,7 @@ class EditProspectStatus extends EditRecord
                     ->required()
                     ->integer()
                     ->minValue(1)
-                    ->maxValue(2147483647)
-                    ->visible(Feature::active(ProspectStatusSortFeature::class)),
+                    ->maxValue(2147483647),
             ]);
     }
 
