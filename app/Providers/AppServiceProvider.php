@@ -76,8 +76,6 @@ class AppServiceProvider extends ServiceProvider
             'tenant' => Tenant::class,
         ]);
 
-        Tenant::observe(TenantObserver::class);
-
         Feature::resolveScopeUsing(fn ($driver) => null);
 
         if (config('app.force_https')) {
