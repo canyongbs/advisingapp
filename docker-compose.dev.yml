@@ -17,65 +17,80 @@ services:
       CACHE_ICONS: '${CACHE_ICONS:-false}'
       CACHE_FILAMENT_COMPONENTS: '${CACHE_FILAMENT_COMPONENTS:-false}'
     labels:
-      - dev.orbstack.domains=*.advisingapp.local
+      - "traefik.enable=true"
+      - "traefik.http.routers.advisingapp-app.rule=HostRegexp(`advisingapp.local`, `{subdomain:[a-z]+}.advisingapp.local`)"
+      - "traefik.http.routers.advisingapp-app.entrypoints=websecure"
+      - "traefik.http.routers.advisingapp-app.tls=true"
+      - "traefik.http.services.advisingapp-app.loadbalancer.server.port=443"
+      - "traefik.http.services.advisingapp-app.loadbalancer.server.scheme=https"
     extra_hosts:
       - 'host.docker.internal:host-gateway'
-    ports:
-      - '${APP_PORT:-80}:80'
-      - '${APP_HTTPS_PORT:-443}:443'
-      - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
     volumes:
       - '.:/var/www/html'
     networks:
-      - development
+      - cgbs-development
     depends_on:
       - advisingapp-redis
       - advisingapp-minio
       - advisingapp-mailpit
       - advisingapp-pgsql
+
   advisingapp-redis:
     image: 'redis:alpine'
     ports:
-      - '${FORWARD_REDIS_PORT:-6379}:6379'
+      - '${FORWARD_REDIS_PORT:-63791}:6379'
     volumes:
       - 'advisingapp-redis:/data'
     networks:
-      - development
+      - cgbs-development
     healthcheck:
-      test:
-        - CMD
-        - redis-cli
-        - ping
+      test: ["CMD", "redis-cli", "ping"]
       retries: 3
       timeout: 5s
+
   advisingapp-minio:
     image: 'minio/minio:RELEASE.2023-07-07T07-13-57Z'
-    ports:
-      - '${FORWARD_MINIO_PORT:-9000}:9000'
-      - '${FORWARD_MINIO_CONSOLE_PORT:-8900}:8900'
     environment:
       MINIO_ROOT_USER: advisingapp
       MINIO_ROOT_PASSWORD: password
     volumes:
       - 'advisingapp-minio:/data/minio'
     networks:
-      - development
+      - cgbs-development
     command: 'minio server /data/minio --console-address ":8900"'
     healthcheck:
-      test:
-        - CMD
-        - curl
-        - '-f'
-        - 'http://localhost:9000/minio/health/live'
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       retries: 3
       timeout: 5s
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.routers.advisingapp-minio-console.rule=Host(`storage.tools.advisingapp.local`)"
+      - "traefik.http.routers.advisingapp-minio-console.entrypoints=websecure"
+      - "traefik.http.routers.advisingapp-minio-console.tls=true"
+      - "traefik.http.routers.advisingapp-minio-console.service=advisingapp-minio-console-service"
+      - "traefik.http.services.advisingapp-minio-console-service.loadbalancer.server.port=8900"
+      - "traefik.http.services.advisingapp-minio-console-service.loadbalancer.server.scheme=http"
+
+      - "traefik.http.routers.advisingapp-minio.rule=Host(`media.tools.advisingapp.local`, `advisingapp-minio`)"
+      - "traefik.http.routers.advisingapp-minio.entrypoints=websecure"
+      - "traefik.http.routers.advisingapp-minio.tls=true"
+      - "traefik.http.routers.advisingapp-minio.service=advisingapp-minio-service"
+      - "traefik.http.services.advisingapp-minio-service.loadbalancer.server.port=9000"
+      - "traefik.http.services.advisingapp-minio-service.loadbalancer.server.scheme=http"
+
   advisingapp-mailpit:
     image: 'axllent/mailpit:latest'
-    ports:
-      - '${FORWARD_MAILPIT_PORT:-1025}:1025'
-      - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
     networks:
-      - development
+      - cgbs-development
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.advisingapp-mailpit.rule=Host(`mail.tools.advisingapp.local`)"
+      - "traefik.http.routers.advisingapp-mailpit.entrypoints=websecure"
+      - "traefik.http.routers.advisingapp-mailpit.tls=true"
+      - "traefik.http.services.advisingapp-mailpit.loadbalancer.server.port=8025"
+      - "traefik.http.services.advisingapp-mailpit.loadbalancer.server.scheme=http"
+
   advisingapp-pgsql:
     image: 'postgres:15'
     ports:
@@ -89,20 +104,16 @@ services:
       - 'advisingapp-pgsql:/var/lib/postgresql/data'
       - './docker/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
     networks:
-      - development
+      - cgbs-development
     healthcheck:
-      test:
-        - CMD
-        - pg_isready
-        - '-q'
-        - '-d'
-        - '${DB_DATABASE}'
-        - '-U'
-        - '${DB_USERNAME}'
+      test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}"]
       retries: 3
       timeout: 5s
+
 networks:
-  development:
+  cgbs-development:
+    external: true
+
 volumes:
   advisingapp-redis:
     driver: local
