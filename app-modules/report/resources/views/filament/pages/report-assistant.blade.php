@@ -96,7 +96,7 @@ use Illuminate\Support\Facades\Vite;
                                                                     class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
                                                                     <div class="prose dark:prose-invert">
                                                                         @if (filled($message->message))
-                                                                            {!! str($message->message)->markdown()->sanitizeHtml() !!}
+                                                                            {{ str($message->message)->markdown()->sanitizeHtml()->toHtmlString() }}
                                                                         @elseif (filled($message->functionCall))
                                                                             <p>Function called:
                                                                                 <code>{{ $message->functionCall['name'] }}</code>
@@ -230,7 +230,9 @@ use Illuminate\Support\Facades\Vite;
                                                             <div class="flex max-w-full flex-grow flex-col gap-3">
                                                                 <div
                                                                     class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
-                                                                    <div>{{ $message->message }}</div>
+                                                                    <div>
+                                                                        {{ str(nl2br($message->message))->stripTags(allowedTags: ['br'])->sanitizeHtml()->toHtmlString() }}
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
