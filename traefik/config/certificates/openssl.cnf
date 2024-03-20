@@ -1,0 +1,28 @@
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+
+[req_distinguished_name]
+countryName = US
+countryName_default = US
+stateOrProvinceName = Arizona
+stateOrProvinceName_default = Arizona
+localityName = Phoenix
+localityName_default = Phoenix
+commonName = *.advisingapp.local
+commonName_max = 64
+
+[ v3_req ]
+# Extensions to add to a certificate request
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = *.advisingapp.local
+DNS.2 = *.tools.advisingapp.local
+DNS.3 = *.aidingapp.local
+DNS.4 = *.tools.aidingapp.local
+DNS.5 = *.olympus.local
+DNS.6 = *.tools.olympus.local
+DNS.6 = advisingapp-minio

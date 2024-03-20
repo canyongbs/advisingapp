@@ -2,10 +2,10 @@ tls:
   stores:
     default:
       defaultCertificate:
-        certFile: /certificates/local-dev.pem
-        keyFile: /certificates/local-dev-key.pem
+        certFile: /certificates/cgbs-local-dev.pem
+        keyFile: /certificates/cgbs-local-dev-key.pem
   certificates:
-    - certFile: /certificates/local-dev.pem
-      keyFile: /certificates/local-dev-key.pem
+    - certFile: /certificates/cgbs-local-dev.pem
+      keyFile: /certificates/cgbs-local-dev-key.pem
       stores:
         - default
