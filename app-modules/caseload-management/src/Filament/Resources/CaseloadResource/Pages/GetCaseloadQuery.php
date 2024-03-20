@@ -42,7 +42,7 @@ use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Concerns\InteractsWithTable;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
-use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource;
+use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResourceForProcesses;
 
 class GetCaseloadQuery extends EditRecord implements HasTable
 {
@@ -50,7 +50,7 @@ class GetCaseloadQuery extends EditRecord implements HasTable
         bootedInteractsWithTable as baseBootedInteractsWithTable;
     }
 
-    protected static string $resource = CaseloadResource::class;
+    protected static string $resource = CaseloadResourceForProcesses::class;
 
     public function mount(int | string $record): void
     {

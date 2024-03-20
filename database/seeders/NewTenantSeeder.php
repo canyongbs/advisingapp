@@ -56,7 +56,6 @@ use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ChangeRequestStatusSeeder;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
-use AdvisingApp\InventoryManagement\Database\Seeders\MaintenanceProviderSeeder;
 
 class NewTenantSeeder extends Seeder
 {
@@ -91,8 +90,6 @@ class NewTenantSeeder extends Seeder
             ApplicationSubmissionStateSeeder::class,
             // InventoryManagement
             ...AssetSeeder::metadataSeeders(),
-            AssetSeeder::class,
-            MaintenanceProviderSeeder::class,
             AnalyticsResourceSourceSeeder::class,
             AnalyticsResourceCategorySeeder::class,
 

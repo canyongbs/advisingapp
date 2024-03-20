@@ -35,6 +35,7 @@
 import { defineProps } from 'vue';
 import axios from '@/Globals/Axios.js';
 import { useTokenStore } from '@/Stores/token.js';
+import { useAuthStore } from '@/Stores/auth.js';
 
 const props = defineProps({
     categories: {
@@ -48,13 +49,13 @@ const props = defineProps({
 });
 
 const { removeToken } = useTokenStore();
+const { portalRequiresAuthentication } = useAuthStore();
 
 const logout = () => {
-    axios.post(props.apiUrl + '/authenticate/logout')
-        .then((response) => {
-            removeToken();
-            window.location.href = response.data.redirect_url;
-        });
+    axios.post(props.apiUrl + '/authenticate/logout').then((response) => {
+        removeToken();
+        window.location.href = response.data.redirect_url;
+    });
 };
 </script>
 
@@ -64,7 +65,13 @@ const logout = () => {
             <router-link :to="{ name: 'home' }">
                 <h3 class="text-xl text-primary-700">Help Center</h3>
             </router-link>
-            <button @click="logout" type="button" class="p-2 font-bold rounded border-2 bg-white text-primary-600 dark:text-primary-400 border-primary-600 dark:border-primary-400">
+
+            <button
+                v-if="portalRequiresAuthentication === true"
+                @click="logout"
+                type="button"
+                class="p-2 font-bold rounded border-2 bg-white text-primary-600 dark:text-primary-400 border-primary-600 dark:border-primary-400"
+            >
                 Logout
             </button>
         </div>

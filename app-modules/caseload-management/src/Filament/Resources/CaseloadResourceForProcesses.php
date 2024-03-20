@@ -34,27 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace App\Multitenancy\Http\Middleware;
+namespace AdvisingApp\CaseloadManagement\Filament\Resources;
 
-use Closure;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Symfony\Component\HttpFoundation\Response;
+use Filament\Resources\Resource;
+use AdvisingApp\CaseloadManagement\Models\Caseload;
 
-class CheckLandlordApiKey
+class CaseloadResourceForProcesses extends Resource
 {
-    public function handle(Request $request, Closure $next): Response
+    protected static ?string $model = Caseload::class;
+
+    protected static bool $isGloballySearchable = false;
+
+    protected static bool $shouldRegisterNavigation = false;
+
+    public static function canAccess(array $parameters = []): bool
     {
-        if (! Hash::check($request->bearerToken(), base64_decode(config('app.landlord_api_key')))) {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'message' => 'Invalid API key',
-                ], Response::HTTP_FORBIDDEN);
-            }
-
-            abort(Response::HTTP_FORBIDDEN, 'Invalid API key');
-        }
-
-        return $next($request);
+        return true;
     }
 }

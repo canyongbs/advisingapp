@@ -351,7 +351,7 @@ use Illuminate\Support\Facades\Vite;
                                                 type="submit"
                                                 wire:loading.remove
                                             >
-                                                Post
+                                                Send
                                             </x-filament::button>
                                         @endif
 
@@ -447,6 +447,6 @@ use Illuminate\Support\Facades\Vite;
                     </x-slot>
                 </x-filament::modal>
             @endif
-            <script src="{{ FilamentAsset::getScriptSrc('assistantCurrentResponse', 'canyon-gbs/assistant') }}"></script>
+            <script src="{{ url('js/canyon-gbs/assistant/assistantCurrentResponse.js') }}"></script>
         </div>
     </x-filament-panels::page>

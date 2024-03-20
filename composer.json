@@ -118,7 +118,6 @@
         "pestphp/pest-plugin-livewire": "^2.1",
         "phpunit/phpunit": "^10.1",
         "rector/rector": "^0.19.0",
-        "serversideup/spin": "v2.0.0-beta-3",
         "spatie/laravel-ignition": "^2.0",
         "spatie/laravel-ray": "^1.32",
         "worksome/request-factories": "^3.2"

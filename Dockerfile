@@ -63,4 +63,4 @@ RUN npm ci --ignore-scripts \
     && rm -rf /var/www/html/vendor \
     && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader --no-scripts \
     && npm run build \
-    && rm -rf /var/www/html/node_modules
+    && npm ci --ignore-scripts --omit=dev

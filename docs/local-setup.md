@@ -4,6 +4,9 @@
 * [Docker](https://docs.docker.com/get-docker/)
 * [Docker Compose](https://docs.docker.com/compose/install/) (It is most likely that the way you installed Docker already came with Docker Compose, so on most systems you probably need not install this)
 * [NVM (Node Version Manager)](https://github.com/nvm-sh/nvm) (Optional, but recommended)
+* Spin CLI
+  * [Spin MacOS](https://serversideup.net/open-source/spin/docs/installation/install-macos#install-docker-desktop)
+  * [Spin Linux](https://serversideup.net/open-source/spin/docs/installation/install-linux)
 
 ### Pre-Setup
 
@@ -28,44 +31,16 @@ nvm use
 Details on how to automatically use the correct version of Node when entering the project directory can be found on the [NVM GitHub page | Deeper Shell Integration](https://github.com/nvm-sh/nvm#deeper-shell-integration)
 
 ### Setup
-This application makes use of [Spin](https://serversideup.net/open-source/spin/docs) for local development. Though not a requirement, it is highly recommended reading through the documentation on it.
 
-The `spin` executable is within your vendor folder, so you would have to type the path to it everytime to use it. To make this better, Spin recommends adding the following Bash alias:
-
+#### 1. Set up the `.env` file
+First, create an `.env` file based on `.env.example`
 ```bash
-alias spin='[ -f node_modules/.bin/spin ] && bash node_modules/.bin/spin || bash vendor/bin/spin'
-```
-
-This documentation will assume you have done so. If not you can simply replace `spin` throughout with `./vendor/bin/spin`.
-
-It may also be helpful to add some aliases for quick artisan and composer commands.
-
-```bash
-alias spina='spin exec -it php php artisan'
-alias spinc='spin exec -it php composer'
-```
-
-Make sure to add these after the `spin` alias.
-
-If you choose not to add these aliases, you can execute commands using `exec` like so:
-
-```bash
-spin exec -it php php artisan key:generate
-
-# or
-
-spin exec -it php php composer install
+cp .env.example .env
 ```
 
 ---
 
-After cloning this project, execute the following commands.
-
-Install NPM dependencies:
-
-```bash
-npm install
-```
+#### 2. Install Composer Dependencies
 
 ```bash
 docker run --rm \
@@ -73,43 +48,45 @@ docker run --rm \
     -v "$(pwd):/var/www/html" \
     -w /var/www/html \
     laravelsail/php82-composer:latest \
-    composer install --ignore-platform-reqs
-```
-You can install the php dependencies by simple running `composer install` on your host machine which can be quicker. But it can be best to install these making sure that the correct PHP version is being used while doing so.
-
-Then, create a `.env` file based on `.env.example`
-```bash
-cp .env.example .env
+    composer install --ignore-platform-reqs --no-scripts
 ```
 
-Next we need to get Spin to set up the containers and start running:
+---
+
+#### 3. Start the containers and open a shell into the main PHP container
+
+Run the following command to start the containers:
 
 ```bash
 spin up -d
 ```
 
-Finally, we will set up the application by running the following commands:
+Once the containers are started you can now start a shell into the main PHP container by running the following command:
+
 ```bash
-spina key:generate
-spina migrate:landlord:fresh
-npm run build
+spin exec -it advisingapp-app bash
 ```
 
-> #### Note:
-> If you do not have `nvm` installed and set up or you would prefer to run `npm` commands inside the container, you will need to run bash within the container and run the commands from there:
->
-> ```bash
-> spin exec -it php bash
-> ```
->
-> You will then have an interactive bash session within the container that you can run all commands from.
+All following commands will and should be run from within the PHP container.
+
+---
+
+#### 4. Set up the application
+
+We will set up the application by running the following commands:
+```bash
+php artisan migrate:landlord:fresh
+php artisan key:generate
+php artisan queue:restart
+php artisan schedule:interrupt
+npm ci
+php artisan app:build-assets
+```
 
 The above commands will set up the application for the "landlord" database. The landlord database is in charge of holding all information on tenants. Next we will set up a tenant.
 
 ```bash
-spina tenant:create [A Name for the Tenant] [A domain for the tenant]
-spina queue:work --queue=landlord --stop-when-empty
-spina tenants:artisan "db:seed --database=tenant"
+php artisan tenants:create [A Name for the Tenant] [A domain for the tenant]
 ```
 
 These commands will create a new tenant with the name and domain you supplied and then refresh and seed the tenant's database.
