@@ -41,23 +41,12 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use AdvisingApp\Authorization\Models\RoleGroup;
-use AdvisingApp\Authorization\Enums\LicenseType;
 
 class InternalAdminUsersSeeder extends Seeder
 {
     public function run(): void
     {
         $superAdminRoleGroup = RoleGroup::where('name', 'Super Administrator')->firstOrFail();
-
-        if (app()->environment('local')) {
-            $superAdmin = User::factory()->licensed(LicenseType::cases())->create([
-                'name' => 'Super Admin',
-                'email' => config('local_development.super_admin.email'),
-                'password' => Hash::make('password'),
-            ]);
-
-            $superAdmin->roleGroups()->sync($superAdminRoleGroup);
-        }
 
         collect(config('internal-users.emails'))->each(function ($email) use ($superAdminRoleGroup) {
             $user = User::where('email', $email)->first();

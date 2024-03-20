@@ -42,7 +42,8 @@ import determineIfUserIsAuthenticated from '@/Services/DetermineIfUserIsAuthenti
 import getAppContext from '@/Services/GetAppContext.js';
 import axios from '@/Globals/Axios.js';
 import { useTokenStore } from '@/Stores/token.js';
-import {useRoute} from "vue-router";
+import { useAuthStore } from '@/Stores/auth.js';
+import { useRoute } from 'vue-router';
 
 const errorLoading = ref(false);
 const loading = ref(true);
@@ -100,6 +101,7 @@ const scriptQuery = Object.fromEntries(scriptUrl.searchParams);
 
 const hostUrl = `${protocol}//${scriptHostname}`;
 
+const portalRequiresAuthentication = ref(true);
 const portalPrimaryColor = ref('');
 const portalRounding = ref('');
 const categories = ref({});
@@ -124,9 +126,15 @@ async function getKnowledgeManagementPortal() {
                 throw new Error(response.error);
             }
 
+            const { setPortalRequiresAuthentication } = useAuthStore();
+
             categories.value = response.data.categories;
 
             portalPrimaryColor.value = response.data.primary_color;
+
+            setPortalRequiresAuthentication(
+                (portalRequiresAuthentication.value = response.data.requires_authentication),
+            );
 
             authentication.value.requestUrl = response.data.authentication_url ?? null;
 
@@ -281,7 +289,10 @@ watch(route, () => {
         </div>
 
         <div v-else>
-            <div v-if="userIsAuthenticated === false" class="flex flex-col items-center justify-center min-h-screen">
+            <div
+                v-if="portalRequiresAuthentication === true && userIsAuthenticated === false"
+                class="flex flex-col items-center justify-center min-h-screen"
+            >
                 <h1 class="text-black text-3xl font-bold">Please log in to the Knowledge Management Portal</h1>
 
                 <div class="mt-4 flex flex-col">
@@ -323,21 +334,20 @@ watch(route, () => {
                         v-if="showMobileMenu"
                         @sidebar-closed="showMobileMenu = !showMobileMenu"
                         :categories="categories"
-                        :api-url="apiUrl">
-
+                        :api-url="apiUrl"
+                    >
                     </MobileSidebar>
 
-                    <DesktopSidebar
-                        :categories="categories"
-                        :api-url="apiUrl">
-                    </DesktopSidebar>
+                    <DesktopSidebar :categories="categories" :api-url="apiUrl"> </DesktopSidebar>
 
                     <div class="lg:pl-72">
                         <div class="px-4 sm:px-6 lg:px-8">
-                            <RouterView @sidebar-opened="showMobileMenu = !showMobileMenu"
-                                        :search-url="searchUrl"
-                                        :api-url="apiUrl"
-                                        :categories="categories">
+                            <RouterView
+                                @sidebar-opened="showMobileMenu = !showMobileMenu"
+                                :search-url="searchUrl"
+                                :api-url="apiUrl"
+                                :categories="categories"
+                            >
                             </RouterView>
                         </div>
                     </div>

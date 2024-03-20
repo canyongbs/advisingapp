@@ -351,7 +351,7 @@ use Illuminate\Support\Facades\Vite;
                                                 type="submit"
                                                 wire:loading.remove
                                             >
-                                                Post
+                                                Send
                                             </x-filament::button>
                                         @endif
 
