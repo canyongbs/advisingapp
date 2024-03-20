@@ -41,7 +41,7 @@ use Illuminate\Console\Command;
 use App\Settings\OlympusSettings;
 use Illuminate\Support\Facades\Http;
 
-class ConnectOlympus extends Command
+class ConnectOlympusCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -63,7 +63,7 @@ class ConnectOlympus extends Command
     public function handle(): void
     {
         $response = Http::post($this->argument('url'), [
-            'url' => config('app.url'),
+            'url' => config('app.internal_url'),
         ])->throw();
 
         $olympusSettings = app(OlympusSettings::class);

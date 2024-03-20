@@ -41,6 +41,7 @@ use App\Models\SystemUser;
 use Laravel\Pennant\Feature;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Octane\Commands\ReloadCommand;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use OpenSearch\Migrations\Filesystem\MigrationStorage;
 use LastDragon_ru\LaraASP\GraphQL\SearchBy\Types\Condition as GraphQLSearchByTypesCondition;
@@ -59,6 +60,14 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(GraphQLSearchByTypesCondition::class, GraphQLSearchByTypesConditionOverride::class);
         $this->app->bind(GraphQLSearchByDirectiveAlias::class, GraphQLSearchByDirectiveOverride::class);
+
+        // Laravel Octane does not register the `ReloadCommand` when the application is not running in the console.
+        // We need to call this command from the `UpdateBrandSettingsController` during an HTTP request.
+        if (! $this->app->runningInConsole()) {
+            $this->commands([
+                ReloadCommand::class,
+            ]);
+        }
     }
 
     /**
