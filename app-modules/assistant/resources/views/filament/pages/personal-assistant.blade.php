@@ -228,7 +228,7 @@ use Illuminate\Support\Facades\Vite;
                                                             <div
                                                                 class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
                                                                 <div class="prose dark:prose-invert">
-                                                                    {!! str($message->message)->markdown()->sanitizeHtml() !!}
+                                                                    {{ str($message->message)->markdown()->sanitizeHtml()->toHtmlString() }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -280,7 +280,7 @@ use Illuminate\Support\Facades\Vite;
                                                             <div class="flex max-w-full flex-grow flex-col gap-3">
                                                                 <div
                                                                     class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
-                                                                    <div>{{ $message->message }}</div>
+                                                                    <div>{{ str($message->message)->sanitizeHtml()->toHtmlString() }}</div>
                                                                 </div>
                                                             </div>
                                                         </div>

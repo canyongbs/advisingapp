@@ -222,7 +222,7 @@ class PersonalAssistant extends Page
 
         $this->message = '';
 
-        $this->setMessage($this->prompt, AIChatMessageFrom::User);
+        $this->setMessage(nl2br($this->prompt), AIChatMessageFrom::User);
 
         $this->js('$wire.ask()');
     }
