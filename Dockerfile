@@ -64,3 +64,7 @@ RUN npm ci --ignore-scripts \
     && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader --no-scripts \
     && npm run build \
     && npm ci --ignore-scripts --omit=dev
+
+RUN chown -R "$PUID":"$PGID" /var/www/html \
+    && chgrp "$PGID" /var/www/html/storage/logs \
+    && chmod g+s /var/www/html/storage/logs \
