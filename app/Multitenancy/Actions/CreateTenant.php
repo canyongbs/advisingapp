@@ -66,7 +66,7 @@ class CreateTenant
         Bus::chain([
             new MigrateTenantDatabase($tenant),
             new SeedTenantDatabase($tenant),
-            new CreateTenantUser($tenant, $user),
+            ...($user ? [new CreateTenantUser($tenant, $user)] : []),
             new DispatchTenantSetupCompleteEvent($tenant),
         ])
             ->onQueue(config('queue.landlord_queue'))
