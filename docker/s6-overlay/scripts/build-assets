@@ -17,5 +17,5 @@ if [ "${BUILD_ASSETS:="false"}" == "true" ]; then
 
     USERNAME=$(id -nu "$PUID")
 
-    s6-setuidgid "$USERNAME" php -d variables_order=EGPCS "$WEBUSER_HOME"/artisan app:build-assets
+    s6-setuidgid "$USERNAME" php -d variables_order=EGPCS "$WEBUSER_HOME"/artisan app:build-assets vite
 fi
