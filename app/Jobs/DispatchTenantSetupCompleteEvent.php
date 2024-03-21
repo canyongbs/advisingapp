@@ -34,54 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace App\Multitenancy\Actions;
+namespace App\Jobs;
 
-use Throwable;
 use App\Models\Tenant;
-use App\Jobs\CreateTenantUser;
-use App\Jobs\SeedTenantDatabase;
-use App\Jobs\MigrateTenantDatabase;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Encryption\Encrypter;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Event;
-use App\Jobs\DispatchTenantSetupCompleteEvent;
-use App\Multitenancy\Events\NewTenantSetupFailure;
-use App\Multitenancy\DataTransferObjects\TenantConfig;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Spatie\Multitenancy\Jobs\NotTenantAware;
+use App\Multitenancy\Events\NewTenantSetupComplete;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 
-class CreateTenant
+class DispatchTenantSetupCompleteEvent implements ShouldQueue, NotTenantAware
 {
-    public function __invoke(
-        string $name,
-        string $domain,
-        TenantConfig $config,
-        ?array $user = null,
-    ): ?Tenant {
-        $tenant = Tenant::query()->create([
-            'name' => $name,
-            'domain' => $domain,
-            'key' => $this->generateTenantKey(),
-            'config' => $config,
-        ]);
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-        Bus::chain([
-            new MigrateTenantDatabase($tenant),
-            new SeedTenantDatabase($tenant),
-            new CreateTenantUser($tenant, $user),
-            new DispatchTenantSetupCompleteEvent($tenant),
-        ])
-            ->onQueue(config('queue.landlord_queue'))
-            ->catch(function (Throwable $exception) use ($tenant) {
-                Event::dispatch(new NewTenantSetupFailure($tenant, $exception));
-            })
-            ->dispatch();
+    public int $timeout = 1200;
 
-        return $tenant;
+    public function __construct(public Tenant $tenant) {}
+
+    public function middleware(): array
+    {
+        return [new SkipIfBatchCancelled()];
     }
 
-    protected function generateTenantKey(): string
+    public function handle(): void
     {
-        return 'base64:' . base64_encode(
-            Encrypter::generateKey(config('app.cipher'))
-        );
+        Event::dispatch(new NewTenantSetupComplete($this->tenant));
     }
 }
