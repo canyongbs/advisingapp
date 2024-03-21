@@ -93,7 +93,7 @@ These commands will create a new tenant with the name and domain you supplied an
 
 After this the application should be accessible at the domain you supplied.
 
-Spin can be stopped by running `spin stop` and turning back on by running `spin up -d`
+Spin can be stopped by running `spin stop` and turned back on by running `spin up -d`
 
 ### Customizing container settings and Ports
 
@@ -110,7 +110,7 @@ FORWARD_MINIO_PORT=9000
 FORWARD_MINIO_CONSOLE_PORT=8900
 ```
 
-Those variable will allow you to edit particular settings and forwarding ports for your local containers. A great example of this usage is within the database section below.
+Those variables will allow you to edit particular settings and forwarding ports for your local containers. A great example of this usage is within the database section below.
 
 ### Accessing the Database
 Within the containers, MySQL lives on port 3306. And by default it can be accessed outside of the containers on port 3308 as well.

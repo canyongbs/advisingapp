@@ -34,42 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Observers;
+namespace AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
 
-use App\Models\User;
-use Illuminate\Support\Facades\Schema;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
 
-class InteractionObserver
+class ListInteractionInitiatives extends ListRecords
 {
-    public function creating(Interaction $interaction): void
-    {
-        if (is_null($interaction->user_id) && ! is_null(auth()->user())) {
-            $interaction->user_id = auth()->user()->id;
-        }
+    protected static string $resource = InteractionInitiativeResource::class;
 
-        if (is_null($interaction->start_datetime)) {
-            $interaction->start_datetime = now();
-        }
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name')
+                    ->searchable(),
+            ])
+            ->actions([
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
-    public function created(Interaction $interaction): void
+    protected function getHeaderActions(): array
     {
-        $user = auth()->user();
-
-        if ($user instanceof User) {
-            TriggeredAutoSubscription::dispatch($user, $interaction);
-        }
-    }
-
-    public function saved(Interaction $interaction): void
-    {
-        if ($interaction->campaign) {
-            if (Schema::hasTable('interaction_initiatives') && Schema::hasColumn((new Interaction())->getTable(), 'interaction_initiative_id')) {
-                $interaction->initiative()->associate(InteractionInitiative::where('name', $interaction->campaign->name)->first())->save();
-            }
-        }
+        return [
+            CreateAction::make(),
+        ];
     }
 }

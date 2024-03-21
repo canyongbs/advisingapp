@@ -36,40 +36,28 @@
 
 namespace AdvisingApp\Interaction\Observers;
 
-use App\Models\User;
 use Illuminate\Support\Facades\Schema;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 
-class InteractionObserver
+class InteractionCampaignObserver
 {
-    public function creating(Interaction $interaction): void
+    public function created(InteractionCampaign $campaign): void
     {
-        if (is_null($interaction->user_id) && ! is_null(auth()->user())) {
-            $interaction->user_id = auth()->user()->id;
-        }
-
-        if (is_null($interaction->start_datetime)) {
-            $interaction->start_datetime = now();
+        if (Schema::hasTable('interaction_initiatives') && Schema::hasColumn((new Interaction())->getTable(), 'interaction_initiative_id')) {
+            InteractionInitiative::create([
+                'name' => $campaign->name,
+            ]);
         }
     }
 
-    public function created(Interaction $interaction): void
+    public function updated(InteractionCampaign $campaign): void
     {
-        $user = auth()->user();
-
-        if ($user instanceof User) {
-            TriggeredAutoSubscription::dispatch($user, $interaction);
-        }
-    }
-
-    public function saved(Interaction $interaction): void
-    {
-        if ($interaction->campaign) {
-            if (Schema::hasTable('interaction_initiatives') && Schema::hasColumn((new Interaction())->getTable(), 'interaction_initiative_id')) {
-                $interaction->initiative()->associate(InteractionInitiative::where('name', $interaction->campaign->name)->first())->save();
-            }
+        if (Schema::hasTable('interaction_initiatives') && Schema::hasColumn((new Interaction())->getTable(), 'interaction_initiative_id')) {
+            InteractionInitiative::where('name', $campaign->name)->update([
+                'name' => $campaign->name,
+            ]);
         }
     }
 }

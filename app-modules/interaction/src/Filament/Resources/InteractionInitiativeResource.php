@@ -42,18 +42,16 @@ use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\InteractionManagement;
 use App\Features\EnableInteractionInitiativesFeature;
-use AdvisingApp\Interaction\Models\InteractionCampaign;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages\EditInteractionCampaign;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages\ListInteractionCampaigns;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages\CreateInteractionCampaign;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
+use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages\EditInteractionInitiative;
+use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages\ListInteractionInitiatives;
+use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages\CreateInteractionInitiative;
 
-class InteractionCampaignResource extends Resource
+class InteractionInitiativeResource extends Resource
 {
-    protected static ?string $model = InteractionCampaign::class;
+    protected static ?string $model = InteractionInitiative::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-megaphone';
-
-    protected static ?string $breadcrumb = 'Interaction Initiatives';
 
     protected static ?string $navigationLabel = 'Initiatives';
 
@@ -63,7 +61,7 @@ class InteractionCampaignResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Feature::inactive(EnableInteractionInitiativesFeature::class);
+        return Feature::active(EnableInteractionInitiativesFeature::class);
     }
 
     public static function form(Form $form): Form
@@ -81,9 +79,9 @@ class InteractionCampaignResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListInteractionCampaigns::route('/'),
-            'create' => CreateInteractionCampaign::route('/create'),
-            'edit' => EditInteractionCampaign::route('/{record}/edit'),
+            'index' => ListInteractionInitiatives::route('/'),
+            'create' => CreateInteractionInitiative::route('/create'),
+            'edit' => EditInteractionInitiative::route('/{record}/edit'),
         ];
     }
 }

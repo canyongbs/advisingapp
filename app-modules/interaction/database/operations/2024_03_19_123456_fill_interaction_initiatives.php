@@ -34,42 +34,54 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Observers;
-
-use App\Models\User;
-use Illuminate\Support\Facades\Schema;
+use Laravel\Pennant\Feature;
+use AdvisingApp\DataMigration\OneTimeOperation;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\DataMigration\Enums\OperationType;
+use App\Features\EnableInteractionInitiativesFeature;
+use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 
-class InteractionObserver
-{
-    public function creating(Interaction $interaction): void
+return new class () extends OneTimeOperation {
+    /**
+     * The type to determine where it will be run. OperationType::Tenant or OperationType::Landlord.
+     */
+    protected OperationType $type = OperationType::Tenant;
+
+    /**
+     * Determine if the operation is being processed asynchronously.
+     */
+    protected bool $async = true;
+
+    /**
+     * The queue that the job will be dispatched to. Will default to defaults in config.
+     */
+    protected ?string $queue = null;
+
+    /**
+     * A tag name, that this operation can be filtered by.
+     */
+    protected ?string $tag = 'after-deployment';
+
+    /**
+     * Process the operation.
+     */
+    public function process(): void
     {
-        if (is_null($interaction->user_id) && ! is_null(auth()->user())) {
-            $interaction->user_id = auth()->user()->id;
-        }
+        InteractionCampaign::all()->each(function (InteractionCampaign $campaign) {
+            $initiative = InteractionInitiative::create([
+                'name' => $campaign->name,
+            ]);
 
-        if (is_null($interaction->start_datetime)) {
-            $interaction->start_datetime = now();
-        }
-    }
-
-    public function created(Interaction $interaction): void
-    {
-        $user = auth()->user();
-
-        if ($user instanceof User) {
-            TriggeredAutoSubscription::dispatch($user, $interaction);
-        }
-    }
-
-    public function saved(Interaction $interaction): void
-    {
-        if ($interaction->campaign) {
-            if (Schema::hasTable('interaction_initiatives') && Schema::hasColumn((new Interaction())->getTable(), 'interaction_initiative_id')) {
-                $interaction->initiative()->associate(InteractionInitiative::where('name', $interaction->campaign->name)->first())->save();
+            if ($campaign->interactions()->exists()) {
+                $campaign->interactions->each(function (Interaction $interaction) use ($initiative) {
+                    $interaction->update([
+                        'interaction_initiative_id' => $initiative->id,
+                    ]);
+                });
             }
-        }
+        });
+
+        Feature::activate(EnableInteractionInitiativesFeature::class);
     }
-}
+};

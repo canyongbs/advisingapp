@@ -34,42 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Observers;
+namespace AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
 
-use App\Models\User;
-use Illuminate\Support\Facades\Schema;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
 
-class InteractionObserver
+class CreateInteractionInitiative extends CreateRecord
 {
-    public function creating(Interaction $interaction): void
-    {
-        if (is_null($interaction->user_id) && ! is_null(auth()->user())) {
-            $interaction->user_id = auth()->user()->id;
-        }
-
-        if (is_null($interaction->start_datetime)) {
-            $interaction->start_datetime = now();
-        }
-    }
-
-    public function created(Interaction $interaction): void
-    {
-        $user = auth()->user();
-
-        if ($user instanceof User) {
-            TriggeredAutoSubscription::dispatch($user, $interaction);
-        }
-    }
-
-    public function saved(Interaction $interaction): void
-    {
-        if ($interaction->campaign) {
-            if (Schema::hasTable('interaction_initiatives') && Schema::hasColumn((new Interaction())->getTable(), 'interaction_initiative_id')) {
-                $interaction->initiative()->associate(InteractionInitiative::where('name', $interaction->campaign->name)->first())->save();
-            }
-        }
-    }
+    protected static string $resource = InteractionInitiativeResource::class;
 }

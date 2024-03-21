@@ -44,7 +44,7 @@ class InteractionCampaignSeeder extends Seeder
     public function run(): void
     {
         InteractionCampaign::factory()
-            ->createMany(
+            ->createManyQuietly(
                 [
                     ['name' => 'N/A'],
                     ['name' => 'College Applicant to Matriculation'],

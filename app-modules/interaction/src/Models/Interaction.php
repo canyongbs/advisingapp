@@ -39,6 +39,7 @@ namespace AdvisingApp\Interaction\Models;
 use Exception;
 use App\Models\User;
 use App\Models\BaseModel;
+use Laravel\Pennant\Feature;
 use App\Models\Authenticatable;
 use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -49,6 +50,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use App\Features\EnableInteractionInitiativesFeature;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
@@ -69,20 +71,21 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
     use SoftDeletes;
 
     protected $fillable = [
-        'user_id',
+        'description',
+        'division_id',
+        'end_datetime',
         'interactable_id',
         'interactable_type',
         'interaction_campaign_id',
         'interaction_driver_id',
-        'division_id',
+        'interaction_initiative_id',
         'interaction_outcome_id',
         'interaction_relation_id',
         'interaction_status_id',
         'interaction_type_id',
         'start_datetime',
-        'end_datetime',
         'subject',
-        'description',
+        'user_id',
     ];
 
     protected $casts = [
@@ -119,6 +122,11 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         return $this->belongsTo(InteractionCampaign::class, 'interaction_campaign_id');
     }
 
+    public function initiative(): BelongsTo
+    {
+        return $this->belongsTo(InteractionInitiative::class, 'interaction_initiative_id');
+    }
+
     public function driver(): BelongsTo
     {
         return $this->belongsTo(InteractionDriver::class, 'interaction_driver_id');
@@ -153,7 +161,7 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
     {
         try {
             $action->campaign->caseload->retrieveRecords()->each(function (Educatable $educatable) use ($action) {
-                Interaction::create([
+                $interactionData = [
                     'user_id' => $action->campaign->user_id,
                     'interactable_type' => $educatable->getMorphClass(),
                     'interactable_id' => $educatable->getKey(),
@@ -164,7 +172,13 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
                     'interaction_status_id' => $action->data['interaction_status_id'],
                     'interaction_outcome_id' => $action->data['interaction_outcome_id'],
                     'division_id' => $action->data['division_id'],
-                ]);
+                ];
+
+                if (Feature::active(EnableInteractionInitiativesFeature::class)) {
+                    $interactionData['interaction_initiative_id'] = $action->data['interaction_initiative_id'];
+                }
+
+                Interaction::create($interactionData);
             });
 
             return true;
