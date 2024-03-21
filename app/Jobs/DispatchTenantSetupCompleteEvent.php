@@ -34,46 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace App\Console\Commands;
+namespace App\Jobs;
 
-use App\Settings\BrandSettings;
-use Illuminate\Console\Command;
-use App\Settings\OlympusSettings;
-use Illuminate\Support\Facades\Http;
+use App\Models\Tenant;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Spatie\Multitenancy\Jobs\NotTenantAware;
+use App\Multitenancy\Events\NewTenantSetupComplete;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 
-class ConnectOlympus extends Command
+class DispatchTenantSetupCompleteEvent implements ShouldQueue, NotTenantAware
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'olympus:connect {url}';
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Connect the app to communicate with Olympus.';
+    public int $timeout = 1200;
 
-    /**
-     * Execute the console command.
-     */
+    public function __construct(public Tenant $tenant) {}
+
+    public function middleware(): array
+    {
+        return [new SkipIfBatchCancelled()];
+    }
+
     public function handle(): void
     {
-        $response = Http::post($this->argument('url'), [
-            'url' => config('app.url'),
-        ])->throw();
-
-        $olympusSettings = app(OlympusSettings::class);
-        $olympusSettings->fill($response->json('olympus'));
-        $olympusSettings->save();
-
-        $brandSettings = app(BrandSettings::class);
-        $brandSettings->fill($response->json('brand'));
-        $brandSettings->save();
-
-        $this->info('The app has been connected to Olympus.');
+        Event::dispatch(new NewTenantSetupComplete($this->tenant));
     }
 }

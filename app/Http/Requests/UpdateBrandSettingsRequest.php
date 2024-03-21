@@ -34,48 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Controllers;
+namespace App\Http\Requests;
 
-use App\Settings\BrandSettings;
-use Illuminate\Http\JsonResponse;
-use App\Console\Commands\BuildAssets;
-use Illuminate\Support\Facades\Artisan;
-use Laravel\Octane\Commands\ReloadCommand;
-use App\Http\Requests\UpdateBrandSettingsRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateBrandSettingsController extends Controller
+class UpdateBrandSettingsRequest extends FormRequest
 {
-    public function __invoke(UpdateBrandSettingsRequest $request): JsonResponse
+    public function rules(): array
     {
-        $brandSettings = app(BrandSettings::class);
-
-        $oldCustomCss = $brandSettings->custom_css;
-        $oldHasDarkMode = $brandSettings->has_dark_mode;
-        $oldColorOverrides = $brandSettings->color_overrides;
-
-        $brandSettings->fill($request->validated());
-
-        $brandSettings->save();
-
-        if ($oldCustomCss !== $brandSettings->custom_css) {
-            app()->terminating(function () {
-                Artisan::call(BuildAssets::class, [
-                    'script' => 'vite',
-                ]);
-            });
-        }
-
-        if (
-            ($oldHasDarkMode !== $brandSettings->has_dark_mode) ||
-            ($oldColorOverrides !== $brandSettings->color_overrides)
-        ) {
-            app()->terminating(function () {
-                Artisan::call(ReloadCommand::class);
-            });
-        }
-
-        return response()->json([
-            'message' => 'Brand settings updated successfully!',
-        ]);
+        return [
+            'color_overrides' => ['nullable', 'array'],
+            'custom_css' => ['nullable', 'string'],
+            'has_dark_mode' => ['nullable', 'boolean'],
+        ];
     }
 }

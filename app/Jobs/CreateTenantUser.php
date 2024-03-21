@@ -34,48 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Controllers;
+namespace App\Jobs;
 
-use App\Settings\BrandSettings;
-use Illuminate\Http\JsonResponse;
-use App\Console\Commands\BuildAssets;
-use Illuminate\Support\Facades\Artisan;
-use Laravel\Octane\Commands\ReloadCommand;
-use App\Http\Requests\UpdateBrandSettingsRequest;
+use App\Models\User;
+use App\Models\Tenant;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Spatie\Multitenancy\Jobs\NotTenantAware;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 
-class UpdateBrandSettingsController extends Controller
+class CreateTenantUser implements ShouldQueue, NotTenantAware
 {
-    public function __invoke(UpdateBrandSettingsRequest $request): JsonResponse
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public int $timeout = 1200;
+
+    public function __construct(
+        public Tenant $tenant,
+        public array $data,
+    ) {}
+
+    public function middleware(): array
     {
-        $brandSettings = app(BrandSettings::class);
+        return [new SkipIfBatchCancelled()];
+    }
 
-        $oldCustomCss = $brandSettings->custom_css;
-        $oldHasDarkMode = $brandSettings->has_dark_mode;
-        $oldColorOverrides = $brandSettings->color_overrides;
-
-        $brandSettings->fill($request->validated());
-
-        $brandSettings->save();
-
-        if ($oldCustomCss !== $brandSettings->custom_css) {
-            app()->terminating(function () {
-                Artisan::call(BuildAssets::class, [
-                    'script' => 'vite',
-                ]);
-            });
-        }
-
-        if (
-            ($oldHasDarkMode !== $brandSettings->has_dark_mode) ||
-            ($oldColorOverrides !== $brandSettings->color_overrides)
-        ) {
-            app()->terminating(function () {
-                Artisan::call(ReloadCommand::class);
-            });
-        }
-
-        return response()->json([
-            'message' => 'Brand settings updated successfully!',
-        ]);
+    public function handle(): void
+    {
+        $this->tenant->execute(function () {
+            User::create($this->data);
+        });
     }
 }

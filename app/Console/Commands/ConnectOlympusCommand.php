@@ -34,38 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace App\Observers;
+namespace App\Console\Commands;
 
-use Throwable;
-use App\Models\Tenant;
-use Illuminate\Bus\Batch;
-use App\Jobs\SeedTenantDatabase;
-use App\Jobs\MigrateTenantDatabase;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Event;
-use App\Multitenancy\Events\NewTenantSetupFailure;
-use App\Multitenancy\Events\NewTenantSetupComplete;
+use App\Settings\BrandSettings;
+use Illuminate\Console\Command;
+use App\Settings\OlympusSettings;
+use Illuminate\Support\Facades\Http;
 
-class TenantObserver
+class ConnectOlympusCommand extends Command
 {
-    public function created(Tenant $tenant): void
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'olympus:connect {url}';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Connect the app to communicate with Olympus.';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle(): void
     {
-        Bus::batch(
-            [
-                [
-                    new MigrateTenantDatabase($tenant),
-                    new SeedTenantDatabase($tenant),
-                ],
-            ]
-        )
-            ->onQueue(config('queue.landlord_queue'))
-            ->then(function (Batch $batch) use ($tenant) {
-                Event::dispatch(new NewTenantSetupComplete($tenant));
-            })
-            ->catch(function (Batch $batch, Throwable $e) use ($tenant) {
-                Event::dispatch(new NewTenantSetupFailure($tenant, $e));
-            })
-            ->allowFailures()
-            ->dispatch();
+        $response = Http::post($this->argument('url'), [
+            'url' => config('app.internal_url'),
+        ])->throw();
+
+        $olympusSettings = app(OlympusSettings::class);
+        $olympusSettings->fill($response->json('olympus'));
+        $olympusSettings->save();
+
+        $brandSettings = app(BrandSettings::class);
+        $brandSettings->fill($response->json('brand'));
+        $brandSettings->save();
+
+        $this->info('The app has been connected to Olympus.');
     }
 }
