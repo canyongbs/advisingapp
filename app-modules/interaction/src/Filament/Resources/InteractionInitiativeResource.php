@@ -43,9 +43,9 @@ use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\InteractionManagement;
 use App\Features\EnableInteractionInitiativesFeature;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages\EditInteractionInitiative;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages\ListInteractionInitiatives;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages\CreateInteractionInitiative;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages\EditInteractionInitiative;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages\ListInteractionInitiatives;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages\CreateInteractionInitiative;
 
 class InteractionInitiativeResource extends Resource
 {
