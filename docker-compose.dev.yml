@@ -16,6 +16,8 @@ services:
       CACHE_EVENTS: '${CACHE_EVENTS:-false}'
       CACHE_ICONS: '${CACHE_ICONS:-false}'
       CACHE_FILAMENT_COMPONENTS: '${CACHE_FILAMENT_COMPONENTS:-false}'
+      PUID: '${SPIN_USER_ID:-9999}'
+      PGID: '${SPIN_GROUP_ID:-9999}'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.advisingapp-app.rule=HostRegexp(`advisingapp.local`, `{subdomain:[a-z]+}.advisingapp.local`)"

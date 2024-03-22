@@ -30,6 +30,22 @@ nvm use
 
 Details on how to automatically use the correct version of Node when entering the project directory can be found on the [NVM GitHub page | Deeper Shell Integration](https://github.com/nvm-sh/nvm#deeper-shell-integration)
 
+#### Local hosts file
+
+In order to access the application in a web browser either in local or remote development you will need to place the following in your local `/etc/hosts` (or equivalent) file:
+
+```bash
+127.0.0.1 advisingapp.local
+127.0.0.1 mail.tools.advisingapp.local
+127.0.0.1 redis.tools.advisingapp.local
+127.0.0.1 storage.tools.advisingapp.local
+127.0.0.1 media.tools.advisingapp.local
+127.0.0.1 advisingapp-minio
+127.0.0.1 test.advisingapp.local
+```
+
+> Note: If you want any other tenant domains other than `test.advisingapp.local` you will need to add them to your `etc/hosts` file in the same way as well.
+
 ### Setup
 
 #### 1. Set up the `.env` file
@@ -95,6 +111,10 @@ After this the application should be accessible at the domain you supplied.
 
 Spin can be stopped by running `spin stop` and turning back on by running `spin up -d`
 
+Setup is now complete.
+
+---
+
 ### Customizing container settings and Ports
 
 Within the `.env.example` (and within the `.env` after you copy it) should exist the following variables:
@@ -147,11 +167,6 @@ By default, the application is set up in the `.env.example` to reference a bucke
         }
     ]
 }
-```
-
-In order to facilitate proper file upload with Livewire you will need to set the following in your local etc/hosts file:
-```
-127.0.0.1 minio
 ```
 
 ### Queue and Scheduler
