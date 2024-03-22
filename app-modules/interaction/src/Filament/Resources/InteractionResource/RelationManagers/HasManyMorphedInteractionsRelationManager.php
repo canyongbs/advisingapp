@@ -61,9 +61,9 @@ class HasManyMorphedInteractionsRelationManager extends RelationManager
                 Fieldset::make('Details')
                     ->schema([
                         Feature::active(EnableInteractionInitiativesFeature::class)
-                        ? TextEntry::make('campaign.name')
-                            ->label('Initiative')
-                        : TextEntry::make('initiative.name'),
+                        ? TextEntry::make('initiative.name')
+                        : TextEntry::make('campaign.name')
+                            ->label('Initiative'),
                         TextEntry::make('driver.name'),
                         TextEntry::make('division.name'),
                         TextEntry::make('outcome.name'),

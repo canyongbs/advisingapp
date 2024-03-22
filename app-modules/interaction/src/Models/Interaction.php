@@ -42,6 +42,7 @@ use App\Models\BaseModel;
 use Laravel\Pennant\Feature;
 use App\Models\Authenticatable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -167,7 +168,6 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
                     'interactable_id' => $educatable->getKey(),
                     'interaction_type_id' => $action->data['interaction_type_id'],
                     'interaction_relation_id' => $action->data['interaction_relation_id'],
-                    'interaction_campaign_id' => $action->data['interaction_campaign_id'],
                     'interaction_driver_id' => $action->data['interaction_driver_id'],
                     'interaction_status_id' => $action->data['interaction_status_id'],
                     'interaction_outcome_id' => $action->data['interaction_outcome_id'],
@@ -176,6 +176,12 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
 
                 if (Feature::active(EnableInteractionInitiativesFeature::class)) {
                     $interactionData['interaction_initiative_id'] = $action->data['interaction_initiative_id'];
+                } else {
+                    $interactionData['interaction_campaign_id'] = $action->data['interaction_campaign_id'];
+                }
+
+                if (Schema::hasTable('interaction_initiatives') && Schema::hasColumn((new Interaction())->getTable(), 'interaction_initiative_id')) {
+                    $interactionData['interaction_initiative_id'] = $action->data['interaction_campaign_id'];
                 }
 
                 Interaction::create($interactionData);
