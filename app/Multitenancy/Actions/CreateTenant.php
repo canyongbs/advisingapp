@@ -36,6 +36,7 @@
 
 namespace App\Multitenancy\Actions;
 
+use Illuminate\Support\Facades\Artisan;
 use Throwable;
 use App\Models\Tenant;
 use App\Jobs\CreateTenantUser;
@@ -69,11 +70,15 @@ class CreateTenant
             ...($user ? [new CreateTenantUser($tenant, $user)] : []),
             new DispatchTenantSetupCompleteEvent($tenant),
         ])
-            ->onQueue(config('queue.landlord_queue'))
+            ->onQueue($queue = config('queue.landlord_queue'))
             ->catch(function (Throwable $exception) use ($tenant) {
                 Event::dispatch(new NewTenantSetupFailure($tenant, $exception));
             })
             ->dispatch();
+
+        app()->terminating(fn () => Artisan::call(
+            command: "queue:work --queue={$queue} --stop-when-empty",
+        ));
 
         return $tenant;
     }
