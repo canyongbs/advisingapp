@@ -58,6 +58,6 @@ class BrandSettings extends Settings
 
     public function mergeColorOverrides(array $colors): array
     {
-        return array_merge_recursive($colors, $this->color_overrides);
+        return array_merge($colors, $this->color_overrides);
     }
 }
