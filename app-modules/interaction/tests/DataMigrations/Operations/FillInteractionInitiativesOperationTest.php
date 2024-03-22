@@ -2,6 +2,7 @@
 
 use function Pest\Laravel\artisan;
 
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -20,16 +21,24 @@ it('Initiatives will be connected to the Interactions that the Campaigns were co
     $campaigns = InteractionCampaign::factory()->count(10)->createQuietly();
 
     $campaigns->each(function (InteractionCampaign $campaign) {
+        $prospect = Prospect::factory()->create();
+
         Interaction::factory()->createQuietly([
+            'interactable_id' => $prospect->id,
+            'interactable_type' => $prospect->getMorphClass(),
             'interaction_campaign_id' => $campaign->id,
         ]);
     });
 
     artisan('operations:process tenant 2024_03_19_123456_fill_interaction_initiatives --test --sync');
 
-    $campaigns->each(function (InteractionCampaign $campaign) {
-        $initiative = InteractionInitiative::where('name', $campaign->name)->first();
+    Interaction::cursor()->each(function (Interaction $interaction) {
+        if (is_null($interaction->interaction_campaign_id)) {
+            return;
+        }
 
-        expect($campaign->interactions->first()->interaction_initiative_id)->toBe($initiative->id);
+        $initiative = InteractionInitiative::where('name', $interaction->campaign->name)->first();
+
+        expect($interaction->interaction_initiative_id)->toBe($initiative->id);
     });
 });

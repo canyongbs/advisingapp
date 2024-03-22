@@ -59,10 +59,18 @@ class InteractionFactory extends Factory
     public function definition(): array
     {
         $interactable = fake()->randomElement([
-            Student::inRandomOrder()->first() ?? Student::factory()->create(),
-            Prospect::factory()->create(),
-            ServiceRequest::factory()->create(),
+            Student::class,
+            Prospect::class,
+            ServiceRequest::class,
         ]);
+
+        $interactable = match ($interactable) {
+            Student::class => Student::inRandomOrder()->first() ?? Student::factory()->create(),
+            Prospect::class => Prospect::factory()->create(),
+            ServiceRequest::class => ServiceRequest::factory()->create([
+                'service_request_number' => fake()->randomNumber(8),
+            ]),
+        };
 
         return [
             'description' => fake()->paragraph(),
