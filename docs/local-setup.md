@@ -32,7 +32,7 @@ Details on how to automatically use the correct version of Node when entering th
 
 #### Local hosts file
 
-In order to access the application in a web browser you will need to place the following in your local `etc/hosts` (or equivalent) file:
+In order to access the application in a web browser either in local or remote development you will need to place the following in your local `/etc/hosts` (or equivalent) file:
 
 ```bash
 127.0.0.1 advisingapp.local
