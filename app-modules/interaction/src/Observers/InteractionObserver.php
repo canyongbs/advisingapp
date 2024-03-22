@@ -68,7 +68,11 @@ class InteractionObserver
     {
         if ($interaction->campaign) {
             if (Schema::hasTable('interaction_initiatives') && Schema::hasColumn((new Interaction())->getTable(), 'interaction_initiative_id')) {
-                $interaction->initiative()->associate(InteractionInitiative::where('name', $interaction->campaign->name)->first())->save();
+                $initiative = InteractionInitiative::where('name', $interaction->campaign->name)->first();
+
+                if (! is_null($initiative)) {
+                    $interaction->initiative()->associate($initiative)->saveQuietly();
+                }
             }
         }
     }

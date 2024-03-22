@@ -68,7 +68,7 @@ return new class () extends OneTimeOperation {
      */
     public function process(): void
     {
-        InteractionCampaign::all()->each(function (InteractionCampaign $campaign) {
+        InteractionCampaign::cursor()->each(function (InteractionCampaign $campaign) {
             $initiative = InteractionInitiative::create([
                 'name' => $campaign->name,
             ]);
