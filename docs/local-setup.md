@@ -96,7 +96,9 @@ php artisan key:generate
 php artisan queue:restart
 php artisan schedule:interrupt
 npm ci
+php artisan filament:publish-assets
 php artisan app:build-assets
+npm run build
 ```
 
 The above commands will set up the application for the "landlord" database. The landlord database is in charge of holding all information on tenants. Next we will set up a tenant.
