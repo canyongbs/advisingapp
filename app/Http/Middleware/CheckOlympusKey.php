@@ -36,9 +36,9 @@
 
 namespace App\Http\Middleware;
 
-use App\Settings\OlympusSettings;
 use Closure;
 use Illuminate\Http\Request;
+use App\Settings\OlympusSettings;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckOlympusKey

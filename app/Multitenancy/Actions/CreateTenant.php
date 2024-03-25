@@ -36,7 +36,6 @@
 
 namespace App\Multitenancy\Actions;
 
-use Illuminate\Support\Facades\Artisan;
 use Throwable;
 use App\Models\Tenant;
 use App\Jobs\CreateTenantUser;
@@ -47,6 +46,7 @@ use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Event;
 use App\Jobs\DispatchTenantSetupCompleteEvent;
 use App\Multitenancy\Events\NewTenantSetupFailure;
+use App\Multitenancy\DataTransferObjects\TenantUser;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 
 class CreateTenant
@@ -55,7 +55,7 @@ class CreateTenant
         string $name,
         string $domain,
         TenantConfig $config,
-        ?array $user = null,
+        ?TenantUser $user = null,
     ): ?Tenant {
         $tenant = Tenant::query()->create([
             'name' => $name,
@@ -70,15 +70,11 @@ class CreateTenant
             ...($user ? [new CreateTenantUser($tenant, $user)] : []),
             new DispatchTenantSetupCompleteEvent($tenant),
         ])
-            ->onQueue($queue = config('queue.landlord_queue'))
+            ->onQueue(config('queue.landlord_queue'))
             ->catch(function (Throwable $exception) use ($tenant) {
                 Event::dispatch(new NewTenantSetupFailure($tenant, $exception));
             })
             ->dispatch();
-
-        app()->terminating(fn () => Artisan::call(
-            command: "queue:work --queue={$queue} --stop-when-empty",
-        ));
 
         return $tenant;
     }

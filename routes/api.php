@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
-use App\Http\Middleware\CheckOlympusKey;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\CheckOlympusKey;
+use App\Http\Controllers\UpdateAzureSsoSettingsController;
 
 Route::middleware([CheckOlympusKey::class])
     ->post('azure-sso/update', UpdateAzureSsoSettingsController::class)
