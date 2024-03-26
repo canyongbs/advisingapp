@@ -43,6 +43,7 @@ use Filament\Forms\Set;
 use Filament\Pages\Page;
 use Livewire\Attributes\On;
 use Filament\Actions\Action;
+use Laravel\Pennant\Feature;
 use Livewire\Attributes\Rule;
 use AdvisingApp\Team\Models\Team;
 use App\Filament\Pages\Dashboard;
@@ -55,6 +56,7 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\ActionSize;
+use Filament\Forms\Components\Checkbox;
 use Illuminate\Validation\Rules\Unique;
 use AdvisingApp\Assistant\Models\Prompt;
 use Filament\Forms\Components\TextInput;
@@ -461,14 +463,13 @@ class PersonalAssistant extends Page
     public function insertFromPromptLibraryAction(): Action
     {
         $getPromptOptions = fn (Builder $query): array => $query
-            ->select(['title', 'id'])
+            ->select(['id', 'title', 'description'])
             ->withCount('upvotes')
             ->withCount('uses')
             ->orderByDesc('upvotes_count')
             ->get()
             ->mapWithKeys(fn (Prompt $prompt) => [
-                // The `prompt-upvotes-count` class is used to hide the upvote count when the prompt is selected.
-                $prompt->id => "<span class=\"prompt-upvotes-count\">[{$prompt->upvotes_count}]</span> " . e($prompt->title) . " ({$prompt->uses_count} " . str('use')->plural($prompt->uses_count) . ')',
+                $prompt->id => view('assistant::filament.pages.personal-assistant.prompt-option', ['prompt' => $prompt])->render(),
             ])
             ->all();
 
@@ -487,6 +488,13 @@ class PersonalAssistant extends Page
                         $set('promptId', null) :
                         null)
                     ->live(),
+                Checkbox::make('myPrompts')
+                    ->label('My prompts only')
+                    ->afterStateUpdated(fn (Get $get, Set $set, $state) => ($state && ! Prompt::find($get('promptId'))?->user->is(auth()->user())) ?
+                        $set('promptId', null) :
+                        null)
+                    ->live()
+                    ->visible(Feature::active('prompt-user')),
                 Select::make('promptId')
                     ->label('Select a prompt')
                     ->searchable()
@@ -495,7 +503,11 @@ class PersonalAssistant extends Page
                         ->limit(50)
                         ->when(
                             filled($get('typeId')),
-                            fn (Builder $query) => $query->where('type_id', $get('typeId'))
+                            fn (Builder $query) => $query->where('type_id', $get('typeId')),
+                        )
+                        ->when(
+                            Feature::active('prompt-user') && filled($get('myPrompts')),
+                            fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
                         )))
                     ->getSearchResultsUsing(function (Get $get, string $search) use ($getPromptOptions): array {
                         $search = (string) str($search)->wrap('%');
@@ -508,19 +520,12 @@ class PersonalAssistant extends Page
                                 ->orWhere(new Expression('lower(prompt)'), 'like', $search))
                             ->when(
                                 filled($get('typeId')),
-                                fn (Builder $query) => $query->where('type_id', $get('typeId'))
+                                fn (Builder $query) => $query->where('type_id', $get('typeId')),
+                            )
+                            ->when(
+                                Feature::active('prompt-user') && filled($get('myPrompts')),
+                                fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
                             ));
-                    })
-                    ->getOptionLabelUsing(function ($value): ?string {
-                        $prompt = Prompt::find($value);
-
-                        if (! $prompt) {
-                            return null;
-                        }
-
-                        $promptUsesCount = $prompt->uses()->count();
-
-                        return '[' . $prompt->upvotes()->count() . '] ' . $prompt->title . ' (' . $promptUsesCount . ' ' . str('use')->plural($promptUsesCount) . ')';
                     })
                     ->live()
                     ->suffixAction(function ($state): ?FormComponentAction {
