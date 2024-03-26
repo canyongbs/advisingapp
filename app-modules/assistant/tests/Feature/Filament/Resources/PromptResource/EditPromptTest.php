@@ -112,13 +112,13 @@ it('can edit a record', function () use ($licenses, $roles) {
         'record' => Prompt::factory()->create()->getRouteKey(),
     ])
         ->assertSuccessful()
-        ->fillForm($record->toArray())
+        ->fillForm($record->attributesToArray())
         ->call('save')
         ->assertHasNoFormErrors();
 
     assertDatabaseCount(Prompt::class, 1);
 
-    assertDatabaseHas(Prompt::class, $record->toArray());
+    assertDatabaseHas(Prompt::class, $record->attributesToArray());
 });
 
 it('can delete a record', function () use ($licenses, $roles) {
@@ -131,7 +131,7 @@ it('can delete a record', function () use ($licenses, $roles) {
 
     assertDatabaseCount(Prompt::class, 1);
 
-    assertDatabaseHas(Prompt::class, $record->toArray());
+    assertDatabaseHas(Prompt::class, $record->attributesToArray());
 
     livewire(EditPrompt::class, [
         'record' => $record->getRouteKey(),
