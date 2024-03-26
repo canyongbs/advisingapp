@@ -34,10 +34,18 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\CheckOlympusKey;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
+namespace App\Http\Requests;
 
-Route::middleware([CheckOlympusKey::class])
-    ->post('azure-sso/update', UpdateAzureSsoSettingsController::class)
-    ->name('azure-sso.update');
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdateBrandSettingsRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'color_overrides' => ['nullable', 'array'],
+            'custom_css' => ['nullable', 'string'],
+            'has_dark_mode' => ['nullable', 'boolean'],
+        ];
+    }
+}

@@ -34,38 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace App\Observers;
+namespace App\Jobs;
 
-use Throwable;
 use App\Models\Tenant;
-use Illuminate\Bus\Batch;
-use App\Jobs\SeedTenantDatabase;
-use App\Jobs\MigrateTenantDatabase;
-use Illuminate\Support\Facades\Bus;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Event;
-use App\Multitenancy\Events\NewTenantSetupFailure;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Spatie\Multitenancy\Jobs\NotTenantAware;
 use App\Multitenancy\Events\NewTenantSetupComplete;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 
-class TenantObserver
+class DispatchTenantSetupCompleteEvent implements ShouldQueue, NotTenantAware
 {
-    public function created(Tenant $tenant): void
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public int $timeout = 1200;
+
+    public function __construct(public Tenant $tenant) {}
+
+    public function middleware(): array
     {
-        Bus::batch(
-            [
-                [
-                    new MigrateTenantDatabase($tenant),
-                    new SeedTenantDatabase($tenant),
-                ],
-            ]
-        )
-            ->onQueue(config('queue.landlord_queue'))
-            ->then(function (Batch $batch) use ($tenant) {
-                Event::dispatch(new NewTenantSetupComplete($tenant));
-            })
-            ->catch(function (Batch $batch, Throwable $e) use ($tenant) {
-                Event::dispatch(new NewTenantSetupFailure($tenant, $e));
-            })
-            ->allowFailures()
-            ->dispatch();
+        return [new SkipIfBatchCancelled()];
+    }
+
+    public function handle(): void
+    {
+        Event::dispatch(new NewTenantSetupComplete($this->tenant));
     }
 }

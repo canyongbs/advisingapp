@@ -40,27 +40,42 @@ use App\Settings\BrandSettings;
 use Illuminate\Http\JsonResponse;
 use App\Console\Commands\BuildAssets;
 use Illuminate\Support\Facades\Artisan;
-use Symfony\Component\HttpFoundation\Response;
-use App\Http\Requests\SetAzureSsoSettingRequest;
+use Laravel\Octane\Commands\ReloadCommand;
+use App\Http\Requests\UpdateBrandSettingsRequest;
 
 class UpdateBrandSettingsController extends Controller
 {
-    public function __invoke(SetAzureSsoSettingRequest $request): JsonResponse
+    public function __invoke(UpdateBrandSettingsRequest $request): JsonResponse
     {
         $brandSettings = app(BrandSettings::class);
 
-        $brandSettings->fill($request->all());
+        $oldCustomCss = $brandSettings->custom_css;
+        $oldHasDarkMode = $brandSettings->has_dark_mode;
+        $oldColorOverrides = $brandSettings->color_overrides;
+
+        $brandSettings->fill($request->validated());
 
         $brandSettings->save();
 
-        if ($request->has('custom_css')) {
-            Artisan::queue(BuildAssets::class, [
-                'script' => 'vite',
-            ]);
+        if ($oldCustomCss !== $brandSettings->custom_css) {
+            app()->terminating(function () {
+                Artisan::call(BuildAssets::class, [
+                    'script' => 'vite',
+                ]);
+            });
+        }
+
+        if (
+            ($oldHasDarkMode !== $brandSettings->has_dark_mode) ||
+            ($oldColorOverrides !== $brandSettings->color_overrides)
+        ) {
+            app()->terminating(function () {
+                Artisan::call(ReloadCommand::class);
+            });
         }
 
         return response()->json([
             'message' => 'Brand settings updated successfully!',
-        ], Response::HTTP_OK);
+        ]);
     }
 }

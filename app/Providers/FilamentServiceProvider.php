@@ -64,6 +64,30 @@ class FilamentServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        static::registerColors();
+
+        FilamentView::registerRenderHook(
+            'panels::footer',
+            fn (): View => view('filament.footer'),
+        );
+
+        Toggle::macro('lockedWithoutAnyLicenses', function (User $user, array $licenses) {
+            /** @var Toggle $this */
+            return $this->disabled(! $user->hasAnyLicense($licenses))
+                ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                ->hintIconTooltip('A CRM license is required for our public profile features.');
+        });
+
+        Checkbox::macro('lockedWithoutAnyLicenses', function (User $user, array $licenses) {
+            /** @var Checkbox $this */
+            return $this->disabled(! $user->hasAnyLicense($licenses))
+                ->hintIcon(fn (Checkbox $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                ->hintIconTooltip('A CRM license is required for our public profile features.');
+        });
+    }
+
+    public static function registerColors(): void
+    {
         $colors = [
             'danger' => Color::Red,
             'gray' => Color::Zinc,
@@ -183,24 +207,5 @@ class FilamentServiceProvider extends ServiceProvider
                 app(BrandSettings::class)->mergeColorOverrides($colors) :
                 $colors,
         );
-
-        FilamentView::registerRenderHook(
-            'panels::footer',
-            fn (): View => view('filament.footer'),
-        );
-
-        Toggle::macro('lockedWithoutAnyLicenses', function (User $user, array $licenses) {
-            /** @var Toggle $this */
-            return $this->disabled(! $user->hasAnyLicense($licenses))
-                ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
-                ->hintIconTooltip('A CRM license is required for our public profile features.');
-        });
-
-        Checkbox::macro('lockedWithoutAnyLicenses', function (User $user, array $licenses) {
-            /** @var Checkbox $this */
-            return $this->disabled(! $user->hasAnyLicense($licenses))
-                ->hintIcon(fn (Checkbox $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
-                ->hintIconTooltip('A CRM license is required for our public profile features.');
-        });
     }
 }

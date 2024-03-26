@@ -34,10 +34,23 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\CheckOlympusKey;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
+namespace App\Http\Requests\Tenants;
 
-Route::middleware([CheckOlympusKey::class])
-    ->post('azure-sso/update', UpdateAzureSsoSettingsController::class)
-    ->name('azure-sso.update');
+use App\Models\Tenant;
+use Illuminate\Validation\Rule;
+use Illuminate\Foundation\Http\FormRequest;
+
+class CreateTenantRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'domain' => ['required', 'string', 'max:255', Rule::unique(Tenant::class)],
+            'database' => ['required', 'string', 'max:255'],
+            'user.name' => ['required', 'string', 'max:255'],
+            'user.email' => ['required', 'email', 'max:255'],
+            'user.password' => ['required', 'string'],
+        ];
+    }
+}

@@ -34,27 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace App\Multitenancy\Http\Middleware;
+namespace App\Multitenancy\DataTransferObjects;
 
-use Closure;
-use Illuminate\Http\Request;
-use App\Settings\OlympusSettings;
-use Symfony\Component\HttpFoundation\Response;
+use Spatie\LaravelData\Data;
 
-class CheckOlympusKey
+class TenantUser extends Data
 {
-    public function handle(Request $request, Closure $next): Response
-    {
-        if ($request->bearerToken() !== app(OlympusSettings::class)->key) {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'message' => 'Invalid Olympus key',
-                ], Response::HTTP_FORBIDDEN);
-            }
-
-            abort(Response::HTTP_FORBIDDEN, 'Invalid Olympus key');
-        }
-
-        return $next($request);
-    }
+    public function __construct(
+        public ?string $name = null,
+        public ?string $email = null,
+        public ?string $password = null,
+    ) {}
 }

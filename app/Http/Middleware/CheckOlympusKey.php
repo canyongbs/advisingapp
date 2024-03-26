@@ -34,46 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace App\Console\Commands;
+namespace App\Http\Middleware;
 
-use App\Settings\BrandSettings;
-use Illuminate\Console\Command;
+use Closure;
+use Illuminate\Http\Request;
 use App\Settings\OlympusSettings;
-use Illuminate\Support\Facades\Http;
+use Symfony\Component\HttpFoundation\Response;
 
-class ConnectOlympus extends Command
+class CheckOlympusKey
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'olympus:connect {url}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Connect the app to communicate with Olympus.';
-
-    /**
-     * Execute the console command.
-     */
-    public function handle(): void
+    public function handle(Request $request, Closure $next): Response
     {
-        $response = Http::post($this->argument('url'), [
-            'url' => config('app.url'),
-        ])->throw();
+        if ($request->bearerToken() !== app(OlympusSettings::class)->key) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Invalid Olympus key',
+                ], Response::HTTP_FORBIDDEN);
+            }
 
-        $olympusSettings = app(OlympusSettings::class);
-        $olympusSettings->fill($response->json('olympus'));
-        $olympusSettings->save();
+            abort(Response::HTTP_FORBIDDEN, 'Invalid Olympus key');
+        }
 
-        $brandSettings = app(BrandSettings::class);
-        $brandSettings->fill($response->json('brand'));
-        $brandSettings->save();
-
-        $this->info('The app has been connected to Olympus.');
+        return $next($request);
     }
 }

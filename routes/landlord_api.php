@@ -36,10 +36,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UpdateBrandSettingsController;
-use App\Multitenancy\Http\Controllers\CreateTenantController;
+use App\Http\Controllers\Tenants\CreateTenantController;
 
-Route::post('tenants/create', CreateTenantController::class)
+Route::post('tenants', CreateTenantController::class)
     ->name('tenants.create');
 
-Route::post('brand/update', UpdateBrandSettingsController::class)
+Route::post('brand', UpdateBrandSettingsController::class)
     ->name('brand.update');

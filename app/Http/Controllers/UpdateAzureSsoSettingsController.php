@@ -37,7 +37,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\SetAzureSsoSettingRequest;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 
@@ -56,6 +55,6 @@ class UpdateAzureSsoSettingsController extends Controller
 
         return response()->json([
             'message' => 'Azure SSO settings updated successfully!',
-        ], Response::HTTP_OK);
+        ]);
     }
 }
