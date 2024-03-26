@@ -96,7 +96,7 @@ php artisan key:generate
 php artisan queue:restart
 php artisan schedule:interrupt
 npm ci
-php artisan filament:assets
+php artisan filament:upgrade
 php artisan app:build-assets
 npm run build
 ```
