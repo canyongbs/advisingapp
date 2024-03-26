@@ -34,74 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-/**
- * @mixin IdeHelperPrompt
- */
-class Prompt extends BaseModel
-{
-    protected $fillable = [
-        'title',
-        'description',
-        'prompt',
-        'type_id',
-    ];
-
-    protected ?bool $isUpvoted = null;
-
-    public function type(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(PromptType::class);
+        Schema::table('prompts', function (Blueprint $table) {
+            $table->foreignUuid('user_id')->nullable()->constrained()->nullOnDelete();
+        });
     }
 
-    public function upvotes(): HasMany
+    public function down(): void
     {
-        return $this->hasMany(PromptUpvote::class);
+        Schema::table('prompts', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('user_id');
+        });
     }
-
-    public function uses(): HasMany
-    {
-        return $this->hasMany(PromptUse::class);
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function isUpvoted(): bool
-    {
-        return $this->isUpvoted ??= $this->upvotes()->whereBelongsTo(auth()->user())->exists();
-    }
-
-    public function upvote(): void
-    {
-        $this->upvotes()->create(['user_id' => auth()->id()]);
-
-        $this->isUpvoted = true;
-    }
-
-    public function cancelUpvote(): void
-    {
-        $this->upvotes()->whereBelongsTo(auth()->user())->delete();
-
-        $this->isUpvoted = false;
-    }
-
-    public function toggleUpvote(): void
-    {
-        if ($this->isUpvoted()) {
-            $this->cancelUpvote();
-
-            return;
-        }
-
-        $this->upvote();
-    }
-}
+};

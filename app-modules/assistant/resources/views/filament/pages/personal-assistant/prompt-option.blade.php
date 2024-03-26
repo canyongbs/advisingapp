@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,76 +30,17 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<div>
+    {{ $prompt->title }}
 
-namespace AdvisingApp\Assistant\Models;
+    {{-- The `prompt-upvotes-count` class is used to hide the upvote count when the prompt is selected. --}}
+    (<span class="prompt-upvotes-count">{{ $prompt->upvotes_count }} {{ str('Like')->plural($prompt->upvotes_count) }} |
+    </span>{{ $prompt->uses_count }} {{ str('Use')->plural($prompt->uses_count) }})
+</div>
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-/**
- * @mixin IdeHelperPrompt
- */
-class Prompt extends BaseModel
-{
-    protected $fillable = [
-        'title',
-        'description',
-        'prompt',
-        'type_id',
-    ];
-
-    protected ?bool $isUpvoted = null;
-
-    public function type(): BelongsTo
-    {
-        return $this->belongsTo(PromptType::class);
-    }
-
-    public function upvotes(): HasMany
-    {
-        return $this->hasMany(PromptUpvote::class);
-    }
-
-    public function uses(): HasMany
-    {
-        return $this->hasMany(PromptUse::class);
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function isUpvoted(): bool
-    {
-        return $this->isUpvoted ??= $this->upvotes()->whereBelongsTo(auth()->user())->exists();
-    }
-
-    public function upvote(): void
-    {
-        $this->upvotes()->create(['user_id' => auth()->id()]);
-
-        $this->isUpvoted = true;
-    }
-
-    public function cancelUpvote(): void
-    {
-        $this->upvotes()->whereBelongsTo(auth()->user())->delete();
-
-        $this->isUpvoted = false;
-    }
-
-    public function toggleUpvote(): void
-    {
-        if ($this->isUpvoted()) {
-            $this->cancelUpvote();
-
-            return;
-        }
-
-        $this->upvote();
-    }
-}
+@if (filled($prompt->description))
+    <div class="text-xs text-gray-600 dark:text-gray-300">
+        {{ $prompt->description }}
+    </div>
+@endif

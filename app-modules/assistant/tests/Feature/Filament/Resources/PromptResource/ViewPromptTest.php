@@ -108,7 +108,7 @@ it('can view a record', function () use ($licenses, $roles) {
 
     assertDatabaseCount(Prompt::class, 1);
 
-    assertDatabaseHas(Prompt::class, $record->toArray());
+    assertDatabaseHas(Prompt::class, $record->attributesToArray());
 
     livewire(ViewPrompt::class, [
         'record' => $record->getRouteKey(),
@@ -117,5 +117,5 @@ it('can view a record', function () use ($licenses, $roles) {
 
     assertDatabaseCount(Prompt::class, 1);
 
-    assertDatabaseHas(Prompt::class, $record->toArray());
+    assertDatabaseHas(Prompt::class, $record->attributesToArray());
 });
