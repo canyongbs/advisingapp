@@ -55,7 +55,7 @@
     {{-- Footer --}}
     <x-slot:footer>
         <x-mail::footer>
-            © {{ date('Y') }} {{ config('app.name') }}. @lang('All rights reserved.')
+            This email was sent using Advising App™. <br /> <br /> © 2016-{{ date('Y') }} Canyon GBS LLC. All Rights Reserved. Canyon GBS™ and Advising App™ are trademarks of Canyon GBS LLC.
         </x-mail::footer>
     </x-slot:footer>
 </x-mail::layout>
