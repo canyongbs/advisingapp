@@ -45,6 +45,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Spatie\Multitenancy\Jobs\NotTenantAware;
+use App\Multitenancy\DataTransferObjects\TenantUser;
 use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 
 class CreateTenantUser implements ShouldQueue, NotTenantAware
@@ -59,7 +60,7 @@ class CreateTenantUser implements ShouldQueue, NotTenantAware
 
     public function __construct(
         public Tenant $tenant,
-        public array $data,
+        public TenantUser $data,
     ) {}
 
     public function middleware(): array
@@ -70,7 +71,7 @@ class CreateTenantUser implements ShouldQueue, NotTenantAware
     public function handle(): void
     {
         $this->tenant->execute(function () {
-            User::create($this->data);
+            User::create($this->data->toArray());
         });
     }
 }

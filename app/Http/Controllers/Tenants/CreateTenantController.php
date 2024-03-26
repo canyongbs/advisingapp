@@ -38,6 +38,7 @@ namespace App\Http\Controllers\Tenants;
 
 use App\Multitenancy\Actions\CreateTenant;
 use App\Http\Requests\Tenants\CreateTenantRequest;
+use App\Multitenancy\DataTransferObjects\TenantUser;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use App\Multitenancy\DataTransferObjects\TenantMailConfig;
 use App\Multitenancy\DataTransferObjects\TenantMailersConfig;
@@ -99,7 +100,11 @@ class CreateTenantController
                     fromName: config('mail.from.name')
                 ),
             ),
-            $request->validated('user'),
+            new TenantUser(
+                name: $request->validated('user.name'),
+                email: $request->validated('user.email'),
+                password: $request->validated('user.password'),
+            ),
         );
     }
 }

@@ -46,6 +46,7 @@ use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Event;
 use App\Jobs\DispatchTenantSetupCompleteEvent;
 use App\Multitenancy\Events\NewTenantSetupFailure;
+use App\Multitenancy\DataTransferObjects\TenantUser;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 
 class CreateTenant
@@ -54,7 +55,7 @@ class CreateTenant
         string $name,
         string $domain,
         TenantConfig $config,
-        ?array $user = null,
+        ?TenantUser $user = null,
     ): ?Tenant {
         $tenant = Tenant::query()->create([
             'name' => $name,
@@ -63,12 +64,15 @@ class CreateTenant
             'config' => $config,
         ]);
 
-        Bus::chain([
-            new MigrateTenantDatabase($tenant),
-            new SeedTenantDatabase($tenant),
-            ...($user ? [new CreateTenantUser($tenant, $user)] : []),
-            new DispatchTenantSetupCompleteEvent($tenant),
+        Bus::batch([
+            [
+                new MigrateTenantDatabase($tenant),
+                new SeedTenantDatabase($tenant),
+                ...($user ? [new CreateTenantUser($tenant, $user)] : []),
+                new DispatchTenantSetupCompleteEvent($tenant),
+            ],
         ])
+            ->name("deploy-tenant-{$tenant->getKey()}-{$domain}")
             ->onQueue(config('queue.landlord_queue'))
             ->catch(function (Throwable $exception) use ($tenant) {
                 Event::dispatch(new NewTenantSetupFailure($tenant, $exception));

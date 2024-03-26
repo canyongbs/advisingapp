@@ -34,10 +34,15 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\CheckOlympusKey;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
+namespace App\Multitenancy\DataTransferObjects;
 
-Route::middleware([CheckOlympusKey::class])
-    ->post('azure-sso/update', UpdateAzureSsoSettingsController::class)
-    ->name('azure-sso.update');
+use Spatie\LaravelData\Data;
+
+class TenantUser extends Data
+{
+    public function __construct(
+        public ?string $name = null,
+        public ?string $email = null,
+        public ?string $password = null,
+    ) {}
+}
