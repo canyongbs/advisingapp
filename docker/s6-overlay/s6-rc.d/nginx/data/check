@@ -1,8 +1,7 @@
 #!/command/with-contenv bash
-response=$(curl -I --location --insecure --silent http://localhost | awk '/^HTTP/{print $2}')
+response=$(curl -s -o /dev/null -w "%{http_code}" -L --insecure http://localhost)
 
-if [[ $response == "302
-200" ]] || [[ $response == "302" ]]; then
+if [[ $response == "200" ]]; then
 	exit 0
 else
 	echo "❌ There seems to be a failure in checking the web server. Here's the response:"
