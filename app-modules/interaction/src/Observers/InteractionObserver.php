@@ -37,7 +37,9 @@
 namespace AdvisingApp\Interaction\Observers;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Schema;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 
 class InteractionObserver
@@ -59,6 +61,19 @@ class InteractionObserver
 
         if ($user instanceof User) {
             TriggeredAutoSubscription::dispatch($user, $interaction);
+        }
+    }
+
+    public function saved(Interaction $interaction): void
+    {
+        if ($interaction->campaign) {
+            if (Schema::hasTable('interaction_initiatives') && Schema::hasColumn((new Interaction())->getTable(), 'interaction_initiative_id')) {
+                $initiative = InteractionInitiative::where('name', $interaction->campaign->name)->first();
+
+                if (! is_null($initiative)) {
+                    $interaction->initiative()->associate($initiative)->saveQuietly();
+                }
+            }
         }
     }
 }

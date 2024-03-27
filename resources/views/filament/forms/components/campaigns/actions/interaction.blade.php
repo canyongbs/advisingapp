@@ -33,14 +33,17 @@
 --}}
 @php
     use Carbon\Carbon;
+    use Laravel\Pennant\Feature;
     use AdvisingApp\Division\Models\Division;
     use AdvisingApp\Campaign\Settings\CampaignSettings;
     use AdvisingApp\Interaction\Models\InteractionType;
     use AdvisingApp\Interaction\Models\InteractionStatus;
     use AdvisingApp\Interaction\Models\InteractionDriver;
+    use App\Features\EnableInteractionInitiativesFeature;
     use AdvisingApp\Interaction\Models\InteractionOutcome;
     use AdvisingApp\Interaction\Models\InteractionCampaign;
     use AdvisingApp\Interaction\Models\InteractionRelation;
+    use AdvisingApp\Interaction\Models\InteractionInitiative;
 @endphp
 
 <x-filament::fieldset>
@@ -49,14 +52,23 @@
     </x-slot>
 
     <dl class="max-w-md divide-y divide-gray-200 text-gray-900 dark:divide-gray-700 dark:text-white">
-        <div class="flex flex-col pb-3">
-            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Campaign</dt>
-            <dd class="text-sm font-semibold">{{ InteractionCampaign::find($action['interaction_campaign_id'])?->name }}
-            </dd>
-        </div>
+        @if (Feature::active(EnableInteractionInitiativesFeature::class))
+            <div class="flex flex-col pb-3">
+                <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Initiative</dt>
+                <dd class="text-sm font-semibold">
+                    {{ InteractionInitiative::find($action['interaction_initiative_id'])?->name }}</dd>
+            </div>
+        @else
+            <div class="flex flex-col pb-3">
+                <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Initiative</dt>
+                <dd class="text-sm font-semibold">
+                    {{ InteractionCampaign::find($action['interaction_campaign_id'])?->name }}</dd>
+            </div>
+        @endif
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Driver</dt>
-            <dd class="text-sm font-semibold">{{ InteractionDriver::find($action['interaction_driver_id'])?->name }}</dd>
+            <dd class="text-sm font-semibold">{{ InteractionDriver::find($action['interaction_driver_id'])?->name }}
+            </dd>
         </div>
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Division</dt>

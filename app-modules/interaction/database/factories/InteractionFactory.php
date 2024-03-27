@@ -49,6 +49,7 @@ use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
 
 /**
  * @extends Factory<Interaction>
@@ -58,26 +59,35 @@ class InteractionFactory extends Factory
     public function definition(): array
     {
         $interactable = fake()->randomElement([
-            Student::inRandomOrder()->first() ?? Student::factory()->create(),
-            Prospect::factory()->create(),
-            ServiceRequest::factory()->create(),
+            Student::class,
+            Prospect::class,
+            ServiceRequest::class,
         ]);
 
+        $interactable = match ($interactable) {
+            Student::class => Student::inRandomOrder()->first() ?? Student::factory()->create(),
+            Prospect::class => Prospect::factory()->create(),
+            ServiceRequest::class => ServiceRequest::factory()->create([
+                'service_request_number' => fake()->randomNumber(8),
+            ]),
+        };
+
         return [
-            'user_id' => User::factory(),
+            'description' => fake()->paragraph(),
+            'division_id' => Division::factory(),
+            'end_datetime' => now()->addMinutes(5),
             'interactable_id' => $interactable->getKey(),
             'interactable_type' => $interactable->getMorphClass(),
-            'interaction_type_id' => InteractionType::factory(),
-            'interaction_relation_id' => InteractionRelation::factory(),
             'interaction_campaign_id' => InteractionCampaign::factory(),
             'interaction_driver_id' => InteractionDriver::factory(),
-            'interaction_status_id' => InteractionStatus::factory(),
+            'interaction_initiative_id' => InteractionInitiative::factory(),
             'interaction_outcome_id' => InteractionOutcome::factory(),
-            'division_id' => Division::factory(),
+            'interaction_relation_id' => InteractionRelation::factory(),
+            'interaction_status_id' => InteractionStatus::factory(),
+            'interaction_type_id' => InteractionType::factory(),
             'start_datetime' => now(),
-            'end_datetime' => now()->addMinutes(5),
             'subject' => fake()->sentence(),
-            'description' => fake()->paragraph(),
+            'user_id' => User::factory(),
         ];
     }
 }

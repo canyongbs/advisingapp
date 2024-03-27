@@ -53,6 +53,7 @@ class InteractionSeeder extends Seeder
         return [
             InteractionCampaignSeeder::class,
             InteractionDriverSeeder::class,
+            InteractionInitiativeSeeder::class,
             InteractionOutcomeSeeder::class,
             InteractionRelationSeeder::class,
             InteractionStatusSeeder::class,

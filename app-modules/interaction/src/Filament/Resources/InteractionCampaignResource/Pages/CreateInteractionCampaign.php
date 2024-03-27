@@ -37,9 +37,15 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Contracts\Support\Htmlable;
 use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
 
 class CreateInteractionCampaign extends CreateRecord
 {
     protected static string $resource = InteractionCampaignResource::class;
+
+    public function getTitle(): string | Htmlable
+    {
+        return 'Create Interaction Initiative';
+    }
 }

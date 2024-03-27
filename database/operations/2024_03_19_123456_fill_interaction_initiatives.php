@@ -34,35 +34,54 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Database\Seeders;
-
-use Illuminate\Database\Seeder;
+use Laravel\Pennant\Feature;
+use AdvisingApp\DataMigration\OneTimeOperation;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\DataMigration\Enums\OperationType;
+use App\Features\EnableInteractionInitiativesFeature;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
 
-class InteractionCampaignSeeder extends Seeder
-{
-    public function run(): void
+return new class () extends OneTimeOperation {
+    /**
+     * The type to determine where it will be run. OperationType::Tenant or OperationType::Landlord.
+     */
+    protected OperationType $type = OperationType::Tenant;
+
+    /**
+     * Determine if the operation is being processed asynchronously.
+     */
+    protected bool $async = true;
+
+    /**
+     * The queue that the job will be dispatched to. Will default to defaults in config.
+     */
+    protected ?string $queue = null;
+
+    /**
+     * A tag name, that this operation can be filtered by.
+     */
+    protected ?string $tag = 'after-deployment';
+
+    /**
+     * Process the operation.
+     */
+    public function process(): void
     {
-        InteractionCampaign::factory()
-            ->createManyQuietly(
-                [
-                    ['name' => 'N/A'],
-                    ['name' => 'College Applicant to Matriculation'],
-                    ['name' => 'College Inquiry to Applicant'],
-                    ['name' => 'College Matriculation to Enroll'],
-                    ['name' => 'College RFI'],
-                    ['name' => 'District Inquiry to Applicant'],
-                    ['name' => 'Dual Reengagement'],
-                    ['name' => 'Early College Plan Update'],
-                    ['name' => 'Early College Transition'],
-                    ['name' => 'Enrollment Cancellation Outreach'],
-                    ['name' => 'Enrollment Cancellation Recovery'],
-                    ['name' => 'Financial Aid Awarded Not Enrolled'],
-                    ['name' => 'Financial Aid Task List'],
-                    ['name' => 'MIH Follow Up'],
-                    ['name' => 'MIH Text'],
-                    ['name' => 'Third Party SEM'],
-                ]
-            );
+        InteractionCampaign::cursor()->each(function (InteractionCampaign $campaign) {
+            $initiative = InteractionInitiative::create([
+                'name' => $campaign->name,
+            ]);
+
+            if ($campaign->interactions()->exists()) {
+                $campaign->interactions->each(function (Interaction $interaction) use ($initiative) {
+                    $interaction->update([
+                        'interaction_initiative_id' => $initiative->id,
+                    ]);
+                });
+            }
+        });
+
+        Feature::activate(EnableInteractionInitiativesFeature::class);
     }
-}
+};

@@ -34,26 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
+namespace AdvisingApp\Interaction\Observers;
 
-use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
-use Illuminate\Contracts\Support\Htmlable;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
+use Illuminate\Support\Facades\Schema;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Interaction\Models\InteractionCampaign;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
 
-class EditInteractionCampaign extends EditRecord
+class InteractionCampaignObserver
 {
-    protected static string $resource = InteractionCampaignResource::class;
-
-    public function getTitle(): string | Htmlable
+    public function created(InteractionCampaign $campaign): void
     {
-        return 'Edit Interaction Initiative';
+        if (Schema::hasTable('interaction_initiatives') && Schema::hasColumn((new Interaction())->getTable(), 'interaction_initiative_id')) {
+            InteractionInitiative::create([
+                'name' => $campaign->name,
+            ]);
+        }
     }
 
-    protected function getHeaderActions(): array
+    public function updated(InteractionCampaign $campaign): void
     {
-        return [
-            DeleteAction::make(),
-        ];
+        if (Schema::hasTable('interaction_initiatives') && Schema::hasColumn((new Interaction())->getTable(), 'interaction_initiative_id')) {
+            InteractionInitiative::where('name', $campaign->name)->update([
+                'name' => $campaign->name,
+            ]);
+        }
     }
 }

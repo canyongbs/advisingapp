@@ -38,6 +38,7 @@ namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use Closure;
 use Carbon\CarbonImmutable;
+use Laravel\Pennant\Feature;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
@@ -50,9 +51,11 @@ use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionStatus;
+use App\Features\EnableInteractionInitiativesFeature;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionRelation;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
 
 class InteractionBlock extends CampaignActionBlock
 {
@@ -72,11 +75,17 @@ class InteractionBlock extends CampaignActionBlock
         return [
             Fieldset::make('Details')
                 ->schema([
-                    Select::make($fieldPrefix . 'interaction_campaign_id')
-                        ->relationship('campaign', 'name')
-                        ->label('Campaign')
-                        ->required()
-                        ->exists((new InteractionCampaign())->getTable(), 'id'),
+                    Feature::active(EnableInteractionInitiativesFeature::class)
+                        ? Select::make($fieldPrefix . 'interaction_initiative_id')
+                            ->relationship('initiative', 'name')
+                            ->label('Initiative')
+                            ->required()
+                            ->exists((new InteractionInitiative())->getTable(), 'id')
+                        : Select::make($fieldPrefix . 'interaction_campaign_id')
+                            ->relationship('campaign', 'name')
+                            ->label('Initiative')
+                            ->required()
+                            ->exists((new InteractionCampaign())->getTable(), 'id'),
                     Select::make($fieldPrefix . 'interaction_driver_id')
                         ->relationship('driver', 'name')
                         ->preload()
