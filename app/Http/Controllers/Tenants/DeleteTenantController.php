@@ -34,19 +34,14 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UpdateBrandSettingsController;
-use App\Http\Controllers\Tenants\CreateTenantController;
-use App\Http\Controllers\Tenants\DeleteTenantController;
+namespace App\Http\Controllers\Tenants;
 
-Route::post('tenants', CreateTenantController::class)
-    ->name('tenants.create');
+use App\Models\Tenant;
 
-Route::delete('tenants/{tenant}', DeleteTenantController::class)
-    ->name('tenants.delete');
-
-Route::post('brand', UpdateBrandSettingsController::class)
-    ->name('brand.update');
-
-Route::post('test', fn () => true)
-    ->name('test');
+class DeleteTenantController
+{
+    public function __invoke(Tenant $tenant): void
+    {
+        $tenant->delete();
+    }
+}
