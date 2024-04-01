@@ -26,7 +26,7 @@ if [ "${TENANT_MIGRATE:="true"}" == "true" ]; then
   echo "Starting tenant migrations..."
 
   {
-    s6-setuidgid webuser php "$WEBUSER_HOME/artisan" migrate --database=tenant --force --isolated \
+    s6-setuidgid webuser php "$WEBUSER_HOME/artisan" tenants:artisan "migrate --database=tenant --force --isolated" \
     && echo "Tenant migrations completed!"
   } || {
     echo "Tenant migrations failed!"
