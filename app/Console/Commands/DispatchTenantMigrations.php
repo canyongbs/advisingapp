@@ -41,7 +41,6 @@ use App\Models\Tenant;
 use Illuminate\Bus\Batch;
 use App\Jobs\TenantSchemaMigration;
 use Illuminate\Support\Facades\Bus;
-use App\Jobs\DispatchTenantDataMigrations;
 use App\Events\TenantMigrationBatchFailure;
 use App\Events\TenantMigrationBatchSuccessful;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
@@ -62,10 +61,7 @@ class DispatchTenantMigrations extends DispatchMigrations
 
         Bus::batch(
             [
-                [
-                    new TenantSchemaMigration(),
-                    new DispatchTenantDataMigrations(),
-                ],
+                new TenantSchemaMigration(),
             ]
         )
             ->name("tenant-migrations-{$tenant->getKey()}-" . $this->getVersionTag())

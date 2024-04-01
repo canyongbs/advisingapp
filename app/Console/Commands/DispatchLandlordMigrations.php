@@ -42,7 +42,6 @@ use Illuminate\Support\Facades\Bus;
 use App\Jobs\LandlordSchemaMigration;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Artisan;
-use App\Jobs\DispatchLandlordDataMigrations;
 use App\Events\LandlordMigrationBatchFailure;
 use App\Events\LandlordMigrationBatchSuccessful;
 use Symfony\Component\Console\Command\Command as CommandAlias;
@@ -63,10 +62,7 @@ class DispatchLandlordMigrations extends DispatchMigrations
 
         Bus::batch(
             [
-                [
-                    new LandlordSchemaMigration(),
-                    new DispatchLandlordDataMigrations(),
-                ],
+                new LandlordSchemaMigration(),
             ]
         )
             ->name('landlord-migrations-' . $this->getVersionTag())
