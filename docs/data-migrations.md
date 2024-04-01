@@ -1,44 +1,46 @@
 # Data Migrations
 
-Data migrations in the application is a custom implementation extended from and inspired by [One-Time Operations for Laravel](https://github.com/TimoKoerber/laravel-one-time-operations).
+Data migrations in the application are created, stored, and executed much in the same way as Laravel schema migrations.
 
 ## Introduction
 
 Data migrations are used to perform one-time operations on the database. This can be used to migrate data from one format to another, or to perform data cleanup operations.
 
-Data migrations are contained in single-use classes called "Operations". Each operation is responsible for performing a single task, and is only run once.
-
-There are two types of Operations: "landlord" and "tenant". Landlord operations are run once on the landlord database, while tenant operations are run once for each tenant database.
+Data migrations are contained in typical Laravel migration files. But contain a particular prefix to differentiate them from schema migrations. And are subject to a specific set of rules.
 
 ## Usage
 
 ### Creating Operations
 
-In order to create a new data migration operation, you can use the `operations:make` Artisan command:
+A data migration can be created using the `make:migration` Artisan command as is typical with Laravel migrations. Please prepend the name of the migration with `data_` to differentiate it from schema migrations.
+
+Migrations created in the `database/migrations` directory are automatically run on all Tenants. Whereas the migrations created in the `database/landlord` directory are run only on the Landlord database.
+
+For example:
 
 ```bash
-php artisan operations:make MyOperation
+php artisan make:migration data_change_name_in_users_table
 ```
 
-This will create a new operation class in the `app/database/operations` directory. The class will contain a `process` method, which is called when the operation is executed.
+When creating data migrations it is important to adhere to the following rules:
 
-It also contains a `type` property, which should be set to either "landlord" or "tenant", depending on where you want the operation to be run.
+1. Do **not** use references to classes and facades that could be removed in the future. This includes Eloquent models. Instead, use the `Illuminate\Support\Facades\DB` facade to interact with the database. You may also access the `Laravel\Pennant\Feature` class to interact with feature flagging.
+2. Ensure that the migration is idempotent. This means that the migration can be run multiple times without causing any issues. Tables and columns should be checked for the existence, data checked if it is in the expected state before it is changed, etc.
+3. Do **not** include a `down` method in the migration. Data migrations are intended to be run once and not rolled back. If you need to roll back a data migration, you should create a new data migration to do so.
+4. Do **not** include schema changes in data migrations. Schema changes should be done in schema migrations. Data migrations should only be used to manipulate data.
 
-Further customizable properties are as follows:
+### Running Data Migrations
 
-- `async`: Whether the operation should be run asynchronously on the queue. Defaults to `true`.
-- `queue`: The queue on which the operation should be run. Defaults to `default`.
-- `tag` : The tag for the operation, this is optional and can be used to segment operations. Defaults to `null`.
+Because data migrations are stored in the same directory as schema migrations, they can be run using the `migrate` Artisan command.
 
-### Running Operations
-
-To run all pending operations, you can use the `operations:process` Artisan command. You must specify the type of operation you want to run, either `landlord` or `tenant`.
+To run migrations from the Landlord database:
 
 ```bash
-php artisan operations:process landlord
+php artisan migrate --database=landlord --path=database/landlord
 ```
 
-After running the command, all pending operations of the specified type will be executed in the order they were created. Either immediately executing or being queued based on the `async` property. It is heavily recommended to run the operations on a queue.
+To run migrations on all Tenants:
 
-Once dispatched the operation will be required in the respective databases `operations` table. This table is used to keep track of which operations have been run, and to prevent them from being run again.
-Upon completion of the operation the records `completed_at` column will be updated to the current timestamp.
+```bash
+php artisan migrate --database=tenant
+```
