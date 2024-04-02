@@ -36,11 +36,7 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources;
 
-use Filament\Tables\Table;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\EditRole;
