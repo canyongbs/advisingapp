@@ -37,7 +37,9 @@
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\RelationManagers;
 
 use Filament\Tables\Table;
+use Filament\Facades\Filament;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Pages\ViewRecord;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
@@ -55,7 +57,17 @@ class PermissionsRelationManager extends RelationManager
 
     public function isReadOnly(): bool
     {
-        return true;
+        if (blank($this->getPageClass())) {
+            return false;
+        }
+
+        $panel = Filament::getCurrentPanel();
+
+        if (! $panel) {
+            return false;
+        }
+
+        return is_subclass_of($this->getPageClass(), ViewRecord::class);
     }
 
     public function table(Table $table): Table

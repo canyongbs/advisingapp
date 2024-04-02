@@ -67,7 +67,7 @@ class Role extends SpatieRole implements Auditable
             config('permission.table_names.model_has_roles'),
             PermissionRegistrar::$pivotRole,
             config('permission.column_names.model_morph_key')
-        )->withPivot('via');
+        );
     }
 
     public function getWebPermissions(): Collection
@@ -77,7 +77,7 @@ class Role extends SpatieRole implements Auditable
 
     public function getApiPermissions(): Collection
     {
-        return collect([]);
+        return collect();
     }
 
     public function scopeApi(Builder $query): void

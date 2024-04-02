@@ -37,7 +37,6 @@
 namespace AdvisingApp\Authorization\Models\Concerns;
 
 use Spatie\Permission\Traits\HasRoles;
-use AdvisingApp\Authorization\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 use App\Actions\Finders\ApplicationModules;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -58,7 +57,7 @@ trait HasRolesWithPivot
             config('permission.table_names.model_has_roles'),
             config('permission.column_names.model_morph_key'),
             PermissionRegistrar::$pivotRole
-        )->withPivot('via');
+        );
 
         if (! PermissionRegistrar::$teams) {
             return $relation;
@@ -69,13 +68,5 @@ trait HasRolesWithPivot
                 $teamField = config('permission.table_names.roles') . '.' . PermissionRegistrar::$teamsKey;
                 $q->whereNull($teamField)->orWhere($teamField, getPermissionsTeamId());
             });
-    }
-
-    // TODO: Check to see if this is needed
-    public function hasBeenAssignedRoleDirectly(Role $role): bool
-    {
-        return $this->roles()
-            ->where('id', $role->id)
-            ->exists();
     }
 }
