@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 // phpcs:ignoreFile
 /**
@@ -197,6 +163,33 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\LandlordSettingsProperty
+ *
+ * @property string $id
+ * @property string $group
+ * @property string $name
+ * @property bool $locked
+ * @property mixed $payload
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|LandlordSettingsProperty newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|LandlordSettingsProperty newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|LandlordSettingsProperty query()
+ * @method static \Illuminate\Database\Eloquent\Builder|LandlordSettingsProperty whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LandlordSettingsProperty whereGroup($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LandlordSettingsProperty whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LandlordSettingsProperty whereLocked($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LandlordSettingsProperty whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LandlordSettingsProperty wherePayload($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LandlordSettingsProperty whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperLandlordSettingsProperty {}
+}
+
+namespace App\Models{
+/**
  * App\Models\NotificationSetting
  *
  * @property string $id
@@ -329,14 +322,10 @@ namespace App\Models{
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Permission> $permissions
  * @property-read int|null $permissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\RoleGroup> $roleGroups
- * @property-read int|null $role_groups_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Role> $roles
  * @property-read int|null $roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\RoleGroup> $traitRoleGroups
- * @property-read int|null $trait_role_groups_count
  * @method static \Illuminate\Database\Eloquent\Builder|SystemUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SystemUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SystemUser onlyTrashed()
@@ -369,6 +358,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @method static \Spatie\Multitenancy\TenantCollection<int, static> all($columns = ['*'])
+ * @method static \Database\Factories\TenantFactory factory($count = null, $state = [])
  * @method static \Spatie\Multitenancy\TenantCollection<int, static> get($columns = ['*'])
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant newQuery()
@@ -431,6 +421,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Carbon\CarbonImmutable|null $last_chat_ping_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Task\Models\Task> $assignedTasks
  * @property-read int|null $assigned_tasks_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChatFolder> $assistantChatFolders
@@ -476,8 +467,6 @@ namespace App\Models{
  * @property-read int|null $prospect_care_teams_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $prospectSubscriptions
  * @property-read int|null $prospect_subscriptions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\RoleGroup> $roleGroups
- * @property-read int|null $role_groups_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Role> $roles
  * @property-read int|null $roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment> $serviceRequestAssignments
@@ -490,8 +479,6 @@ namespace App\Models{
  * @property-read int|null $subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Team\Models\Team> $teams
  * @property-read int|null $teams_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\RoleGroup> $traitRoleGroups
- * @property-read int|null $trait_role_groups_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Alert\Models\Alert[] $studentAlerts
  * @property-read int|null $student_alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Alert\Models\Alert[] $prospectAlerts
@@ -529,6 +516,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsExternal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsPhoneNumberVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereJobTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereLastChatPingAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLocale($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOfficeHours($value)
@@ -1070,7 +1058,13 @@ namespace AdvisingApp\Assistant\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property string|null $user_id
  * @property-read \AdvisingApp\Assistant\Models\PromptType $type
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\PromptUpvote> $upvotes
+ * @property-read int|null $upvotes_count
+ * @property-read \App\Models\User|null $user
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\PromptUse> $uses
+ * @property-read int|null $uses_count
  * @method static \AdvisingApp\Assistant\Database\Factories\PromptFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Prompt newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Prompt newQuery()
@@ -1083,6 +1077,7 @@ namespace AdvisingApp\Assistant\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereUserId($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -1118,6 +1113,60 @@ namespace AdvisingApp\Assistant\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperPromptType {}
+}
+
+namespace AdvisingApp\Assistant\Models{
+/**
+ * AdvisingApp\Assistant\Models\PromptUpvote
+ *
+ * @property string $id
+ * @property string $prompt_id
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \AdvisingApp\Assistant\Models\Prompt $prompt
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote wherePromptId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperPromptUpvote {}
+}
+
+namespace AdvisingApp\Assistant\Models{
+/**
+ * AdvisingApp\Assistant\Models\PromptUse
+ *
+ * @property string $id
+ * @property string $prompt_id
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \AdvisingApp\Assistant\Models\Prompt $prompt
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse wherePromptId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperPromptUse {}
 }
 
 namespace AdvisingApp\Audit\Models{
@@ -1233,32 +1282,6 @@ namespace AdvisingApp\Authorization\Models{
 	class IdeHelperPermission {}
 }
 
-namespace AdvisingApp\Authorization\Models\Pivots{
-/**
- * AdvisingApp\Authorization\Models\Pivots\RoleGroupRolePivot
- *
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupRolePivot newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupRolePivot newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupRolePivot query()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperRoleGroupRolePivot {}
-}
-
-namespace AdvisingApp\Authorization\Models\Pivots{
-/**
- * AdvisingApp\Authorization\Models\Pivots\RoleGroupUserPivot
- *
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupUserPivot newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupUserPivot newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupUserPivot query()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperRoleGroupUserPivot {}
-}
-
 namespace AdvisingApp\Authorization\Models{
 /**
  * AdvisingApp\Authorization\Models\Role
@@ -1268,14 +1291,11 @@ namespace AdvisingApp\Authorization\Models{
  * @property string $guard_name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $description
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Permission> $permissions
  * @property-read int|null $permissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\RoleGroup> $roleGroups
- * @property-read int|null $role_groups_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\RoleGroup> $traitRoleGroups
- * @property-read int|null $trait_role_groups_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
  * @method static \Illuminate\Database\Eloquent\Builder|Role api()
@@ -1287,6 +1307,7 @@ namespace AdvisingApp\Authorization\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Role superAdmin()
  * @method static \Illuminate\Database\Eloquent\Builder|Role web()
  * @method static \Illuminate\Database\Eloquent\Builder|Role whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Role whereGuardName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Role whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Role whereName($value)
@@ -1295,47 +1316,6 @@ namespace AdvisingApp\Authorization\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperRole {}
-}
-
-namespace AdvisingApp\Authorization\Models{
-/**
- * AdvisingApp\Authorization\Models\RoleGroup
- *
- * @property string $id
- * @property string $name
- * @property string $guard_name
- * @property string|null $slug
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Role> $roles
- * @property-read int|null $roles_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUser> $systemUsers
- * @property-read int|null $system_users_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
- * @property-read int|null $users_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Authorization\Models\Permission[] $permissions
- * @property-read int|null $permissions_count
- * @method static \AdvisingApp\Authorization\Database\Factories\RoleGroupFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup query()
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereGuardName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereSlug($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperRoleGroup {}
 }
 
 namespace AdvisingApp\Campaign\Models{
@@ -1587,31 +1567,6 @@ namespace AdvisingApp\Consent\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperUserConsentAgreement {}
-}
-
-namespace AdvisingApp\DataMigration\Models{
-/**
- * AdvisingApp\DataMigration\Models\Operation
- *
- * @property string $id
- * @property string $name
- * @property string $dispatched
- * @property \Illuminate\Support\Carbon|null $processed_at
- * @property \Illuminate\Support\Carbon|null $completed_at
- * @property-read string $file_path
- * @method static \AdvisingApp\DataMigration\Database\Factories\OperationFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Operation newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Operation newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Operation query()
- * @method static \Illuminate\Database\Eloquent\Builder|Operation whereCompletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Operation whereDispatched($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Operation whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Operation whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Operation whereProcessedAt($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperOperation {}
 }
 
 namespace AdvisingApp\Division\Models{
@@ -2405,6 +2360,7 @@ namespace AdvisingApp\Interaction\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property bool $is_default
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
@@ -2417,6 +2373,7 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionOutcome whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionOutcome whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionOutcome whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InteractionOutcome whereIsDefault($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionOutcome whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionOutcome whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionOutcome withTrashed()
@@ -2436,6 +2393,7 @@ namespace AdvisingApp\Interaction\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property bool $is_default
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
@@ -2448,6 +2406,7 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionRelation whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionRelation whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionRelation whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InteractionRelation whereIsDefault($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionRelation whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionRelation whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionRelation withTrashed()
@@ -2468,6 +2427,7 @@ namespace AdvisingApp\Interaction\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property bool $is_default
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
@@ -2481,6 +2441,7 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionStatus whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionStatus whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionStatus whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InteractionStatus whereIsDefault($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionStatus whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionStatus whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionStatus withTrashed()
@@ -2902,6 +2863,10 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @property-read int|null $media_count
  * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality|null $quality
  * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus|null $status
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItemUpvote> $upvotes
+ * @property-read int|null $upvotes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItemView> $views
+ * @property-read int|null $views_count
  * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseItemFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem newQuery()
@@ -2925,6 +2890,60 @@ namespace AdvisingApp\KnowledgeBase\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperKnowledgeBaseItem {}
+}
+
+namespace AdvisingApp\KnowledgeBase\Models{
+/**
+ * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItemUpvote
+ *
+ * @property string $id
+ * @property string $knowledge_base_item_id
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem $knowledgeBaseItem
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote query()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereKnowledgeBaseItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperKnowledgeBaseItemUpvote {}
+}
+
+namespace AdvisingApp\KnowledgeBase\Models{
+/**
+ * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItemView
+ *
+ * @property string $id
+ * @property string $knowledge_base_item_id
+ * @property string|null $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem $knowledgeBaseItem
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView query()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereKnowledgeBaseItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperKnowledgeBaseItemView {}
 }
 
 namespace AdvisingApp\KnowledgeBase\Models{
@@ -3512,6 +3531,8 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read int|null $subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Task\Models\Task> $tasks
  * @property-read int|null $tasks_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
+ * @property-read int|null $tokens_count
  * @method static \AdvisingApp\Prospect\Database\Factories\ProspectFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect newQuery()
@@ -3594,6 +3615,7 @@ namespace AdvisingApp\Prospect\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int $sort
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $prospects
@@ -3609,6 +3631,7 @@ namespace AdvisingApp\Prospect\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus whereSort($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus withoutTrashed()
