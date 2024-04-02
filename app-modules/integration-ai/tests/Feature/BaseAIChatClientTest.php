@@ -39,7 +39,7 @@ use App\Models\User;
 use function Pest\Laravel\{actingAs};
 
 use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
-use AdvisingApp\IntegrationAI\Client\Contracts\AIChatClient;
+use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
 use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\Chat;
 use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
@@ -59,7 +59,7 @@ it('will return a streamed response of strings when prompted', function () {
         from: AIChatMessageFrom::User,
     );
 
-    $client = app(AIChatClient::class);
+    $client = app(AiChatClient::class);
 
     $client->ask($chat, function ($response) {
         expect($response)->toBeString();
@@ -83,7 +83,7 @@ it('will dispatch an event when a prompt is initiated', function () {
         from: AIChatMessageFrom::User,
     );
 
-    $client = app(AIChatClient::class);
+    $client = app(AiChatClient::class);
 
     $client->ask($chat, function ($response) {
         expect($response)->toBeString();

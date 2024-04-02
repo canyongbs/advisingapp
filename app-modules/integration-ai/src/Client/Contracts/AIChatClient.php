@@ -39,7 +39,7 @@ namespace AdvisingApp\IntegrationAI\Client\Contracts;
 use Closure;
 use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\Chat;
 
-interface AIChatClient
+interface AiChatClient
 {
     public function ask(Chat $chat, Closure $callback): string;
 }

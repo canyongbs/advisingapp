@@ -46,6 +46,7 @@ class ChatMessage extends Data implements Wireable
     use WireableData;
 
     public function __construct(
+        public ?string $messageId,
         public ?string $message,
         public AIChatMessageFrom $from,
         public ?string $name = null,

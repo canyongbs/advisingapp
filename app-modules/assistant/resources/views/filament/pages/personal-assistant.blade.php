@@ -420,7 +420,7 @@ use Illuminate\Support\Facades\Vite;
                                     </textarea>
                                 </div>
                                 <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
-                                    <div class="flex items-center gap-3">
+                                    <div class="flex w-full items-center gap-3">
                                         @if (!$showCurrentResponse)
                                             <x-filament::button
                                                 form="sendMessage,ask"
@@ -431,18 +431,29 @@ use Illuminate\Support\Facades\Vite;
                                             </x-filament::button>
 
                                             {{ $this->insertFromPromptLibraryAction }}
+
+                                            {{ $this->uploadFilesAction }}
                                         @endif
 
-                                        <div
+                                        {{-- TODO This might be too generic of a loading indicator... --}}
+                                        {{-- <div
                                             class="py-2"
                                             wire:loading
                                         >
                                             <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
-                                        </div>
+                                        </div> --}}
 
                                         @error('message')
                                             <p class="ml-auto text-xs text-red-500">{{ $message }}</p>
                                         @enderror
+
+                                        @if ($this->files)
+                                            @foreach ($this->files as $file)
+                                                <div class="text-xs text-gray-600 dark:text-gray-200">
+                                                    {{ $file['name'] }}
+                                                </div>
+                                            @endforeach
+                                        @endif
                                     </div>
 
                                     @if (!$showCurrentResponse && !$chat->id && $chat->messages->count() > 0)

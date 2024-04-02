@@ -37,23 +37,31 @@
 namespace AdvisingApp\IntegrationAI\Client;
 
 use Closure;
+use Exception;
 use OpenAI\Client;
+use App\Models\User;
 use Illuminate\Support\Arr;
 use OpenAI\Testing\ClientFake;
 use OpenAI\Responses\StreamResponse;
+use OpenAI\Responses\Threads\ThreadResponse;
 use OpenAI\Responses\Chat\CreateStreamedResponse;
 use AdvisingApp\IntegrationAI\Settings\AISettings;
+use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
+use AdvisingApp\Assistant\Actions\GetAiAssistantFromID;
 use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
 use AdvisingApp\IntegrationAI\DataTransferObjects\AIPrompt;
-use AdvisingApp\IntegrationAI\Client\Contracts\AIChatClient;
+use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
+use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
 use AdvisingApp\IntegrationAI\Client\Concerns\InitializesClient;
 use AdvisingApp\IntegrationAI\Exceptions\ContentFilterException;
+use OpenAI\Responses\Files\CreateResponse as CreateFileResponse;
+use OpenAI\Responses\Threads\Messages\ThreadMessageListResponse;
 use AdvisingApp\IntegrationAI\DataTransferObjects\DynamicContext;
 use AdvisingApp\IntegrationAI\Exceptions\TokensExceededException;
 use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\Chat;
 use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
 
-abstract class BaseAIChatClient implements AIChatClient
+abstract class BaseAIChatClient implements AiChatClient
 {
     use InitializesClient;
 
@@ -69,13 +77,17 @@ abstract class BaseAIChatClient implements AIChatClient
 
     protected ?string $systemContext = null;
 
-    protected Client|ClientFake $client;
+    // TODO Temporarily making this public for testing purposes
+    // Will need to find a slightly better approach to most of this...
+    public Client|ClientFake $client;
 
     public function __construct(
     ) {
         $this->initializeClient();
     }
 
+    // TODO We should have an ask as well as a stream method,
+    // Or, pass a "stream" parameter to the ask method
     public function ask(Chat $chat, ?Closure $callback): string
     {
         if (is_null($this->systemContext)) {
@@ -97,6 +109,105 @@ abstract class BaseAIChatClient implements AIChatClient
         $this->setDynamicContext($context->getContext());
 
         return $this;
+    }
+
+    public function getDynamicContext(): ?string
+    {
+        return $this->dynamicContext;
+    }
+
+    public function uploadFiles(array $files): CreateFileResponse
+    {
+        ray('files', $files);
+
+        $tempFile = $files[0]['file'];
+
+        $tempFilePath = tempnam(sys_get_temp_dir(), 'upload_');
+        $stream = $tempFile->readStream();
+
+        if ($stream === false || file_put_contents($tempFilePath, $stream) === false) {
+            throw new Exception('Failed to create a temporary file.');
+        }
+
+        // Now open the temporary file with fopen
+        $fileResource = fopen($tempFilePath, 'r');
+
+        $response = $this->client->files()->upload([
+            'purpose' => 'assistants',
+            'file' => $fileResource,
+        ]);
+
+        ray('response', $response);
+
+        if (is_resource($fileResource)) {
+            fclose($fileResource);
+        }
+
+        return $response;
+    }
+
+    public function createThread(): ThreadResponse
+    {
+        return $this->client->threads()->create([]);
+    }
+
+    public function createMessageInThread(string $message, string $threadId, string $assistantId): ThreadMessageResponse
+    {
+        $this->dispatchAssistantPromptInitiatedEvent($message, $assistantId);
+
+        return $this->client->threads()->messages()->create($threadId, [
+            'role' => 'user',
+            'content' => $message,
+        ]);
+    }
+
+    public function createRunForThread(string $threadId, string $assistantId): ThreadRunResponse
+    {
+        return $this->client->threads()->runs()->create(
+            threadId: $threadId,
+            parameters: [
+                'assistant_id' => $assistantId,
+                'instructions' => $this->getAssistantContext($assistantId),
+            ],
+        );
+    }
+
+    public function getRunForThread(string $threadId, string $runId): ThreadRunResponse
+    {
+        return $this->client->threads()->runs()->retrieve(
+            threadId: $threadId,
+            runId: $runId,
+        );
+    }
+
+    public function getLatestAssistantMessageInThread(string $threadId): ThreadMessageListResponse
+    {
+        return $this->client->threads()->messages()->list($threadId, [
+            'order' => 'desc',
+            'limit' => 1,
+        ]);
+    }
+
+    protected function getAssistantContext(string $assistantId): string
+    {
+        $baseInstructions = resolve(GetAiAssistantFromID::class)->get($assistantId)->instructions;
+
+        /** @var User $user */
+        $user = auth()->user();
+        $this->provideDynamicContext(new DynamicContext($user));
+
+        return "{$baseInstructions} {$this->dynamicContext}";
+    }
+
+    protected function getContext(): string
+    {
+        $context = $this->systemContext;
+
+        if ($this->dynamicContext) {
+            $context .= rtrim($this->dynamicContext, '.') . '.';
+        }
+
+        return "{$context} When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.";
     }
 
     protected function generateStreamedResponse(StreamResponse $stream, Closure $callback): string
@@ -160,17 +271,6 @@ abstract class BaseAIChatClient implements AIChatClient
         ];
     }
 
-    protected function getContext(): string
-    {
-        $context = $this->systemContext;
-
-        if ($this->dynamicContext) {
-            $context .= rtrim($this->dynamicContext, '.') . '.';
-        }
-
-        return "{$context} When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.";
-    }
-
     protected function dispatchPromptInitiatedEvent(Chat $chat): void
     {
         AIPromptInitiated::dispatch(AIPrompt::from([
@@ -186,6 +286,25 @@ abstract class BaseAIChatClient implements AIChatClient
             'message' => $chat->messages->last()->message,
             'metadata' => [
                 'systemContext' => $this->getContext(),
+            ],
+        ]));
+    }
+
+    protected function dispatchAssistantPromptInitiatedEvent(string $prompt, string $assistantId): void
+    {
+        AIPromptInitiated::dispatch(AIPrompt::from([
+            'user' => auth()->user(),
+            'request' => [
+                'ip' => request()->ip(),
+                'headers' => Arr::only(
+                    request()->headers->all(),
+                    ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
+                ),
+            ],
+            'timestamp' => now(),
+            'message' => $prompt,
+            'metadata' => [
+                'systemContext' => $this->getAssistantContext($assistantId),
             ],
         ]));
     }

@@ -59,6 +59,7 @@ use Filament\Forms\Components\Checkbox;
 use Illuminate\Validation\Rules\Unique;
 use AdvisingApp\Assistant\Models\Prompt;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use AdvisingApp\Assistant\Models\PromptType;
@@ -66,16 +67,18 @@ use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\Assistant\Models\AssistantChat;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
+use AdvisingApp\Assistant\Actions\GetAiAssistant;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Assistant\Models\AssistantChatFolder;
 use AdvisingApp\Assistant\Enums\AssistantChatShareVia;
 use AdvisingApp\Assistant\Jobs\ShareAssistantChatsJob;
+use AdvisingApp\IntegrationAI\Client\BaseAIChatClient;
 use AdvisingApp\Assistant\Enums\AssistantChatShareWith;
-use AdvisingApp\IntegrationAI\Client\Contracts\AIChatClient;
-use AdvisingApp\IntegrationAI\Exceptions\ContentFilterException;
-use AdvisingApp\IntegrationAI\DataTransferObjects\DynamicContext;
-use AdvisingApp\IntegrationAI\Exceptions\TokensExceededException;
+use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
+use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Filament\Forms\Components\Actions\Action as FormComponentAction;
 use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
@@ -97,6 +100,8 @@ class PersonalAssistant extends Page
 
     public Chat $chat;
 
+    public ?string $assistantId = null;
+
     #[Rule(['required', 'string'])]
     public string $message = '';
 
@@ -116,6 +121,8 @@ class PersonalAssistant extends Page
 
     public bool $loading = true;
 
+    public array $files = [];
+
     public static function canAccess(): bool
     {
         /** @var User $user */
@@ -130,6 +137,8 @@ class PersonalAssistant extends Page
 
     public function mount(): void
     {
+        $this->assistantId = resolve(GetAiAssistant::class)->get();
+
         $this->consentAgreement = ConsentAgreement::where('type', ConsentAgreementType::AzureOpenAI)->first();
 
         /** @var AssistantChat $chat */
@@ -137,6 +146,9 @@ class PersonalAssistant extends Page
 
         $this->chat = new Chat(
             id: $chat?->id ?? null,
+            assistantId: $chat?->assistant_id ?? $this->assistantId,
+            threadId: $chat?->thread_id ?? null,
+            runId: $chat?->run_id ?? null,
             messages: ChatMessage::collection($chat?->messages ?? []),
         );
     }
@@ -229,26 +241,61 @@ class PersonalAssistant extends Page
     }
 
     #[On('ask')]
-    public function ask(AIChatClient $ai): void
+    public function ask(AiChatClient $ai): void
     {
-        try {
-            /** @var User $user */
-            $user = auth()->user();
+        ray('ask')->green();
 
-            $this->currentResponse = $ai
-                ->provideDynamicContext(new DynamicContext($user))
-                ->ask($this->chat, function (string $partial) {
-                    $this->stream('currentResponse', nl2br($partial));
-                });
-        } catch (ContentFilterException|TokensExceededException $e) {
-            $this->renderError = true;
-            $this->error = $e->getMessage();
+        /** @var BaseAIChatClient $ai */
+        if ($this->files) {
+            $fileIds = $ai->uploadFiles($this->files);
+
+            // After this, we'll need to add the file ids to the message
+
+            return;
         }
+
+        if (! filled($this->chat->threadId)) {
+            $response = $ai->createThread();
+            $this->chat->threadId = $response->id;
+        }
+
+        /** @var ThreadMessageResponse $message */
+        $message = $ai->createMessageInThread($this->chat->messages->last()->message, $this->chat->threadId, $this->assistantId);
+
+        $this->updateLatestMessageId($message->id);
+
+        /** @var ThreadRunResponse $response */
+        $run = $ai->createRunForThread($this->chat->threadId, $this->assistantId);
+
+        $this->chat->runId = $run->id;
+
+        $attempts = 0;
+        $runIsCompleted = false;
+
+        // TODO Extract this to a method to determine if the run has been completed
+        // TODO Also initiate error handling here...
+        while (! $runIsCompleted && $attempts < 5) {
+            /** @var ThreadRunResponse $response */
+            $run = $ai->getRunForThread($this->chat->threadId, $this->chat->runId);
+
+            $attempts++;
+
+            if ($run->status == 'completed') {
+                $runIsCompleted = true;
+            } else {
+                // TODO Determine a better strategy than this
+                sleep(1);
+            }
+        }
+
+        $latestMessage = $ai->getLatestAssistantMessageInThread($this->chat->threadId);
+
+        $this->currentResponse = $latestMessage->data[0]->content[0]->text->value;
 
         $this->reset('showCurrentResponse');
 
         if ($this->renderError === false) {
-            $this->setMessage($this->currentResponse, AIChatMessageFrom::Assistant);
+            $this->setMessage($this->currentResponse, AIChatMessageFrom::Assistant, $latestMessage->firstId);
         }
 
         $this->reset('currentResponse');
@@ -281,7 +328,13 @@ class PersonalAssistant extends Page
                 $user = auth()->user();
 
                 /** @var AssistantChat $assistantChat */
-                $assistantChat = $user->assistantChats()->create(['name' => $data['name']]);
+                $assistantChat = $user->assistantChats()->create([
+                    'name' => $data['name'],
+                    'assistant_id' => $this->chat->assistantId,
+                    'thread_id' => $this->chat->threadId,
+                    // TODO We don't necessarily need to save the run
+                    'run_id' => $this->chat->runId,
+                ]);
 
                 $this->chat->messages->each(function (ChatMessage $message) use ($assistantChat) {
                     $assistantChat->messages()->create($message->toArray());
@@ -311,6 +364,9 @@ class PersonalAssistant extends Page
 
         $this->chat = new Chat(
             id: $chat->id ?? null,
+            assistantId: $chat->assistant_id ?? null,
+            threadId: $chat->thread_id ?? null,
+            runId: $chat->run_id ?? null,
             messages: ChatMessage::collection($chat->messages ?? []),
         );
     }
@@ -319,7 +375,13 @@ class PersonalAssistant extends Page
     {
         $this->reset(['message', 'prompt', 'renderError', 'error']);
 
-        $this->chat = new Chat(id: null, messages: ChatMessage::collection([]));
+        $this->chat = new Chat(
+            id: null,
+            assistantId: null,
+            threadId: null,
+            runId: null,
+            messages: ChatMessage::collection([])
+        );
     }
 
     public function newFolderAction(): Action
@@ -628,6 +690,34 @@ class PersonalAssistant extends Page
             ]);
     }
 
+    public function uploadFilesAction(): Action
+    {
+        return Action::make('uploadFiles')
+            ->label('Upload Files')
+            ->icon('heroicon-o-paper-clip')
+            ->iconButton()
+            ->color('gray')
+            ->disabled(count($this->files) >= 1)
+            ->badge(count($this->files))
+            ->modalSubmitActionLabel('Upload')
+            ->form([
+                FileUpload::make('attachment')
+                    ->acceptedFileTypes(['text/csv', 'text/plain'])
+                    ->storeFiles(false)
+                    ->maxSize(256)
+                    ->required(),
+            ])
+            ->action(function (array $data) {
+                /** @var TemporaryUploadedFile $attachment */
+                $attachment = $data['attachment'];
+
+                $this->files[] = [
+                    'file' => $attachment,
+                    'name' => $attachment->getClientOriginalName(),
+                ];
+            });
+    }
+
     public function cloneChatAction(): Action
     {
         return Action::make('cloneChat')
@@ -726,7 +816,7 @@ class PersonalAssistant extends Page
             ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
     }
 
-    protected function setMessage(string $message, AIChatMessageFrom $from): void
+    protected function setMessage(string $message, AIChatMessageFrom $from, string $messageId = null): void
     {
         if (filled($this->chat->id)) {
             /** @var User $user */
@@ -736,15 +826,34 @@ class PersonalAssistant extends Page
             $assistantChat = $user->assistantChats()->findOrFail($this->chat->id);
 
             $assistantChat->messages()->create([
+                'message_id' => $messageId,
                 'message' => $message,
                 'from' => $from,
             ]);
         }
 
         $this->chat->messages[] = new ChatMessage(
+            messageId: $messageId,
             message: $message,
             from: $from,
         );
+    }
+
+    protected function updateLatestMessageId(string $messageId): void
+    {
+        if (filled($this->chat->id)) {
+            /** @var User $user */
+            $user = auth()->user();
+
+            /** @var AssistantChat $assistantChat */
+            $assistantChat = $user->assistantChats()->findOrFail($this->chat->id);
+
+            $assistantChat->messages()->latest()->update([
+                'message_id' => $messageId,
+            ]);
+        }
+
+        $this->chat->messages->last()->messageId = $messageId;
     }
 
     private function folderSelect(): Select

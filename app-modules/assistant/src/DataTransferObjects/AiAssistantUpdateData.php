@@ -34,47 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+namespace AdvisingApp\Assistant\DataTransferObjects;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use Spatie\LaravelData\Data;
+use AdvisingApp\IntegrationAI\Settings\AISettings;
 
-/**
- * @mixin IdeHelperAssistantChat
- */
-class AssistantChat extends BaseModel
+class AiAssistantUpdateData extends Data
 {
-    use CanAddAssistantLicenseGlobalScope;
-    use SoftDeletes;
+    public function __construct(
+        public ?string $name,
+        public ?string $description,
+        public ?string $instructions,
+        public ?string $model,
+    ) {}
 
-    protected $fillable = [
-        'assistant_id',
-        'name',
-        'run_id',
-        'thread_id',
-    ];
-
-    public function user(): BelongsTo
+    public static function createFromSettings(AISettings $settings): AiAssistantUpdateData
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function messages(): HasMany
-    {
-        return $this->hasMany(AssistantChatMessage::class);
-    }
-
-    public function folder(): BelongsTo
-    {
-        return $this->belongsTo(AssistantChatFolder::class, 'assistant_chat_folder_id');
-    }
-
-    protected static function booted(): void
-    {
-        static::addAssistantLicenseGlobalScope();
+        return AiAssistantUpdateData::from([
+            'instructions' => $settings->prompt_system_context,
+        ]);
     }
 }

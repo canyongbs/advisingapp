@@ -51,10 +51,11 @@ class AssistantChatMessage extends BaseModel
     use SoftDeletes;
 
     protected $fillable = [
-        'message',
         'from',
-        'name',
         'function_call',
+        'message_id',
+        'message',
+        'name',
     ];
 
     protected $casts = [

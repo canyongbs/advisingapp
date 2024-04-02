@@ -34,47 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+namespace App\Listeners;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Spatie\LaravelSettings\Events\SettingsSaved;
+use AdvisingApp\IntegrationAI\Settings\AISettings;
+use AdvisingApp\Assistant\Actions\UpdateAiAssistant;
+use AdvisingApp\Assistant\DataTransferObjects\AiAssistantUpdateData;
 
-/**
- * @mixin IdeHelperAssistantChat
- */
-class AssistantChat extends BaseModel
+class HandleSettingsSaved implements ShouldQueue
 {
-    use CanAddAssistantLicenseGlobalScope;
-    use SoftDeletes;
-
-    protected $fillable = [
-        'assistant_id',
-        'name',
-        'run_id',
-        'thread_id',
-    ];
-
-    public function user(): BelongsTo
+    public function handle(SettingsSaved $event): void
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function messages(): HasMany
-    {
-        return $this->hasMany(AssistantChatMessage::class);
-    }
-
-    public function folder(): BelongsTo
-    {
-        return $this->belongsTo(AssistantChatFolder::class, 'assistant_chat_folder_id');
-    }
-
-    protected static function booted(): void
-    {
-        static::addAssistantLicenseGlobalScope();
+        match (true) {
+            $event->settings instanceof AISettings => resolve(UpdateAiAssistant::class)->from(
+                AiAssistantUpdateData::createFromSettings($event->settings)
+            ),
+            default => null,
+        };
     }
 }
