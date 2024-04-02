@@ -34,28 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\DataMigration\Commands;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Console\Command;
-use AdvisingApp\DataMigration\OneTimeOperationManager;
-use AdvisingApp\DataMigration\Commands\Utils\ColoredOutput;
-
-abstract class OneTimeOperationsCommand extends Command
+class CreateOneTimeOperationsTable extends Migration
 {
-    use ColoredOutput;
-
-    public const LABEL_PROCESSED = 'PROCESSED';
-
-    public const LABEL_PENDING = 'PENDING';
-
-    public const LABEL_DISPOSED = 'DISPOSED';
-
-    protected string $operationsDirectory;
+    protected string $name;
 
     public function __construct()
     {
-        parent::__construct();
+        $this->name = 'operations';
+    }
 
-        $this->operationsDirectory = OneTimeOperationManager::getDirectoryPath();
+    public function up(): void
+    {
+        Schema::create($this->name, function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('name')->unique();
+            $table->string('dispatched');
+            $table->timestamp('processed_at')->nullable();
+            $table->timestamp('completed_at')->nullable();
+        });
     }
 }
