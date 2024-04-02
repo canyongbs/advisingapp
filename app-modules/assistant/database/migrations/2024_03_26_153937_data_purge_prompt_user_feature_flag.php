@@ -34,14 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Observers;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Assistant\Models\Prompt;
-
-class PromptObserver
-{
-    public function creating(Prompt $prompt): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $prompt->user()->associate(auth()->user());
+        Feature::purge('prompt-user');
     }
-}
+
+    public function down(): void
+    {
+        Feature::activate('prompt-user');
+    }
+};
