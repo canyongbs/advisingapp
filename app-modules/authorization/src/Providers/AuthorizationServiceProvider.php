@@ -41,7 +41,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\License;
-use AdvisingApp\Authorization\Models\RoleGroup;
 use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\AuthorizationPlugin;
 use App\Registries\RoleBasedAccessControlRegistry;
@@ -82,7 +81,6 @@ class AuthorizationServiceProvider extends ServiceProvider
         Relation::morphMap([
             'role' => Role::class,
             'permission' => Permission::class,
-            'role_group' => RoleGroup::class,
             'license' => License::class,
         ]);
 

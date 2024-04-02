@@ -40,15 +40,15 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use AdvisingApp\Authorization\Models\RoleGroup;
+use AdvisingApp\Authorization\Models\Role;
 
 class InternalAdminUsersSeeder extends Seeder
 {
     public function run(): void
     {
-        $superAdminRoleGroup = RoleGroup::where('name', 'Super Administrator')->firstOrFail();
+        $superAdminRole = Role::where('name', 'authorization.super_admin')->firstOrFail();
 
-        collect(config('internal-users.emails'))->each(function ($email) use ($superAdminRoleGroup) {
+        collect(config('internal-users.emails'))->each(function ($email) use ($superAdminRole) {
             $user = User::where('email', $email)->first();
 
             if (is_null($user)) {
@@ -60,7 +60,7 @@ class InternalAdminUsersSeeder extends Seeder
                 ]);
             }
 
-            $user->roleGroups()->sync($superAdminRoleGroup);
+            $user->roles()->sync($superAdminRole);
         });
     }
 }
