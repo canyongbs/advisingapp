@@ -37,8 +37,10 @@
 namespace AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages;
 
 use Filament\Forms\Form;
+use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
+use Illuminate\Support\HtmlString;
 use AdvisingApp\Survey\Models\Survey;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Infolists\Components\TextEntry;
@@ -76,13 +78,14 @@ class EditSurvey extends EditRecord
                             ->state(function (Survey $survey) {
                                 $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($survey);
 
-                                return <<<EOD
+                                $state = <<<EOD
                                 ```
                                 {$code}
                                 ```
                                 EOD;
+
+                                return new HtmlString(Str::markdown($state));
                             })
-                            ->markdown()
                             ->copyable()
                             ->copyableState(fn (Survey $survey) => resolve(GenerateSubmissibleEmbedCode::class)->handle($survey))
                             ->copyMessage('Copied!')

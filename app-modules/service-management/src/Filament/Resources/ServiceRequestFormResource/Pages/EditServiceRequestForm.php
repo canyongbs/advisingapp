@@ -37,8 +37,10 @@
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestFormResource\Pages;
 
 use Filament\Forms\Form;
+use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
+use Illuminate\Support\HtmlString;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
@@ -74,13 +76,14 @@ class EditServiceRequestForm extends EditRecord
                             ->state(function (ServiceRequestForm $serviceRequestForm) {
                                 $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($serviceRequestForm);
 
-                                return <<<EOD
+                                $state = <<<EOD
                                 ```
                                 {$code}
                                 ```
                                 EOD;
+
+                                return new HtmlString(Str::markdown($state));
                             })
-                            ->markdown()
                             ->copyable()
                             ->copyableState(fn (ServiceRequestForm $serviceRequestForm) => resolve(GenerateSubmissibleEmbedCode::class)->handle($serviceRequestForm))
                             ->copyMessage('Copied!')

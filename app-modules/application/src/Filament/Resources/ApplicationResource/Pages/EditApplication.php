@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages;
 
+use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
+use Illuminate\Support\HtmlString;
 use Filament\Forms\Form as FilamentForm;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Infolists\Components\TextEntry;
@@ -76,13 +78,14 @@ class EditApplication extends EditRecord
                             ->state(function (Application $application) {
                                 $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($application);
 
-                                return <<<EOD
+                                $state = <<<EOD
                                 ```
                                 {$code}
                                 ```
                                 EOD;
+
+                                return new HtmlString(Str::markdown($state));
                             })
-                            ->markdown()
                             ->copyable()
                             ->copyableState(fn (Application $application) => resolve(GenerateSubmissibleEmbedCode::class)->handle($application))
                             ->copyMessage('Copied!')
