@@ -58,17 +58,18 @@ class ShareAssistantChatsJob implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        protected AssistantChat $chat,
-        protected AssistantChatShareVia $via,
-        protected AssistantChatShareWith $targetType,
-        protected array $targetIds,
-        protected User $sender
+        public AssistantChat $chat,
+        public AssistantChatShareVia $via,
+        public AssistantChatShareWith $targetType,
+        public array $targetIds,
+        public User $sender
     ) {}
 
     public function handle(): void
     {
         if ($this->targetType === AssistantChatShareWith::User) {
-            User::whereIn('id', $this->targetIds)
+            User::query()
+                ->whereKey($this->targetIds)
                 ->get()
                 ->each(function (User $user) {
                     dispatch(new ShareAssistantChatJob($this->chat, $this->via, $user, $this->sender));
@@ -91,11 +92,16 @@ class ShareAssistantChatsJob implements ShouldQueue
                             break;
                     }
                 });
-        } elseif ($this->targetType === AssistantChatShareWith::Team) {
+
+            return;
+        }
+
+        if ($this->targetType === AssistantChatShareWith::Team) {
             $sender = $this->sender;
             $via = $this->via;
 
-            Team::whereIn('id', $this->targetIds)
+            Team::query()
+                ->whereKey($this->targetIds)
                 ->with('users')
                 ->get()
                 ->each(function (Team $team) use ($sender, $via) {
