@@ -38,6 +38,7 @@ namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
@@ -60,6 +61,9 @@ class CreateRole extends CreateRecord
                         'web' => 'Web',
                         'api' => 'API',
                     ]),
+                Textarea::make('description')
+                    ->nullable()
+                    ->maxLength(65535),
             ]);
     }
 }

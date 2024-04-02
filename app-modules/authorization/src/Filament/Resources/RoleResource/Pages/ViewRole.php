@@ -39,6 +39,7 @@ namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 use Filament\Forms\Form;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ViewRecord;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
@@ -61,6 +62,9 @@ class ViewRole extends ViewRecord
                         'web' => 'Web',
                         'api' => 'API',
                     ]),
+                Textarea::make('description')
+                    ->nullable()
+                    ->maxLength(65535),
             ]);
     }
 
