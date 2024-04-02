@@ -36,16 +36,15 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\RelationManagers;
 
-use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
 use App\Filament\Tables\Columns\IdColumn;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\AttachAction;
+use Filament\Tables\Actions\DetachAction;
+use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Authorization\Models\Role;
 use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class PermissionsRelationManager extends RelationManager
@@ -54,14 +53,9 @@ class PermissionsRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    public function form(Form $form): Form
+    public function isReadOnly(): bool
     {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+        return true;
     }
 
     public function table(Table $table): Table
@@ -72,15 +66,20 @@ class PermissionsRelationManager extends RelationManager
                 TextColumn::make('name'),
             ])
             ->headerActions([
-                CreateAction::make(),
+                AttachAction::make()
+                    ->recordSelectOptionsQuery(function (Builder $query) {
+                        /** @var Role $role */
+                        $role = $this->getOwnerRecord();
+
+                        $query->where('guard_name', $role->guard_name);
+                    }),
             ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
+                DetachAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DetachBulkAction::make(),
                 ]),
             ]);
     }

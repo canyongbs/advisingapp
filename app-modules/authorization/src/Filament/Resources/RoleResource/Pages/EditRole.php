@@ -36,13 +36,33 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
+use Filament\Forms\Form;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
 
 class EditRole extends EditRecord
 {
     protected static string $resource = RoleResource::class;
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(125)
+                    ->unique('roles', 'name'),
+                Select::make('guard_name')
+                    ->options([
+                        'web' => 'Web',
+                        'api' => 'API',
+                    ])
+                    ->disabled()->dehydrated(),
+            ]);
+    }
 
     protected function getHeaderActions(): array
     {

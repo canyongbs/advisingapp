@@ -36,12 +36,10 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources;
 
-use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
 use App\Filament\Tables\Columns\IdColumn;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Authorization\Models\Role;
@@ -60,44 +58,6 @@ class RoleResource extends Resource
     protected static ?string $navigationGroup = 'Users and Permissions';
 
     protected static ?int $navigationSort = 60;
-
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(125),
-                TextInput::make('guard_name')
-                    ->required()
-                    ->maxLength(125),
-            ]);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name')
-                    ->searchable(),
-                TextColumn::make('guard_name')
-                    ->searchable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->actions([
-                ViewAction::make(),
-            ])
-            ->bulkActions([
-            ]);
-    }
 
     public static function getRelations(): array
     {
