@@ -40,7 +40,6 @@ use Spatie\Permission\Traits\HasRoles;
 use AdvisingApp\Authorization\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 use App\Actions\Finders\ApplicationModules;
-use AdvisingApp\Authorization\Enums\ModelHasRolesViaEnum;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait HasRolesWithPivot
@@ -72,20 +71,11 @@ trait HasRolesWithPivot
             });
     }
 
-    public function hasBeenAssignedRoleDirectly(Role $role)
+    // TODO: Check to see if this is needed
+    public function hasBeenAssignedRoleDirectly(Role $role): bool
     {
         return $this->roles()
             ->where('id', $role->id)
-            ->where('via', ModelHasRolesViaEnum::Direct)
             ->exists();
-    }
-
-    public function assignRoleViaRoleGroup(Role $role): void
-    {
-        $this->assignRole([$this->roles, $role]);
-
-        $this->roles()->where('id', $role->id)->first()->pivot->update([
-            'via' => ModelHasRolesViaEnum::RoleGroup,
-        ]);
     }
 }
