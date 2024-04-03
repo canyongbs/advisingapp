@@ -279,14 +279,11 @@ class PersonalAssistant extends Page
             $latestMessage = $ai->getLatestAssistantMessageInThread($this->chat->threadId);
 
             $this->currentResponse = $latestMessage->data[0]->content[0]->text->value;
-        }
 
-        $this->reset('showCurrentResponse');
-
-        if ($this->renderError === false) {
             $this->setMessage($this->currentResponse, AIChatMessageFrom::Assistant, $latestMessage->firstId);
         }
 
+        $this->reset('showCurrentResponse');
         $this->reset('currentResponse');
         $this->reset('files');
         $this->reset('fileIds');

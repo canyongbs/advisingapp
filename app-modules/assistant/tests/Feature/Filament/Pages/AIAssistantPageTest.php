@@ -56,7 +56,7 @@ use AdvisingApp\Assistant\Jobs\ShareAssistantChatsJob;
 use AdvisingApp\Assistant\Models\AssistantChatMessage;
 use AdvisingApp\Assistant\Enums\AssistantChatShareWith;
 use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant;
-use AdvisingApp\IntegrationAI\Client\Contracts\AIChatClient;
+use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
 use AdvisingApp\IntegrationAI\Client\Playground\AzureOpenAI;
 use AdvisingApp\IntegrationAI\Exceptions\ContentFilterException;
 use AdvisingApp\IntegrationAI\Exceptions\TokensExceededException;
@@ -326,7 +326,7 @@ it('can not send a blank message', function () use ($setUp) {
 it('can ask the AI chat client in an existing chat', function () use ($setUp) {
     ['chat' => $chat] = $setUp();
 
-    $aiChatClient = mock(AIChatClient::class, fn () => AzureOpenAI::class);
+    $aiChatClient = mock(AiChatClient::class, fn () => AzureOpenAI::class);
     $aiChatClient->expects('provideDynamicContext')->once()->andReturnSelf();
     $aiChatClient->expects('ask')->once()->andReturn($response = AssistantChatMessage::factory()->make()->message);
 
@@ -350,7 +350,7 @@ it('can ask the AI chat client in a new chat', function () use ($setUp) {
 
     $chat->delete();
 
-    $aiChatClient = mock(AIChatClient::class, fn () => AzureOpenAI::class);
+    $aiChatClient = mock(AiChatClient::class, fn () => AzureOpenAI::class);
     $aiChatClient->expects('provideDynamicContext')->once()->andReturnSelf();
     $aiChatClient->expects('ask')->once()->andReturn($response = AssistantChatMessage::factory()->make()->message);
 
@@ -383,7 +383,7 @@ it('can ask the AI chat client and render a content filter error', function () u
 
     $chat->delete();
 
-    $aiChatClient = mock(AIChatClient::class, fn () => AzureOpenAI::class);
+    $aiChatClient = mock(AiChatClient::class, fn () => AzureOpenAI::class);
     $aiChatClient->expects('provideDynamicContext')->once()->andReturnSelf();
     $aiChatClient->expects('ask')->once()->andThrow(new ContentFilterException($error = Str::random()));
 
@@ -402,7 +402,7 @@ it('can ask the AI chat client and render a tokens exceeded error', function () 
 
     $chat->delete();
 
-    $aiChatClient = mock(AIChatClient::class, fn () => AzureOpenAI::class);
+    $aiChatClient = mock(AiChatClient::class, fn () => AzureOpenAI::class);
     $aiChatClient->expects('provideDynamicContext')->once()->andReturnSelf();
     $aiChatClient->expects('ask')->once()->andThrow(new TokensExceededException($error = Str::random()));
 
