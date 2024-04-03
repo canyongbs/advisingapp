@@ -40,7 +40,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
 
 /**
- * @mixin IdeHelperSettingsProperty
+ * @mixin IdeHelperLandlordSettingsProperty
  */
 class LandlordSettingsProperty extends BaseSettingsProperty
 {

@@ -34,23 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Events;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use AdvisingApp\Authorization\Models\Pivots\RoleGroupRolePivot;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('roles', function (Blueprint $table) {
+            $table->text('description')->nullable();
+        });
+    }
 
-class RoleAttachedToRoleGroup
-{
-    use Dispatchable;
-    use InteractsWithSockets;
-    use SerializesModels;
-
-    /**
-     * Create a new event instance.
-     */
-    public function __construct(
-        public RoleGroupRolePivot $pivot
-    ) {}
-}
+    public function down(): void
+    {
+        Schema::table('roles', function (Blueprint $table) {
+            $table->dropColumn('description');
+        });
+    }
+};

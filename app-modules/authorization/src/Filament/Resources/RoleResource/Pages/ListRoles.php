@@ -36,8 +36,12 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
+use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Components\Tab;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
@@ -54,6 +58,31 @@ class ListRoles extends ListRecords
             'api' => Tab::make('Api')
                 ->modifyQueryUsing(fn (Builder $query) => $query->api()),
         ];
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name')
+                    ->searchable(),
+                TextColumn::make('guard_name')
+                    ->searchable(),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->actions([
+                ViewAction::make(),
+            ])
+            ->bulkActions([
+            ]);
     }
 
     protected function getHeaderActions(): array

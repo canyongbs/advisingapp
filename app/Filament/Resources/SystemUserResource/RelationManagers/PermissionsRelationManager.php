@@ -39,7 +39,6 @@ namespace App\Filament\Resources\SystemUserResource\RelationManagers;
 use Filament\Forms\Form;
 use App\Models\SystemUser;
 use Filament\Tables\Table;
-use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Tables\Columns\IdColumn;
@@ -87,7 +86,8 @@ class PermissionsRelationManager extends RelationManager
                                 ->whereNotIn('name', $owner->getPermissionNames());
                         }
                     )
-                    ->recordSelect(fn (Select $select) => $select->multiple()),
+                    ->multiple()
+                    ->preloadRecordSelect(),
             ])
             ->actions([
                 DetachAction::make(),

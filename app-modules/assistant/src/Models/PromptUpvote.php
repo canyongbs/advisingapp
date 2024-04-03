@@ -40,6 +40,9 @@ use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperPromptUpvote
+ */
 class PromptUpvote extends BaseModel
 {
     protected $fillable = [

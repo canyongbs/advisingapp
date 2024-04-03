@@ -44,9 +44,7 @@ use Spatie\Permission\Models\Role as SpatieRole;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use AdvisingApp\Authorization\Models\Concerns\HasRoleGroups;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-use AdvisingApp\Authorization\Models\Pivots\RoleGroupRolePivot;
 use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
@@ -57,18 +55,9 @@ class Role extends SpatieRole implements Auditable
 {
     use HasFactory;
     use DefinesPermissions;
-    use HasRoleGroups {
-        HasRoleGroups::roleGroups as traitRoleGroups;
-    }
     use HasUuids;
     use AuditableTrait;
     use UsesTenantConnection;
-
-    public function roleGroups(): BelongsToMany
-    {
-        return $this->traitRoleGroups()
-            ->using(RoleGroupRolePivot::class);
-    }
 
     public function users(): BelongsToMany
     {
@@ -78,7 +67,7 @@ class Role extends SpatieRole implements Auditable
             config('permission.table_names.model_has_roles'),
             PermissionRegistrar::$pivotRole,
             config('permission.column_names.model_morph_key')
-        )->withPivot('via');
+        );
     }
 
     public function getWebPermissions(): Collection
@@ -88,7 +77,7 @@ class Role extends SpatieRole implements Auditable
 
     public function getApiPermissions(): Collection
     {
-        return collect([]);
+        return collect();
     }
 
     public function scopeApi(Builder $query): void

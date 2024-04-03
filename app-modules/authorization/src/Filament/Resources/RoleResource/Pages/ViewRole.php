@@ -36,6 +36,11 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
+use Filament\Forms\Form;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ViewRecord;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
 
@@ -43,9 +48,30 @@ class ViewRole extends ViewRecord
 {
     protected static string $resource = RoleResource::class;
 
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(125)
+                    ->unique('roles', 'name'),
+                Select::make('guard_name')
+                    ->required()
+                    ->options([
+                        'web' => 'Web',
+                        'api' => 'API',
+                    ]),
+                Textarea::make('description')
+                    ->nullable()
+                    ->maxLength(65535),
+            ]);
+    }
+
     protected function getHeaderActions(): array
     {
         return [
+            EditAction::make(),
         ];
     }
 }

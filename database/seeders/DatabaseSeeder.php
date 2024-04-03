@@ -89,7 +89,6 @@ class DatabaseSeeder extends Seeder
         );
 
         $this->call([
-            SuperAdminProfileSeeder::class,
             SampleSuperAdminUserSeeder::class,
             InternalAdminUsersSeeder::class,
             DivisionSeeder::class,

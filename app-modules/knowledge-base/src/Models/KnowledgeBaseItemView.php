@@ -40,6 +40,9 @@ use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperKnowledgeBaseItemView
+ */
 class KnowledgeBaseItemView extends BaseModel
 {
     protected $fillable = [

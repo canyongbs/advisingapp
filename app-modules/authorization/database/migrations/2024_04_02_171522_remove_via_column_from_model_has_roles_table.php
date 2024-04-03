@@ -34,14 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Listeners;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-class HandleRoleRemovedFromUser
-{
-    public function handle(object $event): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $event->role->roleGroups->each(function ($roleGroup) use ($event) {
-            $event->user->roleGroups()->detach($roleGroup);
+        Schema::table('model_has_roles', function (Blueprint $table) {
+            $table->dropColumn('via');
         });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('model_has_roles', function (Blueprint $table) {
+            $table->string('via', 125)->default('direct');
+        });
+    }
+};
