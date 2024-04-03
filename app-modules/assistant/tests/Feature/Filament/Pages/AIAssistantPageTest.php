@@ -49,6 +49,7 @@ use AdvisingApp\Assistant\Models\PromptUpvote;
 use AdvisingApp\Assistant\Models\AssistantChat;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
+use AdvisingApp\Assistant\Actions\GetAiAssistant;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Assistant\Models\AssistantChatFolder;
 use AdvisingApp\Assistant\Enums\AssistantChatShareVia;
@@ -91,6 +92,9 @@ $setUp = function (
         ->for($user)
         ->has(AssistantChatMessage::factory()->count(5), 'messages')
         ->create();
+
+    $getAiAssistant = mock(GetAiAssistant::class);
+    $getAiAssistant->expects('get')->once()->andReturn(null);
 
     return ['user' => $user, 'consentAgreement' => $consentAgreement, 'chat' => $chat];
 };
