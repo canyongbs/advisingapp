@@ -715,7 +715,7 @@ it('can not rename a folder with a duplicate name', function () use ($setUp) {
         ->assertHasActionErrors(['name' => 'unique']);
 });
 
-it('can not rename a folder with a duplicate name but belonging to a different user', function () use ($setUp) {
+it('can rename a folder with a duplicate name but belonging to a different user', function () use ($setUp) {
     [$user, $consentAgreement, $chat] = $setUp();
 
     $folder = AssistantChatFolder::factory()
@@ -782,7 +782,7 @@ it('can delete a folder', function () use ($setUp) {
     ]);
 });
 
-it('can delete a folder belonging to a different user', function () use ($setUp) {
+it('can not delete a folder belonging to a different user', function () use ($setUp) {
     [$user, $consentAgreement, $chat] = $setUp();
 
     $folder = AssistantChatFolder::factory()
