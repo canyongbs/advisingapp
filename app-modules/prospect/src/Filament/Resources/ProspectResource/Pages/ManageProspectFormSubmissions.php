@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use App\Enums\Feature;
 use Filament\Tables\Table;
 use Carbon\CarbonInterface;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Cache;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -67,6 +69,11 @@ class ManageProspectFormSubmissions extends ManageRelatedRecords
     protected static ?string $breadcrumb = 'Form Submissions';
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    public static function canAccess(array $parameters = []): bool
+    {
+        return parent::canAccess($parameters) && Gate::check(Feature::OnlineForms->getGateName());
+    }
 
     public function table(Table $table): Table
     {
