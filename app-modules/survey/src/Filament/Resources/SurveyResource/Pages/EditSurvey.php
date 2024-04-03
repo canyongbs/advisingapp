@@ -84,7 +84,7 @@ class EditSurvey extends EditRecord
                                 ```
                                 EOD;
 
-                                return new HtmlString(Str::markdown($state));
+                                return str($state)->markdown()->toHtmlString();
                             })
                             ->copyable()
                             ->copyableState(fn (Survey $survey) => resolve(GenerateSubmissibleEmbedCode::class)->handle($survey))

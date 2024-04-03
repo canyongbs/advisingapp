@@ -82,7 +82,7 @@ class EditServiceRequestForm extends EditRecord
                                 ```
                                 EOD;
 
-                                return new HtmlString(Str::markdown($state));
+                                return str($state)->markdown()->toHtmlString();
                             })
                             ->copyable()
                             ->copyableState(fn (ServiceRequestForm $serviceRequestForm) => resolve(GenerateSubmissibleEmbedCode::class)->handle($serviceRequestForm))
