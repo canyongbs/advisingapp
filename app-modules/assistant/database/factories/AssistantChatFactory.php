@@ -34,31 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+namespace AdvisingApp\Assistant\Database\Factories;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperPromptUpvote
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Assistant\Models\Model>
  */
-class PromptUpvote extends BaseModel
+class AssistantChatFactory extends Factory
 {
-    use SoftDeletes;
-
-    protected $fillable = [
-        'user_id',
-    ];
-
-    public function prompt(): BelongsTo
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        return $this->belongsTo(Prompt::class);
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
+        return [
+            'name' => fake()->sentence(),
+        ];
     }
 }

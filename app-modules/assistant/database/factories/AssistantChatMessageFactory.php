@@ -34,31 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+namespace AdvisingApp\Assistant\Database\Factories;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 
 /**
- * @mixin IdeHelperPromptUpvote
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Assistant\Models\Model>
  */
-class PromptUpvote extends BaseModel
+class AssistantChatMessageFactory extends Factory
 {
-    use SoftDeletes;
-
-    protected $fillable = [
-        'user_id',
-    ];
-
-    public function prompt(): BelongsTo
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        return $this->belongsTo(Prompt::class);
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
+        return [
+            'message' => fake()->paragraph(),
+            'from' => fake()->randomElement([AIChatMessageFrom::User, AIChatMessageFrom::Assistant]),
+        ];
     }
 }

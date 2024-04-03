@@ -289,14 +289,24 @@ class PersonalAssistant extends Page
 
                 $this->chat->id = $assistantChat->id;
 
-                $folder = AssistantChatFolder::find($data['folder']);
+                $folder = auth()->user()->assistantChatFolders()->find($data['folder']);
+
+                if (! $folder) {
+                    return;
+                }
 
                 $this->moveChat($assistantChat, $folder);
             });
     }
 
-    public function selectChat(AssistantChat $chat): void
+    public function selectChat(string $chatId): void
     {
+        $chat = auth()->user()->assistantChats()->find($chatId);
+
+        if (! $chat) {
+            return;
+        }
+
         $this->reset(['message', 'prompt', 'renderError', 'error']);
 
         $this->chat = new Chat(
@@ -356,8 +366,8 @@ class PersonalAssistant extends Page
                     }),
             ])
             ->action(function (array $arguments, array $data) {
-                AssistantChatFolder::find($arguments['folder'])
-                    ->update(['name' => $data['name']]);
+                auth()->user()->assistantChatFolders()->find($arguments['folder'])
+                    ?->update(['name' => $data['name']]);
 
                 unset($this->folders, $this->chats);
             })
@@ -377,8 +387,8 @@ class PersonalAssistant extends Page
             ->requiresConfirmation()
             ->modalDescription('Are you sure you wish to delete this folder? Any chats stored within this folder will also be deleted and this action is not reversible.')
             ->action(function (array $arguments) {
-                AssistantChatFolder::find($arguments['folder'])
-                    ->delete();
+                auth()->user()->assistantChatFolders()->find($arguments['folder'])
+                    ?->delete();
 
                 unset($this->folders, $this->chats);
             })
@@ -401,8 +411,13 @@ class PersonalAssistant extends Page
                 $this->folderSelect(),
             ])
             ->action(function (array $arguments, array $data) {
-                $chat = AssistantChat::find($arguments['chat']);
-                $folder = AssistantChatFolder::find($data['folder']);
+                $chat = auth()->user()->assistantChats()->find($arguments['chat']);
+
+                if (! $chat) {
+                    return;
+                }
+
+                $folder = auth()->user()->assistantChatFolders()->find($data['folder']);
 
                 $this->moveChat($chat, $folder);
             })
@@ -417,8 +432,16 @@ class PersonalAssistant extends Page
 
     public function movedChat(string $chatId, ?string $folderId): JsonResponse
     {
-        $chat = AssistantChat::find($chatId);
-        $folder = $folderId ? AssistantChatFolder::find($folderId) : null;
+        $chat = auth()->user()->assistantChats()->find($chatId);
+
+        if (! $chat) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Chat could not be found.',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $folder = auth()->user()->assistantChatFolders()->find($folderId);
 
         try {
             $this->moveChat($chat, $folder);
@@ -443,9 +466,13 @@ class PersonalAssistant extends Page
             ->size(ActionSize::ExtraSmall)
             ->requiresConfirmation()
             ->action(function (array $arguments) {
-                $chat = AssistantChat::find($arguments['chat']);
+                $chat = auth()->user()->assistantChats()->find($arguments['chat']);
 
-                $chat?->delete();
+                if (! $chat) {
+                    return;
+                }
+
+                $chat->delete();
 
                 if ($this->chat->id === $arguments['chat']) {
                     $this->newChat();
@@ -576,9 +603,13 @@ class PersonalAssistant extends Page
                     ->required(),
             ])
             ->action(function (array $arguments, array $data) {
-                $chat = AssistantChat::find($arguments['chat']);
+                $chat = auth()->user()->assistantChats()->find($arguments['chat']);
 
-                $chat?->update($data);
+                if (! $chat) {
+                    return;
+                }
+
+                $chat->update($data);
 
                 $this->chats = $this->chats->map(function (AssistantChat $chat) use ($arguments, $data) {
                     if ($chat->id === $arguments['chat']) {
@@ -632,7 +663,11 @@ class PersonalAssistant extends Page
                 /** @var User $sender */
                 $sender = auth()->user();
 
-                $chat = AssistantChat::find($arguments['chat']);
+                $chat = auth()->user()->assistantChats()->find($arguments['chat']);
+
+                if (! $chat) {
+                    return;
+                }
 
                 dispatch(new ShareAssistantChatsJob($chat, AssistantChatShareVia::Internal, $data['target_type'], $data['target_ids'], $sender));
             })
@@ -677,7 +712,11 @@ class PersonalAssistant extends Page
                 /** @var User $sender */
                 $sender = auth()->user();
 
-                $chat = AssistantChat::find($arguments['chat']);
+                $chat = auth()->user()->assistantChats()->find($arguments['chat']);
+
+                if (! $chat) {
+                    return;
+                }
 
                 dispatch(new ShareAssistantChatsJob($chat, AssistantChatShareVia::Email, $data['target_type'], $data['target_ids'], $sender));
             })
