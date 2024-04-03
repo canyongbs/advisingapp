@@ -87,7 +87,7 @@ class PermissionsRelationManager extends RelationManager
                                 ->whereNotIn('name', $owner->getPermissionNames());
                         }
                     )
-                    ->recordSelect(fn (Select $select) => $select->multiple())
+                    ->multiple()
                     ->preloadRecordSelect(),
             ])
             ->actions([

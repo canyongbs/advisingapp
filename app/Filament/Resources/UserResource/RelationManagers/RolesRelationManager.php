@@ -79,7 +79,7 @@ class RolesRelationManager extends RelationManager
             ->headerActions([
                 AttachAction::make()
                     ->recordSelectOptionsQuery(fn (Builder $query) => $query->where('guard_name', 'web'))
-                    ->recordSelect(fn (Select $select) => $select->multiple())
+                    ->multiple()
                     ->preloadRecordSelect(),
             ])
             ->actions([

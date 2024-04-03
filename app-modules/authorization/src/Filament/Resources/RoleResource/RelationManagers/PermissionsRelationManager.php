@@ -86,7 +86,7 @@ class PermissionsRelationManager extends RelationManager
 
                         $query->where('guard_name', $role->guard_name);
                     })
-                    ->recordSelect(fn (Select $select) => $select->multiple())
+                    ->multiple()
                     ->preloadRecordSelect(),
             ])
             ->actions([
