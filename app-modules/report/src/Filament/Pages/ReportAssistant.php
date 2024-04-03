@@ -116,6 +116,8 @@ class ReportAssistant extends Page
         $this->chat = new Chat(
             id: $chat?->id ?? null,
             messages: ChatMessage::collection($chat?->messages ?? []),
+            assistantId: null,
+            threadId: null,
         );
     }
 
@@ -220,7 +222,12 @@ class ReportAssistant extends Page
     {
         $this->reset(['message', 'prompt', 'renderError', 'error']);
 
-        $this->chat = new Chat(id: null, messages: ChatMessage::collection([]));
+        $this->chat = new Chat(
+            id: null,
+            messages: ChatMessage::collection([]),
+            assistantId: null,
+            threadId: null,
+        );
     }
 
     protected function setMessage(string $message, AIChatMessageFrom $from): void
