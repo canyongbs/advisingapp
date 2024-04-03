@@ -38,6 +38,7 @@ namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\RelationMana
 
 use Filament\Tables\Table;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ViewRecord;
 use App\Filament\Tables\Columns\IdColumn;
@@ -84,7 +85,9 @@ class PermissionsRelationManager extends RelationManager
                         $role = $this->getOwnerRecord();
 
                         $query->where('guard_name', $role->guard_name);
-                    }),
+                    })
+                    ->recordSelect(fn (Select $select) => $select->multiple())
+                    ->preloadRecordSelect(),
             ])
             ->actions([
                 DetachAction::make(),
