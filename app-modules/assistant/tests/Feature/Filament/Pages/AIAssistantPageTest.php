@@ -740,7 +740,7 @@ it('can not rename a folder with a duplicate name but belonging to a different u
     ]);
 });
 
-it('can rename a folder belonging to a different user', function () use ($setUp) {
+it('can not rename a folder belonging to a different user', function () use ($setUp) {
     [$user, $consentAgreement, $chat] = $setUp();
 
     $folder = AssistantChatFolder::factory()
