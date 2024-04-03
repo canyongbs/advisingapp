@@ -87,6 +87,8 @@ Route::prefix('api')
                 Route::post('/search', [KnowledgeManagementPortalSearchController::class, 'get'])
                     ->middleware(['signed:relative'])
                     ->name('search');
+                Route::get('/categories', [KnowledgeManagementPortalCategoryController::class, 'index'])
+                    ->name('category.index');
                 Route::get('/categories/{category}', [KnowledgeManagementPortalCategoryController::class, 'show'])
                     ->name('category.show');
                 Route::get('/categories/{category}/articles/{article}', [KnowledgeManagementPortalArticleController::class, 'show'])
