@@ -92,7 +92,7 @@ $setUp = function (
         ->has(AssistantChatMessage::factory()->count(5), 'messages')
         ->create();
 
-    return [$user, $consentAgreement, $chat];
+    return ['user' => $user, 'consentAgreement' => $consentAgreement, 'chat' => $chat];
 };
 
 it('renders successfully', function () {
@@ -125,7 +125,7 @@ it('is properly gated with access control', function () {
 });
 
 it('will show a consent modal if the user has not yet agreed to the terms and conditions of use', function () use ($setUp) {
-    [$user, $consentAgreement] = $setUp(
+    ['consentAgreement' => $consentAgreement] = $setUp(
         hasUserConsented: false,
     );
 
@@ -138,7 +138,7 @@ it('will show a consent modal if the user has not yet agreed to the terms and co
 });
 
 it('will show the AI Assistant interface if the user has agreed to the terms and conditions of use', function () use ($setUp) {
-    [$user, $consentAgreement] = $setUp();
+    ['consentAgreement' => $consentAgreement] = $setUp();
 
     Livewire::test(PersonalAssistant::class)
         ->call('determineIfConsentWasGiven')
@@ -159,7 +159,7 @@ it('will redirect the user back to the dashboard if they dismiss the consent mod
 });
 
 it('will allow a user to access the AI Assistant interface if they agree to the terms and conditions of use', function () use ($setUp) {
-    [$user, $consentAgreement] = $setUp(
+    ['user' => $user, 'consentAgreement' => $consentAgreement] = $setUp(
         hasUserConsented: false,
     );
 
@@ -185,7 +185,7 @@ it('will allow a user to access the AI Assistant interface if they agree to the 
 });
 
 it('will automatically set the current chat when it does not have a folder', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $livewire = Livewire::test(PersonalAssistant::class);
 
@@ -198,7 +198,7 @@ it('will automatically set the current chat when it does not have a folder', fun
 });
 
 it('will automatically set the current chat to the most recent without a folder', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user] = $setUp();
 
     $newerChat = AssistantChat::factory()
         ->for($user)
@@ -218,7 +218,7 @@ it('will automatically set the current chat to the most recent without a folder'
 });
 
 it('will not automatically set the current chat to one with a folder', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user, 'chat' => $chat] = $setUp();
 
     $chat->folder()->associate(AssistantChatFolder::factory()->for($user)->create());
     $chat->save();
@@ -234,7 +234,7 @@ it('will not automatically set the current chat to one with a folder', function 
 });
 
 it('will not automatically set the current chat to one belonging to another user', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $chat->user()->associate(User::factory()->create());
     $chat->save();
@@ -251,7 +251,7 @@ it('will not automatically set the current chat to one belonging to another user
 });
 
 it('can send message to an existing chat', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     Livewire::test(PersonalAssistant::class)
         ->set('showCurrentResponse', false)
@@ -273,7 +273,7 @@ it('can send message to an existing chat', function () use ($setUp) {
 });
 
 it('can send message to a new chat', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $chat->delete();
 
@@ -305,7 +305,7 @@ it('can send message to a new chat', function () use ($setUp) {
 });
 
 it('can not send a blank message', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    $setUp();
 
     Livewire::test(PersonalAssistant::class)
         ->set('message', null)
@@ -314,7 +314,7 @@ it('can not send a blank message', function () use ($setUp) {
 });
 
 it('can ask the AI chat client in an existing chat', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $aiChatClient = mock(AIChatClient::class, fn () => AzureOpenAI::class);
     $aiChatClient->expects('provideDynamicContext')->once()->andReturnSelf();
@@ -336,7 +336,7 @@ it('can ask the AI chat client in an existing chat', function () use ($setUp) {
 });
 
 it('can ask the AI chat client in a new chat', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $chat->delete();
 
@@ -367,7 +367,7 @@ it('can ask the AI chat client in a new chat', function () use ($setUp) {
 });
 
 it('can ask the AI chat client and render a content filter error', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $chat->delete();
 
@@ -386,7 +386,7 @@ it('can ask the AI chat client and render a content filter error', function () u
 });
 
 it('can ask the AI chat client and render a tokens exceeded error', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $chat->delete();
 
@@ -405,7 +405,7 @@ it('can ask the AI chat client and render a tokens exceeded error', function () 
 });
 
 it('can save chats', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user, 'chat' => $chat] = $setUp();
 
     $chat->delete();
 
@@ -432,7 +432,7 @@ it('can save chats', function () use ($setUp) {
 });
 
 it('can save chats into a folder', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user, 'chat' => $chat] = $setUp();
 
     $chat->delete();
 
@@ -478,7 +478,7 @@ it('can save chats into a folder', function () use ($setUp) {
 });
 
 it('can save chats without a name', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $chat->delete();
 
@@ -490,7 +490,7 @@ it('can save chats without a name', function () use ($setUp) {
 });
 
 it('can select a chat', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user, 'chat' => $chat] = $setUp();
 
     $newChat = AssistantChat::factory()
         ->for($user)
@@ -529,7 +529,7 @@ it('can select a chat', function () use ($setUp) {
 });
 
 it('can not select a chat belonging to a different user', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $newChat = AssistantChat::factory()
         ->for($otherUser = User::factory()->create())
@@ -568,7 +568,7 @@ it('can not select a chat belonging to a different user', function () use ($setU
 });
 
 it('can start a new chat', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $livewire = Livewire::test(PersonalAssistant::class);
 
@@ -601,7 +601,7 @@ it('can start a new chat', function () use ($setUp) {
 });
 
 it('can create a folder', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user] = $setUp();
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('newFolder', [
@@ -616,7 +616,7 @@ it('can create a folder', function () use ($setUp) {
 });
 
 it('can not create a folder without a name', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    $setUp();
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('newFolder', [
@@ -626,7 +626,7 @@ it('can not create a folder without a name', function () use ($setUp) {
 });
 
 it('can not create a folder with a duplicate name', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user] = $setUp();
 
     $folder = AssistantChatFolder::factory()
         ->for($user)
@@ -640,7 +640,7 @@ it('can not create a folder with a duplicate name', function () use ($setUp) {
 });
 
 it('can create a folder with a duplicate name but belonging to a different user', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user] = $setUp();
 
     $folder = AssistantChatFolder::factory()
         ->for(User::factory()->create())
@@ -659,7 +659,7 @@ it('can create a folder with a duplicate name but belonging to a different user'
 });
 
 it('can rename a folder', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user] = $setUp();
 
     $folder = AssistantChatFolder::factory()
         ->for($user)
@@ -680,7 +680,7 @@ it('can rename a folder', function () use ($setUp) {
 });
 
 it('can not rename a folder without a name', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user] = $setUp();
 
     $folder = AssistantChatFolder::factory()
         ->for($user)
@@ -696,7 +696,7 @@ it('can not rename a folder without a name', function () use ($setUp) {
 });
 
 it('can not rename a folder with a duplicate name', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user] = $setUp();
 
     $folder = AssistantChatFolder::factory()
         ->for($user)
@@ -716,7 +716,7 @@ it('can not rename a folder with a duplicate name', function () use ($setUp) {
 });
 
 it('can rename a folder with a duplicate name but belonging to a different user', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user] = $setUp();
 
     $folder = AssistantChatFolder::factory()
         ->for($user)
@@ -741,7 +741,7 @@ it('can rename a folder with a duplicate name but belonging to a different user'
 });
 
 it('can not rename a folder belonging to a different user', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    $setUp();
 
     $folder = AssistantChatFolder::factory()
         ->for(User::factory()->create())
@@ -766,7 +766,7 @@ it('can not rename a folder belonging to a different user', function () use ($se
 });
 
 it('can delete a folder', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user] = $setUp();
 
     $folder = AssistantChatFolder::factory()
         ->for($user)
@@ -783,7 +783,7 @@ it('can delete a folder', function () use ($setUp) {
 });
 
 it('can not delete a folder belonging to a different user', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    $setUp();
 
     $folder = AssistantChatFolder::factory()
         ->for(User::factory()->create())
@@ -800,7 +800,7 @@ it('can not delete a folder belonging to a different user', function () use ($se
 });
 
 it('can move a chat in to a folder', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user, 'chat' => $chat] = $setUp();
 
     $folder = AssistantChatFolder::factory()
         ->for($user)
@@ -820,7 +820,7 @@ it('can move a chat in to a folder', function () use ($setUp) {
 });
 
 it('can move a chat between folders', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user, 'chat' => $chat] = $setUp();
 
     $folder = AssistantChatFolder::factory()
         ->for($user)
@@ -847,7 +847,7 @@ it('can move a chat between folders', function () use ($setUp) {
 });
 
 it('can move a chat out of a folder', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user, 'chat' => $chat] = $setUp();
 
     $folder = AssistantChatFolder::factory()
         ->for($user)
@@ -870,7 +870,7 @@ it('can move a chat out of a folder', function () use ($setUp) {
 });
 
 it('can not move a chat belonging to a different user in to a folder', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user, 'chat' => $chat] = $setUp();
 
     $chat->user()->associate(User::factory()->create());
     $chat->save();
@@ -893,7 +893,7 @@ it('can not move a chat belonging to a different user in to a folder', function 
 });
 
 it('can not move a chat in to a folder belonging to a different user', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $folder = AssistantChatFolder::factory()
         ->for(User::factory()->create())
@@ -913,7 +913,7 @@ it('can not move a chat in to a folder belonging to a different user', function 
 });
 
 it('can move a chat in to a folder with drag and drop', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user, 'chat' => $chat] = $setUp();
 
     $folder = AssistantChatFolder::factory()
         ->for($user)
@@ -930,7 +930,7 @@ it('can move a chat in to a folder with drag and drop', function () use ($setUp)
 });
 
 it('can move a chat between folders with drag and drop', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user, 'chat' => $chat] = $setUp();
 
     $folder = AssistantChatFolder::factory()
         ->for($user)
@@ -954,7 +954,7 @@ it('can move a chat between folders with drag and drop', function () use ($setUp
 });
 
 it('can move a chat out of a folder with drag and drop', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user, 'chat' => $chat] = $setUp();
 
     $folder = AssistantChatFolder::factory()
         ->for($user)
@@ -974,7 +974,7 @@ it('can move a chat out of a folder with drag and drop', function () use ($setUp
 });
 
 it('can not move a chat belonging to a different user in to a folder with drag and drop', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user, 'chat' => $chat] = $setUp();
 
     $chat->user()->associate(User::factory()->create());
     $chat->save();
@@ -994,7 +994,7 @@ it('can not move a chat belonging to a different user in to a folder with drag a
 });
 
 it('can not move a chat in to a folder belonging to a different user with drag and drop', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $folder = AssistantChatFolder::factory()
         ->for(User::factory()->create())
@@ -1011,7 +1011,7 @@ it('can not move a chat in to a folder belonging to a different user with drag a
 });
 
 it('can delete a chat', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $livewire = Livewire::test(PersonalAssistant::class)
         ->callAction('deleteChat', arguments: [
@@ -1032,7 +1032,7 @@ it('can delete a chat', function () use ($setUp) {
 });
 
 it('can not delete a chat belonging to a different user', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    $setUp();
 
     $chatBelongingToAnotherUser = AssistantChat::factory()
         ->for(User::factory()->create())
@@ -1049,7 +1049,7 @@ it('can not delete a chat belonging to a different user', function () use ($setU
 });
 
 it('can insert a prompt from the library', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user] = $setUp();
 
     $prompt = Prompt::factory()->create();
 
@@ -1072,7 +1072,7 @@ it('can insert a prompt from the library', function () use ($setUp) {
 });
 
 it('can not insert a missing prompt from the library', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    $setUp();
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('insertFromPromptLibrary', [
@@ -1082,7 +1082,7 @@ it('can not insert a missing prompt from the library', function () use ($setUp) 
 });
 
 it('can upvote a prompt from the library while inserting it', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user] = $setUp();
 
     $prompt = Prompt::factory()->create();
 
@@ -1105,7 +1105,7 @@ it('can upvote a prompt from the library while inserting it', function () use ($
 });
 
 it('can remove upvote from a prompt from the library while inserting it', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user] = $setUp();
 
     $prompt = Prompt::factory()->create();
     $prompt->toggleUpvote();
@@ -1129,7 +1129,7 @@ it('can remove upvote from a prompt from the library while inserting it', functi
 });
 
 it('can rename a chat', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('editChat', [
@@ -1146,7 +1146,7 @@ it('can rename a chat', function () use ($setUp) {
 });
 
 it('can not rename a chat without a name', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('editChat', [
@@ -1158,7 +1158,7 @@ it('can not rename a chat without a name', function () use ($setUp) {
 });
 
 it('can not rename a chat belonging to a different user', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $chat->user()->associate(User::factory()->create());
     $chat->save();
@@ -1185,7 +1185,7 @@ it('can not rename a chat belonging to a different user', function () use ($setU
 it('can clone a chat to a user', function () use ($setUp) {
     Bus::fake();
 
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user, 'chat' => $chat] = $setUp();
 
     $otherUser = User::factory()->create();
 
@@ -1226,7 +1226,7 @@ it('can clone a chat to a user', function () use ($setUp) {
 it('can clone a chat to a team', function () use ($setUp) {
     Bus::fake();
 
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user, 'chat' => $chat] = $setUp();
 
     $team = Team::factory()->create();
 
@@ -1265,7 +1265,7 @@ it('can clone a chat to a team', function () use ($setUp) {
 });
 
 it('can not clone a chat without a target type', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $otherUser = User::factory()->create();
 
@@ -1280,7 +1280,7 @@ it('can not clone a chat without a target type', function () use ($setUp) {
 });
 
 it('can not clone a chat without any targets', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('cloneChat', [
@@ -1295,7 +1295,7 @@ it('can not clone a chat without any targets', function () use ($setUp) {
 it('can not clone a chat belonging to a different user', function () use ($setUp) {
     Bus::fake();
 
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $chat->user()->associate(User::factory()->create());
     $chat->save();
@@ -1316,7 +1316,7 @@ it('can not clone a chat belonging to a different user', function () use ($setUp
 it('can email a chat to a user', function () use ($setUp) {
     Bus::fake();
 
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user, 'chat' => $chat] = $setUp();
 
     $otherUser = User::factory()->create();
 
@@ -1357,7 +1357,7 @@ it('can email a chat to a user', function () use ($setUp) {
 it('can email a chat to a team', function () use ($setUp) {
     Bus::fake();
 
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['user' => $user, 'chat' => $chat] = $setUp();
 
     $team = Team::factory()->create();
 
@@ -1396,7 +1396,7 @@ it('can email a chat to a team', function () use ($setUp) {
 });
 
 it('can not email a chat without a target type', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $otherUser = User::factory()->create();
 
@@ -1411,7 +1411,7 @@ it('can not email a chat without a target type', function () use ($setUp) {
 });
 
 it('can not email a chat without any targets', function () use ($setUp) {
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('emailChat', [
@@ -1426,7 +1426,7 @@ it('can not email a chat without any targets', function () use ($setUp) {
 it('can not email a chat belonging to a different user', function () use ($setUp) {
     Bus::fake();
 
-    [$user, $consentAgreement, $chat] = $setUp();
+    ['chat' => $chat] = $setUp();
 
     $chat->user()->associate(User::factory()->create());
     $chat->save();
