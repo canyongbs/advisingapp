@@ -432,7 +432,7 @@ use Illuminate\Support\Facades\Vite;
 
                                             {{ $this->insertFromPromptLibraryAction }}
 
-                                            {{ $this->uploadFilesAction }}
+                                            {{-- {{ $this->uploadFilesAction }} --}}
                                         @endif
 
                                         <div

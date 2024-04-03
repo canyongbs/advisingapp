@@ -45,7 +45,6 @@ class AzureOpenAI extends BaseAIChatClient
         $this->baseEndpoint = rtrim(config('services.azure_open_ai.endpoint'), '/');
         $this->apiKey = config('services.azure_open_ai.api_key');
         $this->apiVersion = config('services.azure_open_ai.personal_assistant_api_version');
-        ray('apiVersion', $this->apiVersion);
         $this->deployment = config('services.azure_open_ai.personal_assistant_deployment_name');
 
         $this->client = OpenAI::factory()

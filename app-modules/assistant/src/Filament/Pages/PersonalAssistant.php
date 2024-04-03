@@ -805,10 +805,10 @@ class PersonalAssistant extends Page
 
     protected function runHasBeenCompleted(AiChatClient $ai): bool
     {
-        $runId = $this->chat->messages->last()->runId;
+        $runId = $this->chat->messages->last()->run_id;
 
         $startTime = time();
-        $timeoutSeconds = 30;
+        $timeoutSeconds = 10;
 
         /** @var BaseAIChatClient $ai */
         while (time() - $startTime < $timeoutSeconds) {
@@ -819,7 +819,7 @@ class PersonalAssistant extends Page
                 return true;
             }
 
-            usleep(100000);
+            usleep(500000);
         }
 
         return false;
@@ -842,7 +842,7 @@ class PersonalAssistant extends Page
         }
 
         $this->chat->messages[] = new ChatMessage(
-            messageId: $messageId,
+            message_id: $messageId,
             message: $message,
             from: $from,
         );
@@ -857,16 +857,16 @@ class PersonalAssistant extends Page
             /** @var AssistantChat $assistantChat */
             $assistantChat = $user->assistantChats()->findOrFail($this->chat->id);
 
-            $assistantChat->messages()->latest()->update([
+            $assistantChat->messages()->latest()->first()->update([
                 'message_id' => $messageId,
                 'run_id' => $runId,
                 'file_ids' => $fileIds,
             ]);
         }
 
-        $this->chat->messages->last()->messageId = $messageId;
-        $this->chat->messages->last()->runId = $runId;
-        $this->chat->messages->last()->fileIds = $fileIds;
+        $this->chat->messages->last()->message_id = $messageId;
+        $this->chat->messages->last()->run_id = $runId;
+        $this->chat->messages->last()->file_ids = $fileIds;
     }
 
     private function folderSelect(): Select
