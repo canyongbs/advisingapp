@@ -42,6 +42,7 @@ use OpenAI\Client;
 use App\Models\User;
 use Illuminate\Support\Arr;
 use OpenAI\Testing\ClientFake;
+use Illuminate\Support\Facades\Http;
 use OpenAI\Responses\StreamResponse;
 use OpenAI\Responses\Threads\ThreadResponse;
 use OpenAI\Responses\Chat\CreateStreamedResponse;
@@ -54,7 +55,6 @@ use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
 use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
 use AdvisingApp\IntegrationAI\Client\Concerns\InitializesClient;
 use AdvisingApp\IntegrationAI\Exceptions\ContentFilterException;
-use OpenAI\Responses\Files\CreateResponse as CreateFileResponse;
 use OpenAI\Responses\Threads\Messages\ThreadMessageListResponse;
 use AdvisingApp\IntegrationAI\DataTransferObjects\DynamicContext;
 use AdvisingApp\IntegrationAI\Exceptions\TokensExceededException;
@@ -77,8 +77,6 @@ abstract class BaseAIChatClient implements AiChatClient
 
     protected ?string $systemContext = null;
 
-    // TODO Temporarily making this public for testing purposes
-    // Will need to find a slightly better approach to most of this...
     public Client|ClientFake $client;
 
     public function __construct(
@@ -86,8 +84,6 @@ abstract class BaseAIChatClient implements AiChatClient
         $this->initializeClient();
     }
 
-    // TODO We should have an ask as well as a stream method,
-    // Or, pass a "stream" parameter to the ask method
     public function ask(Chat $chat, ?Closure $callback): string
     {
         if (is_null($this->systemContext)) {
@@ -116,7 +112,7 @@ abstract class BaseAIChatClient implements AiChatClient
         return $this->dynamicContext;
     }
 
-    public function uploadFiles(array $files): CreateFileResponse
+    public function uploadFiles(array $files)
     {
         ray('files', $files);
 
@@ -132,12 +128,31 @@ abstract class BaseAIChatClient implements AiChatClient
         // Now open the temporary file with fopen
         $fileResource = fopen($tempFilePath, 'r');
 
-        $response = $this->client->files()->upload([
-            'purpose' => 'assistants',
-            'file' => $fileResource,
-        ]);
+        // $response = $this->client->files()->upload([
+        //     'purpose' => 'assistants',
+        //     'file' => $fileResource,
+        // ]);
+
+        $response = Http::attach(
+            'file',
+            $fileResource,
+            $files[0]['name'],
+            ['Content-Type' => 'text/csv']
+        )
+            ->withHeaders([
+                'api-key' => config('services.azure_open_ai.api_key'),
+                'OpenAI-Beta' => 'assistants=v1',
+                'Accept' => '*/*',
+            ])
+            ->withQueryParameters([
+                'api-version' => config('services.azure_open_ai.personal_assistant_api_version'),
+            ])
+            ->post('https://cgbs-ai.openai.azure.com/openai/files', [
+                'purpose' => '',
+            ]);
 
         ray('response', $response);
+        ray($response->getBody()->getContents());
 
         if (is_resource($fileResource)) {
             fclose($fileResource);
@@ -151,13 +166,14 @@ abstract class BaseAIChatClient implements AiChatClient
         return $this->client->threads()->create([]);
     }
 
-    public function createMessageInThread(string $message, string $threadId, string $assistantId): ThreadMessageResponse
+    public function createMessageInThread(Chat $chat, string $assistantId, array $fileIds = []): ThreadMessageResponse
     {
-        $this->dispatchAssistantPromptInitiatedEvent($message, $assistantId);
+        $this->dispatchAssistantPromptInitiatedEvent($chat, $assistantId, $fileIds);
 
-        return $this->client->threads()->messages()->create($threadId, [
+        return $this->client->threads()->messages()->create($chat->threadId, [
             'role' => 'user',
-            'content' => $message,
+            'content' => $chat->messages->last()->message,
+            'file_ids' => $fileIds,
         ]);
     }
 
@@ -290,7 +306,7 @@ abstract class BaseAIChatClient implements AiChatClient
         ]));
     }
 
-    protected function dispatchAssistantPromptInitiatedEvent(string $prompt, string $assistantId): void
+    protected function dispatchAssistantPromptInitiatedEvent(Chat $chat, string $assistantId, array $fileIds = []): void
     {
         AIPromptInitiated::dispatch(AIPrompt::from([
             'user' => auth()->user(),
@@ -302,9 +318,10 @@ abstract class BaseAIChatClient implements AiChatClient
                 ),
             ],
             'timestamp' => now(),
-            'message' => $prompt,
+            'message' => $chat->messages->last()->message,
             'metadata' => [
                 'systemContext' => $this->getAssistantContext($assistantId),
+                'file_ids' => $fileIds,
             ],
         ]));
     }

@@ -54,7 +54,6 @@ class AssistantChat extends BaseModel
     protected $fillable = [
         'assistant_id',
         'name',
-        'run_id',
         'thread_id',
     ];
 

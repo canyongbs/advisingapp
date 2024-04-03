@@ -123,6 +123,8 @@ class PersonalAssistant extends Page
 
     public array $files = [];
 
+    public array $fileIds = [];
+
     public static function canAccess(): bool
     {
         /** @var User $user */
@@ -148,9 +150,10 @@ class PersonalAssistant extends Page
             id: $chat?->id ?? null,
             assistantId: $chat?->assistant_id ?? $this->assistantId,
             threadId: $chat?->thread_id ?? null,
-            runId: $chat?->run_id ?? null,
             messages: ChatMessage::collection($chat?->messages ?? []),
         );
+
+        ray('chat', $this->chat);
     }
 
     #[Computed]
@@ -247,11 +250,13 @@ class PersonalAssistant extends Page
 
         /** @var BaseAIChatClient $ai */
         if ($this->files) {
-            $fileIds = $ai->uploadFiles($this->files);
+            // $this->fileIds = $ai->uploadFiles($this->files);
 
-            // After this, we'll need to add the file ids to the message
+            // Example student data
+            $this->fileIds = ['assistant-Bwvp3qnD1EWRFj0BNz8FjVI5'];
 
-            return;
+            // Example Car data
+            // $this->fileIds = ['assistant-4mn4KG44SuNXatIVo9PZX2Vp'];
         }
 
         if (! filled($this->chat->threadId)) {
@@ -260,37 +265,30 @@ class PersonalAssistant extends Page
         }
 
         /** @var ThreadMessageResponse $message */
-        $message = $ai->createMessageInThread($this->chat->messages->last()->message, $this->chat->threadId, $this->assistantId);
+        $message = $ai->createMessageInThread(
+            chat: $this->chat,
+            assistantId: $this->assistantId,
+            fileIds: $this->fileIds
+        );
 
-        $this->updateLatestMessageId($message->id);
+        ray('message', $message);
+
+        $this->updateLatestMessage(
+            messageId: $message->id,
+            fileIds: $this->fileIds
+        );
 
         /** @var ThreadRunResponse $response */
         $run = $ai->createRunForThread($this->chat->threadId, $this->assistantId);
 
-        $this->chat->runId = $run->id;
+        if (! $this->runHasBeenCompleted($run->id, $ai)) {
+            $this->renderError = true;
+            $this->error = 'Something went wrong. Please try to send your message again. If this continues please contact an administrator.';
+        } else {
+            $latestMessage = $ai->getLatestAssistantMessageInThread($this->chat->threadId);
 
-        $attempts = 0;
-        $runIsCompleted = false;
-
-        // TODO Extract this to a method to determine if the run has been completed
-        // TODO Also initiate error handling here...
-        while (! $runIsCompleted && $attempts < 5) {
-            /** @var ThreadRunResponse $response */
-            $run = $ai->getRunForThread($this->chat->threadId, $this->chat->runId);
-
-            $attempts++;
-
-            if ($run->status == 'completed') {
-                $runIsCompleted = true;
-            } else {
-                // TODO Determine a better strategy than this
-                sleep(1);
-            }
+            $this->currentResponse = $latestMessage->data[0]->content[0]->text->value;
         }
-
-        $latestMessage = $ai->getLatestAssistantMessageInThread($this->chat->threadId);
-
-        $this->currentResponse = $latestMessage->data[0]->content[0]->text->value;
 
         $this->reset('showCurrentResponse');
 
@@ -299,10 +297,14 @@ class PersonalAssistant extends Page
         }
 
         $this->reset('currentResponse');
+        $this->reset('files');
+        $this->reset('fileIds');
     }
 
     public function saveChatAction(): Action
     {
+        ray('saveChatAction()');
+
         return Action::make('saveChat')
             ->label('Save')
             ->modalHeading('Save chat')
@@ -332,11 +334,10 @@ class PersonalAssistant extends Page
                     'name' => $data['name'],
                     'assistant_id' => $this->chat->assistantId,
                     'thread_id' => $this->chat->threadId,
-                    // TODO We don't necessarily need to save the run
-                    'run_id' => $this->chat->runId,
                 ]);
 
                 $this->chat->messages->each(function (ChatMessage $message) use ($assistantChat) {
+                    ray('message', $message->toArray());
                     $assistantChat->messages()->create($message->toArray());
                 });
 
@@ -366,7 +367,6 @@ class PersonalAssistant extends Page
             id: $chat->id ?? null,
             assistantId: $chat->assistant_id ?? null,
             threadId: $chat->thread_id ?? null,
-            runId: $chat->run_id ?? null,
             messages: ChatMessage::collection($chat->messages ?? []),
         );
     }
@@ -379,7 +379,6 @@ class PersonalAssistant extends Page
             id: null,
             assistantId: null,
             threadId: null,
-            runId: null,
             messages: ChatMessage::collection([])
         );
     }
@@ -816,6 +815,31 @@ class PersonalAssistant extends Page
             ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
     }
 
+    protected function runHasBeenCompleted(string $runId, AiChatClient $ai): bool
+    {
+        $attempts = 0;
+        $runHasBeenCompleted = false;
+
+        /** @var BaseAIChatClient $ai */
+        while (! $runHasBeenCompleted && $attempts < 10) {
+            ray('checking run');
+            /** @var ThreadRunResponse $response */
+            $run = $ai->getRunForThread($this->chat->threadId, $runId);
+
+            ray($run);
+
+            $attempts++;
+
+            if ($run->status == 'completed') {
+                $runHasBeenCompleted = true;
+            } else {
+                sleep(1);
+            }
+        }
+
+        return false;
+    }
+
     protected function setMessage(string $message, AIChatMessageFrom $from, string $messageId = null): void
     {
         if (filled($this->chat->id)) {
@@ -839,8 +863,10 @@ class PersonalAssistant extends Page
         );
     }
 
-    protected function updateLatestMessageId(string $messageId): void
+    protected function updateLatestMessage(string $messageId, array $fileIds): void
     {
+        ray('updateLatestMessage()');
+
         if (filled($this->chat->id)) {
             /** @var User $user */
             $user = auth()->user();
@@ -850,10 +876,12 @@ class PersonalAssistant extends Page
 
             $assistantChat->messages()->latest()->update([
                 'message_id' => $messageId,
+                'file_ids' => $fileIds,
             ]);
         }
 
         $this->chat->messages->last()->messageId = $messageId;
+        $this->chat->messages->last()->fileIds = $fileIds;
     }
 
     private function folderSelect(): Select

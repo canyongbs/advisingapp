@@ -28,6 +28,9 @@ class CreateAiAssistant
             'description' => "An AI Assistant for {$tenant->name}",
             'instructions' => $settings->prompt_system_context,
             'model' => config('services.azure_open_ai.personal_assistant_deployment_name'),
+            // 'tools' => [
+            //     ['type' => 'retrieval'],
+            // ],
             'metadata' => [
                 'last_updated_at' => now(),
             ],

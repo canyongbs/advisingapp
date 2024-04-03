@@ -435,13 +435,13 @@ use Illuminate\Support\Facades\Vite;
                                             {{ $this->uploadFilesAction }}
                                         @endif
 
-                                        {{-- TODO This might be too generic of a loading indicator... --}}
-                                        {{-- <div
+                                        <div
                                             class="py-2"
                                             wire:loading
+                                            wire:target="sendMessage"
                                         >
                                             <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
-                                        </div> --}}
+                                        </div>
 
                                         @error('message')
                                             <p class="ml-auto text-xs text-red-500">{{ $message }}</p>

@@ -23,5 +23,7 @@ class UpdateAiAssistant
                 'last_updated_at' => now(),
             ],
         ]);
+
+        ray('assistantResponse', $response);
     }
 }

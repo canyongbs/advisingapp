@@ -39,7 +39,6 @@ use Spatie\LaravelSettings\Migrations\SettingsMigration;
 return new class () extends SettingsMigration {
     public function up(): void
     {
-        // TODO Encrypt this value...
-        $this->migrator->add('ai.assistant_id');
+        $this->migrator->addEncrypted('ai.assistant_id');
     }
 };

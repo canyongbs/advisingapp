@@ -40,8 +40,7 @@ use Spatie\LaravelSettings\Settings;
 
 class AISettings extends Settings
 {
-    // TODO We will need to have a preliminary release that just adds this value in a migration
-    public ?string $assistant_id;
+    public ?string $assistant_id = null;
 
     public string $prompt_system_context;
 
