@@ -46,7 +46,7 @@ use Livewire\Attributes\Computed;
 use AdvisingApp\Assistant\Models\AssistantChat;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
-use AdvisingApp\Report\Client\AIReportChatClient;
+use AdvisingApp\Report\Client\AiReportChatClient;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Assistant\Models\AssistantChatFolder;
 use AdvisingApp\IntegrationAI\Exceptions\ContentFilterException;
@@ -198,7 +198,7 @@ class ReportAssistant extends Page
     }
 
     #[On('ask')]
-    public function ask(AIReportChatClient $ai): void
+    public function ask(AiReportChatClient $ai): void
     {
         try {
             $this->currentResponse = $ai->ask($this->chat, function (string $partial) {
