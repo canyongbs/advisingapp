@@ -43,7 +43,6 @@ use Filament\Forms\Set;
 use Filament\Pages\Page;
 use Livewire\Attributes\On;
 use Filament\Actions\Action;
-use Laravel\Pennant\Feature;
 use Livewire\Attributes\Rule;
 use AdvisingApp\Team\Models\Team;
 use App\Filament\Pages\Dashboard;
@@ -520,8 +519,7 @@ class PersonalAssistant extends Page
                     ->afterStateUpdated(fn (Get $get, Set $set, $state) => ($state && ! Prompt::find($get('promptId'))?->user->is(auth()->user())) ?
                         $set('promptId', null) :
                         null)
-                    ->live()
-                    ->visible(Feature::active('prompt-user')),
+                    ->live(),
                 Select::make('promptId')
                     ->label('Select a prompt')
                     ->searchable()
@@ -533,7 +531,7 @@ class PersonalAssistant extends Page
                             fn (Builder $query) => $query->where('type_id', $get('typeId')),
                         )
                         ->when(
-                            Feature::active('prompt-user') && filled($get('myPrompts')),
+                            filled($get('myPrompts')),
                             fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
                         )))
                     ->getSearchResultsUsing(function (Get $get, string $search) use ($getPromptOptions): array {
@@ -550,7 +548,7 @@ class PersonalAssistant extends Page
                                 fn (Builder $query) => $query->where('type_id', $get('typeId')),
                             )
                             ->when(
-                                Feature::active('prompt-user') && filled($get('myPrompts')),
+                                filled($get('myPrompts')),
                                 fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
                             ));
                     })

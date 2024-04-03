@@ -34,23 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\DataMigration\Database\Factories;
+namespace App\Console\Commands;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use AdvisingApp\DataMigration\Models\Operation;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Schema;
+use Symfony\Component\Console\Command\Command as CommandAlias;
 
-class OperationFactory extends Factory
+class InitialMigration extends Command
 {
-    protected $model = Operation::class;
+    protected $signature = 'app:initial-migration';
 
-    public function definition(): array
+    protected $description = 'Checks if the initial Landlord migration has been run and runs it if not.';
+
+    public function handle(): int
     {
-        return [
-            'name' => $this->faker->date('Y_m_d_His') . '_' . Str::snake($this->faker->words(3, true)),
-            'dispatched' => Arr::random([Operation::DISPATCHED_ASYNC, Operation::DISPATCHED_SYNC]),
-            'processed_at' => $this->faker->date('Y-m-d H:i:s'),
-        ];
+        Schema::connection('landlord')->hasTable('migrations')
+            ? $this->info('The initial Landlord migration has already been run.')
+            : $this->call('migrate', ['--database' => 'landlord', '--path' => 'database/landlord']);
+
+        return CommandAlias::SUCCESS;
     }
 }

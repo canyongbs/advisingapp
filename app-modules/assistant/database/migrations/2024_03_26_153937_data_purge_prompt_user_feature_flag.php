@@ -34,28 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\DataMigration\Commands;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Console\Command;
-use AdvisingApp\DataMigration\OneTimeOperationManager;
-use AdvisingApp\DataMigration\Commands\Utils\ColoredOutput;
-
-abstract class OneTimeOperationsCommand extends Command
-{
-    use ColoredOutput;
-
-    public const LABEL_PROCESSED = 'PROCESSED';
-
-    public const LABEL_PENDING = 'PENDING';
-
-    public const LABEL_DISPOSED = 'DISPOSED';
-
-    protected string $operationsDirectory;
-
-    public function __construct()
+return new class () extends Migration {
+    public function up(): void
     {
-        parent::__construct();
-
-        $this->operationsDirectory = OneTimeOperationManager::getDirectoryPath();
+        Feature::purge('prompt-user');
     }
-}
+
+    public function down(): void
+    {
+        Feature::activate('prompt-user');
+    }
+};

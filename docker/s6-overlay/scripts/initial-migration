@@ -1,0 +1,19 @@
+#!/command/with-contenv bash
+
+if [ ! -f "$WEBUSER_HOME/artisan" ]; then
+  echo "Skipping initial migration task because we could not detect a Laravel install..."
+  exit 0
+fi
+
+cd "$WEBUSER_HOME" || exit 0
+
+  {
+    s6-setuidgid webuser php "$WEBUSER_HOME/artisan" app:initial-migration \
+    && echo "Initial migration check completed!"
+  } || {
+    echo "Initial migration check failed!"
+
+    echo 1
+  }
+
+exit 0
