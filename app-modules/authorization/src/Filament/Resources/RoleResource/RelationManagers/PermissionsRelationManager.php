@@ -38,7 +38,6 @@ namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\RelationMana
 
 use Filament\Tables\Table;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ViewRecord;
 use App\Filament\Tables\Columns\IdColumn;
