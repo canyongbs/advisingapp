@@ -62,7 +62,15 @@ onMounted(async () => {
         userIsAuthenticated.value = response;
     });
 
-    await getKnowledgeManagementPortal().then(() => {
+    await getKnowledgeManagementPortal().then(async () => {
+        if (userIsAuthenticated.value || (! portalRequiresAuthentication.value)) {
+            await getKnowledgeManagementPortalCategories().then(() => {
+                loading.value = false;
+            });
+
+            return
+        }
+
         loading.value = false;
     });
 });
@@ -128,8 +136,6 @@ async function getKnowledgeManagementPortal() {
 
             const { setPortalRequiresAuthentication } = useAuthStore();
 
-            categories.value = response.data.categories;
-
             portalPrimaryColor.value = response.data.primary_color;
 
             setPortalRequiresAuthentication(
@@ -182,6 +188,24 @@ async function getKnowledgeManagementPortal() {
         });
 }
 
+async function getKnowledgeManagementPortalCategories() {
+    await axios
+        .get(`${props.apiUrl}/categories`)
+        .then((response) => {
+            errorLoading.value = false;
+
+            if (response.error) {
+                throw new Error(response.error);
+            }
+
+            categories.value = response.data
+        })
+        .catch((error) => {
+            errorLoading.value = true;
+            console.error(`Knowledge Management Portal Embed ${error}`);
+        });
+}
+
 async function authenticate(formData, node) {
     node.clearErrors();
 
@@ -218,6 +242,8 @@ async function authenticate(formData, node) {
                     setToken(response.data.token);
 
                     userIsAuthenticated.value = true;
+
+                    getKnowledgeManagementPortalCategories();
                 }
             })
             .catch((error) => {
