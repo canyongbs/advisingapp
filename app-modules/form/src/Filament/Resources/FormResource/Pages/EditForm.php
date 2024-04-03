@@ -76,13 +76,14 @@ class EditForm extends EditRecord
                             ->state(function (Form $form) {
                                 $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($form);
 
-                                return <<<EOD
+                                $state = <<<EOD
                                 ```
                                 {$code}
                                 ```
                                 EOD;
+
+                                return str($state)->markdown()->toHtmlString();
                             })
-                            ->markdown()
                             ->copyable()
                             ->copyableState(fn (Form $form) => resolve(GenerateSubmissibleEmbedCode::class)->handle($form))
                             ->copyMessage('Copied!')
