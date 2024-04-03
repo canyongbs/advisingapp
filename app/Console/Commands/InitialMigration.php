@@ -38,7 +38,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
-use Symfony\Component\Console\Command\Command as CommandAlias;
 
 class InitialMigration extends Command
 {
@@ -52,6 +51,6 @@ class InitialMigration extends Command
             ? $this->info('The initial Landlord migration has already been run.')
             : $this->call('migrate', ['--database' => 'landlord', '--path' => 'database/landlord']);
 
-        return CommandAlias::SUCCESS;
+        return static::SUCCESS;
     }
 }

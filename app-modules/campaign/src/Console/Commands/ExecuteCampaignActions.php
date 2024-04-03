@@ -48,8 +48,10 @@ class ExecuteCampaignActions extends Command
 
     protected $description = 'Execute campaign actions that are scheduled to be executed.';
 
-    public function handle(): void
+    public function handle(): int
     {
         dispatch(new ExecuteCampaignActionsJob());
+
+        return static::SUCCESS;
     }
 }

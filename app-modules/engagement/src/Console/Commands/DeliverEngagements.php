@@ -52,6 +52,6 @@ class DeliverEngagements extends Command
     {
         dispatch(new DeliverEngagementsJob());
 
-        return self::SUCCESS;
+        return static::SUCCESS;
     }
 }

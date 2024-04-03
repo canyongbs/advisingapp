@@ -94,7 +94,7 @@ class SyncRolesAndPermissions extends Command
         Cache::forget('application.model.web.permissions');
         Cache::forget('application.model.api.permissions');
 
-        return self::SUCCESS;
+        return static::SUCCESS;
     }
 
     protected function populateRegistries(): void

@@ -50,12 +50,12 @@ class CreateSuperAdmin extends Command
 
     protected $description = 'Creates a super admin user.';
 
-    public function handle(): void
+    public function handle(): int
     {
         if (config('app.allow_super_admin_creation') === false) {
             $this->error('Super admin creation is disabled.');
 
-            return;
+            return static::FAILURE;
         }
 
         $tenant = Tenant::find($this->option('tenant') ?? $this->ask('Enter tenant ID'));
@@ -63,7 +63,7 @@ class CreateSuperAdmin extends Command
         if (is_null($tenant)) {
             $this->error('Tenant not found.');
 
-            return;
+            return static::FAILURE;
         }
 
         $tenant->makeCurrent();
@@ -82,13 +82,11 @@ class CreateSuperAdmin extends Command
 
         $password = Str::random(24);
 
-        $user = User::create(
-            [
-                'name' => $validator->validated()['name'],
-                'email' => $validator->validated()['email'],
-                'password' => Hash::make($password),
-            ]
-        );
+        $user = User::create([
+            'name' => $validator->validated()['name'],
+            'email' => $validator->validated()['email'],
+            'password' => Hash::make($password),
+        ]);
 
         $user->assignRole(Role::superAdmin()->get());
 
@@ -97,5 +95,7 @@ class CreateSuperAdmin extends Command
         $this->info("Email: {$validator->validated()['email']}");
 
         $this->info("Password: {$password}");
+
+        return static::SUCCESS;
     }
 }

@@ -57,6 +57,6 @@ class SyncEvents extends Command
             ->driver($user->calendar->provider_type->value)
             ->syncEvents($user->calendar);
 
-        return self::SUCCESS;
+        return static::SUCCESS;
     }
 }

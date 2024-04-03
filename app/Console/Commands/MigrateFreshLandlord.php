@@ -45,11 +45,13 @@ class MigrateFreshLandlord extends Command
 
     protected $description = 'Migrate the landlord database fresh.';
 
-    public function handle(): void
+    public function handle(): int
     {
         Artisan::call(
             command: 'migrate:fresh --database=landlord --path=database/landlord',
             outputBuffer: $this->output,
         );
+
+        return static::SUCCESS;
     }
 }

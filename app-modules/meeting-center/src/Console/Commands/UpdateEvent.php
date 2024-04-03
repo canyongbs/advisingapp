@@ -52,6 +52,6 @@ class UpdateEvent extends Command
     {
         CalendarEvent::first()->update(['title' => fake()->words(asText: true)]);
 
-        return self::SUCCESS;
+        return static::SUCCESS;
     }
 }

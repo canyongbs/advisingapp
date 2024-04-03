@@ -46,7 +46,7 @@ class ClearTestMigrationCache extends Command
 
     protected $description = 'Deletes the cache files used for the testing migrations cache.';
 
-    public function handle(): void
+    public function handle(): int
     {
         $this->comment('Clearing the testing migration cache...');
 
@@ -64,5 +64,7 @@ class ClearTestMigrationCache extends Command
         $this->newLine();
 
         $this->info('Testing migration cache cleared!');
+
+        return static::SUCCESS;
     }
 }

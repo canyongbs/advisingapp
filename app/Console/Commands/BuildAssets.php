@@ -60,7 +60,7 @@ class BuildAssets extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): void
+    public function handle(): int
     {
         if (Schema::hasTable('settings')) {
             file_put_contents(
@@ -83,5 +83,7 @@ class BuildAssets extends Command
         $this->line($process->output());
 
         $this->info('Assets have been built.');
+
+        return static::SUCCESS;
     }
 }

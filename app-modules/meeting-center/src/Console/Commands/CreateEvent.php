@@ -57,6 +57,6 @@ class CreateEvent extends Command
             ->events()
             ->create(CalendarEvent::factory()->for($user->calendar)->make()->toArray());
 
-        return self::SUCCESS;
+        return static::SUCCESS;
     }
 }
