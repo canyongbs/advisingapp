@@ -51,18 +51,19 @@ class AssistantChatMessage extends BaseModel
     use SoftDeletes;
 
     protected $fillable = [
-        'file_ids',
+        // 'file_ids',
         'from',
         'function_call',
         'message_id',
         'message',
         'name',
+        'run_id',
     ];
 
     protected $casts = [
         'from' => AIChatMessageFrom::class,
         'function_call' => 'array',
-        'file_ids' => 'array',
+        // 'file_ids' => 'array',
     ];
 
     public function chat(): BelongsTo

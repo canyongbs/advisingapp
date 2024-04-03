@@ -37,7 +37,6 @@
 namespace AdvisingApp\IntegrationAI\Client;
 
 use Closure;
-use Exception;
 use OpenAI\Client;
 use App\Models\User;
 use Illuminate\Support\Arr;
@@ -53,6 +52,7 @@ use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
 use AdvisingApp\IntegrationAI\DataTransferObjects\AIPrompt;
 use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
 use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use AdvisingApp\IntegrationAI\Client\Concerns\InitializesClient;
 use AdvisingApp\IntegrationAI\Exceptions\ContentFilterException;
 use OpenAI\Responses\Threads\Messages\ThreadMessageListResponse;
@@ -114,45 +114,79 @@ abstract class BaseAIChatClient implements AiChatClient
 
     public function uploadFiles(array $files)
     {
-        ray('files', $files);
-
+        /** @var TemporaryUploadedFile $tempFile */
         $tempFile = $files[0]['file'];
 
-        $tempFilePath = tempnam(sys_get_temp_dir(), 'upload_');
-        $stream = $tempFile->readStream();
+        $fileResource = fopen($tempFile->temporaryUrl(), 'r');
 
-        if ($stream === false || file_put_contents($tempFilePath, $stream) === false) {
-            throw new Exception('Failed to create a temporary file.');
-        }
+        // This currently does not work due to a validation error,
+        // "purpose contains invalid purpose"
+        $response = $this->client->files()->upload([
+            'purpose' => 'assistants',
+            'file' => $fileResource,
+        ]);
 
-        // Now open the temporary file with fopen
-        $fileResource = fopen($tempFilePath, 'r');
+        // $response = Http::attach(
+        //     'file',
+        //     $fileResource,
+        //     $files[0]['name'],
+        //     ['Content-Type' => 'text/csv']
+        // )
+        //     ->withHeaders([
+        //         'api-key' => config('services.azure_open_ai.api_key'),
+        //         'OpenAI-Beta' => 'assistants=v1',
+        //         'Accept' => '*/*',
+        //     ])
+        //     ->withQueryParameters([
+        //         'api-version' => config('services.azure_open_ai.personal_assistant_api_version'),
+        //     ])
+        //     ->post('https://cgbs-ai.openai.azure.com/openai/files', [
+        //         'purpose' => '',
+        //     ]);
 
-        // $response = $this->client->files()->upload([
+        // $api_key = config('services.azure_open_ai.api_key');
+        // $api_version = config('services.azure_open_ai.personal_assistant_api_version');
+        // $file = $fileResource; // Replace $fileResource with your actual file resource
+        // $filename = $files[0]['name']; // Ensure $files[0]['name'] contains the filename
+
+        // // Initialize cURL session
+        // $ch = curl_init();
+
+        // // Set cURL options
+        // curl_setopt($ch, CURLOPT_URL, 'https://cgbs-ai.openai.azure.com/openai/files?api-version=' . $api_version);
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // curl_setopt($ch, CURLOPT_POST, true);
+
+        // // Prepare the file in a cURL-friendly format
+        // $cfile = new CURLFile($file, 'text/csv', $filename);
+
+        // // Set the POST fields
+        // $postFields = [
         //     'purpose' => 'assistants',
-        //     'file' => $fileResource,
-        // ]);
+        //     'file' => $tempFilePath,
+        // ];
 
-        $response = Http::attach(
-            'file',
-            $fileResource,
-            $files[0]['name'],
-            ['Content-Type' => 'text/csv']
-        )
-            ->withHeaders([
-                'api-key' => config('services.azure_open_ai.api_key'),
-                'OpenAI-Beta' => 'assistants=v1',
-                'Accept' => '*/*',
-            ])
-            ->withQueryParameters([
-                'api-version' => config('services.azure_open_ai.personal_assistant_api_version'),
-            ])
-            ->post('https://cgbs-ai.openai.azure.com/openai/files', [
-                'purpose' => '',
-            ]);
+        // curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
 
-        ray('response', $response);
-        ray($response->getBody()->getContents());
+        // // Set the headers
+        // $headers = [
+        //     'api-key: ' . $api_key,
+        //     'OpenAI-Beta: assistants=v1',
+        //     'Accept: */*',
+        // ];
+
+        // curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        // // Execute the cURL session
+        // $response = curl_exec($ch);
+
+        // // Check for errors and handle them
+        // if (curl_errno($ch)) {
+        //     echo 'Error:' . curl_error($ch);
+        // }
+
+        // // Close cURL session
+        // curl_close($ch);
 
         if (is_resource($fileResource)) {
             fclose($fileResource);

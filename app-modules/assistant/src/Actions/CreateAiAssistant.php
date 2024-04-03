@@ -28,6 +28,7 @@ class CreateAiAssistant
             'description' => "An AI Assistant for {$tenant->name}",
             'instructions' => $settings->prompt_system_context,
             'model' => config('services.azure_open_ai.personal_assistant_deployment_name'),
+            // Re-enable retrieval support once it's available via the API
             // 'tools' => [
             //     ['type' => 'retrieval'],
             // ],

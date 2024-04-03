@@ -54,6 +54,7 @@ class ChatMessage extends Data implements Wireable
         public AIChatMessageFrom $from,
         public ?string $name = null,
         public ?array $functionCall = null,
-        public ?array $fileIds = null
+        public ?array $fileIds = null,
+        public ?string $runId = null,
     ) {}
 }
