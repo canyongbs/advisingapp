@@ -121,11 +121,6 @@ class ManagePortalSettings extends SettingsPage
                             ->label('Performance Alerts'),
                         Toggle::make('has_emergency_alerts')
                             ->label('Emergency Alerts'),
-                        Toggle::make('has_service_management')
-                            ->label('Service Management')
-                            ->disabled(! Gate::check(Feature::ServiceManagement->getGateName()))
-                            ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
-                            ->hintIconTooltip('Service Management is not a part of your current subscription.'),
                         Toggle::make('has_notifications')
                             ->label('Portal Notifications'),
                         Toggle::make('has_knowledge_base')
