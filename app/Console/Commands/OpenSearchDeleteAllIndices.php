@@ -50,19 +50,17 @@ class OpenSearchDeleteAllIndices extends Command
         if (config('scout.driver') !== 'opensearch') {
             $this->error('Scout driver must be set to opensearch.');
 
-            return self::FAILURE;
+            return static::FAILURE;
         }
 
         $client = $clientBuilder->default();
 
-        $response = $client->indices()->delete(
-            [
-                'index' => '*',
-            ]
-        );
+        $response = $client->indices()->delete([
+            'index' => '*',
+        ]);
 
         $this->info(json_encode($response, JSON_PRETTY_PRINT));
 
-        return self::SUCCESS;
+        return static::SUCCESS;
     }
 }

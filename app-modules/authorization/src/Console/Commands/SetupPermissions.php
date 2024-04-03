@@ -56,6 +56,6 @@ class SetupPermissions extends Command
 
         $this->info('Permissions created successfully!');
 
-        return self::SUCCESS;
+        return static::SUCCESS;
     }
 }

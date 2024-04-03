@@ -49,11 +49,13 @@ class TranslateCaseload extends Command
 
     protected $description = 'Translate caseload filters.';
 
-    public function handle(): void
+    public function handle(): int
     {
         Caseload::all()
             ->each(function (Caseload $caseload) {
                 ray(resolve(TranslateCaseloadFilters::class)->handle($caseload)->get());
             });
+
+        return static::SUCCESS;
     }
 }

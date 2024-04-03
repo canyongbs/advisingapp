@@ -41,7 +41,7 @@ use Illuminate\Console\Command;
 use App\Settings\OlympusSettings;
 use Illuminate\Support\Facades\Http;
 
-class ConnectOlympusCommand extends Command
+class ConnectOlympus extends Command
 {
     /**
      * The name and signature of the console command.
@@ -60,7 +60,7 @@ class ConnectOlympusCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): void
+    public function handle(): int
     {
         $response = Http::post($this->argument('url'), [
             'url' => config('app.internal_url'),
@@ -75,5 +75,7 @@ class ConnectOlympusCommand extends Command
         $brandSettings->save();
 
         $this->info('The app has been connected to Olympus.');
+
+        return static::SUCCESS;
     }
 }
