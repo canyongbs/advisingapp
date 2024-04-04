@@ -577,7 +577,7 @@ class PersonalAssistant extends Page
                             fn (Builder $query) => $query->where('type_id', $get('typeId')),
                         )
                         ->when(
-                            filled($get('myPrompts')),
+                            $get('myPrompts'),
                             fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
                         )))
                     ->getSearchResultsUsing(function (Get $get, string $search) use ($getPromptOptions): array {
