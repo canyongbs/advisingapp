@@ -52,7 +52,9 @@ class AssistantChat extends BaseModel
     use SoftDeletes;
 
     protected $fillable = [
+        'assistant_id',
         'name',
+        'thread_id',
     ];
 
     public function user(): BelongsTo

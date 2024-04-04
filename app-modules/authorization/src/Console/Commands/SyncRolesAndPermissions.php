@@ -90,13 +90,11 @@ class SyncRolesAndPermissions extends Command
         $this->syncApiPermissions();
         $this->info('API permissions synced successfully!');
 
-        // Artisan::call(SetupRoleGroups::class);
-
         // Remove api/web model permissions from cache
         Cache::forget('application.model.web.permissions');
         Cache::forget('application.model.api.permissions');
 
-        return self::SUCCESS;
+        return static::SUCCESS;
     }
 
     protected function populateRegistries(): void

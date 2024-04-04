@@ -41,7 +41,7 @@ use Illuminate\Support\ServiceProvider;
 use AdvisingApp\IntegrationAI\Client\AzureOpenAI;
 use AdvisingApp\IntegrationAI\IntegrationAIPlugin;
 use App\Registries\RoleBasedAccessControlRegistry;
-use AdvisingApp\IntegrationAI\Client\Contracts\AIChatClient;
+use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
 use AdvisingApp\IntegrationAI\Registries\IntegrationAIRbacRegistry;
 use AdvisingApp\IntegrationAI\Client\Playground\AzureOpenAI as PlaygroundAzureOpenAI;
 
@@ -51,7 +51,7 @@ class IntegrationAIServiceProvider extends ServiceProvider
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationAIPlugin()));
 
-        $this->app->bind(AIChatClient::class, function () {
+        $this->app->bind(AiChatClient::class, function () {
             if ($this->app->runningUnitTests() || config('services.azure_open_ai.enable_test_mode') === true) {
                 return new PlaygroundAzureOpenAI();
             }

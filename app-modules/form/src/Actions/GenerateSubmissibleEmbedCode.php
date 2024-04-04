@@ -49,7 +49,6 @@ class GenerateSubmissibleEmbedCode
 {
     public function handle(Submissible $submissible): string
     {
-        // TODO Clean this up
         return match ($submissible::class) {
             Form::class => (function () use ($submissible) {
                 $scriptUrl = url('js/widgets/form/advising-app-form-widget.js?');

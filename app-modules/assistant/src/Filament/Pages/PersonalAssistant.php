@@ -55,9 +55,11 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\ActionSize;
+use Filament\Forms\Components\Checkbox;
 use Illuminate\Validation\Rules\Unique;
 use AdvisingApp\Assistant\Models\Prompt;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use AdvisingApp\Assistant\Models\PromptType;
@@ -65,16 +67,18 @@ use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\Assistant\Models\AssistantChat;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
+use AdvisingApp\Assistant\Actions\GetAiAssistant;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Assistant\Models\AssistantChatFolder;
 use AdvisingApp\Assistant\Enums\AssistantChatShareVia;
 use AdvisingApp\Assistant\Jobs\ShareAssistantChatsJob;
+use AdvisingApp\IntegrationAI\Client\BaseAIChatClient;
 use AdvisingApp\Assistant\Enums\AssistantChatShareWith;
-use AdvisingApp\IntegrationAI\Client\Contracts\AIChatClient;
-use AdvisingApp\IntegrationAI\Exceptions\ContentFilterException;
-use AdvisingApp\IntegrationAI\DataTransferObjects\DynamicContext;
-use AdvisingApp\IntegrationAI\Exceptions\TokensExceededException;
+use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
+use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Filament\Forms\Components\Actions\Action as FormComponentAction;
 use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
@@ -96,6 +100,8 @@ class PersonalAssistant extends Page
 
     public Chat $chat;
 
+    public ?string $assistantId = null;
+
     #[Rule(['required', 'string'])]
     public string $message = '';
 
@@ -115,6 +121,10 @@ class PersonalAssistant extends Page
 
     public bool $loading = true;
 
+    public array $files = [];
+
+    public array $fileIds = [];
+
     public static function canAccess(): bool
     {
         /** @var User $user */
@@ -129,6 +139,8 @@ class PersonalAssistant extends Page
 
     public function mount(): void
     {
+        $this->assistantId = resolve(GetAiAssistant::class)->get();
+
         $this->consentAgreement = ConsentAgreement::where('type', ConsentAgreementType::AzureOpenAI)->first();
 
         /** @var AssistantChat $chat */
@@ -136,6 +148,8 @@ class PersonalAssistant extends Page
 
         $this->chat = new Chat(
             id: $chat?->id ?? null,
+            assistantId: $chat?->assistant_id ?? $this->assistantId,
+            threadId: $chat?->thread_id ?? null,
             messages: ChatMessage::collection($chat?->messages ?? []),
         );
     }
@@ -228,29 +242,51 @@ class PersonalAssistant extends Page
     }
 
     #[On('ask')]
-    public function ask(AIChatClient $ai): void
+    public function ask(AiChatClient $ai): void
     {
-        try {
-            /** @var User $user */
-            $user = auth()->user();
+        /** @var BaseAIChatClient $ai */
 
-            $this->currentResponse = $ai
-                ->provideDynamicContext(new DynamicContext($user))
-                ->ask($this->chat, function (string $partial) {
-                    $this->stream('currentResponse', nl2br($partial));
-                });
-        } catch (ContentFilterException|TokensExceededException $e) {
+        // TODO Handle File Uploads
+        if ($this->files) {
+            // $this->fileIds = $ai->uploadFiles($this->files);
+        }
+
+        if (! filled($this->chat->threadId)) {
+            $response = $ai->createThread();
+            $this->chat->threadId = $response->id;
+        }
+
+        /** @var ThreadMessageResponse $message */
+        $message = $ai->createMessageInThread(
+            chat: $this->chat,
+            assistantId: $this->assistantId,
+            fileIds: $this->fileIds
+        );
+
+        /** @var ThreadRunResponse $response */
+        $run = $ai->createRunForThread($this->chat->threadId, $this->assistantId);
+
+        $this->updateLatestMessage(
+            messageId: $message->id,
+            runId: $run->id,
+            fileIds: $this->fileIds
+        );
+
+        if (! $this->runHasBeenCompleted($ai)) {
             $this->renderError = true;
-            $this->error = $e->getMessage();
+            $this->error = 'Something went wrong. Please try to send your message again. If this continues please contact an administrator.';
+        } else {
+            $latestMessage = $ai->getLatestAssistantMessageInThread($this->chat->threadId);
+
+            $this->currentResponse = $latestMessage->data[0]->content[0]->text->value;
+
+            $this->setMessage($this->currentResponse, AIChatMessageFrom::Assistant, $latestMessage->firstId);
         }
 
         $this->reset('showCurrentResponse');
-
-        if ($this->renderError === false) {
-            $this->setMessage($this->currentResponse, AIChatMessageFrom::Assistant);
-        }
-
         $this->reset('currentResponse');
+        $this->reset('files');
+        $this->reset('fileIds');
     }
 
     public function saveChatAction(): Action
@@ -280,7 +316,11 @@ class PersonalAssistant extends Page
                 $user = auth()->user();
 
                 /** @var AssistantChat $assistantChat */
-                $assistantChat = $user->assistantChats()->create(['name' => $data['name']]);
+                $assistantChat = $user->assistantChats()->create([
+                    'name' => $data['name'],
+                    'assistant_id' => $this->chat->assistantId,
+                    'thread_id' => $this->chat->threadId,
+                ]);
 
                 $this->chat->messages->each(function (ChatMessage $message) use ($assistantChat) {
                     $assistantChat->messages()->create($message->toArray());
@@ -288,18 +328,30 @@ class PersonalAssistant extends Page
 
                 $this->chat->id = $assistantChat->id;
 
-                $folder = AssistantChatFolder::find($data['folder']);
+                $folder = auth()->user()->assistantChatFolders()->find($data['folder']);
+
+                if (! $folder) {
+                    return;
+                }
 
                 $this->moveChat($assistantChat, $folder);
             });
     }
 
-    public function selectChat(AssistantChat $chat): void
+    public function selectChat(string $chatId): void
     {
+        $chat = auth()->user()->assistantChats()->find($chatId);
+
+        if (! $chat) {
+            return;
+        }
+
         $this->reset(['message', 'prompt', 'renderError', 'error']);
 
         $this->chat = new Chat(
             id: $chat->id ?? null,
+            assistantId: $chat->assistant_id ?? null,
+            threadId: $chat->thread_id ?? null,
             messages: ChatMessage::collection($chat->messages ?? []),
         );
     }
@@ -308,7 +360,12 @@ class PersonalAssistant extends Page
     {
         $this->reset(['message', 'prompt', 'renderError', 'error']);
 
-        $this->chat = new Chat(id: null, messages: ChatMessage::collection([]));
+        $this->chat = new Chat(
+            id: null,
+            assistantId: null,
+            threadId: null,
+            messages: ChatMessage::collection([])
+        );
     }
 
     public function newFolderAction(): Action
@@ -355,8 +412,8 @@ class PersonalAssistant extends Page
                     }),
             ])
             ->action(function (array $arguments, array $data) {
-                AssistantChatFolder::find($arguments['folder'])
-                    ->update(['name' => $data['name']]);
+                auth()->user()->assistantChatFolders()->find($arguments['folder'])
+                    ?->update(['name' => $data['name']]);
 
                 unset($this->folders, $this->chats);
             })
@@ -376,8 +433,8 @@ class PersonalAssistant extends Page
             ->requiresConfirmation()
             ->modalDescription('Are you sure you wish to delete this folder? Any chats stored within this folder will also be deleted and this action is not reversible.')
             ->action(function (array $arguments) {
-                AssistantChatFolder::find($arguments['folder'])
-                    ->delete();
+                auth()->user()->assistantChatFolders()->find($arguments['folder'])
+                    ?->delete();
 
                 unset($this->folders, $this->chats);
             })
@@ -400,8 +457,13 @@ class PersonalAssistant extends Page
                 $this->folderSelect(),
             ])
             ->action(function (array $arguments, array $data) {
-                $chat = AssistantChat::find($arguments['chat']);
-                $folder = AssistantChatFolder::find($data['folder']);
+                $chat = auth()->user()->assistantChats()->find($arguments['chat']);
+
+                if (! $chat) {
+                    return;
+                }
+
+                $folder = auth()->user()->assistantChatFolders()->find($data['folder']);
 
                 $this->moveChat($chat, $folder);
             })
@@ -416,8 +478,16 @@ class PersonalAssistant extends Page
 
     public function movedChat(string $chatId, ?string $folderId): JsonResponse
     {
-        $chat = AssistantChat::find($chatId);
-        $folder = $folderId ? AssistantChatFolder::find($folderId) : null;
+        $chat = auth()->user()->assistantChats()->find($chatId);
+
+        if (! $chat) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Chat could not be found.',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $folder = auth()->user()->assistantChatFolders()->find($folderId);
 
         try {
             $this->moveChat($chat, $folder);
@@ -442,9 +512,13 @@ class PersonalAssistant extends Page
             ->size(ActionSize::ExtraSmall)
             ->requiresConfirmation()
             ->action(function (array $arguments) {
-                $chat = AssistantChat::find($arguments['chat']);
+                $chat = auth()->user()->assistantChats()->find($arguments['chat']);
 
-                $chat?->delete();
+                if (! $chat) {
+                    return;
+                }
+
+                $chat->delete();
 
                 if ($this->chat->id === $arguments['chat']) {
                     $this->newChat();
@@ -461,14 +535,13 @@ class PersonalAssistant extends Page
     public function insertFromPromptLibraryAction(): Action
     {
         $getPromptOptions = fn (Builder $query): array => $query
-            ->select(['title', 'id'])
+            ->select(['id', 'title', 'description'])
             ->withCount('upvotes')
             ->withCount('uses')
             ->orderByDesc('upvotes_count')
             ->get()
             ->mapWithKeys(fn (Prompt $prompt) => [
-                // The `prompt-upvotes-count` class is used to hide the upvote count when the prompt is selected.
-                $prompt->id => "<span class=\"prompt-upvotes-count\">[{$prompt->upvotes_count}]</span> " . e($prompt->title) . " ({$prompt->uses_count} " . str('use')->plural($prompt->uses_count) . ')',
+                $prompt->id => view('assistant::filament.pages.personal-assistant.prompt-option', ['prompt' => $prompt])->render(),
             ])
             ->all();
 
@@ -487,6 +560,12 @@ class PersonalAssistant extends Page
                         $set('promptId', null) :
                         null)
                     ->live(),
+                Checkbox::make('myPrompts')
+                    ->label('My prompts only')
+                    ->afterStateUpdated(fn (Get $get, Set $set, $state) => ($state && ! Prompt::find($get('promptId'))?->user->is(auth()->user())) ?
+                        $set('promptId', null) :
+                        null)
+                    ->live(),
                 Select::make('promptId')
                     ->label('Select a prompt')
                     ->searchable()
@@ -495,7 +574,11 @@ class PersonalAssistant extends Page
                         ->limit(50)
                         ->when(
                             filled($get('typeId')),
-                            fn (Builder $query) => $query->where('type_id', $get('typeId'))
+                            fn (Builder $query) => $query->where('type_id', $get('typeId')),
+                        )
+                        ->when(
+                            filled($get('myPrompts')),
+                            fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
                         )))
                     ->getSearchResultsUsing(function (Get $get, string $search) use ($getPromptOptions): array {
                         $search = (string) str($search)->wrap('%');
@@ -508,19 +591,12 @@ class PersonalAssistant extends Page
                                 ->orWhere(new Expression('lower(prompt)'), 'like', $search))
                             ->when(
                                 filled($get('typeId')),
-                                fn (Builder $query) => $query->where('type_id', $get('typeId'))
+                                fn (Builder $query) => $query->where('type_id', $get('typeId')),
+                            )
+                            ->when(
+                                filled($get('myPrompts')),
+                                fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
                             ));
-                    })
-                    ->getOptionLabelUsing(function ($value): ?string {
-                        $prompt = Prompt::find($value);
-
-                        if (! $prompt) {
-                            return null;
-                        }
-
-                        $promptUsesCount = $prompt->uses()->count();
-
-                        return '[' . $prompt->upvotes()->count() . '] ' . $prompt->title . ' (' . $promptUsesCount . ' ' . str('use')->plural($promptUsesCount) . ')';
                     })
                     ->live()
                     ->suffixAction(function ($state): ?FormComponentAction {
@@ -573,9 +649,13 @@ class PersonalAssistant extends Page
                     ->required(),
             ])
             ->action(function (array $arguments, array $data) {
-                $chat = AssistantChat::find($arguments['chat']);
+                $chat = auth()->user()->assistantChats()->find($arguments['chat']);
 
-                $chat?->update($data);
+                if (! $chat) {
+                    return;
+                }
+
+                $chat->update($data);
 
                 $this->chats = $this->chats->map(function (AssistantChat $chat) use ($arguments, $data) {
                     if ($chat->id === $arguments['chat']) {
@@ -592,6 +672,34 @@ class PersonalAssistant extends Page
             ->extraAttributes([
                 'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
             ]);
+    }
+
+    public function uploadFilesAction(): Action
+    {
+        return Action::make('uploadFiles')
+            ->label('Upload Files')
+            ->icon('heroicon-o-paper-clip')
+            ->iconButton()
+            ->color('gray')
+            ->disabled(count($this->files) >= 1)
+            ->badge(count($this->files))
+            ->modalSubmitActionLabel('Upload')
+            ->form([
+                FileUpload::make('attachment')
+                    ->acceptedFileTypes(['text/csv', 'text/plain'])
+                    ->storeFiles(false)
+                    ->maxSize(256)
+                    ->required(),
+            ])
+            ->action(function (array $data) {
+                /** @var TemporaryUploadedFile $attachment */
+                $attachment = $data['attachment'];
+
+                $this->files[] = [
+                    'file' => $attachment,
+                    'name' => $attachment->getClientOriginalName(),
+                ];
+            });
     }
 
     public function cloneChatAction(): Action
@@ -629,7 +737,11 @@ class PersonalAssistant extends Page
                 /** @var User $sender */
                 $sender = auth()->user();
 
-                $chat = AssistantChat::find($arguments['chat']);
+                $chat = auth()->user()->assistantChats()->find($arguments['chat']);
+
+                if (! $chat) {
+                    return;
+                }
 
                 dispatch(new ShareAssistantChatsJob($chat, AssistantChatShareVia::Internal, $data['target_type'], $data['target_ids'], $sender));
             })
@@ -674,7 +786,11 @@ class PersonalAssistant extends Page
                 /** @var User $sender */
                 $sender = auth()->user();
 
-                $chat = AssistantChat::find($arguments['chat']);
+                $chat = auth()->user()->assistantChats()->find($arguments['chat']);
+
+                if (! $chat) {
+                    return;
+                }
 
                 dispatch(new ShareAssistantChatsJob($chat, AssistantChatShareVia::Email, $data['target_type'], $data['target_ids'], $sender));
             })
@@ -684,7 +800,29 @@ class PersonalAssistant extends Page
             ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
     }
 
-    protected function setMessage(string $message, AIChatMessageFrom $from): void
+    protected function runHasBeenCompleted(AiChatClient $ai): bool
+    {
+        $runId = $this->chat->messages->last()->run_id;
+
+        $startTime = time();
+        $timeoutSeconds = 10;
+
+        /** @var BaseAIChatClient $ai */
+        while (time() - $startTime < $timeoutSeconds) {
+            /** @var ThreadRunResponse $response */
+            $run = $ai->getRunForThread($this->chat->threadId, $runId);
+
+            if ($run->status == 'completed') {
+                return true;
+            }
+
+            usleep(500000);
+        }
+
+        return false;
+    }
+
+    protected function setMessage(string $message, AIChatMessageFrom $from, string $messageId = null): void
     {
         if (filled($this->chat->id)) {
             /** @var User $user */
@@ -694,15 +832,38 @@ class PersonalAssistant extends Page
             $assistantChat = $user->assistantChats()->findOrFail($this->chat->id);
 
             $assistantChat->messages()->create([
+                'message_id' => $messageId,
                 'message' => $message,
                 'from' => $from,
             ]);
         }
 
         $this->chat->messages[] = new ChatMessage(
+            message_id: $messageId,
             message: $message,
             from: $from,
         );
+    }
+
+    protected function updateLatestMessage(string $messageId, string $runId, array $fileIds): void
+    {
+        if (filled($this->chat->id)) {
+            /** @var User $user */
+            $user = auth()->user();
+
+            /** @var AssistantChat $assistantChat */
+            $assistantChat = $user->assistantChats()->findOrFail($this->chat->id);
+
+            $assistantChat->messages()->latest()->first()->update([
+                'message_id' => $messageId,
+                'run_id' => $runId,
+                'file_ids' => $fileIds,
+            ]);
+        }
+
+        $this->chat->messages->last()->message_id = $messageId;
+        $this->chat->messages->last()->run_id = $runId;
+        $this->chat->messages->last()->file_ids = $fileIds;
     }
 
     private function folderSelect(): Select

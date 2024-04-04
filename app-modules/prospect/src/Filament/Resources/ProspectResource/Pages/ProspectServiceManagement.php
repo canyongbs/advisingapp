@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use App\Enums\Feature;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -65,9 +67,9 @@ class ProspectServiceManagement extends ManageRelatedRecords
         return 'Prospect Service Management';
     }
 
-    public static function canAccess(array $arguments = []): bool
+    public static function canAccess(array $parameters = []): bool
     {
-        return (bool) count(static::managers($arguments['record'] ?? null));
+        return parent::canAccess($parameters) && Gate::check(Feature::ServiceManagement->getGateName()) && count(static::managers($parameters['record'] ?? null));
     }
 
     public function getRelationManagers(): array

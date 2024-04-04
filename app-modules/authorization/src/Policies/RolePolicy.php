@@ -60,26 +60,41 @@ class RolePolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
-        return Response::deny('Roles cannot be created.');
+        return $authenticatable->canOrElse(
+            abilities: 'role.create',
+            denyResponse: 'You do not have permission to create roles.'
+        );
     }
 
     public function update(Authenticatable $authenticatable, Role $role): Response
     {
-        return Response::deny('Roles cannot be updated.');
+        return $authenticatable->canOrElse(
+            abilities: ['role.*.update', "role.{$role->id}.update"],
+            denyResponse: 'You do not have permission to update this role.'
+        );
     }
 
     public function delete(Authenticatable $authenticatable, Role $role): Response
     {
-        return Response::deny('Roles cannot be deleted.');
+        return $authenticatable->canOrElse(
+            abilities: ['role.*.delete', "role.{$role->id}.delete"],
+            denyResponse: 'You do not have permission to delete this role.'
+        );
     }
 
     public function restore(Authenticatable $authenticatable, Role $role): Response
     {
-        return Response::deny('Roles cannot be restored.');
+        return $authenticatable->canOrElse(
+            abilities: ['role.*.restore', "role.{$role->id}.restore"],
+            denyResponse: 'You do not have permission to restore this role.'
+        );
     }
 
     public function forceDelete(Authenticatable $authenticatable, Role $role): Response
     {
-        return Response::deny('Roles cannot be force deleted.');
+        return $authenticatable->canOrElse(
+            abilities: ['role.*.force-delete', "role.{$role->id}.force-delete"],
+            denyResponse: 'You do not have permission to permanently delete this role.'
+        );
     }
 }

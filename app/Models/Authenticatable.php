@@ -39,16 +39,12 @@ namespace App\Models;
 use App\Models\Concerns\CanOrElse;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
-use AdvisingApp\Authorization\Models\Concerns\HasRoleGroups;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use AdvisingApp\Authorization\Models\Concerns\HasRolesWithPivot;
 use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 
 abstract class Authenticatable extends BaseAuthenticatable
 {
-    use HasRoleGroups {
-        HasRoleGroups::roleGroups as traitRoleGroups;
-    }
     use HasRolesWithPivot;
     use DefinesPermissions;
     use CanOrElse;

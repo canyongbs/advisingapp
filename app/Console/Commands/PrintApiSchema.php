@@ -46,19 +46,21 @@ class PrintApiSchema extends Command
 
     protected $description = 'Compiles and prints the API schema.';
 
-    public function handle(): void
+    public function handle(): int
     {
         $tenant = Tenant::query()->first();
 
         if (! $tenant) {
             $this->error('No tenant found.');
 
-            return;
+            return static::FAILURE;
         }
 
         Artisan::call(
             command: "tenants:artisan \"lighthouse:print-schema -W -D public\" --tenant={$tenant->id}",
             outputBuffer: $this->output,
         );
+
+        return static::SUCCESS;
     }
 }

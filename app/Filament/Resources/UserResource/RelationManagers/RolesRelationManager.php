@@ -41,6 +41,11 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Tables\Actions\AttachAction;
+use Filament\Tables\Actions\DetachAction;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class RolesRelationManager extends RelationManager
@@ -69,60 +74,20 @@ class RolesRelationManager extends RelationManager
                 IdColumn::make(),
                 TextColumn::make('name'),
                 TextColumn::make('guard_name'),
-                TextColumn::make('pivot.via')->label('Via'),
             ])
             ->headerActions([
+                AttachAction::make()
+                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->where('guard_name', 'web'))
+                    ->multiple()
+                    ->preloadRecordSelect(),
             ])
             ->actions([
-                // As of 8/15/2023, we are currently removing the ability to detach an individual Role from a User.
-                // All control will exist at the RoleGroup level.
-
-                // FIXME There is currently a bug in Livewire/Filament that requires a refresh after adding a RoleGroup
-                // Before deleting it. This is being looked into by the Filament team
-                // DetachAction::make()->label(function () {
-                //     return 'Remove Role';
-                // })
-                //     ->requiresConfirmation()
-                //     ->modalIcon('heroicon-o-trash')
-                //     ->color('danger')
-                //     ->modalHeading(function ($record) {
-                //         return "Remove {$record->name} Role?";
-                //     })
-                //     ->modalDescription(function ($record) {
-                //         if ($record->via === ModelHasRolesViaEnum::Direct->value) {
-                //             return 'Are you sure you would like to remove this role?';
-                //         }
-
-                //         if ($record->via === ModelHasRolesViaEnum::RoleGroup->value) {
-                //             return 'By removing this role, you will also remove the user from the following Role Group(s):';
-                //         }
-                //     })
-                //     ->modalContent(fn ($record): View => view(
-                //         'filament.pages.users.confirm',
-                //         ['record' => $record, 'roleGroups' => $record->roleGroups],
-                //     ))
-                //     ->after(function ($record) {
-                //         RoleRemovedFromUser::dispatch($record, $this->ownerRecord);
-
-                //         // TODO This is the "double action" that we will carry out to re-assign roles directly after removing a user from a RoleGroup
-                //         // If that is the desired outcome of the administering user.
-                //         // There are potentially other, more elegant ways to handle this as well. (wizard, form in modal with checkbox, etc..)
-                //         // $this->mountAction(
-                //         //     'afterDetach',
-                //         //     [
-                //         //         'record' => $record,
-                //         //     ]
-                //         // );
-                //     }),
+                DetachAction::make(),
             ])
             ->bulkActions([
+                BulkActionGroup::make([
+                    DetachBulkAction::make(),
+                ]),
             ]);
     }
-
-    // public function afterDetachAction(): Action
-    // {
-    //     return Action::make('afterDetach')
-    //         ->requiresConfirmation()
-    //         ->action(fn (array $arguments) => ray($arguments));
-    // }
 }

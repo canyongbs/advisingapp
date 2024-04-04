@@ -52,6 +52,6 @@ class DeleteEvent extends Command
     {
         CalendarEvent::first()->delete();
 
-        return self::SUCCESS;
+        return static::SUCCESS;
     }
 }

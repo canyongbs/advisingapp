@@ -75,7 +75,6 @@ class NewTenantSeeder extends Seeder
         );
 
         $this->call([
-            SuperAdminProfileSeeder::class,
             DivisionSeeder::class,
             ServiceRequestStatusSeeder::class,
             ServiceRequestTypeSeeder::class,

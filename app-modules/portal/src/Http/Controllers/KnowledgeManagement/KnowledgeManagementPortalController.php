@@ -41,8 +41,6 @@ use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use AdvisingApp\Portal\Settings\PortalSettings;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
 
 class KnowledgeManagementPortalController extends Controller
 {
@@ -59,19 +57,6 @@ class KnowledgeManagementPortalController extends Controller
                     name: 'api.portal.knowledge-management.request-authentication',
                     absolute: false,
                 )
-            ),
-            'categories' => KnowledgeBaseCategoryData::collection(
-                KnowledgeBaseCategory::query()
-                    ->get()
-                    ->map(function (KnowledgeBaseCategory $category) {
-                        return [
-                            'id' => $category->getKey(),
-                            'name' => $category->name,
-                            'description' => $category->description,
-                            'icon' => $category->icon ? svg($category->icon, 'h-6 w-6')->toHtml() : null,
-                        ];
-                    })
-                    ->toArray()
             ),
         ]);
     }

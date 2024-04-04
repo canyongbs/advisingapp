@@ -50,11 +50,13 @@ class RefreshCalendarRefreshTokens extends Command
 
     protected $description = 'Triggers a refresh of all calendar refresh tokens that are needed.';
 
-    public function handle(): void
+    public function handle(): int
     {
         Calendar::query()
             ->whereNotNull('oauth_refresh_token')
             ->where('updated_at', '<=', now()->subDays(14))
             ->each(fn (Calendar $calendar) => RefreshCalendarRefreshToken::dispatch($calendar));
+
+        return static::SUCCESS;
     }
 }

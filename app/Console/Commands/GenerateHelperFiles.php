@@ -53,7 +53,7 @@ class GenerateHelperFiles extends Command
         if (! $tenant) {
             $this->error('No tenant found.');
 
-            return self::FAILURE;
+            return static::FAILURE;
         }
 
         $tenant->makeCurrent();
@@ -82,6 +82,6 @@ class GenerateHelperFiles extends Command
 
         $this->info('Helper files generated!');
 
-        return self::SUCCESS;
+        return static::SUCCESS;
     }
 }

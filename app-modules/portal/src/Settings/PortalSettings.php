@@ -58,8 +58,6 @@ class PortalSettings extends Settings
 
     public bool $has_emergency_alerts = false;
 
-    public bool $has_service_management = false;
-
     public bool $has_notifications = false;
 
     public bool $has_knowledge_base = false;

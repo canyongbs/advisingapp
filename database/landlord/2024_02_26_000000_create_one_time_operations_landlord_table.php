@@ -37,7 +37,6 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use AdvisingApp\DataMigration\OneTimeOperationManager;
 
 class CreateOneTimeOperationsLandlordTable extends Migration
 {
@@ -45,7 +44,7 @@ class CreateOneTimeOperationsLandlordTable extends Migration
 
     public function __construct()
     {
-        $this->name = OneTimeOperationManager::getTableName();
+        $this->name = 'operations';
     }
 
     public function up(): void

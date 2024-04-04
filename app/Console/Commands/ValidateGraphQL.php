@@ -80,13 +80,13 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
         if (app()->isProduction()) {
             $this->error('This command is not available in production.');
 
-            return self::FAILURE;
+            return static::FAILURE;
         }
 
         if ($this->option('details') && ! in_array($this->option('details'), ['list', 'table'])) {
             $this->error('The --details option must be one of: list, table.');
 
-            return self::FAILURE;
+            return static::FAILURE;
         }
 
         $tenant = Tenant::first();
@@ -94,7 +94,7 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
         if (! $tenant) {
             $this->error('No tenant found.');
 
-            return self::FAILURE;
+            return static::FAILURE;
         }
 
         $tenant->makeCurrent();
@@ -183,7 +183,11 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
 
         $this->line($this->style("File {$this->filename} deleted."));
 
-        return $fail ? self::FAILURE : self::SUCCESS;
+        if ($fail) {
+            return static::FAILURE;
+        }
+
+        return static::SUCCESS;
     }
 
     private function checkModel(string $block, Collection $types, &$fail, Collection $models): void

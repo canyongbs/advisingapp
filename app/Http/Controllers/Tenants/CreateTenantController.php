@@ -36,6 +36,7 @@
 
 namespace App\Http\Controllers\Tenants;
 
+use Illuminate\Http\JsonResponse;
 use App\Multitenancy\Actions\CreateTenant;
 use App\Http\Requests\Tenants\CreateTenantRequest;
 use App\Multitenancy\DataTransferObjects\TenantUser;
@@ -48,9 +49,9 @@ use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
 
 class CreateTenantController
 {
-    public function __invoke(CreateTenantRequest $request): void
+    public function __invoke(CreateTenantRequest $request): JsonResponse
     {
-        app(CreateTenant::class)(
+        $tenant = app(CreateTenant::class)(
             $request->validated('name'),
             $request->validated('domain'),
             new TenantConfig(
@@ -106,5 +107,9 @@ class CreateTenantController
                 password: $request->validated('user.password'),
             ),
         );
+
+        return response()->json(['tenant' => [
+            'id' => $tenant->getKey(),
+        ]]);
     }
 }

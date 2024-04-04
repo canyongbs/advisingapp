@@ -8,30 +8,30 @@ fi
 cd "$WEBUSER_HOME" || exit 0
 
 if [ "${LANDLORD_MIGRATE:="true"}" == "true" ]; then
-  echo "Dispatching landlord migrations..."
+  echo "Starting landlord migrations..."
 
   {
-    s6-setuidgid webuser php "$WEBUSER_HOME/artisan" app:dispatch-landlord-migrations \
-    && echo "Landlord migrations dispatched!"
+    s6-setuidgid webuser php "$WEBUSER_HOME/artisan" migrate --database=landlord --path=database/landlord --force --isolated \
+    && echo "Landlord migrations completed!"
   } || {
-    echo "Landlord migrations failed to dispatch!"
+    echo "Landlord migrations failed!"
 
-    # TODO: Do something to send an alert that migration dispatch failed. Currently this will NOT stop the container.
+    # TODO: Do something to send an alert that landlord migrations failed. Currently this will NOT stop the container.
   }
 else
     echo "Skipping landlord migrations because it was specifically disabled..."
 fi
 
 if [ "${TENANT_MIGRATE:="true"}" == "true" ]; then
-  echo "Dispatching tenant migrations..."
+  echo "Starting tenant migrations..."
 
   {
-    s6-setuidgid webuser php "$WEBUSER_HOME/artisan" app:dispatch-tenant-migrations \
-    && echo "Tenant migrations dispatched!"
+    s6-setuidgid webuser php "$WEBUSER_HOME/artisan" tenants:artisan "migrate --database=tenant --force --isolated" \
+    && echo "Tenant migrations completed!"
   } || {
-    echo "Tenant migrations failed to dispatch!"
+    echo "Tenant migrations failed!"
 
-    # TODO: Do something to send an alert that migration dispatch failed. Currently this will NOT stop the container.
+    # TODO: Do something to send an alert that tenant migration failed. Currently this will NOT stop the container.
   }
 else
     echo "Skipping tenant migrations because it was specifically disabled..."

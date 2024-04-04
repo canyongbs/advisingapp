@@ -49,7 +49,7 @@ class SimulatedNotification extends Command
 
     protected $description = 'This is a temporary command to showcase the notification system.';
 
-    public function handle(): void
+    public function handle(): int
     {
         $recipient = User::first();
 
@@ -57,5 +57,7 @@ class SimulatedNotification extends Command
             ->status($this->option('type'))
             ->title('This is a simulated notification')
             ->sendToDatabase($recipient);
+
+        return static::SUCCESS;
     }
 }

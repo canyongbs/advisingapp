@@ -83,7 +83,6 @@ use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
-use AdvisingApp\Authorization\Models\Pivots\RoleGroupUserPivot;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestResponse;
 use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
@@ -294,12 +293,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function careTeams(): HasMany
     {
         return $this->hasMany(CareTeam::class);
-    }
-
-    public function roleGroups(): BelongsToMany
-    {
-        return $this->traitRoleGroups()
-            ->using(RoleGroupUserPivot::class);
     }
 
     public function permissionsFromRoles(): HasManyDeep

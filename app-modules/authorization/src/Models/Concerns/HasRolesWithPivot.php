@@ -37,10 +37,8 @@
 namespace AdvisingApp\Authorization\Models\Concerns;
 
 use Spatie\Permission\Traits\HasRoles;
-use AdvisingApp\Authorization\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 use App\Actions\Finders\ApplicationModules;
-use AdvisingApp\Authorization\Enums\ModelHasRolesViaEnum;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait HasRolesWithPivot
@@ -59,7 +57,7 @@ trait HasRolesWithPivot
             config('permission.table_names.model_has_roles'),
             config('permission.column_names.model_morph_key'),
             PermissionRegistrar::$pivotRole
-        )->withPivot('via');
+        );
 
         if (! PermissionRegistrar::$teams) {
             return $relation;
@@ -70,22 +68,5 @@ trait HasRolesWithPivot
                 $teamField = config('permission.table_names.roles') . '.' . PermissionRegistrar::$teamsKey;
                 $q->whereNull($teamField)->orWhere($teamField, getPermissionsTeamId());
             });
-    }
-
-    public function hasBeenAssignedRoleDirectly(Role $role)
-    {
-        return $this->roles()
-            ->where('id', $role->id)
-            ->where('via', ModelHasRolesViaEnum::Direct)
-            ->exists();
-    }
-
-    public function assignRoleViaRoleGroup(Role $role): void
-    {
-        $this->assignRole([$this->roles, $role]);
-
-        $this->roles()->where('id', $role->id)->first()->pivot->update([
-            'via' => ModelHasRolesViaEnum::RoleGroup,
-        ]);
     }
 }

@@ -76,13 +76,14 @@ class EditApplication extends EditRecord
                             ->state(function (Application $application) {
                                 $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($application);
 
-                                return <<<EOD
+                                $state = <<<EOD
                                 ```
                                 {$code}
                                 ```
                                 EOD;
+
+                                return str($state)->markdown()->toHtmlString();
                             })
-                            ->markdown()
                             ->copyable()
                             ->copyableState(fn (Application $application) => resolve(GenerateSubmissibleEmbedCode::class)->handle($application))
                             ->copyMessage('Copied!')

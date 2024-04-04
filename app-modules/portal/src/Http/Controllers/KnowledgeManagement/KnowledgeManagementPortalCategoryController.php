@@ -44,6 +44,25 @@ use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
 
 class KnowledgeManagementPortalCategoryController extends Controller
 {
+    public function index(): JsonResponse
+    {
+        return response()->json(
+            KnowledgeBaseCategoryData::collection(
+                KnowledgeBaseCategory::query()
+                    ->get()
+                    ->map(function (KnowledgeBaseCategory $category) {
+                        return [
+                            'id' => $category->getKey(),
+                            'name' => $category->name,
+                            'description' => $category->description,
+                            'icon' => $category->icon ? svg($category->icon, 'h-6 w-6')->toHtml() : null,
+                        ];
+                    })
+                    ->toArray()
+            )
+        );
+    }
+
     public function show(KnowledgeBaseCategory $category): JsonResponse
     {
         return response()->json([

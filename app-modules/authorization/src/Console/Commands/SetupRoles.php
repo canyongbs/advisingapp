@@ -56,6 +56,6 @@ class SetupRoles extends Command
 
         $this->info('Roles created successfully!');
 
-        return self::SUCCESS;
+        return static::SUCCESS;
     }
 }

@@ -36,10 +36,34 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
+use Filament\Forms\Form;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
 
 class CreateRole extends CreateRecord
 {
     protected static string $resource = RoleResource::class;
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(125)
+                    ->unique('roles', 'name'),
+                Select::make('guard_name')
+                    ->required()
+                    ->options([
+                        'web' => 'Web',
+                        'api' => 'API',
+                    ]),
+                Textarea::make('description')
+                    ->nullable()
+                    ->maxLength(65535),
+            ]);
+    }
 }

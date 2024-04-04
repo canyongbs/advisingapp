@@ -38,10 +38,16 @@ namespace AdvisingApp\Assistant\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperPromptUpvote
+ */
 class PromptUpvote extends BaseModel
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'user_id',
     ];

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Assistant\Models;
 
+use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -67,6 +68,11 @@ class Prompt extends BaseModel
     public function uses(): HasMany
     {
         return $this->hasMany(PromptUse::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function isUpvoted(): bool
