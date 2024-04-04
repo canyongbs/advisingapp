@@ -34,22 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAI\Settings;
+namespace AdvisingApp\Assistant\Actions;
 
-use Spatie\LaravelSettings\Settings;
+use OpenAI\Responses\Assistants\AssistantResponse;
+use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
 
-class AISettings extends Settings
+class GetAiAssistantFromID
 {
-    public ?string $assistant_id = null;
+    public function __construct(
+        private AiChatClient $ai
+    ) {}
 
-    public string $prompt_system_context;
-
-    public int $max_tokens;
-
-    public float $temperature;
-
-    public static function group(): string
+    public function get(string $id): AssistantResponse
     {
-        return 'ai';
+        return $this->ai->client->assistants()->retrieve($id);
     }
 }

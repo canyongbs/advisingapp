@@ -34,22 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAI\Settings;
+namespace AdvisingApp\Assistant\Actions;
 
-use Spatie\LaravelSettings\Settings;
+use AdvisingApp\IntegrationAI\Settings\AISettings;
 
-class AISettings extends Settings
+class GetAiAssistant
 {
-    public ?string $assistant_id = null;
-
-    public string $prompt_system_context;
-
-    public int $max_tokens;
-
-    public float $temperature;
-
-    public static function group(): string
+    public function get(): string
     {
-        return 'ai';
+        return resolve(AISettings::class)->assistant_id ?? resolve(CreateAiAssistant::class)->create();
     }
 }

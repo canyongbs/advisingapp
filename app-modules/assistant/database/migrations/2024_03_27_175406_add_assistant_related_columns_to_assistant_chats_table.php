@@ -34,22 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAI\Settings;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Spatie\LaravelSettings\Settings;
-
-class AISettings extends Settings
-{
-    public ?string $assistant_id = null;
-
-    public string $prompt_system_context;
-
-    public int $max_tokens;
-
-    public float $temperature;
-
-    public static function group(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'ai';
+        Schema::table('assistant_chats', function (Blueprint $table) {
+            $table->string('assistant_id')->nullable();
+            $table->string('thread_id')->nullable();
+        });
+
+        Schema::table('assistant_chat_messages', function (Blueprint $table) {
+            $table->string('message_id')->nullable();
+            $table->string('run_id')->nullable();
+            $table->json('file_ids')->nullable();
+        });
     }
-}
+};

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Report\Client;
 
+use OpenAI;
 use Closure;
 use Throwable;
 use Illuminate\Support\Arr;
@@ -50,7 +51,6 @@ use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\IntegrationAI\Client\AzureOpenAI;
 use AdvisingApp\Notification\Models\Subscription;
 use Illuminate\Auth\Access\AuthorizationException;
 use AdvisingApp\Interaction\Models\InteractionType;
@@ -58,6 +58,7 @@ use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Performance;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\IntegrationAI\Client\BaseAIChatClient;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionRelation;
@@ -65,7 +66,7 @@ use AdvisingApp\Report\Settings\ReportAssistantSettings;
 use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\Chat;
 
-class AIReportChatClient extends AzureOpenAI
+class AiReportChatClient extends BaseAIChatClient
 {
     public function ask(Chat $chat, ?Closure $callback, int $attempt = 1): string
     {
@@ -153,6 +154,20 @@ class AIReportChatClient extends AzureOpenAI
         }
 
         return $response->message->content;
+    }
+
+    protected function initializeClient(): void
+    {
+        $this->baseEndpoint = rtrim(config('services.azure_open_ai.endpoint'), '/');
+        $this->apiKey = config('services.azure_open_ai.api_key');
+        $this->apiVersion = config('services.azure_open_ai.report_assistant_api_version');
+        $this->deployment = config('services.azure_open_ai.report_assistant_deployment_name');
+
+        $this->client = OpenAI::factory()
+            ->withBaseUri("{$this->baseEndpoint}/openai/deployments/{$this->deployment}")
+            ->withHttpHeader('api-key', $this->apiKey)
+            ->withQueryParam('api-version', $this->apiVersion)
+            ->make();
     }
 
     protected function getAuthorizedTables(): array

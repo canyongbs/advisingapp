@@ -39,7 +39,7 @@ namespace AdvisingApp\IntegrationAI\Client\Playground;
 use Closure;
 use OpenAI\Testing\ClientFake;
 use OpenAI\Responses\StreamResponse;
-use OpenAI\Responses\Chat\CreateStreamedResponse;
+use OpenAI\Responses\Assistants\AssistantResponse;
 use AdvisingApp\IntegrationAI\Client\BaseAIChatClient;
 
 class AzureOpenAI extends BaseAIChatClient
@@ -53,7 +53,7 @@ class AzureOpenAI extends BaseAIChatClient
         rewind($handle);
 
         $this->client = new ClientFake([
-            CreateStreamedResponse::fake(fread($handle, strlen($fakeText))),
+            AssistantResponse::fake(),
         ]);
 
         fclose($handle);

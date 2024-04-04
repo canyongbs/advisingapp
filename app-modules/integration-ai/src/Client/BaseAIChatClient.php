@@ -38,22 +38,30 @@ namespace AdvisingApp\IntegrationAI\Client;
 
 use Closure;
 use OpenAI\Client;
+use App\Models\User;
 use Illuminate\Support\Arr;
 use OpenAI\Testing\ClientFake;
+use Illuminate\Support\Facades\Http;
 use OpenAI\Responses\StreamResponse;
+use OpenAI\Responses\Threads\ThreadResponse;
 use OpenAI\Responses\Chat\CreateStreamedResponse;
 use AdvisingApp\IntegrationAI\Settings\AISettings;
+use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
+use AdvisingApp\Assistant\Actions\GetAiAssistantFromID;
 use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
 use AdvisingApp\IntegrationAI\DataTransferObjects\AIPrompt;
-use AdvisingApp\IntegrationAI\Client\Contracts\AIChatClient;
+use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
+use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use AdvisingApp\IntegrationAI\Client\Concerns\InitializesClient;
 use AdvisingApp\IntegrationAI\Exceptions\ContentFilterException;
+use OpenAI\Responses\Threads\Messages\ThreadMessageListResponse;
 use AdvisingApp\IntegrationAI\DataTransferObjects\DynamicContext;
 use AdvisingApp\IntegrationAI\Exceptions\TokensExceededException;
 use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\Chat;
 use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
 
-abstract class BaseAIChatClient implements AIChatClient
+abstract class BaseAIChatClient implements AiChatClient
 {
     use InitializesClient;
 
@@ -69,7 +77,7 @@ abstract class BaseAIChatClient implements AIChatClient
 
     protected ?string $systemContext = null;
 
-    protected Client|ClientFake $client;
+    public Client|ClientFake $client;
 
     public function __construct(
     ) {
@@ -97,6 +105,159 @@ abstract class BaseAIChatClient implements AIChatClient
         $this->setDynamicContext($context->getContext());
 
         return $this;
+    }
+
+    public function getDynamicContext(): ?string
+    {
+        return $this->dynamicContext;
+    }
+
+    public function uploadFiles(array $files)
+    {
+        /** @var TemporaryUploadedFile $tempFile */
+        $tempFile = $files[0]['file'];
+
+        $fileResource = fopen($tempFile->temporaryUrl(), 'r');
+
+        // This currently does not work due to a validation error,
+        // "purpose contains invalid purpose"
+        $response = $this->client->files()->upload([
+            'purpose' => 'assistants',
+            'file' => $fileResource,
+        ]);
+
+        // $response = Http::attach(
+        //     'file',
+        //     $fileResource,
+        //     $files[0]['name'],
+        //     ['Content-Type' => 'text/csv']
+        // )
+        //     ->withHeaders([
+        //         'api-key' => config('services.azure_open_ai.api_key'),
+        //         'OpenAI-Beta' => 'assistants=v1',
+        //         'Accept' => '*/*',
+        //     ])
+        //     ->withQueryParameters([
+        //         'api-version' => config('services.azure_open_ai.personal_assistant_api_version'),
+        //     ])
+        //     ->post('https://cgbs-ai.openai.azure.com/openai/files', [
+        //         'purpose' => '',
+        //     ]);
+
+        // $api_key = config('services.azure_open_ai.api_key');
+        // $api_version = config('services.azure_open_ai.personal_assistant_api_version');
+        // $file = $fileResource; // Replace $fileResource with your actual file resource
+        // $filename = $files[0]['name']; // Ensure $files[0]['name'] contains the filename
+
+        // // Initialize cURL session
+        // $ch = curl_init();
+
+        // // Set cURL options
+        // curl_setopt($ch, CURLOPT_URL, 'https://cgbs-ai.openai.azure.com/openai/files?api-version=' . $api_version);
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // curl_setopt($ch, CURLOPT_POST, true);
+
+        // // Prepare the file in a cURL-friendly format
+        // $cfile = new CURLFile($file, 'text/csv', $filename);
+
+        // // Set the POST fields
+        // $postFields = [
+        //     'purpose' => 'assistants',
+        //     'file' => $tempFilePath,
+        // ];
+
+        // curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+
+        // // Set the headers
+        // $headers = [
+        //     'api-key: ' . $api_key,
+        //     'OpenAI-Beta: assistants=v1',
+        //     'Accept: */*',
+        // ];
+
+        // curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        // // Execute the cURL session
+        // $response = curl_exec($ch);
+
+        // // Check for errors and handle them
+        // if (curl_errno($ch)) {
+        //     echo 'Error:' . curl_error($ch);
+        // }
+
+        // // Close cURL session
+        // curl_close($ch);
+
+        if (is_resource($fileResource)) {
+            fclose($fileResource);
+        }
+
+        return $response;
+    }
+
+    public function createThread(): ThreadResponse
+    {
+        return $this->client->threads()->create([]);
+    }
+
+    public function createMessageInThread(Chat $chat, string $assistantId, array $fileIds = []): ThreadMessageResponse
+    {
+        $this->dispatchAssistantPromptInitiatedEvent($chat, $assistantId, $fileIds);
+
+        return $this->client->threads()->messages()->create($chat->threadId, [
+            'role' => 'user',
+            'content' => $chat->messages->last()->message,
+            'file_ids' => $fileIds,
+        ]);
+    }
+
+    public function createRunForThread(string $threadId, string $assistantId): ThreadRunResponse
+    {
+        return $this->client->threads()->runs()->create(
+            threadId: $threadId,
+            parameters: [
+                'assistant_id' => $assistantId,
+                'instructions' => $this->getAssistantContext($assistantId),
+            ],
+        );
+    }
+
+    public function getRunForThread(string $threadId, string $runId): ThreadRunResponse
+    {
+        return $this->client->threads()->runs()->retrieve(
+            threadId: $threadId,
+            runId: $runId,
+        );
+    }
+
+    public function getLatestAssistantMessageInThread(string $threadId): ThreadMessageListResponse
+    {
+        return $this->client->threads()->messages()->list($threadId, [
+            'order' => 'desc',
+            'limit' => 1,
+        ]);
+    }
+
+    protected function getAssistantContext(string $assistantId): string
+    {
+        $baseInstructions = resolve(GetAiAssistantFromID::class)->get($assistantId)->instructions;
+
+        /** @var User $user */
+        $user = auth()->user();
+        $this->provideDynamicContext(new DynamicContext($user));
+
+        return "{$baseInstructions} {$this->dynamicContext}";
+    }
+
+    protected function getContext(): string
+    {
+        $context = $this->systemContext;
+
+        if ($this->dynamicContext) {
+            $context .= rtrim($this->dynamicContext, '.') . '.';
+        }
+
+        return "{$context} When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.";
     }
 
     protected function generateStreamedResponse(StreamResponse $stream, Closure $callback): string
@@ -135,7 +296,6 @@ abstract class BaseAIChatClient implements AIChatClient
         return $response->choices[0]?->delta?->content ?: null;
     }
 
-    // TODO We can utilize the finishReason in order to flag audit records that might need attention
     protected function examineFinishReason(CreateStreamedResponse $response): void
     {
         match ($response->choices[0]->finishReason) {
@@ -160,17 +320,6 @@ abstract class BaseAIChatClient implements AIChatClient
         ];
     }
 
-    protected function getContext(): string
-    {
-        $context = $this->systemContext;
-
-        if ($this->dynamicContext) {
-            $context .= rtrim($this->dynamicContext, '.') . '.';
-        }
-
-        return "{$context} When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.";
-    }
-
     protected function dispatchPromptInitiatedEvent(Chat $chat): void
     {
         AIPromptInitiated::dispatch(AIPrompt::from([
@@ -186,6 +335,26 @@ abstract class BaseAIChatClient implements AIChatClient
             'message' => $chat->messages->last()->message,
             'metadata' => [
                 'systemContext' => $this->getContext(),
+            ],
+        ]));
+    }
+
+    protected function dispatchAssistantPromptInitiatedEvent(Chat $chat, string $assistantId, array $fileIds = []): void
+    {
+        AIPromptInitiated::dispatch(AIPrompt::from([
+            'user' => auth()->user(),
+            'request' => [
+                'ip' => request()->ip(),
+                'headers' => Arr::only(
+                    request()->headers->all(),
+                    ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
+                ),
+            ],
+            'timestamp' => now(),
+            'message' => $chat->messages->last()->message,
+            'metadata' => [
+                'systemContext' => $this->getAssistantContext($assistantId),
+                'file_ids' => $fileIds,
             ],
         ]));
     }

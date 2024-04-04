@@ -34,22 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAI\Settings;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use Spatie\LaravelSettings\Settings;
-
-class AISettings extends Settings
-{
-    public ?string $assistant_id = null;
-
-    public string $prompt_system_context;
-
-    public int $max_tokens;
-
-    public float $temperature;
-
-    public static function group(): string
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return 'ai';
+        $this->migrator->addEncrypted('ai.assistant_id');
     }
-}
+};

@@ -39,8 +39,11 @@ namespace AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects;
 use Livewire\Wireable;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Concerns\WireableData;
+use Spatie\LaravelData\Mappers\SnakeCaseMapper;
+use Spatie\LaravelData\Attributes\MapOutputName;
 use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 
+#[MapOutputName(SnakeCaseMapper::class)]
 class ChatMessage extends Data implements Wireable
 {
     use WireableData;
@@ -48,7 +51,10 @@ class ChatMessage extends Data implements Wireable
     public function __construct(
         public ?string $message,
         public AIChatMessageFrom $from,
+        public ?string $message_id = null,
         public ?string $name = null,
         public ?array $functionCall = null,
+        public ?array $file_ids = null,
+        public ?string $run_id = null,
     ) {}
 }

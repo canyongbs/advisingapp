@@ -34,22 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAI\Settings;
+namespace AdvisingApp\Assistant\Actions;
 
-use Spatie\LaravelSettings\Settings;
+use OpenAI\Client;
+use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
+use AdvisingApp\Assistant\DataTransferObjects\AiAssistantUpdateData;
 
-class AISettings extends Settings
+class UpdateAiAssistant
 {
-    public ?string $assistant_id = null;
+    public function __construct(
+        private AiChatClient $ai
+    ) {}
 
-    public string $prompt_system_context;
-
-    public int $max_tokens;
-
-    public float $temperature;
-
-    public static function group(): string
+    public function from(AiAssistantUpdateData $data): void
     {
-        return 'ai';
+        /** @var Client $client */
+        $client = $this->ai->client;
+
+        $response = $client->assistants()->modify(resolve(GetAiAssistant::class)->get(), [
+            ...array_filter($data->toArray()),
+            'metadata' => [
+                'last_updated_at' => now(),
+            ],
+        ]);
     }
 }

@@ -34,22 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAI\Settings;
+namespace AdvisingApp\IntegrationAI\Client\Contracts;
 
-use Spatie\LaravelSettings\Settings;
+use Closure;
+use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\Chat;
 
-class AISettings extends Settings
+interface AiChatClient
 {
-    public ?string $assistant_id = null;
-
-    public string $prompt_system_context;
-
-    public int $max_tokens;
-
-    public float $temperature;
-
-    public static function group(): string
-    {
-        return 'ai';
-    }
+    public function ask(Chat $chat, Closure $callback): string;
 }

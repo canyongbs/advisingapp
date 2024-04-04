@@ -34,12 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAI\Client\Contracts;
+namespace AdvisingApp\Assistant\Actions;
 
-use Closure;
-use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\Chat;
+use OpenAI\Client;
+use Spatie\Multitenancy\Models\Tenant;
+use AdvisingApp\IntegrationAI\Settings\AISettings;
+use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
 
-interface AIChatClient
+class CreateAiAssistant
 {
-    public function ask(Chat $chat, Closure $callback): string;
+    public function __construct(
+        private AiChatClient $ai
+    ) {}
+
+    public function create()
+    {
+        /** @var Client $client */
+        $client = $this->ai->client;
+
+        $tenant = Tenant::current();
+
+        $settings = resolve(AISettings::class);
+
+        /** @var AssistantResponse $response */
+        $assistantResponse = $client->assistants()->create([
+            'name' => "{$tenant->name} AI Assistant",
+            'description' => "An AI Assistant for {$tenant->name}",
+            'instructions' => $settings->prompt_system_context,
+            'model' => config('services.azure_open_ai.personal_assistant_deployment_name'),
+            // Re-enable retrieval support once it's available via the API
+            // 'tools' => [
+            //     ['type' => 'retrieval'],
+            // ],
+            'metadata' => [
+                'last_updated_at' => now(),
+            ],
+        ]);
+
+        $settings->assistant_id = $assistantResponse->id;
+        $settings->save();
+
+        return $settings->assistant_id;
+    }
 }

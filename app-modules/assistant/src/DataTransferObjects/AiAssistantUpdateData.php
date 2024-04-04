@@ -34,22 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAI\Settings;
+namespace AdvisingApp\Assistant\DataTransferObjects;
 
-use Spatie\LaravelSettings\Settings;
+use Spatie\LaravelData\Data;
+use AdvisingApp\IntegrationAI\Settings\AISettings;
 
-class AISettings extends Settings
+class AiAssistantUpdateData extends Data
 {
-    public ?string $assistant_id = null;
+    public function __construct(
+        public ?string $name,
+        public ?string $description,
+        public ?string $instructions,
+        public ?string $model,
+    ) {}
 
-    public string $prompt_system_context;
-
-    public int $max_tokens;
-
-    public float $temperature;
-
-    public static function group(): string
+    public static function createFromSettings(AISettings $settings): AiAssistantUpdateData
     {
-        return 'ai';
+        return AiAssistantUpdateData::from([
+            'instructions' => $settings->prompt_system_context,
+        ]);
     }
 }

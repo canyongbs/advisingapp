@@ -34,22 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAI\Settings;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
 
-use Spatie\LaravelSettings\Settings;
-
-class AISettings extends Settings
-{
-    public ?string $assistant_id = null;
-
-    public string $prompt_system_context;
-
-    public int $max_tokens;
-
-    public float $temperature;
-
-    public static function group(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'ai';
+        DB::transaction(function () {
+            DB::table('assistant_chat_messages')->truncate();
+            DB::table('assistant_chats')->truncate();
+        });
     }
-}
+};

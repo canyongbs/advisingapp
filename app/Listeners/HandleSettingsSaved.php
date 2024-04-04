@@ -34,60 +34,23 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
+namespace App\Listeners;
 
-use function Pest\Laravel\{actingAs};
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Spatie\LaravelSettings\Events\SettingsSaved;
+use AdvisingApp\IntegrationAI\Settings\AISettings;
+use AdvisingApp\Assistant\Actions\UpdateAiAssistant;
+use AdvisingApp\Assistant\DataTransferObjects\AiAssistantUpdateData;
 
-use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
-use AdvisingApp\IntegrationAI\Client\Contracts\AIChatClient;
-use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
-use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\Chat;
-use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
-
-it('will return a streamed response of strings when prompted', function () {
-    $user = User::factory()->create();
-
-    actingAs($user);
-
-    $chat = new Chat(
-        id: null,
-        messages: ChatMessage::collection([]),
-    );
-
-    $chat->messages[] = new ChatMessage(
-        message: 'Hello',
-        from: AIChatMessageFrom::User,
-    );
-
-    $client = app(AIChatClient::class);
-
-    $client->ask($chat, function ($response) {
-        expect($response)->toBeString();
-    });
-});
-
-it('will dispatch an event when a prompt is initiated', function () {
-    Event::fake([AIPromptInitiated::class]);
-
-    $user = User::factory()->create();
-
-    actingAs($user);
-
-    $chat = new Chat(
-        id: null,
-        messages: ChatMessage::collection([]),
-    );
-
-    $chat->messages[] = new ChatMessage(
-        message: 'Hello',
-        from: AIChatMessageFrom::User,
-    );
-
-    $client = app(AIChatClient::class);
-
-    $client->ask($chat, function ($response) {
-        expect($response)->toBeString();
-    });
-
-    Event::assertDispatched(AIPromptInitiated::class);
-});
+class HandleSettingsSaved implements ShouldQueue
+{
+    public function handle(SettingsSaved $event): void
+    {
+        match (true) {
+            $event->settings instanceof AISettings => resolve(UpdateAiAssistant::class)->from(
+                AiAssistantUpdateData::createFromSettings($event->settings)
+            ),
+            default => null,
+        };
+    }
+}
