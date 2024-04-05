@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use Filament\Tables\Table;
+use Laravel\Pennant\Feature;
 use Filament\Infolists\Infolist;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -67,31 +68,40 @@ class EnrollmentsRelationManager extends RelationManager
                         ->label('Earned'),
                     TextEntry::make('section')
                         ->label('Section')
-                        ->default('N/A'),
+                        ->default('N/A')
+                        ->visible(Feature::active('new-enrollments-columns')),
                     TextEntry::make('name')
                         ->label('Name')
-                        ->default('N/A'),
+                        ->default('N/A')
+                        ->visible(Feature::active('new-enrollments-columns')),
                     TextEntry::make('department')
                         ->label('Department')
-                        ->default('N/A'),
+                        ->default('N/A')
+                        ->visible(Feature::active('new-enrollments-columns')),
                     TextEntry::make('faculty_name')
                         ->label('Faculty Name')
-                        ->default('N/A'),
+                        ->default('N/A')
+                        ->visible(Feature::active('new-enrollments-columns')),
                     TextEntry::make('faculty_email')
                         ->label('Faculty Email')
-                        ->default('N/A'),
+                        ->default('N/A')
+                        ->visible(Feature::active('new-enrollments-columns')),
                     TextEntry::make('semester_code')
                         ->label('Semester Code')
-                        ->default('N/A'),
+                        ->default('N/A')
+                        ->visible(Feature::active('new-enrollments-columns')),
                     TextEntry::make('semester_name')
                         ->label('Semester Name')
-                        ->default('N/A'),
+                        ->default('N/A')
+                        ->visible(Feature::active('new-enrollments-columns')),
                     TextEntry::make('start_date')
                         ->label('Start Date')
-                        ->default('N/A'),
+                        ->default('N/A')
+                        ->visible(Feature::active('new-enrollments-columns')),
                     TextEntry::make('end_date')
                         ->label('End Date')
-                        ->default('N/A'),
+                        ->default('N/A')
+                        ->visible(Feature::active('new-enrollments-columns')),
                 ]
             );
     }
