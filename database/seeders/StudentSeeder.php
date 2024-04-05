@@ -51,35 +51,28 @@ class StudentSeeder extends Seeder
         $students = Student::factory(500)
             ->make();
 
-        $students->each(function ($student) {
-            Student::insert($student->toArray());
+        $enrollments = [];
+        $programs = [];
+        $performances = [];
 
-            $enrollments = [];
+        $students->each(function ($student) use (&$enrollments, &$programs, &$performances) {
+            foreach (Enrollment::factory(5)->make(['sisid' => $student->sisid])->toArray() as $enrollment) {
+                $enrollments[] = $enrollment;
+            }
 
-            $student->each(function (Student $student) use (&$enrollments) {
-                foreach (Enrollment::factory(5)->make(['sisid' => $student->sisid])->toArray() as $enrollment) {
-                    $enrollments[] = $enrollment;
-                }
-            });
+            $programs[] = Program::factory()->make(
+                [
+                    'sisid' => $student->sisid,
+                    'otherid' => $student->otherid,
+                ]
+            )->toArray();
 
-            Enrollment::insert($enrollments);
-
-            $programs = [];
-            $performances = [];
-
-            $student->each(function (Student $student) use (&$programs, &$performances) {
-                $programs[] = Program::factory()->make(
-                    [
-                        'sisid' => $student->sisid,
-                        'otherid' => $student->otherid,
-                    ]
-                )->toArray();
-
-                $performances[] = Performance::factory()->make(['sisid' => $student->sisid])->toArray();
-            });
-
-            Program::insert($programs);
-            Performance::insert($performances);
+            $performances[] = Performance::factory()->make(['sisid' => $student->sisid])->toArray();
         });
+
+        Student::insert($students->toArray());
+        Enrollment::insert($enrollments);
+        Program::insert($programs);
+        Performance::insert($performances);
     }
 }
