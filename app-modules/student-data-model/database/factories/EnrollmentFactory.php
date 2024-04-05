@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Database\Factories;
 
 use DateTime;
+use Carbon\Carbon;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -50,34 +51,40 @@ class EnrollmentFactory extends Factory
     {
         return [
             'sisid' => Student::factory(),
-            'acad_career' => $this->faker->randomElement(['NC', 'CRED']),
-            'division' => $this->faker->randomElement(['ABC01', 'ABD02', 'ABE03']),
-            'semester' => $this->faker->numerify('42##'),
-            'class_nbr' => $this->faker->numerify('19###'),
-            'subject' => $this->faker->randomElement(['ACC', 'FITNESS', 'MATH', 'SENIORS', 'ART']),
-            'catalog_nbr' => $this->faker->numerify('###-#####'),
-            'enrl_status_reason' => $this->faker->randomElement(['DROP', 'ENRL']),
-            'enrl_add_dt' => $this->faker->dateTime(),
-            'enrl_drop_dt' => $this->faker->dateTime(),
-            'crse_grade_off' => $this->faker->randomElement(['A', 'B', 'C', 'D', 'W']),
-            'unt_taken' => $this->faker->numberBetween(1, 4),
+            'acad_career' => fake()->randomElement(['NC', 'CRED']),
+            'division' => fake()->randomElement(['ABC01', 'ABD02', 'ABE03']),
+            'semester' => fake()->numerify('42##'),
+            'class_nbr' => fake()->numerify('19###'),
+            'subject' => fake()->randomElement(['ACC', 'FITNESS', 'MATH', 'SENIORS', 'ART']),
+            'catalog_nbr' => fake()->numerify('###-#####'),
+            'enrl_status_reason' => fake()->randomElement(['DROP', 'ENRL']),
+            'enrl_add_dt' => fake()->dateTime(),
+            'enrl_drop_dt' => fake()->dateTime(),
+            'crse_grade_off' => fake()->randomElement(['A', 'B', 'C', 'D', 'W']),
+            'unt_taken' => fake()->numberBetween(1, 4),
             'unt_earned' => function (array $attributes) {
-                return $attributes['unt_taken'] - $this->faker->numberBetween(0, $attributes['unt_taken']);
+                return $attributes['unt_taken'] - fake()->numberBetween(0, $attributes['unt_taken']);
             },
-            'last_upd_dt_stmp' => $this->faker->dateTime(),
-            'section' => $this->faker->numerify('####'),
-            'name' => $this->faker->randomElement(['Introduction to Mathematics', 'College Algebra', 'Business Communication: Writing for the Workplace']),
-            'department' => $this->faker->randomElement(['Business', 'Business Administration', 'BA: Business Administration', null]),
-            'faculty_name' => $this->faker->name(),
-            'faculty_email' => $this->faker->safeEmail(),
-            'semester_code' => $this->faker->randomElement([$this->faker->numerify('42##'), null]),
-            'semester_name' => $this->faker->randomElement(['Fall 2006', 'Spring Cohort A 2006', 'Summer A 2006', 'Summer 2012', null]),
-            'start_date' => $this->faker->randomElement([$this->faker->dateTime(), null]),
+            'last_upd_dt_stmp' => fake()->dateTime(),
+            'section' => fake()->numerify('####'),
+            'name' => fake()->randomElement(['Introduction to Mathematics', 'College Algebra', 'Business Communication: Writing for the Workplace']),
+            'department' => fake()->optional(0.8)->randomElement(['Business', 'Business Administration', 'BA: Business Administration']),
+            'faculty_name' => fake()->name(),
+            'faculty_email' => fake()->safeEmail(),
+            'semester_code' => fake()->optional(0.8)->numerify('42##'),
+            'semester_name' => fake()->optional(0.8)->randomElement(['Fall 2006', 'Spring Cohort A 2006', 'Summer A 2006', 'Summer 2012']),
+            'start_date' => fake()->optional(0.8)->dateTime(),
             'end_date' => function (array $attributes) {
                 /** @var ?DateTime $start */
                 $start = $attributes['start_date'];
 
-                return $start ? $this->faker->randomElement([$start->modify("+{$this->faker->numberBetween(1, 7)} days"), null]) : $this->faker->randomElement([$this->faker->dateTime(), null]);
+                $days = fake()->numberBetween(1, 7);
+
+                return $start
+                    ? fake()->boolean(80)
+                        ? Carbon::make($start)->addDays($days)
+                        : null
+                    : fake()->optional(0.8)->dateTime();
             },
         ];
     }
