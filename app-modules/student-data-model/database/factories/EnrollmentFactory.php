@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Database\Factories;
 
+use DateTime;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -64,6 +65,20 @@ class EnrollmentFactory extends Factory
                 return $attributes['unt_taken'] - $this->faker->numberBetween(0, $attributes['unt_taken']);
             },
             'last_upd_dt_stmp' => $this->faker->dateTime(),
+            'section' => $this->faker->randomElement(['A', 'B', 'C', 'D', 'E']),
+            'name' => $this->faker->name(),
+            'department' => $this->faker->randomElement(['Mathematics', 'Science', 'History', 'English', 'Art']),
+            'faculty_name' => $this->faker->name(),
+            'faculty_email' => $this->faker->email(),
+            'semester_code' => $this->faker->numerify('42##'),
+            'semester_name' => $this->faker->randomElement(['Fall', 'Spring', 'Summer']),
+            'start_date' => $this->faker->dateTime(),
+            'end_date' => function (array $attributes) {
+                /** @var DateTime $start */
+                $start = $attributes['start_date'];
+
+                return $start->modify("+{$this->faker->numberBetween(1, 7)} days");
+            },
         ];
     }
 }
