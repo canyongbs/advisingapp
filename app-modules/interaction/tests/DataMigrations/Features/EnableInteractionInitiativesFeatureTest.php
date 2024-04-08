@@ -34,13 +34,14 @@
 </COPYRIGHT>
 */
 
-use Laravel\Pennant\Feature;
-
 use function Tests\asSuperAdmin;
 use function Pest\Livewire\livewire;
 
+use Illuminate\Support\Facades\Artisan;
+
+use function Tests\Helpers\rollbackToBefore;
+
 use AdvisingApp\Interaction\Models\Interaction;
-use App\Features\EnableInteractionInitiativesFeature;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
@@ -69,6 +70,8 @@ it('will find and associate the Initiative that was created as a mirror of a Cam
 });
 
 it('will render the InteractionInitiative select after the feature has been activated', function () {
+    rollbackToBefore('2024_03_18_181319_data_fill_interaction_initiatives');
+
     asSuperAdmin()
         ->get(
             InteractionResource::getUrl('create')
@@ -78,7 +81,7 @@ it('will render the InteractionInitiative select after the feature has been acti
     livewire(CreateInteraction::class)
         ->assertFormFieldExists('interaction_campaign_id');
 
-    Feature::activate(EnableInteractionInitiativesFeature::class);
+    Artisan::call('migrate', ['--step' => 1]);
 
     livewire(CreateInteraction::class)
         ->assertFormFieldExists('interaction_initiative_id');
