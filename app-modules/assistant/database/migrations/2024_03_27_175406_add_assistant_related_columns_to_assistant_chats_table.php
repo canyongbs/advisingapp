@@ -52,4 +52,18 @@ return new class () extends Migration {
             $table->json('file_ids')->nullable();
         });
     }
+
+    public function down(): void
+    {
+        Schema::table('assistant_chats', function (Blueprint $table) {
+            $table->dropColumn('assistant_id');
+            $table->dropColumn('thread_id');
+        });
+
+        Schema::table('assistant_chat_messages', function (Blueprint $table) {
+            $table->dropColumn('message_id');
+            $table->dropColumn('run_id');
+            $table->dropColumn('file_ids');
+        });
+    }
 };

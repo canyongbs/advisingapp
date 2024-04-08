@@ -39,6 +39,11 @@ use Spatie\LaravelSettings\Migrations\SettingsMigration;
 return new class () extends SettingsMigration {
     public function up(): void
     {
-        $this->migrator->delete('portal.has_service_management');
+        $this->migrator->deleteIfExists('portal.has_service_management');
+    }
+
+    public function down(): void
+    {
+        $this->migrator->add('portal.has_service_management', false);
     }
 };

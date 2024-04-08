@@ -34,27 +34,54 @@
 </COPYRIGHT>
 */
 
+use Illuminate\Support\Str;
 use Laravel\Pennant\Feature;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
 use App\Features\EnableInteractionInitiativesFeature;
 
 return new class () extends Migration {
     public function up(): void
     {
-        InteractionCampaign::cursor()->each(function (InteractionCampaign $campaign) {
-            $initiative = InteractionInitiative::create([
-                'name' => $campaign->name,
-            ]);
+        ray('up()');
 
-            if ($campaign->interactions()->exists()) {
-                $campaign->interactions->each(function (Interaction $interaction) use ($initiative) {
-                    $interaction->update([
-                        'interaction_initiative_id' => $initiative->id,
+        if (Schema::hasTable('interaction_campaigns') && Schema::hasTable('interaction_initiatives') && Schema::hasTable('interactions')) {
+            DB::table('interaction_campaigns')->orderBy('id')->chunk(100, function ($campaigns) {
+                foreach ($campaigns as $campaign) {
+                    $initiativeId = DB::table('interaction_initiatives')->insertGetId([
+                        'id' => Str::orderedUuid(),
+                        'name' => $campaign->name,
                     ]);
-                });
-            }
-        });
+
+                    $hasInteractions = DB::table('interactions')
+                        ->where('interaction_campaign_id', $campaign->id)
+                        ->exists();
+
+                    if ($hasInteractions) {
+                        DB::table('interactions')
+                            ->where('interaction_campaign_id', $campaign->id)
+                            ->update(['interaction_initiative_id' => $initiativeId]);
+                    }
+                }
+            });
+        }
 
         Feature::activate(EnableInteractionInitiativesFeature::class);
+    }
+
+    public function down(): void
+    {
+        ray('down()');
+
+        if (Schema::hasTable('interaction_campaigns') && Schema::hasTable('interaction_initiatives') && Schema::hasTable('interactions')) {
+            DB::table('interaction_initiatives')->truncate();
+
+            DB::table('interactions')
+                ->whereNotNull('interaction_initiative_id')
+                ->update(['interaction_initiative_id' => null]);
+        }
+
+        Feature::deactivate(EnableInteractionInitiativesFeature::class);
     }
 };

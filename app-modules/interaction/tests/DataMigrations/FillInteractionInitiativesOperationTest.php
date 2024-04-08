@@ -34,24 +34,30 @@
 </COPYRIGHT>
 */
 
-use function Pest\Laravel\artisan;
-
+use Illuminate\Support\Facades\Artisan;
 use AdvisingApp\Prospect\Models\Prospect;
+
+use function Tests\Helpers\rollbackToBefore;
+
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 
 it('will create Initiatives from all existing Campaigns', function () {
+    rollbackToBefore('2024_03_18_181319_data_fill_interaction_initiatives');
+
     InteractionCampaign::factory()->count(10)->createQuietly();
 
     expect(InteractionInitiative::count())->toBe(0);
 
-    artisan('operations:process tenant 2024_03_19_123456_fill_interaction_initiatives --test --sync');
+    Artisan::call('migrate', ['--step' => 1]);
 
     expect(InteractionInitiative::count())->toBe(10);
 });
 
 it('Initiatives will be connected to the Interactions that the Campaigns were connected to', function () {
+    rollbackToBefore('2024_03_18_181319_data_fill_interaction_initiatives');
+
     $campaigns = InteractionCampaign::factory()->count(10)->createQuietly();
 
     $campaigns->each(function (InteractionCampaign $campaign) {
@@ -64,7 +70,7 @@ it('Initiatives will be connected to the Interactions that the Campaigns were co
         ]);
     });
 
-    artisan('operations:process tenant 2024_03_19_123456_fill_interaction_initiatives --test --sync');
+    Artisan::call('migrate', ['--step' => 1]);
 
     Interaction::cursor()->each(function (Interaction $interaction) {
         if (is_null($interaction->interaction_campaign_id)) {
