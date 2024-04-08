@@ -47,7 +47,6 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
-use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Observers\InteractionObserver;
@@ -55,7 +54,6 @@ use AdvisingApp\Interaction\Registries\InteractionRbacRegistry;
 use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
 use AdvisingApp\Interaction\Observers\InteractionStatusObserver;
 use AdvisingApp\Interaction\Observers\InteractionOutcomeObserver;
-use AdvisingApp\Interaction\Observers\InteractionCampaignObserver;
 use AdvisingApp\Interaction\Observers\InteractionRelationObserver;
 
 class InteractionServiceProvider extends ServiceProvider
@@ -70,7 +68,6 @@ class InteractionServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([
-            'interaction_campaign' => InteractionCampaign::class,
             'interaction_driver' => InteractionDriver::class,
             'interaction_initiative' => InteractionInitiative::class,
             'interaction_outcome' => InteractionOutcome::class,
@@ -95,6 +92,5 @@ class InteractionServiceProvider extends ServiceProvider
         InteractionOutcome::observe(InteractionOutcomeObserver::class);
         InteractionStatus::observe(InteractionStatusObserver::class);
         InteractionRelation::observe(InteractionRelationObserver::class);
-        InteractionCampaign::observe(InteractionCampaignObserver::class);
     }
 }
