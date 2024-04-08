@@ -44,8 +44,6 @@ use App\Features\EnableInteractionInitiativesFeature;
 return new class () extends Migration {
     public function up(): void
     {
-        ray('up()');
-
         if (Schema::hasTable('interaction_campaigns') && Schema::hasTable('interaction_initiatives') && Schema::hasTable('interactions')) {
             DB::table('interaction_campaigns')->orderBy('id')->chunk(100, function ($campaigns) {
                 foreach ($campaigns as $campaign) {
@@ -72,8 +70,6 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        ray('down()');
-
         if (Schema::hasTable('interaction_campaigns') && Schema::hasTable('interaction_initiatives') && Schema::hasTable('interactions')) {
             DB::table('interaction_initiatives')->truncate();
 
