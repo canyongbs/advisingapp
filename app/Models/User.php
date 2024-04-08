@@ -487,7 +487,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function revokeLicense(LicenseType $type): bool
     {
-        return (bool) $this->licenses()->where('type', $type)->delete();
+        return (bool) $this->licenses()->where('type', $type)->get()->each->delete();
     }
 
     public function getApiPermissions(): Collection

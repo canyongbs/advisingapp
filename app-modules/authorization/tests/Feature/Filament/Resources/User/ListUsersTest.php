@@ -39,10 +39,14 @@ use App\Models\User;
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+use function PHPUnit\Framework\assertTrue;
+use function PHPUnit\Framework\assertFalse;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use Lab404\Impersonate\Services\ImpersonateManager;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
+use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
 
 it('renders impersonate button for non super admin users when user is super admin', function () {
     asSuperAdmin();
@@ -120,8 +124,8 @@ it('allows super admin user to impersonate', function () {
         ->assertCountTableRecords(2)
         ->callTableAction(Impersonate::class, $user);
 
-    expect($user->isImpersonated())->toBeTrue();
-    expect(auth()->id())->toBe($user->id);
+    expect($user->isImpersonated())->toBeTrue()
+        ->and(auth()->id())->toBe($user->id);
 });
 
 it('allows user with permission to impersonate', function () {
@@ -138,8 +142,8 @@ it('allows user with permission to impersonate', function () {
         ->assertCountTableRecords(2)
         ->callTableAction(Impersonate::class, $second);
 
-    expect($second->isImpersonated())->toBeTrue();
-    expect(auth()->id())->toBe($second->id);
+    expect($second->isImpersonated())->toBeTrue()
+        ->and(auth()->id())->toBe($second->id);
 });
 
 it('allows a user to leave impersonate', function () {
@@ -151,11 +155,56 @@ it('allows a user to leave impersonate', function () {
 
     app(ImpersonateManager::class)->take($first, $second);
 
-    expect($second->isImpersonated())->toBeTrue();
-    expect(auth()->id())->toBe($second->id);
+    expect($second->isImpersonated())->toBeTrue()
+        ->and(auth()->id())->toBe($second->id);
 
     $second->leaveImpersonation();
 
-    expect($second->isImpersonated())->toBeFalse();
-    expect(auth()->id())->toBe($first->id);
+    expect($second->isImpersonated())->toBeFalse()
+        ->and(auth()->id())->toBe($first->id);
+});
+
+it('does not allow a user without permission to assign licenses in bulk', function () {
+    $user = User::factory()->create();
+    $user->assignRole('authorization.user_management');
+    actingAs($user);
+
+    $records = User::factory(2)->create()->prepend($user);
+
+    livewire(ListUsers::class)
+        ->assertSuccessful()
+        ->assertCountTableRecords($records->count())
+        ->assertTableBulkActionHidden(AssignLicensesBulkAction::class);
+});
+
+it('allows a user with permission to assign licenses in bulk', function () {
+    $user = User::factory()->create();
+    $user->assignRole([
+        'authorization.user_management',
+        'authorization.license_management',
+    ]);
+    actingAs($user);
+
+    $records = User::factory(2)->create()->prepend($user);
+
+    $licenseTypes = collect(LicenseType::cases());
+
+    $records->each(function (User $record) use ($licenseTypes) {
+        $licenseTypes->each(fn ($license) => assertFalse($record->hasLicense($license)));
+    });
+
+    livewire(ListUsers::class)
+        ->assertSuccessful()
+        ->assertCountTableRecords($records->count())
+        ->callTableBulkAction(AssignLicensesBulkAction::class, $records, [
+            'replace' => true,
+            ...$licenseTypes->mapWithKeys(fn (LicenseType $licenseType) => [$licenseType->value => true]),
+        ])
+        ->assertHasNoTableBulkActionErrors()
+        ->assertNotified('Assigned Licenses');
+
+    $records->each(function (User $record) use ($licenseTypes) {
+        $record->refresh();
+        $licenseTypes->each(fn (LicenseType $licenseType) => assertTrue($record->hasLicense($licenseType)));
+    });
 });
