@@ -67,4 +67,4 @@ RUN npm ci --ignore-scripts \
 
 RUN chown -R "$PUID":"$PGID" /var/www/html \
     && chgrp "$PGID" /var/www/html/storage/logs \
-    && chmod g+s /var/www/html/storage/logs \
+    && chmod g+s /var/www/html/storage/logs

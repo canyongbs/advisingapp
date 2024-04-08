@@ -577,7 +577,7 @@ class PersonalAssistant extends Page
                             fn (Builder $query) => $query->where('type_id', $get('typeId')),
                         )
                         ->when(
-                            filled($get('myPrompts')),
+                            $get('myPrompts'),
                             fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
                         )))
                     ->getSearchResultsUsing(function (Get $get, string $search) use ($getPromptOptions): array {
@@ -805,7 +805,7 @@ class PersonalAssistant extends Page
         $runId = $this->chat->messages->last()->run_id;
 
         $startTime = time();
-        $timeoutSeconds = 10;
+        $timeoutSeconds = 60;
 
         /** @var BaseAIChatClient $ai */
         while (time() - $startTime < $timeoutSeconds) {
@@ -816,7 +816,7 @@ class PersonalAssistant extends Page
                 return true;
             }
 
-            usleep(500000);
+            sleep(1);
         }
 
         return false;

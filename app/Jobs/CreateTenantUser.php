@@ -38,13 +38,16 @@ namespace App\Jobs;
 
 use App\Models\User;
 use App\Models\Tenant;
+use Illuminate\Support\Arr;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
+use AdvisingApp\Authorization\Models\Role;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Spatie\Multitenancy\Jobs\NotTenantAware;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Multitenancy\DataTransferObjects\TenantUser;
 use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 
@@ -71,7 +74,13 @@ class CreateTenantUser implements ShouldQueue, NotTenantAware
     public function handle(): void
     {
         $this->tenant->execute(function () {
-            User::create($this->data->toArray());
+            $user = User::create($this->data->toArray());
+
+            foreach (Arr::wrap(LicenseType::cases()) as $licenseType) {
+                $user->licenses()->create(['type' => $licenseType]);
+            }
+
+            $user->roles()->sync(Role::where('name', 'authorization.super_admin')->firstOrFail());
         });
     }
 }
