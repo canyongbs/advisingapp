@@ -37,6 +37,7 @@
 namespace App\Exceptions;
 
 use Throwable;
+use Sentry\Laravel\Integration;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
@@ -73,7 +74,9 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->reportable(function (Throwable $e) {});
+        $this->reportable(function (Throwable $e) {
+            Integration::captureUnhandledException($e);
+        });
     }
 
     protected function unauthenticated($request, AuthenticationException $exception)
