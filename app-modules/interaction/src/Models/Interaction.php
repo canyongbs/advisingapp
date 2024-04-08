@@ -174,14 +174,14 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
                     'division_id' => $action->data['division_id'],
                 ];
 
+                if (Schema::hasTable('interaction_initiatives') && Schema::hasColumn((new Interaction())->getTable(), 'interaction_initiative_id')) {
+                    $interactionData['interaction_initiative_id'] = $action->data['interaction_campaign_id'];
+                }
+
                 if (Feature::active(EnableInteractionInitiativesFeature::class)) {
                     $interactionData['interaction_initiative_id'] = $action->data['interaction_initiative_id'];
                 } else {
                     $interactionData['interaction_campaign_id'] = $action->data['interaction_campaign_id'];
-                }
-
-                if (Schema::hasTable('interaction_initiatives') && Schema::hasColumn((new Interaction())->getTable(), 'interaction_initiative_id')) {
-                    $interactionData['interaction_initiative_id'] = $action->data['interaction_campaign_id'];
                 }
 
                 Interaction::create($interactionData);
