@@ -153,6 +153,8 @@ class ManageLicenseSettings extends SettingsPage
                                 ->disabled(fn (LicenseSettings $settings): bool => $settings->data->limits->conversationalAiSeats < 1)
                                 ->live()
                                 ->afterStateUpdated(fn (Toggle $component, $state) => $state ? $component->state(false) && $this->mountAction('enableExperimentalReporting') : null),
+                            Toggle::make('data.addons.scheduleAndAppointments')
+                                ->label('Schedule & Appointments'),
                         ]
                     ),
             ]);

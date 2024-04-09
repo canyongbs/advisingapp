@@ -59,6 +59,8 @@ enum Feature: string
 
     case ExperimentalReporting = 'experimental-reporting';
 
+    case ScheduleAndAppointments = 'schedule-and-appointments';
+
     public function generateGate(): void
     {
         // If features are added that are not based on a License Addon we will need to update this
