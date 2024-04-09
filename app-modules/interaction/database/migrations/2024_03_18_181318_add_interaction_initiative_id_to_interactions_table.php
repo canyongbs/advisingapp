@@ -34,26 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
-use Illuminate\Contracts\Support\Htmlable;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
-
-class EditInteractionCampaign extends EditRecord
-{
-    protected static string $resource = InteractionCampaignResource::class;
-
-    public function getTitle(): string | Htmlable
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'Edit Interaction Initiative';
+        Schema::table('interactions', function (Blueprint $table) {
+            $table->foreignUuid('interaction_initiative_id')->nullable()->constrained('interaction_initiatives');
+        });
     }
 
-    protected function getHeaderActions(): array
+    public function down(): void
     {
-        return [
-            DeleteAction::make(),
-        ];
+        Schema::table('interactions', function (Blueprint $table) {
+            $table->dropColumn('interaction_initiative_id');
+        });
     }
-}
+};

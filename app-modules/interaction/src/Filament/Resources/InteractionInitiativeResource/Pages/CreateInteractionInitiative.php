@@ -34,26 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
+namespace AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages;
 
-use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
-use Illuminate\Contracts\Support\Htmlable;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
+use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
 
-class EditInteractionCampaign extends EditRecord
+class CreateInteractionInitiative extends CreateRecord
 {
-    protected static string $resource = InteractionCampaignResource::class;
-
-    public function getTitle(): string | Htmlable
-    {
-        return 'Edit Interaction Initiative';
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            DeleteAction::make(),
-        ];
-    }
+    protected static string $resource = InteractionInitiativeResource::class;
 }

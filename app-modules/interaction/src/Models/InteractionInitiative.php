@@ -34,26 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
+namespace AdvisingApp\Interaction\Models;
 
-use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
-use Illuminate\Contracts\Support\Htmlable;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
+use App\Models\BaseModel;
+use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
-class EditInteractionCampaign extends EditRecord
+class InteractionInitiative extends BaseModel implements Auditable
 {
-    protected static string $resource = InteractionCampaignResource::class;
+    use AuditableTrait;
+    use HasManyInteractions;
+    use HasFactory;
 
-    public function getTitle(): string | Htmlable
-    {
-        return 'Edit Interaction Initiative';
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            DeleteAction::make(),
-        ];
-    }
+    protected $fillable = [
+        'name',
+    ];
 }

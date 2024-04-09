@@ -34,35 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Database\Seeders;
+use Illuminate\Support\Facades\Artisan;
+use AdvisingApp\Prospect\Models\Prospect;
 
-use Illuminate\Database\Seeder;
+use function Tests\Helpers\rollbackToBefore;
+
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
 
-class InteractionCampaignSeeder extends Seeder
-{
-    public function run(): void
-    {
-        InteractionCampaign::factory()
-            ->createManyQuietly(
-                [
-                    ['name' => 'N/A'],
-                    ['name' => 'College Applicant to Matriculation'],
-                    ['name' => 'College Inquiry to Applicant'],
-                    ['name' => 'College Matriculation to Enroll'],
-                    ['name' => 'College RFI'],
-                    ['name' => 'District Inquiry to Applicant'],
-                    ['name' => 'Dual Reengagement'],
-                    ['name' => 'Early College Plan Update'],
-                    ['name' => 'Early College Transition'],
-                    ['name' => 'Enrollment Cancellation Outreach'],
-                    ['name' => 'Enrollment Cancellation Recovery'],
-                    ['name' => 'Financial Aid Awarded Not Enrolled'],
-                    ['name' => 'Financial Aid Task List'],
-                    ['name' => 'MIH Follow Up'],
-                    ['name' => 'MIH Text'],
-                    ['name' => 'Third Party SEM'],
-                ]
-            );
-    }
-}
+it('will create Initiatives from all existing Campaigns', function () {
+    rollbackToBefore('2024_03_18_181319_data_fill_interaction_initiatives');
+
+    InteractionCampaign::factory()->count(10)->createQuietly();
+
+    expect(InteractionInitiative::count())->toBe(0);
+
+    Artisan::call('migrate', ['--step' => 1]);
+
+    expect(InteractionInitiative::count())->toBe(10);
+});
+
+it('Initiatives will be connected to the Interactions that the Campaigns were connected to', function () {
+    rollbackToBefore('2024_03_18_181319_data_fill_interaction_initiatives');
+
+    $campaigns = InteractionCampaign::factory()->count(10)->createQuietly();
+
+    $campaigns->each(function (InteractionCampaign $campaign) {
+        $prospect = Prospect::factory()->create();
+
+        Interaction::factory()->createQuietly([
+            'interactable_id' => $prospect->id,
+            'interactable_type' => $prospect->getMorphClass(),
+            'interaction_campaign_id' => $campaign->id,
+        ]);
+    });
+
+    Artisan::call('migrate', ['--step' => 1]);
+
+    Interaction::cursor()->each(function (Interaction $interaction) {
+        if (is_null($interaction->interaction_campaign_id)) {
+            return;
+        }
+
+        $initiative = InteractionInitiative::where('name', $interaction->campaign->name)->first();
+
+        expect($interaction->interaction_initiative_id)->toBe($initiative->id);
+    });
+});

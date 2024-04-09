@@ -34,26 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
+namespace AdvisingApp\Interaction\Database\Factories;
 
-use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
-use Illuminate\Contracts\Support\Htmlable;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class EditInteractionCampaign extends EditRecord
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Interaction\Models\InteractionInitiative>
+ */
+class InteractionInitiativeFactory extends Factory
 {
-    protected static string $resource = InteractionCampaignResource::class;
-
-    public function getTitle(): string | Htmlable
-    {
-        return 'Edit Interaction Initiative';
-    }
-
-    protected function getHeaderActions(): array
+    public function definition(): array
     {
         return [
-            DeleteAction::make(),
+            'name' => fake()->unique()->word(),
         ];
     }
 }

@@ -34,26 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
+namespace Tests\Helpers;
 
-use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
-use Illuminate\Contracts\Support\Htmlable;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
+use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 
-class EditInteractionCampaign extends EditRecord
+function rollbackToBefore(string $migrationToRollbackTo)
 {
-    protected static string $resource = InteractionCampaignResource::class;
-
-    public function getTitle(): string | Htmlable
-    {
-        return 'Edit Interaction Initiative';
+    if (app()->environment('production')) {
+        throw new Exception('This cannot safely be run in production environments.');
     }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            DeleteAction::make(),
-        ];
+    $targetMigration = DB::table('migrations')
+        ->where('migration', $migrationToRollbackTo)
+        ->first();
+
+    if (! $targetMigration) {
+        throw new Exception("Migration not found: {$migrationToRollbackTo}");
+    }
+
+    $rollbackSteps = DB::table('migrations')
+        ->where('id', '>', $targetMigration->id)
+        ->count() + 1;
+
+    if ($rollbackSteps > 0) {
+        Artisan::call('migrate:rollback', ['--step' => $rollbackSteps]);
     }
 }

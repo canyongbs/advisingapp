@@ -34,36 +34,50 @@
 </COPYRIGHT>
 */
 
+use Illuminate\Support\Str;
+use Laravel\Pennant\Feature;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use App\Features\EnableInteractionInitiativesFeature;
 
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('assistant_chats', function (Blueprint $table) {
-            $table->string('assistant_id')->nullable();
-            $table->string('thread_id')->nullable();
-        });
+        if (Schema::hasTable('interaction_campaigns') && Schema::hasTable('interaction_initiatives') && Schema::hasTable('interactions')) {
+            DB::table('interaction_campaigns')->orderBy('id')->chunk(100, function ($campaigns) {
+                foreach ($campaigns as $campaign) {
+                    $initiativeId = DB::table('interaction_initiatives')->insertGetId([
+                        'id' => Str::orderedUuid(),
+                        'name' => $campaign->name,
+                    ]);
 
-        Schema::table('assistant_chat_messages', function (Blueprint $table) {
-            $table->string('message_id')->nullable();
-            $table->string('run_id')->nullable();
-            $table->json('file_ids')->nullable();
-        });
+                    $hasInteractions = DB::table('interactions')
+                        ->where('interaction_campaign_id', $campaign->id)
+                        ->exists();
+
+                    if ($hasInteractions) {
+                        DB::table('interactions')
+                            ->where('interaction_campaign_id', $campaign->id)
+                            ->update(['interaction_initiative_id' => $initiativeId]);
+                    }
+                }
+            });
+        }
+
+        Feature::activate(EnableInteractionInitiativesFeature::class);
     }
 
     public function down(): void
     {
-        Schema::table('assistant_chats', function (Blueprint $table) {
-            $table->dropColumn('assistant_id');
-            $table->dropColumn('thread_id');
-        });
+        if (Schema::hasTable('interaction_campaigns') && Schema::hasTable('interaction_initiatives') && Schema::hasTable('interactions')) {
+            DB::table('interaction_initiatives')->truncate();
 
-        Schema::table('assistant_chat_messages', function (Blueprint $table) {
-            $table->dropColumn('message_id');
-            $table->dropColumn('run_id');
-            $table->dropColumn('file_ids');
-        });
+            DB::table('interactions')
+                ->whereNotNull('interaction_initiative_id')
+                ->update(['interaction_initiative_id' => null]);
+        }
+
+        Feature::deactivate(EnableInteractionInitiativesFeature::class);
     }
 };

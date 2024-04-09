@@ -39,6 +39,7 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages;
 use Filament\Actions;
 use Filament\Tables\Table;
 use Carbon\CarbonInterface;
+use Laravel\Pennant\Feature;
 use Filament\Actions\ImportAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -47,6 +48,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Interaction\Models\Interaction;
+use App\Features\EnableInteractionInitiativesFeature;
 use AdvisingApp\Interaction\Imports\InteractionsImporter;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
 
@@ -59,8 +61,12 @@ class ListInteractions extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('campaign.name')
-                    ->searchable(),
+                Feature::active(EnableInteractionInitiativesFeature::class)
+                    ? TextColumn::make('initiative.name')
+                        ->searchable()
+                    : TextColumn::make('campaign.name')
+                        ->label('Initiative')
+                        ->searchable(),
                 TextColumn::make('driver.name')
                     ->searchable(),
                 TextColumn::make('division.name')
