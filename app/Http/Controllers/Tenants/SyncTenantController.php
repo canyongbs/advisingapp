@@ -34,23 +34,37 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Tenants\SyncTenantController;
-use App\Http\Controllers\UpdateBrandSettingsController;
-use App\Http\Controllers\Tenants\CreateTenantController;
-use App\Http\Controllers\Tenants\DeleteTenantController;
+namespace App\Http\Controllers\Tenants;
 
-Route::post('tenants', CreateTenantController::class)
-    ->name('tenants.create');
+use App\Models\Tenant;
+use Illuminate\Http\JsonResponse;
+use App\Jobs\UpdateTenantLicenseData;
+use App\Http\Requests\Tenants\SyncTenantRequest;
+use App\DataTransferObjects\LicenseManagement\LicenseData;
+use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
+use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
+use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
 
-Route::delete('tenants/{tenant}', DeleteTenantController::class)
-    ->name('tenants.delete');
+class SyncTenantController
+{
+    public function __invoke(SyncTenantRequest $request, Tenant $tenant): JsonResponse
+    {
+        $licenseData = new LicenseData(
+            updatedAt: now(),
+            subscription: new LicenseSubscriptionData(
+                clientName: 'Jane Smith',
+                partnerName: 'Fake Edu Tech',
+                clientPo: 'abc123',
+                partnerPo: 'def456',
+                startDate: now(),
+                endDate: now()->addYear(),
+            ),
+            limits: LicenseLimitsData::from($request->validated('limits')),
+            addons: LicenseAddonsData::from($request->validated('addons')),
+        );
 
-Route::post('tenants/{tenant}/sync', SyncTenantController::class)
-    ->name('tenants.sync');
+        dispatch_sync(new UpdateTenantLicenseData($tenant, $licenseData));
 
-Route::post('brand', UpdateBrandSettingsController::class)
-    ->name('brand.update');
-
-Route::post('test', fn () => true)
-    ->name('test');
+        return response()->json();
+    }
+}
