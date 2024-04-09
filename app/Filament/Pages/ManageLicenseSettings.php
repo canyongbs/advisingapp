@@ -75,6 +75,8 @@ class ManageLicenseSettings extends SettingsPage
                     ->dehydrated(),
                 Section::make('Subscription Information')
                     ->columns()
+                    ->disabled()
+                    ->dehydrated()
                     ->schema(
                         [
                             TextInput::make('data.subscription.clientName')
@@ -101,6 +103,8 @@ class ManageLicenseSettings extends SettingsPage
                     ),
                 Section::make('Limits Configuration')
                     ->columns()
+                    ->disabled()
+                    ->dehydrated()
                     ->schema(
                         [
                             TextInput::make('data.limits.conversationalAiSeats')
@@ -130,6 +134,8 @@ class ManageLicenseSettings extends SettingsPage
                     ),
                 Section::make('Enabled Features')
                     ->columns()
+                    ->disabled()
+                    ->dehydrated()
                     ->schema(
                         [
                             Toggle::make('data.addons.onlineForms')
