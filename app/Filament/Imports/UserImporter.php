@@ -60,8 +60,6 @@ class UserImporter extends Importer
 
     protected function afterCreate(): void
     {
-        ray('UserImporter.afterCreate()');
-
         /** @var User $user */
         $user = $this->getRecord();
 
