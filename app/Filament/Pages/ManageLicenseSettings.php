@@ -66,6 +66,8 @@ class ManageLicenseSettings extends SettingsPage
 
     public function form(Form $form): Form
     {
+        $allowEditing = config('app.allow_license_settings_editing');
+
         return $form
             ->schema([
                 TextInput::make('license_key')
@@ -75,8 +77,8 @@ class ManageLicenseSettings extends SettingsPage
                     ->dehydrated(),
                 Section::make('Subscription Information')
                     ->columns()
-                    ->disabled()
-                    ->dehydrated()
+                    ->disabled(! $allowEditing)
+                    ->dehydrated(! $allowEditing)
                     ->schema(
                         [
                             TextInput::make('data.subscription.clientName')
@@ -103,8 +105,8 @@ class ManageLicenseSettings extends SettingsPage
                     ),
                 Section::make('Limits Configuration')
                     ->columns()
-                    ->disabled()
-                    ->dehydrated()
+                    ->disabled(! $allowEditing)
+                    ->dehydrated(! $allowEditing)
                     ->schema(
                         [
                             TextInput::make('data.limits.conversationalAiSeats')
@@ -134,8 +136,8 @@ class ManageLicenseSettings extends SettingsPage
                     ),
                 Section::make('Enabled Features')
                     ->columns()
-                    ->disabled()
-                    ->dehydrated()
+                    ->disabled(! $allowEditing)
+                    ->dehydrated(! $allowEditing)
                     ->schema(
                         [
                             Toggle::make('data.addons.onlineForms')
@@ -177,6 +179,8 @@ class ManageLicenseSettings extends SettingsPage
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
+        ray($data);
+
         return [
             'data' => LicenseData::from(
                 [
