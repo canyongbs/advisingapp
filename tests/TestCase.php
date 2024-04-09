@@ -40,6 +40,7 @@ use App\Models\Tenant;
 use Illuminate\Support\Str;
 use Tests\Concerns\LoadsFixtures;
 use Symfony\Component\Finder\Finder;
+use App\Jobs\UpdateTenantLicenseData;
 use Symfony\Component\Process\Process;
 use Illuminate\Contracts\Console\Kernel;
 use Symfony\Component\Finder\SplFileInfo;
@@ -125,6 +126,41 @@ abstract class TestCase extends BaseTestCase
                     '--tenant' => Tenant::current()->id,
                 ],
             );
+
+            dispatch_sync(new UpdateTenantLicenseData(
+                Tenant::current(),
+                new LicenseData(
+                    updatedAt: now(),
+                    subscription: new LicenseSubscriptionData(
+                        clientName: 'Jane Smith',
+                        partnerName: 'Fake Edu Tech',
+                        clientPo: 'abc123',
+                        partnerPo: 'def456',
+                        startDate: now(),
+                        endDate: now()->addYear(),
+                    ),
+                    limits: new LicenseLimitsData(
+                        conversationalAiSeats: 50,
+                        retentionCrmSeats: 25,
+                        recruitmentCrmSeats: 10,
+                        emails: 1000,
+                        sms: 1000,
+                        resetDate: now()->format('m-d'),
+                    ),
+                    addons: new LicenseAddonsData(
+                        onlineForms: true,
+                        onlineSurveys: true,
+                        onlineAdmissions: true,
+                        serviceManagement: true,
+                        knowledgeManagement: true,
+                        eventManagement: true,
+                        realtimeChat: true,
+                        mobileApps: true,
+                        experimentalReporting: true,
+                        scheduleAndAppointments: true,
+                    ),
+                )
+            ));
         });
 
         Tenant::forgetCurrent();
@@ -244,37 +280,11 @@ abstract class TestCase extends BaseTestCase
     protected function refreshTestDatabase()
     {
         if (! RefreshDatabaseState::$migrated) {
-            $cachedLandlordChecksum = $this->getCachedMigrationChecksum('landlord');
-            $currentLandlordChecksum = $this->calculateMigrationChecksum(
-                [
-                    database_path('landlord'),
-                ]
-            );
+            $this->createLandlordTestingEnvironment();
 
-            if ($cachedLandlordChecksum !== $currentLandlordChecksum) {
-                $this->createLandlordTestingEnvironment();
+            //$this->app[Kernel::class]->setArtisan(null);
 
-                $this->app[Kernel::class]->setArtisan(null);
-
-                $this->storeMigrationChecksum('landlord', $currentLandlordChecksum);
-            }
-
-            $cachedTenantChecksum = $this->getCachedMigrationChecksum('tenant');
-            $currentTenantChecksum = $this->calculateMigrationChecksum(
-                [
-                    database_path('migrations'),
-                    database_path('settings'),
-                    base_path('app-modules/*/database/migrations'),
-                    base_path('app-modules/*/config/**'),
-                    base_path('app-modules/*/src/Models'),
-                ]
-            );
-
-            if ($cachedTenantChecksum !== $currentTenantChecksum) {
-                $this->createTenantTestingEnvironment();
-
-                $this->storeMigrationChecksum('tenant', $currentTenantChecksum);
-            }
+            $this->createTenantTestingEnvironment();
 
             $this->app[Kernel::class]->setArtisan(null);
 
