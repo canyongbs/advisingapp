@@ -41,12 +41,16 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
+use App\DataTransferObjects\LicenseManagement\LicenseData;
 use App\Multitenancy\DataTransferObjects\TenantMailConfig;
 use App\Multitenancy\DataTransferObjects\TenantMailersConfig;
 use App\Multitenancy\DataTransferObjects\TenantDatabaseConfig;
+use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
+use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
 use App\Multitenancy\Actions\CreateTenant as CreateTenantAction;
 use App\Multitenancy\DataTransferObjects\TenantSmtpMailerConfig;
 use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
+use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
 
 class CreateTenant extends Command
 {
@@ -122,7 +126,38 @@ class CreateTenant extends Command
                     fromAddress: config('mail.from.address'),
                     fromName: config('mail.from.name')
                 ),
-            )
+            ),
+            licenseData: new LicenseData(
+                updatedAt: now(),
+                subscription: new LicenseSubscriptionData(
+                    clientName: 'Jane Smith',
+                    partnerName: 'Fake Edu Tech',
+                    clientPo: 'abc123',
+                    partnerPo: 'def456',
+                    startDate: now(),
+                    endDate: now()->addYear(),
+                ),
+                limits: new LicenseLimitsData(
+                    conversationalAiSeats: 50,
+                    retentionCrmSeats: 25,
+                    recruitmentCrmSeats: 10,
+                    emails: 1000,
+                    sms: 1000,
+                    resetDate: now()->format('m-d'),
+                ),
+                addons: new LicenseAddonsData(
+                    onlineForms: true,
+                    onlineSurveys: true,
+                    onlineAdmissions: true,
+                    serviceManagement: true,
+                    knowledgeManagement: true,
+                    eventManagement: true,
+                    realtimeChat: true,
+                    mobileApps: true,
+                    experimentalReporting: true,
+                    //scheduleAndAppointments: true,
+                ),
+            ),
         );
 
         if ($this->option('run-queue') || $this->confirm('Run the queue to migrate tenant databases?')) {
