@@ -56,13 +56,16 @@ $licenses = [
     LicenseType::ConversationalAi,
 ];
 
-$roles = [
-    'assistant.assistant_prompt_management',
+$permissions = [
+    'prompt_type.view-any',
+    'prompt_type.create',
+    'prompt_type.*.view',
+    'prompt_type.*.update',
 ];
 
-it('cannot render without a license', function () use ($roles) {
+it('cannot render without a license', function () use ($permissions) {
     actingAs(user(
-        roles: $roles
+        permissions: $permissions
     ));
 
     $record = PromptType::factory()->create();
@@ -86,10 +89,10 @@ it('cannot render without permissions', function () use ($licenses) {
         ->assertForbidden();
 });
 
-it('can render', function () use ($licenses, $roles) {
+it('can render', function () use ($licenses, $permissions) {
     actingAs(user(
         licenses: $licenses,
-        roles: $roles
+        permissions: $permissions
     ));
 
     $record = PromptType::factory()->create();
@@ -100,10 +103,10 @@ it('can render', function () use ($licenses, $roles) {
         ->assertSuccessful();
 });
 
-it('can edit a record', function () use ($licenses, $roles) {
+it('can edit a record', function () use ($licenses, $permissions) {
     actingAs(user(
         licenses: $licenses,
-        roles: $roles
+        permissions: $permissions
     ));
 
     $record = PromptType::factory()->make();
@@ -121,10 +124,10 @@ it('can edit a record', function () use ($licenses, $roles) {
     assertDatabaseHas(PromptType::class, $record->toArray());
 });
 
-it('can delete a record', function () use ($licenses, $roles) {
+it('can delete a record', function () use ($licenses, $permissions) {
     actingAs(user(
         licenses: $licenses,
-        roles: $roles
+        permissions: $permissions
     ));
 
     $record = PromptType::factory()->create();

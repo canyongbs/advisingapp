@@ -51,8 +51,10 @@ $licenses = [
     LicenseType::ConversationalAi,
 ];
 
-$roles = [
-    'assistant.assistant_prompt_management',
+$permissions = [
+    'prompt.view-any',
+    'prompt.create',
+    'prompt.*.view',
 ];
 
 it('cannot render without a license', function () use ($roles) {
