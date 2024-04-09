@@ -41,11 +41,15 @@ use App\Multitenancy\Actions\CreateTenant;
 use App\Http\Requests\Tenants\CreateTenantRequest;
 use App\Multitenancy\DataTransferObjects\TenantUser;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
+use App\DataTransferObjects\LicenseManagement\LicenseData;
 use App\Multitenancy\DataTransferObjects\TenantMailConfig;
 use App\Multitenancy\DataTransferObjects\TenantMailersConfig;
 use App\Multitenancy\DataTransferObjects\TenantDatabaseConfig;
+use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
+use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
 use App\Multitenancy\DataTransferObjects\TenantSmtpMailerConfig;
 use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
+use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
 
 class CreateTenantController
 {
@@ -106,6 +110,19 @@ class CreateTenantController
                 email: $request->validated('user.email'),
                 password: $request->validated('user.password'),
             ),
+            new LicenseData(
+                updatedAt: now(),
+                subscription: new LicenseSubscriptionData(
+                    clientName: 'Jane Smith',
+                    partnerName: 'Fake Edu Tech',
+                    clientPo: 'abc123',
+                    partnerPo: 'def456',
+                    startDate: now(),
+                    endDate: now()->addYear(),
+                ),
+                limits: LicenseLimitsData::from($request->validated('limits')),
+                addons: LicenseAddonsData::from($request->validated('addons')),
+            )
         );
 
         return response()->json(['tenant' => [

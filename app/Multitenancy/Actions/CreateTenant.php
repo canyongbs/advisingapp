@@ -44,10 +44,12 @@ use App\Jobs\MigrateTenantDatabase;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Event;
+use App\Jobs\UpdateTenantLicenseData;
 use App\Jobs\DispatchTenantSetupCompleteEvent;
 use App\Multitenancy\Events\NewTenantSetupFailure;
 use App\Multitenancy\DataTransferObjects\TenantUser;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
+use App\DataTransferObjects\LicenseManagement\LicenseData;
 
 class CreateTenant
 {
@@ -56,6 +58,7 @@ class CreateTenant
         string $domain,
         TenantConfig $config,
         ?TenantUser $user = null,
+        ?LicenseData $licenseData = null,
     ): ?Tenant {
         $tenant = Tenant::query()->create([
             'name' => $name,
@@ -69,6 +72,7 @@ class CreateTenant
                 new MigrateTenantDatabase($tenant),
                 new SeedTenantDatabase($tenant),
                 ...($user ? [new CreateTenantUser($tenant, $user)] : []),
+                ...($licenseData ? [new UpdateTenantLicenseData($tenant, $licenseData)] : []),
                 new DispatchTenantSetupCompleteEvent($tenant),
             ],
         ])
