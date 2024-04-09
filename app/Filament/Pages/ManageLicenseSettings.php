@@ -78,7 +78,6 @@ class ManageLicenseSettings extends SettingsPage
                 Section::make('Subscription Information')
                     ->columns()
                     ->disabled(! $allowEditing)
-                    ->dehydrated(! $allowEditing)
                     ->schema(
                         [
                             TextInput::make('data.subscription.clientName')
@@ -106,7 +105,6 @@ class ManageLicenseSettings extends SettingsPage
                 Section::make('Limits Configuration')
                     ->columns()
                     ->disabled(! $allowEditing)
-                    ->dehydrated(! $allowEditing)
                     ->schema(
                         [
                             TextInput::make('data.limits.conversationalAiSeats')
@@ -137,7 +135,6 @@ class ManageLicenseSettings extends SettingsPage
                 Section::make('Enabled Features')
                     ->columns()
                     ->disabled(! $allowEditing)
-                    ->dehydrated(! $allowEditing)
                     ->schema(
                         [
                             Toggle::make('data.addons.onlineForms')
@@ -165,7 +162,8 @@ class ManageLicenseSettings extends SettingsPage
                                 ->label('Schedule & Appointments'),
                         ]
                     ),
-            ]);
+            ])
+            ->disabled(! $allowEditing);
     }
 
     public function enableExperimentalReporting(): Action
@@ -179,8 +177,6 @@ class ManageLicenseSettings extends SettingsPage
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        ray($data);
-
         return [
             'data' => LicenseData::from(
                 [

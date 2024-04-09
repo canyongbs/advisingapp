@@ -43,8 +43,8 @@ use App\Jobs\SeedTenantDatabase;
 use App\Jobs\MigrateTenantDatabase;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Encryption\Encrypter;
-use Illuminate\Support\Facades\Event;
 use App\Jobs\UpdateTenantLicenseData;
+use Illuminate\Support\Facades\Event;
 use App\Jobs\DispatchTenantSetupCompleteEvent;
 use App\Multitenancy\Events\NewTenantSetupFailure;
 use App\Multitenancy\DataTransferObjects\TenantUser;
@@ -71,8 +71,8 @@ class CreateTenant
             [
                 new MigrateTenantDatabase($tenant),
                 new SeedTenantDatabase($tenant),
-                ...($user ? [new CreateTenantUser($tenant, $user)] : []),
                 ...($licenseData ? [new UpdateTenantLicenseData($tenant, $licenseData)] : []),
+                ...($user ? [new CreateTenantUser($tenant, $user)] : []),
                 new DispatchTenantSetupCompleteEvent($tenant),
             ],
         ])
