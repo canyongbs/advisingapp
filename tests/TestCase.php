@@ -51,13 +51,17 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Spatie\Multitenancy\Concerns\UsesMultitenancyConfig;
+use App\DataTransferObjects\LicenseManagement\LicenseData;
 use App\Multitenancy\DataTransferObjects\TenantMailConfig;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use App\Multitenancy\DataTransferObjects\TenantMailersConfig;
 use App\Multitenancy\DataTransferObjects\TenantDatabaseConfig;
 use Illuminate\Foundation\Testing\DatabaseTransactionsManager;
+use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
+use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
 use App\Multitenancy\DataTransferObjects\TenantSmtpMailerConfig;
 use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
+use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
 use AdvisingApp\Authorization\Console\Commands\SyncRolesAndPermissions;
 use Illuminate\Foundation\Testing\Traits\CanConfigureMigrationCommands;
 
@@ -202,7 +206,38 @@ abstract class TestCase extends BaseTestCase
                     fromAddress: config('mail.from.address'),
                     fromName: config('mail.from.name')
                 ),
-            )
+            ),
+            licenseData: new LicenseData(
+                updatedAt: now(),
+                subscription: new LicenseSubscriptionData(
+                    clientName: 'Jane Smith',
+                    partnerName: 'Fake Edu Tech',
+                    clientPo: 'abc123',
+                    partnerPo: 'def456',
+                    startDate: now(),
+                    endDate: now()->addYear(),
+                ),
+                limits: new LicenseLimitsData(
+                    conversationalAiSeats: 50,
+                    retentionCrmSeats: 25,
+                    recruitmentCrmSeats: 10,
+                    emails: 1000,
+                    sms: 1000,
+                    resetDate: now()->format('m-d'),
+                ),
+                addons: new LicenseAddonsData(
+                    onlineForms: true,
+                    onlineSurveys: true,
+                    onlineAdmissions: true,
+                    serviceManagement: true,
+                    knowledgeManagement: true,
+                    eventManagement: true,
+                    realtimeChat: true,
+                    mobileApps: true,
+                    experimentalReporting: true,
+                    scheduleAndAppointments: true,
+                ),
+            ),
         );
     }
 
