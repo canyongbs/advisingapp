@@ -116,7 +116,7 @@ abstract class TestCase extends BaseTestCase
         $tenant->execute(function () use ($tenant) {
             $this->artisan('migrate:fresh', [
                 '--database' => $this->tenantDatabaseConnectionName(),
-                '--seeder' => 'SisDataSeeder',
+                '--seeder' => 'StudentSeeder',
                 ...$this->migrateFreshUsing(),
             ]);
 
