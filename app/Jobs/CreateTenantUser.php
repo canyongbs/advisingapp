@@ -77,7 +77,10 @@ class CreateTenantUser implements ShouldQueue, NotTenantAware
             $user = User::create($this->data->toArray());
 
             foreach (Arr::wrap(LicenseType::cases()) as $licenseType) {
-                $user->licenses()->create(['type' => $licenseType]);
+                /** @var LicenseType $licenseType */
+                if ($licenseType->hasAvailableLicenses()) {
+                    $user->licenses()->create(['type' => $licenseType]);
+                }
             }
 
             $user->roles()->sync(Role::where('name', 'authorization.super_admin')->firstOrFail());

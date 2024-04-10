@@ -40,6 +40,7 @@ use App\Models\Tenant;
 use Illuminate\Support\Str;
 use Tests\Concerns\LoadsFixtures;
 use Symfony\Component\Finder\Finder;
+use App\Jobs\UpdateTenantLicenseData;
 use Symfony\Component\Process\Process;
 use Illuminate\Contracts\Console\Kernel;
 use Symfony\Component\Finder\SplFileInfo;
@@ -51,13 +52,17 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Spatie\Multitenancy\Concerns\UsesMultitenancyConfig;
+use App\DataTransferObjects\LicenseManagement\LicenseData;
 use App\Multitenancy\DataTransferObjects\TenantMailConfig;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use App\Multitenancy\DataTransferObjects\TenantMailersConfig;
 use App\Multitenancy\DataTransferObjects\TenantDatabaseConfig;
 use Illuminate\Foundation\Testing\DatabaseTransactionsManager;
+use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
+use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
 use App\Multitenancy\DataTransferObjects\TenantSmtpMailerConfig;
 use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
+use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
 use AdvisingApp\Authorization\Console\Commands\SyncRolesAndPermissions;
 use Illuminate\Foundation\Testing\Traits\CanConfigureMigrationCommands;
 
@@ -108,17 +113,52 @@ abstract class TestCase extends BaseTestCase
 
         $tenant->makeCurrent();
 
-        $tenant->execute(function () {
+        $tenant->execute(function () use ($tenant) {
             $this->artisan('migrate:fresh', [
                 '--database' => $this->tenantDatabaseConnectionName(),
-                '--seeder' => 'SisDataSeeder',
+                '--seeder' => 'StudentSeeder',
                 ...$this->migrateFreshUsing(),
             ]);
+
+            dispatch_sync(new UpdateTenantLicenseData(
+                $tenant,
+                new LicenseData(
+                    updatedAt: now(),
+                    subscription: new LicenseSubscriptionData(
+                        clientName: 'Jane Smith',
+                        partnerName: 'Fake Edu Tech',
+                        clientPo: 'abc123',
+                        partnerPo: 'def456',
+                        startDate: now(),
+                        endDate: now()->addYear(),
+                    ),
+                    limits: new LicenseLimitsData(
+                        conversationalAiSeats: 50,
+                        retentionCrmSeats: 25,
+                        recruitmentCrmSeats: 10,
+                        emails: 1000,
+                        sms: 1000,
+                        resetDate: now()->format('m-d'),
+                    ),
+                    addons: new LicenseAddonsData(
+                        onlineForms: true,
+                        onlineSurveys: true,
+                        onlineAdmissions: true,
+                        serviceManagement: true,
+                        knowledgeManagement: true,
+                        eventManagement: true,
+                        realtimeChat: true,
+                        mobileApps: true,
+                        experimentalReporting: true,
+                        scheduleAndAppointments: true,
+                    )
+                )
+            ));
 
             $this->artisan(
                 command: SyncRolesAndPermissions::class,
                 parameters: [
-                    '--tenant' => Tenant::current()->id,
+                    '--tenant' => $tenant->getKey(),
                 ],
             );
         });
@@ -202,44 +242,47 @@ abstract class TestCase extends BaseTestCase
                     fromAddress: config('mail.from.address'),
                     fromName: config('mail.from.name')
                 ),
-            )
+            ),
+            licenseData: new LicenseData(
+                updatedAt: now(),
+                subscription: new LicenseSubscriptionData(
+                    clientName: 'Jane Smith',
+                    partnerName: 'Fake Edu Tech',
+                    clientPo: 'abc123',
+                    partnerPo: 'def456',
+                    startDate: now(),
+                    endDate: now()->addYear(),
+                ),
+                limits: new LicenseLimitsData(
+                    conversationalAiSeats: 50,
+                    retentionCrmSeats: 25,
+                    recruitmentCrmSeats: 10,
+                    emails: 1000,
+                    sms: 1000,
+                    resetDate: now()->format('m-d'),
+                ),
+                addons: new LicenseAddonsData(
+                    onlineForms: true,
+                    onlineSurveys: true,
+                    onlineAdmissions: true,
+                    serviceManagement: true,
+                    knowledgeManagement: true,
+                    eventManagement: true,
+                    realtimeChat: true,
+                    mobileApps: true,
+                    experimentalReporting: true,
+                    scheduleAndAppointments: true,
+                ),
+            ),
         );
     }
 
     protected function refreshTestDatabase()
     {
         if (! RefreshDatabaseState::$migrated) {
-            $cachedLandlordChecksum = $this->getCachedMigrationChecksum('landlord');
-            $currentLandlordChecksum = $this->calculateMigrationChecksum(
-                [
-                    database_path('landlord'),
-                ]
-            );
+            $this->createLandlordTestingEnvironment();
 
-            if ($cachedLandlordChecksum !== $currentLandlordChecksum) {
-                $this->createLandlordTestingEnvironment();
-
-                $this->app[Kernel::class]->setArtisan(null);
-
-                $this->storeMigrationChecksum('landlord', $currentLandlordChecksum);
-            }
-
-            $cachedTenantChecksum = $this->getCachedMigrationChecksum('tenant');
-            $currentTenantChecksum = $this->calculateMigrationChecksum(
-                [
-                    database_path('migrations'),
-                    database_path('settings'),
-                    base_path('app-modules/*/database/migrations'),
-                    base_path('app-modules/*/config/**'),
-                    base_path('app-modules/*/src/Models'),
-                ]
-            );
-
-            if ($cachedTenantChecksum !== $currentTenantChecksum) {
-                $this->createTenantTestingEnvironment();
-
-                $this->storeMigrationChecksum('tenant', $currentTenantChecksum);
-            }
+            $this->createTenantTestingEnvironment();
 
             $this->app[Kernel::class]->setArtisan(null);
 

@@ -51,13 +51,15 @@ $licenses = [
     LicenseType::ConversationalAi,
 ];
 
-$roles = [
-    'assistant.assistant_prompt_management',
+$permissions = [
+    'prompt.view-any',
+    'prompt.create',
+    'prompt.*.view',
 ];
 
-it('cannot render without a license', function () use ($roles) {
+it('cannot render without a license', function () use ($permissions) {
     actingAs(user(
-        roles: $roles
+        permissions: $permissions
     ));
 
     get(PromptResource::getUrl())
@@ -73,20 +75,20 @@ it('cannot render without permissions', function () use ($licenses) {
         ->assertForbidden();
 });
 
-it('can render', function () use ($licenses, $roles) {
+it('can render', function () use ($licenses, $permissions) {
     actingAs(user(
         licenses: $licenses,
-        roles: $roles
+        permissions: $permissions
     ));
 
     get(PromptResource::getUrl())
         ->assertSuccessful();
 });
 
-it('can list records', function () use ($licenses, $roles) {
+it('can list records', function () use ($licenses, $permissions) {
     actingAs(user(
         licenses: $licenses,
-        roles: $roles
+        permissions: $permissions
     ));
 
     assertDatabaseCount(Prompt::class, 0);

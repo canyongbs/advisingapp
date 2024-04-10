@@ -41,36 +41,37 @@ return new class () extends SettingsMigration {
     {
         // TODO: When we eventually have a paradigm for validating and retrieving license data, change this to both default to null, nothing passed into the second argument
 
-        $this->migrator->addEncrypted('license.license_key', 'ABCD-1234-EFGH-5678');
+        $this->migrator->addEncrypted('license.license_key', null);
         $this->migrator->addEncrypted(
             'license.data',
             [
                 'updated_at' => now(),
                 'subscription' => [
-                    'client_name' => 'Jane Smith',
-                    'partner_name' => 'Fake Edu Tech',
-                    'client_po' => 'abc123',
-                    'partner_po' => 'def456',
-                    'start_date' => now(),
-                    'end_date' => now()->addYear(),
+                    'client_name' => null,
+                    'partner_name' => null,
+                    'client_po' => null,
+                    'partner_po' => null,
+                    'start_date' => null,
+                    'end_date' => null,
                 ],
                 'limits' => [
-                    'conversational_ai_seats' => 50,
-                    'retention_crm_seats' => 25,
-                    'recruitment_crm_seats' => 10,
-                    'emails' => 1000,
-                    'sms' => 1000,
-                    'reset_date' => now()->format('m-d'),
+                    'conversational_ai_seats' => 0,
+                    'retention_crm_seats' => 0,
+                    'recruitment_crm_seats' => 0,
+                    'emails' => 0,
+                    'sms' => 0,
+                    'reset_date' => null,
                 ],
                 'addons' => [
-                    'online_forms' => true,
-                    'online_surveys' => true,
-                    'online_admissions' => true,
-                    'service_management' => true,
-                    'knowledge_management' => true,
-                    'event_management' => true,
-                    'realtime_chat' => true,
-                    'mobileApps' => true,
+                    'online_forms' => false,
+                    'online_surveys' => false,
+                    'online_admissions' => false,
+                    'service_management' => false,
+                    'knowledge_management' => false,
+                    'event_management' => false,
+                    'realtime_chat' => false,
+                    'mobileApps' => false,
+                    'schedule_and_appointments' => false,
                 ],
             ]
         );
