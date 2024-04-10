@@ -61,6 +61,7 @@ $permissions = [
     'prompt_type.create',
     'prompt_type.*.view',
     'prompt_type.*.update',
+    'prompt_type.*.delete',
 ];
 
 it('cannot render without a license', function () use ($permissions) {

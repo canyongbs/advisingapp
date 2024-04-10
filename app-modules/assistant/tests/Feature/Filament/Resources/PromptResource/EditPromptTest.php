@@ -61,6 +61,7 @@ $permissions = [
     'prompt.create',
     'prompt.*.view',
     'prompt.*.update',
+    'prompt.*.delete',
 ];
 
 it('cannot render without a license', function () use ($permissions) {
