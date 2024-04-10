@@ -40,8 +40,10 @@ use Filament\Forms\Form;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Illuminate\Validation\Rules\Unique;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
 
 class EditRole extends EditRecord
@@ -58,7 +60,13 @@ class EditRole extends EditRecord
                     ->unique(
                         table: 'roles',
                         column: 'name',
-                        ignoreRecord: true
+                        ignoreRecord: true,
+                        modifyRuleUsing: function (Unique $rule) {
+                            /** @var Role $role */
+                            $role = $this->record;
+
+                            $rule->where('guard_name', $role->guard_name);
+                        }
                     ),
                 Select::make('guard_name')
                     ->options([
