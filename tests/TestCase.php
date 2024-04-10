@@ -111,11 +111,54 @@ abstract class TestCase extends BaseTestCase
 
         $tenant->makeCurrent();
 
-        $tenant->execute(function () {
-            $this->artisan('db:seed', [
+        $tenant->execute(function () use ($tenant) {
+            $this->artisan('migrate:fresh', [
                 '--database' => $this->tenantDatabaseConnectionName(),
-                '--class' => 'SisDataSeeder',
+                '--seeder' => 'SisDataSeeder',
+                ...$this->migrateFreshUsing(),
             ]);
+
+            dispatch_sync(new UpdateTenantLicenseData(
+                $tenant,
+                new LicenseData(
+                    updatedAt: now(),
+                    subscription: new LicenseSubscriptionData(
+                        clientName: 'Jane Smith',
+                        partnerName: 'Fake Edu Tech',
+                        clientPo: 'abc123',
+                        partnerPo: 'def456',
+                        startDate: now(),
+                        endDate: now()->addYear(),
+                    ),
+                    limits: new LicenseLimitsData(
+                        conversationalAiSeats: 50,
+                        retentionCrmSeats: 25,
+                        recruitmentCrmSeats: 10,
+                        emails: 1000,
+                        sms: 1000,
+                        resetDate: now()->format('m-d'),
+                    ),
+                    addons: new LicenseAddonsData(
+                        onlineForms: true,
+                        onlineSurveys: true,
+                        onlineAdmissions: true,
+                        serviceManagement: true,
+                        knowledgeManagement: true,
+                        eventManagement: true,
+                        realtimeChat: true,
+                        mobileApps: true,
+                        experimentalReporting: true,
+                        scheduleAndAppointments: true,
+                    )
+                )
+            ));
+
+            $this->artisan(
+                command: SyncRolesAndPermissions::class,
+                parameters: [
+                    '--tenant' => $tenant->getKey(),
+                ],
+            );
         });
 
         Tenant::forgetCurrent();
@@ -148,17 +191,6 @@ abstract class TestCase extends BaseTestCase
 
     public function createTenant(string $name, string $domain, string $database): Tenant
     {
-        $currentConnectionDatabase = config("database.connections.{$this->tenantDatabaseConnectionName()}.database");
-
-        config(["database.connections.{$this->tenantDatabaseConnectionName()}.database" => $database]);
-
-        $this->artisan('migrate:fresh', [
-            '--database' => $this->tenantDatabaseConnectionName(),
-            ...$this->migrateFreshUsing(),
-        ]);
-
-        config(["database.connections.{$this->tenantDatabaseConnectionName()}.database" => $currentConnectionDatabase]);
-
         return app(CreateTenant::class)(
             $name,
             $domain,
