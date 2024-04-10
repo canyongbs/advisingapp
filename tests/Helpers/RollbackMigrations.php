@@ -61,4 +61,7 @@ function rollbackToBefore(string $migrationToRollbackTo)
     if ($rollbackSteps > 0) {
         Artisan::call('migrate:rollback', ['--step' => $rollbackSteps]);
     }
+
+    /** @phpstan-ignore-next-line */
+    $this->beforeApplicationDestroyed(fn () => Artisan::call('migrate'));
 }
