@@ -46,10 +46,9 @@ class SyncTimelineData
 {
     public function now(Model $recordModel, $modelsToTimeline): void
     {
-        //TODO: put back
-        // if (cache()->has("timeline.synced.{$recordModel->getMorphClass()}.{$recordModel->getKey()}")) {
-        //     return;
-        // }
+        if (cache()->has("timeline.synced.{$recordModel->getMorphClass()}.{$recordModel->getKey()}")) {
+            return;
+        }
 
         $aggregateRecords = collect();
 

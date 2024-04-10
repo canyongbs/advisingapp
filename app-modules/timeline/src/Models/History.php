@@ -3,10 +3,14 @@
 namespace AdvisingApp\Timeline\Models;
 
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * @property array $new
+ * @property array $old
+ */
 abstract class History extends BaseModel
 {
     use SoftDeletes;

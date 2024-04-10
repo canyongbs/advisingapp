@@ -22,7 +22,8 @@
         {{ $record->created_at->diffForHumans() }}
     </time>
 
-    <div class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal dark:border-gray-800 text-gray-400 dark:text-gray-500">
+    <div
+        class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal text-gray-400 dark:border-gray-800 dark:text-gray-500">
         <div class="mb-2 flex flex-col">
             <p class="text-xs text-gray-400 dark:text-gray-500">{{ $record->formatted['status']['key'] }}</p>
             <div class="prose dark:prose-invert">
@@ -42,7 +43,8 @@
             </div>
         </div>
         <div class="mb-2 flex flex-col">
-            <p class="text-xs text-gray-400 dark:text-gray-500">{{ $record->formatted['suggested_intervention']['key'] }}</p>
+            <p class="text-xs text-gray-400 dark:text-gray-500">
+                {{ $record->formatted['suggested_intervention']['key'] }}</p>
             <div class="prose dark:prose-invert">
                 {{ str($record->formatted['suggested_intervention']['new'])->markdown()->sanitizeHtml()->toHtmlString() }}
             </div>

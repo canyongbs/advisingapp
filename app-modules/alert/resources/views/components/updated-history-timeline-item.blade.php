@@ -22,17 +22,18 @@
         {{ $record->updated_at->diffForHumans() }}
     </time>
 
-    <div class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal dark:border-gray-800 text-gray-400 dark:text-gray-500">
+    <div
+        class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal text-gray-400 dark:border-gray-800 dark:text-gray-500">
         Here's what changed
 
         <ul class="list-inside list-disc">
             @foreach ($record->formatted as $value)
                 <li>
-                    <span class="font-semibold prose dark:prose-invert">{{ $value['key'] }}</span>
+                    <span class="prose font-semibold dark:prose-invert">{{ $value['key'] }}</span>
                     changed from
-                    <span class="font-semibold prose dark:prose-invert">{{ $value['old'] }}</span>
+                    <span class="prose font-semibold dark:prose-invert">{{ $value['old'] }}</span>
                     to
-                    <span class="font-semibold prose dark:prose-invert">{{ $value['new'] }}</span>
+                    <span class="prose font-semibold dark:prose-invert">{{ $value['new'] }}</span>
                 </li>
             @endforeach
         </ul>

@@ -43,7 +43,6 @@ use App\Models\Scopes\HasLicense;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Collection;
 use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Timeline\Models\History;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\CareTeam\Models\CareTeam;
