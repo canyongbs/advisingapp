@@ -60,7 +60,7 @@ class UserImporter extends Importer
             ImportColumn::make('job_title')
                 ->rules(['required'])
                 ->requiredMapping()
-                ->example('12345'),
+                ->example('Advisor'),
             ImportColumn::make('emplid')
                 ->rules(['string'])
                 ->example('12345'),
