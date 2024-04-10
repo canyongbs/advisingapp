@@ -36,7 +36,10 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\ImportAction;
+use App\Filament\Imports\UserImporter;
 use App\Filament\Resources\UserResource;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Contracts\Support\Htmlable;
@@ -62,6 +65,9 @@ class ListUsers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            ImportAction::make()
+                ->importer(UserImporter::class)
+                ->authorize('import', User::class),
             CreateAction::make(),
         ];
     }
