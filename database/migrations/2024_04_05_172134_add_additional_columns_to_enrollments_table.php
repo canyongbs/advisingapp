@@ -34,45 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace Database\Seeders;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Collection;
-use AdvisingApp\StudentDataModel\Models\Program;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\Performance;
-
-class StudentSeeder extends Seeder
-{
-    public function run(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        /** @var Collection $students */
-        $students = Student::factory(500)
-            ->make();
-
-        $enrollments = [];
-        $programs = [];
-        $performances = [];
-
-        $students->each(function ($student) use (&$enrollments, &$programs, &$performances) {
-            foreach (Enrollment::factory(5)->make(['sisid' => $student->sisid])->toArray() as $enrollment) {
-                $enrollments[] = $enrollment;
-            }
-
-            $programs[] = Program::factory()->make(
-                [
-                    'sisid' => $student->sisid,
-                    'otherid' => $student->otherid,
-                ]
-            )->toArray();
-
-            $performances[] = Performance::factory()->make(['sisid' => $student->sisid])->toArray();
+        Schema::table('enrollments', function (Blueprint $table) {
+            $table->string('section')->nullable();
+            $table->string('name')->nullable();
+            $table->string('department')->nullable();
+            $table->string('faculty_name')->nullable();
+            $table->string('faculty_email')->nullable();
+            $table->string('semester_code')->nullable();
+            $table->string('semester_name')->nullable();
+            $table->dateTime('start_date')->nullable();
+            $table->dateTime('end_date')->nullable();
         });
-
-        Student::insert($students->toArray());
-        Enrollment::insert($enrollments);
-        Program::insert($programs);
-        Performance::insert($performances);
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('enrollments', function (Blueprint $table) {
+            $table->dropColumn('section');
+            $table->dropColumn('name');
+            $table->dropColumn('department');
+            $table->dropColumn('faculty_name');
+            $table->dropColumn('faculty_email');
+            $table->dropColumn('semester_code');
+            $table->dropColumn('semester_name');
+            $table->dropColumn('start_date');
+            $table->dropColumn('end_date');
+        });
+    }
+};

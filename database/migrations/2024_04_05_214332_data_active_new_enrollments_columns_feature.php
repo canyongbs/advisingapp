@@ -34,45 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace Database\Seeders;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Collection;
-use AdvisingApp\StudentDataModel\Models\Program;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\Performance;
-
-class StudentSeeder extends Seeder
-{
-    public function run(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        /** @var Collection $students */
-        $students = Student::factory(500)
-            ->make();
-
-        $enrollments = [];
-        $programs = [];
-        $performances = [];
-
-        $students->each(function ($student) use (&$enrollments, &$programs, &$performances) {
-            foreach (Enrollment::factory(5)->make(['sisid' => $student->sisid])->toArray() as $enrollment) {
-                $enrollments[] = $enrollment;
-            }
-
-            $programs[] = Program::factory()->make(
-                [
-                    'sisid' => $student->sisid,
-                    'otherid' => $student->otherid,
-                ]
-            )->toArray();
-
-            $performances[] = Performance::factory()->make(['sisid' => $student->sisid])->toArray();
-        });
-
-        Student::insert($students->toArray());
-        Enrollment::insert($enrollments);
-        Program::insert($programs);
-        Performance::insert($performances);
+        Feature::activate('new-enrollments-columns');
     }
-}
+
+    public function down(): void
+    {
+        Feature::deactivate('new-enrollments-columns');
+    }
+};
