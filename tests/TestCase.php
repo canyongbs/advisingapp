@@ -40,6 +40,7 @@ use App\Models\Tenant;
 use Illuminate\Support\Str;
 use Tests\Concerns\LoadsFixtures;
 use Symfony\Component\Finder\Finder;
+use App\Jobs\UpdateTenantLicenseData;
 use Symfony\Component\Process\Process;
 use Illuminate\Contracts\Console\Kernel;
 use Symfony\Component\Finder\SplFileInfo;
@@ -62,6 +63,7 @@ use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
 use App\Multitenancy\DataTransferObjects\TenantSmtpMailerConfig;
 use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
 use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
+use AdvisingApp\Authorization\Console\Commands\SyncRolesAndPermissions;
 use Illuminate\Foundation\Testing\Traits\CanConfigureMigrationCommands;
 
 abstract class TestCase extends BaseTestCase
