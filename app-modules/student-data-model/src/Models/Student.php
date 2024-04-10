@@ -43,18 +43,21 @@ use App\Models\Scopes\HasLicense;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Collection;
 use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Timeline\Models\History;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Notification\Models\Subscription;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
@@ -96,6 +99,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     use HasSubscriptions;
     use NotifiableViaSms;
     use UsesTenantConnection;
+    use HasRelationships;
 
     protected $table = 'students';
 
@@ -256,6 +260,11 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     public function getApiPermissions(): Collection
     {
         return collect(['view-any', '*.view']);
+    }
+
+    public function alertHistories(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->alerts(), (new Alert())->histories());
     }
 
     public static function getLicenseType(): LicenseType

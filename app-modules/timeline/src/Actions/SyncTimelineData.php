@@ -46,9 +46,10 @@ class SyncTimelineData
 {
     public function now(Model $recordModel, $modelsToTimeline): void
     {
-        if (cache()->has("timeline.synced.{$recordModel->getMorphClass()}.{$recordModel->getKey()}")) {
-            return;
-        }
+        //TODO: put back
+        // if (cache()->has("timeline.synced.{$recordModel->getMorphClass()}.{$recordModel->getKey()}")) {
+        //     return;
+        // }
 
         $aggregateRecords = collect();
 
@@ -63,6 +64,14 @@ class SyncTimelineData
         $aggregateRecords = $aggregateRecords->sortByDesc(function ($record) {
             return Carbon::parse($record->timeline()->sortableBy())->timestamp;
         });
+
+        Timeline::query()
+            ->forEntity($recordModel)
+            ->whereIn(
+                'timelineable_type',
+                collect($modelsToTimeline)->map(fn ($model) => resolve($model)->getMorphClass())->toArray()
+            )
+            ->delete();
 
         $aggregateRecords->each(function ($record) use ($recordModel) {
             $timelineRecord = Timeline::firstOrCreate([

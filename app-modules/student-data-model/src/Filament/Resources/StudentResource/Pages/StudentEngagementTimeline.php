@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
+use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
@@ -54,5 +55,6 @@ class StudentEngagementTimeline extends TimelinePage
     public array $modelsToTimeline = [
         Engagement::class,
         EngagementResponse::class,
+        AlertHistory::class,
     ];
 }
