@@ -60,17 +60,20 @@ class Kernel extends ConsoleKernel
                 $schedule->command("tenants:artisan \"cache:prune-stale-tags\" --tenant={$tenant->id}")
                     ->hourly()
                     ->onOneServer()
-                    ->withoutOverlapping();
+                    ->withoutOverlapping()
+                    ->sentryMonitor();
 
                 $schedule->command("tenants:artisan \"health:check\" --tenant={$tenant->id}")
                     ->everyMinute()
                     ->onOneServer()
-                    ->withoutOverlapping();
+                    ->withoutOverlapping()
+                    ->sentryMonitor();
 
                 $schedule->command("tenants:artisan \"health:queue-check-heartbeat\" --tenant={$tenant->id}")
                     ->everyMinute()
                     ->onOneServer()
-                    ->withoutOverlapping();
+                    ->withoutOverlapping()
+                    ->sentryMonitor();
 
                 collect([
                     Audit::class,
@@ -84,6 +87,7 @@ class Kernel extends ConsoleKernel
                             ->daily()
                             ->onOneServer()
                             ->withoutOverlapping()
+                            ->sentryMonitor()
                     );
 
                 $schedule->command(
@@ -94,12 +98,14 @@ class Kernel extends ConsoleKernel
                 )
                     ->daily()
                     ->onOneServer()
-                    ->withoutOverlapping();
+                    ->withoutOverlapping()
+                    ->sentryMonitor();
 
                 $schedule->command("tenants:artisan \"health:schedule-check-heartbeat\" --tenant={$tenant->id}")
                     ->everyMinute()
                     ->onOneServer()
-                    ->withoutOverlapping();
+                    ->withoutOverlapping()
+                    ->sentryMonitor();
             } catch (Throwable $th) {
                 Log::error('Error scheduling tenant commands.', [
                     'tenant' => $tenant->id,

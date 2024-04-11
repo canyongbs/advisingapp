@@ -36,12 +36,30 @@
 
 namespace AdvisingApp\Application\Policies;
 
+use App\Enums\Feature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Gate;
+use App\Support\FeatureAccessResponse;
+use App\Concerns\PerformsFeatureChecks;
+use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 
-class ApplicationSubmissionStatePolicy
+class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorization
 {
+    use PerformsFeatureChecks;
+
+    public function before(Authenticatable $authenticatable): ?Response
+    {
+        if (! Gate::check(
+            collect($this->requiredFeatures())->map(fn (Feature $feature) => $feature->getGateName())
+        )) {
+            return FeatureAccessResponse::deny();
+        }
+
+        return null;
+    }
+
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
@@ -96,5 +114,10 @@ class ApplicationSubmissionStatePolicy
             abilities: ['application_submission_state.*.force-delete', "application_submission_state.{$model->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this state.'
         );
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [Feature::OnlineAdmissions];
     }
 }

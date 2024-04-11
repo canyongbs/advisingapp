@@ -42,8 +42,5 @@ return [
         'permission' => [
             '*',
         ],
-        'role_group' => [
-            '*',
-        ],
     ],
 ];

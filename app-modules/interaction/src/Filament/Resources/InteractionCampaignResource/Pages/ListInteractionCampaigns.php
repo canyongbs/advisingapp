@@ -36,12 +36,13 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
 
-use Filament\Actions;
 use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Contracts\Support\Htmlable;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
@@ -49,6 +50,11 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
 class ListInteractionCampaigns extends ListRecords
 {
     protected static string $resource = InteractionCampaignResource::class;
+
+    public function getTitle(): string | Htmlable
+    {
+        return 'Interaction Initiatives';
+    }
 
     public function table(Table $table): Table
     {
@@ -71,7 +77,8 @@ class ListInteractionCampaigns extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make()
+                ->label('New Interaction Initiative'),
         ];
     }
 }

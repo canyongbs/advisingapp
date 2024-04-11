@@ -8,32 +8,6 @@ The application uses a dedicated convention in order to define and populate role
 ### Local Setup
 In order to get your local environment correctly set up, you won't have to do anything beyond running the `composer refresh-database` command. Under the hood, this command will call on the `DatabaseSeeder`, which calls the `SyncRolesAndPermissions` artisan command. This command will seed and sync all of the roles and permissions defined in the application.
 
-## Role Groups
-Role Groups are a key component to understand in this application, as they are more akin to what we typically think of as Roles.
-
-In order to make the assignment and management of roles simple, Role Groups are used as logical groupings of Roles, which are even smaller logical groupings containing Permissions.
-
-A Role can belong to many Role Groups, and a User can belong to many Role Groups. When a User is assigned to a Role Group, they inherit all of the Roles that are attached to that Role Group. Any time a Role is added to a Role Group, any User that belongs to the Role Group will receive access to the Role that was added.
-
-> In order for a User to exist in a Role Group, they **must** have every Role defined in the Role Group.
-
-This means that if a Role is removed from a User, but that Role belongs to a Role Group that the User is also in, the User will lose access to the Role Group, and subsequently any other Roles that the Role Group had attached
-
-*Note: There is a planned improvement in the works which would allow an administering user to "directly" apply the remaining Roles of a Role Group to a user in the event they just want to remove a single Role.*
-
-A good example of how Role Groups are used in the application and how they interact with Roles and Permissions can be understood as follows.
-
-The Advising App provides a model called ServiceRequest. This represents service requests opened and managed within the Advising App system. Associated with this model are many permissions pertaining to the viewing, creating, updating, and deleting of cases. In order to group these permissions, we may want to create a "Service Request Manager" Role. This Role can be directly applied to a User, but it may also be applied to a User through a Role Group.
-
-We can create a Role Group called "Administrator", which could receive the "Service Request Manager" Role, as well as the "Knowledge Base Manager" Role, among others. Then, when a new administrator is added to the system, they can simply be granted the "Administrator" Role Group in order to inherit all of the roles and subsequent permissions that fall into this grouping.
-
-There are some high level rules about Role Groups that should be understood.
-
-1. When a user is assigned to a RoleGroup, any Role within this group that the User has *not already been assigned* will be assigned to the User, and will be denoted by the `via: role_group` pivot attribute.
-2. When a Role is assigned to a RoleGroup, any User within this group will be assigned the new Role *if they have not already been assigned*. If a Role was previously directly assigned, it will not be overwritten when the Role is added to the RoleGroup.
-3. When removing a Role from a User, if it belongs to a RoleGroup, the User will be removed from the RoleGroup entirely. A User cannot exist as a member of a RoleGroup without *all* of the Roles that exist within it.
-4. When a Role is removed from a RoleGroup, that Role is removed from any User in the RoleGroup, who had that Role assigned to them via the RoleGroup. If a Role exists within multiple RoleGroups to which a user is assigned, but the Role is only removed from one, the User will keep that Role via the RoleGroup that still contains the Role.
-
 ## Permissions
 The application defines two distinct types of permissions: those related directly to models and those that are not. In the application, these are aptly referred to as `model` permissions and `custom` permissions.
 
@@ -105,10 +79,6 @@ return [
     ]
 ];
 ```
-
-1. There are two ways roles can be assigned:
-   1. "directly" by simply assigning a single Role to a User
-   2. "role_group" by assigning a RoleGroup to a User, wherein they inherit all of the Roles that belong to this group
 
 ## Registering Roles and Permissions
 In order to register Roles and Permissions, the `authorization` module exposes registries that every other module can interact with. The Advising App platform expects that your Roles and Permissions are defined within configuration files.

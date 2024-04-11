@@ -74,6 +74,14 @@ class UserPolicy
         );
     }
 
+    public function import(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'user.import',
+            denyResponse: 'You do not have permission to import users.',
+        );
+    }
+
     public function update(Authenticatable $authenticatable, User $model): Response
     {
         return $authenticatable->canOrElse(

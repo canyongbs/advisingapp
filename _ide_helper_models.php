@@ -961,19 +961,24 @@ namespace AdvisingApp\Assistant\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $assistant_id
+ * @property string|null $thread_id
  * @property-read \AdvisingApp\Assistant\Models\AssistantChatFolder|null $folder
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChatMessage> $messages
  * @property-read int|null $messages_count
  * @property-read \App\Models\User $user
+ * @method static \AdvisingApp\Assistant\Database\Factories\AssistantChatFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat query()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereAssistantChatFolderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereAssistantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereThreadId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat withTrashed()
@@ -997,6 +1002,7 @@ namespace AdvisingApp\Assistant\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChat> $chats
  * @property-read int|null $chats_count
  * @property-read \App\Models\User $user
+ * @method static \AdvisingApp\Assistant\Database\Factories\AssistantChatFolderFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder onlyTrashed()
@@ -1028,7 +1034,11 @@ namespace AdvisingApp\Assistant\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $message_id
+ * @property string|null $run_id
+ * @property mixed|null $file_ids
  * @property-read \AdvisingApp\Assistant\Models\AssistantChat $chat
+ * @method static \AdvisingApp\Assistant\Database\Factories\AssistantChatMessageFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage onlyTrashed()
@@ -1036,11 +1046,14 @@ namespace AdvisingApp\Assistant\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereAssistantChatId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereFileIds($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereFrom($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereFunctionCall($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereMessage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereMessageId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereRunId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage withoutTrashed()
@@ -1158,11 +1171,12 @@ namespace AdvisingApp\Assistant\Models{
  * @property string $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \AdvisingApp\Assistant\Models\Prompt $prompt
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote query()
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereDeletedAt($value)
@@ -1170,6 +1184,8 @@ namespace AdvisingApp\Assistant\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote wherePromptId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote withoutTrashed()
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -1185,11 +1201,12 @@ namespace AdvisingApp\Assistant\Models{
  * @property string $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \AdvisingApp\Assistant\Models\Prompt $prompt
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUse newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUse newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUse query()
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereDeletedAt($value)
@@ -1197,6 +1214,8 @@ namespace AdvisingApp\Assistant\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUse wherePromptId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse withoutTrashed()
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -4420,6 +4439,15 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property int $unt_taken
  * @property int $unt_earned
  * @property \Illuminate\Support\Carbon $last_upd_dt_stmp
+ * @property string|null $section
+ * @property string|null $name
+ * @property string|null $department
+ * @property string|null $faculty_name
+ * @property string|null $faculty_email
+ * @property string|null $semester_code
+ * @property string|null $semester_name
+ * @property string|null $start_date
+ * @property string|null $end_date
  * @property-read \AdvisingApp\StudentDataModel\Models\Student|null $student
  * @method static \AdvisingApp\StudentDataModel\Database\Factories\EnrollmentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment newModelQuery()
@@ -4429,13 +4457,22 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereCatalogNbr($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereClassNbr($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereCrseGradeOff($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereDepartment($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereDivision($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereEndDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereEnrlAddDt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereEnrlDropDt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereEnrlStatusReason($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereFacultyEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereFacultyName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereLastUpdDtStmp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereSection($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereSemester($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereSemesterCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereSemesterName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereSisid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereStartDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereSubject($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereUntEarned($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereUntTaken($value)

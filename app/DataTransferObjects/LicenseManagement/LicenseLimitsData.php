@@ -50,7 +50,7 @@ class LicenseLimitsData extends Data
         public int $recruitmentCrmSeats,
         public int $emails,
         public int $sms,
-        public string $resetDate,
+        public ?string $resetDate,
     ) {}
 
     public function getResetWindow(): array

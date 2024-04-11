@@ -36,9 +36,11 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
+use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Illuminate\Validation\Rules\Unique;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
@@ -54,7 +56,13 @@ class CreateRole extends CreateRecord
                 TextInput::make('name')
                     ->required()
                     ->maxLength(125)
-                    ->unique('roles', 'name'),
+                    ->unique(
+                        table: 'roles',
+                        column: 'name',
+                        modifyRuleUsing: function (Unique $rule, Get $get) {
+                            $rule->where('guard_name', $get('guard_name'));
+                        }
+                    ),
                 Select::make('guard_name')
                     ->required()
                     ->options([
