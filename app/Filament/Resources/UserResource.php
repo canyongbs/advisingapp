@@ -47,6 +47,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Clusters\UserManagement;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Filament\Forms\Components\Licenses;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -60,7 +61,6 @@ use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\PermissionsRelationManager;
-use App\Filament\Clusters\UserManagement;
 
 class UserResource extends Resource
 {
