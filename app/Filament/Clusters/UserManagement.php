@@ -34,45 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources;
+namespace App\Filament\Clusters;
 
-use App\Models\SystemUser;
-use Filament\Resources\Resource;
-use App\Filament\Clusters\UserManagement;
-use App\Filament\Resources\SystemUserResource\Pages\EditSystemUser;
-use App\Filament\Resources\SystemUserResource\Pages\ListSystemUsers;
-use App\Filament\Resources\SystemUserResource\Pages\CreateSystemUser;
-use App\Filament\Resources\SystemUserResource\RelationManagers\PermissionsRelationManager;
+use Filament\Clusters\Cluster;
 
-class SystemUserResource extends Resource
+class UserManagement extends Cluster
 {
-    protected static ?string $model = SystemUser::class;
+    protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
 
-    protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?string $cluster = UserManagement::class;
-
-    protected static ?string $navigationLabel = 'Programmatic Users';
-
-    protected static ?string $modelLabel = 'Programmatic User';
-
-    protected static ?string $breadcrumb = 'Programmatic Users';
-
-    protected static ?int $navigationSort = 60;
-
-    public static function getRelations(): array
-    {
-        return [
-            PermissionsRelationManager::class,
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListSystemUsers::route('/'),
-            'create' => CreateSystemUser::route('/create'),
-            'edit' => EditSystemUser::route('/{record}/edit'),
-        ];
-    }
+    protected static ?string $navigationLabel = 'User Management';
 }
