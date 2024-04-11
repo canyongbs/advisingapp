@@ -43,16 +43,17 @@ use AdvisingApp\Division\Filament\Resources\DivisionResource\Pages\ViewDivision;
 use AdvisingApp\Division\Filament\Resources\DivisionResource\Pages\ListDivisions;
 use AdvisingApp\Division\Filament\Resources\DivisionResource\Pages\CreateDivision;
 use AdvisingApp\Division\Filament\Resources\DivisionResource\RelationManagers\TeamsRelationManager;
+use App\Filament\Clusters\UserManagement;
 
 class DivisionResource extends Resource
 {
     protected static ?string $model = Division::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-bars-2';
 
-    protected static ?string $navigationGroup = 'Users and Permissions';
+    protected static ?string $cluster = UserManagement::class;
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 70;
 
     public static function getRelations(): array
     {

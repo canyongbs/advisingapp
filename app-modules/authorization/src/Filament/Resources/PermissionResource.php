@@ -47,6 +47,7 @@ use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\Filament\Resources\PermissionResource\Pages\ViewPermission;
 use AdvisingApp\Authorization\Filament\Resources\PermissionResource\Pages\ListPermissions;
 use AdvisingApp\Authorization\Filament\Resources\PermissionResource\RelationManagers\RolesRelationManager;
+use App\Filament\Clusters\UserManagement;
 
 class PermissionResource extends Resource
 {
@@ -54,9 +55,9 @@ class PermissionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-key';
 
-    protected static ?string $navigationGroup = 'Users and Permissions';
+    protected static ?string $cluster = UserManagement::class;
 
-    protected static ?int $navigationSort = 70;
+    protected static ?int $navigationSort = 40;
 
     public static function form(Form $form): Form
     {

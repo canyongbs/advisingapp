@@ -59,20 +59,21 @@ use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\PermissionsRelationManager;
+use App\Filament\Clusters\UserManagement;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup = 'Users and Permissions';
+    protected static ?string $cluster = UserManagement::class;
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 10;
 
-    protected static ?string $navigationLabel = 'Product Users';
+    protected static ?string $navigationLabel = 'Users';
 
-    protected static ?string $breadcrumb = 'Product Users';
+    protected static ?string $breadcrumb = 'Users';
 
     protected static ?string $modelLabel = 'User';
 

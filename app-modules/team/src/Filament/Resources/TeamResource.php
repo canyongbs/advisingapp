@@ -43,14 +43,15 @@ use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\ViewTeam;
 use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\ListTeams;
 use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\CreateTeam;
 use AdvisingApp\Team\Filament\Resources\TeamResource\RelationManagers\UsersRelationManager;
+use App\Filament\Clusters\UserManagement;
 
 class TeamResource extends Resource
 {
     protected static ?string $model = Team::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $navigationGroup = 'Users and Permissions';
+    protected static ?string $cluster = UserManagement::class;
 
     protected static ?int $navigationSort = 20;
 
