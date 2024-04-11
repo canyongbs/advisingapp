@@ -42,12 +42,12 @@ use Filament\Resources\Resource;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Clusters\UserManagement;
 use App\Filament\Tables\Columns\IdColumn;
 use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\Filament\Resources\PermissionResource\Pages\ViewPermission;
 use AdvisingApp\Authorization\Filament\Resources\PermissionResource\Pages\ListPermissions;
 use AdvisingApp\Authorization\Filament\Resources\PermissionResource\RelationManagers\RolesRelationManager;
-use App\Filament\Clusters\UserManagement;
 
 class PermissionResource extends Resource
 {

@@ -43,9 +43,8 @@ use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Clusters\ProductIntegrations;
-use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use App\Filament\Clusters\GlobalSettings;
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 
 class ManageTwilioSettings extends SettingsPage
 {

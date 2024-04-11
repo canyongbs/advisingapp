@@ -42,9 +42,8 @@ use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Clusters\ProductIntegrations;
-use AdvisingApp\MeetingCenter\Settings\GoogleCalendarSettings;
 use App\Filament\Clusters\GlobalSettings;
+use AdvisingApp\MeetingCenter\Settings\GoogleCalendarSettings;
 
 class ManageGoogleCalendarSettings extends SettingsPage
 {

@@ -42,7 +42,6 @@ use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Clusters\ProductIntegrations;
 use App\Filament\Clusters\GlobalSettings;
 use AdvisingApp\IntegrationMicrosoftClarity\Settings\MicrosoftClaritySettings;
 
