@@ -44,6 +44,7 @@ use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\ViewRole;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\ListRoles;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\CreateRole;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource\RelationManagers\PermissionsRelationManager;
+use App\Filament\Clusters\UserManagement;
 
 class RoleResource extends Resource
 {
@@ -51,9 +52,9 @@ class RoleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
 
-    protected static ?string $navigationGroup = 'Users and Permissions';
+    protected static ?string $cluster = UserManagement::class;
 
-    protected static ?int $navigationSort = 60;
+    protected static ?int $navigationSort = 30;
 
     public static function getRelations(): array
     {
