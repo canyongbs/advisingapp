@@ -34,41 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Task\Providers;
+namespace AdvisingApp\Timeline\Timelines;
 
-use Filament\Panel;
-use AdvisingApp\Task\TaskPlugin;
-use AdvisingApp\Task\Models\Task;
-use Illuminate\Support\ServiceProvider;
+use Filament\Actions\ViewAction;
 use AdvisingApp\Task\Histories\TaskHistory;
-use AdvisingApp\Task\Observers\TaskObserver;
-use AdvisingApp\Task\Registries\TaskRbacRegistry;
-use App\Registries\RoleBasedAccessControlRegistry;
-use AdvisingApp\Task\Observers\TaskHistoryObserver;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Timeline\Models\CustomTimeline;
+use AdvisingApp\Task\Filament\Actions\TaskHistoryCreatedViewAction;
+use AdvisingApp\Task\Filament\Actions\TaskHistoryUpdatedViewAction;
 
-class TaskServiceProvider extends ServiceProvider
+class TaskHistoryTimeline extends CustomTimeline
 {
-    public function register(): void
+    public function __construct(
+        public TaskHistory $history
+    ) {}
+
+    public function icon(): string
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new TaskPlugin()));
+        return 'heroicon-o-clipboard-document-check';
     }
 
-    public function boot(): void
+    public function sortableBy(): string
     {
-        Relation::morphMap([
-            'task' => Task::class,
-            'task_history' => TaskHistory::class,
-        ]);
-
-        $this->registerObservers();
-
-        RoleBasedAccessControlRegistry::register(TaskRbacRegistry::class);
+        return $this->history->created_at;
     }
 
-    protected function registerObservers(): void
+    public function providesCustomView(): bool
     {
-        Task::observe(TaskObserver::class);
-        TaskHistory::observe(TaskHistoryObserver::class);
+        return true;
+    }
+
+    public function renderCustomView(): string
+    {
+        return match ($this->history->event) {
+            'created' => 'task::created-history-timeline-item',
+            'updated' => 'task::updated-history-timeline-item',
+            'status_changed' => 'task::status-changed-history-timeline-item',
+            'reassigned' => 'task::reassigned-history-timeline-item',
+        };
+    }
+
+    public function modalViewAction(): ViewAction
+    {
+        return (match ($this->history->event) {
+            'created' => TaskHistoryCreatedViewAction::make()
+                ->modalHeading('View Alert'),
+            'updated', 'status_changed', 'reassigned' => TaskHistoryUpdatedViewAction::make()
+                ->modalHeading('View Changes'),
+        })->record($this->history);
     }
 }

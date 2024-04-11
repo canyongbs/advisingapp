@@ -34,41 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Task\Providers;
+namespace AdvisingApp\Task\Filament\Actions;
 
-use Filament\Panel;
-use AdvisingApp\Task\TaskPlugin;
-use AdvisingApp\Task\Models\Task;
-use Illuminate\Support\ServiceProvider;
+use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\Section;
 use AdvisingApp\Task\Histories\TaskHistory;
-use AdvisingApp\Task\Observers\TaskObserver;
-use AdvisingApp\Task\Registries\TaskRbacRegistry;
-use App\Registries\RoleBasedAccessControlRegistry;
-use AdvisingApp\Task\Observers\TaskHistoryObserver;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Filament\Infolists\Components\KeyValueEntry;
 
-class TaskServiceProvider extends ServiceProvider
+class TaskHistoryUpdatedViewAction extends ViewAction
 {
-    public function register(): void
+    protected function setUp(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new TaskPlugin()));
-    }
+        parent::setUp();
 
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'task' => Task::class,
-            'task_history' => TaskHistory::class,
+        $this->infolist([
+            Section::make()
+                ->schema([
+                    KeyValueEntry::make('Changes')
+                        ->getStateUsing(fn (TaskHistory $record) => $record->formatted)
+                        ->view('filament.infolists.components.update-entry'),
+                ]),
         ]);
-
-        $this->registerObservers();
-
-        RoleBasedAccessControlRegistry::register(TaskRbacRegistry::class);
-    }
-
-    protected function registerObservers(): void
-    {
-        Task::observe(TaskObserver::class);
-        TaskHistory::observe(TaskHistoryObserver::class);
     }
 }

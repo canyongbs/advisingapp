@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,43 +30,36 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\Task\Histories\TaskHistory;
+@endphp
 
-namespace AdvisingApp\Task\Providers;
+@php
+    /* @var TaskHistory $record */
+@endphp
+<div>
+    <div class="flex flex-row justify-between">
+        <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
+            <div class="font-medium">
+                Task Status Changed
+            </div>
+        </h3>
 
-use Filament\Panel;
-use AdvisingApp\Task\TaskPlugin;
-use AdvisingApp\Task\Models\Task;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Task\Histories\TaskHistory;
-use AdvisingApp\Task\Observers\TaskObserver;
-use AdvisingApp\Task\Registries\TaskRbacRegistry;
-use App\Registries\RoleBasedAccessControlRegistry;
-use AdvisingApp\Task\Observers\TaskHistoryObserver;
-use Illuminate\Database\Eloquent\Relations\Relation;
+        <div>
+            {{ $viewRecordIcon }}
+        </div>
+    </div>
 
-class TaskServiceProvider extends ServiceProvider
-{
-    public function register(): void
-    {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new TaskPlugin()));
-    }
+    <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+        {{ $record->created_at->diffForHumans() }}
+    </time>
 
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'task' => Task::class,
-            'task_history' => TaskHistory::class,
-        ]);
-
-        $this->registerObservers();
-
-        RoleBasedAccessControlRegistry::register(TaskRbacRegistry::class);
-    }
-
-    protected function registerObservers(): void
-    {
-        Task::observe(TaskObserver::class);
-        TaskHistory::observe(TaskHistoryObserver::class);
-    }
-}
+    <div
+        class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal text-gray-400 dark:border-gray-800 dark:text-gray-500">
+        Changed from
+        <span class="prose font-semibold dark:prose-invert">{{ $record->formatted['status']['old'] }}</span>
+        to
+        <span class="prose font-semibold dark:prose-invert">{{ $record->formatted['status']['new'] }}</span>
+    </div>
+</div>

@@ -66,6 +66,7 @@ class AlertServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'alert' => Alert::class,
+            'alert_history' => AlertHistory::class,
         ]);
 
         $this->registerObservers();
