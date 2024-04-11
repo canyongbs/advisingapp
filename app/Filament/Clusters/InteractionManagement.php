@@ -50,7 +50,7 @@ class InteractionManagement extends Cluster
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 9;
 
     protected array $children = [
         InteractionCampaignResource::class,

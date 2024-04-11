@@ -44,5 +44,5 @@ class GlobalSettings extends Cluster
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 11;
 }

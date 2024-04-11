@@ -44,6 +44,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\ProductIntegrations;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
+use App\Filament\Clusters\GlobalSettings;
 
 class ManageGoogleSsoSettings extends SettingsPage
 {
@@ -57,7 +58,9 @@ class ManageGoogleSsoSettings extends SettingsPage
 
     protected static ?int $navigationSort = 70;
 
-    protected static ?string $cluster = ProductIntegrations::class;
+    protected static ?string $navigationGroup = 'Product Integrations';
+
+    protected static ?string $cluster = GlobalSettings::class;
 
     public static function canAccess(): bool
     {

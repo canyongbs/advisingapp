@@ -45,4 +45,6 @@ class Communication extends Cluster
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Communication Settings';
+
+    protected static ?int $navigationSort = 4;
 }

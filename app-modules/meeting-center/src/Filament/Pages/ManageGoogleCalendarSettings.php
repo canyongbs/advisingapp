@@ -44,6 +44,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\ProductIntegrations;
 use AdvisingApp\MeetingCenter\Settings\GoogleCalendarSettings;
+use App\Filament\Clusters\GlobalSettings;
 
 class ManageGoogleCalendarSettings extends SettingsPage
 {
@@ -57,7 +58,9 @@ class ManageGoogleCalendarSettings extends SettingsPage
 
     protected static ?int $navigationSort = 90;
 
-    protected static ?string $cluster = ProductIntegrations::class;
+    protected static ?string $navigationGroup = 'Product Integrations';
+
+    protected static ?string $cluster = GlobalSettings::class;
 
     public static function canAccess(): bool
     {

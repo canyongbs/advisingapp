@@ -43,6 +43,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\ProductIntegrations;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
+use App\Filament\Clusters\GlobalSettings;
 
 class ManageAmazonSesSettings extends SettingsPage
 {
@@ -56,7 +57,9 @@ class ManageAmazonSesSettings extends SettingsPage
 
     protected static ?int $navigationSort = 50;
 
-    protected static ?string $cluster = ProductIntegrations::class;
+    protected static ?string $navigationGroup = 'Product Integrations';
+
+    protected static ?string $cluster = GlobalSettings::class;
 
     public static function canAccess(): bool
     {

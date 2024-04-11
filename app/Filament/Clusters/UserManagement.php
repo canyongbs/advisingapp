@@ -45,4 +45,6 @@ class UserManagement extends Cluster
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'User Management';
+
+    protected static ?int $navigationSort = 1;
 }
