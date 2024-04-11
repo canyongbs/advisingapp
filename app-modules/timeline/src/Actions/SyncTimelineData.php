@@ -64,14 +64,6 @@ class SyncTimelineData
             return Carbon::parse($record->timeline()->sortableBy())->timestamp;
         });
 
-        Timeline::query()
-            ->forEntity($recordModel)
-            ->whereIn(
-                'timelineable_type',
-                collect($modelsToTimeline)->map(fn ($model) => resolve($model)->getMorphClass())->toArray()
-            )
-            ->delete();
-
         $aggregateRecords->each(function ($record) use ($recordModel) {
             $timelineRecord = Timeline::firstOrCreate([
                 'entity_type' => $recordModel->getMorphClass(),

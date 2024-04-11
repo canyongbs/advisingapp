@@ -2,11 +2,11 @@
 
 namespace AdvisingApp\Timeline\Models\Concerns;
 
+use Laravel\Pennant\Feature;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use AdvisingApp\Timeline\Observers\HistorySubjectObserver;
 
-trait HasHistory
+trait InteractsWithHistory
 {
     protected array $ignoredAttributes = [
         'id',
@@ -15,12 +15,10 @@ trait HasHistory
         'deleted_at',
     ];
 
-    public static function bootHasHistory(): void
+    public static function bootInteractsWithHistory(): void
     {
         static::observe(HistorySubjectObserver::class);
     }
-
-    abstract public function histories(): MorphMany;
 
     public function processCustomHistories(string $event, Collection $old, Collection $new, Collection $pending): void {}
 
@@ -34,8 +32,9 @@ trait HasHistory
 
         $this->recordHistory($event, $old->only($keys), $new->only($keys), $pending);
 
-        $pending->reverse()
-            ->each(fn (array $history) => $this->histories()->create($history));
+        if (Feature::active('educatable-alerts-timeline')) {
+            $pending->each(fn (array $history) => $this->histories()->create($history));
+        }
     }
 
     public function recordHistory(string $event, Collection $old, Collection $new, Collection $pending): void

@@ -49,10 +49,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use AdvisingApp\Timeline\Models\Concerns\HasHistory;
+use AdvisingApp\Timeline\Models\Contracts\HasHistory;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Timeline\Models\Concerns\InteractsWithHistory;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
@@ -64,12 +65,12 @@ use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
  *
  * @mixin IdeHelperAlert
  */
-class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction
+class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction, HasHistory
 {
     use SoftDeletes;
     use AuditableTrait;
     use BelongsToEducatable;
-    use HasHistory;
+    use InteractsWithHistory;
 
     protected $fillable = [
         'concern_id',

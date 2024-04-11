@@ -2,11 +2,11 @@
 
 namespace AdvisingApp\Timeline\Observers;
 
-use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Timeline\Models\Contracts\HasHistory;
 
 class HistorySubjectObserver
 {
-    public function created(Model $model): void
+    public function created(HasHistory $model): void
     {
         $model->processHistory(
             'created',
@@ -15,7 +15,7 @@ class HistorySubjectObserver
         );
     }
 
-    public function updated(Model $model): void
+    public function updated(HasHistory $model): void
     {
         $model->processHistory(
             'updated',
