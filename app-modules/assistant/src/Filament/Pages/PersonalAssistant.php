@@ -805,7 +805,7 @@ class PersonalAssistant extends Page
         $runId = $this->chat->messages->last()->run_id;
 
         $startTime = time();
-        $timeoutSeconds = 10;
+        $timeoutSeconds = 60;
 
         /** @var BaseAIChatClient $ai */
         while (time() - $startTime < $timeoutSeconds) {
@@ -816,7 +816,7 @@ class PersonalAssistant extends Page
                 return true;
             }
 
-            usleep(500000);
+            sleep(1);
         }
 
         return false;

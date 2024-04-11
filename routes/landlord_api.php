@@ -35,6 +35,7 @@
 */
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Tenants\SyncTenantController;
 use App\Http\Controllers\UpdateBrandSettingsController;
 use App\Http\Controllers\Tenants\CreateTenantController;
 use App\Http\Controllers\Tenants\DeleteTenantController;
@@ -44,6 +45,9 @@ Route::post('tenants', CreateTenantController::class)
 
 Route::delete('tenants/{tenant}', DeleteTenantController::class)
     ->name('tenants.delete');
+
+Route::post('tenants/{tenant}/sync', SyncTenantController::class)
+    ->name('tenants.sync');
 
 Route::post('brand', UpdateBrandSettingsController::class)
     ->name('brand.update');

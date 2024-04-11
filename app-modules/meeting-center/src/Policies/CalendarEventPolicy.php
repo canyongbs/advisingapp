@@ -36,8 +36,12 @@
 
 namespace AdvisingApp\MeetingCenter\Policies;
 
+use App\Enums\Feature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Gate;
+use App\Support\FeatureAccessResponse;
+use App\Concerns\PerformsFeatureChecks;
 use App\Concerns\PerformsLicenseChecks;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
@@ -46,11 +50,18 @@ use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 class CalendarEventPolicy implements PerformsChecksBeforeAuthorization
 {
     use PerformsLicenseChecks;
+    use PerformsFeatureChecks;
 
     public function before(Authenticatable $authenticatable): ?Response
     {
         if (! is_null($response = $this->hasAnyLicense($authenticatable, [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]))) {
             return $response;
+        }
+
+        if (! Gate::check(
+            collect($this->requiredFeatures())->map(fn (Feature $feature) => $feature->getGateName())
+        )) {
+            return FeatureAccessResponse::deny();
         }
 
         return null;
@@ -110,5 +121,10 @@ class CalendarEventPolicy implements PerformsChecksBeforeAuthorization
             abilities: ['calendar_event.*.force-delete', "calendar_event.{$calendarEvent->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this engagement response.'
         );
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [Feature::ScheduleAndAppointments];
     }
 }

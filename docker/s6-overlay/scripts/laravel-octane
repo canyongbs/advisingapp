@@ -5,12 +5,14 @@ set -e
 
 echo "Starting Laravel Octane..."
 
+USERNAME=$(id -nu "$PUID")
+
 if [ "${LARAVEL_OCTANE_WATCH:="false"}" == "true" ]; then
     echo "👉 Starting Laravel Octane in watch mode..."
 
     source "$NVM_DIR/nvm.sh"
 
-    php -d variables_order=EGPCS "$WEBUSER_HOME"/artisan octane:start --server=roadrunner --host=0.0.0.0 --rpc-port=6001 --port=8000 --watch
+    s6-setuidgid "$USERNAME" php -d variables_order=EGPCS "$WEBUSER_HOME"/artisan octane:start --server=roadrunner --host=0.0.0.0 --rpc-port=6001 --port=8000 --watch
 else
-    php -d variables_order=EGPCS "$WEBUSER_HOME"/artisan octane:start --server=roadrunner --host=0.0.0.0 --rpc-port=6001 --port=8000
+    s6-setuidgid "$USERNAME" php -d variables_order=EGPCS "$WEBUSER_HOME"/artisan octane:start --server=roadrunner --host=0.0.0.0 --rpc-port=6001 --port=8000
 fi

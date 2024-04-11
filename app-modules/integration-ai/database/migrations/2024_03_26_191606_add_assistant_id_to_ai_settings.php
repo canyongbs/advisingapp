@@ -41,4 +41,9 @@ return new class () extends SettingsMigration {
     {
         $this->migrator->addEncrypted('ai.assistant_id');
     }
+
+    public function down(): void
+    {
+        $this->migrator->deleteIfExists('ai.assistant_id');
+    }
 };

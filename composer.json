@@ -83,6 +83,7 @@
         "nuwave/lighthouse": "^6.33",
         "owen-it/laravel-auditing": "^13.6",
         "saade/filament-fullcalendar": "^3.1",
+        "sentry/sentry-laravel": "^4.4",
         "shuvroroy/filament-spatie-laravel-health": "^2.0",
         "socialiteproviders/google": "^4.1",
         "socialiteproviders/microsoft-azure": "^5.1",
@@ -99,7 +100,7 @@
         "stechstudio/filament-impersonate": "^3.5",
         "talkroute/message-segment-calculator": "^1.0",
         "tapp/filament-timezone-field": "^3.0",
-        "tpetry/laravel-postgresql-enhanced": "^0.36",
+        "tpetry/laravel-postgresql-enhanced": "^0.37.0",
         "twilio/sdk": "^7.15"
     },
     "require-dev": {

@@ -82,13 +82,15 @@ class SyncRolesAndPermissions extends Command
             outputBuffer: $this->output,
         );
 
-        $this->line('Syncing Web permissions...');
-        $this->syncWebPermissions();
-        $this->info('Web permissions synced successfully!');
+        if (! app()->environment('testing')) {
+            $this->line('Syncing Web permissions...');
+            $this->syncWebPermissions();
+            $this->info('Web permissions synced successfully!');
 
-        $this->line('Syncing API permissions...');
-        $this->syncApiPermissions();
-        $this->info('API permissions synced successfully!');
+            $this->line('Syncing API permissions...');
+            $this->syncApiPermissions();
+            $this->info('API permissions synced successfully!');
+        }
 
         // Remove api/web model permissions from cache
         Cache::forget('application.model.web.permissions');

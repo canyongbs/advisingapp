@@ -44,8 +44,8 @@ info:
 
 
 servers:
-  - url: ${APP_URL}/graphql
-    description: This server
+  - url: https://college.advising.app/graphql
+    description: This server. Replace with your own server URL.
     production: true
     headers:
       - name: Authorization

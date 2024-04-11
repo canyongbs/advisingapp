@@ -320,14 +320,12 @@ use Illuminate\Support\Facades\Vite;
                                                         <div
                                                             class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
                                                             <div
-                                                                class="hidden"
-                                                                id="hidden_current_response"
-                                                                wire:stream="currentResponse"
-                                                            >{{ $currentResponse }}</div>
-                                                            <div
-                                                                class="markdown light prose w-full break-words dark:prose-invert"
-                                                                id="current_response"
-                                                            ></div>
+                                                                class="flex items-center rounded-lg bg-primary-600 px-4 py-2 dark:bg-primary-500">
+                                                                <x-filament::loading-indicator class="h-5 w-5" />
+                                                                <span class="ml-2">
+                                                                    Processing...
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>

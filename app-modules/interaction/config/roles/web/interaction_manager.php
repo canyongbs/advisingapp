@@ -45,6 +45,9 @@ return [
         'interaction_driver' => [
             '*',
         ],
+        'interaction_initiative' => [
+            '*',
+        ],
         'interaction_outcome' => [
             '*',
         ],

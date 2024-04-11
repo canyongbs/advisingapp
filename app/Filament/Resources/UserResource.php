@@ -57,6 +57,7 @@ use App\Filament\Resources\UserResource\Pages\ViewUser;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
+use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\PermissionsRelationManager;
 use App\Filament\Clusters\UserManagement;
@@ -143,6 +144,8 @@ class UserResource extends Resource
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    AssignLicensesBulkAction::make()
+                        ->visible(fn () => auth()->user()->can('create', License::class)),
                 ]),
             ]);
     }

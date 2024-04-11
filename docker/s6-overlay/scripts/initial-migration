@@ -8,7 +8,9 @@ fi
 cd "$WEBUSER_HOME" || exit 0
 
   {
-    s6-setuidgid webuser php "$WEBUSER_HOME/artisan" app:initial-migration \
+    USERNAME=$(id -nu "$PUID")
+
+    s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" app:initial-migration \
     && echo "Initial migration check completed!"
   } || {
     echo "Initial migration check failed!"

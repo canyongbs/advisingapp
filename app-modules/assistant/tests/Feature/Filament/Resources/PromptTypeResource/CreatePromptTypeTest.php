@@ -52,13 +52,15 @@ $licenses = [
     LicenseType::ConversationalAi,
 ];
 
-$roles = [
-    'assistant.assistant_prompt_management',
+$permissions = [
+    'prompt_type.view-any',
+    'prompt_type.create',
+    'prompt_type.*.view',
 ];
 
-it('cannot render without a license', function () use ($roles) {
+it('cannot render without a license', function () use ($permissions) {
     actingAs(user(
-        roles: $roles
+        permissions: $permissions
     ));
 
     get(PromptTypeResource::getUrl('create'))
@@ -74,20 +76,20 @@ it('cannot render without permissions', function () use ($licenses) {
         ->assertForbidden();
 });
 
-it('can render', function () use ($licenses, $roles) {
+it('can render', function () use ($licenses, $permissions) {
     actingAs(user(
         licenses: $licenses,
-        roles: $roles
+        permissions: $permissions
     ));
 
     get(PromptTypeResource::getUrl('create'))
         ->assertSuccessful();
 });
 
-it('can create a record', function () use ($roles, $licenses) {
+it('can create a record', function () use ($permissions, $licenses) {
     actingAs(user(
         licenses: $licenses,
-        roles: $roles
+        permissions: $permissions
     ));
 
     $record = PromptType::factory()->make();
