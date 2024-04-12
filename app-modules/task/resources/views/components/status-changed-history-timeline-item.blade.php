@@ -40,26 +40,20 @@
 @endphp
 <div>
     <div class="flex flex-row justify-between">
-        <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
-            <div class="font-medium">
-                Task Status Changed
-            </div>
-        </h3>
+        <x-timeline::timeline.heading>
+            Task Status Changed
+        </x-timeline::timeline.heading>
 
         <div>
             {{ $viewRecordIcon }}
         </div>
     </div>
 
-    <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+    <x-timeline::timeline.time>
         {{ $record->created_at->diffForHumans() }}
-    </time>
+    </x-timeline::timeline.time>
 
-    <div
-        class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal text-gray-400 dark:border-gray-800 dark:text-gray-500">
-        Changed from
-        <span class="prose font-semibold dark:prose-invert">{{ $record->formatted['status']['old'] }}</span>
-        to
-        <span class="prose font-semibold dark:prose-invert">{{ $record->formatted['status']['new'] }}</span>
-    </div>
+    <x-timeline::timeline.history.content>
+        <x-timeline::timeline.history.content.item :value="$record->formatted['status']" />
+    </x-timeline::timeline.history.content>
 </div>

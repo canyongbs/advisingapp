@@ -46,7 +46,6 @@ use AdvisingApp\Timeline\Models\History;
 use App\Filament\Resources\UserResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use AdvisingApp\Timeline\Timelines\TaskHistoryTimeline;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 
@@ -67,68 +66,60 @@ class TaskHistory extends History implements ProvidesATimeline
         return collect();
     }
 
-    public function formatted(): Attribute
+    public function getFormattedValueForKey(string $key): array
     {
-        return Attribute::get(
-            fn () => collect($this->new)
-                ->map(function ($value, $key) {
-                    return match ($key) {
-                        'status' => [
-                            'key' => 'Status',
-                            'old' => array_key_exists($key, $this->old)
-                                ? TaskStatus::tryFrom($this->old[$key])?->getLabel()
-                                : null,
-                            'new' => TaskStatus::tryFrom($value)?->getLabel(),
-                        ],
-                        'due' => [
-                            'key' => 'Due',
-                            'old' => array_key_exists($key, $this->old)
-                                ? Carbon::parse($this->old[$key])->format('m-d-Y')
-                                : null,
-                            'new' => Carbon::parse($value)->format('m-d-Y'),
-                        ],
-                        'assigned_to' => [
-                            'key' => 'Assigned to',
-                            'old' => array_key_exists($key, $this->old)
-                                ? User::find($this->old[$key])?->name
-                                : null,
-                            'new' => User::find($value)?->name,
-                            'extra' => [
-                                'old' => [
-                                    'link' => array_key_exists($key, $this->old)
-                                        ? UserResource::getUrl('view', ['record' => $this->old[$key]])
-                                        : null,
-                                ],
-                                'new' => [
-                                    'link' => UserResource::getUrl('view', ['record' => $value]),
-                                ],
-                            ],
-                        ],
-                        'created_by' => [
-                            'key' => 'Created by',
-                            'old' => array_key_exists($key, $this->old)
-                                ? User::find($this->old[$key])?->name
-                                : null,
-                            'new' => User::find($value)?->name,
-                            'extra' => [
-                                'old' => [
-                                    'link' => array_key_exists($key, $this->old)
-                                        ? UserResource::getUrl('view', ['record' => $this->old[$key]])
-                                        : null,
-                                ],
-                                'new' => [
-                                    'link' => UserResource::getUrl('view', ['record' => $value]),
-                                ],
-                            ],
-                        ],
-                        default => [
-                            'key' => str($key)->headline()->toString(),
-                            'old' => $this->old[$key] ?? null,
-                            'new' => $value,
-                        ],
-                    };
-                })
-                ->filter()
-        );
+        return match ($key) {
+            'status' => [
+                'key' => 'Status',
+                'old' => array_key_exists($key, $this->old)
+                    ? TaskStatus::tryFrom($this->old[$key])?->getLabel()
+                    : null,
+                'new' => TaskStatus::tryFrom($this->new[$key])?->getLabel(),
+            ],
+            'due' => [
+                'key' => 'Due',
+                'old' => data_get($this->old, $key)
+                    ? Carbon::parse($this->old[$key])->format('m-d-Y')
+                    : '(Not set)',
+                'new' => $this->new[$key]
+                    ? Carbon::parse($this->new[$key])->format('m-d-Y')
+                    : '(Not set)',
+            ],
+            'assigned_to' => [
+                'key' => 'Assigned to',
+                'old' => array_key_exists($key, $this->old)
+                    ? User::find($this->old[$key])?->name
+                    : null,
+                'new' => User::find($this->new[$key])?->name,
+                'extra' => [
+                    'old' => [
+                        'link' => array_key_exists($key, $this->old)
+                            ? UserResource::getUrl('view', ['record' => $this->old[$key]])
+                            : null,
+                    ],
+                    'new' => [
+                        'link' => UserResource::getUrl('view', ['record' => $this->new[$key]]),
+                    ],
+                ],
+            ],
+            'created_by' => [
+                'key' => 'Created by',
+                'old' => array_key_exists($key, $this->old)
+                    ? User::find($this->old[$key])?->name
+                    : null,
+                'new' => User::find($this->new[$key])?->name,
+                'extra' => [
+                    'old' => [
+                        'link' => array_key_exists($key, $this->old)
+                            ? UserResource::getUrl('view', ['record' => $this->old[$key]])
+                            : null,
+                    ],
+                    'new' => [
+                        'link' => UserResource::getUrl('view', ['record' => $this->new[$key]]),
+                    ],
+                ],
+            ],
+            default => parent::getFormattedValueForKey($key),
+        };
     }
 }

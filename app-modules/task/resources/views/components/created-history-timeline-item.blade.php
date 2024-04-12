@@ -40,68 +40,25 @@
 @endphp
 <div>
     <div class="flex flex-row justify-between">
-        <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
-            <div class="font-medium">
-                Task Created
-            </div>
-        </h3>
+        <x-timeline::timeline.heading>
+            Task Created
+        </x-timeline::timeline.heading>
 
         <div>
             {{ $viewRecordIcon }}
         </div>
     </div>
 
-    <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+    <x-timeline::timeline.time>
         {{ $record->created_at->diffForHumans() }}
-    </time>
+    </x-timeline::timeline.time>
 
-    <div
-        class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal text-gray-400 dark:border-gray-800 dark:text-gray-500">
-        <div class="mb-2 flex flex-col">
-            <p class="text-xs text-gray-400 dark:text-gray-500">{{ $record->formatted['title']['key'] }}</p>
-            <div class="prose dark:prose-invert">
-                {{ str($record->formatted['title']['new'])->markdown()->sanitizeHtml()->toHtmlString() }}
-            </div>
-        </div>
-        <div class="mb-2 flex flex-col">
-            <p class="text-xs text-gray-400 dark:text-gray-500">{{ $record->formatted['description']['key'] }}</p>
-            <div class="prose dark:prose-invert">
-                {{ str($record->formatted['description']['new'])->markdown()->sanitizeHtml()->toHtmlString() }}
-            </div>
-        </div>
-        <div class="mb-2 flex flex-col">
-            <p class="text-xs text-gray-400 dark:text-gray-500">{{ $record->formatted['status']['key'] }}</p>
-            <div class="prose dark:prose-invert">
-                <p>{{ $record->formatted['status']['new'] }}</p>
-            </div>
-        </div>
-        <div class="mb-2 flex flex-col">
-            <p class="text-xs text-gray-400 dark:text-gray-500">{{ $record->formatted['due']['key'] }}</p>
-            <div class="prose dark:prose-invert">
-                <p>{{ $record->formatted['due']['new'] }}</p>
-            </div>
-        </div>
-        <div class="mb-2 flex flex-col">
-            <p class="text-xs text-gray-400 dark:text-gray-500">{{ $record->formatted['assigned_to']['key'] }}</p>
-            <a
-                class="hover:underline"
-                href="{{ $record->formatted['assigned_to']['extra']['new']['link'] }}"
-            >
-                <div class="prose dark:prose-invert">
-                    {{ $record->formatted['assigned_to']['new'] }}
-                </div>
-            </a>
-        </div>
-        <div class="mb-2 flex flex-col">
-            <p class="text-xs text-gray-400 dark:text-gray-500">{{ $record->formatted['created_by']['key'] }}</p>
-            <a
-                class="hover:underline"
-                href="{{ $record->formatted['created_by']['extra']['new']['link'] }}"
-            >
-                <div class="prose dark:prose-invert">
-                    {{ $record->formatted['created_by']['new'] }}
-                </div>
-            </a>
-        </div>
-    </div>
+    <x-timeline::timeline.history.content>
+        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['title']" />
+        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['description']" />
+        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['status']" />
+        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['due']" />
+        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['assigned_to']" />
+        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['created_by']" />
+    </x-timeline::timeline.history.content>
 </div>

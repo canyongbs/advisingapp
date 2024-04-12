@@ -67,5 +67,22 @@ abstract class History extends BaseModel
         return $this->morphTo();
     }
 
-    abstract public function formatted(): Attribute;
+    public function getFormattedValueForKey(string $key): array
+    {
+        return [
+            'key' => str($key)->headline()->toString(),
+            'old' => $this->old[$key] ?? null,
+            'new' => $this->new[$key],
+        ];
+    }
+
+    public function formatted(): Attribute
+    {
+        return Attribute::get(
+            fn () => collect($this->new)
+                ->keys()
+                ->mapWithKeys(fn (string $key) => [$key => $this->getFormattedValueForKey($key)])
+                ->filter()
+        );
+    }
 }
