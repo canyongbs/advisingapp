@@ -9,6 +9,8 @@ class TaskHistoryObserver
 {
     public function created(TaskHistory $taskHistory): void
     {
-        event(new TimelineableRecordCreated($taskHistory->subject->concern, $taskHistory));
+        if ($taskHistory->subject->concern) {
+            event(new TimelineableRecordCreated($taskHistory->subject->concern, $taskHistory));
+        }
     }
 }

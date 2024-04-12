@@ -46,6 +46,7 @@ use AdvisingApp\Timeline\Models\History;
 use App\Filament\Resources\UserResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Timeline\Timelines\TaskHistoryTimeline;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 
@@ -121,5 +122,26 @@ class TaskHistory extends History implements ProvidesATimeline
             ],
             default => parent::getFormattedValueForKey($key),
         };
+    }
+
+    public function getFormattedValues(): Collection
+    {
+        return parent::getFormattedValues()->merge([
+            'concern' => [
+                'key' => 'Concern',
+                'old' => data_get($this->old, 'concern_id')
+                    ? sprintf(
+                        '%s: %s',
+                        str($this->old['concern_type'])->ucfirst(),
+                        Relation::getMorphedModel($this->old['concern_type'])::find($this->old['concern_id'])?->display_name
+                    ) : '(Not set)',
+                'new' => data_get($this->new, 'concern_id')
+                    ? sprintf(
+                        '%s: %s',
+                        str($this->new['concern_type'])->ucfirst(),
+                        Relation::getMorphedModel($this->new['concern_type'])::find($this->new['concern_id'])?->display_name
+                    ) : '(Not set)',
+            ],
+        ])->forget(['concern_type', 'concern_id']);
     }
 }
