@@ -66,6 +66,8 @@ class Enrollment extends Model
         'enrl_add_dt' => 'datetime',
         'enrl_drop_dt' => 'datetime',
         'last_upd_dt_stmp' => 'datetime',
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
     ];
 
     public function getWebPermissions(): Collection

@@ -70,9 +70,7 @@ class ManageLicenseSettings extends SettingsPage
             ->schema([
                 TextInput::make('license_key')
                     ->label('License Key')
-                    ->required()
-                    ->disabled()
-                    ->dehydrated(),
+                    ->required(),
                 Section::make('Subscription Information')
                     ->columns()
                     ->schema(
@@ -157,7 +155,8 @@ class ManageLicenseSettings extends SettingsPage
                                 ->label('Schedule & Appointments'),
                         ]
                     ),
-            ]);
+            ])
+            ->disabled(! config('app.allow_license_settings_editing'));
     }
 
     public function enableExperimentalReporting(): Action

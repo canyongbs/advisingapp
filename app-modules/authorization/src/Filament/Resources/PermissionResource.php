@@ -42,6 +42,7 @@ use Filament\Resources\Resource;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Clusters\UserManagement;
 use App\Filament\Tables\Columns\IdColumn;
 use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\Filament\Resources\PermissionResource\Pages\ViewPermission;
@@ -54,9 +55,9 @@ class PermissionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-key';
 
-    protected static ?string $navigationGroup = 'Users and Permissions';
+    protected static ?string $cluster = UserManagement::class;
 
-    protected static ?int $navigationSort = 70;
+    protected static ?int $navigationSort = 40;
 
     public static function form(Form $form): Form
     {

@@ -37,7 +37,7 @@
 namespace AdvisingApp\Engagement\Filament\Resources;
 
 use Filament\Resources\Resource;
-use App\Filament\Clusters\GlobalSettings;
+use App\Filament\Clusters\Communication;
 use AdvisingApp\Engagement\Models\SmsTemplate;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\EditSmsTemplate;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\ListSmsTemplates;
@@ -49,15 +49,13 @@ class SmsTemplateResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-device-phone-mobile';
 
-    protected static ?string $navigationGroup = 'Communication';
-
     protected static ?string $navigationLabel = 'Text Message Templates';
 
     protected static ?string $modelLabel = 'text message template';
 
     protected static ?int $navigationSort = 130;
 
-    protected static ?string $cluster = GlobalSettings::class;
+    protected static ?string $cluster = Communication::class;
 
     public static function getPages(): array
     {

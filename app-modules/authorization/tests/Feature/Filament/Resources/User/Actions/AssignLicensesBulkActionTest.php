@@ -61,9 +61,21 @@ $setUp = function (
     LicenseType | array $licenseTypes = null,
 ) {
     $user ??= User::factory()->create();
-    $user->assignRole([
-        'authorization.user_management',
-        'authorization.license_management',
+    $user->givePermissionTo([
+        'user.view-any',
+        'user.create',
+        'user.*.update',
+        'user.*.view',
+        'user.*.delete',
+        'user.*.restore',
+        'user.*.force-delete',
+        'license.view-any',
+        'license.create',
+        'license.*.update',
+        'license.*.view',
+        'license.*.delete',
+        'license.*.restore',
+        'license.*.force-delete',
     ]);
     actingAs($user);
 

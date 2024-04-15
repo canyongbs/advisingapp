@@ -193,6 +193,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'locale',
     ];
 
+    public function getWebPermissions(): Collection
+    {
+        return collect(['import', ...$this->webPermissions()]);
+    }
+
     public function defaultAssistantChatFoldersHaveBeenCreated(): bool
     {
         return $this->default_assistant_chat_folders_created;

@@ -166,7 +166,15 @@ it('allows a user to leave impersonate', function () {
 
 it('does not allow a user without permission to assign licenses in bulk', function () {
     $user = User::factory()->create();
-    $user->assignRole('authorization.user_management');
+    $user->givePermissionTo([
+        'user.view-any',
+        'user.create',
+        'user.*.update',
+        'user.*.view',
+        'user.*.delete',
+        'user.*.restore',
+        'user.*.force-delete',
+    ]);
     actingAs($user);
 
     $records = User::factory(2)->create()->prepend($user);
@@ -179,9 +187,21 @@ it('does not allow a user without permission to assign licenses in bulk', functi
 
 it('allows a user with permission to assign licenses in bulk', function () {
     $user = User::factory()->create();
-    $user->assignRole([
-        'authorization.user_management',
-        'authorization.license_management',
+    $user->givePermissionTo([
+        'user.view-any',
+        'user.create',
+        'user.*.update',
+        'user.*.view',
+        'user.*.delete',
+        'user.*.restore',
+        'user.*.force-delete',
+        'license.view-any',
+        'license.create',
+        'license.*.update',
+        'license.*.view',
+        'license.*.delete',
+        'license.*.restore',
+        'license.*.force-delete',
     ]);
     actingAs($user);
 
