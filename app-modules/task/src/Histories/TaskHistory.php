@@ -126,22 +126,30 @@ class TaskHistory extends History implements ProvidesATimeline
 
     public function getFormattedValues(): Collection
     {
-        return parent::getFormattedValues()->merge([
-            'concern' => [
-                'key' => 'Concern',
-                'old' => data_get($this->old, 'concern_id')
-                    ? sprintf(
-                        '%s: %s',
-                        str($this->old['concern_type'])->ucfirst(),
-                        Relation::getMorphedModel($this->old['concern_type'])::find($this->old['concern_id'])?->display_name
-                    ) : '(Not set)',
-                'new' => data_get($this->new, 'concern_id')
-                    ? sprintf(
-                        '%s: %s',
-                        str($this->new['concern_type'])->ucfirst(),
-                        Relation::getMorphedModel($this->new['concern_type'])::find($this->new['concern_id'])?->display_name
-                    ) : '(Not set)',
-            ],
-        ])->forget(['concern_type', 'concern_id']);
+        $values = parent::getFormattedValues()
+            ->merge([
+                'concern' => [
+                    'key' => 'Concern',
+                    'old' => data_get($this->old, 'concern_id')
+                        ? sprintf(
+                            '%s: %s',
+                            str($this->old['concern_type'])->ucfirst(),
+                            Relation::getMorphedModel($this->old['concern_type'])::find($this->old['concern_id'])?->display_name
+                        ) : '(Not set)',
+                    'new' => data_get($this->new, 'concern_id')
+                        ? sprintf(
+                            '%s: %s',
+                            str($this->new['concern_type'])->ucfirst(),
+                            Relation::getMorphedModel($this->new['concern_type'])::find($this->new['concern_id'])?->display_name
+                        ) : '(Not set)',
+                ],
+            ])
+            ->forget(['concern_type', 'concern_id']);
+
+        if ($values['concern']['old'] === $values['concern']['new']) {
+            $values->forget('concern');
+        }
+
+        return $values;
     }
 }
