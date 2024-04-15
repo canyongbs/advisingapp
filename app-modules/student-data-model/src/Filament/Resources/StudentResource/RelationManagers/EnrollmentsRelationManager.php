@@ -41,7 +41,7 @@ use Laravel\Pennant\Feature;
 use Filament\Infolists\Infolist;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
 
@@ -111,7 +111,6 @@ class EnrollmentsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('division')
             ->columns([
-                IdColumn::make(),
                 TextColumn::make('division')
                     ->label('College'),
                 TextColumn::make('class_nbr')
@@ -128,5 +127,17 @@ class EnrollmentsRelationManager extends RelationManager
                 ViewAction::make(),
             ])
             ->bulkActions([]);
+    }
+
+    public function getTableRecordKey(Model $record): string
+    {
+        return base64_encode(json_encode($record->attributesToArray()));
+    }
+
+    protected function resolveTableRecord(?string $key): ?Model
+    {
+        return $this->getTable()->getQuery()
+            ->where(json_decode(base64_decode($key), associative: true))
+            ->first();
     }
 }
