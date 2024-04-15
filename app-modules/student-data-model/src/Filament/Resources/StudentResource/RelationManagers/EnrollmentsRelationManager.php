@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use Filament\Tables\Table;
-use Laravel\Pennant\Feature;
 use Filament\Infolists\Infolist;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
