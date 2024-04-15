@@ -34,27 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Feature::activate('educatable-alerts-timeline');
+    }
 
-class StudentEngagementTimeline extends TimelinePage
-{
-    protected static string $resource = StudentResource::class;
-
-    protected static ?string $navigationLabel = 'Timeline';
-
-    public string $emptyStateMessage = 'There are no engagements to show for this student.';
-
-    public string $noMoreRecordsMessage = "You have reached the end of this student's engagement timeline.";
-
-    public array $modelsToTimeline = [
-        Engagement::class,
-        EngagementResponse::class,
-        AlertHistory::class,
-    ];
-}
+    public function down(): void
+    {
+        Feature::deactivate('educatable-alerts-timeline');
+    }
+};

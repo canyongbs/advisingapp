@@ -38,17 +38,22 @@ namespace AdvisingApp\Alert\Models;
 
 use Exception;
 use App\Models\BaseModel;
+use Illuminate\Support\Collection;
 use AdvisingApp\Alert\Enums\AlertStatus;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Alert\Enums\AlertSeverity;
+use AdvisingApp\Alert\Histories\AlertHistory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use AdvisingApp\Timeline\Models\Contracts\HasHistory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Timeline\Models\Concerns\InteractsWithHistory;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
@@ -60,11 +65,12 @@ use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
  *
  * @mixin IdeHelperAlert
  */
-class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction
+class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction, HasHistory
 {
     use SoftDeletes;
     use AuditableTrait;
     use BelongsToEducatable;
+    use InteractsWithHistory;
 
     protected $fillable = [
         'concern_id',
@@ -79,6 +85,23 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
         'severity' => AlertSeverity::class,
         'status' => AlertStatus::class,
     ];
+
+    public function processCustomHistories(string $event, Collection $old, Collection $new, Collection $pending): void
+    {
+        if ($event !== 'updated') {
+            return;
+        }
+
+        if ($new->has('status')) {
+            $this->recordHistory('status_changed', $old->only('status'), $new->only('status'), $pending);
+            $new->forget('status');
+        }
+    }
+
+    public function histories(): MorphMany
+    {
+        return $this->morphMany(AlertHistory::class, 'subject');
+    }
 
     public function concern(): MorphTo
     {

@@ -34,27 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\Alert\Filament\Actions;
 
+use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\Section;
 use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use Filament\Infolists\Components\KeyValueEntry;
 
-class StudentEngagementTimeline extends TimelinePage
+class AlertHistoryUpdatedViewAction extends ViewAction
 {
-    protected static string $resource = StudentResource::class;
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-    protected static ?string $navigationLabel = 'Timeline';
-
-    public string $emptyStateMessage = 'There are no engagements to show for this student.';
-
-    public string $noMoreRecordsMessage = "You have reached the end of this student's engagement timeline.";
-
-    public array $modelsToTimeline = [
-        Engagement::class,
-        EngagementResponse::class,
-        AlertHistory::class,
-    ];
+        $this->infolist([
+            Section::make()
+                ->schema([
+                    KeyValueEntry::make('Changes')
+                        ->getStateUsing(fn (AlertHistory $record) => $record->formatted)
+                        ->view('filament.infolists.components.update-entry'),
+                ]),
+        ]);
+    }
 }

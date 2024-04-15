@@ -34,27 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\Timeline\Timelines;
 
+use Filament\Actions\ViewAction;
 use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\Timeline\Models\CustomTimeline;
+use AdvisingApp\Alert\Filament\Actions\AlertHistoryCreatedViewAction;
+use AdvisingApp\Alert\Filament\Actions\AlertHistoryUpdatedViewAction;
 
-class StudentEngagementTimeline extends TimelinePage
+class AlertHistoryTimeline extends CustomTimeline
 {
-    protected static string $resource = StudentResource::class;
+    public function __construct(
+        public AlertHistory $history
+    ) {}
 
-    protected static ?string $navigationLabel = 'Timeline';
+    public function icon(): string
+    {
+        return 'heroicon-o-bell-alert';
+    }
 
-    public string $emptyStateMessage = 'There are no engagements to show for this student.';
+    public function sortableBy(): string
+    {
+        return $this->history->created_at;
+    }
 
-    public string $noMoreRecordsMessage = "You have reached the end of this student's engagement timeline.";
+    public function providesCustomView(): bool
+    {
+        return true;
+    }
 
-    public array $modelsToTimeline = [
-        Engagement::class,
-        EngagementResponse::class,
-        AlertHistory::class,
-    ];
+    public function renderCustomView(): string
+    {
+        return match ($this->history->event) {
+            'created' => 'alert::created-history-timeline-item',
+            'updated' => 'alert::updated-history-timeline-item',
+            'status_changed' => 'alert::status-changed-history-timeline-item',
+        };
+    }
+
+    public function modalViewAction(): ViewAction
+    {
+        return (match ($this->history->event) {
+            'created' => AlertHistoryCreatedViewAction::make()
+                ->modalHeading('View Alert'),
+            'updated', 'status_changed' => AlertHistoryUpdatedViewAction::make()
+                ->modalHeading('View Changes'),
+        })->record($this->history);
+    }
 }

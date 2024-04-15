@@ -34,27 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\Timeline\Models;
 
-use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class StudentEngagementTimeline extends TimelinePage
+/**
+ * @property array $new
+ * @property array $old
+ */
+abstract class History extends BaseModel
 {
-    protected static string $resource = StudentResource::class;
+    use SoftDeletes;
 
-    protected static ?string $navigationLabel = 'Timeline';
+    protected $table = 'histories';
 
-    public string $emptyStateMessage = 'There are no engagements to show for this student.';
-
-    public string $noMoreRecordsMessage = "You have reached the end of this student's engagement timeline.";
-
-    public array $modelsToTimeline = [
-        Engagement::class,
-        EngagementResponse::class,
-        AlertHistory::class,
+    protected $fillable = [
+        'event',
+        'old',
+        'new',
     ];
+
+    protected $casts = [
+        'old' => 'array',
+        'new' => 'array',
+    ];
+
+    public function subject(): MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    abstract public function formatted(): Attribute;
 }

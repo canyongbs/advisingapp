@@ -45,10 +45,12 @@ use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Alert\Enums\AlertStatus;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Events\AlertCreated;
+use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Alert\Observers\AlertObserver;
 use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Alert\Registries\AlertRbacRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Alert\Observers\AlertHistoryObserver;
 use AdvisingApp\Alert\Listeners\NotifySubscribersOfAlertCreated;
 
 class AlertServiceProvider extends ServiceProvider
@@ -78,6 +80,7 @@ class AlertServiceProvider extends ServiceProvider
     protected function registerObservers(): void
     {
         Alert::observe(AlertObserver::class);
+        AlertHistory::observe(AlertHistoryObserver::class);
     }
 
     protected function registerEvents(): void
