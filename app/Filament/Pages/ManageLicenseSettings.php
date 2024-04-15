@@ -66,18 +66,13 @@ class ManageLicenseSettings extends SettingsPage
 
     public function form(Form $form): Form
     {
-        $allowEditing = config('app.allow_license_settings_editing');
-
         return $form
             ->schema([
                 TextInput::make('license_key')
                     ->label('License Key')
-                    ->required()
-                    ->disabled()
-                    ->dehydrated(),
+                    ->required(),
                 Section::make('Subscription Information')
                     ->columns()
-                    ->disabled(! $allowEditing)
                     ->schema(
                         [
                             TextInput::make('data.subscription.clientName')
@@ -104,7 +99,6 @@ class ManageLicenseSettings extends SettingsPage
                     ),
                 Section::make('Limits Configuration')
                     ->columns()
-                    ->disabled(! $allowEditing)
                     ->schema(
                         [
                             TextInput::make('data.limits.conversationalAiSeats')
@@ -134,7 +128,6 @@ class ManageLicenseSettings extends SettingsPage
                     ),
                 Section::make('Enabled Features')
                     ->columns()
-                    ->disabled(! $allowEditing)
                     ->schema(
                         [
                             Toggle::make('data.addons.onlineForms')
@@ -163,7 +156,7 @@ class ManageLicenseSettings extends SettingsPage
                         ]
                     ),
             ])
-            ->disabled(! $allowEditing);
+            ->disabled(! config('app.allow_license_settings_editing'));
     }
 
     public function enableExperimentalReporting(): Action
