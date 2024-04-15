@@ -1,0 +1,76 @@
+type Engagement
+    @model(class: "AdvisingApp\\Engagement\\Models\\Engagement") {
+    id: UUID!
+
+    subject: String
+
+    body: String @method(name: "getBody")
+
+    scheduled: Boolean!
+
+    deliver_at: DateTime!
+
+    created_at: DateTime
+
+    updated_at: DateTime
+
+    deleted_at: DateTime
+
+    recipient: Educatable! @morphTo
+
+    created_by: User! @belongsTo(relation: "createdBy")
+
+    audits: [Audit!] @hasMany
+
+    audits_count: Int @count(relation: "audits")
+}
+
+input EngagementRecipientsQuery {
+    student: StudentsQuery
+    prospect: ProspectsQuery
+}
+
+input EngagementsQuery {
+    id: UUID
+
+    subject: String
+
+    body: JSON
+
+    scheduled: Boolean
+
+    deliver_at: DateTime
+
+    created_at: DateTime
+
+    updated_at: DateTime
+
+    deleted_at: DateTime
+
+    recipient: EngagementRecipientsQuery @morphToRelation
+
+    recipient_id: EducatableId
+
+    recipient_type: EducatableType
+
+    created_by: UsersQuery
+
+    audits: AuditsQuery
+}
+
+type EngagementQueries {
+    find(
+        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:engagements"])
+    ): Engagement @find @canResolved(ability: "view")
+
+    list(
+        where: EngagementsQuery @searchBy,
+        order: EngagementsQuery @sortBy
+    ): [Engagement!]!
+    @paginate
+    @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    engagement: EngagementQueries! @namespaced
+}

@@ -83,7 +83,6 @@ use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 
 /**
  * @property string $display_name
- *
  * @mixin IdeHelperProspect
  */
 class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, Educatable, HasFilamentResource, NotifiableInterface
