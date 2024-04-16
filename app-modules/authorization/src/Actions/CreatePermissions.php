@@ -37,6 +37,7 @@
 namespace AdvisingApp\Authorization\Actions;
 
 use ReflectionClass;
+use Laravel\Pennant\Feature;
 use AdvisingApp\Authorization\Models\Permission;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
@@ -84,10 +85,32 @@ class CreatePermissions
     {
         $registry = resolve(AuthorizationPermissionRegistry::class);
 
+        $getPermissionGroupId = app(GetPermissionGroupId::class);
+
         foreach ($registry->getModuleWebPermissions() as $module => $permissions) {
             foreach ($permissions as $permission) {
-                Permission::firstOrCreate([
-                    'name' => "{$module}.{$permission}",
+                $permissionName = "{$module}.{$permission}";
+
+                $existingPermission = Permission::query()
+                    ->where([
+                        'name' => $permissionName,
+                        'guard_name' => 'web',
+                    ])
+                    ->first();
+
+                if ($existingPermission && blank($existingPermission->group_id) && Feature::active('permission-groups')) {
+                    $existingPermission->update([
+                        'group_id' => $getPermissionGroupId($permissionName),
+                    ]);
+                }
+
+                if ($existingPermission) {
+                    continue;
+                }
+
+                Permission::create([
+                    'name' => $permissionName,
+                    'group_id' => $getPermissionGroupId($permissionName),
                     'guard_name' => 'web',
                 ]);
             }
@@ -95,8 +118,28 @@ class CreatePermissions
 
         foreach ($registry->getModuleApiPermissions() as $module => $permissions) {
             foreach ($permissions as $permission) {
-                Permission::firstOrCreate([
-                    'name' => "{$module}.{$permission}",
+                $permissionName = "{$module}.{$permission}";
+
+                $existingPermission = Permission::query()
+                    ->where([
+                        'name' => $permissionName,
+                        'guard_name' => 'api',
+                    ])
+                    ->first();
+
+                if ($existingPermission && blank($existingPermission->group_id) && Feature::active('permission-groups')) {
+                    $existingPermission->update([
+                        'group_id' => $getPermissionGroupId($permissionName),
+                    ]);
+                }
+
+                if ($existingPermission) {
+                    continue;
+                }
+
+                Permission::create([
+                    'name' => $permissionName,
+                    'group_id' => $getPermissionGroupId($permissionName),
                     'guard_name' => 'api',
                 ]);
             }
