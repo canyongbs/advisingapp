@@ -6,11 +6,11 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     public function up(): void
     {
-        Feature::activate('permission-groups');
+        Feature::purge('permission-groups');
     }
 
     public function down(): void
     {
-        Feature::purge('permission-groups');
+        Feature::activate('permission-groups');
     }
 };

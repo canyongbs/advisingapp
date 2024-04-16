@@ -37,7 +37,6 @@
 namespace AdvisingApp\Authorization\Actions;
 
 use ReflectionClass;
-use Laravel\Pennant\Feature;
 use AdvisingApp\Authorization\Models\Permission;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
@@ -98,7 +97,7 @@ class CreatePermissions
                     ])
                     ->first();
 
-                if ($existingPermission && blank($existingPermission->group_id) && Feature::active('permission-groups')) {
+                if ($existingPermission && blank($existingPermission->group_id)) {
                     $existingPermission->update([
                         'group_id' => $getPermissionGroupId($permissionName),
                     ]);
@@ -127,7 +126,7 @@ class CreatePermissions
                     ])
                     ->first();
 
-                if ($existingPermission && blank($existingPermission->group_id) && Feature::active('permission-groups')) {
+                if ($existingPermission && blank($existingPermission->group_id)) {
                     $existingPermission->update([
                         'group_id' => $getPermissionGroupId($permissionName),
                     ]);
