@@ -46,5 +46,5 @@ class UserManagement extends Cluster
 
     protected static ?string $navigationLabel = 'User Management';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 10;
 }
