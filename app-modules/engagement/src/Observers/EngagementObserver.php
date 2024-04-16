@@ -47,8 +47,10 @@ class EngagementObserver
 {
     public function creating(Engagement $engagement): void
     {
-        if (is_null($engagement->user_id) && ! is_null(auth()->user())) {
-            $engagement->user_id = auth()->user()->id;
+        $user = auth()->user();
+
+        if ($user instanceof User && is_null($engagement->user_id)) {
+            $engagement->user_id = $user->id;
         }
     }
 

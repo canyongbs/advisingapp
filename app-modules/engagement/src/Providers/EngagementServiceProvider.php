@@ -56,6 +56,8 @@ use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
 use AdvisingApp\Engagement\Models\EngagementFileEntities;
 use AdvisingApp\Engagement\Observers\SmsTemplateObserver;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Engagement\Observers\EmailTemplateObserver;
 use AdvisingApp\Engagement\Observers\EngagementBatchObserver;
 use AdvisingApp\Engagement\Registries\EngagementRbacRegistry;
@@ -118,5 +120,8 @@ class EngagementServiceProvider extends ServiceProvider
     protected function registerGraphQL(): void
     {
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
+
+        $this->registerEnum(EngagementDeliveryMethod::class);
+        $this->registerEnum(EngagementDeliveryStatus::class);
     }
 }

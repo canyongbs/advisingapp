@@ -20,6 +20,8 @@ type Engagement
 
     created_by: User! @belongsTo(relation: "createdBy")
 
+    deliverable: EngagementDeliverable @hasOne
+
     audits: [Audit!] @hasMany
 
     audits_count: Int @count(relation: "audits")
@@ -49,10 +51,6 @@ input EngagementsQuery {
 
     recipient: EngagementRecipientsQuery @morphToRelation
 
-    recipient_id: EducatableId
-
-    recipient_type: EducatableType
-
     created_by: UsersQuery
 
     audits: AuditsQuery
@@ -73,4 +71,57 @@ type EngagementQueries {
 
 extend type Query {
     engagement: EngagementQueries! @namespaced
+}
+
+input CreateEngagementSMSInput {
+    body: String! @rules(apply: ["required", "string", "max:3200"])
+
+    scheduled: Boolean
+
+    deliver_at: DateTime @rules(apply: ["required_if:scheduled,true"])
+
+    recipient_id: EducatableId!
+    @rules(apply: [
+        "required"
+        "AdvisingApp\\Engagement\\GraphQL\\Rules\\RecipientIdExists"
+    ])
+
+    recipient_type: EducatableType!
+    @rules(apply: ["required", "in:student,prospect"])
+}
+
+input UpdateEngagementSMSInput {
+    body: String @rules(apply: ["required", "string", "max:320"])
+
+    scheduled: Boolean
+
+    deliver_at: DateTime @rules(apply: ["required_if:scheduled,true"])
+}
+
+type EngagementMutations {
+    sendSms(
+        input: CreateEngagementSMSInput! @spread
+    ): Engagement! @canResolved(ability: "create")
+    @field(
+        resolver: "AdvisingApp\\Engagement\\GraphQL\\Mutations\\SendSMS"
+    )
+
+    updateSms(
+        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:engagements"]),
+        input: UpdateEngagementSMSInput! @spread
+    ): Engagement @canFind(ability: "update", find: "id")
+    @field(
+        resolver: "AdvisingApp\\Engagement\\GraphQL\\Mutations\\UpdateSMS"
+    )
+
+    delete(
+        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:engagements"])
+    ): Engagement @canFind(ability: "delete", find: "id")
+    @field(
+        resolver: "AdvisingApp\\Engagement\\GraphQL\\Mutations\\DeleteEngagement"
+    )
+}
+
+extend type Mutation {
+    engagement: EngagementMutations! @namespaced
 }
