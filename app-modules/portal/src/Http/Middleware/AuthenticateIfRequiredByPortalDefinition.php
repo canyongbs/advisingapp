@@ -47,11 +47,11 @@ class AuthenticateIfRequiredByPortalDefinition
     {
         $settings = resolve(PortalSettings::class);
 
-        if ($settings->knowledge_management_portal_requires_authentication === false) {
+        if (! $settings->knowledge_management_portal_requires_authentication) {
             return $next($request);
         }
 
-        if (auth('sanctum')->check() === true) {
+        if (auth('sanctum')->check()) {
             return $next($request);
         }
 
