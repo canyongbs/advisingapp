@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace App\Overrides\Filament\Actions\Imports\Jobs;
 
-use Filament\Clusters\Cluster;
+use Carbon\CarbonInterface;
+use Filament\Actions\Imports\Jobs\ImportCsv;
 
-class ServiceManagementAdministration extends Cluster
+class ImportCsvOverride extends ImportCsv
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    public int $tries = 2;
 
-    protected static ?string $navigationGroup = 'Product Administration';
-
-    protected static ?int $navigationSort = 70;
-
-    protected static ?string $title = 'Service Management';
+    public function retryUntil(): ?CarbonInterface
+    {
+        return null;
+    }
 }

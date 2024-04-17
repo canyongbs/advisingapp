@@ -34,17 +34,55 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Engagement\Actions;
 
-use Filament\Clusters\Cluster;
-
-class ServiceManagementAdministration extends Cluster
+class GenerateTipTapBodyJson
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    public function __invoke(string $body, array $mergeData = []): array
+    {
+        return tiptap_converter()
+            ->asJSON([
+                'type' => 'doc',
+                'content' => str($body)
+                    ->explode("\n")
+                    ->map(fn (string $line): array => $this->paragraph($line, $mergeData))
+                    ->filter(fn (array $component) => ! empty($component['content']))
+                    ->values()
+                    ->toArray(),
+            ], true);
+    }
 
-    protected static ?string $navigationGroup = 'Product Administration';
+    private function paragraph(string $line, array $mergeData = []): array
+    {
+        preg_match_all('/{{[\s\S]*?}}|(\S+\s*)/', $line, $tokens);
 
-    protected static ?int $navigationSort = 70;
+        return [
+            'type' => 'paragraph',
+            'content' => collect($tokens[0])
+                ->map(
+                    fn ($token) => in_array($token, $mergeData)
+                        ? $this->mergeTag($token)
+                        : $this->text($token)
+                )
+                ->toArray(),
+        ];
+    }
 
-    protected static ?string $title = 'Service Management';
+    private function mergeTag(string $token): array
+    {
+        return [
+            'type' => 'mergeTag',
+            'attrs' => [
+                'id' => str($token)->remove(['{{', '}}'])->trim()->toString(),
+            ],
+        ];
+    }
+
+    private function text(string $text): array
+    {
+        return [
+            'type' => 'text',
+            'text' => $text,
+        ];
+    }
 }

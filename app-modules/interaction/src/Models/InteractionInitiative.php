@@ -42,6 +42,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
+/**
+ * @mixin IdeHelperInteractionInitiative
+ */
 class InteractionInitiative extends BaseModel implements Auditable
 {
     use AuditableTrait;

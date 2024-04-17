@@ -2299,11 +2299,13 @@ namespace AdvisingApp\Interaction\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $interaction_initiative_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \AdvisingApp\Interaction\Models\InteractionCampaign|null $campaign
  * @property-read \AdvisingApp\Division\Models\Division|null $division
  * @property-read \AdvisingApp\Interaction\Models\InteractionDriver|null $driver
+ * @property-read \AdvisingApp\Interaction\Models\InteractionInitiative|null $initiative
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $interactable
  * @property-read \AdvisingApp\Interaction\Models\InteractionOutcome|null $outcome
  * @property-read \AdvisingApp\Interaction\Models\InteractionRelation|null $relation
@@ -2326,6 +2328,7 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractionCampaignId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractionDriverId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractionInitiativeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractionOutcomeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractionRelationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractionStatusId($value)
@@ -2402,6 +2405,34 @@ namespace AdvisingApp\Interaction\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperInteractionDriver {}
+}
+
+namespace AdvisingApp\Interaction\Models{
+/**
+ * AdvisingApp\Interaction\Models\InteractionInitiative
+ *
+ * @property string $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
+ * @property-read int|null $interactions_count
+ * @method static \AdvisingApp\Interaction\Database\Factories\InteractionInitiativeFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative query()
+ * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperInteractionInitiative {}
 }
 
 namespace AdvisingApp\Interaction\Models{
@@ -4446,8 +4477,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string|null $faculty_email
  * @property string|null $semester_code
  * @property string|null $semester_name
- * @property string|null $start_date
- * @property string|null $end_date
+ * @property \Illuminate\Support\Carbon|null $start_date
+ * @property \Illuminate\Support\Carbon|null $end_date
  * @property-read \AdvisingApp\StudentDataModel\Models\Student|null $student
  * @method static \AdvisingApp\StudentDataModel\Database\Factories\EnrollmentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment newModelQuery()
