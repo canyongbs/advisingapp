@@ -50,6 +50,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use SocialiteProviders\Google\GoogleExtendSocialite;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\Observers\LicenseObserver;
+use AdvisingApp\Authorization\Actions\GetPermissionGroupId;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Authorization\Registries\AuthorizationRbacRegistry;
 use AdvisingApp\Authorization\Http\Controllers\Auth\LogoutController;
@@ -71,6 +72,10 @@ class AuthorizationServiceProvider extends ServiceProvider
 
         $this->app->bind(FilamentLogoutController::class, function () {
             return new LogoutController();
+        });
+
+        $this->app->scoped(GetPermissionGroupId::class, function () {
+            return new GetPermissionGroupId();
         });
 
         app('config')->set('permission', require base_path('app-modules/authorization/config/permission.php'));
