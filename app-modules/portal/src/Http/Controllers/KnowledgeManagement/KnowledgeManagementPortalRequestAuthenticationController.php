@@ -86,7 +86,7 @@ class KnowledgeManagementPortalRequestAuthenticationController extends Controlle
             ),
             default => URL::to(
                 URL::signedRoute(
-                    name: 'portal.knowledge-management.authenticate.embedded',
+                    name: 'api.portal.knowledge-management.authenticate.embedded',
                     parameters: [
                         'authentication' => $authentication,
                     ],

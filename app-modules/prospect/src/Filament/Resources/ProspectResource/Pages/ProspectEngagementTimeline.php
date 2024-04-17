@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use AdvisingApp\Task\Histories\TaskHistory;
+use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
@@ -49,10 +51,12 @@ class ProspectEngagementTimeline extends TimelinePage
 
     public string $emptyStateMessage = 'There are no engagements to show for this prospect.';
 
-    public string $noMoreRecordsMessage = "You have reached the end of this prospects's engagement timeline.";
+    public string $noMoreRecordsMessage = "You have reached the end of this prospect's engagement timeline.";
 
     public array $modelsToTimeline = [
         Engagement::class,
         EngagementResponse::class,
+        AlertHistory::class,
+        TaskHistory::class,
     ];
 }

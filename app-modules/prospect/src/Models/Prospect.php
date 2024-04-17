@@ -51,6 +51,7 @@ use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Notification\Models\Subscription;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -59,6 +60,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
@@ -101,6 +103,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     use NotifiableViaSms;
     use SoftDeletes;
     use UsesTenantConnection;
+    use HasRelationships;
 
     protected $fillable = [
         'first_name',
@@ -235,6 +238,16 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     public static function filamentResource(): string
     {
         return ProspectResource::class;
+    }
+
+    public function alertHistories(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->alerts(), (new Alert())->histories());
+    }
+
+    public function taskHistories(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->tasks(), (new Task())->histories());
     }
 
     public function subscribedUsers(): MorphToMany

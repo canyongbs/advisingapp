@@ -31,17 +31,32 @@
 
 </COPYRIGHT>
 --}}
+@php
+    use AdvisingApp\Alert\Histories\AlertHistory;
+@endphp
+
+@php
+    /* @var AlertHistory $record */
+@endphp
 <div>
-    <knowledge-management-portal-embed
-        url="http://test.advisingapp.local/api/portal/knowledge-management?signature=a9425eb754fc360f36635d850c3140013ff0391c2a80e1496c34ec41bfbc63f6"
-        user-authentication-url=http://test.advisingapp.local/api/user
-        access-url=http://test.advisingapp.local/portals/knowledge-management
-        search-url="http://test.advisingapp.local/api/portal/knowledge-management/search?signature=b08da80e30779c24d2a3ad41f4f43b2d31bf5feefa9a81f50f683621daf871b3"
-        app-url="http://test.advisingapp.local"
-        api-url="http://test.advisingapp.local/api/portal/knowledge-management"
-    >
-    </knowledge-management-portal-embed>
-    <script
-        src="http://test.advisingapp.local/js/portals/knowledge-management/advising-app-knowledge-management-portal.js?">
-    </script>
+    <div class="flex flex-row justify-between">
+        <x-timeline::timeline.heading>
+            Alert Created
+        </x-timeline::timeline.heading>
+
+        <div>
+            {{ $viewRecordIcon }}
+        </div>
+    </div>
+
+    <x-timeline::timeline.time>
+        {{ $record->created_at->diffForHumans() }}
+    </x-timeline::timeline.time>
+
+    <x-timeline::timeline.history.content>
+        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['status']" />
+        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['severity']" />
+        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['description']" />
+        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['suggested_intervention']" />
+    </x-timeline::timeline.history.content>
 </div>
