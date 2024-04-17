@@ -560,7 +560,7 @@ it('respects message creation time when saving chats', function () use ($setUp) 
         'assistant_chat_id' => $chat->getKey(),
         'message' => $message,
         'from' => AIChatMessageFrom::User,
-        'created_at' => $createdAt,
+        'created_at' => $createdAt->format('Y-m-d H:i:s'),
     ]);
 });
 
