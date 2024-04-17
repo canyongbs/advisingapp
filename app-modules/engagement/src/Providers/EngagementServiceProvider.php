@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Providers;
 
 use Filament\Panel;
 use App\Models\Tenant;
+use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Multitenancy\TenantCollection;
 use Illuminate\Console\Scheduling\Schedule;
@@ -55,6 +56,8 @@ use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
 use AdvisingApp\Engagement\Models\EngagementFileEntities;
 use AdvisingApp\Engagement\Observers\SmsTemplateObserver;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Engagement\Observers\EmailTemplateObserver;
 use AdvisingApp\Engagement\Observers\EngagementBatchObserver;
 use AdvisingApp\Engagement\Registries\EngagementRbacRegistry;
@@ -62,6 +65,8 @@ use AdvisingApp\Engagement\Observers\EngagementFileEntitiesObserver;
 
 class EngagementServiceProvider extends ServiceProvider
 {
+    use ImplementsGraphQL;
+
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new EngagementPlugin()));
@@ -98,6 +103,8 @@ class EngagementServiceProvider extends ServiceProvider
 
         $this->registerObservers();
 
+        $this->registerGraphQL();
+
         RoleBasedAccessControlRegistry::register(EngagementRbacRegistry::class);
     }
 
@@ -108,5 +115,13 @@ class EngagementServiceProvider extends ServiceProvider
         EngagementBatch::observe(EngagementBatchObserver::class);
         EngagementFileEntities::observe(EngagementFileEntitiesObserver::class);
         SmsTemplate::observe(SmsTemplateObserver::class);
+    }
+
+    protected function registerGraphQL(): void
+    {
+        $this->discoverSchema(__DIR__ . '/../../graphql/*');
+
+        $this->registerEnum(EngagementDeliveryMethod::class);
+        $this->registerEnum(EngagementDeliveryStatus::class);
     }
 }

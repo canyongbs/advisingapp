@@ -6,6 +6,7 @@ union Auditable =
     | SystemUser
     | ConsentAgreement
     | UserConsentAgreement
+    | Engagement
 
 input AuditableablesQuery {
     student: StudentsQuery
@@ -14,6 +15,7 @@ input AuditableablesQuery {
     system_user: SystemUsersQuery
     consent_agreement: ConsentAgreementsQuery
     user_consent_agreement: UserConsentAgreementsQuery
+    engagement: EngagementsQuery
 }
 
 type Audit @model(class: "AdvisingApp\\Audit\\Models\\Audit") {

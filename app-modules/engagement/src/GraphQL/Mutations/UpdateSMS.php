@@ -34,24 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+namespace AdvisingApp\Engagement\GraphQL\Mutations;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Nuwave\Lighthouse\Execution\ResolveInfo;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
+use AdvisingApp\Engagement\Actions\GenerateTipTapBodyJson;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 
-/**
- * @mixin IdeHelperInteractionInitiative
- */
-class InteractionInitiative extends BaseModel implements Auditable
+class UpdateSMS
 {
-    use AuditableTrait;
-    use HasManyInteractions;
-    use HasFactory;
+    public function __invoke(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Engagement
+    {
+        $engagement = Engagement::findOrFail($args['id']);
 
-    protected $fillable = [
-        'name',
-    ];
+        $mergeTags = match ($engagement->recipient::class) {
+            Student::class => [
+                '{{ student full name }}',
+                '{{ student email }}',
+            ],
+            default => [],
+        };
+
+        $args['body'] = app(GenerateTipTapBodyJson::class)(body: $args['body'], mergeData: $mergeTags);
+        $engagement->update($args);
+
+        $engagement->deliverable->delete();
+        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: EngagementDeliveryMethod::Sms->value);
+
+        return $engagement->refresh();
+    }
 }

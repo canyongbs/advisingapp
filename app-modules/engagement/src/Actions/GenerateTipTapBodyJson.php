@@ -34,24 +34,55 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+namespace AdvisingApp\Engagement\Actions;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-
-/**
- * @mixin IdeHelperInteractionInitiative
- */
-class InteractionInitiative extends BaseModel implements Auditable
+class GenerateTipTapBodyJson
 {
-    use AuditableTrait;
-    use HasManyInteractions;
-    use HasFactory;
+    public function __invoke(string $body, array $mergeData = []): array
+    {
+        return tiptap_converter()
+            ->asJSON([
+                'type' => 'doc',
+                'content' => str($body)
+                    ->explode("\n")
+                    ->map(fn (string $line): array => $this->paragraph($line, $mergeData))
+                    ->filter(fn (array $component) => ! empty($component['content']))
+                    ->values()
+                    ->toArray(),
+            ], true);
+    }
 
-    protected $fillable = [
-        'name',
-    ];
+    private function paragraph(string $line, array $mergeData = []): array
+    {
+        preg_match_all('/{{[\s\S]*?}}|(\S+\s*)/', $line, $tokens);
+
+        return [
+            'type' => 'paragraph',
+            'content' => collect($tokens[0])
+                ->map(
+                    fn ($token) => in_array($token, $mergeData)
+                        ? $this->mergeTag($token)
+                        : $this->text($token)
+                )
+                ->toArray(),
+        ];
+    }
+
+    private function mergeTag(string $token): array
+    {
+        return [
+            'type' => 'mergeTag',
+            'attrs' => [
+                'id' => str($token)->remove(['{{', '}}'])->trim()->toString(),
+            ],
+        ];
+    }
+
+    private function text(string $text): array
+    {
+        return [
+            'type' => 'text',
+            'text' => $text,
+        ];
+    }
 }

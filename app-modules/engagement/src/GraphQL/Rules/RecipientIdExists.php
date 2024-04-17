@@ -34,24 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+namespace AdvisingApp\Engagement\GraphQL\Rules;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Closure;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Validation\DataAwareRule;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
-/**
- * @mixin IdeHelperInteractionInitiative
- */
-class InteractionInitiative extends BaseModel implements Auditable
+class RecipientIdExists implements DataAwareRule, ValidationRule
 {
-    use AuditableTrait;
-    use HasManyInteractions;
-    use HasFactory;
+    protected array $data = [];
 
-    protected $fillable = [
-        'name',
-    ];
+    public function validate(string $attribute, mixed $value, Closure $fail): void
+    {
+        $type = $this->data['input']['recipient_type'];
+
+        /** @var ?Model $morph */
+        $morph = Relation::getMorphedModel($type);
+
+        if (! $morph) {
+            $fail('The type must be either student or prospect.');
+        } elseif ($morph::query()->whereKey($value)->doesntExist()) {
+            $fail('The recipient does not exist.');
+        }
+    }
+
+    public function setData(array $data): static
+    {
+        $this->data = $data;
+
+        return $this;
+    }
 }

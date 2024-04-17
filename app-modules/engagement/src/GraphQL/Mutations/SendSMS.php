@@ -34,24 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+namespace AdvisingApp\Engagement\GraphQL\Mutations;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\Model;
+use Nuwave\Lighthouse\Execution\ResolveInfo;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
+use AdvisingApp\Engagement\Actions\GenerateTipTapBodyJson;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 
-/**
- * @mixin IdeHelperInteractionInitiative
- */
-class InteractionInitiative extends BaseModel implements Auditable
+class SendSMS
 {
-    use AuditableTrait;
-    use HasManyInteractions;
-    use HasFactory;
+    public function __invoke(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Engagement
+    {
+        /** @var Model $morph */
+        $morph = Relation::getMorphedModel($args['recipient_type']);
+        $recipient = $morph::find($args['recipient_id']);
 
-    protected $fillable = [
-        'name',
-    ];
+        $mergeTags = match ($recipient::class) {
+            Student::class => [
+                '{{ student full name }}',
+                '{{ student email }}',
+            ],
+            default => [],
+        };
+
+        $args['body'] = app(GenerateTipTapBodyJson::class)(body: $args['body'], mergeData: $mergeTags);
+
+        $engagement = Engagement::create($args);
+
+        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: EngagementDeliveryMethod::Sms->value);
+
+        return $engagement->refresh();
+    }
 }
