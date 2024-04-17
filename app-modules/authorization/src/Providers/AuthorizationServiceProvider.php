@@ -37,7 +37,6 @@
 namespace AdvisingApp\Authorization\Providers;
 
 use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Authorization\Models\Role;

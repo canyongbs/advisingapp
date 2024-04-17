@@ -2,11 +2,8 @@
 
 namespace AdvisingApp\Engagement\GraphQL\Mutations;
 
-use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
-use AdvisingApp\Engagement\Models\Engagement;
-use App\Models\User;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
+use AdvisingApp\Engagement\Models\Engagement;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class DeleteEngagement

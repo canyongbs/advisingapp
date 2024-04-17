@@ -1,5 +1,4 @@
-type Engagement
-    @model(class: "AdvisingApp\\Engagement\\Models\\Engagement") {
+type Engagement @model(class: "AdvisingApp\\Engagement\\Models\\Engagement") {
     id: UUID!
 
     subject: String
@@ -58,15 +57,15 @@ input EngagementsQuery {
 
 type EngagementQueries {
     find(
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:engagements"])
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:engagements"])
     ): Engagement @find @canResolved(ability: "view")
 
     list(
-        where: EngagementsQuery @searchBy,
+        where: EngagementsQuery @searchBy
         order: EngagementsQuery @sortBy
-    ): [Engagement!]!
-    @paginate
-    @canModel(ability: "viewAny")
+    ): [Engagement!]! @paginate @canModel(ability: "viewAny")
 }
 
 extend type Query {
@@ -81,13 +80,15 @@ input CreateEngagementSMSInput {
     deliver_at: DateTime @rules(apply: ["required_if:scheduled,true"])
 
     recipient_id: EducatableId!
-    @rules(apply: [
-        "required"
-        "AdvisingApp\\Engagement\\GraphQL\\Rules\\RecipientIdExists"
-    ])
+        @rules(
+            apply: [
+                "required"
+                "AdvisingApp\\Engagement\\GraphQL\\Rules\\RecipientIdExists"
+            ]
+        )
 
     recipient_type: EducatableType!
-    @rules(apply: ["required", "in:student,prospect"])
+        @rules(apply: ["required", "in:student,prospect"])
 }
 
 input UpdateEngagementSMSInput {
@@ -99,27 +100,30 @@ input UpdateEngagementSMSInput {
 }
 
 type EngagementMutations {
-    sendSms(
-        input: CreateEngagementSMSInput! @spread
-    ): Engagement! @canResolved(ability: "create")
-    @field(
-        resolver: "AdvisingApp\\Engagement\\GraphQL\\Mutations\\SendSMS"
-    )
+    sendSms(input: CreateEngagementSMSInput! @spread): Engagement!
+        @canResolved(ability: "create")
+        @field(resolver: "AdvisingApp\\Engagement\\GraphQL\\Mutations\\SendSMS")
 
     updateSms(
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:engagements"]),
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:engagements"])
         input: UpdateEngagementSMSInput! @spread
-    ): Engagement @canFind(ability: "update", find: "id")
-    @field(
-        resolver: "AdvisingApp\\Engagement\\GraphQL\\Mutations\\UpdateSMS"
-    )
+    ): Engagement
+        @canFind(ability: "update", find: "id")
+        @field(
+            resolver: "AdvisingApp\\Engagement\\GraphQL\\Mutations\\UpdateSMS"
+        )
 
     delete(
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:engagements"])
-    ): Engagement @canFind(ability: "delete", find: "id")
-    @field(
-        resolver: "AdvisingApp\\Engagement\\GraphQL\\Mutations\\DeleteEngagement"
-    )
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:engagements"])
+    ): Engagement
+        @canFind(ability: "delete", find: "id")
+        @field(
+            resolver: "AdvisingApp\\Engagement\\GraphQL\\Mutations\\DeleteEngagement"
+        )
 }
 
 extend type Mutation {
