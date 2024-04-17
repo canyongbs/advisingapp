@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Overrides\Filament\Actions\Imports\Jobs;
 
 use Carbon\CarbonInterface;
-use Filament\Actions\Imports\Jobs\ImportCsv as BaseImportCsv;
+use Filament\Actions\Imports\Jobs\ImportCsv;
 
-class ImportCsv extends BaseImportCsv
+class ImportCsvOverride extends ImportCsv
 {
     public int $tries = 2;
 
