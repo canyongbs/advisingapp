@@ -57,7 +57,7 @@ class CreatePermissionsForModel
 
             $groupId = app(GetPermissionGroupId::class)("{$modelMorphClass}.*");
 
-            $model->getWebPermissions()->each(function ($permission) use ($groupId, $model, $modelMorphClass) {
+            $model->getWebPermissions()->each(function ($permission) use ($groupId, $modelMorphClass) {
                 $permissionName = "{$modelMorphClass}.{$permission}";
 
                 $existingPermission = Permission::query()
