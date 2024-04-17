@@ -844,7 +844,7 @@ class PersonalAssistant extends Page
             message_id: $messageId,
             message: $message,
             from: $from,
-            created_at: now()
+            created_at: now(),
         );
     }
 
