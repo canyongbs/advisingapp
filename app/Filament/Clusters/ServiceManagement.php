@@ -46,7 +46,7 @@ class ServiceManagement extends Cluster
 
     protected static ?string $navigationGroup = 'Premium Features';
 
-    protected static ?int $navigationSort = 70;
+    protected static ?int $navigationSort = 30;
 
     // TODO Move into policy once created...
     public static function canAccess(): bool
