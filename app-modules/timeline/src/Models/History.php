@@ -37,6 +37,7 @@
 namespace AdvisingApp\Timeline\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -67,5 +68,24 @@ abstract class History extends BaseModel
         return $this->morphTo();
     }
 
-    abstract public function formatted(): Attribute;
+    public function getFormattedValueForKey(string $key): array
+    {
+        return [
+            'key' => str($key)->headline()->toString(),
+            'old' => $this->old[$key] ?? null,
+            'new' => $this->new[$key],
+        ];
+    }
+
+    public function getFormattedValues(): Collection
+    {
+        return collect($this->new)
+            ->keys()
+            ->mapWithKeys(fn (string $key) => [$key => $this->getFormattedValueForKey($key)]);
+    }
+
+    public function formatted(): Attribute
+    {
+        return Attribute::get(fn () => $this->getFormattedValues()->filter());
+    }
 }

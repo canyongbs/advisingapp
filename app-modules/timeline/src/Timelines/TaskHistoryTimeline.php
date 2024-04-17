@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,33 +32,54 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use AdvisingApp\Alert\Histories\AlertHistory;
-@endphp
+*/
 
-@php
-    /* @var AlertHistory $record */
-@endphp
-<div>
-    <div class="flex flex-row justify-between">
-        <x-timeline::timeline.heading>
-            Alert Created
-        </x-timeline::timeline.heading>
+namespace AdvisingApp\Timeline\Timelines;
 
-        <div>
-            {{ $viewRecordIcon }}
-        </div>
-    </div>
+use Filament\Actions\ViewAction;
+use AdvisingApp\Task\Histories\TaskHistory;
+use AdvisingApp\Timeline\Models\CustomTimeline;
+use AdvisingApp\Task\Filament\Actions\TaskHistoryCreatedViewAction;
+use AdvisingApp\Task\Filament\Actions\TaskHistoryUpdatedViewAction;
 
-    <x-timeline::timeline.time>
-        {{ $record->created_at->diffForHumans() }}
-    </x-timeline::timeline.time>
+class TaskHistoryTimeline extends CustomTimeline
+{
+    public function __construct(
+        public TaskHistory $history
+    ) {}
 
-    <x-timeline::timeline.history.content>
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['status']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['severity']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['description']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['suggested_intervention']" />
-    </x-timeline::timeline.history.content>
-</div>
+    public function icon(): string
+    {
+        return 'heroicon-o-clipboard-document-check';
+    }
+
+    public function sortableBy(): string
+    {
+        return $this->history->created_at;
+    }
+
+    public function providesCustomView(): bool
+    {
+        return true;
+    }
+
+    public function renderCustomView(): string
+    {
+        return match ($this->history->event) {
+            'created' => 'task::created-history-timeline-item',
+            'updated' => 'task::updated-history-timeline-item',
+            'status_changed' => 'task::status-changed-history-timeline-item',
+            'reassigned' => 'task::reassigned-history-timeline-item',
+        };
+    }
+
+    public function modalViewAction(): ViewAction
+    {
+        return (match ($this->history->event) {
+            'created' => TaskHistoryCreatedViewAction::make()
+                ->modalHeading('View Alert'),
+            'updated', 'status_changed', 'reassigned' => TaskHistoryUpdatedViewAction::make()
+                ->modalHeading('View Changes'),
+        })->record($this->history);
+    }
+}

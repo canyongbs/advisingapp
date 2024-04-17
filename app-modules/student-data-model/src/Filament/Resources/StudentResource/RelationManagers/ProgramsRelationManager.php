@@ -40,7 +40,7 @@ use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
 
@@ -76,7 +76,6 @@ class ProgramsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('descr')
             ->columns([
-                IdColumn::make(),
                 TextColumn::make('otherid')
                     ->label('STUID'),
                 TextColumn::make('division')
@@ -95,5 +94,17 @@ class ProgramsRelationManager extends RelationManager
                 ViewAction::make(),
             ])
             ->bulkActions([]);
+    }
+
+    public function getTableRecordKey(Model $record): string
+    {
+        return base64_encode(json_encode($record->attributesToArray()));
+    }
+
+    protected function resolveTableRecord(?string $key): ?Model
+    {
+        return $this->getTable()->getQuery()
+            ->where(json_decode(base64_decode($key), associative: true))
+            ->first();
     }
 }

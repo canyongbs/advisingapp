@@ -266,6 +266,11 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return $this->hasManyDeepFromRelations($this->alerts(), (new Alert())->histories());
     }
 
+    public function taskHistories(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->tasks(), (new Task())->histories());
+    }
+
     public static function getLicenseType(): LicenseType
     {
         return LicenseType::RetentionCrm;

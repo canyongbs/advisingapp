@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,33 +32,19 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use AdvisingApp\Alert\Histories\AlertHistory;
-@endphp
+*/
 
-@php
-    /* @var AlertHistory $record */
-@endphp
-<div>
-    <div class="flex flex-row justify-between">
-        <x-timeline::timeline.heading>
-            Alert Created
-        </x-timeline::timeline.heading>
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-        <div>
-            {{ $viewRecordIcon }}
-        </div>
-    </div>
+return new class () extends Migration {
+    public function up(): void
+    {
+        Feature::purge('new-enrollments-columns');
+    }
 
-    <x-timeline::timeline.time>
-        {{ $record->created_at->diffForHumans() }}
-    </x-timeline::timeline.time>
-
-    <x-timeline::timeline.history.content>
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['status']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['severity']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['description']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['suggested_intervention']" />
-    </x-timeline::timeline.history.content>
-</div>
+    public function down(): void
+    {
+        Feature::activate('new-enrollments-columns');
+    }
+};

@@ -37,11 +37,10 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use Filament\Tables\Table;
-use Laravel\Pennant\Feature;
 use Filament\Infolists\Infolist;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
 
@@ -68,40 +67,31 @@ class EnrollmentsRelationManager extends RelationManager
                         ->label('Earned'),
                     TextEntry::make('section')
                         ->label('Section')
-                        ->default('N/A')
-                        ->visible(Feature::active('new-enrollments-columns')),
+                        ->default('N/A'),
                     TextEntry::make('name')
                         ->label('Name')
-                        ->default('N/A')
-                        ->visible(Feature::active('new-enrollments-columns')),
+                        ->default('N/A'),
                     TextEntry::make('department')
                         ->label('Department')
-                        ->default('N/A')
-                        ->visible(Feature::active('new-enrollments-columns')),
+                        ->default('N/A'),
                     TextEntry::make('faculty_name')
                         ->label('Faculty Name')
-                        ->default('N/A')
-                        ->visible(Feature::active('new-enrollments-columns')),
+                        ->default('N/A'),
                     TextEntry::make('faculty_email')
                         ->label('Faculty Email')
-                        ->default('N/A')
-                        ->visible(Feature::active('new-enrollments-columns')),
+                        ->default('N/A'),
                     TextEntry::make('semester_code')
                         ->label('Semester Code')
-                        ->default('N/A')
-                        ->visible(Feature::active('new-enrollments-columns')),
+                        ->default('N/A'),
                     TextEntry::make('semester_name')
                         ->label('Semester Name')
-                        ->default('N/A')
-                        ->visible(Feature::active('new-enrollments-columns')),
+                        ->default('N/A'),
                     TextEntry::make('start_date')
                         ->label('Start Date')
-                        ->default('N/A')
-                        ->visible(Feature::active('new-enrollments-columns')),
+                        ->default('N/A'),
                     TextEntry::make('end_date')
                         ->label('End Date')
-                        ->default('N/A')
-                        ->visible(Feature::active('new-enrollments-columns')),
+                        ->default('N/A'),
                 ]
             );
     }
@@ -111,7 +101,6 @@ class EnrollmentsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('division')
             ->columns([
-                IdColumn::make(),
                 TextColumn::make('division')
                     ->label('College'),
                 TextColumn::make('class_nbr')
@@ -128,5 +117,17 @@ class EnrollmentsRelationManager extends RelationManager
                 ViewAction::make(),
             ])
             ->bulkActions([]);
+    }
+
+    public function getTableRecordKey(Model $record): string
+    {
+        return base64_encode(json_encode($record->attributesToArray()));
+    }
+
+    protected function resolveTableRecord(?string $key): ?Model
+    {
+        return $this->getTable()->getQuery()
+            ->where(json_decode(base64_decode($key), associative: true))
+            ->first();
     }
 }

@@ -32,16 +32,16 @@
 </COPYRIGHT>
 --}}
 @php
-    use AdvisingApp\Alert\Histories\AlertHistory;
+    use AdvisingApp\Task\Histories\TaskHistory;
 @endphp
 
 @php
-    /* @var AlertHistory $record */
+    /* @var TaskHistory $record */
 @endphp
 <div>
     <div class="flex flex-row justify-between">
         <x-timeline::timeline.heading>
-            Alert Created
+            Task Updated
         </x-timeline::timeline.heading>
 
         <div>
@@ -54,9 +54,11 @@
     </x-timeline::timeline.time>
 
     <x-timeline::timeline.history.content>
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['status']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['severity']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['description']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['suggested_intervention']" />
+        Here's what changed
+        <ul class="list-inside list-disc">
+            @foreach ($record->formatted as $value)
+                <x-timeline::timeline.history.content.list-item :value="$value" />
+            @endforeach
+        </ul>
     </x-timeline::timeline.history.content>
 </div>

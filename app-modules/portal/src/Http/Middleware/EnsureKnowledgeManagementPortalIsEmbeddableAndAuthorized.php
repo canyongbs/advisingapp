@@ -47,7 +47,6 @@ class EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized
     {
         $referer = $request->headers->get('referer');
 
-        // If we are on the root domain
         if (parse_url($request->url())['host'] === parse_url(config('app.url'))['host']) {
             return $next($request);
         }

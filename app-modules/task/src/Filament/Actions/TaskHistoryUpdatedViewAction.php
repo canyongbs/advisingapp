@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,33 +32,28 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use AdvisingApp\Alert\Histories\AlertHistory;
-@endphp
+*/
 
-@php
-    /* @var AlertHistory $record */
-@endphp
-<div>
-    <div class="flex flex-row justify-between">
-        <x-timeline::timeline.heading>
-            Alert Created
-        </x-timeline::timeline.heading>
+namespace AdvisingApp\Task\Filament\Actions;
 
-        <div>
-            {{ $viewRecordIcon }}
-        </div>
-    </div>
+use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\Section;
+use AdvisingApp\Task\Histories\TaskHistory;
+use Filament\Infolists\Components\KeyValueEntry;
 
-    <x-timeline::timeline.time>
-        {{ $record->created_at->diffForHumans() }}
-    </x-timeline::timeline.time>
+class TaskHistoryUpdatedViewAction extends ViewAction
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-    <x-timeline::timeline.history.content>
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['status']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['severity']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['description']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['suggested_intervention']" />
-    </x-timeline::timeline.history.content>
-</div>
+        $this->infolist([
+            Section::make()
+                ->schema([
+                    KeyValueEntry::make('Changes')
+                        ->getStateUsing(fn (TaskHistory $record) => $record->formatted)
+                        ->view('filament.infolists.components.update-entry'),
+                ]),
+        ]);
+    }
+}

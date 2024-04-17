@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,33 +32,19 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use AdvisingApp\Alert\Histories\AlertHistory;
-@endphp
+*/
 
-@php
-    /* @var AlertHistory $record */
-@endphp
-<div>
-    <div class="flex flex-row justify-between">
-        <x-timeline::timeline.heading>
-            Alert Created
-        </x-timeline::timeline.heading>
+namespace AdvisingApp\Task\Observers;
 
-        <div>
-            {{ $viewRecordIcon }}
-        </div>
-    </div>
+use AdvisingApp\Task\Histories\TaskHistory;
+use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 
-    <x-timeline::timeline.time>
-        {{ $record->created_at->diffForHumans() }}
-    </x-timeline::timeline.time>
-
-    <x-timeline::timeline.history.content>
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['status']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['severity']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['description']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['suggested_intervention']" />
-    </x-timeline::timeline.history.content>
-</div>
+class TaskHistoryObserver
+{
+    public function created(TaskHistory $taskHistory): void
+    {
+        if ($taskHistory->subject->concern) {
+            event(new TimelineableRecordCreated($taskHistory->subject->concern, $taskHistory));
+        }
+    }
+}

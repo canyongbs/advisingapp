@@ -49,6 +49,9 @@ use AdvisingApp\Assistant\Models\PromptUpvote;
 use AdvisingApp\Assistant\Models\AssistantChat;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
+
+use function Spatie\PestPluginTestTime\testTime;
+
 use AdvisingApp\Assistant\Actions\GetAiAssistant;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Assistant\Models\AssistantChatFolder;
@@ -292,6 +295,9 @@ it('can send message to a new chat', function () use ($setUp) {
 
     $chat->delete();
 
+    testTime()->freeze();
+    $createdAt = now();
+
     $livewire = Livewire::test(PersonalAssistant::class)
         ->set('showCurrentResponse', false)
         ->set('renderError', true)
@@ -313,6 +319,7 @@ it('can send message to a new chat', function () use ($setUp) {
                     new ChatMessage(
                         message: $message,
                         from: AIChatMessageFrom::User,
+                        created_at: $createdAt
                     ),
                 ]),
                 assistantId: '12345',
@@ -462,6 +469,9 @@ it('can save chats into a folder', function () use ($setUp) {
         ->for($user)
         ->create();
 
+    testTime()->freeze();
+    $createdAt = now();
+
     $livewire = Livewire::test(PersonalAssistant::class)
         ->set('message', $message = AssistantChatMessage::factory()->make()->message)
         ->call('sendMessage')
@@ -487,6 +497,7 @@ it('can save chats into a folder', function () use ($setUp) {
                     new ChatMessage(
                         message: $message,
                         from: AIChatMessageFrom::User,
+                        created_at: $createdAt
                     ),
                 ]),
                 assistantId: '12345',
@@ -501,7 +512,7 @@ it('can save chats into a folder', function () use ($setUp) {
     ]);
 });
 
-it('can save chats without a name', function () use ($setUp) {
+it('cannot save chats without a name', function () use ($setUp) {
     ['chat' => $chat] = $setUp();
 
     $chat->delete();
@@ -511,6 +522,46 @@ it('can save chats without a name', function () use ($setUp) {
         ->call('sendMessage')
         ->callAction('saveChat')
         ->assertHasActionErrors(['name' => 'required']);
+});
+
+it('respects message creation time when saving chats', function () use ($setUp) {
+    ['user' => $user, 'chat' => $chat] = $setUp();
+
+    $chat->delete();
+
+    // Given that a message was sent at a specific time
+    testTime()->freeze();
+    $createdAt = now();
+
+    $personalAssistant = Livewire::test(PersonalAssistant::class)
+        ->set('message', $message = AssistantChatMessage::factory()->make()->message)
+        ->call('sendMessage');
+
+    // And time has elapsed since this message was sent
+    testTime()->addMinute();
+    testTime()->unfreeze();
+
+    // When the chat is saved
+    $personalAssistant
+        ->callAction('saveChat', [
+            'name' => $name = Str::random(),
+        ])
+        ->assertHasNoActionErrors();
+
+    assertDatabaseHas(AssistantChat::class, [
+        'user_id' => $user->getKey(),
+        'name' => $name,
+    ]);
+
+    $chat = AssistantChat::query()->latest()->first();
+
+    // Then the message should have been saved with the correct creation time
+    assertDatabaseHas(AssistantChatMessage::class, [
+        'assistant_chat_id' => $chat->getKey(),
+        'message' => $message,
+        'from' => AIChatMessageFrom::User,
+        'created_at' => $createdAt,
+    ]);
 });
 
 it('can select a chat', function () use ($setUp) {

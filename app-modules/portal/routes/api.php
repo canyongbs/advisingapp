@@ -37,6 +37,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+use AdvisingApp\Portal\Http\Middleware\AuthenticateIfRequiredByPortalDefinition;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
 use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalController;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized;
@@ -84,14 +85,20 @@ Route::prefix('api')
                     ->middleware(['signed:relative', EnsureFrontendRequestsAreStateful::class])
                     ->name('authenticate.embedded');
 
-                Route::post('/search', [KnowledgeManagementPortalSearchController::class, 'get'])
-                    ->middleware(['signed:relative'])
-                    ->name('search');
-                Route::get('/categories', [KnowledgeManagementPortalCategoryController::class, 'index'])
-                    ->name('category.index');
-                Route::get('/categories/{category}', [KnowledgeManagementPortalCategoryController::class, 'show'])
-                    ->name('category.show');
-                Route::get('/categories/{category}/articles/{article}', [KnowledgeManagementPortalArticleController::class, 'show'])
-                    ->name('article.show');
+                Route::middleware([AuthenticateIfRequiredByPortalDefinition::class])
+                    ->group(function () {
+                        Route::post('/search', [KnowledgeManagementPortalSearchController::class, 'get'])
+                            ->middleware(['signed:relative'])
+                            ->name('search');
+
+                        Route::get('/categories', [KnowledgeManagementPortalCategoryController::class, 'index'])
+                            ->name('category.index');
+
+                        Route::get('/categories/{category}', [KnowledgeManagementPortalCategoryController::class, 'show'])
+                            ->name('category.show');
+
+                        Route::get('/categories/{category}/articles/{article}', [KnowledgeManagementPortalArticleController::class, 'show'])
+                            ->name('article.show');
+                    });
             });
     });
