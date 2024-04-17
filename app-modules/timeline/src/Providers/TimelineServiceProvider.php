@@ -41,7 +41,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Timeline\TimelinePlugin;
 use AdvisingApp\Timeline\Models\Timeline;
-use AdvisingApp\Alert\Histories\AlertHistory;
 use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Timeline\Listeners\AddRecordToTimeline;
@@ -61,7 +60,6 @@ class TimelineServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'timeline' => Timeline::class,
-            'alert_history' => AlertHistory::class,
         ]);
 
         $this->registerEvents();
