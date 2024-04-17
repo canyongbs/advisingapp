@@ -40,9 +40,11 @@ use Filament\Panel;
 use AdvisingApp\Task\TaskPlugin;
 use AdvisingApp\Task\Models\Task;
 use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Task\Observers\TaskObserver;
 use AdvisingApp\Task\Registries\TaskRbacRegistry;
 use App\Registries\RoleBasedAccessControlRegistry;
+use AdvisingApp\Task\Observers\TaskHistoryObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class TaskServiceProvider extends ServiceProvider
@@ -54,11 +56,10 @@ class TaskServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Relation::morphMap(
-            [
-                'task' => Task::class,
-            ]
-        );
+        Relation::morphMap([
+            'task' => Task::class,
+            'task_history' => TaskHistory::class,
+        ]);
 
         $this->registerObservers();
 
@@ -68,5 +69,6 @@ class TaskServiceProvider extends ServiceProvider
     protected function registerObservers(): void
     {
         Task::observe(TaskObserver::class);
+        TaskHistory::observe(TaskHistoryObserver::class);
     }
 }

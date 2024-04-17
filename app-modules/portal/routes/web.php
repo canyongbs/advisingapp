@@ -48,6 +48,9 @@ Route::prefix('portals')
         EnsureFrontendRequestsAreStateful::class,
     ])
     ->group(function () {
+        /**
+         * Knowledge Management Portal
+         */
         Route::middleware([
             EnsureKnowledgeManagementPortalIsEnabled::class,
             EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,

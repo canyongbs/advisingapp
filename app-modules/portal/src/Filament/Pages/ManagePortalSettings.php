@@ -204,13 +204,14 @@ class ManagePortalSettings extends SettingsPage
                                             ->state(function () {
                                                 $code = resolve(GeneratePortalEmbedCode::class)->handle(PortalType::KnowledgeManagement);
 
-                                                return <<<EOD
+                                                $state = <<<EOD
                                                 ```
                                                 {$code}
                                                 ```
                                                 EOD;
+
+                                                return str($state)->markdown()->toHtmlString();
                                             })
-                                            ->markdown()
                                             ->copyable()
                                             ->copyableState(fn () => resolve(GeneratePortalEmbedCode::class)->handle(PortalType::KnowledgeManagement))
                                             ->copyMessage('Copied!')

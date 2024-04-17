@@ -73,15 +73,27 @@ class SendAssistantTranscriptNotification extends BaseNotification implements Em
         $this->chat
             ->messages
             ->each(function ($chatMessage) use ($senderIsNotifiable, $message) {
-                if ($chatMessage->from === AIChatMessageFrom::User) {
-                    if ($senderIsNotifiable) {
-                        $message->line("You: {$chatMessage->message}");
-                    } else {
-                        $message->line("{$this->sender->name}: {$chatMessage->message}");
-                    }
-                } else {
-                    $message->line("Canyon: {$chatMessage->message}");
+                if ($chatMessage->from !== AIChatMessageFrom::User) {
+                    return $message->line(str(nl2br($chatMessage->message))
+                        ->prepend('**Canyon:** ')
+                        ->markdown()
+                        ->sanitizeHtml()
+                        ->toHtmlString());
                 }
+
+                if ($senderIsNotifiable) {
+                    return $message->line(str(nl2br($chatMessage->message))
+                        ->prepend('**You:** ')
+                        ->markdown()
+                        ->sanitizeHtml()
+                        ->toHtmlString());
+                }
+
+                return $message->line(str(nl2br($chatMessage->message))
+                    ->prepend("**{$this->sender->name}:** ")
+                    ->markdown()
+                    ->sanitizeHtml()
+                    ->toHtmlString());
             });
 
         return $message;

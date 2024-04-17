@@ -56,5 +56,6 @@ class ChatMessage extends Data implements Wireable
         public ?array $functionCall = null,
         public ?array $file_ids = null,
         public ?string $run_id = null,
+        public ?string $created_at = null,
     ) {}
 }

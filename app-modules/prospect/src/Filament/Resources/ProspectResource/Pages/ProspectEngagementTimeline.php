@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
@@ -56,5 +57,6 @@ class ProspectEngagementTimeline extends TimelinePage
         Engagement::class,
         EngagementResponse::class,
         AlertHistory::class,
+        TaskHistory::class,
     ];
 }

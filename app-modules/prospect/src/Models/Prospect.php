@@ -245,6 +245,11 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return $this->hasManyDeepFromRelations($this->alerts(), (new Alert())->histories());
     }
 
+    public function taskHistories(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->tasks(), (new Task())->histories());
+    }
+
     public function subscribedUsers(): MorphToMany
     {
         return $this->morphToMany(

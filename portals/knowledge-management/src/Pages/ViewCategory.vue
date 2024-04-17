@@ -36,6 +36,7 @@ import { defineProps, ref, watch, onMounted } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import Loading from '@/Components/Loading.vue';
+import { consumer } from '@/Services/Consumer.js';
 
 const route = useRoute();
 
@@ -75,13 +76,13 @@ onMounted(function () {
 function getData() {
     loadingResults.value = true;
 
-    fetch(props.apiUrl + '/categories/' + route.params.categoryId)
-        .then((response) => response.json())
-        .then((json) => {
-            category.value = json.category;
-            articles.value = json.articles;
-            loadingResults.value = false;
-        });
+    const { get } = consumer();
+
+    get(props.apiUrl + '/categories/' + route.params.categoryId).then((response) => {
+        category.value = response.data.category;
+        articles.value = response.data.articles;
+        loadingResults.value = false;
+    });
 }
 </script>
 
