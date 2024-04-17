@@ -86,13 +86,4 @@ return new class () extends Migration {
                     ]);
             });
     }
-
-    public function down(): void
-    {
-        DB::table('permissions')
-            ->update([
-                'group_id' => null,
-                'updated_at' => now(),
-            ]);
-    }
 };

@@ -42,9 +42,4 @@ return new class () extends Migration {
     {
         Feature::activate('permission-groups');
     }
-
-    public function down(): void
-    {
-        Feature::purge('permission-groups');
-    }
 };
