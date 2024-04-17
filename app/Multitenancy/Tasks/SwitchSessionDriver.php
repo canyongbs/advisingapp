@@ -59,8 +59,8 @@ class SwitchSessionDriver implements SwitchTenantTask
         }
 
         $this->setSessionConfig(
-            driver: 'database',
-            connection: 'tenant',
+            driver: config('session.driver'),
+            connection: 'tenant', // This should probably respect configuration values
             domain: $tenant->domain,
         );
     }

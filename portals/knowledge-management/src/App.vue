@@ -44,6 +44,7 @@ import axios from '@/Globals/Axios.js';
 import { useTokenStore } from '@/Stores/token.js';
 import { useAuthStore } from '@/Stores/auth.js';
 import { useRoute } from 'vue-router';
+import { consumer } from '@/Services/Consumer.js';
 
 const errorLoading = ref(false);
 const loading = ref(true);
@@ -63,12 +64,12 @@ onMounted(async () => {
     });
 
     await getKnowledgeManagementPortal().then(async () => {
-        if (userIsAuthenticated.value || (! portalRequiresAuthentication.value)) {
+        if (userIsAuthenticated.value || !portalRequiresAuthentication.value) {
             await getKnowledgeManagementPortalCategories().then(() => {
                 loading.value = false;
             });
 
-            return
+            return;
         }
 
         loading.value = false;
@@ -189,8 +190,9 @@ async function getKnowledgeManagementPortal() {
 }
 
 async function getKnowledgeManagementPortalCategories() {
-    await axios
-        .get(`${props.apiUrl}/categories`)
+    const { get } = consumer();
+
+    get(`${props.apiUrl}/categories`)
         .then((response) => {
             errorLoading.value = false;
 
@@ -198,7 +200,7 @@ async function getKnowledgeManagementPortalCategories() {
                 throw new Error(response.error);
             }
 
-            categories.value = response.data
+            categories.value = response.data;
         })
         .catch((error) => {
             errorLoading.value = true;

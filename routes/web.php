@@ -37,10 +37,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ViewPublicUserProfileController;
 
-Route::get('/test-embed', function () {
-    return view('test-embed');
-});
-
 Route::get('/profiles/{user:public_profile_slug}', ViewPublicUserProfileController::class)
     ->name('users.profile.view.public');
 

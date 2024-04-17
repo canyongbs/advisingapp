@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,18 +33,28 @@
 
 </COPYRIGHT>
 */
-import { consumer } from '@/Services/Consumer.js';
 
-async function determineIfUserIsAuthenticated(endpoint) {
-    const { get } = consumer();
+namespace AdvisingApp\Portal\Http\Middleware;
 
-    return await get(endpoint)
-        .then((response) => {
-            return response.status === 200;
-        })
-        .catch((error) => {
-            return false;
-        });
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use AdvisingApp\Portal\Settings\PortalSettings;
+
+class AuthenticateIfRequiredByPortalDefinition
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        $settings = resolve(PortalSettings::class);
+
+        if (! $settings->knowledge_management_portal_requires_authentication) {
+            return $next($request);
+        }
+
+        if (! auth('sanctum')->check()) {
+            abort(403);
+        }
+
+        return $next($request);
+    }
 }
-
-export default determineIfUserIsAuthenticated;
