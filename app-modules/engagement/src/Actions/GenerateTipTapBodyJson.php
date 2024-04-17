@@ -27,8 +27,8 @@ class GenerateTipTapBodyJson
             'content' => collect($tokens[0])
                 ->map(
                     fn ($token) => in_array($token, $mergeData)
-                    ? $this->mergeTag($token)
-                    : $this->text($token)
+                        ? $this->mergeTag($token)
+                        : $this->text($token)
                 )
                 ->toArray(),
         ];
