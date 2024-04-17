@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,29 +30,45 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\Alert\Histories\AlertHistory;
+@endphp
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+@php
+    /* @var AlertHistory $record */
+@endphp
+<div>
+    <div class="flex flex-row justify-between">
+        <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
+            <div class="font-medium">
+                Alert Updated
+            </div>
+        </h3>
 
-use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+        <div>
+            {{ $viewRecordIcon }}
+        </div>
+    </div>
 
-class StudentEngagementTimeline extends TimelinePage
-{
-    protected static string $resource = StudentResource::class;
+    <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+        {{ $record->updated_at->diffForHumans() }}
+    </time>
 
-    protected static ?string $navigationLabel = 'Timeline';
+    <div
+        class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal text-gray-400 dark:border-gray-800 dark:text-gray-500">
+        Here's what changed
 
-    public string $emptyStateMessage = 'There are no engagements to show for this student.';
-
-    public string $noMoreRecordsMessage = "You have reached the end of this student's engagement timeline.";
-
-    public array $modelsToTimeline = [
-        Engagement::class,
-        EngagementResponse::class,
-        AlertHistory::class,
-    ];
-}
+        <ul class="list-inside list-disc">
+            @foreach ($record->formatted as $value)
+                <li>
+                    <span class="prose font-semibold dark:prose-invert">{{ $value['key'] }}</span>
+                    changed from
+                    <span class="prose font-semibold dark:prose-invert">{{ $value['old'] }}</span>
+                    to
+                    <span class="prose font-semibold dark:prose-invert">{{ $value['new'] }}</span>
+                </li>
+            @endforeach
+        </ul>
+    </div>
+</div>

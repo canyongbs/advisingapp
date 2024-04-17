@@ -34,27 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('histories', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-class StudentEngagementTimeline extends TimelinePage
-{
-    protected static string $resource = StudentResource::class;
+            $table->string('event');
+            $table->json('old');
+            $table->json('new');
 
-    protected static ?string $navigationLabel = 'Timeline';
+            $table->uuidMorphs('subject');
 
-    public string $emptyStateMessage = 'There are no engagements to show for this student.';
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
 
-    public string $noMoreRecordsMessage = "You have reached the end of this student's engagement timeline.";
-
-    public array $modelsToTimeline = [
-        Engagement::class,
-        EngagementResponse::class,
-        AlertHistory::class,
-    ];
-}
+    public function down(): void
+    {
+        Schema::dropIfExists('histories');
+    }
+};

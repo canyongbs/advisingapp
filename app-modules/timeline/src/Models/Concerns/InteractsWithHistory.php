@@ -34,27 +34,53 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\Timeline\Models\Concerns;
 
-use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use Laravel\Pennant\Feature;
+use Illuminate\Support\Collection;
+use AdvisingApp\Timeline\Observers\HistorySubjectObserver;
 
-class StudentEngagementTimeline extends TimelinePage
+trait InteractsWithHistory
 {
-    protected static string $resource = StudentResource::class;
-
-    protected static ?string $navigationLabel = 'Timeline';
-
-    public string $emptyStateMessage = 'There are no engagements to show for this student.';
-
-    public string $noMoreRecordsMessage = "You have reached the end of this student's engagement timeline.";
-
-    public array $modelsToTimeline = [
-        Engagement::class,
-        EngagementResponse::class,
-        AlertHistory::class,
+    protected array $ignoredAttributes = [
+        'id',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
+
+    public static function bootInteractsWithHistory(): void
+    {
+        static::observe(HistorySubjectObserver::class);
+    }
+
+    public function processCustomHistories(string $event, Collection $old, Collection $new, Collection $pending): void {}
+
+    public function processHistory(string $event, Collection $old, Collection $new): void
+    {
+        $pending = collect();
+
+        $this->processCustomHistories($event, $old, $new, $pending);
+
+        $keys = $new->keys()->diff($this->ignoredAttributes);
+
+        $this->recordHistory($event, $old->only($keys), $new->only($keys), $pending);
+
+        if (Feature::active('educatable-alerts-timeline')) {
+            $pending->each(fn (array $history) => $this->histories()->create($history));
+        }
+    }
+
+    public function recordHistory(string $event, Collection $old, Collection $new, Collection $pending): void
+    {
+        if ($new->isEmpty()) {
+            return;
+        }
+
+        $pending->push([
+            'event' => $event,
+            'old' => $old,
+            'new' => $new,
+        ]);
+    }
 }

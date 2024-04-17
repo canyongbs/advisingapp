@@ -34,27 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\Alert\Observers;
 
 use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 
-class StudentEngagementTimeline extends TimelinePage
+class AlertHistoryObserver
 {
-    protected static string $resource = StudentResource::class;
-
-    protected static ?string $navigationLabel = 'Timeline';
-
-    public string $emptyStateMessage = 'There are no engagements to show for this student.';
-
-    public string $noMoreRecordsMessage = "You have reached the end of this student's engagement timeline.";
-
-    public array $modelsToTimeline = [
-        Engagement::class,
-        EngagementResponse::class,
-        AlertHistory::class,
-    ];
+    public function created(AlertHistory $model): void
+    {
+        event(new TimelineableRecordCreated($model->subject->concern, $model));
+    }
 }
