@@ -87,6 +87,8 @@ class CreatePermissions
         $getPermissionGroupId = app(GetPermissionGroupId::class);
 
         foreach ($registry->getModuleWebPermissions() as $module => $permissions) {
+            $groupId = $getPermissionGroupId("{$module}.*");
+
             foreach ($permissions as $permission) {
                 $permissionName = "{$module}.{$permission}";
 
@@ -99,7 +101,7 @@ class CreatePermissions
 
                 if ($existingPermission && blank($existingPermission->group_id)) {
                     $existingPermission->update([
-                        'group_id' => $getPermissionGroupId($permissionName),
+                        'group_id' => $groupId,
                     ]);
                 }
 
@@ -109,13 +111,15 @@ class CreatePermissions
 
                 Permission::create([
                     'name' => $permissionName,
-                    'group_id' => $getPermissionGroupId($permissionName),
+                    'group_id' => $groupId,
                     'guard_name' => 'web',
                 ]);
             }
         }
 
         foreach ($registry->getModuleApiPermissions() as $module => $permissions) {
+            $groupId = $getPermissionGroupId("{$module}.*");
+
             foreach ($permissions as $permission) {
                 $permissionName = "{$module}.{$permission}";
 
@@ -128,7 +132,7 @@ class CreatePermissions
 
                 if ($existingPermission && blank($existingPermission->group_id)) {
                     $existingPermission->update([
-                        'group_id' => $getPermissionGroupId($permissionName),
+                        'group_id' => $groupId,
                     ]);
                 }
 
@@ -138,7 +142,7 @@ class CreatePermissions
 
                 Permission::create([
                     'name' => $permissionName,
-                    'group_id' => $getPermissionGroupId($permissionName),
+                    'group_id' => $groupId,
                     'guard_name' => 'api',
                 ]);
             }
