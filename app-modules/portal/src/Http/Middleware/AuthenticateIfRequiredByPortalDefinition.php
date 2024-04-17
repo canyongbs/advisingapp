@@ -51,10 +51,10 @@ class AuthenticateIfRequiredByPortalDefinition
             return $next($request);
         }
 
-        if (auth('sanctum')->check()) {
-            return $next($request);
+        if (! auth('sanctum')->check()) {
+            abort(403);
         }
 
-        abort(403);
+        return $next($request);
     }
 }
