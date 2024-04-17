@@ -296,7 +296,7 @@ it('can send message to a new chat', function () use ($setUp) {
     $chat->delete();
 
     testTime()->freeze();
-    $createdAt = now();
+    $createdAt = now()->format('Y-m-d H:i:s');
 
     $livewire = Livewire::test(PersonalAssistant::class)
         ->set('showCurrentResponse', false)
@@ -319,7 +319,7 @@ it('can send message to a new chat', function () use ($setUp) {
                     new ChatMessage(
                         message: $message,
                         from: AIChatMessageFrom::User,
-                        created_at: $createdAt
+                        created_at: $createdAt,
                     ),
                 ]),
                 assistantId: '12345',
@@ -470,7 +470,7 @@ it('can save chats into a folder', function () use ($setUp) {
         ->create();
 
     testTime()->freeze();
-    $createdAt = now();
+    $createdAt = now()->format('Y-m-d H:i:s');
 
     $livewire = Livewire::test(PersonalAssistant::class)
         ->set('message', $message = AssistantChatMessage::factory()->make()->message)
@@ -497,7 +497,7 @@ it('can save chats into a folder', function () use ($setUp) {
                     new ChatMessage(
                         message: $message,
                         from: AIChatMessageFrom::User,
-                        created_at: $createdAt
+                        created_at: $createdAt,
                     ),
                 ]),
                 assistantId: '12345',
@@ -531,7 +531,7 @@ it('respects message creation time when saving chats', function () use ($setUp) 
 
     // Given that a message was sent at a specific time
     testTime()->freeze();
-    $createdAt = now();
+    $createdAt = now()->format('Y-m-d H:i:s');
 
     $personalAssistant = Livewire::test(PersonalAssistant::class)
         ->set('message', $message = AssistantChatMessage::factory()->make()->message)
@@ -560,7 +560,7 @@ it('respects message creation time when saving chats', function () use ($setUp) 
         'assistant_chat_id' => $chat->getKey(),
         'message' => $message,
         'from' => AIChatMessageFrom::User,
-        'created_at' => $createdAt->format('Y-m-d H:i:s'),
+        'created_at' => $createdAt,
     ]);
 });
 
