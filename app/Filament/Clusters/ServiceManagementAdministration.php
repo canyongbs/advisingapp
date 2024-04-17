@@ -44,7 +44,7 @@ class ServiceManagementAdministration extends Cluster
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 60;
+    protected static ?int $navigationSort = 70;
 
     protected static ?string $title = 'Service Management';
 }
