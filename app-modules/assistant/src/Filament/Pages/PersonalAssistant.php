@@ -323,7 +323,9 @@ class PersonalAssistant extends Page
                 ]);
 
                 $this->chat->messages->each(function (ChatMessage $message) use ($assistantChat) {
-                    $assistantChat->messages()->create($message->toArray());
+                    $record = $assistantChat->messages()->make($message->toArray());
+                    $record->updated_at = $record->created_at;
+                    $record->save(['timestamps' => false]);
                 });
 
                 $this->chat->id = $assistantChat->id;
@@ -842,6 +844,7 @@ class PersonalAssistant extends Page
             message_id: $messageId,
             message: $message,
             from: $from,
+            created_at: now(),
         );
     }
 

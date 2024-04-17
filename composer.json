@@ -120,6 +120,7 @@
         "rector/rector": "^0.19.0",
         "spatie/laravel-ignition": "^2.0",
         "spatie/laravel-ray": "^1.32",
+        "spatie/pest-plugin-test-time": "^2.1",
         "worksome/request-factories": "^3.2"
     },
     "autoload": {
