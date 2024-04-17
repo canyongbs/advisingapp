@@ -17,7 +17,7 @@ type Engagement @model(class: "AdvisingApp\\Engagement\\Models\\Engagement") {
 
     recipient: Educatable! @morphTo
 
-    created_by: User! @belongsTo(relation: "createdBy")
+    created_by: User @belongsTo(relation: "createdBy")
 
     deliverable: EngagementDeliverable @hasOne
 
@@ -73,7 +73,7 @@ extend type Query {
 }
 
 input CreateEngagementSMSInput {
-    body: String! @rules(apply: ["required", "string", "max:3200"])
+    body: String! @rules(apply: ["required", "string", "max:320"])
 
     scheduled: Boolean
 
