@@ -42,6 +42,7 @@ use Tests\Concerns\LoadsFixtures;
 use Symfony\Component\Finder\Finder;
 use App\Jobs\UpdateTenantLicenseData;
 use Symfony\Component\Process\Process;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Contracts\Console\Kernel;
 use Symfony\Component\Finder\SplFileInfo;
 use App\Multitenancy\Actions\CreateTenant;
@@ -63,6 +64,7 @@ use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
 use App\Multitenancy\DataTransferObjects\TenantSmtpMailerConfig;
 use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
 use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
+use AdvisingApp\Authorization\Console\Commands\SyncRolesAndPermissions;
 use Illuminate\Foundation\Testing\Traits\CanConfigureMigrationCommands;
 
 abstract class TestCase extends BaseTestCase
@@ -118,6 +120,13 @@ abstract class TestCase extends BaseTestCase
                 '--seeder' => 'StudentSeeder',
                 ...$this->migrateFreshUsing(),
             ]);
+
+            Artisan::call(
+                command: SyncRolesAndPermissions::class,
+                parameters: [
+                    '--tenant' => $tenant->id,
+                ]
+            );
 
             dispatch_sync(new UpdateTenantLicenseData(
                 $tenant,
@@ -266,6 +275,7 @@ abstract class TestCase extends BaseTestCase
                     scheduleAndAppointments: true,
                 ),
             ),
+            seedTenantDatabase: false
         );
     }
 
