@@ -90,15 +90,15 @@ class CreatePermissions
         foreach ($registry->getModuleWebPermissions() as $module => $permissions) {
             $groupId = $getPermissionGroupId("{$module}.*");
 
+            $existingPermissions = Permission::query()
+                ->where('name', 'like', "{$module}.%")
+                ->where('guard_name', 'web')
+                ->get();
+
             foreach ($permissions as $permission) {
                 $permissionName = "{$module}.{$permission}";
 
-                $existingPermission = Permission::query()
-                    ->where([
-                        'name' => $permissionName,
-                        'guard_name' => 'web',
-                    ])
-                    ->first();
+                $existingPermission = $existingPermissions->where('name', $permissionName)->first();
 
                 if ($existingPermission && blank($existingPermission->group_id) && Feature::active('permission-groups')) {
                     $existingPermission->update([
@@ -121,15 +121,15 @@ class CreatePermissions
         foreach ($registry->getModuleApiPermissions() as $module => $permissions) {
             $groupId = $getPermissionGroupId("{$module}.*");
 
+            $existingPermissions = Permission::query()
+                ->where('name', 'like', "{$module}.%")
+                ->where('guard_name', 'api')
+                ->get();
+
             foreach ($permissions as $permission) {
                 $permissionName = "{$module}.{$permission}";
 
-                $existingPermission = Permission::query()
-                    ->where([
-                        'name' => $permissionName,
-                        'guard_name' => 'api',
-                    ])
-                    ->first();
+                $existingPermission = $existingPermissions->where('name', $permissionName)->first();
 
                 if ($existingPermission && blank($existingPermission->group_id) && Feature::active('permission-groups')) {
                     $existingPermission->update([

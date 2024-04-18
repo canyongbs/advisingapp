@@ -57,15 +57,15 @@ class CreatePermissionsForModel
 
             $groupId = app(GetPermissionGroupId::class)("{$modelMorphClass}.*");
 
-            $model->getWebPermissions()->each(function ($permission) use ($groupId, $modelMorphClass) {
+            $existingPermissions = Permission::query()
+                ->where('name', 'like', "{$modelMorphClass}.%")
+                ->where('guard_name', 'web')
+                ->get();
+
+            $model->getWebPermissions()->each(function ($permission) use ($existingPermissions, $groupId, $modelMorphClass) {
                 $permissionName = "{$modelMorphClass}.{$permission}";
 
-                $existingPermission = Permission::query()
-                    ->where([
-                        'name' => $permissionName,
-                        'guard_name' => 'web',
-                    ])
-                    ->first();
+                $existingPermission = $existingPermissions->where('name', $permissionName)->first();
 
                 if ($existingPermission && blank($existingPermission->group_id) && Feature::active('permission-groups')) {
                     $existingPermission->update([
@@ -93,15 +93,15 @@ class CreatePermissionsForModel
 
             $groupId = app(GetPermissionGroupId::class)("{$modelMorphClass}.*");
 
-            $model->getApiPermissions()->each(function ($permission) use ($groupId, $modelMorphClass) {
+            $existingPermissions = Permission::query()
+                ->where('name', 'like', "{$modelMorphClass}.%")
+                ->where('guard_name', 'api')
+                ->get();
+
+            $model->getApiPermissions()->each(function ($permission) use ($existingPermissions, $groupId, $modelMorphClass) {
                 $permissionName = "{$modelMorphClass}.{$permission}";
 
-                $existingPermission = Permission::query()
-                    ->where([
-                        'name' => $permissionName,
-                        'guard_name' => 'api',
-                    ])
-                    ->first();
+                $existingPermission = $existingPermissions->where('name', $permissionName)->first();
 
                 if ($existingPermission && blank($existingPermission->group_id) && Feature::active('permission-groups')) {
                     $existingPermission->update([
