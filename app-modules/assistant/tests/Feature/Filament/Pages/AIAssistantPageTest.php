@@ -296,7 +296,7 @@ it('can send message to a new chat', function () use ($setUp) {
     $chat->delete();
 
     testTime()->freeze();
-    $createdAt = now()->format('Y-m-d H:i:s');
+    $createdAt = now()->toDateTimeString();
 
     $livewire = Livewire::test(PersonalAssistant::class)
         ->set('showCurrentResponse', false)
@@ -470,7 +470,7 @@ it('can save chats into a folder', function () use ($setUp) {
         ->create();
 
     testTime()->freeze();
-    $createdAt = now()->format('Y-m-d H:i:s');
+    $createdAt = now()->toDateTimeString();
 
     $livewire = Livewire::test(PersonalAssistant::class)
         ->set('message', $message = AssistantChatMessage::factory()->make()->message)
@@ -531,7 +531,7 @@ it('respects message creation time when saving chats', function () use ($setUp) 
 
     // Given that a message was sent at a specific time
     testTime()->freeze();
-    $createdAt = now()->format('Y-m-d H:i:s');
+    $createdAt = now()->toDateTimeString();
 
     $personalAssistant = Livewire::test(PersonalAssistant::class)
         ->set('message', $message = AssistantChatMessage::factory()->make()->message)
