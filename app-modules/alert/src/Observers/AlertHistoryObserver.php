@@ -41,8 +41,8 @@ use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 
 class AlertHistoryObserver
 {
-    public function created(AlertHistory $model): void
+    public function created(AlertHistory $alertHistory): void
     {
-        event(new TimelineableRecordCreated($model->subject->concern, $model));
+        event(new TimelineableRecordCreated($alertHistory->subject->concern, $alertHistory));
     }
 }

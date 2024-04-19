@@ -44,5 +44,5 @@ class OnlineAdmissions extends Cluster
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 100;
 }

@@ -42,7 +42,7 @@ use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Clusters\ProductIntegrations;
+use App\Filament\Clusters\GlobalSettings;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 
 class ManageAzureSsoSettings extends SettingsPage
@@ -57,7 +57,9 @@ class ManageAzureSsoSettings extends SettingsPage
 
     protected static ?int $navigationSort = 60;
 
-    protected static ?string $cluster = ProductIntegrations::class;
+    protected static ?string $navigationGroup = 'Product Integrations';
+
+    protected static ?string $cluster = GlobalSettings::class;
 
     public static function canAccess(): bool
     {

@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,17 +30,17 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@props(['value'])
+<div>
+    <x-timeline::timeline.labeled-field>
+        <x-slot:label>
+            {{ $value['key'] }}
+        </x-slot:label>
 
-namespace App\Filament\Clusters;
-
-use Filament\Clusters\Cluster;
-
-class ProductIntegrations extends Cluster
-{
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
-    protected static ?string $navigationGroup = 'Product Administration';
-
-    protected static ?int $navigationSort = 2;
-}
+        <x-timeline::timeline.history.content.value
+            :value="$value['new']"
+            :link="data_get($value, 'extra.new.link')"
+        />
+    </x-timeline::timeline.labeled-field>
+</div>

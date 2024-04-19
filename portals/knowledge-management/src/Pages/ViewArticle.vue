@@ -37,6 +37,7 @@ import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import Loading from '@/Components/Loading.vue';
 import DOMPurify from 'dompurify';
+import { consumer } from '@/Services/Consumer.js';
 
 const route = useRoute();
 
@@ -76,13 +77,15 @@ onMounted(function () {
 function getData() {
     loading.value = true;
 
-    fetch(props.apiUrl + '/categories/' + route.params.categoryId + '/articles/' + route.params.articleId)
-        .then((response) => response.json())
-        .then((json) => {
-            category.value = json.category;
-            article.value = json.article;
+    const { get } = consumer();
+
+    get(props.apiUrl + '/categories/' + route.params.categoryId + '/articles/' + route.params.articleId).then(
+        (response) => {
+            category.value = response.data.category;
+            article.value = response.data.article;
             loading.value = false;
-        });
+        },
+    );
 }
 </script>
 
@@ -95,9 +98,9 @@ function getData() {
             <Breadcrumbs
                 :currentCrumb="article.name"
                 :breadcrumbs="[
-                { name: 'Help Center', route: 'home' },
-                { name: category.name, route: 'view-category', params: { categoryId: category.id } },
-            ]"
+                    { name: 'Help Center', route: 'home' },
+                    { name: category.name, route: 'view-category', params: { categoryId: category.id } },
+                ]"
             ></Breadcrumbs>
 
             <div class="prose">
