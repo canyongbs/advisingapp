@@ -42,7 +42,7 @@ use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Clusters\ProductIntegrations;
+use App\Filament\Clusters\GlobalSettings;
 use AdvisingApp\IntegrationMicrosoftClarity\Settings\MicrosoftClaritySettings;
 
 class ManageMicrosoftClaritySettings extends SettingsPage
@@ -57,7 +57,9 @@ class ManageMicrosoftClaritySettings extends SettingsPage
 
     protected static ?int $navigationSort = 30;
 
-    protected static ?string $cluster = ProductIntegrations::class;
+    protected static ?string $navigationGroup = 'Product Integrations';
+
+    protected static ?string $cluster = GlobalSettings::class;
 
     public static function canAccess(): bool
     {

@@ -187,7 +187,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function hasBeenDelivered(): bool
     {
-        return (bool) $this->deliverable->hasBeenDelivered();
+        return $this->deliverable->hasBeenDelivered();
     }
 
     public function getSubscribable(): ?Subscribable
