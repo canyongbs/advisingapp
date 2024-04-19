@@ -34,17 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Engagement\GraphQL\Mutations;
 
-use Filament\Clusters\Cluster;
+use Nuwave\Lighthouse\Execution\ResolveInfo;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
+use AdvisingApp\Engagement\Actions\GenerateTipTapBodyJson;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 
-class ServiceManagementAdministration extends Cluster
+class UpdateSMS
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    public function __invoke(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Engagement
+    {
+        $engagement = Engagement::findOrFail($args['id']);
 
-    protected static ?string $navigationGroup = 'Product Administration';
+        $mergeTags = match ($engagement->recipient::class) {
+            Student::class => [
+                '{{ student full name }}',
+                '{{ student email }}',
+            ],
+            default => [],
+        };
 
-    protected static ?int $navigationSort = 70;
+        $args['body'] = app(GenerateTipTapBodyJson::class)(body: $args['body'], mergeData: $mergeTags);
+        $engagement->update($args);
 
-    protected static ?string $title = 'Service Management';
+        $engagement->deliverable->delete();
+        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: EngagementDeliveryMethod::Sms->value);
+
+        return $engagement->refresh();
+    }
 }

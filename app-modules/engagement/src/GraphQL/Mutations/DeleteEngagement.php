@@ -34,17 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Engagement\GraphQL\Mutations;
 
-use Filament\Clusters\Cluster;
+use Nuwave\Lighthouse\Execution\ResolveInfo;
+use AdvisingApp\Engagement\Models\Engagement;
+use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-class ServiceManagementAdministration extends Cluster
+class DeleteEngagement
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    public function __invoke(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Engagement
+    {
+        $engagement = Engagement::findOrFail($args['id']);
 
-    protected static ?string $navigationGroup = 'Product Administration';
+        $engagement->deliverable->delete();
 
-    protected static ?int $navigationSort = 70;
+        $engagement->delete();
 
-    protected static ?string $title = 'Service Management';
+        return $engagement->refresh();
+    }
 }
