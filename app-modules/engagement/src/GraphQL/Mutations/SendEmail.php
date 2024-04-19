@@ -36,37 +36,40 @@
 
 namespace AdvisingApp\Engagement\GraphQL\Mutations;
 
+use Illuminate\Support\Stringable;
+use AdvisingApp\Prospect\Models\Prospect;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use AdvisingApp\Engagement\Actions\GenerateTipTapBodyJson;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 
-class UpdateSMS
+class SendEmail
 {
     public function __invoke(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Engagement
     {
-        $engagement = Engagement::findOrFail($args['id']);
+        /** @var Student|Prospect $morph */
+        $morph = Relation::getMorphedModel($args['recipient_type']);
 
-        $mergeTags = collect(Engagement::getMergeTags($engagement->recipient::class))
+        $mergeTags = collect(Engagement::getMergeTags($morph))
             ->map(fn (string $tag): string => "{{ {$tag} }}")
             ->toArray();
 
         $body = str($args['body'])
-            ->markdown([
+            ->when(strip_tags($args['body']) === $args['body'], fn (Stringable $str) => $str->markdown([
                 'html_input' => 'strip',
                 'allow_unsafe_links' => false,
-            ])
+            ]))
             ->toString();
 
         $args['body'] = app(GenerateTipTapBodyJson::class)(body: $body, mergeTags: $mergeTags);
 
-        $engagement->update($args);
+        $engagement = Engagement::create($args);
 
-        $engagement->deliverable->delete();
-
-        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: EngagementDeliveryMethod::Sms->value);
+        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: EngagementDeliveryMethod::Email->value);
 
         return $engagement->refresh();
     }

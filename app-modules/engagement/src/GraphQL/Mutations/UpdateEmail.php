@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Engagement\GraphQL\Mutations;
 
+use Illuminate\Support\Stringable;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
 use AdvisingApp\Engagement\Models\Engagement;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
@@ -43,7 +44,7 @@ use AdvisingApp\Engagement\Actions\GenerateTipTapBodyJson;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 
-class UpdateSMS
+class UpdateEmail
 {
     public function __invoke(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Engagement
     {
@@ -54,10 +55,10 @@ class UpdateSMS
             ->toArray();
 
         $body = str($args['body'])
-            ->markdown([
+            ->when(strip_tags($args['body']) === $args['body'], fn (Stringable $str) => $str->markdown([
                 'html_input' => 'strip',
                 'allow_unsafe_links' => false,
-            ])
+            ]))
             ->toString();
 
         $args['body'] = app(GenerateTipTapBodyJson::class)(body: $body, mergeTags: $mergeTags);
@@ -66,7 +67,7 @@ class UpdateSMS
 
         $engagement->deliverable->delete();
 
-        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: EngagementDeliveryMethod::Sms->value);
+        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: EngagementDeliveryMethod::Email->value);
 
         return $engagement->refresh();
     }

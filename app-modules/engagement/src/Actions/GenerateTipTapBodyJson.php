@@ -38,34 +38,37 @@ namespace AdvisingApp\Engagement\Actions;
 
 class GenerateTipTapBodyJson
 {
-    public function __invoke(string $body, array $mergeData = []): array
+    public function __invoke(string $body, array $mergeTags = []): array
     {
-        return tiptap_converter()
-            ->asJSON([
-                'type' => 'doc',
-                'content' => str($body)
-                    ->explode("\n")
-                    ->map(fn (string $line): array => $this->paragraph($line, $mergeData))
-                    ->filter(fn (array $component) => ! empty($component['content']))
-                    ->values()
-                    ->toArray(),
-            ], true);
-    }
+        return json_decode(tiptap_converter()
+            ->getEditor()
+            ->setContent($body)
+            ->descendants(function ($node) use ($mergeTags) {
+                if ($node->type !== 'paragraph') {
+                    return;
+                }
 
-    private function paragraph(string $line, array $mergeData = []): array
-    {
-        preg_match_all('/{{[\s\S]*?}}|(\S+\s*)/', $line, $tokens);
+                $content = collect();
 
-        return [
-            'type' => 'paragraph',
-            'content' => collect($tokens[0])
-                ->map(
-                    fn ($token) => in_array($token, $mergeData)
-                        ? $this->mergeTag($token)
-                        : $this->text($token)
-                )
-                ->toArray(),
-        ];
+                foreach ($node->content as $item) {
+                    preg_match_all('/{{2}[\s\S]*?}{2}|[{(<\[]|[})>\]]|\s*\S+\s*/', $item->text, $tokens);
+
+                    if (empty($tokens)) {
+                        continue;
+                    }
+
+                    $content->push(
+                        collect($tokens[0])
+                            ->map(
+                                fn ($token) => in_array($token, $mergeTags)
+                                    ? (object) $this->mergeTag($token)
+                                    : (object) $this->text($token, $item)
+                            )
+                    );
+                }
+                $node->content = $content->flatten()->toArray();
+            })
+            ->getJSON(), true);
     }
 
     private function mergeTag(string $token): array
@@ -78,11 +81,12 @@ class GenerateTipTapBodyJson
         ];
     }
 
-    private function text(string $text): array
+    private function text(string $text, object $item): array
     {
         return [
             'type' => 'text',
             'text' => $text,
+            ...collect($item)->except(['type', 'text'])->toArray(),
         ];
     }
 }

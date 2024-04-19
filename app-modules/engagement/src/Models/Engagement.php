@@ -211,6 +211,20 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         ];
     }
 
+    /**
+     * @param class-string $type
+     */
+    public static function getMergeTags(string $type): array
+    {
+        return match ($type) {
+            Student::class => [
+                'student full name',
+                'student email',
+            ],
+            default => [],
+        };
+    }
+
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
