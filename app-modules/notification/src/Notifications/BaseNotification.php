@@ -58,6 +58,8 @@ abstract class BaseNotification extends Notification implements ShouldQueue
 
     protected array $metadata = [];
 
+    public $tries = 3;
+
     public function via(object $notifiable): array
     {
         $traits = collect(class_uses_recursive(static::class));
