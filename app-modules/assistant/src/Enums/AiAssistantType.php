@@ -34,37 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Actions;
+namespace AdvisingApp\Assistant\Enums;
 
-use OpenAI\Client;
-use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
+use Filament\Support\Contracts\HasLabel;
 
-class CreateAiAssistant
+enum AiAssistantType: string implements HasLabel
 {
-    public function __construct(
-        private AiChatClient $ai
-    ) {}
+    case Default = 'default';
+    case Custom = 'custom';
 
-    public function from(string $name, string $description, string $instructions): string
+    public function getLabel(): ?string
     {
-        /** @var Client $client */
-        $client = $this->ai->client;
-
-        /** @var AssistantResponse $response */
-        $assistantResponse = $client->assistants()->create([
-            'name' => $name,
-            'description' => $description,
-            'instructions' => $instructions,
-            'model' => config('services.azure_open_ai.personal_assistant_deployment_name'),
-            // Re-enable retrieval support once it's available via the API
-            // 'tools' => [
-            //     ['type' => 'retrieval'],
-            // ],
-            'metadata' => [
-                'last_updated_at' => now(),
-            ],
-        ]);
-
-        return $assistantResponse->id;
+        return $this->name;
     }
 }

@@ -36,12 +36,20 @@
 
 namespace AdvisingApp\Assistant\Actions;
 
+use Laravel\Pennant\Feature;
+use App\Features\EnableCustomAiAssistants;
+use AdvisingApp\Assistant\Models\AiAssistant;
 use AdvisingApp\IntegrationAI\Settings\AISettings;
 
 class GetAiAssistant
 {
     public function get(): string
     {
-        return resolve(AISettings::class)->assistant_id ?? resolve(CreateAiAssistant::class)->create();
+        if (Feature::active(EnableCustomAiAssistants::class)) {
+            // TODO Better enforce a single default AI Assistant per institution
+            return AiAssistant::default()->first()->assistant_id ?? resolve(CreateDefaultInsitutionAiAssistant::class)->create();
+        }
+
+        return resolve(AISettings::class)->assistant_id ?? resolve(CreateDefaultInsitutionAiAssistant::class)->create();
     }
 }

@@ -36,35 +36,54 @@
 
 namespace AdvisingApp\Assistant\Actions;
 
-use OpenAI\Client;
+use App\Models\Tenant;
+use Laravel\Pennant\Feature;
+use App\Features\CustomAiAssistants;
+use AdvisingApp\Assistant\Models\AiAssistant;
+use AdvisingApp\Assistant\Enums\AiAssistantType;
+use AdvisingApp\IntegrationAI\Settings\AISettings;
 use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
 
-class CreateAiAssistant
+class CreateDefaultInsitutionAiAssistant
 {
     public function __construct(
         private AiChatClient $ai
     ) {}
 
-    public function from(string $name, string $description, string $instructions): string
+    public function create()
     {
-        /** @var Client $client */
-        $client = $this->ai->client;
+        $tenant = Tenant::current();
 
-        /** @var AssistantResponse $response */
-        $assistantResponse = $client->assistants()->create([
-            'name' => $name,
-            'description' => $description,
-            'instructions' => $instructions,
-            'model' => config('services.azure_open_ai.personal_assistant_deployment_name'),
-            // Re-enable retrieval support once it's available via the API
-            // 'tools' => [
-            //     ['type' => 'retrieval'],
-            // ],
-            'metadata' => [
-                'last_updated_at' => now(),
-            ],
-        ]);
+        $settings = resolve(AISettings::class);
 
-        return $assistantResponse->id;
+        $name = "{$tenant->name} AI Assistant";
+        $description = "An AI Assistant for {$tenant->name}";
+        $instructions = $settings->prompt_system_context;
+
+        if (Feature::active(CustomAiAssistants::class)) {
+            $aiAssistant = AiAssistant::create([
+                'name' => $name,
+                'description' => $description,
+                'instructions' => $instructions,
+                'type' => AiAssistantType::Default,
+            ]);
+        }
+
+        $clientAssistantId = resolve(CreateAiAssistant::class)->from(
+            name: $name,
+            description: $description,
+            instructions: $instructions
+        );
+
+        if (Feature::active(CustomAiAssistants::class)) {
+            $aiAssistant->update([
+                'assistant_id' => $clientAssistantId,
+            ]);
+        }
+
+        $settings->assistant_id = $clientAssistantId;
+        $settings->save();
+
+        return $settings->assistant_id;
     }
 }

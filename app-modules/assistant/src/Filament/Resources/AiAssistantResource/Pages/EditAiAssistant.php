@@ -34,37 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Actions;
+namespace AdvisingApp\Assistant\Filament\Resources\PromptResource\Pages;
 
-use OpenAI\Client;
-use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource;
+use AdvisingApp\Assistant\Filament\Resources\PromptResource\Forms\AiAssistantForm;
 
-class CreateAiAssistant
+class EditAiAssistant extends EditRecord
 {
-    public function __construct(
-        private AiChatClient $ai
-    ) {}
+    protected static string $resource = AiAssistantResource::class;
 
-    public function from(string $name, string $description, string $instructions): string
+    public function form(Form $form): Form
     {
-        /** @var Client $client */
-        $client = $this->ai->client;
-
-        /** @var AssistantResponse $response */
-        $assistantResponse = $client->assistants()->create([
-            'name' => $name,
-            'description' => $description,
-            'instructions' => $instructions,
-            'model' => config('services.azure_open_ai.personal_assistant_deployment_name'),
-            // Re-enable retrieval support once it's available via the API
-            // 'tools' => [
-            //     ['type' => 'retrieval'],
-            // ],
-            'metadata' => [
-                'last_updated_at' => now(),
-            ],
-        ]);
-
-        return $assistantResponse->id;
+        return resolve(AiAssistantForm::class)->form($form);
     }
 }

@@ -34,37 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Actions;
+namespace AdvisingApp\Assistant\Filament\Resources\PromptResource\Forms;
 
-use OpenAI\Client;
-use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
+use Filament\Forms\Form;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
+use AdvisingApp\Assistant\Enums\AiAssistantType;
 
-class CreateAiAssistant
+class AiAssistantForm
 {
-    public function __construct(
-        private AiChatClient $ai
-    ) {}
-
-    public function from(string $name, string $description, string $instructions): string
+    public function form(Form $form): Form
     {
-        /** @var Client $client */
-        $client = $this->ai->client;
+        return $form
+            ->schema([
+                FileUpload::make('profile_image')
+                    ->avatar()
+                    ->directory('ai-assistant-images')
+                    ->columnSpanFull()
+                    ->required(),
+                TextInput::make('name')
+                    ->required(),
+                Textarea::make('description')
+                    ->columnSpanFull()
+                    ->required(),
+                Section::make('Configure AI Assistant')
+                    ->description('The following information will be used to instruct your AI Assistant on how to respond.')
+                    ->schema([
+                        Textarea::make('instructions')
+                            ->helperText('Instructions are used to provide context to the AI Assistant on how to respond to user queries.')
+                            ->required(),
+                        Textarea::make('knowledge')
+                            ->required(),
+                    ]),
+            ]);
+    }
 
-        /** @var AssistantResponse $response */
-        $assistantResponse = $client->assistants()->create([
-            'name' => $name,
-            'description' => $description,
-            'instructions' => $instructions,
-            'model' => config('services.azure_open_ai.personal_assistant_deployment_name'),
-            // Re-enable retrieval support once it's available via the API
-            // 'tools' => [
-            //     ['type' => 'retrieval'],
-            // ],
-            'metadata' => [
-                'last_updated_at' => now(),
-            ],
-        ]);
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['type'] = AiAssistantType::Custom;
 
-        return $assistantResponse->id;
+        return $data;
     }
 }

@@ -34,37 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Actions;
+namespace AdvisingApp\Assistant\Observers;
 
-use OpenAI\Client;
-use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
+use AdvisingApp\Assistant\Models\AiAssistant;
+use AdvisingApp\Assistant\Actions\CreateCustomAiAssistant;
 
-class CreateAiAssistant
+class AiAssistantObserver
 {
-    public function __construct(
-        private AiChatClient $ai
-    ) {}
-
-    public function from(string $name, string $description, string $instructions): string
+    public function created(AiAssistant $assistant): void
     {
-        /** @var Client $client */
-        $client = $this->ai->client;
-
-        /** @var AssistantResponse $response */
-        $assistantResponse = $client->assistants()->create([
-            'name' => $name,
-            'description' => $description,
-            'instructions' => $instructions,
-            'model' => config('services.azure_open_ai.personal_assistant_deployment_name'),
-            // Re-enable retrieval support once it's available via the API
-            // 'tools' => [
-            //     ['type' => 'retrieval'],
-            // ],
-            'metadata' => [
-                'last_updated_at' => now(),
-            ],
-        ]);
-
-        return $assistantResponse->id;
+        resolve(CreateCustomAiAssistant::class)->create($assistant);
     }
 }

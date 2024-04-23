@@ -62,6 +62,11 @@ class AssistantChat extends BaseModel
         return $this->belongsTo(User::class);
     }
 
+    public function assistant(): BelongsTo
+    {
+        return $this->belongsTo(AiAssistant::class, 'ai_ assistant_id');
+    }
+
     public function messages(): HasMany
     {
         return $this->hasMany(AssistantChatMessage::class);
