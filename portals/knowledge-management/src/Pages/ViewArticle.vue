@@ -35,9 +35,10 @@
 import { defineProps, ref, watch, onMounted } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
-import Loading from '@/Components/Loading.vue';
+import AppLoading from '@/Components/AppLoading.vue';
 import DOMPurify from 'dompurify';
 import { consumer } from '@/Services/Consumer.js';
+import { Bars3Icon } from "@heroicons/vue/24/outline/index.js";
 
 const route = useRoute();
 
@@ -90,24 +91,40 @@ function getData() {
 </script>
 
 <template>
-    <div v-if="loading">
-        <Loading />
-    </div>
-    <div v-else>
-        <main class="py-10">
-            <Breadcrumbs
-                :currentCrumb="article.name"
-                :breadcrumbs="[
-                    { name: 'Help Center', route: 'home' },
-                    { name: category.name, route: 'view-category', params: { categoryId: category.id } },
-                ]"
-            ></Breadcrumbs>
+    <div
+        class="sticky top-0 z-40 flex flex-col items-center bg-gray-50"
+    >
+        <button class="w-full p-3 lg:hidden" type="button" @click="$emit('sidebarOpened')">
+            <span class="sr-only">Open sidebar</span>
 
-            <div class="prose">
-                <h1 class="text-3xl font-semibold mt-4">{{ article.name }}</h1>
-                <span>Last Updated: {{ article.lastUpdated }}</span>
-                <div v-html="DOMPurify.sanitize(article.content)"></div>
+            <Bars3Icon class="h-6 w-6 text-gray-900"></Bars3Icon>
+        </button>
+
+        <div class="w-full px-6">
+            <div class="max-w-screen-xl flex flex-col gap-y-6 mx-auto py-8">
+                <div v-if="loading">
+                    <AppLoading />
+                </div>
+                <div v-else>
+                    <main class="flex flex-col gap-8">
+                        <Breadcrumbs
+                            :breadcrumbs="[
+                                { name: category.name, route: 'view-category', params: { categoryId: category.id } },
+                            ]"
+                            currentCrumb="Articles"
+                        ></Breadcrumbs>
+
+                        <div class="flex flex-col gap-3">
+                            <div class="prose max-w-none">
+                                <h1>{{ article.name }}</h1>
+                                <div v-html="DOMPurify.sanitize(article.content)"></div>
+                            </div>
+
+                            <span class="text-xs text-gray-500">Last updated: {{ article.lastUpdated }}</span>
+                        </div>
+                    </main>
+                </div>
             </div>
-        </main>
+        </div>
     </div>
 </template>
