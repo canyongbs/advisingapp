@@ -36,65 +36,48 @@
 
 namespace AdvisingApp\Engagement\Notifications;
 
-use Throwable;
-use App\Models\Tenant;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
+use App\Models\User;
+use App\Models\NotificationSetting;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use Filament\Notifications\Notification as FilamentNotification;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 
-class EngagementEmailNotification extends BaseNotification implements EmailNotification, ShouldBeUnique
+class EngagementFailedNotification extends BaseNotification implements EmailNotification, DatabaseNotification
 {
     use EmailChannelTrait;
+    use DatabaseChannelTrait;
 
     public function __construct(
-        public EngagementDeliverable $deliverable
+        public Engagement $engagement
     ) {}
-
-    public function uniqueId(): string
-    {
-        return Tenant::current()->id . ':' . $this->deliverable->id;
-    }
 
     public function toEmail(object $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->subject($this->deliverable->engagement->subject)
-            ->greeting('Hello ' . $this->deliverable->engagement->recipient->display_name . '!')
-            ->content($this->deliverable->engagement->getBody())
-            ->salutation("Regards, {$this->deliverable->engagement->user->name}");
+            ->settings($this->resolveNotificationSetting($notifiable))
+            ->subject('The following engagement failed to be delivered.')
+            ->line("The engagement with the following contents was unable to be delivered to {$this->engagement->recipient->display_name}.")
+            ->line('Subject: ' . ($this->engagement->subject ?? 'n/a'))
+            ->line('Body: ' . $this->engagement->getBody());
     }
 
-    public function failed(?Throwable $exception): void
+    public function toDatabase(object $notifiable): array
     {
-        $this->deliverable->markDeliveryFailed($exception->getMessage());
-
-        if (is_null($this->deliverable->engagement->engagement_batch_id)) {
-            $this->deliverable->engagement->user->notify(new EngagementFailedNotification($this->deliverable->engagement));
-        }
+        return FilamentNotification::make()
+            ->danger()
+            ->title('Engagement Delivery Failed')
+            ->body("Your engagement failed to be delivered to {$this->engagement->recipient->display_name}.")
+            ->getDatabaseMessage();
     }
 
-    protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
+    private function resolveNotificationSetting(NotifiableInterface $notifiable): ?NotificationSetting
     {
-        $deliverable->related()->associate($this->deliverable);
-    }
-
-    protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
-    {
-        $updateData = array_filter([
-            'external_reference_id' => $deliverable->external_reference_id,
-            'external_status' => $deliverable->external_status,
-            'delivery_status' => $deliverable->delivery_status,
-            'delivered_at' => $deliverable->delivered_at,
-            'last_delivery_attempt' => $deliverable->last_delivery_attempt,
-            'delivery_response' => $deliverable->delivery_response,
-        ], function ($value) {
-            return ! is_null($value);
-        });
-
-        $this->deliverable->update($updateData);
+        return $notifiable instanceof User ? $this->engagement->createdBy->teams()->first()?->division?->notificationSetting?->setting : null;
     }
 }
