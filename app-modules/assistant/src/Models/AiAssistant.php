@@ -29,4 +29,9 @@ class AiAssistant extends BaseModel
     {
         return $this->hasMany(AssistantChat::class);
     }
+
+    public function scopeDefault(): void
+    {
+        $this->where('type', AiAssistantType::Default);
+    }
 }

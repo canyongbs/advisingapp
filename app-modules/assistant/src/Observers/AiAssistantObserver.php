@@ -37,12 +37,27 @@
 namespace AdvisingApp\Assistant\Observers;
 
 use AdvisingApp\Assistant\Models\AiAssistant;
+use AdvisingApp\Assistant\Actions\UpdateAiAssistant;
 use AdvisingApp\Assistant\Actions\CreateCustomAiAssistant;
+use AdvisingApp\Assistant\DataTransferObjects\AiAssistantUpdateData;
 
 class AiAssistantObserver
 {
     public function created(AiAssistant $assistant): void
     {
         resolve(CreateCustomAiAssistant::class)->create($assistant);
+    }
+
+    public function updated(AiAssistant $assistant): void
+    {
+        resolve(UpdateAiAssistant::class)->from(
+            assistantId: $assistant->assistant_id,
+            data: new AiAssistantUpdateData(
+                name: $assistant->name,
+                description: $assistant->description,
+                instructions: "{$assistant->instructions} {$assistant->knowledge}",
+                model: $assistant->model,
+            )
+        );
     }
 }

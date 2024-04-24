@@ -46,16 +46,19 @@ class UpdateAiAssistant
         private AiChatClient $ai
     ) {}
 
-    public function from(AiAssistantUpdateData $data): void
+    public function from(string $assistantId, AiAssistantUpdateData $data): void
     {
         /** @var Client $client */
         $client = $this->ai->client;
 
-        $response = $client->assistants()->modify(resolve(GetAiAssistant::class)->get(), [
-            ...array_filter($data->toArray()),
-            'metadata' => [
-                'last_updated_at' => now(),
-            ],
-        ]);
+        $client->assistants()->modify(
+            $assistantId,
+            [
+                ...array_filter($data->toArray()),
+                'metadata' => [
+                    'last_updated_at' => now(),
+                ],
+            ]
+        );
     }
 }

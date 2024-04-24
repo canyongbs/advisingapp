@@ -63,6 +63,7 @@ use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use AdvisingApp\Assistant\Models\PromptType;
+use AdvisingApp\Assistant\Models\AiAssistant;
 use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\Assistant\Models\AssistantChat;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -101,6 +102,8 @@ class PersonalAssistant extends Page
     public Chat $chat;
 
     public ?string $assistantId = null;
+
+    public ?AiAssistant $aiAssistant = null;
 
     #[Rule(['required', 'string'])]
     public string $message = '';
@@ -259,12 +262,15 @@ class PersonalAssistant extends Page
         /** @var ThreadMessageResponse $message */
         $message = $ai->createMessageInThread(
             chat: $this->chat,
-            assistantId: $this->assistantId,
+            assistantId: $this->aiAssistant ? $this->aiAssistant->assistant_id : $this->assistantId,
             fileIds: $this->fileIds
         );
 
         /** @var ThreadRunResponse $response */
-        $run = $ai->createRunForThread($this->chat->threadId, $this->assistantId);
+        $run = $ai->createRunForThread(
+            threadId: $this->chat->threadId,
+            assistantId: $this->aiAssistant ? $this->aiAssistant->assistant_id : $this->assistantId
+        );
 
         $this->updateLatestMessage(
             messageId: $message->id,
@@ -355,6 +361,20 @@ class PersonalAssistant extends Page
             assistantId: $chat->assistant_id ?? null,
             threadId: $chat->thread_id ?? null,
             messages: ChatMessage::collection($chat->messages ?? []),
+        );
+    }
+
+    public function newChatWithAssistant(AiAssistant $assistant): void
+    {
+        $this->reset(['message', 'prompt', 'renderError', 'error']);
+
+        $this->aiAssistant = $assistant;
+
+        $this->chat = new Chat(
+            id: null,
+            assistantId: $assistant->assistant_id,
+            threadId: null,
+            messages: ChatMessage::collection([])
         );
     }
 

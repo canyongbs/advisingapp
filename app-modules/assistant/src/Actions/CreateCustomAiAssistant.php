@@ -50,7 +50,8 @@ class CreateCustomAiAssistant
         $clientAssistantId = resolve(CreateAiAssistant::class)->from(
             name: $assistant->name,
             description: $assistant->description,
-            instructions: $assistant->instructions
+            // Maximum length is 32768 characters - needs to be enforced
+            instructions: "{$assistant->instructions} {$assistant->knowledge}",
         );
 
         $assistant->update([
