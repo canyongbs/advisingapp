@@ -36,15 +36,22 @@
 
 namespace AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource\Pages;
 
+use Filament\Actions\ExportAction;
 use Filament\Resources\Pages\ManageRecords;
+use AdvisingApp\Assistant\Filament\Exports\AssistantChatMessageLogExporter;
 use AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource;
 
 class ManageAssistantChatMessageLogs extends ManageRecords
 {
     protected static string $resource = AssistantChatMessageLogResource::class;
 
+    protected static ?string $title = 'Personal Assistant';
+
     protected function getHeaderActions(): array
     {
-        return [];
+        return [
+            ExportAction::make()
+                ->exporter(AssistantChatMessageLogExporter::class),
+        ];
     }
 }

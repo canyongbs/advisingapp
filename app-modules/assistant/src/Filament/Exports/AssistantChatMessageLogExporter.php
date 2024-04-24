@@ -34,35 +34,48 @@
 </COPYRIGHT>
 */
 
-use App\Models\Tenant;
+namespace AdvisingApp\Assistant\Filament\Exports;
 
-use function Pest\Laravel\artisan;
+use Filament\Actions\Exports\Exporter;
+use Filament\Actions\Exports\ExportColumn;
+use Filament\Actions\Exports\Models\Export;
+use Filament\Actions\Exports\Enums\ExportFormat;
+use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 
-use App\Console\Commands\CreateTenant;
-use App\Multitenancy\Events\NewTenantSetupComplete;
+class AssistantChatMessageLogExporter extends Exporter
+{
+    protected static ?string $model = AssistantChatMessageLog::class;
 
-beforeEach(function () {
-    Tenant::forgetCurrent();
-});
+    public static function getColumns(): array
+    {
+        return [
+            ExportColumn::make('message'),
+            ExportColumn::make('metadata')
+                ->listAsJson(),
+            ExportColumn::make('user.name'),
+            ExportColumn::make('request')
+                ->listAsJson(),
+            ExportColumn::make('sent_at'),
+            ExportColumn::make('created_at'),
+        ];
+    }
 
-it('creates a tenant', function () {
-    Event::fake(NewTenantSetupComplete::class);
+    public static function getCompletedNotificationBody(Export $export): string
+    {
+        $body = 'Your assistant chat message log export has completed and ' . number_format($export->successful_rows) . ' ' . str('row')->plural($export->successful_rows) . ' exported.';
 
-    $name = str(fake()->words(asText: true));
-    $domain = $name->slug()->toString() . '.' . config('app.landlord_host');
+        if ($failedRowsCount = $export->getFailedRowsCount()) {
+            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to export.';
+        }
 
-    DB::commit();
+        return $body;
+    }
 
-    artisan(CreateTenant::class, [
-        'name' => $name->toString(),
-        'domain' => $domain,
-        '--run-queue' => true,
-        '--seed' => true,
-        '--admin' => true,
-    ])->assertSuccessful();
-
-    Event::assertDispatched(
-        NewTenantSetupComplete::class,
-        fn (NewTenantSetupComplete $event) => $event->tenant->name === $name->toString()
-    );
-});
+    /**
+     * Using CSV format causes issues with the JSON commas not being properly escaped by league/csv.
+     */
+    public function getFormats(): array
+    {
+        return [ExportFormat::Xlsx];
+    }
+}
