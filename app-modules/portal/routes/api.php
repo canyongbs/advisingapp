@@ -73,20 +73,11 @@ Route::prefix('api')
                     ->middleware(['signed:relative'])
                     ->name('define');
 
-                Route::post('/authenticate/request', KnowledgeManagementPortalRequestAuthenticationController::class)
-                    ->middleware(['signed:relative'])
-                    ->name('request-authentication');
-
-                Route::post('/authenticate/logout', KnowledgeManagementPortalLogoutController::class)
-                    ->middleware(['auth:sanctum'])
-                    ->name('knowledge-management.logout');
-
-                Route::post('/authenticate/{authentication}', KnowledgeManagementPortalAuthenticateController::class)
-                    ->middleware(['signed:relative', EnsureFrontendRequestsAreStateful::class])
-                    ->name('authenticate.embedded');
-
                 Route::middleware([AuthenticateIfRequiredByPortalDefinition::class])
                     ->group(function () {
+                        Route::post('/authenticate/logout', KnowledgeManagementPortalLogoutController::class)
+                            ->name('logout');
+
                         Route::post('/search', [KnowledgeManagementPortalSearchController::class, 'get'])
                             ->middleware(['signed:relative'])
                             ->name('search');
@@ -100,5 +91,13 @@ Route::prefix('api')
                         Route::get('/categories/{category}/articles/{article}', [KnowledgeManagementPortalArticleController::class, 'show'])
                             ->name('article.show');
                     });
+
+                Route::post('/authenticate/request', KnowledgeManagementPortalRequestAuthenticationController::class)
+                    ->middleware(['signed:relative'])
+                    ->name('request-authentication');
+
+                Route::post('/authenticate/{authentication}', KnowledgeManagementPortalAuthenticateController::class)
+                    ->middleware(['signed:relative', EnsureFrontendRequestsAreStateful::class])
+                    ->name('authenticate.embedded');
             });
     });

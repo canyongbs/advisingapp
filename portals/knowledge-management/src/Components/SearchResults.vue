@@ -34,6 +34,7 @@
 <script setup>
 import { defineProps } from 'vue';
 import SearchLoading from '@/Components/SearchLoading.vue';
+import { ChevronRightIcon, XMarkIcon } from "@heroicons/vue/20/solid";
 
 defineProps({
     searchQuery: {
@@ -52,56 +53,77 @@ defineProps({
 </script>
 
 <template>
-    <h3 class="text-xl">Search Results for {{ searchQuery }}</h3>
+    <div v-if="loadingResults">
+        <SearchLoading />
+    </div>
 
-    <div class="flex flex-col space-y-6 mt-6">
-        <div v-if="loadingResults">
-            <SearchLoading />
-        </div>
-        <div v-if="!loadingResults && searchResults && searchResults.data" class="flex flex-col space-y-4">
-            <div class="border border-gray-200 rounded p-4 shadow">
-                <h4 class="text-lg font-bold text-gray-900">Articles</h4>
-                <div v-if="searchResults.data.articles.length > 0">
-                    <ul role="list" class="divide-y divide-gray-200 mt-2">
-                        <li
-                            v-for="article in searchResults.data.articles"
-                            :key="article.id"
-                            class="py-4 border-gray-200"
+    <div v-if="!loadingResults && searchResults?.data" class="flex flex-col gap-6">
+        <h3 class="text-2xl font-bold text-primary-950">
+            Search results: <span class="font-normal">{{ searchQuery }}</span>
+        </h3>
+
+        <div class="flex flex-col divide-y ring-1 ring-black/5 shadow-sm px-3 pt-3 pb-1 rounded bg-white">
+            <h4 class="text-lg font-semibold text-gray-800 px-3 pt-1 pb-3">Articles</h4>
+
+            <div v-if="searchResults.data.articles.length > 0">
+                <ul role="list" class="divide-y">
+                    <li
+                        v-for="article in searchResults.data.articles"
+                        :key="article.id"
+                    >
+                        <router-link
+                            :to="{
+                                name: 'view-article',
+                                params: { categoryId: article.categoryId, articleId: article.id },
+                            }"
+                            class="group p-3 flex items-start text-sm font-medium text-gray-700"
                         >
-                            <router-link
-                                :to="{
-                                    name: 'view-article',
-                                    params: { categoryId: article.categoryId, articleId: article.id },
-                                }"
-                            >
-                                <h5 class="text-md text-gray-800">{{ article.name }}</h5>
-                            </router-link>
-                        </li>
-                    </ul>
-                </div>
-                <div v-else>
-                    <p class="text-gray-500 mt-2">No articles found for "{{ searchQuery }}"</p>
-                </div>
+                            <h5>
+                                {{ article.name }}
+                            </h5>
+
+                            <ChevronRightIcon class="opacity-0 h-5 w-5 text-primary-600 transition-all group-hover:translate-x-2 group-hover:opacity-100" />
+                        </router-link>
+                    </li>
+                </ul>
             </div>
+            <div v-else class="p-3 flex items-start gap-2">
+                <XMarkIcon class="h-5 w-5 text-gray-400" />
 
-            <div class="border border-gray-200 rounded p-4 shadow">
-                <h4 class="text-lg font-bold text-gray-900">Categories</h4>
-                <div v-if="searchResults.data.categories.length > 0">
-                    <ul role="list" class="divide-y divide-gray-200 mt-2">
-                        <li
-                            v-for="category in searchResults.data.categories"
-                            :key="category.id"
-                            class="py-4 border-gray-200"
+                <p class="text-gray-600 text-sm font-medium">
+                    No articles found that match this search.
+                </p>
+            </div>
+        </div>
+
+        <div class="flex flex-col divide-y ring-1 ring-black/5 shadow-sm px-3 pt-3 pb-1 rounded bg-white">
+            <h4 class="text-lg font-semibold text-gray-800 px-3 pt-1 pb-3">Categories</h4>
+
+            <div v-if="searchResults.data.categories.length > 0">
+                <ul role="list" class="divide-y">
+                    <li
+                        v-for="category in searchResults.data.categories"
+                        :key="category.id"
+                    >
+                        <router-link
+                            :to="{ name: 'view-category', params: { categoryId: category.id } }"
+                            class="group p-3 flex items-start text-sm font-medium text-gray-700"
                         >
-                            <router-link :to="{ name: 'view-category', params: { categoryId: category.id } }">
-                                <h5 class="text-md text-gray-800">{{ category.name }}</h5>
-                            </router-link>
-                        </li>
-                    </ul>
-                </div>
-                <div v-else>
-                    <p class="text-gray-500 mt-2">No categories found for "{{ searchQuery }}"</p>
-                </div>
+                            <h5>
+                                {{ category.name }}
+                            </h5>
+
+                            <ChevronRightIcon class="opacity-0 h-5 w-5 text-primary-600 transition-all group-hover:translate-x-2 group-hover:opacity-100" />
+                        </router-link>
+                    </li>
+                </ul>
+            </div>
+            <div v-else class="p-3 flex items-start gap-2">
+                <XMarkIcon class="h-5 w-5 text-gray-400" />
+
+                <p class="text-gray-600 text-sm font-medium">
+                    No categories found that match this search.
+                </p>
             </div>
         </div>
     </div>
