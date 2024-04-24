@@ -38,15 +38,15 @@ namespace AdvisingApp\KnowledgeBase\Database\Factories;
 
 use AdvisingApp\Division\Models\Division;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 
 /**
- * @extends Factory<KnowledgeBaseItem>
+ * @extends Factory<KnowledgeBaseArticle>
  */
-class KnowledgeBaseItemFactory extends Factory
+class KnowledgeBaseArticleFactory extends Factory
 {
     public function definition(): array
     {
@@ -63,12 +63,12 @@ class KnowledgeBaseItemFactory extends Factory
 
     public function configure(): static
     {
-        return $this->afterMaking(function (KnowledgeBaseItem $knowledgeBaseItem) {
+        return $this->afterMaking(function (KnowledgeBaseArticle $knowledgeBaseArticle) {
             // ...
-        })->afterCreating(function (KnowledgeBaseItem $knowledgeBaseItem) {
-            if ($knowledgeBaseItem->division->isEmpty()) {
-                $knowledgeBaseItem->division()->attach(Division::first()?->id ?? Division::factory()->create()->id);
-                $knowledgeBaseItem->save();
+        })->afterCreating(function (KnowledgeBaseArticle $knowledgeBaseArticle) {
+            if ($knowledgeBaseArticle->division->isEmpty()) {
+                $knowledgeBaseArticle->division()->attach(Division::first()?->id ?? Division::factory()->create()->id);
+                $knowledgeBaseArticle->save();
             }
         });
     }

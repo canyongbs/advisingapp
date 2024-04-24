@@ -44,48 +44,48 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages\EditKnowledgeBaseItem;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource\Pages\EditKnowledgeBaseArticle;
 
-// TODO: Write EditKnowledgeBaseItem tests
-//test('A successful action on the EditKnowledgeBaseItem page', function () {});
+// TODO: Write EditKnowledgeBaseArticle tests
+//test('A successful action on the EditKnowledgeBaseArticle page', function () {});
 //
-//test('EditKnowledgeBaseItem requires valid data', function ($data, $errors) {})->with([]);
+//test('EditKnowledgeBaseArticle requires valid data', function ($data, $errors) {})->with([]);
 
 // Permission Tests
 
-test('EditKnowledgeBaseItem is gated with proper access control', function () {
+test('EditKnowledgeBaseArticle is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user);
 
-    $knowledgeBaseItem = KnowledgeBaseItem::factory()->create();
+    $knowledgeBaseArticle = KnowledgeBaseArticle::factory()->create();
 
     get(
-        KnowledgeBaseItemResource::getUrl('edit', [
-            'record' => $knowledgeBaseItem,
+        KnowledgeBaseArticleResource::getUrl('edit', [
+            'record' => $knowledgeBaseArticle,
         ])
     )->assertForbidden();
 
-    livewire(EditKnowledgeBaseItem::class, [
-        'record' => $knowledgeBaseItem->getRouteKey(),
+    livewire(EditKnowledgeBaseArticle::class, [
+        'record' => $knowledgeBaseArticle->getRouteKey(),
     ])
         ->assertForbidden();
 
-    $user->givePermissionTo('knowledge_base_item.view-any');
-    $user->givePermissionTo('knowledge_base_item.*.update');
+    $user->givePermissionTo('knowledge_base_article.view-any');
+    $user->givePermissionTo('knowledge_base_article.*.update');
 
     get(
-        KnowledgeBaseItemResource::getUrl('edit', [
-            'record' => $knowledgeBaseItem,
+        KnowledgeBaseArticleResource::getUrl('edit', [
+            'record' => $knowledgeBaseArticle,
         ])
     )->assertSuccessful();
 
     // TODO Restore testing the edit form
 });
 
-test('EditKnowledgeBaseItem is gated with proper feature access control', function () {
+test('EditKnowledgeBaseArticle is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->knowledgeManagement = false;
@@ -96,19 +96,19 @@ test('EditKnowledgeBaseItem is gated with proper feature access control', functi
 
     actingAs($user);
 
-    $user->givePermissionTo('knowledge_base_item.view-any');
-    $user->givePermissionTo('knowledge_base_item.*.update');
+    $user->givePermissionTo('knowledge_base_article.view-any');
+    $user->givePermissionTo('knowledge_base_article.*.update');
 
-    $knowledgeBaseItem = KnowledgeBaseItem::factory()->create();
+    $knowledgeBaseArticle = KnowledgeBaseArticle::factory()->create();
 
     get(
-        KnowledgeBaseItemResource::getUrl('edit', [
-            'record' => $knowledgeBaseItem,
+        KnowledgeBaseArticleResource::getUrl('edit', [
+            'record' => $knowledgeBaseArticle,
         ])
     )->assertForbidden();
 
-    livewire(EditKnowledgeBaseItem::class, [
-        'record' => $knowledgeBaseItem->getRouteKey(),
+    livewire(EditKnowledgeBaseArticle::class, [
+        'record' => $knowledgeBaseArticle->getRouteKey(),
     ])
         ->assertForbidden();
 
@@ -117,8 +117,8 @@ test('EditKnowledgeBaseItem is gated with proper feature access control', functi
     $settings->save();
 
     get(
-        KnowledgeBaseItemResource::getUrl('edit', [
-            'record' => $knowledgeBaseItem,
+        KnowledgeBaseArticleResource::getUrl('edit', [
+            'record' => $knowledgeBaseArticle,
         ])
     )->assertSuccessful();
 

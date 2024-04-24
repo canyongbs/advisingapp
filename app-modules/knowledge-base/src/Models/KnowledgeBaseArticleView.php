@@ -34,26 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Observers;
+namespace AdvisingApp\KnowledgeBase\Models;
 
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
-use App\Support\MediaEncoding\Concerns\ImplementsEncodedMediaProcessing;
-use AdvisingApp\KnowledgeBase\Jobs\KnowledgeBaseItemDownloadExternalMedia;
+use App\Models\User;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class KnowledgeBaseItemObserver
+/**
+ * @mixin IdeHelperKnowledgeBaseArticleView
+ */
+class KnowledgeBaseArticleView extends BaseModel
 {
-    use ImplementsEncodedMediaProcessing;
+    protected $table = 'knowledge_base_item_views';
 
-    public function saved(KnowledgeBaseItem $knowledgeBaseItem): void
+    protected $fillable = [
+        'user_id',
+    ];
+
+    public function knowledgeBaseArticle(): BelongsTo
     {
-        if (is_string($knowledgeBaseItem->article_details)) {
-            $knowledgeBaseItem->article_details = json_decode($knowledgeBaseItem->article_details, true);
-        }
+        return $this->belongsTo(KnowledgeBaseArticle::class, 'knowledge_base_item_id');
+    }
 
-        $this->convertPathShortcodesToIdShortcodes($knowledgeBaseItem, ['solution', 'notes']);
-
-        $this->cleanupMediaItems($knowledgeBaseItem, ['solution', 'notes']);
-
-        KnowledgeBaseItemDownloadExternalMedia::dispatch($knowledgeBaseItem);
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

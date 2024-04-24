@@ -42,10 +42,10 @@ use Illuminate\Auth\Access\Response;
 use App\Concerns\PerformsFeatureChecks;
 use App\Concerns\PerformsLicenseChecks;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 
-class KnowledgeBaseItemPolicy implements PerformsChecksBeforeAuthorization
+class KnowledgeBaseArticlePolicy implements PerformsChecksBeforeAuthorization
 {
     use PerformsLicenseChecks;
     use PerformsFeatureChecks;
@@ -66,56 +66,56 @@ class KnowledgeBaseItemPolicy implements PerformsChecksBeforeAuthorization
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'knowledge_base_item.view-any',
-            denyResponse: 'You do not have permissions to view knowledge base items.'
+            abilities: 'knowledge_base_article.view-any',
+            denyResponse: 'You do not have permissions to view knowledge base articles.'
         );
     }
 
-    public function view(Authenticatable $authenticatable, KnowledgeBaseItem $knowledgeBaseItem): Response
+    public function view(Authenticatable $authenticatable, KnowledgeBaseArticle $knowledgeBaseArticle): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['knowledge_base_item.*.view', "knowledge_base_item.{$knowledgeBaseItem->id}.view"],
-            denyResponse: 'You do not have permissions to view this knowledge base item.'
+            abilities: ['knowledge_base_article.*.view', "knowledge_base_article.{$knowledgeBaseArticle->id}.view"],
+            denyResponse: 'You do not have permissions to view this knowledge base article.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'knowledge_base_item.create',
-            denyResponse: 'You do not have permissions to create knowledge base items.'
+            abilities: 'knowledge_base_article.create',
+            denyResponse: 'You do not have permissions to create knowledge base articles.'
         );
     }
 
-    public function update(Authenticatable $authenticatable, KnowledgeBaseItem $knowledgeBaseItem): Response
+    public function update(Authenticatable $authenticatable, KnowledgeBaseArticle $knowledgeBaseArticle): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['knowledge_base_item.*.update', "knowledge_base_item.{$knowledgeBaseItem->id}.update"],
-            denyResponse: 'You do not have permissions to update this knowledge base item.'
+            abilities: ['knowledge_base_article.*.update', "knowledge_base_article.{$knowledgeBaseArticle->id}.update"],
+            denyResponse: 'You do not have permissions to update this knowledge base article.'
         );
     }
 
-    public function delete(Authenticatable $authenticatable, KnowledgeBaseItem $knowledgeBaseItem): Response
+    public function delete(Authenticatable $authenticatable, KnowledgeBaseArticle $knowledgeBaseArticle): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['knowledge_base_item.*.delete', "knowledge_base_item.{$knowledgeBaseItem->id}.delete"],
-            denyResponse: 'You do not have permissions to delete this knowledge base item.'
+            abilities: ['knowledge_base_article.*.delete', "knowledge_base_article.{$knowledgeBaseArticle->id}.delete"],
+            denyResponse: 'You do not have permissions to delete this knowledge base article.'
         );
     }
 
-    public function restore(Authenticatable $authenticatable, KnowledgeBaseItem $knowledgeBaseItem): Response
+    public function restore(Authenticatable $authenticatable, KnowledgeBaseArticle $knowledgeBaseArticle): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['knowledge_base_item.*.restore', "knowledge_base_item.{$knowledgeBaseItem->id}.restore"],
-            denyResponse: 'You do not have permissions to restore this knowledge base item.'
+            abilities: ['knowledge_base_article.*.restore', "knowledge_base_article.{$knowledgeBaseArticle->id}.restore"],
+            denyResponse: 'You do not have permissions to restore this knowledge base article.'
         );
     }
 
-    public function forceDelete(Authenticatable $authenticatable, KnowledgeBaseItem $knowledgeBaseItem): Response
+    public function forceDelete(Authenticatable $authenticatable, KnowledgeBaseArticle $knowledgeBaseArticle): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['knowledge_base_item.*.force-delete', "knowledge_base_item.{$knowledgeBaseItem->id}.force-delete"],
-            denyResponse: 'You do not have permissions to force delete this knowledge base item.'
+            abilities: ['knowledge_base_article.*.force-delete', "knowledge_base_article.{$knowledgeBaseArticle->id}.force-delete"],
+            denyResponse: 'You do not have permissions to force delete this knowledge base article.'
         );
     }
 

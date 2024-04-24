@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseItem\RequestFactories;
+namespace AdvisingApp\KnowledgeBase\Database\Seeders;
 
-use Worksome\RequestFactories\RequestFactory;
+use Illuminate\Database\Seeder;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
 
-class EditKnowledgeBaseItemRequestFactory extends RequestFactory
+class KnowledgeBaseArticleSeeder extends Seeder
 {
-    public function definition(): array
+    public function run(): void
     {
-        return [
-            'title' => fake()->words(5, true),
-            'article_details' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph()]]]]],
-        ];
+        KnowledgeBaseArticle::factory()
+            ->count(25)
+            ->create();
     }
 }

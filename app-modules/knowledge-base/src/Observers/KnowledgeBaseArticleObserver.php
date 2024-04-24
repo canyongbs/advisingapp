@@ -34,26 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseItem\RequestFactories;
+namespace AdvisingApp\KnowledgeBase\Observers;
 
-use AdvisingApp\Division\Models\Division;
-use Worksome\RequestFactories\RequestFactory;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
+use App\Support\MediaEncoding\Concerns\ImplementsEncodedMediaProcessing;
+use AdvisingApp\KnowledgeBase\Jobs\KnowledgeBaseArticleDownloadExternalMedia;
 
-class CreateKnowledgeBaseItemRequestFactory extends RequestFactory
+class KnowledgeBaseArticleObserver
 {
-    public function definition(): array
+    use ImplementsEncodedMediaProcessing;
+
+    public function saved(KnowledgeBaseArticle $knowledgeBaseArticle): void
     {
-        return [
-            'title' => fake()->words(5, true),
-            'public' => fake()->boolean(),
-            'notes' => fake()->paragraph(),
-            'quality_id' => KnowledgeBaseQuality::inRandomOrder()->first()?->id ?? KnowledgeBaseQuality::factory()->create()->id,
-            'status_id' => KnowledgeBaseStatus::inRandomOrder()->first()?->id ?? KnowledgeBaseStatus::factory()->create()->id,
-            'category_id' => KnowledgeBaseCategory::inRandomOrder()->first()?->id ?? KnowledgeBaseCategory::factory()->create()->id,
-            'division' => [Division::inRandomOrder()->first()?->id ?? Division::factory()->create()->id],
-        ];
+        if (is_string($knowledgeBaseArticle->article_details)) {
+            $knowledgeBaseArticle->article_details = json_decode($knowledgeBaseArticle->article_details, true);
+        }
+
+        $this->convertPathShortcodesToIdShortcodes($knowledgeBaseArticle, ['solution', 'notes']);
+
+        $this->cleanupMediaItems($knowledgeBaseArticle, ['solution', 'notes']);
+
+        KnowledgeBaseArticleDownloadExternalMedia::dispatch($knowledgeBaseArticle);
     }
 }

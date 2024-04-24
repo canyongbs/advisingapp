@@ -34,28 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Models;
+namespace AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseArticle\RequestFactories;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Division\Models\Division;
+use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 
-/**
- * @mixin IdeHelperKnowledgeBaseItemView
- */
-class KnowledgeBaseItemView extends BaseModel
+class CreateKnowledgeBaseArticleRequestFactory extends RequestFactory
 {
-    protected $fillable = [
-        'user_id',
-    ];
-
-    public function knowledgeBaseItem(): BelongsTo
+    public function definition(): array
     {
-        return $this->belongsTo(KnowledgeBaseItem::class);
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
+        return [
+            'title' => fake()->words(5, true),
+            'public' => fake()->boolean(),
+            'notes' => fake()->paragraph(),
+            'quality_id' => KnowledgeBaseQuality::inRandomOrder()->first()?->id ?? KnowledgeBaseQuality::factory()->create()->id,
+            'status_id' => KnowledgeBaseStatus::inRandomOrder()->first()?->id ?? KnowledgeBaseStatus::factory()->create()->id,
+            'category_id' => KnowledgeBaseCategory::inRandomOrder()->first()?->id ?? KnowledgeBaseCategory::factory()->create()->id,
+            'division' => [Division::inRandomOrder()->first()?->id ?? Division::factory()->create()->id],
+        ];
     }
 }

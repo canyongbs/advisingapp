@@ -40,19 +40,19 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages\EditKnowledgeBaseItem;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages\ViewKnowledgeBaseItem;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages\ListKnowledgeBaseItems;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages\CreateKnowledgeBaseItem;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource\Pages\EditKnowledgeBaseArticle;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource\Pages\ViewKnowledgeBaseArticle;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource\Pages\ListKnowledgeBaseArticles;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource\Pages\CreateKnowledgeBaseArticle;
 
-class KnowledgeBaseItemResource extends Resource
+class KnowledgeBaseArticleResource extends Resource
 {
-    protected static ?string $model = KnowledgeBaseItem::class;
+    protected static ?string $model = KnowledgeBaseArticle::class;
 
     protected static ?string $navigationLabel = 'Knowledge Management';
 
-    protected static ?string $modelLabel = 'knowledge base item';
+    protected static ?string $modelLabel = 'knowledge base article';
 
     protected static ?string $breadcrumb = 'Knowledge Management';
 
@@ -92,15 +92,15 @@ class KnowledgeBaseItemResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return resolve(CreateKnowledgeBaseItem::class)->form($form);
+        return resolve(CreateKnowledgeBaseArticle::class)->form($form);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListKnowledgeBaseItems::route('/'),
-            'view' => ViewKnowledgeBaseItem::route('/{record}'),
-            'edit' => EditKnowledgeBaseItem::route('/{record}/edit'),
+            'index' => ListKnowledgeBaseArticles::route('/'),
+            'view' => ViewKnowledgeBaseArticle::route('/{record}'),
+            'edit' => EditKnowledgeBaseArticle::route('/{record}/edit'),
         ];
     }
 }

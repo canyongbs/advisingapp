@@ -43,51 +43,51 @@ use function PHPUnit\Framework\assertCount;
 use function Pest\Laravel\assertDatabaseHas;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages\ListKnowledgeBaseItems;
-use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseItem\RequestFactories\CreateKnowledgeBaseItemRequestFactory;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource\Pages\ListKnowledgeBaseArticles;
+use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseArticle\RequestFactories\CreateKnowledgeBaseArticleRequestFactory;
 
-// TODO: Write CreateKnowledgeBaseItem tests
-//test('A successful action on the CreateKnowledgeBaseItem page', function () {});
+// TODO: Write CreateKnowledgeBaseArticle tests
+//test('A successful action on the CreateKnowledgeBaseArticle page', function () {});
 //
-//test('CreateKnowledgeBaseItem requires valid data', function ($data, $errors) {})->with([]);
+//test('CreateKnowledgeBaseArticle requires valid data', function ($data, $errors) {})->with([]);
 
 // Permission Tests
 
-test('CreateKnowledgeBaseItem is gated with proper access control', function () {
+test('CreateKnowledgeBaseArticle is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user);
 
-    $user->givePermissionTo('knowledge_base_item.view-any');
+    $user->givePermissionTo('knowledge_base_article.view-any');
 
-    livewire(ListKnowledgeBaseItems::class)
+    livewire(ListKnowledgeBaseArticles::class)
         ->assertSuccessful()
         ->assertActionDisabled('create');
 
-    $user->givePermissionTo('knowledge_base_item.create');
+    $user->givePermissionTo('knowledge_base_article.create');
 
-    livewire(ListKnowledgeBaseItems::class)
+    livewire(ListKnowledgeBaseArticles::class)
         ->assertActionEnabled('create');
 
-    $request = collect(CreateKnowledgeBaseItemRequestFactory::new()->create());
+    $request = collect(CreateKnowledgeBaseArticleRequestFactory::new()->create());
 
-    livewire(ListKnowledgeBaseItems::class)
+    livewire(ListKnowledgeBaseArticles::class)
         ->callAction('create', $request->toArray())
         ->assertHasNoActionErrors();
 
-    assertCount(1, KnowledgeBaseItem::all());
+    assertCount(1, KnowledgeBaseArticle::all());
 
     $data = $request->except('division')->toArray();
 
-    assertDatabaseHas(KnowledgeBaseItem::class, $data);
+    assertDatabaseHas(KnowledgeBaseArticle::class, $data);
 
-    $knowledgeBaseItem = KnowledgeBaseItem::first();
+    $knowledgeBaseArticle = KnowledgeBaseArticle::first();
 
-    expect($knowledgeBaseItem->division->pluck('id')->toArray())->toEqual($request['division']);
+    expect($knowledgeBaseArticle->division->pluck('id')->toArray())->toEqual($request['division']);
 });
 
-test('CreateKnowledgeBaseItem is gated with proper feature access control', function () {
+test('CreateKnowledgeBaseArticle is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->knowledgeManagement = false;
@@ -98,32 +98,32 @@ test('CreateKnowledgeBaseItem is gated with proper feature access control', func
 
     actingAs($user);
 
-    $user->givePermissionTo('knowledge_base_item.view-any');
-    $user->givePermissionTo('knowledge_base_item.create');
+    $user->givePermissionTo('knowledge_base_article.view-any');
+    $user->givePermissionTo('knowledge_base_article.create');
 
-    livewire(ListKnowledgeBaseItems::class)
+    livewire(ListKnowledgeBaseArticles::class)
         ->assertForbidden();
 
     $settings->data->addons->knowledgeManagement = true;
 
     $settings->save();
 
-    livewire(ListKnowledgeBaseItems::class)
+    livewire(ListKnowledgeBaseArticles::class)
         ->assertSuccessful();
 
-    $request = collect(CreateKnowledgeBaseItemRequestFactory::new()->create());
+    $request = collect(CreateKnowledgeBaseArticleRequestFactory::new()->create());
 
-    livewire(ListKnowledgeBaseItems::class)
+    livewire(ListKnowledgeBaseArticles::class)
         ->callAction('create', $request->toArray())
         ->assertHasNoActionErrors();
 
-    assertCount(1, KnowledgeBaseItem::all());
+    assertCount(1, KnowledgeBaseArticle::all());
 
     $data = $request->except('division')->toArray();
 
-    assertDatabaseHas(KnowledgeBaseItem::class, $data);
+    assertDatabaseHas(KnowledgeBaseArticle::class, $data);
 
-    $knowledgeBaseItem = KnowledgeBaseItem::first();
+    $knowledgeBaseArticle = KnowledgeBaseArticle::first();
 
-    expect($knowledgeBaseItem->division->pluck('id')->toArray())->toEqual($request['division']);
+    expect($knowledgeBaseArticle->division->pluck('id')->toArray())->toEqual($request['division']);
 });

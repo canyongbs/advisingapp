@@ -59,9 +59,9 @@ class KnowledgeBaseCategory extends BaseModel implements Auditable
         'icon',
     ];
 
-    public function knowledgeBaseItems(): HasMany
+    public function knowledgeBaseArticles(): HasMany
     {
-        return $this->hasMany(KnowledgeBaseItem::class, 'category_id');
+        return $this->hasMany(KnowledgeBaseArticle::class, 'category_id');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

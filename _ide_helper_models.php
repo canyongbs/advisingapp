@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 // phpcs:ignoreFile
 /**
@@ -593,6 +559,8 @@ namespace AdvisingApp\Alert\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Alert\Histories\AlertHistory> $histories
+ * @property-read int|null $histories_count
  * @method static \AdvisingApp\Alert\Database\Factories\AlertFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Alert licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert newModelQuery()
@@ -2890,6 +2858,89 @@ namespace AdvisingApp\InventoryManagement\Models{
 
 namespace AdvisingApp\KnowledgeBase\Models{
 /**
+ * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle
+ *
+ * @property string $id
+ * @property bool $public
+ * @property string $title
+ * @property array|null $article_details
+ * @property string|null $notes
+ * @property string|null $quality_id
+ * @property string|null $status_id
+ * @property string|null $category_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory|null $category
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Division\Models\Division> $division
+ * @property-read int|null $division_count
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality|null $quality
+ * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus|null $status
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticleUpvote> $upvotes
+ * @property-read int|null $upvotes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticleView> $views
+ * @property-read int|null $views_count
+ * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseArticleFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle public()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle query()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereArticleDetails($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle wherePublic($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereQualityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereStatusId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperKnowledgeBaseArticle {}
+}
+
+namespace AdvisingApp\KnowledgeBase\Models{
+/**
+ * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticleUpvote
+ *
+ * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle|null $knowledgeBaseArticle
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperKnowledgeBaseArticleUpvote {}
+}
+
+namespace AdvisingApp\KnowledgeBase\Models{
+/**
+ * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticleView
+ *
+ * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle|null $knowledgeBaseArticle
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperKnowledgeBaseArticleView {}
+}
+
+namespace AdvisingApp\KnowledgeBase\Models{
+/**
  * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory
  *
  * @property string $id
@@ -2901,8 +2952,8 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
- * @property-read int|null $knowledge_base_items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle> $knowledgeBaseArticles
+ * @property-read int|null $knowledge_base_articles_count
  * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseCategoryFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory newQuery()
@@ -2925,113 +2976,6 @@ namespace AdvisingApp\KnowledgeBase\Models{
 
 namespace AdvisingApp\KnowledgeBase\Models{
 /**
- * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem
- *
- * @property string $id
- * @property bool $public
- * @property string $title
- * @property array|null $article_details
- * @property string|null $notes
- * @property string|null $quality_id
- * @property string|null $status_id
- * @property string|null $category_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory|null $category
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Division\Models\Division> $division
- * @property-read int|null $division_count
- * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
- * @property-read int|null $media_count
- * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality|null $quality
- * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus|null $status
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItemUpvote> $upvotes
- * @property-read int|null $upvotes_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItemView> $views
- * @property-read int|null $views_count
- * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseItemFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem public()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem query()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereArticleDetails($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereCategoryId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereNotes($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem wherePublic($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereQualityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereStatusId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperKnowledgeBaseItem {}
-}
-
-namespace AdvisingApp\KnowledgeBase\Models{
-/**
- * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItemUpvote
- *
- * @property string $id
- * @property string $knowledge_base_item_id
- * @property string $user_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem $knowledgeBaseItem
- * @property-read \App\Models\User $user
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote query()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereKnowledgeBaseItemId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperKnowledgeBaseItemUpvote {}
-}
-
-namespace AdvisingApp\KnowledgeBase\Models{
-/**
- * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItemView
- *
- * @property string $id
- * @property string $knowledge_base_item_id
- * @property string|null $user_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem $knowledgeBaseItem
- * @property-read \App\Models\User|null $user
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView query()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereKnowledgeBaseItemId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperKnowledgeBaseItemView {}
-}
-
-namespace AdvisingApp\KnowledgeBase\Models{
-/**
  * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality
  *
  * @property string $id
@@ -3041,8 +2985,8 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
- * @property-read int|null $knowledge_base_items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle> $knowledgeBaseArticles
+ * @property-read int|null $knowledge_base_articles_count
  * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseQualityFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality newQuery()
@@ -3072,8 +3016,8 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
- * @property-read int|null $knowledge_base_items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle> $knowledgeBaseArticles
+ * @property-read int|null $knowledge_base_articles_count
  * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseStatusFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus newQuery()
@@ -3617,6 +3561,10 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read int|null $tasks_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Alert\Histories\AlertHistory[] $alertHistories
+ * @property-read int|null $alert_histories_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Task\Histories\TaskHistory[] $taskHistories
+ * @property-read int|null $task_histories_count
  * @method static \AdvisingApp\Prospect\Database\Factories\ProspectFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect newQuery()
@@ -4666,6 +4614,10 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $tasks_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Alert\Histories\AlertHistory[] $alertHistories
+ * @property-read int|null $alert_histories_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Task\Histories\TaskHistory[] $taskHistories
+ * @property-read int|null $task_histories_count
  * @method static \AdvisingApp\StudentDataModel\Database\Factories\StudentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Student newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Student newQuery()
@@ -4927,6 +4879,8 @@ namespace AdvisingApp\Task\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \App\Models\User|null $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Task\Histories\TaskHistory> $histories
+ * @property-read int|null $histories_count
  * @method static \Illuminate\Database\Eloquent\Builder|Task byNextDue()
  * @method static \AdvisingApp\Task\Database\Factories\TaskFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Task licensedToEducatable(string $relationship)

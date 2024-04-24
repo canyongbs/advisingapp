@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages;
+namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Actions\EditAction;
@@ -46,11 +46,11 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Actions\Action as BaseAction;
 use Filament\Forms\Components\Actions\Action;
 use App\Filament\Forms\Components\TiptapEditor;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource;
 
-class EditKnowledgeBaseItem extends EditRecord
+class EditKnowledgeBaseArticle extends EditRecord
 {
-    protected static string $resource = KnowledgeBaseItemResource::class;
+    protected static string $resource = KnowledgeBaseArticleResource::class;
 
     public function form(Form $form): Form
     {
@@ -126,7 +126,7 @@ class EditKnowledgeBaseItem extends EditRecord
                 ->button()
                 ->outlined()
                 ->record($this->record)
-                ->form(resolve(EditKnowledgeBaseItemMetadata::class)->form())
+                ->form(resolve(EditKnowledgeBaseArticleMetadata::class)->form())
                 ->successNotificationTitle('Article metadata successfully updated'),
         ];
     }
