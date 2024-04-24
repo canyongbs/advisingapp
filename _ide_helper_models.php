@@ -1306,8 +1306,10 @@ namespace AdvisingApp\Authorization\Models{
  * @property string $guard_name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $group_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\Authorization\Models\PermissionGroup $group
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Permission> $permissions
  * @property-read int|null $permissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Role> $roles
@@ -1325,6 +1327,7 @@ namespace AdvisingApp\Authorization\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Permission role($roles, $guard = null)
  * @method static \Illuminate\Database\Eloquent\Builder|Permission web()
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission whereGroupId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereGuardName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereName($value)
@@ -1333,6 +1336,34 @@ namespace AdvisingApp\Authorization\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperPermission {}
+}
+
+namespace AdvisingApp\Authorization\Models{
+/**
+ * AdvisingApp\Authorization\Models\PermissionGroup
+ *
+ * @property string $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Permission> $permissions
+ * @property-read int|null $permissions_count
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperPermissionGroup {}
 }
 
 namespace AdvisingApp\Authorization\Models{

@@ -34,6 +34,7 @@
 <script setup>
 import { defineProps } from 'vue';
 import axios from '@/Globals/Axios.js';
+import { consumer } from '@/Services/Consumer.js';
 import { useTokenStore } from '@/Stores/token.js';
 import { useAuthStore } from '@/Stores/auth.js';
 
@@ -52,7 +53,13 @@ const { removeToken } = useTokenStore();
 const { portalRequiresAuthentication } = useAuthStore();
 
 const logout = () => {
-    axios.post(props.apiUrl + '/authenticate/logout').then((response) => {
+    const { post } = consumer();
+
+    post(props.apiUrl + '/authenticate/logout').then((response) => {
+        if (! response.data.success) {
+            return
+        }
+
         removeToken();
         window.location.href = response.data.redirect_url;
     });
@@ -60,41 +67,44 @@ const logout = () => {
 </script>
 
 <template>
-    <nav class="flex flex-1 flex-col mt-4">
-        <div class="grid gap-y-2 justify-center">
+    <nav>
+        <div class="flex flex-col gap-1 px-6 py-4 border-b">
             <router-link :to="{ name: 'home' }">
-                <h3 class="text-xl text-primary-700">Help Center</h3>
+                <h3 class="text-2xl text-primary-800 font-semibold">
+                    <span class="mr-1">🛟</span> <span>Help Center</span>
+                </h3>
             </router-link>
 
-            <button
-                v-if="portalRequiresAuthentication === true"
-                @click="logout"
-                type="button"
-                class="p-2 font-bold rounded border-2 bg-white text-primary-600 dark:text-primary-400 border-primary-600 dark:border-primary-400"
-            >
-                Logout
-            </button>
+            <div>
+                <button
+                    v-if="portalRequiresAuthentication === true"
+                    @click="logout"
+                    type="button"
+                    class="text-gray-700 hover:text-primary-700 text-sm font-medium hover:underline focus:underline"
+                >
+                    Sign out
+                </button>
+            </div>
         </div>
 
-        <ul role="list" class="flex flex-1 flex-col gap-y-7 mt-4">
+        <ul role="list" class="my-2 flex flex-col gap-y-1">
             <li v-for="category in categories" :key="category.id">
-                <div
-                    class="bg-gray-100 text-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                <router-link
+                    :to="{ name: 'view-category', params: { categoryId: category.id } }"
+                    active-class="text-primary-950 bg-gray-100"
+                    class="w-full text-gray-700 group flex items-start gap-x-3 px-6 py-2 text-sm font-medium transition hover:bg-gray-100 hover:text-primary-950"
                 >
                     <span
                         v-if="category.icon"
                         v-html="category.icon"
-                        class="text-primary-600 dark:text-primary-400"
+                        class="text-primary-700"
                         aria-hidden="true"
-                    >
-                    </span>
-                    <router-link
-                        :to="{ name: 'view-category', params: { categoryId: category.id } }"
-                        active-class="font-bold"
-                    >
+                    ></span>
+
+                    <span class="mt-0.5">
                         {{ category.name }}
-                    </router-link>
-                </div>
+                    </span>
+                </router-link>
             </li>
         </ul>
     </nav>

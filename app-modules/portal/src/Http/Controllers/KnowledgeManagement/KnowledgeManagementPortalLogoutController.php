@@ -46,11 +46,15 @@ class KnowledgeManagementPortalLogoutController extends Controller
     public function __invoke(Request $request)
     {
         /** @var Student|Prospect $user */
-        $user = auth('student')->user() ?? auth('prospect')->user();
+        $user = auth('sanctum')->user();
+
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+            ]);
+        }
 
         $user->tokens()->where('name', 'knowledge-management-portal-access-token')->delete();
-
-        auth('student')->logout() ?? auth('prospect')->logout();
 
         return response()->json([
             'success' => true,
