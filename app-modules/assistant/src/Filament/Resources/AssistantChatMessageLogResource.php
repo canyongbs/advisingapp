@@ -47,8 +47,10 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\ExportBulkAction;
 use App\Filament\Infolists\Components\CodeEntry;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
+use AdvisingApp\Assistant\Filament\Exports\AssistantChatMessageLogExporter;
 use AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource\Pages\ManageAssistantChatMessageLogs;
 
 class AssistantChatMessageLogResource extends Resource
@@ -61,9 +63,7 @@ class AssistantChatMessageLogResource extends Resource
 
     protected static ?int $navigationSort = 30;
 
-    protected static ?string $modelLabel = 'Personal Assistant';
-
-    protected static ?string $pluralLabel = 'Personal Assistant';
+    protected static ?string $modelLabel = 'message log';
 
     protected static ?string $cluster = UsageAuditing::class;
 
@@ -111,6 +111,8 @@ class AssistantChatMessageLogResource extends Resource
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    ExportBulkAction::make()
+                        ->exporter(AssistantChatMessageLogExporter::class),
                 ]),
             ])
             ->defaultSort('sent_at', 'desc');
