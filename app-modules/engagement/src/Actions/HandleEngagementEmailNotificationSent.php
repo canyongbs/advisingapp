@@ -61,7 +61,7 @@ class HandleEngagementEmailNotificationSent implements ShouldQueue
         $deliverable->markDeliverySuccessful();
 
         if (is_null($deliverable->engagement->engagement_batch_id)) {
-            $deliverable->engagement->user->notify(new EngagementEmailSentNotification($deliverable->engagement));
+            $deliverable->engagement->user?->notify(new EngagementEmailSentNotification($deliverable->engagement));
         }
     }
 }

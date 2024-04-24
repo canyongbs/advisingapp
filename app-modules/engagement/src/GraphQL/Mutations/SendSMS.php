@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Engagement\GraphQL\Mutations;
 
-use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Prospect\Models\Prospect;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -50,19 +50,21 @@ class SendSMS
 {
     public function __invoke(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Engagement
     {
-        /** @var Model $morph */
+        /** @var Student|Prospect $morph */
         $morph = Relation::getMorphedModel($args['recipient_type']);
-        $recipient = $morph::find($args['recipient_id']);
 
-        $mergeTags = match ($recipient::class) {
-            Student::class => [
-                '{{ student full name }}',
-                '{{ student email }}',
-            ],
-            default => [],
-        };
+        $mergeTags = collect(Engagement::getMergeTags($morph))
+            ->map(fn (string $tag): string => "{{ {$tag} }}")
+            ->toArray();
 
-        $args['body'] = app(GenerateTipTapBodyJson::class)(body: $args['body'], mergeData: $mergeTags);
+        $body = str($args['body'])
+            ->markdown([
+                'html_input' => 'strip',
+                'allow_unsafe_links' => false,
+            ])
+            ->toString();
+
+        $args['body'] = app(GenerateTipTapBodyJson::class)(body: $body, mergeTags: $mergeTags);
 
         $engagement = Engagement::create($args);
 
