@@ -6,6 +6,7 @@ use AdvisingApp\Audit\Models\Audit;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Models\Export;
+use Filament\Actions\Exports\Enums\ExportFormat;
 
 class AuditExporter extends Exporter
 {
@@ -40,5 +41,13 @@ class AuditExporter extends Exporter
         }
 
         return $body;
+    }
+
+    /**
+     * Using CSV format causes issues with the JSON commas not being properly escaped by league/csv.
+     */
+    public function getFormats(): array
+    {
+        return [ExportFormat::Xlsx];
     }
 }
