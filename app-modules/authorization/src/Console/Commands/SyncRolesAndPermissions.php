@@ -57,9 +57,6 @@ class SyncRolesAndPermissions extends Command
 
     public function handle(): int
     {
-        // TODO Put handling in place to prevent this from being run in production IF it has already been run once
-        // We are going to introduce a convention for "one-time" operations similar to Laravel migrations in order to handle this
-
         $this->populateRegistries();
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();

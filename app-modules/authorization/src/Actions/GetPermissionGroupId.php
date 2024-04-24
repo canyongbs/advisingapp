@@ -34,59 +34,48 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Models;
+namespace AdvisingApp\Authorization\Actions;
 
-use App\Models\SystemUser;
-use Illuminate\Support\Collection;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Spatie\Permission\Models\Permission as SpatiePermission;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Exception;
+use AdvisingApp\Authorization\Models\PermissionGroup;
 
-/**
- * @mixin IdeHelperPermission
- */
-class Permission extends SpatiePermission implements Auditable
+class GetPermissionGroupId
 {
-    use HasFactory;
-    use DefinesPermissions;
-    use HasUuids;
-    use AuditableTrait;
-    use UsesTenantConnection;
+    protected array $groups;
 
-    public function getWebPermissions(): Collection
+    public function __construct()
     {
-        return collect(['view-any', '*.view']);
+        $this->groups = PermissionGroup::query()
+            ->pluck('id', 'name')
+            ->all();
     }
 
-    public function getApiPermissions(): Collection
+    public function __invoke(string $name): string
     {
-        return collect([]);
-    }
+        if (! str($name)->contains('.')) {
+            throw new Exception("Invalid permission name: [{$name}] does not contain a period.");
+        }
 
-    public function systemUsers(): BelongsToMany
-    {
-        return $this->belongsToMany(SystemUser::class);
-    }
+        $groupName = match ((string) str($name)->before('.')) {
+            'sla' => 'SLA',
+            'sms_template' => 'SMS Template',
+            'in-app-communication' => 'In-App Communication',
+            'integration-aws-ses-event-handling' => 'Integration: AWS SES Event Handling',
+            'integration-google-analytics' => 'Integration: Google Analytics',
+            'integration-google-recaptcha' => 'Integration: Google reCAPTCHA',
+            'integration-microsoft-clarity' => 'Integration: Microsoft Clarity',
+            'integration-twilio' => 'Integration: Twilio',
+            default => (string) str($name)
+                ->before('.')
+                ->headline(),
+        };
 
-    public function group(): BelongsTo
-    {
-        return $this->belongsTo(PermissionGroup::class, 'group_id');
-    }
+        if (blank($this->groups[$groupName] ?? null)) {
+            $this->groups[$groupName] = PermissionGroup::create([
+                'name' => $groupName,
+            ])->id;
+        }
 
-    public function scopeApi(Builder $query): void
-    {
-        $query->where('guard_name', 'api');
-    }
-
-    public function scopeWeb(Builder $query): void
-    {
-        $query->where('guard_name', 'web');
+        return $this->groups[$groupName];
     }
 }

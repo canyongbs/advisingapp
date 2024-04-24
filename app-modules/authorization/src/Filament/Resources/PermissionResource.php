@@ -38,12 +38,14 @@ namespace AdvisingApp\Authorization\Filament\Resources;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Laravel\Pennant\Feature;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\UserManagement;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Tables\Filters\SelectFilter;
 use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\Filament\Resources\PermissionResource\Pages\ViewPermission;
 use AdvisingApp\Authorization\Filament\Resources\PermissionResource\Pages\ListPermissions;
@@ -77,6 +79,9 @@ class PermissionResource extends Resource
         return $table
             ->columns([
                 IdColumn::make(),
+                TextColumn::make('group.name')
+                    ->sortable()
+                    ->visible(Feature::active('permission-groups')),
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('guard_name')
@@ -89,6 +94,14 @@ class PermissionResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                SelectFilter::make('group')
+                    ->relationship('group', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->multiple()
+                    ->visible(Feature::active('permission-groups')),
             ])
             ->actions([
                 ViewAction::make(),

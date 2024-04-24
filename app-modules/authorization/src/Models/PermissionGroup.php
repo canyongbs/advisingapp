@@ -36,57 +36,23 @@
 
 namespace AdvisingApp\Authorization\Models;
 
-use App\Models\SystemUser;
-use Illuminate\Support\Collection;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Spatie\Permission\Models\Permission as SpatiePermission;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @mixin IdeHelperPermission
+ * @mixin IdeHelperPermissionGroup
  */
-class Permission extends SpatiePermission implements Auditable
+class PermissionGroup extends BaseModel
 {
-    use HasFactory;
-    use DefinesPermissions;
-    use HasUuids;
-    use AuditableTrait;
-    use UsesTenantConnection;
+    use SoftDeletes;
 
-    public function getWebPermissions(): Collection
-    {
-        return collect(['view-any', '*.view']);
-    }
+    protected $fillable = [
+        'name',
+    ];
 
-    public function getApiPermissions(): Collection
+    public function permissions(): HasMany
     {
-        return collect([]);
-    }
-
-    public function systemUsers(): BelongsToMany
-    {
-        return $this->belongsToMany(SystemUser::class);
-    }
-
-    public function group(): BelongsTo
-    {
-        return $this->belongsTo(PermissionGroup::class, 'group_id');
-    }
-
-    public function scopeApi(Builder $query): void
-    {
-        $query->where('guard_name', 'api');
-    }
-
-    public function scopeWeb(Builder $query): void
-    {
-        $query->where('guard_name', 'web');
+        return $this->hasMany(Permission::class, 'group_id');
     }
 }

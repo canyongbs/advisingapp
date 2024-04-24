@@ -34,59 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\SystemUser;
-use Illuminate\Support\Collection;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Spatie\Permission\Models\Permission as SpatiePermission;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-
-/**
- * @mixin IdeHelperPermission
- */
-class Permission extends SpatiePermission implements Auditable
-{
-    use HasFactory;
-    use DefinesPermissions;
-    use HasUuids;
-    use AuditableTrait;
-    use UsesTenantConnection;
-
-    public function getWebPermissions(): Collection
+return new class () extends Migration {
+    public function up(): void
     {
-        return collect(['view-any', '*.view']);
+        Schema::table('permissions', function (Blueprint $table) {
+            $table->foreignUuid('group_id')->nullable()->constrained('permission_groups')->cascadeOnDelete();
+        });
     }
 
-    public function getApiPermissions(): Collection
+    public function down(): void
     {
-        return collect([]);
+        Schema::table('permissions', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('group_id');
+        });
     }
-
-    public function systemUsers(): BelongsToMany
-    {
-        return $this->belongsToMany(SystemUser::class);
-    }
-
-    public function group(): BelongsTo
-    {
-        return $this->belongsTo(PermissionGroup::class, 'group_id');
-    }
-
-    public function scopeApi(Builder $query): void
-    {
-        $query->where('guard_name', 'api');
-    }
-
-    public function scopeWeb(Builder $query): void
-    {
-        $query->where('guard_name', 'web');
-    }
-}
+};
