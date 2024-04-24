@@ -107,9 +107,9 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    public function createTenantTestingEnvironment(): void
+    public function createTenantTestingEnvironment(Tenant $tenant = null): void
     {
-        $tenant = Tenant::firstOrFail();
+        $tenant ??= Tenant::firstOrFail();
 
         $tenant->makeCurrent();
 
