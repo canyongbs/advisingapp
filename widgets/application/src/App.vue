@@ -34,7 +34,7 @@
 <script setup>
 import { defineProps, ref, reactive } from 'vue';
 import wizard from '../../form/src/FormKit/wizard';
-
+import asteriskPlugin from '../../form/src/FormKit/asterisk.js';
 let { steps, visitedSteps, activeStep, setStep, wizardPlugin } = wizard();
 
 const props = defineProps(['url']);
@@ -45,6 +45,7 @@ const data = reactive({
     activeStep,
     plugins: [
         wizardPlugin,
+        asteriskPlugin,
     ],
     setStep: target => () => {
         setStep(target)
