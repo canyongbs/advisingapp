@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Authorization\Actions;
 
-use Illuminate\Support\Str;
+use Laravel\Pennant\Feature;
 use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Authorization\Models\Permission;
 
@@ -53,9 +53,33 @@ class CreatePermissionsForModel
     protected function createWebPermissionsForModel(Model $model): void
     {
         if (method_exists($model, 'getWebPermissions')) {
-            $model->getWebPermissions()->each(function ($permission) use ($model) {
-                Permission::firstOrCreate([
-                    'name' => Str::of($model->getMorphClass())->append('.')->append($permission),
+            $modelMorphClass = $model->getMorphClass();
+
+            $groupId = app(GetPermissionGroupId::class)("{$modelMorphClass}.*");
+
+            $existingPermissions = Permission::query()
+                ->where('name', 'like', "{$modelMorphClass}.%")
+                ->where('guard_name', 'web')
+                ->get();
+
+            $model->getWebPermissions()->each(function ($permission) use ($existingPermissions, $groupId, $modelMorphClass) {
+                $permissionName = "{$modelMorphClass}.{$permission}";
+
+                $existingPermission = $existingPermissions->where('name', $permissionName)->first();
+
+                if ($existingPermission && blank($existingPermission->group_id) && Feature::active('permission-groups')) {
+                    $existingPermission->update([
+                        'group_id' => $groupId,
+                    ]);
+                }
+
+                if ($existingPermission) {
+                    return;
+                }
+
+                Permission::create([
+                    'name' => $permissionName,
+                    'group_id' => $groupId,
                     'guard_name' => 'web',
                 ]);
             });
@@ -65,9 +89,33 @@ class CreatePermissionsForModel
     protected function createApiPermissionsForModel(Model $model): void
     {
         if (method_exists($model, 'getApiPermissions')) {
-            $model->getApiPermissions()->each(function ($permission) use ($model) {
-                Permission::firstOrCreate([
-                    'name' => Str::of($model->getMorphClass())->append('.')->append($permission),
+            $modelMorphClass = $model->getMorphClass();
+
+            $groupId = app(GetPermissionGroupId::class)("{$modelMorphClass}.*");
+
+            $existingPermissions = Permission::query()
+                ->where('name', 'like', "{$modelMorphClass}.%")
+                ->where('guard_name', 'api')
+                ->get();
+
+            $model->getApiPermissions()->each(function ($permission) use ($existingPermissions, $groupId, $modelMorphClass) {
+                $permissionName = "{$modelMorphClass}.{$permission}";
+
+                $existingPermission = $existingPermissions->where('name', $permissionName)->first();
+
+                if ($existingPermission && blank($existingPermission->group_id) && Feature::active('permission-groups')) {
+                    $existingPermission->update([
+                        'group_id' => $groupId,
+                    ]);
+                }
+
+                if ($existingPermission) {
+                    return;
+                }
+
+                Permission::create([
+                    'name' => $permissionName,
+                    'group_id' => $groupId,
                     'guard_name' => 'api',
                 ]);
             });

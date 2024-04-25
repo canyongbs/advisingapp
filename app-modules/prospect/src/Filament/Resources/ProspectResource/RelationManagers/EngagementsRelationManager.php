@@ -42,10 +42,10 @@ use Filament\Infolists\Infolist;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Support\Enums\IconPosition;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Infolists\Components\Fieldset;
-use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Engagement\Models\Engagement;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -88,18 +88,25 @@ class EngagementsRelationManager extends RelationManager
                     ->schema([
                         TextEntry::make('deliverable.channel')
                             ->label('Channel'),
-                        IconEntry::make('deliverable.delivery_status')
+                        TextEntry::make('deliverable.delivery_status')
+                            ->iconPosition(IconPosition::After)
                             ->icon(fn (EngagementDeliveryStatus $state): string => match ($state) {
                                 EngagementDeliveryStatus::Successful => 'heroicon-o-check-circle',
                                 EngagementDeliveryStatus::Awaiting, EngagementDeliveryStatus::Dispatched => 'heroicon-o-clock',
                                 EngagementDeliveryStatus::Failed, EngagementDeliveryStatus::DispatchFailed, EngagementDeliveryStatus::RateLimited => 'heroicon-o-x-circle',
                             })
-                            ->color(fn (EngagementDeliveryStatus $state): string => match ($state) {
+                            ->iconColor(fn (EngagementDeliveryStatus $state): string => match ($state) {
                                 EngagementDeliveryStatus::Successful => 'success',
                                 EngagementDeliveryStatus::Awaiting, EngagementDeliveryStatus::Dispatched => 'info',
                                 EngagementDeliveryStatus::Failed, EngagementDeliveryStatus::DispatchFailed, EngagementDeliveryStatus::RateLimited => 'danger',
                             })
-                            ->label('Status'),
+                            ->label('Status')
+                            ->formatStateUsing(fn (Engagement $engagement): string => match ($engagement->deliverable->delivery_status) {
+                                EngagementDeliveryStatus::Successful => 'Successfully delivered',
+                                EngagementDeliveryStatus::Awaiting, EngagementDeliveryStatus::Dispatched => 'Awaiting delivery',
+                                EngagementDeliveryStatus::Failed, EngagementDeliveryStatus::DispatchFailed => 'Failed to send',
+                                EngagementDeliveryStatus::RateLimited => 'Failed to send due to rate limits',
+                            }),
                         TextEntry::make('deliverable.delivered_at')
                             ->label('Delivered At')
                             ->hidden(fn (Engagement $engagement): bool => is_null($engagement->deliverable->delivered_at)),

@@ -32,7 +32,7 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { ChevronRightIcon } from '@heroicons/vue/24/outline';
+import { ChevronRightIcon, HomeIcon } from '@heroicons/vue/24/outline';
 import { defineProps } from 'vue';
 
 defineProps({
@@ -48,14 +48,34 @@ defineProps({
 </script>
 
 <template>
-    <div class="flex flex-row text-gray-800 space-x-2 mb-4 items-center">
-        <div v-for="crumb in breadcrumbs" :key="crumb.route" class="flex flex-row items-center space-x-2">
-            <router-link :to="{ name: crumb.route }">
-                <h3 class="text-md">{{ crumb.name }}</h3>
-            </router-link>
-            <ChevronRightIcon class="h-4 w-4" />
-        </div>
+    <nav class="flex" aria-label="Breadcrumb">
+        <ol role="list" class="flex items-center space-x-4">
+            <li>
+                <div>
+                    <router-link :to="{ name: 'home' }" class="text-gray-400 hover:text-gray-500">
+                        <HomeIcon class="h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                        <span class="sr-only">Home</span>
+                    </router-link>
+                </div>
+            </li>
+            <li v-for="crumb in breadcrumbs" :key="crumb.route">
+                <div class="flex items-center">
+                    <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
 
-        <h3 class="text-md font-semibold">{{ currentCrumb }}</h3>
-    </div>
+                    <router-link :to="{ name: crumb.route }" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                        {{ crumb.name }}
+                    </router-link>
+                </div>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+
+                    <div class="ml-4 text-sm font-medium text-primary-600">
+                        {{ currentCrumb }}
+                    </div>
+                </div>
+            </li>
+        </ol>
+    </nav>
 </template>

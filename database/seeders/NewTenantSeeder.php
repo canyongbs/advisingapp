@@ -59,9 +59,6 @@ use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
 
 class NewTenantSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $currentTenant = Tenant::current();

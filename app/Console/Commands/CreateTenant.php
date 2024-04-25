@@ -60,8 +60,8 @@ class CreateTenant extends Command
 
     public function handle(): int
     {
-        if (! app()->environment('local')) {
-            $this->error('This command can only be run in the local environment.');
+        if (app()->isProduction()) {
+            $this->error('This command cannot be run in production.');
 
             return static::FAILURE;
         }

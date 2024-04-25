@@ -42,6 +42,7 @@ use Tests\Concerns\LoadsFixtures;
 use Symfony\Component\Finder\Finder;
 use App\Jobs\UpdateTenantLicenseData;
 use Symfony\Component\Process\Process;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Contracts\Console\Kernel;
 use Symfony\Component\Finder\SplFileInfo;
 use App\Multitenancy\Actions\CreateTenant;
@@ -107,9 +108,9 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    public function createTenantTestingEnvironment(): void
+    public function createTenantTestingEnvironment(Tenant $tenant = null): void
     {
-        $tenant = Tenant::firstOrFail();
+        $tenant ??= Tenant::firstOrFail();
 
         $tenant->makeCurrent();
 
@@ -119,6 +120,13 @@ abstract class TestCase extends BaseTestCase
                 '--seeder' => 'StudentSeeder',
                 ...$this->migrateFreshUsing(),
             ]);
+
+            Artisan::call(
+                command: SyncRolesAndPermissions::class,
+                parameters: [
+                    '--tenant' => $tenant->id,
+                ]
+            );
 
             dispatch_sync(new UpdateTenantLicenseData(
                 $tenant,
@@ -154,13 +162,6 @@ abstract class TestCase extends BaseTestCase
                     )
                 )
             ));
-
-            $this->artisan(
-                command: SyncRolesAndPermissions::class,
-                parameters: [
-                    '--tenant' => $tenant->getKey(),
-                ],
-            );
         });
 
         Tenant::forgetCurrent();
@@ -274,6 +275,7 @@ abstract class TestCase extends BaseTestCase
                     scheduleAndAppointments: true,
                 ),
             ),
+            seedTenantDatabase: false
         );
     }
 
