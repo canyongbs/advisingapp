@@ -34,67 +34,63 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Blocks;
+namespace AdvisingApp\Survey\Filament\Blocks;
 
-use FilamentTiptapEditor\TiptapBlock;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\KeyValue;
 use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
 
-abstract class FormFieldBlock extends TiptapBlock
+class MultipleCheckboxSurveyFieldBlock extends FormFieldBlock
 {
-    public string $preview = 'form::blocks.previews.default';
+    public string $preview = 'survey::blocks.previews.checkbox-list';
 
-    public string $rendered = 'form::blocks.submissions.default';
+    public string $rendered = 'survey::blocks.submissions.checkbox-list';
 
-    public ?string $icon = 'heroicon-m-cube';
-
-    public function getFormSchema(): array
+    public static function type(): string
     {
-        return [
-            TextInput::make('label')
-                ->required()
-                ->string()
-                ->maxLength(255),
-            Checkbox::make('isRequired')
-                ->label('Required'),
-            ...$this->fields(),
-        ];
+        return 'checkbox';
     }
 
     public function getLabel(): string
     {
-        return $this->label ?? (string) str(static::type())
-            ->afterLast('.')
-            ->kebab()
-            ->replace(['-', '_'], ' ')
-            ->ucfirst();
-    }
-
-    public function getIdentifier(): string
-    {
-        return static::type();
+        return 'Multiple Choice';
     }
 
     public function fields(): array
     {
-        return [];
+        return [
+            KeyValue::make('options')
+                ->keyLabel('Value')
+                ->valueLabel('Label'),
+        ];
     }
 
-    abstract public static function type(): string;
-
-    abstract public static function getFormKitSchema(SubmissibleField $field): array;
+    public static function getFormKitSchema(SubmissibleField $field): array
+    {
+        return [
+            '$formkit' => 'checkbox',
+            'label' => $field->label,
+            'name' => $field->getKey(),
+            ...($field->is_required ? ['validation' => 'required'] : []),
+            'options' => $field->config['options'],
+        ];
+    }
 
     public static function getValidationRules(SubmissibleField $field): array
     {
-        return [];
+        return [
+            'array',
+            'in:' . collect($field->config['options'])->keys()->join(','),
+        ];
     }
 
     public static function getSubmissionState(SubmissibleField $field, mixed $response): array
     {
         return [
-            'field' => $field,
-            'response' => $response,
+            ...parent::getSubmissionState($field, $response),
+            'response' => collect($field->config['options'])
+                ->mapWithKeys(fn ($label, $key) => [$label => in_array($key, $response)])
+                ->toArray(),
         ];
     }
 }
