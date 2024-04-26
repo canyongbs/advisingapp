@@ -54,10 +54,11 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
+use Illuminate\Database\Eloquent\Collection;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Tables\Actions\DissociateAction;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Tables\Actions\DissociateBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
@@ -172,7 +173,12 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
             ->recordUrl(null)
             ->bulkActions([
                 BulkActionGroup::make([
-                    DetachBulkAction::make(),
+                    DissociateBulkAction::make()
+                        ->using(function (Collection $selectedRecords) {
+                            $selectedRecords->each(
+                                fn (Task $selectedRecord) => $selectedRecord->concern()->dissociate()->save()
+                            );
+                        }),
                 ]),
             ]);
     }
