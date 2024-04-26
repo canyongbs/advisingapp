@@ -51,12 +51,12 @@ use Filament\Forms\Components\TextInput;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Tables\Actions\DetachBulkAction;
+use Filament\Tables\Actions\DissociateAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
@@ -166,7 +166,8 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
             ->actions([
                 TaskViewAction::make(),
                 EditAction::make(),
-                DetachAction::make(),
+                DissociateAction::make()
+                    ->using(fn (Task $task) => $task->concern()->dissociate()->save()),
             ])
             ->recordUrl(null)
             ->bulkActions([
