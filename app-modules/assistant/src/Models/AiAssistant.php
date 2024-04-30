@@ -3,12 +3,19 @@
 namespace AdvisingApp\Assistant\Models;
 
 use App\Models\BaseModel;
+use Spatie\MediaLibrary\HasMedia;
+use Illuminate\Database\Eloquent\Builder;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Assistant\Enums\AiAssistantType;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class AiAssistant extends BaseModel
+/**
+ * @mixin IdeHelperAiAssistant
+ */
+class AiAssistant extends BaseModel implements HasMedia
 {
+    use InteractsWithMedia;
     use SoftDeletes;
 
     protected $fillable = [
@@ -17,7 +24,6 @@ class AiAssistant extends BaseModel
         'instructions',
         'knowledge',
         'name',
-        'profile_image',
         'type',
     ];
 
@@ -30,8 +36,8 @@ class AiAssistant extends BaseModel
         return $this->hasMany(AssistantChat::class);
     }
 
-    public function scopeDefault(): void
+    public function scopeDefault(Builder $query): void
     {
-        $this->where('type', AiAssistantType::Default);
+        $query->where('type', AiAssistantType::Default);
     }
 }

@@ -2,14 +2,20 @@
 
 namespace AdvisingApp\Assistant\Policies;
 
+use App\Enums\Feature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Gate;
 use AdvisingApp\Assistant\Models\AiAssistant;
 
 class AiAssistantPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
+        if (! Gate::check(Feature::CustomAiAssistants->getGateName())) {
+            return Response::deny('AI Assistants are not enabled.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'ai_assistant.view-any',
             denyResponse: 'You do not have permission to view AI Assistants.'

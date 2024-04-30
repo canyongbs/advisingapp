@@ -40,8 +40,8 @@ use Filament\Forms\Form;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\FileUpload;
 use AdvisingApp\Assistant\Enums\AiAssistantType;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class AiAssistantForm
 {
@@ -49,11 +49,14 @@ class AiAssistantForm
     {
         return $form
             ->schema([
-                FileUpload::make('profile_image')
+                SpatieMediaLibraryFileUpload::make('avatar')
+                    ->label('Avatar')
+                    ->disk('s3')
+                    ->collection('avatar')
+                    ->visibility('private')
                     ->avatar()
-                    ->directory('ai-assistant-images')
-                    ->columnSpanFull()
-                    ->required(),
+                    ->required()
+                    ->columnSpanFull(),
                 TextInput::make('name')
                     ->required(),
                 Textarea::make('description')
@@ -65,8 +68,7 @@ class AiAssistantForm
                         Textarea::make('instructions')
                             ->helperText('Instructions are used to provide context to the AI Assistant on how to respond to user queries.')
                             ->required(),
-                        Textarea::make('knowledge')
-                            ->required(),
+                        Textarea::make('knowledge'),
                     ]),
             ]);
     }

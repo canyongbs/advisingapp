@@ -6,8 +6,8 @@ use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource;
 
 class ListAiAssistants extends ListRecords
@@ -18,8 +18,9 @@ class ListAiAssistants extends ListRecords
     {
         return $table
             ->columns([
-                ImageColumn::make('profile_image')
-                    ->label('Profile Image'),
+                SpatieMediaLibraryImageColumn::make('avatar')
+                    ->collection('avatar')
+                    ->visibility('private'),
                 TextColumn::make('name')
                     ->searchable()
                     ->label('Name'),

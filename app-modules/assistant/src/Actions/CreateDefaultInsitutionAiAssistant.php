@@ -38,7 +38,6 @@ namespace AdvisingApp\Assistant\Actions;
 
 use App\Models\Tenant;
 use Laravel\Pennant\Feature;
-use App\Features\CustomAiAssistants;
 use AdvisingApp\Assistant\Models\AiAssistant;
 use AdvisingApp\Assistant\Enums\AiAssistantType;
 use AdvisingApp\IntegrationAI\Settings\AISettings;
@@ -61,7 +60,7 @@ class CreateDefaultInsitutionAiAssistant
         $description = "An AI Assistant for {$tenant->name}";
         $instructions = $settings->prompt_system_context;
 
-        if (Feature::active(CustomAiAssistants::class)) {
+        if (Feature::active('custom-ai-assistants')) {
             $aiAssistant = AiAssistant::create([
                 'name' => $name,
                 'description' => $description,
@@ -76,7 +75,7 @@ class CreateDefaultInsitutionAiAssistant
             instructions: $instructions
         );
 
-        if (Feature::active(CustomAiAssistants::class)) {
+        if (Feature::active('custom-ai-assistants')) {
             $aiAssistant->update([
                 'assistant_id' => $clientAssistantId,
             ]);

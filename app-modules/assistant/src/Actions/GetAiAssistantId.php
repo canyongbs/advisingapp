@@ -36,18 +36,17 @@
 
 namespace AdvisingApp\Assistant\Actions;
 
-use Laravel\Pennant\Feature;
-use App\Features\EnableCustomAiAssistants;
+use App\Enums\Feature;
+use Illuminate\Support\Facades\Gate;
 use AdvisingApp\Assistant\Models\AiAssistant;
 use AdvisingApp\IntegrationAI\Settings\AISettings;
 
-class GetAiAssistant
+class GetAiAssistantId
 {
     public function get(): string
     {
-        if (Feature::active(EnableCustomAiAssistants::class)) {
-            // TODO Better enforce a single default AI Assistant per institution
-            return AiAssistant::default()->first()->assistant_id ?? resolve(CreateDefaultInsitutionAiAssistant::class)->create();
+        if (Gate::check(Feature::CustomAiAssistants->getGateName())) {
+            return AiAssistant::query()->default()->value('assistant_id') ?? resolve(CreateDefaultInsitutionAiAssistant::class)->create();
         }
 
         return resolve(AISettings::class)->assistant_id ?? resolve(CreateDefaultInsitutionAiAssistant::class)->create();

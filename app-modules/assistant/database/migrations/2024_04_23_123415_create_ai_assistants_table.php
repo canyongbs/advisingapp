@@ -1,7 +1,6 @@
 <?php
 
 use Laravel\Pennant\Feature;
-use App\Features\CustomAiAssistants;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -13,7 +12,6 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
             $table->string('assistant_id')->nullable();
 
-            $table->string('profile_image');
             $table->string('name');
             $table->string('type')->nullable();
             $table->text('description')->nullable();
@@ -28,15 +26,25 @@ return new class () extends Migration {
             $table->foreignUuid('ai_assistant_id')->nullable()->constrained('ai_assistants');
         });
 
-        Feature::activate(CustomAiAssistants::class);
+        Feature::activate('custom-ai-assistants');
+
+        Schema::table('assistant_chats', function (Blueprint $table) {
+            $table->dropColumn('assistant_id');
+        });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('ai_assistants');
+        Schema::table('assistant_chats', function (Blueprint $table) {
+            $table->string('assistant_id')->nullable();
+        });
+
+        Feature::purge('custom-ai-assistants');
 
         Schema::table('assistant_chats', function (Blueprint $table) {
             $table->dropColumn('ai_assistant_id');
         });
+
+        Schema::dropIfExists('ai_assistants');
     }
 };
