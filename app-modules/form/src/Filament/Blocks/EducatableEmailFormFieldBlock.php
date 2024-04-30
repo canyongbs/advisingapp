@@ -83,12 +83,12 @@ class EducatableEmailFormFieldBlock extends FormFieldBlock
         return ['string', 'email', 'max:255'];
     }
 
-    public static function getSubmissionState(mixed $response): array
+    public static function getSubmissionState(SubmissibleField $field, mixed $response): array
     {
         $author = app(ResolveSubmissionAuthorFromEmail::class)($response);
 
         return [
-            'response' => $response,
+            ...parent::getSubmissionState($field, $response),
             'authorKey' => $author ? $author->getKey() : null,
             'authorType' => $author ? $author::class : null,
         ];

@@ -34,67 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Blocks;
+namespace AdvisingApp\Survey\Models;
 
-use FilamentTiptapEditor\TiptapBlock;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\TextInput;
-use AdvisingApp\Form\Models\SubmissibleField;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-abstract class FormFieldBlock extends TiptapBlock
+class SurveyFieldSubmission extends Pivot
 {
-    public string $preview = 'form::blocks.previews.default';
+    use HasUuids;
 
-    public string $rendered = 'form::blocks.submissions.default';
+    protected $fillable = [
+        'response',
+        'id',
+    ];
 
-    public ?string $icon = 'heroicon-m-cube';
+    protected $casts = [
+        'response' => 'array',
+    ];
 
-    public function getFormSchema(): array
+    public function field(): BelongsTo
     {
-        return [
-            TextInput::make('label')
-                ->required()
-                ->string()
-                ->maxLength(255),
-            Checkbox::make('isRequired')
-                ->label('Required'),
-            ...$this->fields(),
-        ];
+        return $this->belongsTo(SurveyField::class, 'field_id');
     }
 
-    public function getLabel(): string
+    public function submission(): BelongsTo
     {
-        return $this->label ?? (string) str(static::type())
-            ->afterLast('.')
-            ->kebab()
-            ->replace(['-', '_'], ' ')
-            ->ucfirst();
-    }
-
-    public function getIdentifier(): string
-    {
-        return static::type();
-    }
-
-    public function fields(): array
-    {
-        return [];
-    }
-
-    abstract public static function type(): string;
-
-    abstract public static function getFormKitSchema(SubmissibleField $field): array;
-
-    public static function getValidationRules(SubmissibleField $field): array
-    {
-        return [];
-    }
-
-    public static function getSubmissionState(SubmissibleField $field, mixed $response): array
-    {
-        return [
-            'field' => $field,
-            'response' => $response,
-        ];
+        return $this->belongsTo(SurveySubmission::class, 'submission_id');
     }
 }

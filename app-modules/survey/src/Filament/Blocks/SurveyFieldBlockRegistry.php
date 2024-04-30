@@ -54,7 +54,7 @@ class SurveyFieldBlockRegistry
             TextAreaSurveyFieldBlock::class,
             SelectSurveyFieldBlock::class,
             RadioSurveyFieldBlock::class,
-            CheckboxSurveyFieldBlock::class,
+            MultipleCheckboxSurveyFieldBlock::class,
             EmailFormFieldBlock::class,
             NumberFormFieldBlock::class,
             LikertScaleSurveyBlock::class,
