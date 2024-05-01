@@ -603,7 +603,7 @@ it('can select a chat', function () use ($setUp) {
             (new Chat(
                 id: $newChat->id,
                 messages: ChatMessage::collection($newChat->messages),
-                assistantId: null,
+                assistantId: $newChat->assistant->assistant_id,
                 threadId: null,
             ))->toArray(),
         );
