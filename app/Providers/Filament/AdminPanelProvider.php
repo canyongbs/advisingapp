@@ -37,6 +37,7 @@
 namespace App\Providers\Filament;
 
 use Filament\Panel;
+use App\Models\Tenant;
 use Filament\PanelProvider;
 use App\Settings\BrandSettings;
 use App\Models\SettingsProperty;
@@ -98,6 +99,10 @@ class AdminPanelProvider extends PanelProvider
             ->login(Login::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->favicon(function () {
+                if (! Tenant::checkCurrent()) {
+                    return asset('/images/default-favicon.png');
+                }
+
                 $themeSettings = app(ThemeSettings::class);
                 $settingsProperty = SettingsProperty::getInstance('theme.is_favicon_active');
                 $favicon = $settingsProperty->getFirstMedia('favicon');
