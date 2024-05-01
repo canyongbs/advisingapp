@@ -45,9 +45,9 @@ use AdvisingApp\Assistant\Models\Prompt;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Assistant\Filament\Resources\PromptResource;
-use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Pages\EditPrompt;
-use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Pages\ViewPrompt;
-use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Pages\ListPrompts;
+use AdvisingApp\Assistant\Filament\Resources\PromptResource\Pages\EditPrompt;
+use AdvisingApp\Assistant\Filament\Resources\PromptResource\Pages\ViewPrompt;
+use AdvisingApp\Assistant\Filament\Resources\PromptResource\Pages\ListPrompts;
 
 class PromptsRelationManager extends RelationManager
 {

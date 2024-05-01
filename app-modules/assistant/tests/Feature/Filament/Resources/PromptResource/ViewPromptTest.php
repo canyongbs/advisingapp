@@ -45,7 +45,7 @@ use function Pest\Laravel\assertDatabaseCount;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Assistant\Filament\Resources\PromptResource;
-use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Pages\ViewPrompt;
+use AdvisingApp\Assistant\Filament\Resources\PromptResource\Pages\ViewPrompt;
 
 /** @var array<LicenseType> $licenses */
 $licenses = [
