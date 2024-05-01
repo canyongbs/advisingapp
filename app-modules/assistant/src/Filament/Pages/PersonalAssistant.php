@@ -69,7 +69,6 @@ use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\Assistant\Models\AssistantChat;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
-use AdvisingApp\Assistant\Actions\GetAiAssistantId;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
@@ -78,6 +77,7 @@ use AdvisingApp\Assistant\Enums\AssistantChatShareVia;
 use AdvisingApp\Assistant\Jobs\ShareAssistantChatsJob;
 use AdvisingApp\IntegrationAI\Client\BaseAIChatClient;
 use AdvisingApp\Assistant\Enums\AssistantChatShareWith;
+use AdvisingApp\Assistant\Actions\GetDefaultAiAssistantId;
 use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
 use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -161,7 +161,7 @@ class PersonalAssistant extends Page
     public function setAssistant(?AssistantChat $chat = null): void
     {
         if (! $chat) {
-            $this->assistantId = resolve(GetAiAssistantId::class)->get();
+            $this->assistantId = resolve(GetDefaultAiAssistantId::class)->get();
 
             if (! Feature::active('custom-ai-assistants')) {
                 return;
@@ -184,7 +184,7 @@ class PersonalAssistant extends Page
 
         if (! $this->aiAssistant) {
             $this->aiAssistant = AiAssistant::query()
-                ->where('assistant_id', resolve(GetAiAssistantId::class)->get())
+                ->where('assistant_id', resolve(GetDefaultAiAssistantId::class)->get())
                 ->first();
 
             $chat->ai_assistant_id = $this->aiAssistant->getKey();

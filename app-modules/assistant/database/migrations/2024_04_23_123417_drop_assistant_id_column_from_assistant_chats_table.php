@@ -34,56 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Actions;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\Tenant;
-use Laravel\Pennant\Feature;
-use AdvisingApp\Assistant\Models\AiAssistant;
-use AdvisingApp\Assistant\Enums\AiAssistantType;
-use AdvisingApp\IntegrationAI\Settings\AISettings;
-use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
-
-class CreateDefaultInsitutionAiAssistant
-{
-    public function __construct(
-        private AiChatClient $ai
-    ) {}
-
-    public function create()
+return new class () extends Migration {
+    public function up(): void
     {
-        $tenant = Tenant::current();
-
-        $settings = resolve(AISettings::class);
-
-        // TODO Update to reflect desired institutional defaults
-        $name = "{$tenant->name} AI Assistant";
-        $description = "An AI Assistant for {$tenant->name}";
-        $instructions = $settings->prompt_system_context;
-
-        if (Feature::active('custom-ai-assistants')) {
-            $aiAssistant = AiAssistant::create([
-                'name' => $name,
-                'description' => $description,
-                'instructions' => $instructions,
-                'type' => AiAssistantType::Default,
-            ]);
-        }
-
-        $clientAssistantId = resolve(CreateAiAssistant::class)->from(
-            name: $name,
-            description: $description,
-            instructions: $instructions
-        );
-
-        if (Feature::active('custom-ai-assistants')) {
-            $aiAssistant->update([
-                'assistant_id' => $clientAssistantId,
-            ]);
-        }
-
-        $settings->assistant_id = $clientAssistantId;
-        $settings->save();
-
-        return $settings->assistant_id;
+        Schema::table('assistant_chats', function (Blueprint $table) {
+            $table->dropColumn('assistant_id');
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('assistant_chats', function (Blueprint $table) {
+            $table->string('assistant_id')->nullable();
+        });
+    }
+};

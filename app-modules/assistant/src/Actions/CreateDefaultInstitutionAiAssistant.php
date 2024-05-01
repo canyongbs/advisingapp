@@ -34,38 +34,56 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\Assistant\Actions;
 
-return new class () extends Migration {
-    public function up(): void
+use App\Models\Tenant;
+use Laravel\Pennant\Feature;
+use AdvisingApp\Assistant\Models\AiAssistant;
+use AdvisingApp\Assistant\Enums\AiAssistantType;
+use AdvisingApp\IntegrationAI\Settings\AISettings;
+use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
+
+class CreateDefaultInstitutionAiAssistant
+{
+    public function __construct(
+        private AiChatClient $ai
+    ) {}
+
+    public function create()
     {
-        Schema::create('ai_assistants', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('assistant_id')->nullable();
+        $tenant = Tenant::current();
 
-            $table->string('name');
-            $table->string('type')->nullable();
-            $table->text('description')->nullable();
-            $table->longText('instructions')->nullable();
-            $table->longText('knowledge')->nullable();
+        $settings = resolve(AISettings::class);
 
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        // TODO Update to reflect desired institutional defaults
+        $name = "{$tenant->name} AI Assistant";
+        $description = "An AI Assistant for {$tenant->name}";
+        $instructions = $settings->prompt_system_context;
 
-        Schema::table('assistant_chats', function (Blueprint $table) {
-            $table->foreignUuid('ai_assistant_id')->nullable()->constrained('ai_assistants');
-        });
+        if (Feature::active('custom-ai-assistants')) {
+            $aiAssistant = AiAssistant::create([
+                'name' => $name,
+                'description' => $description,
+                'instructions' => $instructions,
+                'type' => AiAssistantType::Default,
+            ]);
+        }
+
+        $clientAssistantId = resolve(CreateAiAssistant::class)->from(
+            name: $name,
+            description: $description,
+            instructions: $instructions
+        );
+
+        if (Feature::active('custom-ai-assistants')) {
+            $aiAssistant->update([
+                'assistant_id' => $clientAssistantId,
+            ]);
+        }
+
+        $settings->assistant_id = $clientAssistantId;
+        $settings->save();
+
+        return $settings->assistant_id;
     }
-
-    public function down(): void
-    {
-        Schema::table('assistant_chats', function (Blueprint $table) {
-            $table->dropColumn('ai_assistant_id');
-        });
-
-        Schema::dropIfExists('ai_assistants');
-    }
-};
+}

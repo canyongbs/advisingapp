@@ -52,13 +52,13 @@ use AdvisingApp\Consent\Models\ConsentAgreement;
 
 use function Spatie\PestPluginTestTime\testTime;
 
-use AdvisingApp\Assistant\Actions\GetAiAssistantId;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Assistant\Models\AssistantChatFolder;
 use AdvisingApp\Assistant\Enums\AssistantChatShareVia;
 use AdvisingApp\Assistant\Jobs\ShareAssistantChatsJob;
 use AdvisingApp\Assistant\Models\AssistantChatMessage;
 use AdvisingApp\Assistant\Enums\AssistantChatShareWith;
+use AdvisingApp\Assistant\Actions\GetDefaultAiAssistantId;
 use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant;
 use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
 use AdvisingApp\IntegrationAI\Client\Playground\AzureOpenAI;
@@ -99,7 +99,7 @@ $setUp = function (
         ->has(AssistantChatMessage::factory()->count(5), 'messages')
         ->create();
 
-    $getAiAssistant = mock(GetAiAssistantId::class);
+    $getAiAssistant = mock(GetDefaultAiAssistantId::class);
     $getAiAssistant->expects('get')->once()->andReturn('12345');
 
     return ['user' => $user, 'consentAgreement' => $consentAgreement, 'chat' => $chat];

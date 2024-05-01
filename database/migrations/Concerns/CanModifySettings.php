@@ -41,6 +41,9 @@ use Illuminate\Support\Facades\DB;
 
 trait CanModifySettings
 {
+    /**
+     * @param Closure(mixed): mixed $modifyPayload
+     */
     public function updateSettings(string $group, string $name, Closure $modifyPayload, bool $isEncrypted = false): void
     {
         $payload = DB::table('settings')

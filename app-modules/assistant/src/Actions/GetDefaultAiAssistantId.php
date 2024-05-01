@@ -46,9 +46,9 @@ class GetAiAssistantId
     public function get(): string
     {
         if (Gate::check(Feature::CustomAiAssistants->getGateName())) {
-            return AiAssistant::query()->default()->value('assistant_id') ?? resolve(CreateDefaultInsitutionAiAssistant::class)->create();
+            return AiAssistant::query()->default()->value('assistant_id') ?? resolve(CreateDefaultInstitutionAiAssistant::class)->create();
         }
 
-        return resolve(AISettings::class)->assistant_id ?? resolve(CreateDefaultInsitutionAiAssistant::class)->create();
+        return resolve(AISettings::class)->assistant_id ?? resolve(CreateDefaultInstitutionAiAssistant::class)->create();
     }
 }
