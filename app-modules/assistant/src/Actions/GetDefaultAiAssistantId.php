@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Gate;
 use AdvisingApp\Assistant\Models\AiAssistant;
 use AdvisingApp\IntegrationAI\Settings\AISettings;
 
-class GetAiAssistantId
+class GetDefaultAiAssistantId
 {
     public function get(): string
     {
