@@ -52,7 +52,6 @@ class AiAssistantFactory extends Factory
     public function definition(): array
     {
         return [
-            'assistant_id' => fake()->uuid(),
             'name' => fake()->word(),
             'type' => AiAssistantType::Custom,
             'description' => fake()->sentence(),

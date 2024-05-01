@@ -60,7 +60,6 @@ use AdvisingApp\Assistant\Enums\AssistantChatShareVia;
 use AdvisingApp\Assistant\Jobs\ShareAssistantChatsJob;
 use AdvisingApp\Assistant\Models\AssistantChatMessage;
 use AdvisingApp\Assistant\Enums\AssistantChatShareWith;
-use AdvisingApp\Assistant\Actions\GetDefaultAiAssistantId;
 use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant;
 use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
 use AdvisingApp\IntegrationAI\Client\Playground\AzureOpenAI;
@@ -104,9 +103,6 @@ $setUp = function (
         ->for($user)
         ->has(AssistantChatMessage::factory()->count(5), 'messages')
         ->create();
-
-    $getAiAssistant = mock(GetDefaultAiAssistantId::class);
-    $getAiAssistant->expects('get')->once()->andReturn('12345');
 
     return ['user' => $user, 'consentAgreement' => $consentAgreement, 'chat' => $chat];
 };
@@ -209,7 +205,7 @@ it('will automatically set the current chat when it does not have a folder', fun
         (new Chat(
             id: $chat->id,
             messages: ChatMessage::collection($chat->messages),
-            assistantId: '12345',
+            assistantId: $chat->assistant->assistant_id,
             threadId: null,
         ))->toArray(),
     );
@@ -231,7 +227,7 @@ it('will automatically set the current chat to the most recent without a folder'
         (new Chat(
             id: $newerChat->id,
             messages: ChatMessage::collection($newerChat->messages),
-            assistantId: '12345',
+            assistantId: $chat->assistant->assistant_id,
             threadId: null,
         ))->toArray(),
     );
@@ -249,7 +245,7 @@ it('will not automatically set the current chat to one with a folder', function 
         (new Chat(
             id: null,
             messages: ChatMessage::collection([]),
-            assistantId: '12345',
+            assistantId: $chat->assistant->assistant_id,
             threadId: null,
         ))->toArray(),
     );
@@ -268,7 +264,7 @@ it('will not automatically set the current chat to one belonging to another user
             (new Chat(
                 id: null,
                 messages: ChatMessage::collection([]),
-                assistantId: '12345',
+                assistantId: $chat->assistant->assistant_id,
                 threadId: null,
             ))->toArray(),
         );
@@ -328,7 +324,7 @@ it('can send message to a new chat', function () use ($setUp) {
                         created_at: $createdAt,
                     ),
                 ]),
-                assistantId: '12345',
+                assistantId: $chat->assistant->assistant_id,
                 threadId: null,
             ))->toArray(),
         );
@@ -394,7 +390,7 @@ it('can ask the AI chat client in a new chat', function () use ($setUp) {
                         from: AIChatMessageFrom::Assistant,
                     ),
                 ]),
-                assistantId: '12345',
+                assistantId: $chat->assistant->assistant_id,
                 threadId: null,
             ))->toArray(),
         );
@@ -506,7 +502,7 @@ it('can save chats into a folder', function () use ($setUp) {
                         created_at: $createdAt,
                     ),
                 ]),
-                assistantId: '12345',
+                assistantId: $chat->assistant->assistant_id,
                 threadId: null,
             ))->toArray(),
         );
@@ -586,7 +582,7 @@ it('can select a chat', function () use ($setUp) {
             (new Chat(
                 id: $chat->id,
                 messages: ChatMessage::collection($chat->messages),
-                assistantId: '12345',
+                assistantId: $chat->assistant->assistant_id,
                 threadId: null,
             ))->toArray(),
         );
@@ -629,7 +625,7 @@ it('can not select a chat belonging to a different user', function () use ($setU
             (new Chat(
                 id: $chat->id,
                 messages: ChatMessage::collection($chat->messages),
-                assistantId: '12345',
+                assistantId: $chat->assistant->assistant_id,
                 threadId: null,
             ))->toArray(),
         );
@@ -650,7 +646,7 @@ it('can not select a chat belonging to a different user', function () use ($setU
             (new Chat(
                 id: $chat->id,
                 messages: ChatMessage::collection($chat->messages),
-                assistantId: '12345',
+                assistantId: $chat->assistant->assistant_id,
                 threadId: null,
             ))->toArray(),
         );
@@ -666,7 +662,7 @@ it('can start a new chat', function () use ($setUp) {
             (new Chat(
                 id: $chat->id,
                 messages: ChatMessage::collection($chat->messages),
-                assistantId: '12345',
+                assistantId: $chat->assistant->assistant_id,
                 threadId: null,
             ))->toArray(),
         );
