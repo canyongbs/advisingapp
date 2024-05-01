@@ -49,11 +49,8 @@ beforeEach(function () {
 });
 
 it('returns a 404 without a tenant', function () {
-    /** @var Response $response */
-    $response = (new NeedsTenant())->handle(Request::create('/needs-tenant-test-route'), fn () => new Response());
-
-    assertTrue($response->isNotFound());
-});
+    (new NeedsTenant())->handle(Request::create('/needs-tenant-test-route'), fn () => new Response());
+})->expectException(Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
 
 it('continues with a tenant', function () {
     Tenant::first()->makeCurrent();
