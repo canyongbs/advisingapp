@@ -38,7 +38,9 @@ namespace AdvisingApp\IntegrationTwilio\Providers;
 
 use Filament\Panel;
 use Twilio\Rest\Client;
+use App\Enums\Integration;
 use Illuminate\Support\ServiceProvider;
+use App\Exceptions\IntegrationException;
 use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\IntegrationTwilio\IntegrationTwilioPlugin;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
@@ -54,7 +56,7 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationTwilioPlugin()));
 
         $this->app->bind(EngagementResponseSenderFinder::class, function () {
-            if (config('services.twilio.enable_test_sender') === true) {
+            if (config('local_development.twilio.enable_test_sender') === true) {
                 return new PlaygroundFindEngagementResponseSender();
             }
 
@@ -63,10 +65,12 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
 
         $settings = $this->app->make(TwilioSettings::class);
 
-        $this->app->bind(Client::class, fn () => new Client(
-            $settings->account_sid,
-            $settings->auth_token
-        ));
+        $this->app->bind(
+            Client::class,
+            fn () => Integration::Twilio->isOn()
+                ? new Client($settings->account_sid, $settings->auth_token)
+                : throw new IntegrationException(Integration::Twilio)
+        );
     }
 
     public function boot(): void

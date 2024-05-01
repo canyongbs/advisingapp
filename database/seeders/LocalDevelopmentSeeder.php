@@ -37,18 +37,31 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Enums\Integration;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use AdvisingApp\Authorization\Models\Role;
 
-class InternalAdminUsersSeeder extends Seeder
+class LocalDevelopmentSeeder extends Seeder
 {
     public function run(): void
     {
-        $superAdminRole = Role::where('name', 'authorization.super_admin')->firstOrFail();
+        if (app()->isLocal()) {
+            $this->internalAdminUsers();
+            $this->twilio();
+        }
+    }
 
-        collect(config('internal-users.emails'))->each(function ($email) use ($superAdminRole) {
+    private function internalAdminUsers(): void
+    {
+        $superAdminRole = Role::where('name', 'authorization.super_admin')->first();
+
+        if (! $superAdminRole) {
+            return;
+        }
+
+        collect(config('local_development.internal_users.emails'))->each(function ($email) use ($superAdminRole) {
             $user = User::where('email', $email)->first();
 
             if (is_null($user)) {
@@ -62,5 +75,20 @@ class InternalAdminUsersSeeder extends Seeder
 
             $user->roles()->sync($superAdminRole);
         });
+    }
+
+    private function twilio(): void
+    {
+        $twilio = Integration::Twilio->settings();
+
+        $twilio->account_sid = config('local_development.twilio.account_sid');
+        $twilio->auth_token = config('local_development.twilio.auth_token');
+        $twilio->from_number = config('local_development.twilio.from_number');
+        $twilio->save();
+
+        if ($twilio->isConfigured()) {
+            $twilio->is_enabled = true;
+            $twilio->save();
+        }
     }
 }
