@@ -38,6 +38,7 @@ import attachRecaptchaScript from '../../../app-modules/integration-google-recap
 import getRecaptchaToken from '../../../app-modules/integration-google-recaptcha/resources/js/Services/GetRecaptchaToken.js';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
+import asteriskPlugin from './FormKit/asterisk.js';
 
 onMounted(async () => {
     await getForm().then(function () {
@@ -55,7 +56,10 @@ const data = reactive({
     steps,
     visitedSteps,
     activeStep,
-    plugins: [wizardPlugin],
+    plugins: [
+        wizardPlugin,
+        asteriskPlugin,
+    ],
     setStep: (target) => () => {
         setStep(target);
     },
