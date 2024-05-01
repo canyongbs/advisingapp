@@ -45,8 +45,10 @@ use App\Filament\Pages\Dashboard;
 use Illuminate\Support\Facades\Bus;
 use AdvisingApp\Assistant\Models\Prompt;
 use AdvisingApp\Assistant\Models\PromptUse;
+use AdvisingApp\Assistant\Models\AiAssistant;
 use AdvisingApp\Assistant\Models\PromptUpvote;
 use AdvisingApp\Assistant\Models\AssistantChat;
+use AdvisingApp\Assistant\Enums\AiAssistantType;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 
@@ -93,6 +95,10 @@ $setUp = function (
     if ($hasUserConsented) {
         $user->consentTo($consentAgreement);
     }
+
+    AiAssistant::factory()->create([
+        'type' => AiAssistantType::Default,
+    ]);
 
     $chat = AssistantChat::factory()
         ->for($user)
