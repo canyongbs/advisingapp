@@ -39,6 +39,7 @@ namespace AdvisingApp\Survey\Models;
 use AdvisingApp\Form\Models\SubmissibleField;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @mixin IdeHelperSurveyField
@@ -70,5 +71,17 @@ class SurveyField extends SubmissibleField
     {
         return $this
             ->belongsTo(SurveyStep::class, 'step_id');
+    }
+
+    public function submissions(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            SurveySubmission::class,
+            'survey_field_submission',
+            'field_id',
+            'submission_id',
+        )
+            ->withPivot(['id', 'response'])
+            ->using(SurveyFieldSubmission::class);
     }
 }

@@ -38,6 +38,7 @@ namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Form\Models\Submission;
 use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
 
 class InjectSubmissionStateIntoTipTapContent
 {
@@ -64,6 +65,7 @@ class InjectSubmissionStateIntoTipTapContent
                 continue;
             }
 
+            /** @var FormFieldBlock $block */
             $block = $blocks[$componentAttributes['type']] ?? null;
 
             if (blank($block)) {
@@ -79,7 +81,7 @@ class InjectSubmissionStateIntoTipTapContent
 
             $content[$componentKey]['attrs']['data'] = [
                 ...$component['attrs']['data'],
-                ...$block::getSubmissionState($field->pivot->response),
+                ...$block::getSubmissionState($field, $field->pivot->response),
             ];
         }
 
