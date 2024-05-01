@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Resources\PromptResource\Forms;
+namespace AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Forms;
 
 use Filament\Forms\Form;
 use Filament\Forms\Components\Section;

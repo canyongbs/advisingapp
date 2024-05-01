@@ -39,7 +39,7 @@ namespace AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Pages;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource;
-use AdvisingApp\Assistant\Filament\Resources\PromptResource\Forms\AiAssistantForm;
+use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
 
 class CreateAiAssistant extends CreateRecord
 {
