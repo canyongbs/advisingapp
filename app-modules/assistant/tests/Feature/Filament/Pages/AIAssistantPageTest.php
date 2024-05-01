@@ -227,7 +227,7 @@ it('will automatically set the current chat to the most recent without a folder'
         (new Chat(
             id: $newerChat->id,
             messages: ChatMessage::collection($newerChat->messages),
-            assistantId: $chat->assistant->assistant_id,
+            assistantId: $newerChat->assistant->assistant_id,
             threadId: null,
         ))->toArray(),
     );
