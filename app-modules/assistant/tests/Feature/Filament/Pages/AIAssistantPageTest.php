@@ -541,7 +541,6 @@ it('respects message creation time when saving chats', function () use ($setUp) 
 
     // And time has elapsed since this message was sent
     testTime()->addMinute();
-    testTime()->unfreeze();
 
     // When the chat is saved
     $personalAssistant
