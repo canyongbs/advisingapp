@@ -34,52 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+namespace AdvisingApp\Assistant\Observers;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use AdvisingApp\Assistant\Models\AiAssistant;
+use AdvisingApp\Assistant\Actions\UpdateAiAssistant;
+use AdvisingApp\Assistant\Actions\CreateCustomAiAssistant;
+use AdvisingApp\Assistant\DataTransferObjects\AiAssistantUpdateData;
 
-/**
- * @mixin IdeHelperAssistantChat
- */
-class AssistantChat extends BaseModel
+class AiAssistantObserver
 {
-    use CanAddAssistantLicenseGlobalScope;
-    use SoftDeletes;
-
-    protected $fillable = [
-        'ai_assistant_id',
-        'assistant_id',
-        'name',
-        'thread_id',
-    ];
-
-    public function user(): BelongsTo
+    public function created(AiAssistant $assistant): void
     {
-        return $this->belongsTo(User::class);
+        resolve(CreateCustomAiAssistant::class)->create($assistant);
     }
 
-    public function assistant(): BelongsTo
+    public function updated(AiAssistant $assistant): void
     {
-        return $this->belongsTo(AiAssistant::class, 'ai_assistant_id');
-    }
-
-    public function messages(): HasMany
-    {
-        return $this->hasMany(AssistantChatMessage::class);
-    }
-
-    public function folder(): BelongsTo
-    {
-        return $this->belongsTo(AssistantChatFolder::class, 'assistant_chat_folder_id');
-    }
-
-    protected static function booted(): void
-    {
-        static::addAssistantLicenseGlobalScope();
+        resolve(UpdateAiAssistant::class)->from(
+            assistantId: $assistant->assistant_id,
+            data: new AiAssistantUpdateData(
+                name: $assistant->name,
+                description: $assistant->description,
+                instructions: "{$assistant->instructions} {$assistant->knowledge}",
+                model: $assistant->model,
+            )
+        );
     }
 }

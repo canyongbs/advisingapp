@@ -34,52 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
-
-/**
- * @mixin IdeHelperAssistantChat
- */
-class AssistantChat extends BaseModel
-{
-    use CanAddAssistantLicenseGlobalScope;
-    use SoftDeletes;
-
-    protected $fillable = [
-        'ai_assistant_id',
-        'assistant_id',
-        'name',
-        'thread_id',
-    ];
-
-    public function user(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(User::class);
+        Feature::activate('custom-ai-assistants');
     }
 
-    public function assistant(): BelongsTo
+    public function down(): void
     {
-        return $this->belongsTo(AiAssistant::class, 'ai_assistant_id');
+        Feature::purge('custom-ai-assistants');
     }
-
-    public function messages(): HasMany
-    {
-        return $this->hasMany(AssistantChatMessage::class);
-    }
-
-    public function folder(): BelongsTo
-    {
-        return $this->belongsTo(AssistantChatFolder::class, 'assistant_chat_folder_id');
-    }
-
-    protected static function booted(): void
-    {
-        static::addAssistantLicenseGlobalScope();
-    }
-}
+};

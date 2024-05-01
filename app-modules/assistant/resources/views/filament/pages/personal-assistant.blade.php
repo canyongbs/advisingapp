@@ -33,8 +33,9 @@
 --}}
 <?php
 
-use Filament\Support\Facades\FilamentAsset;
+use AdvisingApp\Assistant\Models\AiAssistant;
 use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\Facades\Vite;
 
 ?>
@@ -51,12 +52,41 @@ use Illuminate\Support\Facades\Vite;
             >
                 <div class="col-span-1">
                     <div class="flex flex-col gap-y-2">
-                        <x-filament::button
-                            icon="heroicon-m-plus"
-                            wire:click="newChat"
-                        >
-                            {{ __('New Chat') }}
-                        </x-filament::button>
+                        @if (
+                            \Illuminate\Support\Facades\Gate::check(\App\Enums\Feature::CustomAiAssistants->getGateName()) &&
+                                count($assistants = AiAssistant::all()) > 1)
+                            <x-filament::dropdown>
+                                <x-slot name="trigger">
+                                    <x-filament::button
+                                        class="w-full"
+                                        icon="heroicon-m-plus"
+                                    >
+                                        {{ __('New Chat') }}
+                                    </x-filament::button>
+                                </x-slot>
+
+                                <x-filament::dropdown.header>
+                                    Choose an assistant to use
+                                </x-filament::dropdown.header>
+
+                                <x-filament::dropdown.list>
+                                    @foreach ($assistants as $assistant)
+                                        <x-filament::dropdown.list.item
+                                            wire:click="newChatWithAssistant('{{ $assistant->id }}')"
+                                        >
+                                            {{ $assistant->name }}
+                                        </x-filament::dropdown.list.item>
+                                    @endforeach
+                                </x-filament::dropdown.list>
+                            </x-filament::dropdown>
+                        @else
+                            <x-filament::button
+                                icon="heroicon-m-plus"
+                                wire:click="newChat"
+                            >
+                                {{ __('New Chat') }}
+                            </x-filament::button>
+                        @endif
 
                         {{ $this->newFolderAction }}
 
@@ -203,6 +233,13 @@ use Illuminate\Support\Facades\Vite;
                 </div>
 
                 <div class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3">
+                    @php
+                        $aiAssistantAvatar = $aiAssistant?->getFirstTemporaryUrl(now()->addHour(), 'avatar') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg');
+                    @endphp
+
+                    @if ($aiAssistant)
+                        <h1>{{ $aiAssistant->name }}</h1>
+                    @endif
                     <div
                         class="flex max-h-[calc(100dvh-20rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
                         x-ref="chatContainer"
@@ -219,9 +256,7 @@ use Illuminate\Support\Facades\Vite;
                                                         <x-filament::avatar
                                                             class="rounded-full"
                                                             alt="AI Assistant avatar"
-                                                            :src="Vite::asset(
-                                                                'resources/images/canyon-ai-headshot.jpg',
-                                                            )"
+                                                            :src="$aiAssistantAvatar"
                                                         />
                                                     </div>
                                                     <div
@@ -308,9 +343,7 @@ use Illuminate\Support\Facades\Vite;
                                                         <x-filament::avatar
                                                             class="rounded-full"
                                                             alt="AI Assistant avatar"
-                                                            :src="Vite::asset(
-                                                                'resources/images/canyon-ai-headshot.jpg',
-                                                            )"
+                                                            :src="$aiAssistantAvatar"
                                                         />
                                                     </div>
                                                 </div>
@@ -350,9 +383,7 @@ use Illuminate\Support\Facades\Vite;
                                                         <x-filament::avatar
                                                             class="rounded-full"
                                                             alt="AI Assistant avatar"
-                                                            :src="Vite::asset(
-                                                                'resources/images/canyon-ai-headshot.jpg',
-                                                            )"
+                                                            :src="$aiAssistantAvatar"
                                                         />
                                                     </div>
                                                 </div>
@@ -485,7 +516,6 @@ use Illuminate\Support\Facades\Vite;
             @endif
 
             @if ($consentedToTerms === false)
-                {{-- TODO potentially prevent closure of modal by pressing escape --}}
                 <x-filament::modal
                     id="consent-agreement"
                     width="5xl"

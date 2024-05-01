@@ -34,52 +34,56 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+namespace AdvisingApp\Assistant\Actions;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use App\Models\Tenant;
+use Laravel\Pennant\Feature;
+use AdvisingApp\Assistant\Models\AiAssistant;
+use AdvisingApp\Assistant\Enums\AiAssistantType;
+use AdvisingApp\IntegrationAI\Settings\AISettings;
+use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
 
-/**
- * @mixin IdeHelperAssistantChat
- */
-class AssistantChat extends BaseModel
+class CreateDefaultInstitutionAiAssistant
 {
-    use CanAddAssistantLicenseGlobalScope;
-    use SoftDeletes;
+    public function __construct(
+        private AiChatClient $ai
+    ) {}
 
-    protected $fillable = [
-        'ai_assistant_id',
-        'assistant_id',
-        'name',
-        'thread_id',
-    ];
-
-    public function user(): BelongsTo
+    public function create()
     {
-        return $this->belongsTo(User::class);
-    }
+        $tenant = Tenant::current();
 
-    public function assistant(): BelongsTo
-    {
-        return $this->belongsTo(AiAssistant::class, 'ai_assistant_id');
-    }
+        $settings = resolve(AISettings::class);
 
-    public function messages(): HasMany
-    {
-        return $this->hasMany(AssistantChatMessage::class);
-    }
+        // TODO Update to reflect desired institutional defaults
+        $name = "{$tenant->name} AI Assistant";
+        $description = "An AI Assistant for {$tenant->name}";
+        $instructions = $settings->prompt_system_context;
 
-    public function folder(): BelongsTo
-    {
-        return $this->belongsTo(AssistantChatFolder::class, 'assistant_chat_folder_id');
-    }
+        if (Feature::active('custom-ai-assistants')) {
+            $aiAssistant = AiAssistant::create([
+                'name' => $name,
+                'description' => $description,
+                'instructions' => $instructions,
+                'type' => AiAssistantType::Default,
+            ]);
+        }
 
-    protected static function booted(): void
-    {
-        static::addAssistantLicenseGlobalScope();
+        $clientAssistantId = resolve(CreateAiAssistant::class)->from(
+            name: $name,
+            description: $description,
+            instructions: $instructions
+        );
+
+        if (Feature::active('custom-ai-assistants')) {
+            $aiAssistant->update([
+                'assistant_id' => $clientAssistantId,
+            ]);
+        }
+
+        $settings->assistant_id = $clientAssistantId;
+        $settings->save();
+
+        return $settings->assistant_id;
     }
 }

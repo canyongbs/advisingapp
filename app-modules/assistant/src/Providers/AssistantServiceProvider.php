@@ -43,6 +43,7 @@ use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Assistant\Models\Prompt;
 use AdvisingApp\Assistant\AssistantPlugin;
 use AdvisingApp\Assistant\Models\PromptType;
+use AdvisingApp\Assistant\Models\AiAssistant;
 use AdvisingApp\Assistant\Models\AssistantChat;
 use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Assistant\Observers\PromptObserver;
@@ -50,6 +51,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Assistant\Models\AssistantChatFolder;
 use AdvisingApp\Assistant\Models\AssistantChatMessage;
 use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
+use AdvisingApp\Assistant\Observers\AiAssistantObserver;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 use AdvisingApp\Assistant\Registries\AssistantRbacRegistry;
 use AdvisingApp\Assistant\Listeners\LogAssistantChatMessage;
@@ -67,10 +69,11 @@ class AssistantServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([
-            'assistant_chat' => AssistantChat::class,
-            'assistant_chat_message' => AssistantChatMessage::class,
-            'assistant_chat_message_log' => AssistantChatMessageLog::class,
+            'ai_assistant' => AiAssistant::class,
             'assistant_chat_folder' => AssistantChatFolder::class,
+            'assistant_chat_message_log' => AssistantChatMessageLog::class,
+            'assistant_chat_message' => AssistantChatMessage::class,
+            'assistant_chat' => AssistantChat::class,
             'prompt_type' => PromptType::class,
             'prompt' => Prompt::class,
         ]);
@@ -88,6 +91,7 @@ class AssistantServiceProvider extends ServiceProvider
     protected function registerObservers(): void
     {
         Prompt::observe(PromptObserver::class);
+        AiAssistant::observe(AiAssistantObserver::class);
     }
 
     protected function registerEvents(): void

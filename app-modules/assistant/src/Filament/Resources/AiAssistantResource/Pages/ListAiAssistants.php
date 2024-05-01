@@ -34,52 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+namespace AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Pages;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource;
 
-/**
- * @mixin IdeHelperAssistantChat
- */
-class AssistantChat extends BaseModel
+class ListAiAssistants extends ListRecords
 {
-    use CanAddAssistantLicenseGlobalScope;
-    use SoftDeletes;
+    protected static string $resource = AiAssistantResource::class;
 
-    protected $fillable = [
-        'ai_assistant_id',
-        'assistant_id',
-        'name',
-        'thread_id',
-    ];
-
-    public function user(): BelongsTo
+    public function table(Table $table): Table
     {
-        return $this->belongsTo(User::class);
+        return $table
+            ->columns([
+                SpatieMediaLibraryImageColumn::make('avatar')
+                    ->collection('avatar')
+                    ->visibility('private'),
+                TextColumn::make('name')
+                    ->searchable()
+                    ->label('Name'),
+            ])
+            ->actions([
+                EditAction::make(),
+            ])
+            ->emptyStateHeading('No AI Assistants')
+            ->emptyStateDescription('Add a new custom AI Assistant by clicking the "Create AI Assistant" button above.');
     }
 
-    public function assistant(): BelongsTo
+    protected function getHeaderActions(): array
     {
-        return $this->belongsTo(AiAssistant::class, 'ai_assistant_id');
-    }
-
-    public function messages(): HasMany
-    {
-        return $this->hasMany(AssistantChatMessage::class);
-    }
-
-    public function folder(): BelongsTo
-    {
-        return $this->belongsTo(AssistantChatFolder::class, 'assistant_chat_folder_id');
-    }
-
-    protected static function booted(): void
-    {
-        static::addAssistantLicenseGlobalScope();
+        return [
+            CreateAction::make()
+                ->label('Create AI Assistant'),
+        ];
     }
 }
