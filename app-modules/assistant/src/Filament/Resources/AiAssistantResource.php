@@ -38,7 +38,7 @@ namespace AdvisingApp\Assistant\Filament\Resources;
 
 use Filament\Resources\Resource;
 use AdvisingApp\Assistant\Models\AiAssistant;
-use AdvisingApp\Assistant\Filament\Resources\PromptResource\Pages\EditAiAssistant;
+use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Pages\EditAiAssistant;
 use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Pages\ListAiAssistants;
 use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Pages\CreateAiAssistant;
 

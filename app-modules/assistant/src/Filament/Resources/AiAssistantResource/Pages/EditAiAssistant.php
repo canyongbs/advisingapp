@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Resources\PromptResource\Pages;
+namespace AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
