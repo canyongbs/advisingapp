@@ -61,6 +61,9 @@ class LandlordPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
             ])
             ->routes(function () {
+                Route::get('/ping', fn () => response()->json(['message' => 'pong']))
+                    ->name('ping');
+
                 Route::get('/{path?}', fn () => view('landlord'))
                     ->where('path', '.*');
             });

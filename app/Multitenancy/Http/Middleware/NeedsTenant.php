@@ -40,6 +40,6 @@ class NeedsTenant extends \Spatie\Multitenancy\Http\Middleware\NeedsTenant
 {
     public function handleInvalidRequest()
     {
-        return redirect(config('app.landlord_url'));
+        abort(404);
     }
 }
