@@ -1112,7 +1112,7 @@ it('can delete a chat', function () use ($setUp) {
             (new Chat(
                 id: null,
                 messages: ChatMessage::collection([]),
-                assistantId: null,
+                assistantId: $chat->assistant->assistant_id,
                 threadId: null,
             ))->toArray(),
         );
