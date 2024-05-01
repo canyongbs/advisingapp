@@ -48,15 +48,14 @@ beforeEach(function () {
     Route::get('/needs-tenant-test-route')->middleware(NeedsTenant::class);
 });
 
-it('redirects without a tenant', function () {
-    $response = (new NeedsTenant())->handle(Request::create('/needs-tenant-test-route'), fn () => new Response());
-
-    assertTrue($response->isRedirect(config('app.landlord_url')));
-});
+it('returns a 404 without a tenant', function () {
+    (new NeedsTenant())->handle(Request::create('/needs-tenant-test-route'), fn () => new Response());
+})->expectException(Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
 
 it('continues with a tenant', function () {
     Tenant::first()->makeCurrent();
 
+    /** @var Response $response */
     $response = (new NeedsTenant())->handle(Request::create('/needs-tenant-test-route'), fn () => new Response());
 
     assertTrue($response->isOk());

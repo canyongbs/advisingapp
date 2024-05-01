@@ -1,5 +1,5 @@
 #!/command/with-contenv bash
-response=$(curl -s -o /dev/null -w "%{http_code}" -L --insecure http://localhost)
+response=$(curl -s -o /dev/null -w "%{http_code}" -L --insecure http://localhost/ping)
 
 if [[ $response == "200" ]]; then
 	exit 0
