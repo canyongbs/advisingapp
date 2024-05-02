@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 // phpcs:ignoreFile
 /**
@@ -956,35 +922,17 @@ namespace AdvisingApp\Assistant\Models{
 /**
  * AdvisingApp\Assistant\Models\AiAssistant
  *
- * @property string $id
- * @property string|null $assistant_id
- * @property string $name
- * @property \AdvisingApp\Assistant\Enums\AiAssistantType|null $type
- * @property string|null $description
- * @property string|null $instructions
- * @property string|null $knowledge
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \AdvisingApp\Assistant\Enums\AiAssistantType $type
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChat> $assistantChats
  * @property-read int|null $assistant_chats_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant default()
+ * @method static \AdvisingApp\Assistant\Database\Factories\AiAssistantFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant query()
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereAssistantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereInstructions($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereKnowledge($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant withoutTrashed()
  * @mixin \Eloquent
@@ -1004,8 +952,8 @@ namespace AdvisingApp\Assistant\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $assistant_id
  * @property string|null $thread_id
- * @property string|null $ai_assistant_id
  * @property-read \AdvisingApp\Assistant\Models\AiAssistant|null $assistant
  * @property-read \AdvisingApp\Assistant\Models\AssistantChatFolder|null $folder
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChatMessage> $messages
@@ -1016,8 +964,8 @@ namespace AdvisingApp\Assistant\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat query()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereAiAssistantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereAssistantChatFolderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereAssistantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereId($value)
@@ -2377,7 +2325,6 @@ namespace AdvisingApp\Interaction\Models{
  * @property string|null $interaction_initiative_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Interaction\Models\InteractionCampaign|null $campaign
  * @property-read \AdvisingApp\Division\Models\Division|null $division
  * @property-read \AdvisingApp\Interaction\Models\InteractionDriver|null $driver
  * @property-read \AdvisingApp\Interaction\Models\InteractionInitiative|null $initiative
@@ -2418,37 +2365,6 @@ namespace AdvisingApp\Interaction\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperInteraction {}
-}
-
-namespace AdvisingApp\Interaction\Models{
-/**
- * AdvisingApp\Interaction\Models\InteractionCampaign
- *
- * @property string $id
- * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
- * @property-read int|null $interactions_count
- * @method static \AdvisingApp\Interaction\Database\Factories\InteractionCampaignFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign query()
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperInteractionCampaign {}
 }
 
 namespace AdvisingApp\Interaction\Models{
@@ -4882,6 +4798,8 @@ namespace AdvisingApp\Survey\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \AdvisingApp\Survey\Models\SurveyStep|null $step
  * @property-read \AdvisingApp\Survey\Models\Survey $submissible
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Survey\Models\SurveySubmission> $submissions
+ * @property-read int|null $submissions_count
  * @method static \AdvisingApp\Survey\Database\Factories\SurveyFieldFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|SurveyField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SurveyField newQuery()
@@ -4903,6 +4821,33 @@ namespace AdvisingApp\Survey\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperSurveyField {}
+}
+
+namespace AdvisingApp\Survey\Models{
+/**
+ * AdvisingApp\Survey\Models\SurveyFieldSubmission
+ *
+ * @property string $id
+ * @property array $response
+ * @property string $field_id
+ * @property string $submission_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\Survey\Models\SurveyField $field
+ * @property-read \AdvisingApp\Survey\Models\SurveySubmission $submission
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereFieldId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereResponse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereSubmissionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperSurveyFieldSubmission {}
 }
 
 namespace AdvisingApp\Survey\Models{
