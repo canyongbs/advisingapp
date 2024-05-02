@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Engagement\Enums;
 
+use App\Enums\Integration;
 use Filament\Support\Contracts\HasLabel;
 
 enum EngagementDeliveryMethod: string implements HasLabel
@@ -46,8 +47,34 @@ enum EngagementDeliveryMethod: string implements HasLabel
     public function getLabel(): ?string
     {
         return match ($this) {
-            static::Email => 'Email',
-            static::Sms => 'SMS',
+            EngagementDeliveryMethod::Email => 'Email',
+            EngagementDeliveryMethod::Sms => $this->getLabelForIntegrationState(Integration::Twilio, 'SMS'),
         };
+    }
+
+    public function getDefault(): EngagementDeliveryMethod
+    {
+        return EngagementDeliveryMethod::Email;
+    }
+
+    public function getCaseDisabled(): bool
+    {
+        return match ($this) {
+            EngagementDeliveryMethod::Sms => Integration::Twilio->isOff(),
+            default => false,
+        };
+    }
+
+    private function getLabelForIntegrationState(Integration $integration, string $label): string
+    {
+        if ($integration->isDisabled()) {
+            return "{$label} (A required setting is disabled. Please contact your administrator to enable it.)";
+        }
+
+        if ($integration->isNotConfigured()) {
+            return "{$label} (A required setting is not configured. Please contact your administrator to configure it.)";
+        }
+
+        return $label;
     }
 }

@@ -71,7 +71,8 @@ class BulkEngagementAction
                         Select::make('delivery_method')
                             ->label('How would you like to send this engagement?')
                             ->options(EngagementDeliveryMethod::class)
-                            ->default(EngagementDeliveryMethod::Email->value)
+                            ->default(EngagementDeliveryMethod::Email)
+                            ->disableOptionWhen(fn (string $value): bool => EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
                             ->selectablePlaceholder(false)
                             ->live(),
                     ]),

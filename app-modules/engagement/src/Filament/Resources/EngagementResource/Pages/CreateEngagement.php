@@ -71,7 +71,8 @@ class CreateEngagement extends CreateRecord
                 Select::make('delivery_method')
                     ->label('What would you like to send?')
                     ->options(EngagementDeliveryMethod::class)
-                    ->default(EngagementDeliveryMethod::Email->value)
+                    ->default(EngagementDeliveryMethod::Email)
+                    ->disableOptionWhen(fn (string $value): bool => EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
                     ->selectablePlaceholder(false)
                     ->live(),
                 Fieldset::make('Content')

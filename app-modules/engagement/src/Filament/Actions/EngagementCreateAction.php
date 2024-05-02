@@ -62,6 +62,9 @@ class EngagementCreateAction
                             ->label('How would you like to send this engagement?')
                             ->translateLabel()
                             ->options(EngagementDeliveryMethod::class)
+                            ->default(EngagementDeliveryMethod::Email)
+                            ->disableOptionWhen(fn (string $value): bool => EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
+                            ->selectablePlaceholder(false)
                             ->validationAttribute('Delivery Method')
                             ->required(),
                     ]),
