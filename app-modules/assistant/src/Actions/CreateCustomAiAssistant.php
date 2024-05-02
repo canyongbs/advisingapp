@@ -34,52 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+namespace AdvisingApp\Assistant\Actions;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use AdvisingApp\Assistant\Models\AiAssistant;
+use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
 
-/**
- * @mixin IdeHelperAssistantChat
- */
-class AssistantChat extends BaseModel
+class CreateCustomAiAssistant
 {
-    use CanAddAssistantLicenseGlobalScope;
-    use SoftDeletes;
+    public function __construct(
+        private AiChatClient $ai
+    ) {}
 
-    protected $fillable = [
-        'ai_assistant_id',
-        'assistant_id',
-        'name',
-        'thread_id',
-    ];
-
-    public function user(): BelongsTo
+    public function create(AiAssistant $assistant): AiAssistant
     {
-        return $this->belongsTo(User::class);
-    }
+        $clientAssistantId = resolve(CreateAiAssistant::class)->from(
+            name: $assistant->name,
+            description: $assistant->description,
+            // Maximum length is 32768 characters - needs to be enforced
+            instructions: "{$assistant->instructions} {$assistant->knowledge}",
+        );
 
-    public function assistant(): BelongsTo
-    {
-        return $this->belongsTo(AiAssistant::class, 'ai_assistant_id');
-    }
+        $assistant->update([
+            'assistant_id' => $clientAssistantId,
+        ]);
 
-    public function messages(): HasMany
-    {
-        return $this->hasMany(AssistantChatMessage::class);
-    }
-
-    public function folder(): BelongsTo
-    {
-        return $this->belongsTo(AssistantChatFolder::class, 'assistant_chat_folder_id');
-    }
-
-    protected static function booted(): void
-    {
-        static::addAssistantLicenseGlobalScope();
+        return $assistant;
     }
 }

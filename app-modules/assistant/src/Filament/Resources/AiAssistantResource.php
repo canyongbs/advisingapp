@@ -34,52 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+namespace AdvisingApp\Assistant\Filament\Resources;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use Filament\Resources\Resource;
+use AdvisingApp\Assistant\Models\AiAssistant;
+use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Pages\EditAiAssistant;
+use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Pages\ListAiAssistants;
+use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Pages\CreateAiAssistant;
 
-/**
- * @mixin IdeHelperAssistantChat
- */
-class AssistantChat extends BaseModel
+class AiAssistantResource extends Resource
 {
-    use CanAddAssistantLicenseGlobalScope;
-    use SoftDeletes;
+    protected static ?string $model = AiAssistant::class;
 
-    protected $fillable = [
-        'ai_assistant_id',
-        'assistant_id',
-        'name',
-        'thread_id',
-    ];
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    public function user(): BelongsTo
+    protected static ?string $navigationGroup = 'Artificial Intelligence';
+
+    protected static ?string $navigationLabel = 'Assistant Library';
+
+    protected static ?string $modelLabel = 'AI assistant';
+
+    protected static ?int $navigationSort = 30;
+
+    public static function getPages(): array
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function assistant(): BelongsTo
-    {
-        return $this->belongsTo(AiAssistant::class, 'ai_assistant_id');
-    }
-
-    public function messages(): HasMany
-    {
-        return $this->hasMany(AssistantChatMessage::class);
-    }
-
-    public function folder(): BelongsTo
-    {
-        return $this->belongsTo(AssistantChatFolder::class, 'assistant_chat_folder_id');
-    }
-
-    protected static function booted(): void
-    {
-        static::addAssistantLicenseGlobalScope();
+        return [
+            'index' => ListAiAssistants::route('/'),
+            'create' => CreateAiAssistant::route('/create'),
+            'edit' => EditAiAssistant::route('/{record}/edit'),
+        ];
     }
 }

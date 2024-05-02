@@ -34,52 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
-
-/**
- * @mixin IdeHelperAssistantChat
- */
-class AssistantChat extends BaseModel
-{
-    use CanAddAssistantLicenseGlobalScope;
-    use SoftDeletes;
-
-    protected $fillable = [
-        'ai_assistant_id',
-        'assistant_id',
-        'name',
-        'thread_id',
-    ];
-
-    public function user(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(User::class);
+        Schema::table('assistant_chats', function (Blueprint $table) {
+            $table->dropColumn('assistant_id');
+        });
     }
 
-    public function assistant(): BelongsTo
+    public function down(): void
     {
-        return $this->belongsTo(AiAssistant::class, 'ai_assistant_id');
+        Schema::table('assistant_chats', function (Blueprint $table) {
+            $table->string('assistant_id')->nullable();
+        });
     }
-
-    public function messages(): HasMany
-    {
-        return $this->hasMany(AssistantChatMessage::class);
-    }
-
-    public function folder(): BelongsTo
-    {
-        return $this->belongsTo(AssistantChatFolder::class, 'assistant_chat_folder_id');
-    }
-
-    protected static function booted(): void
-    {
-        static::addAssistantLicenseGlobalScope();
-    }
-}
+};

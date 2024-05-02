@@ -34,52 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+namespace AdvisingApp\Assistant\Database\Factories;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use AdvisingApp\Assistant\Enums\AiAssistantType;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperAssistantChat
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Assistant\Models\Model>
  */
-class AssistantChat extends BaseModel
+class AiAssistantFactory extends Factory
 {
-    use CanAddAssistantLicenseGlobalScope;
-    use SoftDeletes;
-
-    protected $fillable = [
-        'ai_assistant_id',
-        'assistant_id',
-        'name',
-        'thread_id',
-    ];
-
-    public function user(): BelongsTo
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function assistant(): BelongsTo
-    {
-        return $this->belongsTo(AiAssistant::class, 'ai_assistant_id');
-    }
-
-    public function messages(): HasMany
-    {
-        return $this->hasMany(AssistantChatMessage::class);
-    }
-
-    public function folder(): BelongsTo
-    {
-        return $this->belongsTo(AssistantChatFolder::class, 'assistant_chat_folder_id');
-    }
-
-    protected static function booted(): void
-    {
-        static::addAssistantLicenseGlobalScope();
+        return [
+            'name' => fake()->word(),
+            'type' => AiAssistantType::Custom,
+            'description' => fake()->sentence(),
+            'instructions' => fake()->paragraph(),
+            'knowledge' => fake()->paragraph(),
+        ];
     }
 }

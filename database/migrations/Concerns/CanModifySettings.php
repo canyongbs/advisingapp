@@ -34,52 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+namespace Database\Migrations\Concerns;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use Closure;
+use Illuminate\Support\Facades\DB;
 
-/**
- * @mixin IdeHelperAssistantChat
- */
-class AssistantChat extends BaseModel
+trait CanModifySettings
 {
-    use CanAddAssistantLicenseGlobalScope;
-    use SoftDeletes;
-
-    protected $fillable = [
-        'ai_assistant_id',
-        'assistant_id',
-        'name',
-        'thread_id',
-    ];
-
-    public function user(): BelongsTo
+    /**
+     * @param Closure(mixed): mixed $modifyPayload
+     */
+    public function updateSettings(string $group, string $name, Closure $modifyPayload, bool $isEncrypted = false): void
     {
-        return $this->belongsTo(User::class);
-    }
+        $payload = DB::table('settings')
+            ->where('group', $group)
+            ->where('name', $name)
+            ->value('payload');
 
-    public function assistant(): BelongsTo
-    {
-        return $this->belongsTo(AiAssistant::class, 'ai_assistant_id');
-    }
+        $payload = json_decode($payload);
 
-    public function messages(): HasMany
-    {
-        return $this->hasMany(AssistantChatMessage::class);
-    }
+        if ($isEncrypted) {
+            $payload = decrypt($payload);
+        }
 
-    public function folder(): BelongsTo
-    {
-        return $this->belongsTo(AssistantChatFolder::class, 'assistant_chat_folder_id');
-    }
+        $payload = $modifyPayload($payload);
 
-    protected static function booted(): void
-    {
-        static::addAssistantLicenseGlobalScope();
+        if ($isEncrypted) {
+            $payload = encrypt($payload);
+        }
+
+        $payload = json_encode($payload);
+
+        DB::table('settings')
+            ->where('group', $group)
+            ->where('name', $name)
+            ->update([
+                'payload' => $payload,
+                'updated_at' => now(),
+            ]);
     }
 }

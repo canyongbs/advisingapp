@@ -43,6 +43,7 @@ use Filament\Forms\Set;
 use Filament\Pages\Page;
 use Livewire\Attributes\On;
 use Filament\Actions\Action;
+use Laravel\Pennant\Feature;
 use Livewire\Attributes\Rule;
 use AdvisingApp\Team\Models\Team;
 use App\Filament\Pages\Dashboard;
@@ -63,11 +64,11 @@ use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use AdvisingApp\Assistant\Models\PromptType;
+use AdvisingApp\Assistant\Models\AiAssistant;
 use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\Assistant\Models\AssistantChat;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
-use AdvisingApp\Assistant\Actions\GetAiAssistant;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
@@ -76,6 +77,7 @@ use AdvisingApp\Assistant\Enums\AssistantChatShareVia;
 use AdvisingApp\Assistant\Jobs\ShareAssistantChatsJob;
 use AdvisingApp\IntegrationAI\Client\BaseAIChatClient;
 use AdvisingApp\Assistant\Enums\AssistantChatShareWith;
+use AdvisingApp\Assistant\Actions\GetDefaultAiAssistantId;
 use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
 use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -96,11 +98,13 @@ class PersonalAssistant extends Page
 
     protected static ?string $navigationGroup = 'Artificial Intelligence';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 10;
 
     public Chat $chat;
 
     public ?string $assistantId = null;
+
+    public ?AiAssistant $aiAssistant = null;
 
     #[Rule(['required', 'string'])]
     public string $message = '';
@@ -139,19 +143,67 @@ class PersonalAssistant extends Page
 
     public function mount(): void
     {
-        $this->assistantId = resolve(GetAiAssistant::class)->get();
-
         $this->consentAgreement = ConsentAgreement::where('type', ConsentAgreementType::AzureOpenAI)->first();
 
         /** @var AssistantChat $chat */
         $chat = $this->chats->first();
 
+        $this->setAssistant($chat);
+
         $this->chat = new Chat(
             id: $chat?->id ?? null,
-            assistantId: $chat?->assistant_id ?? $this->assistantId,
+            assistantId: $this->assistantId,
             threadId: $chat?->thread_id ?? null,
             messages: ChatMessage::collection($chat?->messages ?? []),
         );
+    }
+
+    public function setAssistant(?AssistantChat $chat = null): void
+    {
+        if (! $chat) {
+            $this->assistantId = resolve(GetDefaultAiAssistantId::class)->get();
+
+            if (! Feature::active('custom-ai-assistants')) {
+                return;
+            }
+
+            $this->aiAssistant = AiAssistant::query()
+                ->where('assistant_id', $this->assistantId)
+                ->first();
+
+            return;
+        }
+
+        if (! Feature::active('custom-ai-assistants')) {
+            $this->assistantId = $chat->assistant_id;
+
+            return;
+        }
+
+        $this->aiAssistant = $chat->assistant;
+
+        if ($this->aiAssistant) {
+            $this->assistantId = $this->aiAssistant->assistant_id;
+
+            return;
+        }
+
+        $defaultId = resolve(GetDefaultAiAssistantId::class)->get();
+
+        $this->aiAssistant = AiAssistant::query()
+            ->where('assistant_id', $defaultId)
+            ->first();
+
+        if (! $this->aiAssistant) {
+            $this->assistantId = $defaultId;
+
+            return;
+        }
+
+        $chat->ai_assistant_id = $this->aiAssistant->getKey();
+        $chat->save();
+
+        $this->assistantId = $this->aiAssistant->assistant_id;
     }
 
     #[Computed]
@@ -259,12 +311,15 @@ class PersonalAssistant extends Page
         /** @var ThreadMessageResponse $message */
         $message = $ai->createMessageInThread(
             chat: $this->chat,
-            assistantId: $this->assistantId,
+            assistantId: $this->aiAssistant ? $this->aiAssistant->assistant_id : $this->assistantId,
             fileIds: $this->fileIds
         );
 
         /** @var ThreadRunResponse $response */
-        $run = $ai->createRunForThread($this->chat->threadId, $this->assistantId);
+        $run = $ai->createRunForThread(
+            threadId: $this->chat->threadId,
+            assistantId: $this->aiAssistant ? $this->aiAssistant->assistant_id : $this->assistantId
+        );
 
         $this->updateLatestMessage(
             messageId: $message->id,
@@ -318,7 +373,9 @@ class PersonalAssistant extends Page
                 /** @var AssistantChat $assistantChat */
                 $assistantChat = $user->assistantChats()->create([
                     'name' => $data['name'],
-                    'assistant_id' => $this->chat->assistantId,
+                    ...((Feature::active('custom-ai-assistants') && $this->aiAssistant) ? [
+                        'ai_assistant_id' => $this->aiAssistant->getKey(),
+                    ] : []),
                     'thread_id' => $this->chat->threadId,
                 ]);
 
@@ -350,11 +407,28 @@ class PersonalAssistant extends Page
 
         $this->reset(['message', 'prompt', 'renderError', 'error']);
 
+        $this->setAssistant($chat);
+
         $this->chat = new Chat(
             id: $chat->id ?? null,
-            assistantId: $chat->assistant_id ?? null,
+            assistantId: $this->assistantId,
             threadId: $chat->thread_id ?? null,
             messages: ChatMessage::collection($chat->messages ?? []),
+        );
+    }
+
+    public function newChatWithAssistant(AiAssistant $assistant): void
+    {
+        $this->reset(['message', 'prompt', 'renderError', 'error']);
+
+        $this->aiAssistant = $assistant;
+        $this->assistantId = $assistant->assistant_id;
+
+        $this->chat = new Chat(
+            id: null,
+            assistantId: $this->assistantId,
+            threadId: null,
+            messages: ChatMessage::collection([])
         );
     }
 
@@ -362,9 +436,11 @@ class PersonalAssistant extends Page
     {
         $this->reset(['message', 'prompt', 'renderError', 'error']);
 
+        $this->setAssistant();
+
         $this->chat = new Chat(
             id: null,
-            assistantId: null,
+            assistantId: $this->assistantId,
             threadId: null,
             messages: ChatMessage::collection([])
         );

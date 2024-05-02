@@ -34,52 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Models;
+namespace AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Pages;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource;
+use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
 
-/**
- * @mixin IdeHelperAssistantChat
- */
-class AssistantChat extends BaseModel
+class EditAiAssistant extends EditRecord
 {
-    use CanAddAssistantLicenseGlobalScope;
-    use SoftDeletes;
+    protected static string $resource = AiAssistantResource::class;
 
-    protected $fillable = [
-        'ai_assistant_id',
-        'assistant_id',
-        'name',
-        'thread_id',
-    ];
-
-    public function user(): BelongsTo
+    public function form(Form $form): Form
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function assistant(): BelongsTo
-    {
-        return $this->belongsTo(AiAssistant::class, 'ai_assistant_id');
-    }
-
-    public function messages(): HasMany
-    {
-        return $this->hasMany(AssistantChatMessage::class);
-    }
-
-    public function folder(): BelongsTo
-    {
-        return $this->belongsTo(AssistantChatFolder::class, 'assistant_chat_folder_id');
-    }
-
-    protected static function booted(): void
-    {
-        static::addAssistantLicenseGlobalScope();
+        return resolve(AiAssistantForm::class)->form($form);
     }
 }

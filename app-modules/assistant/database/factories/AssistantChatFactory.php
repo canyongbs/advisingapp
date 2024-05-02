@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Assistant\Database\Factories;
 
+use AdvisingApp\Assistant\Models\AiAssistant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -52,6 +53,7 @@ class AssistantChatFactory extends Factory
     {
         return [
             'name' => fake()->sentence(),
+            'ai_assistant_id' => AiAssistant::factory(),
         ];
     }
 }
