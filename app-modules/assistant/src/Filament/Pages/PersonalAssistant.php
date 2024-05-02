@@ -182,14 +182,26 @@ class PersonalAssistant extends Page
 
         $this->aiAssistant = $chat->assistant;
 
-        if (! $this->aiAssistant) {
-            $this->aiAssistant = AiAssistant::query()
-                ->where('assistant_id', resolve(GetDefaultAiAssistantId::class)->get())
-                ->first();
+        if ($this->aiAssistant) {
+            $this->assistantId = $this->aiAssistant->assistant_id;
 
-            $chat->ai_assistant_id = $this->aiAssistant->getKey();
-            $chat->save();
+            return;
         }
+
+        $defaultId = resolve(GetDefaultAiAssistantId::class)->get();
+
+        $this->aiAssistant = AiAssistant::query()
+            ->where('assistant_id', $defaultId)
+            ->first();
+
+        if (! $this->aiAssistant) {
+            $this->assistantId = $defaultId;
+
+            return;
+        }
+
+        $chat->ai_assistant_id = $this->aiAssistant->getKey();
+        $chat->save();
 
         $this->assistantId = $this->aiAssistant->assistant_id;
     }
