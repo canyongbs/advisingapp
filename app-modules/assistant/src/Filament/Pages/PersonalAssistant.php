@@ -373,11 +373,9 @@ class PersonalAssistant extends Page
                 /** @var AssistantChat $assistantChat */
                 $assistantChat = $user->assistantChats()->create([
                     'name' => $data['name'],
-                    ...(Feature::active('custom-ai-assistants') ? [
+                    ...((Feature::active('custom-ai-assistants') && $this->aiAssistant) ? [
                         'ai_assistant_id' => $this->aiAssistant->getKey(),
-                    ] : [
-                        'assistant_id' => $this->chat->assistantId,
-                    ]),
+                    ] : []),
                     'thread_id' => $this->chat->threadId,
                 ]);
 
