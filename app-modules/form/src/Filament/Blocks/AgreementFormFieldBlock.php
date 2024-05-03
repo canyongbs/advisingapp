@@ -36,18 +36,23 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
+use Laravel\Pennant\Feature;
 use AdvisingApp\Form\Models\SubmissibleField;
 
-class CheckboxFormFieldBlock extends FormFieldBlock
+class AgreementFormFieldBlock extends FormFieldBlock
 {
-    public string $preview = 'form::blocks.previews.checkbox';
+    public string $preview = 'form::blocks.previews.agreement';
 
-    public string $rendered = 'form::blocks.submissions.checkbox';
+    public string $rendered = 'form::blocks.submissions.agreement';
 
     public ?string $icon = 'heroicon-m-check-circle';
 
     public static function type(): string
     {
+        if (Feature::active('rename-checkbox-form-field')) {
+            return 'agreement';
+        }
+
         return 'checkbox';
     }
 
