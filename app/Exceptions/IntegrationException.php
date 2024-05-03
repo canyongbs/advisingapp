@@ -38,23 +38,38 @@ namespace App\Exceptions;
 
 use Exception;
 use App\Enums\Integration;
+use GraphQL\Error\ClientAware;
 
-class IntegrationException extends Exception
+class IntegrationException extends Exception implements ClientAware
 {
-    /**
-     * @throws IntegrationNotConfigured
-     * @throws IntegrationNotEnabled
-     */
-    public function __construct(Integration $integration)
+    protected $message = 'Something has gone wrong. Please contact your administrator.';
+
+    final private function __construct(
+        protected Integration $integration
+    ) {
+        parent::__construct();
+    }
+
+    public static function make(Integration $integration): static
     {
         if ($integration->isNotConfigured()) {
-            throw new IntegrationNotConfigured($integration);
+            return new IntegrationNotConfigured($integration);
         }
 
-        if ($integration->isOff()) {
-            throw new IntegrationNotEnabled($integration);
+        if ($integration->isDisabled()) {
+            return new IntegrationNotEnabled($integration);
         }
 
-        parent::__construct("Something went wrong with the {$integration->getLabel()} integration.");
+        return new static($integration);
+    }
+
+    public function context(): array
+    {
+        return ['integration' => $this->integration->value];
+    }
+
+    public function isClientSafe(): bool
+    {
+        return true;
     }
 }

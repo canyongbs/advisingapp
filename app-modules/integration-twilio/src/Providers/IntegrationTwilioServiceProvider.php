@@ -69,7 +69,7 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
             Client::class,
             fn () => Integration::Twilio->isOn()
                 ? new Client($settings->account_sid, $settings->auth_token)
-                : throw new IntegrationException(Integration::Twilio)
+                : throw IntegrationException::make(Integration::Twilio)
         );
     }
 

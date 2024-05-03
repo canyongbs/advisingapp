@@ -36,13 +36,7 @@
 
 namespace App\Exceptions;
 
-use Exception;
-use App\Enums\Integration;
-
-class IntegrationNotConfigured extends Exception
+class IntegrationNotConfigured extends IntegrationException
 {
-    public function __construct(Integration $integration)
-    {
-        parent::__construct("The {$integration->getLabel()} integration is not configured.");
-    }
+    protected $message = 'A required setting is not configured. Please contact your administrator to configure it.';
 }

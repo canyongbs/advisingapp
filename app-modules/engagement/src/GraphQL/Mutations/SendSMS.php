@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Engagement\GraphQL\Mutations;
 
+use App\Enums\Integration;
+use App\Exceptions\IntegrationException;
 use AdvisingApp\Prospect\Models\Prospect;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -50,6 +52,10 @@ class SendSMS
 {
     public function __invoke(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Engagement
     {
+        if (Integration::Twilio->isOff()) {
+            throw IntegrationException::make(Integration::Twilio);
+        }
+
         /** @var Student|Prospect $morph */
         $morph = Relation::getMorphedModel($args['recipient_type']);
 
