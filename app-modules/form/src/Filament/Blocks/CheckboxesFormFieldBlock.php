@@ -34,26 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Survey\Filament\Blocks;
+namespace AdvisingApp\Form\Filament\Blocks;
 
+use Laravel\Pennant\Feature;
 use Filament\Forms\Components\KeyValue;
 use AdvisingApp\Form\Models\SubmissibleField;
-use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
 
-class MultipleCheckboxSurveyFieldBlock extends FormFieldBlock
+class CheckboxesFormFieldBlock extends FormFieldBlock
 {
-    public string $preview = 'survey::blocks.previews.checkbox-list';
+    public string $preview = 'form::blocks.previews.checkboxes';
 
-    public string $rendered = 'survey::blocks.submissions.checkbox-list';
+    public string $rendered = 'form::blocks.submissions.checkboxes';
 
     public static function type(): string
     {
-        return 'checkbox';
-    }
+        if (Feature::active('introduce-checkboxes-form-field')) {
+            return 'checkboxes';
+        }
 
-    public function getLabel(): string
-    {
-        return 'Multiple Choice';
+        return 'checkbox';
     }
 
     public function fields(): array

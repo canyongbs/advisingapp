@@ -86,7 +86,8 @@ class FormSubmission extends Submission
             'submission_id',
             'field_id',
         )
-            ->withPivot(['id', 'response']);
+            ->withPivot(['id', 'response'])
+            ->using(FormFieldSubmission::class);
     }
 
     public function deliverRequest(): void

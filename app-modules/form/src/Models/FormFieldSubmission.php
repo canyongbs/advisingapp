@@ -34,43 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Survey\Filament\Blocks;
+namespace AdvisingApp\Form\Models;
 
-use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\EmailFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\NumberFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class SurveyFieldBlockRegistry
+class FormFieldSubmission extends Pivot
 {
-    /**
-     * @return array<class-string<FormFieldBlock>>
-     */
-    public static function get(): array
+    use HasUuids;
+
+    protected $fillable = [
+        'response',
+        'id',
+    ];
+
+    protected $casts = [
+        'response' => 'array',
+    ];
+
+    public function field(): BelongsTo
     {
-        return [
-            EducatableEmailFormFieldBlock::class,
-            TextInputSurveyFieldBlock::class,
-            TextAreaSurveyFieldBlock::class,
-            SelectSurveyFieldBlock::class,
-            RadioSurveyFieldBlock::class,
-            CheckboxesSurveyFieldBlock::class,
-            EmailFormFieldBlock::class,
-            NumberFormFieldBlock::class,
-            LikertScaleSurveyBlock::class,
-            SliderSurveyFieldBlock::class,
-            RatingScaleSurveyFieldBlock::class,
-        ];
+        return $this->belongsTo(FormField::class, 'field_id');
     }
 
-    /**
-     * @return array<string, class-string<FormFieldBlock>>
-     */
-    public static function keyByType(): array
+    public function submission(): BelongsTo
     {
-        /** @var FormFieldBlock $block */
-        return collect(static::get())
-            ->mapWithKeys(fn (string $block): array => [$block::type() => $block])
-            ->all();
+        return $this->belongsTo(FormSubmission::class, 'submission_id');
     }
 }
