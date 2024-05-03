@@ -59,6 +59,7 @@ class CreateTenant
         TenantConfig $config,
         ?TenantUser $user = null,
         ?LicenseData $licenseData = null,
+        bool $seedTenantDatabase = true
     ): ?Tenant {
         $tenant = Tenant::query()->create([
             'name' => $name,
@@ -70,7 +71,7 @@ class CreateTenant
         Bus::batch([
             [
                 new MigrateTenantDatabase($tenant),
-                new SeedTenantDatabase($tenant),
+                ...($seedTenantDatabase ? [new SeedTenantDatabase($tenant)] : []),
                 ...($licenseData ? [new UpdateTenantLicenseData($tenant, $licenseData)] : []),
                 ...($user ? [new CreateTenantUser($tenant, $user)] : []),
                 new DispatchTenantSetupCompleteEvent($tenant),

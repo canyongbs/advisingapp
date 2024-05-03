@@ -34,14 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Survey\Filament\Blocks;
+use App\Models\Tenant;
+use Illuminate\Http\Request;
 
-use AdvisingApp\Form\Filament\Blocks\CheckboxFormFieldBlock;
+use function PHPUnit\Framework\assertTrue;
 
-class CheckboxSurveyFieldBlock extends CheckboxFormFieldBlock
-{
-    public function getLabel(): string
-    {
-        return 'Multiple Choice';
-    }
-}
+use Symfony\Component\HttpFoundation\Response;
+use App\Multitenancy\Http\Middleware\NeedsTenant;
+
+beforeEach(function () {
+    Tenant::forgetCurrent();
+
+    Route::get('/needs-tenant-test-route')->middleware(NeedsTenant::class);
+});
+
+it('returns a 404 without a tenant', function () {
+    (new NeedsTenant())->handle(Request::create('/needs-tenant-test-route'), fn () => new Response());
+})->expectException(Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
+
+it('continues with a tenant', function () {
+    Tenant::first()->makeCurrent();
+
+    /** @var Response $response */
+    $response = (new NeedsTenant())->handle(Request::create('/needs-tenant-test-route'), fn () => new Response());
+
+    assertTrue($response->isOk());
+});

@@ -41,7 +41,9 @@ use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
@@ -68,9 +70,14 @@ class Permission extends SpatiePermission implements Auditable
         return collect([]);
     }
 
-    public function systemUsers()
+    public function systemUsers(): BelongsToMany
     {
         return $this->belongsToMany(SystemUser::class);
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(PermissionGroup::class, 'group_id');
     }
 
     public function scopeApi(Builder $query): void

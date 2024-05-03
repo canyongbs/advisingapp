@@ -50,6 +50,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use SocialiteProviders\Google\GoogleExtendSocialite;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\Observers\LicenseObserver;
+use AdvisingApp\Authorization\Actions\GetPermissionGroupId;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Authorization\Registries\AuthorizationRbacRegistry;
 use AdvisingApp\Authorization\Http\Controllers\Auth\LogoutController;
@@ -61,16 +62,20 @@ class AuthorizationServiceProvider extends ServiceProvider
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AuthorizationPlugin()));
 
-        $this->app->singleton(AuthorizationPermissionRegistry::class, function ($app) {
+        $this->app->singleton(AuthorizationPermissionRegistry::class, function () {
             return new AuthorizationPermissionRegistry();
         });
 
-        $this->app->singleton(AuthorizationRoleRegistry::class, function ($app) {
+        $this->app->singleton(AuthorizationRoleRegistry::class, function () {
             return new AuthorizationRoleRegistry();
         });
 
-        $this->app->bind(FilamentLogoutController::class, function ($app) {
+        $this->app->bind(FilamentLogoutController::class, function () {
             return new LogoutController();
+        });
+
+        $this->app->scoped(GetPermissionGroupId::class, function () {
+            return new GetPermissionGroupId();
         });
 
         app('config')->set('permission', require base_path('app-modules/authorization/config/permission.php'));

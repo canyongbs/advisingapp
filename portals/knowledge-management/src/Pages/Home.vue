@@ -32,10 +32,11 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { Bars3Icon } from '@heroicons/vue/24/outline';
+import { Bars3Icon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import HelpCenter from '../Components/HelpCenter.vue';
 import SearchResults from '../Components/SearchResults.vue';
 import { defineProps, ref, watch } from 'vue';
+import { consumer } from '@/Services/Consumer.js';
 
 const props = defineProps({
     searchUrl: {
@@ -52,8 +53,6 @@ const props = defineProps({
     },
 });
 
-const urlParams = new URLSearchParams(window.location.search);
-const searchParameter = urlParams.get('q');
 const searchQuery = ref(null);
 const loadingResults = ref(false);
 const searchResults = ref(null);
@@ -67,16 +66,13 @@ const debounceSearch = debounce((value) => {
 
     loadingResults.value = true;
 
-    fetch(props.searchUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+    const { post } = consumer();
+
+    post(props.searchUrl, {
         body: JSON.stringify({ search: value }),
     })
-        .then((response) => response.json())
-        .then((json) => {
-            searchResults.value = json;
+        .then((response) => {
+            searchResults.value = response.data;
             loadingResults.value = false;
         });
 }, 500);
@@ -100,41 +96,52 @@ function debounce(func, delay) {
 
 <template>
     <div
-        class="sticky top-0 z-40 flex flex-col items-center border-b border-gray-100 bg-white px-4 py-4 shadow-sm sm:px-6 lg:px-8"
+        class="sticky top-0 z-40 flex flex-col items-center bg-gray-50"
     >
-        <button class="w-full p-2.5 lg:hidden" type="button" @click="$emit('sidebarOpened')">
+        <button class="w-full p-3 lg:hidden" type="button" @click="$emit('sidebarOpened')">
             <span class="sr-only">Open sidebar</span>
+
             <Bars3Icon class="h-6 w-6 text-gray-900"></Bars3Icon>
         </button>
 
-        <div class="flex h-full w-full flex-col rounded bg-primary-700 px-12 py-4">
-            <div class="flex flex-col text-left">
-                <h3 class="text-3xl text-white">Need help?</h3>
-                <p class="text-white">Search our knowledge base for advice and answers</p>
-            </div>
+        <div class="bg-gradient-to-br from-primary-500 to-primary-800 w-full px-6">
+            <div class="max-w-screen-xl flex flex-col gap-y-6 mx-auto py-8">
+                <div class="flex flex-col gap-y-1 text-left">
+                    <h3 class="text-3xl font-semibold text-white">Need help?</h3>
+                    <p class="text-primary-100">Search our knowledge base for advice and answers</p>
+                </div>
 
-            <form class="relative mt-2 flex h-12" action="#" method="GET">
-                <label class="sr-only" for="search-field">Search</label>
-                <input
-                    class="block h-full w-full text-gray-900 border-0 py-0 pl-8 pr-0 placeholder:text-gray-400 focus:ring-0 sm:text-sm rounded"
-                    id="search-field"
-                    v-model="searchQuery"
-                    name="search"
-                    type="search"
-                    placeholder="Search for articles and categories"
-                />
-            </form>
+                <form action="#" method="GET">
+                    <label for="search" class="sr-only">Search</label>
+
+                    <div class="relative rounded">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                            <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                        </div>
+
+                        <input
+                            type="search"
+                            v-model="searchQuery"
+                            id="search"
+                            placeholder="Search for articles and categories"
+                            class="block w-full rounded border-0 py-3 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-2-- sm:text-sm sm:leading-6"
+                        />
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
-    <main class="py-10">
-        <SearchResults
-            v-if="searchQuery"
-            :searchQuery="searchQuery"
-            :searchResults="searchResults"
-            :loadingResults="loadingResults"
-        ></SearchResults>
+    <main class="px-6">
+        <div class="max-w-screen-xl flex flex-col gap-y-6 mx-auto py-8">
+            <SearchResults
+                v-if="searchQuery"
+                :searchQuery="searchQuery"
+                :searchResults="searchResults"
+                :loadingResults="loadingResults"
+            ></SearchResults>
 
-        <HelpCenter v-else :categories="categories"></HelpCenter>
+            <HelpCenter v-else :categories="categories"></HelpCenter>
+        </div>
     </main>
 </template>

@@ -43,25 +43,17 @@ defineProps({
 </script>
 
 <template>
-    <h3 class="text-xl">Help Center</h3>
-
     <div
-        class="mt-4 divide-y divide-gray-100 overflow-hidden rounded-lg bg-gray-100 shadow sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0"
+        class="overflow-hidden rounded bg-gray-200 shadow-sm ring-1 ring-black/5 sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0"
     >
         <div
             v-for="(category, categoryId) in categories"
             :key="category.id"
-            :class="[
-                categoryId === 0 ? 'rounded-tl-lg rounded-tr-lg sm:rounded-tr-none' : '',
-                categoryId === 1 ? 'sm:rounded-tr-lg' : '',
-                categoryId === categories.length - 2 ? 'sm:rounded-bl-lg' : '',
-                categoryId === categories.length - 1 ? 'rounded-bl-lg rounded-br-lg sm:rounded-bl-none' : '',
-                'group relative bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary-500',
-            ]"
+            class="group relative bg-white p-6 focus-within:bg-gray-50"
         >
             <span v-if="category.icon"
                   v-html="category.icon"
-                  class="pointer-events-none absolute top-6 text-primary-600 dark:text-primary-400"
+                  class="pointer-events-none absolute top-6 text-primary-700"
                   aria-hidden="true"
             >
             </span>
@@ -77,7 +69,7 @@ defineProps({
                 </p>
             </div>
             <span
-                class="pointer-events-none absolute right-6 top-6 text-gray-300 group-hover:text-primary-400"
+                class="pointer-events-none absolute right-6 top-6 text-gray-300 transition group-hover:text-primary-500"
                 aria-hidden="true"
             >
                 <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
@@ -87,5 +79,7 @@ defineProps({
                 </svg>
             </span>
         </div>
+
+        <div v-show="(categories.length % 2) === 1" class="hidden sm:block bg-white"></div>
     </div>
 </template>

@@ -41,6 +41,7 @@ use Spatie\LaravelSettings\Events\SettingsSaved;
 use AdvisingApp\IntegrationAI\Settings\AISettings;
 use AdvisingApp\Assistant\Actions\UpdateAiAssistant;
 use AdvisingApp\Assistant\DataTransferObjects\AiAssistantUpdateData;
+use AdvisingApp\Assistant\Actions\CreateDefaultInstitutionAiAssistant;
 
 class HandleSettingsSaved implements ShouldQueue
 {
@@ -48,7 +49,9 @@ class HandleSettingsSaved implements ShouldQueue
     {
         match (true) {
             $event->settings instanceof AISettings => resolve(UpdateAiAssistant::class)->from(
-                AiAssistantUpdateData::createFromSettings($event->settings)
+                // Might make sense to create the default assistant at some point other than this, if this is first interaction
+                assistantId: resolve(AISettings::class)->assistant_id ?? resolve(CreateDefaultInstitutionAiAssistant::class)->create(),
+                data: AiAssistantUpdateData::createFromSettings($event->settings)
             ),
             default => null,
         };

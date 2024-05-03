@@ -76,6 +76,10 @@ it('will create appropriate permissions for all models', function () {
         'name' => 'user.*.view',
         'guard_name' => 'web',
     ]);
+
+    assertDatabaseHas('permission_groups', [
+        'name' => 'User',
+    ]);
 });
 
 it('will create appropriate custom permissions', function () {
@@ -109,6 +113,10 @@ it('will create appropriate custom permissions', function () {
     assertDatabaseHas('permissions', [
         'name' => 'new-module.dashboard.queries',
         'guard_name' => 'api',
+    ]);
+
+    assertDatabaseHas('permission_groups', [
+        'name' => 'New Module',
     ]);
 
     expect(Permission::get())->toHaveCount(2);

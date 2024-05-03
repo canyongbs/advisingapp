@@ -954,6 +954,47 @@ namespace AdvisingApp\Application\Models{
 
 namespace AdvisingApp\Assistant\Models{
 /**
+ * AdvisingApp\Assistant\Models\AiAssistant
+ *
+ * @property string $id
+ * @property string|null $assistant_id
+ * @property string $name
+ * @property \AdvisingApp\Assistant\Enums\AiAssistantType|null $type
+ * @property string|null $description
+ * @property string|null $instructions
+ * @property string|null $knowledge
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChat> $assistantChats
+ * @property-read int|null $assistant_chats_count
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant default()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereAssistantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereInstructions($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereKnowledge($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperAiAssistant {}
+}
+
+namespace AdvisingApp\Assistant\Models{
+/**
  * AdvisingApp\Assistant\Models\AssistantChat
  *
  * @property string $id
@@ -963,8 +1004,9 @@ namespace AdvisingApp\Assistant\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property string|null $assistant_id
  * @property string|null $thread_id
+ * @property string|null $ai_assistant_id
+ * @property-read \AdvisingApp\Assistant\Models\AiAssistant|null $assistant
  * @property-read \AdvisingApp\Assistant\Models\AssistantChatFolder|null $folder
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChatMessage> $messages
  * @property-read int|null $messages_count
@@ -974,8 +1016,8 @@ namespace AdvisingApp\Assistant\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereAiAssistantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereAssistantChatFolderId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereAssistantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereId($value)
@@ -1308,8 +1350,10 @@ namespace AdvisingApp\Authorization\Models{
  * @property string $guard_name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $group_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\Authorization\Models\PermissionGroup $group
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Permission> $permissions
  * @property-read int|null $permissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Role> $roles
@@ -1327,6 +1371,7 @@ namespace AdvisingApp\Authorization\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Permission role($roles, $guard = null)
  * @method static \Illuminate\Database\Eloquent\Builder|Permission web()
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission whereGroupId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereGuardName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereName($value)
@@ -1335,6 +1380,34 @@ namespace AdvisingApp\Authorization\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperPermission {}
+}
+
+namespace AdvisingApp\Authorization\Models{
+/**
+ * AdvisingApp\Authorization\Models\PermissionGroup
+ *
+ * @property string $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Permission> $permissions
+ * @property-read int|null $permissions_count
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|PermissionGroup withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperPermissionGroup {}
 }
 
 namespace AdvisingApp\Authorization\Models{

@@ -87,7 +87,8 @@ class SurveySubmission extends Submission
             'submission_id',
             'field_id',
         )
-            ->withPivot(['id', 'response']);
+            ->withPivot(['id', 'response'])
+            ->using(SurveyFieldSubmission::class);
     }
 
     public function deliverRequest(): void

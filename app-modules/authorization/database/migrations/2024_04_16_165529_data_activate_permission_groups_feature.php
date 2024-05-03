@@ -34,14 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Actions;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\IntegrationAI\Settings\AISettings;
-
-class GetAiAssistant
-{
-    public function get(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return resolve(AISettings::class)->assistant_id ?? resolve(CreateAiAssistant::class)->create();
+        Feature::activate('permission-groups');
     }
-}
+};

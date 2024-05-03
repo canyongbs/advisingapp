@@ -52,6 +52,7 @@ class AssistantChat extends BaseModel
     use SoftDeletes;
 
     protected $fillable = [
+        'ai_assistant_id',
         'assistant_id',
         'name',
         'thread_id',
@@ -60,6 +61,11 @@ class AssistantChat extends BaseModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function assistant(): BelongsTo
+    {
+        return $this->belongsTo(AiAssistant::class, 'ai_assistant_id');
     }
 
     public function messages(): HasMany

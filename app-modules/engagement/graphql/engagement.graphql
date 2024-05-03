@@ -91,8 +91,39 @@ input CreateEngagementSMSInput {
         @rules(apply: ["required", "in:student,prospect"])
 }
 
+input CreateEngagementEmailInput {
+    subject: String! @rules(apply: ["required", "string", "max:255"])
+
+    body: String! @rules(apply: ["required", "string", "max:65535"])
+
+    scheduled: Boolean
+
+    deliver_at: DateTime @rules(apply: ["required_if:scheduled,true"])
+
+    recipient_id: EducatableId!
+        @rules(
+            apply: [
+                "required"
+                "AdvisingApp\\Engagement\\GraphQL\\Rules\\RecipientIdExists"
+            ]
+        )
+
+    recipient_type: EducatableType!
+        @rules(apply: ["required", "in:student,prospect"])
+}
+
 input UpdateEngagementSMSInput {
-    body: String @rules(apply: ["required", "string", "max:320"])
+    body: String @rules(apply: ["string", "max:320"])
+
+    scheduled: Boolean
+
+    deliver_at: DateTime @rules(apply: ["required_if:scheduled,true"])
+}
+
+input UpdateEngagementEmailInput {
+    subject: String @rules(apply: ["string", "max:255"])
+
+    body: String @rules(apply: ["string", "max:65535"])
 
     scheduled: Boolean
 
@@ -113,6 +144,23 @@ type EngagementMutations {
         @canFind(ability: "update", find: "id")
         @field(
             resolver: "AdvisingApp\\Engagement\\GraphQL\\Mutations\\UpdateSMS"
+        )
+
+    sendEmail(input: CreateEngagementEmailInput! @spread): Engagement!
+        @canResolved(ability: "create")
+        @field(
+            resolver: "AdvisingApp\\Engagement\\GraphQL\\Mutations\\SendEmail"
+        )
+
+    updateEmail(
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:engagements"])
+        input: UpdateEngagementEmailInput! @spread
+    ): Engagement
+        @canFind(ability: "update", find: "id")
+        @field(
+            resolver: "AdvisingApp\\Engagement\\GraphQL\\Mutations\\UpdateEmail"
         )
 
     delete(

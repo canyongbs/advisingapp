@@ -153,6 +153,8 @@ class ManageLicenseSettings extends SettingsPage
                                 ->afterStateUpdated(fn (Toggle $component, $state) => $state ? $component->state(false) && $this->mountAction('enableExperimentalReporting') : null),
                             Toggle::make('data.addons.scheduleAndAppointments')
                                 ->label('Schedule & Appointments'),
+                            Toggle::make('data.addons.customAiAssistants')
+                                ->label('Custom AI Assistants'),
                         ]
                     ),
             ])

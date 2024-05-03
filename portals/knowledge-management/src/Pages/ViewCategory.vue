@@ -35,8 +35,10 @@
 import { defineProps, ref, watch, onMounted } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
-import Loading from '@/Components/Loading.vue';
+import AppLoading from '@/Components/AppLoading.vue';
 import { consumer } from '@/Services/Consumer.js';
+import { Bars3Icon } from "@heroicons/vue/24/outline/index.js";
+import { ChevronRightIcon, XMarkIcon } from "@heroicons/vue/20/solid/index.js";
 
 const route = useRoute();
 
@@ -87,33 +89,68 @@ function getData() {
 </script>
 
 <template>
-    <div>
-        <div v-if="loadingResults">
-            <Loading />
-        </div>
-        <div v-else>
-            <main class="py-10">
-                <Breadcrumbs
-                    :currentCrumb="category.name"
-                    :breadcrumbs="[{ name: 'Help Center', route: 'home' }]"
-                ></Breadcrumbs>
+    <div
+        class="sticky top-0 z-40 flex flex-col items-center bg-gray-50"
+    >
+        <button class="w-full p-3 lg:hidden" type="button" @click="$emit('sidebarOpened')">
+            <span class="sr-only">Open sidebar</span>
 
-                <div class="border border-gray-200 rounded p-4 shadow">
-                    <h4 class="text-lg font-bold text-gray-900">Articles</h4>
-                    <div v-if="articles.length > 0">
-                        <ul role="list" class="divide-y divide-gray-200 mt-2">
-                            <li v-for="article in articles" :key="article.id" class="py-4 border-gray-200">
-                                <router-link :to="{ name: 'view-article', params: { articleId: article.id } }">
-                                    <h5 class="text-md text-gray-800">{{ article.name }}</h5>
-                                </router-link>
-                            </li>
-                        </ul>
-                    </div>
-                    <div v-else>
-                        <p class="text-gray-500 mt-2">No articles found for {{ category.name }}</p>
-                    </div>
+            <Bars3Icon class="h-6 w-6 text-gray-900"></Bars3Icon>
+        </button>
+
+        <div class="w-full px-6">
+            <div class="max-w-screen-xl flex flex-col gap-y-6 mx-auto py-8">
+                <div v-if="loadingResults">
+                    <AppLoading />
                 </div>
-            </main>
+                <div v-else>
+                    <main class="flex flex-col gap-8">
+                        <Breadcrumbs
+                            currentCrumb="Categories"
+                        ></Breadcrumbs>
+
+                        <div class="flex flex-col gap-6">
+                            <h2 class="text-2xl font-bold text-primary-950">
+                                {{ category.name }}
+                            </h2>
+
+                            <div class="flex flex-col divide-y ring-1 ring-black/5 shadow-sm px-3 pt-3 pb-1 rounded bg-white">
+                                <h3 class="text-lg font-semibold text-gray-800 px-3 pt-1 pb-3">Articles</h3>
+
+                                <div v-if="articles.length > 0">
+                                    <ul role="list" class="divide-y">
+                                        <li
+                                            v-for="article in articles"
+                                            :key="article.id"
+                                        >
+                                            <router-link
+                                                :to="{
+                                                    name: 'view-article',
+                                                    params: { categoryId: article.categoryId, articleId: article.id },
+                                                }"
+                                                class="group p-3 flex items-start text-sm font-medium text-gray-700"
+                                            >
+                                                <h4>
+                                                    {{ article.name }}
+                                                </h4>
+
+                                                <ChevronRightIcon class="opacity-0 h-5 w-5 text-primary-600 transition-all group-hover:translate-x-2 group-hover:opacity-100" />
+                                            </router-link>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div v-else class="p-3 flex items-start gap-2">
+                                    <XMarkIcon class="h-5 w-5 text-gray-400" />
+
+                                    <p class="text-gray-600 text-sm font-medium">
+                                        No articles found in this category.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </div>
         </div>
     </div>
 </template>

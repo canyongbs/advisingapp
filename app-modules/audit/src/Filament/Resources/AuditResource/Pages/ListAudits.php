@@ -38,12 +38,16 @@ namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
 use App\Models\User;
 use Filament\Tables\Table;
+use Filament\Actions\ExportAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\ExportBulkAction;
+use AdvisingApp\Audit\Filament\Exports\AuditExporter;
 use AdvisingApp\Audit\Actions\Finders\AuditableModels;
 use AdvisingApp\Audit\Filament\Resources\AuditResource;
 
@@ -80,11 +84,19 @@ class ListAudits extends ListRecords
             ->actions([
                 ViewAction::make(),
             ])
-            ->bulkActions([]);
+            ->bulkActions([
+                BulkActionGroup::make([
+                    ExportBulkAction::make()
+                        ->exporter(AuditExporter::class),
+                ]),
+            ]);
     }
 
     protected function getHeaderActions(): array
     {
-        return [];
+        return [
+            ExportAction::make()
+                ->exporter(AuditExporter::class),
+        ];
     }
 }

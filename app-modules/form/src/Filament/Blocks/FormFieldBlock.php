@@ -90,9 +90,10 @@ abstract class FormFieldBlock extends TiptapBlock
         return [];
     }
 
-    public static function getSubmissionState(mixed $response): array
+    public static function getSubmissionState(SubmissibleField $field, mixed $response): array
     {
         return [
+            'field' => $field,
             'response' => $response,
         ];
     }

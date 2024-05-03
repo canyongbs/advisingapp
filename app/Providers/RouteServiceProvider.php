@@ -61,6 +61,9 @@ class RouteServiceProvider extends ServiceProvider
         $this->configureRateLimiting();
 
         $this->routes(function () {
+            Route::get('/ping', fn () => response()->json(['message' => 'pong']))
+                ->name('ping');
+
             Route::prefix('landlord/api')
                 ->middleware('landlord-api')
                 ->namespace($this->namespace)
