@@ -48,6 +48,9 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
+use AdvisingApp\Engagement\Models\EngagementFile;
+use Filament\Tables\Actions\Action;
+use Illuminate\Support\Facades\Storage;
 
 class EngagementFilesRelationManager extends RelationManager
 {
@@ -82,7 +85,7 @@ class EngagementFilesRelationManager extends RelationManager
                 Action::make('download')
                     ->icon('heroicon-o-arrow-down-on-square')
                     ->action(
-                      fn (EngagementFile $record) => \Storage::disk('s3')
+                      fn (EngagementFile $record) => Storage::disk('s3')
                                                 ->download(
                                                         $record
                                                         ->getMedia('file')
