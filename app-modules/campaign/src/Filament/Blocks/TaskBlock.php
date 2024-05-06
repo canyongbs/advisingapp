@@ -81,9 +81,9 @@ class TaskBlock extends CampaignActionBlock
                 ->label('When should the journey step be executed?')
                 ->columnSpanFull()
                 ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
-                ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
+                ->hintIconTooltip('This time is set in ' . app(CampaignSettings::class)->getActionExecutionTimezoneLabel() . '.')
                 ->lazy()
-                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
+                ->helperText(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
                 ->required()
                 ->minDate(now()),
         ];

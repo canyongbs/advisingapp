@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns;
 
-use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Components\Grid;
 use AdvisingApp\Form\Enums\Rounding;
@@ -66,9 +65,6 @@ trait HasSharedEventFormConfiguration
 {
     public function fields(): array
     {
-        /** @var User $user */
-        $user = auth()->user();
-
         return [
             TextInput::make('title')
                 ->string()
@@ -84,10 +80,8 @@ trait HasSharedEventFormConfiguration
                 ->minValue(1)
                 ->nullable(),
             DateTimePicker::make('starts_at')
-                ->timezone($user->timezone)
                 ->required(),
             DateTimePicker::make('ends_at')
-                ->timezone($user->timezone)
                 ->required(),
             Fieldset::make('Registration Form')
                 ->relationship('eventRegistrationForm')

@@ -34,32 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Settings;
+namespace App\Filament\Pages;
 
+use Filament\Forms\Form;
 use Laravel\Pennant\Feature;
+use Filament\Pages\SettingsPage;
 use App\Settings\DisplaySettings;
-use Spatie\LaravelSettings\Settings;
+use App\Filament\Clusters\GlobalSettings;
+use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
-class CampaignSettings extends Settings
+class ManageDisplaySettings extends SettingsPage
 {
-    public ?string $action_execution_timezone = null;
+    protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 
-    public static function group(): string
+    protected static ?string $navigationLabel = 'Display';
+
+    protected static ?int $navigationSort = 70;
+
+    protected static string $settings = DisplaySettings::class;
+
+    protected static ?string $cluster = GlobalSettings::class;
+
+    public static function canAccess(): bool
     {
-        return 'campaign';
+        if (! Feature::active('display-settings')) {
+            return false;
+        }
+
+        return auth()->user()->can('display_settings.manage');
     }
 
-    public function getActionExecutionTimezone(): string
+    public function form(Form $form): Form
     {
-        return $this->action_execution_timezone ?? (Feature::active('display-settings') ? app(DisplaySettings::class)->timezone : null) ?? config('app.timezone');
-    }
-
-    public function getActionExecutionTimezoneLabel(): string
-    {
-        return str_replace(
-            ['/', '_', 'St '],
-            [', ', ' ', 'St. '],
-            $this->getActionExecutionTimezone()
-        );
+        return $form
+            ->schema([
+                TimezoneSelect::make('timezone')
+                    ->helperText('Default: ' . config('app.timezone')),
+            ]);
     }
 }

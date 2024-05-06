@@ -42,7 +42,9 @@ use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
+use Laravel\Pennant\Feature;
 use Filament\Facades\Filament;
+use App\Settings\DisplaySettings;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Grid;
 use Illuminate\Support\Facades\Hash;
@@ -246,7 +248,19 @@ class EditProfile extends Page
                             ->hidden($user->is_external),
                         TimezoneSelect::make('timezone')
                             ->required()
-                            ->selectablePlaceholder(false),
+                            ->selectablePlaceholder(false)
+                            ->helperText(function (): string {
+                                $timezone = config('app.timezone');
+
+                                if (
+                                    Feature::active('display-settings') &&
+                                    filled($displaySettingsTimezone = app(DisplaySettings::class)->timezone)
+                                ) {
+                                    $timezone = $displaySettingsTimezone;
+                                }
+
+                                return "Default: {$timezone}";
+                            }),
                     ]),
                 Section::make('Connected Accounts')
                     ->description('Disconnect your external accounts.')

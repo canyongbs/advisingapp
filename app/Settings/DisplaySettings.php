@@ -34,32 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Settings;
+namespace App\Settings;
 
-use Laravel\Pennant\Feature;
-use App\Settings\DisplaySettings;
 use Spatie\LaravelSettings\Settings;
 
-class CampaignSettings extends Settings
+class DisplaySettings extends Settings
 {
-    public ?string $action_execution_timezone = null;
+    public ?string $timezone = null;
 
     public static function group(): string
     {
-        return 'campaign';
+        return 'display';
     }
 
-    public function getActionExecutionTimezone(): string
+    public function getTimezone(): string
     {
-        return $this->action_execution_timezone ?? (Feature::active('display-settings') ? app(DisplaySettings::class)->timezone : null) ?? config('app.timezone');
+        if (filled($userTimezone = auth()->user()->timezone)) {
+            return $userTimezone;
+        }
+
+        if (filled($this->timezone)) {
+            return $this->timezone;
+        }
+
+        return config('app.timezone');
     }
 
-    public function getActionExecutionTimezoneLabel(): string
+    public function getTimezoneLabel(): string
     {
         return str_replace(
             ['/', '_', 'St '],
             [', ', ' ', 'St. '],
-            $this->getActionExecutionTimezone()
+            $this->getTimezone(),
         );
     }
 }
