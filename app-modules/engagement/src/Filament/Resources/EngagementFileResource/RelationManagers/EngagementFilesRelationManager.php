@@ -79,6 +79,17 @@ class EngagementFilesRelationManager extends RelationManager
                 CreateAction::make(),
             ])
             ->actions([
+                Action::make('download')
+                    ->icon('heroicon-o-arrow-down-on-square')
+                    ->action(
+                      fn (EngagementFile $record) => \Storage::disk('s3')
+                                                ->download(
+                                                        $record
+                                                        ->getMedia('file')
+                                                        ->first()
+                                                        ->getPathRelativeToRoot()
+                                                )
+                    ),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
