@@ -2,21 +2,21 @@
 
 namespace App\Filament\Clusters\GlobalSettings\Pages;
 
-use App\Filament\Clusters\GlobalSettings;
+use Throwable;
 use App\Models\Tenant;
-use App\Multitenancy\DataTransferObjects\TenantConfig;
-use App\Multitenancy\DataTransferObjects\TenantMailConfig;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
-use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\CanUseDatabaseTransactions;
-use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\DB;
-use Throwable;
+use Filament\Forms\ComponentContainer;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use App\Filament\Clusters\GlobalSettings;
+use Filament\Forms\Concerns\InteractsWithForms;
+use App\Multitenancy\DataTransferObjects\TenantConfig;
+use Filament\Pages\Concerns\CanUseDatabaseTransactions;
+use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
+use App\Multitenancy\DataTransferObjects\TenantMailConfig;
 
 /**
  * @property ComponentContainer $form
@@ -41,13 +41,13 @@ class AmazonS3 extends Page implements HasForms
 
     protected static ?int $navigationSort = 100;
 
+    public ?array $data = [];
+
     public static function canAccess(): bool
     {
         // TODO: Add a custom permissions that is checked here
         return true;
     }
-
-    public ?array $data = [];
 
     public function mount(): void
     {
@@ -68,11 +68,6 @@ class AmazonS3 extends Page implements HasForms
         $this->callHook('afterFill');
     }
 
-    protected function mutateFormDataBeforeFill(array $data): array
-    {
-        return $data;
-    }
-
     public function form(Form $form): Form
     {
         return $form
@@ -85,7 +80,7 @@ class AmazonS3 extends Page implements HasForms
                     ->label('From Name')
                     ->string()
                     ->maxLength(150)
-                    ->required()
+                    ->required(),
             ])
             ->statePath('data');
     }
@@ -136,8 +131,11 @@ class AmazonS3 extends Page implements HasForms
                 ->danger()
                 ->send();
         }
+    }
 
-
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        return $data;
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
