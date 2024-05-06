@@ -37,7 +37,6 @@
 namespace AdvisingApp\Task\Histories;
 
 use App\Models\User;
-use Laravel\Pennant\Feature;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use AdvisingApp\Task\Enums\TaskStatus;
@@ -59,12 +58,8 @@ class TaskHistory extends History implements ProvidesATimeline
 
     public static function getTimelineData(Model $forModel): Collection
     {
-        if (Feature::active('educatable-alerts-timeline')) {
-            /* @var Student|Prospect $forModel */
-            return $forModel->taskHistories()->get();
-        }
-
-        return collect();
+        /* @var Student|Prospect $forModel */
+        return $forModel->taskHistories()->get();
     }
 
     public function getFormattedValueForKey(string $key): array
