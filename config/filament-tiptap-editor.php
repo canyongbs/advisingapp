@@ -39,6 +39,7 @@ use FilamentTiptapEditor\Actions\MediaAction;
 return [
     'direction' => 'ltr',
     'max_content_width' => '5xl',
+    'disable_link_as_button' => true,
 
     /*
     |--------------------------------------------------------------------------
