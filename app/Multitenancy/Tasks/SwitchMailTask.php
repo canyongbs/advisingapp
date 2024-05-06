@@ -36,6 +36,11 @@
 
 namespace App\Multitenancy\Tasks;
 
+use App\Notifications\MailMessage;
+use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Spatie\Multitenancy\Models\Tenant;
 use Spatie\Multitenancy\Tasks\SwitchTenantTask;
 
@@ -125,5 +130,18 @@ class SwitchMailTask implements SwitchTenantTask
                 'mail.mailers.smtp.local_domain' => $smtpLocalDomain,
             ]
         );
+
+        app()->forgetInstance('mail.manager');
+        app()->forgetInstance(MailMessage::class);
+        app()->forgetInstance('mail');
+
+        Mail::alwaysFrom(config('mail.from.address'), config('mail.from.name'));
+
+//        collect(get_declared_classes())
+//            ->filter(fn ($className) => is_subclass_of($className, Facade::class))
+//            ->filter(fn ($className) => Str::startsWith($className, 'App') || Str::startsWith($className, 'Facades\\App'))
+//            ->each(fn ($className) => $className::clearResolvedInstance(
+//                $className::getFacadeAccessor()
+//            ));
     }
 }
