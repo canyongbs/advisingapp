@@ -36,8 +36,8 @@
 
 namespace App\Filament\Clusters\GlobalSettings\Pages;
 
-use App\Models\User;
 use Throwable;
+use App\Models\User;
 use App\Models\Tenant;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
