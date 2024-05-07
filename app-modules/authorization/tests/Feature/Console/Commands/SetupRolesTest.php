@@ -77,19 +77,59 @@ $createPermissions = function (array $permissions) {
     ];
 };
 
-it('will assign custom permissions to roles', function () use ($createPermissions) {
+it('can assign model permissions to roles', function () use ($createPermissions) {
     $registry = app(AuthorizationRoleRegistry::class);
 
-    [$permissions, $testPermissionId] = $createPermissions(['test']);
+    [$permissions, $testOnePermissionId, $testTwoPermissionId] = $createPermissions(['test.one', 'test.two', 'test.three', 'another.one']);
+
+    $roles = [];
+
+    $registry->registerRole('Test Role', [
+        'model' => [
+            'test' => [
+                'one',
+                'two',
+            ],
+        ],
+    ], $roles, $permissions);
+
+    expect($roles['Test Role'])
+        ->toBe([$testOnePermissionId, $testTwoPermissionId]);
+});
+
+it('can assign all model permissions to roles', function () use ($createPermissions) {
+    $registry = app(AuthorizationRoleRegistry::class);
+
+    [$permissions, $testOnePermissionId, $testTwoPermissionId, $testThreePermissionId] = $createPermissions(['test.one', 'test.two', 'test.three', 'another.one']);
+
+    $roles = [];
+
+    $registry->registerRole('Test Role', [
+        'model' => [
+            'test' => [
+                '*',
+            ],
+        ],
+    ], $roles, $permissions);
+
+    expect($roles['Test Role'])
+        ->toBe([$testOnePermissionId, $testTwoPermissionId, $testThreePermissionId]);
+});
+
+it('can assign custom permissions to roles', function () use ($createPermissions) {
+    $registry = app(AuthorizationRoleRegistry::class);
+
+    [$permissions, $testOnePermissionId, $testTwoPermissionId] = $createPermissions(['testOne', 'testTwo', 'testThree']);
 
     $roles = [];
 
     $registry->registerRole('Test Role', [
         'custom' => [
-            'test',
+            'testOne',
+            'testTwo',
         ],
     ], $roles, $permissions);
 
     expect($roles['Test Role'])
-        ->toBe([$testPermissionId]);
+        ->toBe([$testOnePermissionId, $testTwoPermissionId]);
 });
