@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Authorization;
 
+use Exception;
+use App\Models\Tenant;
 use Illuminate\Support\Facades\File;
 use AdvisingApp\Authorization\Models\Permission;
 
@@ -51,6 +53,10 @@ class AuthorizationRoleRegistry
 
     public function __construct()
     {
+        if (! Tenant::current()) {
+            throw new Exception('No current tenant set');
+        }
+
         $this->webPermissions = Permission::query()
             ->where('guard_name', 'web')
             ->pluck('id', 'name')
@@ -98,7 +104,17 @@ class AuthorizationRoleRegistry
 
             $permissions = require $file->getPathname();
 
+            if ($permissions === ['*']) {
+                $roleRegistry[$roleName] = array_values($permissionRegistry);
+
+                continue;
+            }
+
             foreach ($permissions['model'] ?? [] as $model => $operations) {
+                if (is_string($operations)) {
+                    dd($operations, $module, $path);
+                }
+
                 foreach ($operations as $operation) {
                     if ($operation === '*') {
                         foreach ($permissionRegistry as $permissionName => $permissionId) {

@@ -52,7 +52,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Spatie\Multitenancy\Concerns\UsesMultitenancyConfig;
-use AdvisingApp\Authorization\Console\Commands\SyncRoles;
+use AdvisingApp\Authorization\Console\Commands\SetupRoles;
 use App\DataTransferObjects\LicenseManagement\LicenseData;
 use App\Multitenancy\DataTransferObjects\TenantMailConfig;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -114,7 +114,7 @@ abstract class TestCase extends BaseTestCase
             ]);
 
             Artisan::call(
-                command: SyncRoles::class,
+                command: SetupRoles::class,
                 parameters: [
                     '--tenant' => $tenant->id,
                 ]

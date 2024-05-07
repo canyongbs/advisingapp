@@ -69,7 +69,7 @@ class SetupRoles extends Command
                 ], $permissionIds));
         }
 
-        foreach ($roleRegistry->getApiRoles() as $module => $roles) {
+        foreach ($roleRegistry->getApiRoles() as $roleName => $permissionIds) {
             $roleId = Role::create([
                 'name' => $roleName,
                 'guard_name' => 'api',

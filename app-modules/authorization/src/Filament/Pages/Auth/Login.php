@@ -38,7 +38,6 @@ namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
 use Filament\Actions\Action;
 use Filament\Pages\Auth\Login as FilamentLogin;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 
@@ -48,8 +47,6 @@ class Login extends FilamentLogin
 
     protected function getSsoFormActions(): array
     {
-        app(AuthorizationRoleRegistry::class);
-
         $ssoActions = [];
 
         $azureSsoSettings = app(AzureSsoSettings::class);

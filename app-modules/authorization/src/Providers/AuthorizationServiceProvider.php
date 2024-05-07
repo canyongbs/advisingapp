@@ -59,7 +59,7 @@ class AuthorizationServiceProvider extends ServiceProvider
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AuthorizationPlugin()));
 
-        $this->app->singleton(AuthorizationRoleRegistry::class, function () {
+        $this->app->scoped(AuthorizationRoleRegistry::class, function () {
             return new AuthorizationRoleRegistry();
         });
 

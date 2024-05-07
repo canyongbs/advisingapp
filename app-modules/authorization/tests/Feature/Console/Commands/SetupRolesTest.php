@@ -34,10 +34,14 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Actions\CreateRoles;
+use Illuminate\Support\Facades\DB;
 
-it('will create the roles defined in our config', function () {
-    resolve(CreateRoles::class)->handle();
+beforeEach(function () {
+    DB::table('roles')->truncate();
+    DB::table('model_has_roles')->truncate();
+    DB::table('permissions')->truncate();
+    DB::table('role_has_permissions')->truncate();
+    DB::table('model_has_permissions')->truncate();
+});
 
-    // TODO Check for roles that should be created from various modules
-})->skip();
+it('will assign permissions to roles as defined in our configuration', function () {});

@@ -2,7 +2,4 @@
 
 namespace App\Registries;
 
-class RoleRegistriesIndex
-{
-
-}
+class RoleRegistriesIndex {}
