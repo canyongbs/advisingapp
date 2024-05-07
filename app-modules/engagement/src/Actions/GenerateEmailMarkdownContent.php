@@ -51,7 +51,8 @@ class GenerateEmailMarkdownContent
                 'mergeTag' => ' ' . $this->text($mergeData[$component['attrs']['id'] ?? null] ?? '', $component),
                 'orderedList' => PHP_EOL . PHP_EOL . $this->orderedList($component, $mergeData),
                 'text' => ' ' . $this->text($component['text'] ?? '', $component),
-                'hardBreak' => PHP_EOL,
+                'hardBreak' => '  ' . PHP_EOL,
+                default => '',
             };
         }
 
