@@ -34,43 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Survey\Filament\Blocks;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\EmailFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\NumberFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
-
-class SurveyFieldBlockRegistry
-{
-    /**
-     * @return array<class-string<FormFieldBlock>>
-     */
-    public static function get(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            EducatableEmailFormFieldBlock::class,
-            TextInputSurveyFieldBlock::class,
-            TextAreaSurveyFieldBlock::class,
-            SelectSurveyFieldBlock::class,
-            RadioSurveyFieldBlock::class,
-            CheckboxesSurveyFieldBlock::class,
-            EmailFormFieldBlock::class,
-            NumberFormFieldBlock::class,
-            LikertScaleSurveyBlock::class,
-            SliderSurveyFieldBlock::class,
-            RatingScaleSurveyFieldBlock::class,
-        ];
+        Feature::activate('introduce-checkboxes-form-field');
     }
 
-    /**
-     * @return array<string, class-string<FormFieldBlock>>
-     */
-    public static function keyByType(): array
+    public function down(): void
     {
-        /** @var FormFieldBlock $block */
-        return collect(static::get())
-            ->mapWithKeys(fn (string $block): array => [$block::type() => $block])
-            ->all();
+        Feature::deactivate('introduce-checkboxes-form-field');
     }
-}
+};

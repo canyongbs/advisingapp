@@ -53,6 +53,7 @@ class FormFieldBlockRegistry
             TimeFormFieldBlock::class,
             AgreementFormFieldBlock::class,
             SignatureFormFieldBlock::class,
+            CheckboxesFormFieldBlock::class,
             EmailFormFieldBlock::class,
             NumberFormFieldBlock::class,
             PhoneFormFieldBlock::class,
