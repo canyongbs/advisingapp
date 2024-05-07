@@ -2,6 +2,7 @@
 
 namespace App\Filament\Clusters\GlobalSettings\Pages;
 
+use App\Models\User;
 use Throwable;
 use App\Models\Tenant;
 use Filament\Forms\Form;
@@ -45,8 +46,10 @@ class AmazonS3 extends Page implements HasForms
 
     public static function canAccess(): bool
     {
-        // TODO: Add a custom permissions that is checked here
-        return true;
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('manage_s3_settings');
     }
 
     public function mount(): void
