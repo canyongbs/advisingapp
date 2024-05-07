@@ -76,7 +76,6 @@ use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\Contracts\Servic
 
 /**
  * @property-read Student|Prospect $respondent
- *
  * @mixin IdeHelperServiceRequest
  */
 class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable, ExecutableFromACampaignAction

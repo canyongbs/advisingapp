@@ -49,7 +49,6 @@ use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 
 /**
  * @property Student|Prospect|null $author
- *
  * @mixin IdeHelperSurveySubmission
  */
 class SurveySubmission extends Submission

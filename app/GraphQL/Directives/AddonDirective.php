@@ -53,19 +53,19 @@ use Nuwave\Lighthouse\Support\Contracts\TypeManipulator;
 use Nuwave\Lighthouse\Support\Contracts\FieldManipulator;
 use Nuwave\Lighthouse\Support\Contracts\TypeExtensionManipulator;
 
-class FeatureDirective extends BaseDirective implements TypeManipulator, TypeExtensionManipulator, FieldManipulator
+class AddonDirective extends BaseDirective implements TypeManipulator, TypeExtensionManipulator, FieldManipulator
 {
     public static function definition(): string
     {
         return /** @lang GraphQL */ <<<'GRAPHQL'
 """
-Removes the item from the schema if the provided features are not enabled.
+Removes the item from the schema if the provided addons are not enabled.
 """
-directive @feature(
+directive @addon(
   """
-  Specify which features to check
+  Specify which addons to check
   """
-  feature: [String!]
+  name: [String!]
 ) repeatable on FIELD_DEFINITION | OBJECT
 GRAPHQL;
     }
@@ -121,7 +121,7 @@ GRAPHQL;
 
     protected function shouldHide(): bool
     {
-        $feature = Feature::from($this->directiveArgValue('feature'));
+        $feature = Feature::from($this->directiveArgValue('name'));
 
         return Gate::denies($feature->getGateName());
     }

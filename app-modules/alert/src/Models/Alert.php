@@ -62,7 +62,6 @@ use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
  * @property-read Student|Prospect $concern
- *
  * @mixin IdeHelperAlert
  */
 class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction, HasHistory

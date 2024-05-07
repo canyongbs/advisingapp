@@ -50,7 +50,6 @@ use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 
 /**
  * @property Student|Prospect|null $author
- *
  * @mixin IdeHelperServiceRequestFormSubmission
  */
 class ServiceRequestFormSubmission extends Submission
