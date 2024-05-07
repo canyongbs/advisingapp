@@ -47,7 +47,7 @@ enum Integration: string implements HasLabel
     public function settings(): IntegrationSettings
     {
         return app(match ($this) {
-            self::Twilio => TwilioSettings::class,
+            Integration::Twilio => TwilioSettings::class,
         });
     }
 
@@ -84,7 +84,7 @@ enum Integration: string implements HasLabel
     public function getLabel(): string
     {
         return match ($this) {
-            self::Twilio => 'Twilio',
+            Integration::Twilio => 'Twilio',
         };
     }
 }

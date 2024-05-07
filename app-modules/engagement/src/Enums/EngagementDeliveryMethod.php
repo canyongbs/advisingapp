@@ -60,19 +60,18 @@ enum EngagementDeliveryMethod: string implements HasLabel
 
     public function getCaseDisabled(): bool
     {
-        return match ($this) {
-            EngagementDeliveryMethod::Sms => Integration::Twilio->isOff(),
-            default => false,
-        };
+        return $this->caseDependsOnIntegration()?->isOff() ?? false;
     }
 
     public function getLabelForIntegrationState(): string
     {
-        return $this->getCaseDisabled()
+        $integration = $this->caseDependsOnIntegration();
+
+        return $this->getCaseDisabled() && $integration
             ? sprintf(
                 '%s (%s)',
                 $this->getLabel(),
-                IntegrationException::make(Integration::Twilio)->getMessage()
+                IntegrationException::make($integration)->getMessage()
             )
             : $this->getLabel();
     }
@@ -82,5 +81,13 @@ enum EngagementDeliveryMethod: string implements HasLabel
         return collect(EngagementDeliveryMethod::cases())
             ->mapWithKeys(fn (EngagementDeliveryMethod $method) => [$method->value => $method->getLabelForIntegrationState()])
             ->toArray();
+    }
+
+    private function caseDependsOnIntegration(): ?Integration
+    {
+        return match ($this) {
+            EngagementDeliveryMethod::Sms => Integration::Twilio,
+            default => null,
+        };
     }
 }
