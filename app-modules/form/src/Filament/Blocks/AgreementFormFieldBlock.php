@@ -36,38 +36,43 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
-class FormFieldBlockRegistry
+use Laravel\Pennant\Feature;
+use AdvisingApp\Form\Models\SubmissibleField;
+
+class AgreementFormFieldBlock extends FormFieldBlock
 {
-    /**
-     * @return array<class-string<FormFieldBlock>>
-     */
-    public static function get(): array
+    public string $preview = 'form::blocks.previews.agreement';
+
+    public string $rendered = 'form::blocks.submissions.agreement';
+
+    public ?string $icon = 'heroicon-m-check-circle';
+
+    public static function type(): string
+    {
+        if (Feature::active('rename-checkbox-form-field')) {
+            return 'agreement';
+        }
+
+        return 'checkbox';
+    }
+
+    public function fields(): array
+    {
+        return [];
+    }
+
+    public static function getFormKitSchema(SubmissibleField $field): array
     {
         return [
-            EducatableEmailFormFieldBlock::class,
-            TextInputFormFieldBlock::class,
-            TextAreaFormFieldBlock::class,
-            SelectFormFieldBlock::class,
-            RadioFormFieldBlock::class,
-            DateFormFieldBlock::class,
-            TimeFormFieldBlock::class,
-            AgreementFormFieldBlock::class,
-            SignatureFormFieldBlock::class,
-            EmailFormFieldBlock::class,
-            NumberFormFieldBlock::class,
-            PhoneFormFieldBlock::class,
-            UrlFormFieldBlock::class,
+            '$formkit' => 'checkbox',
+            'label' => $field->label,
+            'name' => $field->getKey(),
+            ...($field->is_required ? ['validation' => 'required'] : []),
         ];
     }
 
-    /**
-     * @return array<string, class-string<FormFieldBlock>>
-     */
-    public static function keyByType(): array
+    public static function getValidationRules(SubmissibleField $field): array
     {
-        /** @var FormFieldBlock $block */
-        return collect(static::get())
-            ->mapWithKeys(fn (string $block): array => [$block::type() => $block])
-            ->all();
+        return ['boolean'];
     }
 }

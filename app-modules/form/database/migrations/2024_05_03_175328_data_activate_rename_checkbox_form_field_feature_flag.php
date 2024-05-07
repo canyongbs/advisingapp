@@ -34,40 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Blocks;
+use Illuminate\Database\Migrations\Migration;
 
-class FormFieldBlockRegistry
-{
-    /**
-     * @return array<class-string<FormFieldBlock>>
-     */
-    public static function get(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            EducatableEmailFormFieldBlock::class,
-            TextInputFormFieldBlock::class,
-            TextAreaFormFieldBlock::class,
-            SelectFormFieldBlock::class,
-            RadioFormFieldBlock::class,
-            DateFormFieldBlock::class,
-            TimeFormFieldBlock::class,
-            AgreementFormFieldBlock::class,
-            SignatureFormFieldBlock::class,
-            EmailFormFieldBlock::class,
-            NumberFormFieldBlock::class,
-            PhoneFormFieldBlock::class,
-            UrlFormFieldBlock::class,
-        ];
+        Feature::activate('rename-checkbox-form-field');
     }
 
-    /**
-     * @return array<string, class-string<FormFieldBlock>>
-     */
-    public static function keyByType(): array
+    public function down(): void
     {
-        /** @var FormFieldBlock $block */
-        return collect(static::get())
-            ->mapWithKeys(fn (string $block): array => [$block::type() => $block])
-            ->all();
+        Feature::deactivate('rename-checkbox-form-field');
     }
-}
+};

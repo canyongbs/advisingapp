@@ -34,40 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Blocks;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Form\Models\SubmissibleField;
-
-class CheckboxFormFieldBlock extends FormFieldBlock
-{
-    public string $preview = 'form::blocks.previews.checkbox';
-
-    public string $rendered = 'form::blocks.submissions.checkbox';
-
-    public ?string $icon = 'heroicon-m-check-circle';
-
-    public static function type(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'checkbox';
+        DB::table('form_fields')
+            ->where('type', 'checkbox')
+            ->update(['type' => 'agreement']);
+
+        DB::table('forms')
+            ->where('content', 'like', '%"type":"checkbox"%')
+            ->eachById(function ($form) {
+                DB::table('forms')
+                    ->where('id', $form->id)
+                    ->update([
+                        'content' => str_replace('"type":"checkbox"', '"type":"agreement"', $form->content),
+                        'updated_at' => now(),
+                    ]);
+            });
     }
 
-    public function fields(): array
+    public function down(): void
     {
-        return [];
-    }
+        DB::table('form_fields')
+            ->where('type', 'agreement')
+            ->update(['type' => 'checkbox']);
 
-    public static function getFormKitSchema(SubmissibleField $field): array
-    {
-        return [
-            '$formkit' => 'checkbox',
-            'label' => $field->label,
-            'name' => $field->getKey(),
-            ...($field->is_required ? ['validation' => 'required'] : []),
-        ];
+        DB::table('forms')
+            ->where('content', 'like', '%"type":"agreement"%')
+            ->eachById(function ($form) {
+                DB::table('forms')
+                    ->where('id', $form->id)
+                    ->update([
+                        'content' => str_replace('"type":"agreement"', '"type":"checkbox"', $form->content),
+                        'updated_at' => now(),
+                    ]);
+            });
     }
-
-    public static function getValidationRules(SubmissibleField $field): array
-    {
-        return ['boolean'];
-    }
-}
+};
