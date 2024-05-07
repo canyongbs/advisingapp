@@ -66,7 +66,7 @@ class SetupRoles extends Command
 
             $rolePermissions = [
                 ...$rolePermissions,
-                array_map(fn (string $permissionId) => [
+                ...array_map(fn (string $permissionId) => [
                     'permission_id' => $permissionId,
                     'role_id' => $roleId,
                 ], $permissionIds),
@@ -81,7 +81,7 @@ class SetupRoles extends Command
 
             $rolePermissions = [
                 ...$rolePermissions,
-                array_map(fn (string $permissionId) => [
+                ...array_map(fn (string $permissionId) => [
                     'permission_id' => $permissionId,
                     'role_id' => $roleId,
                 ], $permissionIds),
