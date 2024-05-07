@@ -38,10 +38,9 @@ namespace App\Multitenancy\Tasks;
 
 use App\Notifications\MailMessage;
 use Illuminate\Contracts\Mail\Factory as MailFactory;
-use Illuminate\Support\Facades\Facade;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Notifications\ChannelManager;
+use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 use Spatie\Multitenancy\Models\Tenant;
 use Spatie\Multitenancy\Tasks\SwitchTenantTask;
 
@@ -132,18 +131,13 @@ class SwitchMailTask implements SwitchTenantTask
             ]
         );
 
-//        app()->forgetInstance('mail.manager');
-//        app()->forgetInstance(MailMessage::class);
-//        app()->forgetInstance('mail');
-//        app()->forgetInstance(MailFactory::class);
-//
-//        Mail::alwaysFrom(config('mail.from.address'), config('mail.from.name'));
+        app()->forgetInstance('mail.manager');
+        app()->forgetInstance(MailMessage::class);
+        app()->forgetInstance('mail');
+        app()->forgetInstance(MailFactory::class);
+        app()->forgetInstance(ChannelManager::class);
+        app()->forgetInstance(MailChannel::class);
 
-//        collect(get_declared_classes())
-//            ->filter(fn ($className) => is_subclass_of($className, Facade::class))
-//            ->filter(fn ($className) => Str::startsWith($className, 'App') || Str::startsWith($className, 'Facades\\App'))
-//            ->each(fn ($className) => $className::clearResolvedInstance(
-//                $className::getFacadeAccessor()
-//            ));
+        Mail::alwaysFrom(config('mail.from.address'), config('mail.from.name'));
     }
 }
