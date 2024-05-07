@@ -72,7 +72,7 @@ class KnowledgeManagementPortalCategoryController extends Controller
                 'description' => $category->description,
             ]),
             'articles' => KnowledgeBaseArticleData::collection(
-                $category->knowledgeBaseItems()
+                $category->knowledgeBaseArticles()
                     ->public()
                     ->get()
                     ->map(function ($item) {

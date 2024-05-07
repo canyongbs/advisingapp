@@ -40,7 +40,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Scopes\SearchBy;
 use App\Http\Controllers\Controller;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
@@ -51,7 +51,7 @@ class KnowledgeManagementPortalSearchController extends Controller
     public function get(Request $request): KnowledgeManagementSearchData
     {
         $itemData = KnowledgeBaseArticleData::collection(
-            KnowledgeBaseItem::query()
+            KnowledgeBaseArticle::query()
                 ->public()
                 ->tap(new SearchBy('title', Str::lower($request->get('search'))))
                 ->get()

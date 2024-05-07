@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,42 +30,15 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<div class="fi-resource-relation-manager flex flex-col gap-y-6 curator-panel">
+    <x-filament-panels::resources.tabs />
 
-namespace AdvisingApp\Form\Filament\Blocks;
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::RESOURCE_RELATION_MANAGER_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
-use AdvisingApp\Form\Models\SubmissibleField;
+    {{ $this->table }}
 
-class CheckboxFormFieldBlock extends FormFieldBlock
-{
-    public string $preview = 'form::blocks.previews.checkbox';
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::RESOURCE_RELATION_MANAGER_AFTER, scopes: $this->getRenderHookScopes()) }}
 
-    public string $rendered = 'form::blocks.submissions.checkbox';
-
-    public ?string $icon = 'heroicon-m-check-circle';
-
-    public static function type(): string
-    {
-        return 'checkbox';
-    }
-
-    public function fields(): array
-    {
-        return [];
-    }
-
-    public static function getFormKitSchema(SubmissibleField $field): array
-    {
-        return [
-            '$formkit' => 'checkbox',
-            'label' => $field->label,
-            'name' => $field->getKey(),
-            ...($field->is_required ? ['validation' => 'required'] : []),
-        ];
-    }
-
-    public static function getValidationRules(SubmissibleField $field): array
-    {
-        return ['boolean'];
-    }
-}
+    <x-filament-panels::unsaved-action-changes-alert />
+</div>

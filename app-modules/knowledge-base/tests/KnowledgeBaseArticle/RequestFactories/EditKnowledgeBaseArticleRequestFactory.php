@@ -34,46 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Exports;
+namespace AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseArticle\RequestFactories;
 
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Illuminate\Database\Eloquent\Collection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use AdvisingApp\Application\Models\ApplicationField;
+use Worksome\RequestFactories\RequestFactory;
 
-class ApplicationSubmissionExport implements FromCollection, WithHeadings, WithMapping
+class EditKnowledgeBaseArticleRequestFactory extends RequestFactory
 {
-    public function __construct(protected Collection $submissions) {}
-
-    public function collection(): Collection
-    {
-        return $this->submissions->load(['fields', 'submissible.fields']);
-    }
-
-    public function headings(): array
-    {
-        $submissible = $this->submissions->first()?->submissible;
-
-        return [
-            'id',
-            'application_id',
-            ...$submissible?->fields()->pluck('label')->all() ?? [],
-            'created_at',
-            'updated_at',
-        ];
-    }
-
-    public function map($row): array
+    public function definition(): array
     {
         return [
-            $row->id,
-            $row->application_id,
-            ...$row->submissible->fields
-                ->map(fn (ApplicationField $field) => $row->fields->where('id', $field->id)->first()?->pivot->response)
-                ->all(),
-            $row->created_at,
-            $row->updated_at,
+            'title' => fake()->words(5, true),
+            'article_details' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph()]]]]],
         ];
     }
 }

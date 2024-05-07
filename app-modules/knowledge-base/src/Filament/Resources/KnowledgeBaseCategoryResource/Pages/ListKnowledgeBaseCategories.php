@@ -61,9 +61,9 @@ class ListKnowledgeBaseCategories extends ListRecords
                     ->label('Name')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('knowledge_base_items_count')
-                    ->label('# of Knowledge Base Items')
-                    ->counts('knowledgeBaseItems')
+                TextColumn::make('knowledge_base_articles_count')
+                    ->label('# of Knowledge Base Articles')
+                    ->counts('knowledgeBaseArticles')
                     ->sortable(),
                 IconColumn::make('icon')
                     ->icon(fn (string $state): string => $state)

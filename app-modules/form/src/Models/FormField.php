@@ -38,6 +38,7 @@ namespace AdvisingApp\Form\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @mixin IdeHelperFormField
@@ -69,5 +70,17 @@ class FormField extends SubmissibleField
     {
         return $this
             ->belongsTo(FormStep::class, 'step_id');
+    }
+
+    public function submissions(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            FormSubmission::class,
+            'form_field_submission',
+            'field_id',
+            'submission_id',
+        )
+            ->withPivot(['id', 'response'])
+            ->using(FormFieldSubmission::class);
     }
 }

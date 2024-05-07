@@ -36,7 +36,7 @@
 
 return [
     'model' => [
-        'knowledge_base_item' => [
+        'knowledge_base_article' => [
             '*',
         ],
     ],

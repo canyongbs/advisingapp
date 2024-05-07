@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages;
+namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource\Pages;
 
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -45,7 +45,7 @@ use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 
-class EditKnowledgeBaseItemMetadata
+class EditKnowledgeBaseArticleMetadata
 {
     public function form(): array
     {

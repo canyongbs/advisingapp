@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages;
+namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource\Pages;
 
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -46,12 +46,12 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\RateLimiter;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource;
 
-class ViewKnowledgeBaseItem extends ViewRecord
+class ViewKnowledgeBaseArticle extends ViewRecord
 {
-    protected static string $resource = KnowledgeBaseItemResource::class;
+    protected static string $resource = KnowledgeBaseArticleResource::class;
 
     public function getTitle(): string | Htmlable
     {
@@ -62,12 +62,12 @@ class ViewKnowledgeBaseItem extends ViewRecord
     {
         parent::mount($record);
 
-        $knowledgeBaseItem = $this->getRecord();
+        $knowledgeBaseArticle = $this->getRecord();
 
         RateLimiter::attempt(
-            "view-knowledge-base-item-{$knowledgeBaseItem->getKey()}-user-" . auth()->id(),
+            "view-knowledge-base-article-{$knowledgeBaseArticle->getKey()}-user-" . auth()->id(),
             1,
-            fn () => $knowledgeBaseItem->views()->create(['user_id' => auth()->id()]),
+            fn () => $knowledgeBaseArticle->views()->create(['user_id' => auth()->id()]),
         );
     }
 
@@ -89,7 +89,7 @@ class ViewKnowledgeBaseItem extends ViewRecord
                             ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No'),
                         TextEntry::make('views_count')
                             ->label('Views')
-                            ->state(fn (KnowledgeBaseItem $record): int => $record->views()->count()),
+                            ->state(fn (KnowledgeBaseArticle $record): int => $record->views()->count()),
                     ])
                     ->columns(2),
                 Section::make()
@@ -116,14 +116,14 @@ class ViewKnowledgeBaseItem extends ViewRecord
 
     protected function getHeaderActions(): array
     {
-        $knowledgeBaseItem = $this->getRecord();
+        $knowledgeBaseArticle = $this->getRecord();
 
         return [
             Action::make('upvote')
-                ->label(fn (): string => ($knowledgeBaseItem->isUpvoted() ? 'Upvoted ' : 'Upvote ') . "({$knowledgeBaseItem->upvotes()->count()})")
-                ->color(fn (): string => $knowledgeBaseItem->isUpvoted() ? 'success' : 'gray')
-                ->icon(fn (): ?string => $knowledgeBaseItem->isUpvoted() ? 'heroicon-m-chevron-up' : null)
-                ->action(fn () => $knowledgeBaseItem->toggleUpvote()),
+                ->label(fn (): string => ($knowledgeBaseArticle->isUpvoted() ? 'Upvoted ' : 'Upvote ') . "({$knowledgeBaseArticle->upvotes()->count()})")
+                ->color(fn (): string => $knowledgeBaseArticle->isUpvoted() ? 'success' : 'gray')
+                ->icon(fn (): ?string => $knowledgeBaseArticle->isUpvoted() ? 'heroicon-m-chevron-up' : null)
+                ->action(fn () => $knowledgeBaseArticle->toggleUpvote()),
             EditAction::make(),
             DeleteAction::make(),
         ];

@@ -41,17 +41,19 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperKnowledgeBaseItemView
+ * @mixin IdeHelperKnowledgeBaseArticleUpvote
  */
-class KnowledgeBaseItemView extends BaseModel
+class KnowledgeBaseArticleUpvote extends BaseModel
 {
+    protected $table = 'knowledge_base_item_upvotes';
+
     protected $fillable = [
         'user_id',
     ];
 
-    public function knowledgeBaseItem(): BelongsTo
+    public function knowledgeBaseArticle(): BelongsTo
     {
-        return $this->belongsTo(KnowledgeBaseItem::class);
+        return $this->belongsTo(KnowledgeBaseArticle::class, 'knowledge_base_item_id');
     }
 
     public function user(): BelongsTo
