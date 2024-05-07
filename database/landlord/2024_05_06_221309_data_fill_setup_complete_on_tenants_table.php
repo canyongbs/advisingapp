@@ -47,6 +47,8 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        // nop
+        if (Schema::hasColumn('tenants', 'setup_complete')) {
+            DB::table('tenants')->update(['setup_complete' => false]);
+        }
     }
 };
