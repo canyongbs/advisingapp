@@ -1,0 +1,24 @@
+type KnowledgeBaseArticle
+    @feature(feature: "knowledge-management")
+    @model(class: "AdvisingApp\\KnowledgeBase\\Models\\KnowledgeBaseArticle") {
+    id: UUID!
+}
+
+type KnowledgeBaseArticleQueries @feature(feature: "knowledge-management") {
+    "Find a single knowledge base article by an identifying attribute."
+    find(
+        "The value of the attribute to match."
+        id: UUID!
+            @whereKey
+            @rules(
+                apply: ["required", "uuid", "exists:knowledge_base_articles"]
+            )
+    ): KnowledgeBaseArticle @find @canResolved(ability: "view")
+
+    "Get all knowledge base articles."
+    list: [KnowledgeBaseArticle!]! @canModel(ability: "viewAny") @paginate
+}
+
+extend type Query @feature(feature: "knowledge-management") {
+    knowledgeBaseArticle: KnowledgeBaseArticleQueries! @namespaced
+}

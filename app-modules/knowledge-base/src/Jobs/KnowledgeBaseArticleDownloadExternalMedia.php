@@ -45,26 +45,26 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
 use AdvisingApp\KnowledgeBase\Exceptions\KnowledgeBaseExternalMediaFileAccessException;
 use AdvisingApp\KnowledgeBase\Exceptions\KnowledgeBaseExternalMediaValidationException;
 
-class KnowledgeBaseItemDownloadExternalMedia implements ShouldQueue
+class KnowledgeBaseArticleDownloadExternalMedia implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
-    public function __construct(public KnowledgeBaseItem $knowledgeBaseItem) {}
+    public function __construct(public KnowledgeBaseArticle $knowledgeBaseArticle) {}
 
     public function handle(): void
     {
-        $content = $this->processContentItem($this->knowledgeBaseItem->article_details);
+        $content = $this->processContentItem($this->knowledgeBaseArticle->article_details);
 
-        $this->knowledgeBaseItem->article_details = $content;
+        $this->knowledgeBaseArticle->article_details = $content;
 
-        $this->knowledgeBaseItem::withoutEvents(fn () => $this->knowledgeBaseItem->save());
+        $this->knowledgeBaseArticle::withoutEvents(fn () => $this->knowledgeBaseArticle->save());
     }
 
     public function processContentItem(string | array | null $content): array
@@ -121,7 +121,7 @@ class KnowledgeBaseItemDownloadExternalMedia implements ShouldQueue
                         throw new KnowledgeBaseExternalMediaValidationException('The file size is too large.');
                     }
 
-                    $media = $this->knowledgeBaseItem->addMedia($tmpFile)
+                    $media = $this->knowledgeBaseArticle->addMedia($tmpFile)
                         ->toMediaCollection('article_details');
 
                     return "{{media|id:{$media->getKey()};}}";

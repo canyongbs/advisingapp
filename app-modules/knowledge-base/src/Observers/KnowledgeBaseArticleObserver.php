@@ -34,17 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseItem\RequestFactories;
+namespace AdvisingApp\KnowledgeBase\Observers;
 
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
+use App\Support\MediaEncoding\Concerns\ImplementsEncodedMediaProcessing;
+use AdvisingApp\KnowledgeBase\Jobs\KnowledgeBaseArticleDownloadExternalMedia;
 
-class EditKnowledgeBaseItemRequestFactory extends RequestFactory
+class KnowledgeBaseArticleObserver
 {
-    public function definition(): array
+    use ImplementsEncodedMediaProcessing;
+
+    public function saved(KnowledgeBaseArticle $knowledgeBaseArticle): void
     {
-        return [
-            'title' => fake()->words(5, true),
-            'article_details' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph()]]]]],
-        ];
+        if (is_string($knowledgeBaseArticle->article_details)) {
+            $knowledgeBaseArticle->article_details = json_decode($knowledgeBaseArticle->article_details, true);
+        }
+
+        $this->convertPathShortcodesToIdShortcodes($knowledgeBaseArticle, ['solution', 'notes']);
+
+        $this->cleanupMediaItems($knowledgeBaseArticle, ['solution', 'notes']);
+
+        KnowledgeBaseArticleDownloadExternalMedia::dispatch($knowledgeBaseArticle);
     }
 }

@@ -34,28 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Models;
+namespace AdvisingApp\KnowledgeBase\Database\Seeders;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Seeder;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
 
-/**
- * @mixin IdeHelperKnowledgeBaseItemUpvote
- */
-class KnowledgeBaseItemUpvote extends BaseModel
+class KnowledgeBaseArticleSeeder extends Seeder
 {
-    protected $fillable = [
-        'user_id',
-    ];
-
-    public function knowledgeBaseItem(): BelongsTo
+    public function run(): void
     {
-        return $this->belongsTo(KnowledgeBaseItem::class);
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
+        KnowledgeBaseArticle::factory()
+            ->count(25)
+            ->create();
     }
 }

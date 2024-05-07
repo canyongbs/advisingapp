@@ -34,42 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Database\Factories;
+namespace AdvisingApp\KnowledgeBase\Models;
 
-use AdvisingApp\Division\Models\Division;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
+use App\Models\User;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @extends Factory<KnowledgeBaseItem>
+ * @mixin IdeHelperKnowledgeBaseArticleUpvote
  */
-class KnowledgeBaseItemFactory extends Factory
+class KnowledgeBaseArticleUpvote extends BaseModel
 {
-    public function definition(): array
+    protected $table = 'knowledge_base_item_upvotes';
+
+    protected $fillable = [
+        'user_id',
+    ];
+
+    public function knowledgeBaseArticle(): BelongsTo
     {
-        return [
-            'public' => fake()->boolean(),
-            'title' => fake()->sentence(),
-            'article_details' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph()]]]]],
-            'notes' => fake()->paragraph(),
-            'quality_id' => KnowledgeBaseQuality::inRandomOrder()->first() ?? KnowledgeBaseQuality::factory(),
-            'status_id' => KnowledgeBaseStatus::inRandomOrder()->first() ?? KnowledgeBaseStatus::factory(),
-            'category_id' => KnowledgeBaseCategory::inRandomOrder()->first() ?? KnowledgeBaseCategory::factory(),
-        ];
+        return $this->belongsTo(KnowledgeBaseArticle::class, 'knowledge_base_item_id');
     }
 
-    public function configure(): static
+    public function user(): BelongsTo
     {
-        return $this->afterMaking(function (KnowledgeBaseItem $knowledgeBaseItem) {
-            // ...
-        })->afterCreating(function (KnowledgeBaseItem $knowledgeBaseItem) {
-            if ($knowledgeBaseItem->division->isEmpty()) {
-                $knowledgeBaseItem->division()->attach(Division::first()?->id ?? Division::factory()->create()->id);
-                $knowledgeBaseItem->save();
-            }
-        });
+        return $this->belongsTo(User::class);
     }
 }

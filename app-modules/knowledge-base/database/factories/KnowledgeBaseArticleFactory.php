@@ -34,33 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
+namespace AdvisingApp\KnowledgeBase\Database\Factories;
 
-use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
-use App\Support\MediaEncoding\TiptapMediaEncoder;
+use AdvisingApp\Division\Models\Division;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
 
-class KnowledgeManagementPortalArticleController extends Controller
+/**
+ * @extends Factory<KnowledgeBaseArticle>
+ */
+class KnowledgeBaseArticleFactory extends Factory
 {
-    public function show(KnowledgeBaseCategory $category, KnowledgeBaseArticle $article): JsonResponse
+    public function definition(): array
     {
-        return response()->json([
-            'category' => KnowledgeBaseCategoryData::from([
-                'id' => $category->getKey(),
-                'name' => $category->name,
-                'description' => $category->description,
-            ]),
-            'article' => KnowledgeBaseArticleData::from([
-                'id' => $article->getKey(),
-                'categoryId' => $article->category_id,
-                'name' => $article->title,
-                'lastUpdated' => $article->updated_at->format('M d Y, h:m a'),
-                'content' => tiptap_converter()->asHTML(TiptapMediaEncoder::decode($article->article_details)),
-            ]),
-        ]);
+        return [
+            'public' => fake()->boolean(),
+            'title' => fake()->sentence(),
+            'article_details' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph()]]]]],
+            'notes' => fake()->paragraph(),
+            'quality_id' => KnowledgeBaseQuality::inRandomOrder()->first() ?? KnowledgeBaseQuality::factory(),
+            'status_id' => KnowledgeBaseStatus::inRandomOrder()->first() ?? KnowledgeBaseStatus::factory(),
+            'category_id' => KnowledgeBaseCategory::inRandomOrder()->first() ?? KnowledgeBaseCategory::factory(),
+        ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterMaking(function (KnowledgeBaseArticle $knowledgeBaseArticle) {
+            // ...
+        })->afterCreating(function (KnowledgeBaseArticle $knowledgeBaseArticle) {
+            if ($knowledgeBaseArticle->division->isEmpty()) {
+                $knowledgeBaseArticle->division()->attach(Division::first()?->id ?? Division::factory()->create()->id);
+                $knowledgeBaseArticle->save();
+            }
+        });
     }
 }
