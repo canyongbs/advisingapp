@@ -132,9 +132,6 @@ class SwitchMailTask implements SwitchTenantTask
         );
 
         app()->forgetInstance('mail.manager');
-        app()->forgetInstance(MailMessage::class);
-        app()->forgetInstance('mail');
-        app()->forgetInstance(MailFactory::class);
         app()->forgetInstance(ChannelManager::class);
         app()->forgetInstance(MailChannel::class);
 
