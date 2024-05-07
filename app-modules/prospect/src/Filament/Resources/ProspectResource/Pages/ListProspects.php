@@ -102,6 +102,7 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                     ->badge()
                     ->translateLabel()
                     ->color(fn (Prospect $record) => $record->status->color->value)
+                    ->toggleable()
                     ->sortable(['sort']),
                 TextColumn::make('source.name')
                     ->label('Source')
