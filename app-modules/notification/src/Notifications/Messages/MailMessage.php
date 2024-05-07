@@ -44,7 +44,7 @@ class MailMessage extends BaseMailMessage
 {
     public static function make(): static
     {
-        return app(static::class);
+        return new self;
     }
 
     public function content(string $content): static
