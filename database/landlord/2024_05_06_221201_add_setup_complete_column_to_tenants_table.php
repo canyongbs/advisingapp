@@ -34,34 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Casts\LandlordEncrypted;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Spatie\Multitenancy\Models\Tenant as SpatieTenant;
-use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('tenants', function (Blueprint $table) {
+            $table->boolean('setup_complete')->default(false);
+        });
+    }
 
-/**
- * @mixin IdeHelperTenant
- */
-class Tenant extends SpatieTenant
-{
-    use UsesLandlordConnection;
-    use HasUuids;
-    use SoftDeletes;
-
-    protected $fillable = [
-        'name',
-        'domain',
-        'key',
-        'config',
-        'setup_complete',
-    ];
-
-    protected $casts = [
-        'key' => LandlordEncrypted::class,
-        'config' => LandlordEncrypted::class,
-        'setup_complete' => 'boolean',
-    ];
-}
+    public function down(): void
+    {
+        Schema::table('tenants', function (Blueprint $table) {
+            $table->dropColumn('setup_complete');
+        });
+    }
+};

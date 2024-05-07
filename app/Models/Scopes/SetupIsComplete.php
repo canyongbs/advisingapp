@@ -34,34 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+namespace App\Models\Scopes;
 
-use App\Casts\LandlordEncrypted;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Spatie\Multitenancy\Models\Tenant as SpatieTenant;
-use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+namespace App\Models\Scopes;
 
-/**
- * @mixin IdeHelperTenant
- */
-class Tenant extends SpatieTenant
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Eloquent\Builder;
+
+class SetupIsComplete
 {
-    use UsesLandlordConnection;
-    use HasUuids;
-    use SoftDeletes;
+    public function __invoke(Builder $query): void
+    {
+        if (Feature::inactive('setup-complete')) {
+            return;
+        }
 
-    protected $fillable = [
-        'name',
-        'domain',
-        'key',
-        'config',
-        'setup_complete',
-    ];
-
-    protected $casts = [
-        'key' => LandlordEncrypted::class,
-        'config' => LandlordEncrypted::class,
-        'setup_complete' => 'boolean',
-    ];
+        $query->where('setup_complete', true);
+    }
 }

@@ -34,34 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Casts\LandlordEncrypted;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Spatie\Multitenancy\Models\Tenant as SpatieTenant;
-use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+return new class () extends Migration {
+    public function up(): void
+    {
+        if (Schema::hasColumn('tenants', 'setup_complete')) {
+            DB::table('tenants')->update(['setup_complete' => true]);
+        }
+    }
 
-/**
- * @mixin IdeHelperTenant
- */
-class Tenant extends SpatieTenant
-{
-    use UsesLandlordConnection;
-    use HasUuids;
-    use SoftDeletes;
-
-    protected $fillable = [
-        'name',
-        'domain',
-        'key',
-        'config',
-        'setup_complete',
-    ];
-
-    protected $casts = [
-        'key' => LandlordEncrypted::class,
-        'config' => LandlordEncrypted::class,
-        'setup_complete' => 'boolean',
-    ];
-}
+    public function down(): void
+    {
+        if (Schema::hasColumn('tenants', 'setup_complete')) {
+            DB::table('tenants')->update(['setup_complete' => false]);
+        }
+    }
+};
