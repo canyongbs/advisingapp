@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages;
+namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource\Pages;
 
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
@@ -48,14 +48,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource;
 
-class ListKnowledgeBaseItems extends ListRecords
+class ListKnowledgeBaseArticles extends ListRecords
 {
     protected ?string $heading = 'Knowledge Management';
 
-    protected static string $resource = KnowledgeBaseItemResource::class;
+    protected static string $resource = KnowledgeBaseArticleResource::class;
 
     public function table(Table $table): Table
     {
@@ -95,10 +95,10 @@ class ListKnowledgeBaseItems extends ListRecords
                         'upvotes as my_upvotes_count' => fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
                     ])
                     ->sortable()
-                    ->action(fn (KnowledgeBaseItem $record) => $record->toggleUpvote())
-                    ->color(fn (KnowledgeBaseItem $record): string => $record->my_upvotes_count ? 'success' : 'gray')
-                    ->tooltip(fn (KnowledgeBaseItem $record): string => $record->my_upvotes_count ? 'Click to remove upvote' : 'Click to upvote')
-                    ->formatStateUsing(fn (KnowledgeBaseItem $record, int $state): string => ($record->my_upvotes_count ? 'Upvoted ' : 'Upvote ') . "({$state})"),
+                    ->action(fn (KnowledgeBaseArticle $record) => $record->toggleUpvote())
+                    ->color(fn (KnowledgeBaseArticle $record): string => $record->my_upvotes_count ? 'success' : 'gray')
+                    ->tooltip(fn (KnowledgeBaseArticle $record): string => $record->my_upvotes_count ? 'Click to remove upvote' : 'Click to upvote')
+                    ->formatStateUsing(fn (KnowledgeBaseArticle $record, int $state): string => ($record->my_upvotes_count ? 'Upvoted ' : 'Upvote ') . "({$state})"),
             ])
             ->filters([
                 SelectFilter::make('quality')
@@ -130,10 +130,10 @@ class ListKnowledgeBaseItems extends ListRecords
     {
         return [
             CreateAction::make()
-                ->disabled(fn (): bool => ! auth()->user()->can('knowledge_base_item.create'))
+                ->disabled(fn (): bool => ! auth()->user()->can('knowledge_base_article.create'))
                 ->label('New Article')
                 ->createAnother(false)
-                ->successRedirectUrl(fn (Model $record): string => KnowledgeBaseItemResource::getUrl('edit', ['record' => $record])),
+                ->successRedirectUrl(fn (Model $record): string => KnowledgeBaseArticleResource::getUrl('edit', ['record' => $record])),
         ];
     }
 }

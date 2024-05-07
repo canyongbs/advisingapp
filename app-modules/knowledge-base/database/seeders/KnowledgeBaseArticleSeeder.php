@@ -37,13 +37,13 @@
 namespace AdvisingApp\KnowledgeBase\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
 
-class KnowledgeBaseItemSeeder extends Seeder
+class KnowledgeBaseArticleSeeder extends Seeder
 {
     public function run(): void
     {
-        KnowledgeBaseItem::factory()
+        KnowledgeBaseArticle::factory()
             ->count(25)
             ->create();
     }

@@ -46,22 +46,22 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 
 use function Tests\Helpers\testResourceRequiresPermissionForAccess;
 
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource;
 
-// TODO: Write ListKnowledgeBaseItems tests
-//test('The correct details are displayed on the ListKnowledgeBaseItems page', function () {});
+// TODO: Write ListKnowledgeBaseArticles tests
+//test('The correct details are displayed on the ListKnowledgeBaseArticles page', function () {});
 
 // TODO: Sorting and Searching tests
 
 // Permission Tests
 
 testResourceRequiresPermissionForAccess(
-    resource: KnowledgeBaseItemResource::class,
-    permissions: 'knowledge_base_item.view-any',
+    resource: KnowledgeBaseArticleResource::class,
+    permissions: 'knowledge_base_article.view-any',
     method: 'index'
 );
 
-test('ListKnowledgeBaseItems is gated with proper feature access control', function () {
+test('ListKnowledgeBaseArticles is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->knowledgeManagement = false;
@@ -70,12 +70,12 @@ test('ListKnowledgeBaseItems is gated with proper feature access control', funct
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $user->givePermissionTo('knowledge_base_item.view-any');
+    $user->givePermissionTo('knowledge_base_article.view-any');
 
     actingAs($user);
 
     get(
-        KnowledgeBaseItemResource::getUrl('index')
+        KnowledgeBaseArticleResource::getUrl('index')
     )->assertForbidden();
 
     $settings->data->addons->knowledgeManagement = true;
@@ -83,11 +83,11 @@ test('ListKnowledgeBaseItems is gated with proper feature access control', funct
     $settings->save();
 
     get(
-        KnowledgeBaseItemResource::getUrl('index')
+        KnowledgeBaseArticleResource::getUrl('index')
     )->assertSuccessful();
 });
 
-test('ListKnowledgeBaseItems is gated with proper license access control', function () {
+test('ListKnowledgeBaseArticles is gated with proper license access control', function () {
     $settings = app(LicenseSettings::class);
 
     // When the feature is enabled
@@ -99,13 +99,13 @@ test('ListKnowledgeBaseItems is gated with proper license access control', funct
 
     // And the authenticatable has the correct permissions
     // But they do not have the appropriate license
-    $user->givePermissionTo('knowledge_base_item.view-any');
+    $user->givePermissionTo('knowledge_base_article.view-any');
 
     // They should not be able to access the resource
     actingAs($user);
 
     get(
-        KnowledgeBaseItemResource::getUrl('index')
+        KnowledgeBaseArticleResource::getUrl('index')
     )->assertForbidden();
 
     $user->grantLicense(LicenseType::RecruitmentCrm);
@@ -113,6 +113,6 @@ test('ListKnowledgeBaseItems is gated with proper license access control', funct
     $user->refresh();
 
     get(
-        KnowledgeBaseItemResource::getUrl('index')
+        KnowledgeBaseArticleResource::getUrl('index')
     )->assertSuccessful();
 });

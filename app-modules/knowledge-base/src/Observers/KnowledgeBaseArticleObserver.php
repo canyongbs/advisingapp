@@ -34,28 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Models;
+namespace AdvisingApp\KnowledgeBase\Observers;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
+use App\Support\MediaEncoding\Concerns\ImplementsEncodedMediaProcessing;
+use AdvisingApp\KnowledgeBase\Jobs\KnowledgeBaseArticleDownloadExternalMedia;
 
-/**
- * @mixin IdeHelperKnowledgeBaseItemUpvote
- */
-class KnowledgeBaseItemUpvote extends BaseModel
+class KnowledgeBaseArticleObserver
 {
-    protected $fillable = [
-        'user_id',
-    ];
+    use ImplementsEncodedMediaProcessing;
 
-    public function knowledgeBaseItem(): BelongsTo
+    public function saved(KnowledgeBaseArticle $knowledgeBaseArticle): void
     {
-        return $this->belongsTo(KnowledgeBaseItem::class);
-    }
+        if (is_string($knowledgeBaseArticle->article_details)) {
+            $knowledgeBaseArticle->article_details = json_decode($knowledgeBaseArticle->article_details, true);
+        }
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
+        $this->convertPathShortcodesToIdShortcodes($knowledgeBaseArticle, ['solution', 'notes']);
+
+        $this->cleanupMediaItems($knowledgeBaseArticle, ['solution', 'notes']);
+
+        KnowledgeBaseArticleDownloadExternalMedia::dispatch($knowledgeBaseArticle);
     }
 }

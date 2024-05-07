@@ -34,26 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Observers;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
-use App\Support\MediaEncoding\Concerns\ImplementsEncodedMediaProcessing;
-use AdvisingApp\KnowledgeBase\Jobs\KnowledgeBaseItemDownloadExternalMedia;
-
-class KnowledgeBaseItemObserver
-{
-    use ImplementsEncodedMediaProcessing;
-
-    public function saved(KnowledgeBaseItem $knowledgeBaseItem): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (is_string($knowledgeBaseItem->article_details)) {
-            $knowledgeBaseItem->article_details = json_decode($knowledgeBaseItem->article_details, true);
-        }
+        DB::table('permissions')
+            ->where('name', 'LIKE', 'knowledge_base_item.%')
+            ->update([
+                'name' => DB::raw("REPLACE(name, 'knowledge_base_item.', 'knowledge_base_article.')"),
+                'updated_at' => now(),
+            ]);
 
-        $this->convertPathShortcodesToIdShortcodes($knowledgeBaseItem, ['solution', 'notes']);
-
-        $this->cleanupMediaItems($knowledgeBaseItem, ['solution', 'notes']);
-
-        KnowledgeBaseItemDownloadExternalMedia::dispatch($knowledgeBaseItem);
+        DB::table('permission_groups')
+            ->where('name', 'Knowledge Base Item')
+            ->update([
+                'name' => 'Knowledge Base Article',
+                'updated_at' => now(),
+            ]);
     }
-}
+
+    public function down(): void
+    {
+        DB::table('permissions')
+            ->where('name', 'LIKE', 'knowledge_base_article.%')
+            ->update([
+                'name' => DB::raw("REPLACE(name, 'knowledge_base_article.', 'knowledge_base_item.')"),
+                'updated_at' => now(),
+            ]);
+
+        DB::table('permission_groups')
+            ->where('name', 'Knowledge Base Article')
+            ->update([
+                'name' => 'Knowledge Base Item',
+                'updated_at' => now(),
+            ]);
+    }
+};

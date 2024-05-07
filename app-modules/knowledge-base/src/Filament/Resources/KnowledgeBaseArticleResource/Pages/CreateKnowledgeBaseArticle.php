@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages;
+namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
@@ -47,11 +47,11 @@ use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource;
 
-class CreateKnowledgeBaseItem extends CreateRecord
+class CreateKnowledgeBaseArticle extends CreateRecord
 {
-    protected static string $resource = KnowledgeBaseItemResource::class;
+    protected static string $resource = KnowledgeBaseArticleResource::class;
 
     public function form(Form $form): Form
     {
