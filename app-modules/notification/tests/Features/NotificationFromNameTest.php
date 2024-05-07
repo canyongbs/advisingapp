@@ -44,7 +44,7 @@ it('sets the mail from name based on settings fromName if set', function () {
 
     $user = User::factory()->create();
 
-    $notificationSetting = NotificationSetting::make();
+    $notificationSetting = new NotificationSetting();
 
     $notificationSetting->from_name = fake()->name();
 
