@@ -44,7 +44,7 @@ class MailMessage extends BaseMailMessage
 {
     public static function make(): static
     {
-        return new self;
+        return new self();
     }
 
     public function content(string $content): static
@@ -60,7 +60,7 @@ class MailMessage extends BaseMailMessage
     public function settings(?NotificationSetting $setting): static
     {
         if (Feature::active('notification-settings-from-name')) {
-            if (!empty($setting->from_name)) {
+            if (! empty($setting->from_name)) {
                 $this->from(
                     address: config('mail.from.address'),
                     name: $setting->from_name,

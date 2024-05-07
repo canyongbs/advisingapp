@@ -34,35 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Notifications;
+namespace AdvisingApp\Notification\Tests\Features;
 
 use App\Models\NotificationSetting;
-use Illuminate\Notifications\Messages\MailMessage as BaseMailMessage;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
-class MailMessage extends BaseMailMessage
+class TestEmailSettingFromNameNotification extends BaseNotification implements EmailNotification
 {
-    public static function make(): static
+    use EmailChannelTrait;
+
+    public function __construct(
+        public NotificationSetting $setting,
+    ) {}
+
+    public function toEmail(object $notifiable): MailMessage
     {
-        return new static();
-    }
-
-    public function content(string $content): static
-    {
-        $this->viewData = [
-            $this->viewData,
-            'content' => $content,
-        ];
-
-        return $this;
-    }
-
-    public function settings(?NotificationSetting $setting): static
-    {
-        $this->viewData = [
-            $this->viewData,
-            'settings' => $setting,
-        ];
-
-        return $this;
+        return MailMessage::make()
+            ->settings($this->setting)
+            ->subject('Test Subject')
+            ->greeting('Test Greeting')
+            ->content('This is a test email')
+            ->salutation('Test Salutation');
     }
 }
