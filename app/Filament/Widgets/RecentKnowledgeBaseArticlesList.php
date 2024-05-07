@@ -41,8 +41,8 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Widgets\TableWidget as BaseWidget;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource;
 
 class RecentKnowledgeBaseArticlesList extends BaseWidget
 {
@@ -57,7 +57,7 @@ class RecentKnowledgeBaseArticlesList extends BaseWidget
         return $table
             ->heading('Latest KB Articles (5)')
             ->query(
-                KnowledgeBaseItem::latest()->limit(5)
+                KnowledgeBaseArticle::latest()->limit(5)
             )
             ->columns([
                 IdColumn::make(),
@@ -86,10 +86,10 @@ class RecentKnowledgeBaseArticlesList extends BaseWidget
             ])
             ->actions([
                 ViewAction::make()
-                    ->url(fn (KnowledgeBaseItem $record): string => KnowledgeBaseItemResource::getUrl(name: 'view', parameters: ['record' => $record])),
+                    ->url(fn (KnowledgeBaseArticle $record): string => KnowledgeBaseArticleResource::getUrl(name: 'view', parameters: ['record' => $record])),
             ])
             ->recordUrl(
-                fn (KnowledgeBaseItem $record): string => KnowledgeBaseItemResource::getUrl(name: 'view', parameters: ['record' => $record]),
+                fn (KnowledgeBaseArticle $record): string => KnowledgeBaseArticleResource::getUrl(name: 'view', parameters: ['record' => $record]),
             )
             ->paginated(false);
     }

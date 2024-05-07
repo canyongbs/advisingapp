@@ -57,9 +57,9 @@ class KnowledgeBaseStatus extends BaseModel implements Auditable
         'name',
     ];
 
-    public function knowledgeBaseItems(): HasMany
+    public function knowledgeBaseArticles(): HasMany
     {
-        return $this->hasMany(KnowledgeBaseItem::class, 'status_id');
+        return $this->hasMany(KnowledgeBaseArticle::class, 'status_id');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

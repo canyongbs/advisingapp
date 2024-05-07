@@ -34,46 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Exports;
+use Illuminate\Database\Migrations\Migration;
 
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Illuminate\Database\Eloquent\Collection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use AdvisingApp\Application\Models\ApplicationField;
-
-class ApplicationSubmissionExport implements FromCollection, WithHeadings, WithMapping
-{
-    public function __construct(protected Collection $submissions) {}
-
-    public function collection(): Collection
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->submissions->load(['fields', 'submissible.fields']);
+        Feature::activate('rename-checkbox-form-field');
     }
 
-    public function headings(): array
+    public function down(): void
     {
-        $submissible = $this->submissions->first()?->submissible;
-
-        return [
-            'id',
-            'application_id',
-            ...$submissible?->fields()->pluck('label')->all() ?? [],
-            'created_at',
-            'updated_at',
-        ];
+        Feature::deactivate('rename-checkbox-form-field');
     }
-
-    public function map($row): array
-    {
-        return [
-            $row->id,
-            $row->application_id,
-            ...$row->submissible->fields
-                ->map(fn (ApplicationField $field) => $row->fields->where('id', $field->id)->first()?->pivot->response)
-                ->all(),
-            $row->created_at,
-            $row->updated_at,
-        ];
-    }
-}
+};

@@ -43,38 +43,38 @@ use App\Settings\LicenseSettings;
 use function Pest\Laravel\actingAs;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource;
 
-// TODO: Write ViewKnowledgeBaseItem tests
-//test('The correct details are displayed on the ViewKnowledgeBaseItem page', function () {});
+// TODO: Write ViewKnowledgeBaseArticle tests
+//test('The correct details are displayed on the ViewKnowledgeBaseArticle page', function () {});
 
 // Permission Tests
 
-test('ViewKnowledgeBaseItem is gated with proper access control', function () {
+test('ViewKnowledgeBaseArticle is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $knowledgeBaseItem = KnowledgeBaseItem::factory()->create();
+    $knowledgeBaseArticle = KnowledgeBaseArticle::factory()->create();
 
     actingAs($user);
 
     get(
-        KnowledgeBaseItemResource::getUrl('view', [
-            'record' => $knowledgeBaseItem,
+        KnowledgeBaseArticleResource::getUrl('view', [
+            'record' => $knowledgeBaseArticle,
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('knowledge_base_item.view-any');
-    $user->givePermissionTo('knowledge_base_item.*.view');
+    $user->givePermissionTo('knowledge_base_article.view-any');
+    $user->givePermissionTo('knowledge_base_article.*.view');
 
     get(
-        KnowledgeBaseItemResource::getUrl('view', [
-            'record' => $knowledgeBaseItem,
+        KnowledgeBaseArticleResource::getUrl('view', [
+            'record' => $knowledgeBaseArticle,
         ])
     )->assertSuccessful();
 });
 
-test('ViewKnowledgeBaseItem is gated with proper feature access control', function () {
+test('ViewKnowledgeBaseArticle is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->knowledgeManagement = false;
@@ -83,16 +83,16 @@ test('ViewKnowledgeBaseItem is gated with proper feature access control', functi
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $user->givePermissionTo('knowledge_base_item.view-any');
-    $user->givePermissionTo('knowledge_base_item.*.view');
+    $user->givePermissionTo('knowledge_base_article.view-any');
+    $user->givePermissionTo('knowledge_base_article.*.view');
 
-    $knowledgeBaseItem = KnowledgeBaseItem::factory()->create();
+    $knowledgeBaseArticle = KnowledgeBaseArticle::factory()->create();
 
     actingAs($user);
 
     get(
-        KnowledgeBaseItemResource::getUrl('view', [
-            'record' => $knowledgeBaseItem,
+        KnowledgeBaseArticleResource::getUrl('view', [
+            'record' => $knowledgeBaseArticle,
         ])
     )->assertForbidden();
 
@@ -101,8 +101,8 @@ test('ViewKnowledgeBaseItem is gated with proper feature access control', functi
     $settings->save();
 
     get(
-        KnowledgeBaseItemResource::getUrl('view', [
-            'record' => $knowledgeBaseItem,
+        KnowledgeBaseArticleResource::getUrl('view', [
+            'record' => $knowledgeBaseArticle,
         ])
     )->assertSuccessful();
 });

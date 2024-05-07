@@ -34,46 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Exports;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
 
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Illuminate\Database\Eloquent\Collection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use AdvisingApp\Application\Models\ApplicationField;
-
-class ApplicationSubmissionExport implements FromCollection, WithHeadings, WithMapping
-{
-    public function __construct(protected Collection $submissions) {}
-
-    public function collection(): Collection
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->submissions->load(['fields', 'submissible.fields']);
+        DB::table('survey_fields')
+            ->where('type', 'checkbox')
+            ->update(['type' => 'checkboxes']);
+
+        DB::table('surveys')
+            ->where('content', 'like', '%"type":"checkbox"%')
+            ->eachById(function ($survey) {
+                DB::table('surveys')
+                    ->where('id', $survey->id)
+                    ->update([
+                        'content' => str_replace('"type":"checkbox"', '"type":"checkboxes"', $survey->content),
+                        'updated_at' => now(),
+                    ]);
+            });
     }
 
-    public function headings(): array
+    public function down(): void
     {
-        $submissible = $this->submissions->first()?->submissible;
+        DB::table('survey_fields')
+            ->where('type', 'checkboxes')
+            ->update(['type' => 'checkbox']);
 
-        return [
-            'id',
-            'application_id',
-            ...$submissible?->fields()->pluck('label')->all() ?? [],
-            'created_at',
-            'updated_at',
-        ];
+        DB::table('surveys')
+            ->where('content', 'like', '%"type":"checkboxes"%')
+            ->eachById(function ($survey) {
+                DB::table('surveys')
+                    ->where('id', $survey->id)
+                    ->update([
+                        'content' => str_replace('"type":"checkboxes"', '"type":"checkbox"', $survey->content),
+                        'updated_at' => now(),
+                    ]);
+            });
     }
-
-    public function map($row): array
-    {
-        return [
-            $row->id,
-            $row->application_id,
-            ...$row->submissible->fields
-                ->map(fn (ApplicationField $field) => $row->fields->where('id', $field->id)->first()?->pivot->response)
-                ->all(),
-            $row->created_at,
-            $row->updated_at,
-        ];
-    }
-}
+};

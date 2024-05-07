@@ -34,26 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseItem\RequestFactories;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Division\Models\Division;
-use Worksome\RequestFactories\RequestFactory;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
-
-class CreateKnowledgeBaseItemRequestFactory extends RequestFactory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'title' => fake()->words(5, true),
-            'public' => fake()->boolean(),
-            'notes' => fake()->paragraph(),
-            'quality_id' => KnowledgeBaseQuality::inRandomOrder()->first()?->id ?? KnowledgeBaseQuality::factory()->create()->id,
-            'status_id' => KnowledgeBaseStatus::inRandomOrder()->first()?->id ?? KnowledgeBaseStatus::factory()->create()->id,
-            'category_id' => KnowledgeBaseCategory::inRandomOrder()->first()?->id ?? KnowledgeBaseCategory::factory()->create()->id,
-            'division' => [Division::inRandomOrder()->first()?->id ?? Division::factory()->create()->id],
-        ];
+        Feature::activate('introduce-checkboxes-form-field');
     }
-}
+
+    public function down(): void
+    {
+        Feature::deactivate('introduce-checkboxes-form-field');
+    }
+};

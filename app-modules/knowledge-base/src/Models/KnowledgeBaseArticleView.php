@@ -34,17 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseItem\RequestFactories;
+namespace AdvisingApp\KnowledgeBase\Models;
 
-use Worksome\RequestFactories\RequestFactory;
+use App\Models\User;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class EditKnowledgeBaseItemRequestFactory extends RequestFactory
+/**
+ * @mixin IdeHelperKnowledgeBaseArticleView
+ */
+class KnowledgeBaseArticleView extends BaseModel
 {
-    public function definition(): array
+    protected $table = 'knowledge_base_item_views';
+
+    protected $fillable = [
+        'user_id',
+    ];
+
+    public function knowledgeBaseArticle(): BelongsTo
     {
-        return [
-            'title' => fake()->words(5, true),
-            'article_details' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph()]]]]],
-        ];
+        return $this->belongsTo(KnowledgeBaseArticle::class, 'knowledge_base_item_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }
