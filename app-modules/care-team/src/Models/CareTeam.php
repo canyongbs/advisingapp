@@ -46,7 +46,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 
 /**
@@ -55,7 +54,6 @@ use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 class CareTeam extends MorphPivot implements ExecutableFromACampaignAction
 {
     use HasFactory;
-    use DefinesPermissions;
     use HasUuids;
 
     public $timestamps = true;

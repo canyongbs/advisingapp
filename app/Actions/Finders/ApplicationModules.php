@@ -60,6 +60,6 @@ class ApplicationModules
 
         return collect(File::files($path))->map(function ($file, $key) {
             return explode('.' . $file->getExtension(), $file->getFilename())[0];
-        });
+        })->dump();
     }
 }

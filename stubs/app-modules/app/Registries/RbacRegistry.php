@@ -37,12 +37,12 @@
 namespace StubModuleNamespace\StubClassNamePrefix\Registries;
 
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use App\Registries\Contracts\RegistersRolesAndPermissions;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\Registries\Contracts\RegistersRolesAndPermissions;
 
 class StubClassNamePrefixRbacRegistry implements RegistersRolesAndPermissions
 {
-    public function registerRolesAndPermissions(): void
+    public function __invoke(): void
     {
         $permissionRegistry = app(AuthorizationPermissionRegistry::class);
         $roleRegistry = app(AuthorizationRoleRegistry::class);

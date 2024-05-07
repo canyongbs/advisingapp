@@ -46,10 +46,10 @@ use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
 use AdvisingApp\MeetingCenter\MeetingCenterPlugin;
-use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Observers\CalendarEventObserver;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
@@ -101,7 +101,7 @@ class MeetingCenterServiceProvider extends ServiceProvider
 
         Livewire::component('event-attendee-submissions-manager', EventAttendeeSubmissionsManager::class);
 
-        RoleBasedAccessControlRegistry::register(MeetingCenterRbacRegistry::class);
+        AuthorizationRoleRegistry::register(MeetingCenterRbacRegistry::class);
     }
 
     protected function registerObservers(): void

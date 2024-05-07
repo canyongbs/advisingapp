@@ -36,12 +36,10 @@
 
 namespace AdvisingApp\StudentDataModel\Models;
 
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 
 /**
  * @mixin IdeHelperPerformance
@@ -49,7 +47,6 @@ use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 class Performance extends Model
 {
     use HasFactory;
-    use DefinesPermissions;
     use UsesTenantConnection;
 
     protected $table = 'performance';
@@ -65,16 +62,6 @@ class Performance extends Model
     protected $casts = [
         'max_dt' => 'datetime',
     ];
-
-    public function getWebPermissions(): Collection
-    {
-        return collect(['view-any', '*.view']);
-    }
-
-    public function getApiPermissions(): Collection
-    {
-        return collect(['view-any', '*.view']);
-    }
 
     public function student(): BelongsTo
     {

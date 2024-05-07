@@ -40,8 +40,8 @@ use Filament\Panel;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Mail\Events\MessageSending;
-use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\IntegrationAwsSesEventHandling\IntegrationAwsSesEventHandlingPlugin;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\EnsureSesConfigurationSetHeadersArePresent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Registries\IntegrationAwsSesEventHandlingRbacRegistry;
@@ -59,7 +59,7 @@ class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
 
         $this->registerEvents();
 
-        RoleBasedAccessControlRegistry::register(IntegrationAwsSesEventHandlingRbacRegistry::class);
+        AuthorizationRoleRegistry::register(IntegrationAwsSesEventHandlingRbacRegistry::class);
     }
 
     public function registerEvents(): void

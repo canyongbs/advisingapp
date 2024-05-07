@@ -39,7 +39,7 @@ namespace AdvisingApp\IntegrationTwilio\Providers;
 use Filament\Panel;
 use Twilio\Rest\Client;
 use Illuminate\Support\ServiceProvider;
-use App\Registries\RoleBasedAccessControlRegistry;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\IntegrationTwilio\IntegrationTwilioPlugin;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Engagement\Actions\FindEngagementResponseSender;
@@ -71,6 +71,6 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        RoleBasedAccessControlRegistry::register(IntegrationTwilioRbacRegistry::class);
+        AuthorizationRoleRegistry::register(IntegrationTwilioRbacRegistry::class);
     }
 }

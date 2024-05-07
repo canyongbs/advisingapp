@@ -34,6 +34,9 @@
 </COPYRIGHT>
 */
 
-return [
-    'view_microsoft_clarity_settings',
-];
+namespace AdvisingApp\Authorization\Registries\Contracts;
+
+interface RegistersRolesAndPermissions
+{
+    public function __invoke(): void;
+}

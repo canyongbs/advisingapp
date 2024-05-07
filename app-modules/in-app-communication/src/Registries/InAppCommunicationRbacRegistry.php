@@ -37,25 +37,12 @@
 namespace AdvisingApp\InAppCommunication\Registries;
 
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use App\Registries\Contracts\RegistersRolesAndPermissions;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\Registries\Contracts\RegistersRolesAndPermissions;
 
 class InAppCommunicationRbacRegistry implements RegistersRolesAndPermissions
 {
-    public function registerRolesAndPermissions(): void
+    public function __invoke(): void
     {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'in-app-communication',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'in-app-communication',
-            path: 'permissions/web/custom'
-        );
-
         $roleRegistry = app(AuthorizationRoleRegistry::class);
 
         $roleRegistry->registerApiRoles(

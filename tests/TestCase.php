@@ -48,11 +48,11 @@ use Symfony\Component\Finder\SplFileInfo;
 use App\Multitenancy\Actions\CreateTenant;
 use Spatie\Permission\PermissionRegistrar;
 use Illuminate\Support\Facades\ParallelTesting;
-use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Spatie\Multitenancy\Concerns\UsesMultitenancyConfig;
+use AdvisingApp\Authorization\Console\Commands\SyncRoles;
 use App\DataTransferObjects\LicenseManagement\LicenseData;
 use App\Multitenancy\DataTransferObjects\TenantMailConfig;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -64,7 +64,6 @@ use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
 use App\Multitenancy\DataTransferObjects\TenantSmtpMailerConfig;
 use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
 use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
-use AdvisingApp\Authorization\Console\Commands\SyncRolesAndPermissions;
 use Illuminate\Foundation\Testing\Traits\CanConfigureMigrationCommands;
 
 abstract class TestCase extends BaseTestCase
@@ -84,13 +83,6 @@ abstract class TestCase extends BaseTestCase
         Tenant::first()->makeCurrent();
 
         $this->beginDatabaseTransactionOnConnection($this->tenantDatabaseConnectionName());
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        RoleBasedAccessControlRegistry::clearRegistry();
     }
 
     public function createLandlordTestingEnvironment(): void
@@ -122,7 +114,7 @@ abstract class TestCase extends BaseTestCase
             ]);
 
             Artisan::call(
-                command: SyncRolesAndPermissions::class,
+                command: SyncRoles::class,
                 parameters: [
                     '--tenant' => $tenant->id,
                 ]

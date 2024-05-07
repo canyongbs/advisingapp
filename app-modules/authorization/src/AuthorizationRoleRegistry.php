@@ -36,43 +36,101 @@
 
 namespace AdvisingApp\Authorization;
 
-use App\Actions\Finders\ApplicationModules;
+use Illuminate\Support\Facades\File;
+use AdvisingApp\Authorization\Models\Permission;
 
 class AuthorizationRoleRegistry
 {
-    protected $moduleWebRoles = [];
+    protected array $webPermissions = [];
 
-    protected $moduleApiRoles = [];
+    protected array $apiPermissions = [];
+
+    protected array $webRoles = [];
+
+    protected array $apiRoles = [];
+
+    public function __construct()
+    {
+        $this->webPermissions = Permission::query()
+            ->where('guard_name', 'web')
+            ->pluck('id', 'name')
+            ->all();
+
+        $this->apiPermissions = Permission::query()
+            ->where('guard_name', 'api')
+            ->pluck('id', 'name')
+            ->all();
+    }
+
+    public static function register(string $class): void
+    {
+        app()->resolving(AuthorizationRoleRegistry::class, function () use ($class) {
+            app()->call($class);
+        });
+    }
 
     public function registerApiRoles(string $module, string $path)
     {
-        $roles = resolve(ApplicationModules::class)
-            ->moduleConfigDirectory(
-                module: $module,
-                path: $path
-            );
-
-        $this->moduleApiRoles[$module] = $roles;
+        $this->registerRoles($module, $path, $this->apiRoles, $this->apiPermissions);
     }
 
     public function registerWebRoles(string $module, string $path)
     {
-        $roles = resolve(ApplicationModules::class)
-            ->moduleConfigDirectory(
-                module: $module,
-                path: $path
-            );
-
-        $this->moduleWebRoles[$module] = $roles;
+        $this->registerRoles($module, $path, $this->webRoles, $this->webPermissions);
     }
 
-    public function getModuleWebRoles(): array
+    public function getWebRoles(): array
     {
-        return $this->moduleWebRoles;
+        return $this->webRoles;
     }
 
-    public function getModuleApiRoles(): array
+    public function getApiRoles(): array
     {
-        return $this->moduleApiRoles;
+        return $this->apiRoles;
+    }
+
+    protected function registerRoles(string $module, string $path, &$roleRegistry, &$permissionRegistry): void
+    {
+        foreach (File::files(base_path("app-modules/{$module}/config/{$path}")) as $file) {
+            $roleName = "{$module}.{$file->getFilenameWithoutExtension()}";
+
+            $roleRegistry[$roleName] ??= [];
+
+            $permissions = require $file->getPathname();
+
+            foreach ($permissions['model'] ?? [] as $model => $operations) {
+                foreach ($operations as $operation) {
+                    if ($operation === '*') {
+                        foreach ($permissionRegistry as $permissionName => $permissionId) {
+                            if (! str($permissionName)->startsWith("{$model}.")) {
+                                continue;
+                            }
+
+                            $roleRegistry[$roleName][] = $permissionId;
+                        }
+
+                        continue;
+                    }
+
+                    $permissionName = "{$model}.{$operation}";
+
+                    if (! array_key_exists($permissionName, $permissionRegistry)) {
+                        continue;
+                    }
+
+                    $roleRegistry[$roleName][] = $permissionRegistry[$permissionName];
+                }
+            }
+
+            foreach ($permissions['custom'] ?? [] as $permissionName) {
+                if (! array_key_exists($permissionName, $permissionRegistry)) {
+                    continue;
+                }
+
+                $roleRegistry[$roleName][] = $permissionRegistry[$permissionName];
+            }
+
+            $roleRegistry[$roleName] = array_unique($roleRegistry[$roleName]);
+        }
     }
 }

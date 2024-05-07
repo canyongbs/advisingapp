@@ -42,7 +42,6 @@ use App\Models\Authenticatable;
 use AdvisingApp\Task\Models\Task;
 use App\Models\Scopes\HasLicense;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Support\Collection;
 use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -76,7 +75,6 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use AdvisingApp\Notification\Models\Concerns\HasSubscriptions;
 use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
-use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
@@ -92,7 +90,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
 {
     use HasApiTokens;
     use AuditableTrait;
-    use DefinesPermissions;
     use HasFactory;
     use HasManyMorphedEngagementResponses;
     use HasManyMorphedEngagements;
@@ -228,11 +225,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     public static function displayEmailKey(): string
     {
         return 'email';
-    }
-
-    public function getWebPermissions(): Collection
-    {
-        return collect(['import', ...$this->webPermissions()]);
     }
 
     public static function filamentResource(): string

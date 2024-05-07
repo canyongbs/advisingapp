@@ -43,15 +43,12 @@ use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\AuthorizationPlugin;
-use App\Registries\RoleBasedAccessControlRegistry;
 use SocialiteProviders\Azure\AzureExtendSocialite;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use SocialiteProviders\Google\GoogleExtendSocialite;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\Observers\LicenseObserver;
-use AdvisingApp\Authorization\Actions\GetPermissionGroupId;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Authorization\Registries\AuthorizationRbacRegistry;
 use AdvisingApp\Authorization\Http\Controllers\Auth\LogoutController;
 use Filament\Http\Controllers\Auth\LogoutController as FilamentLogoutController;
@@ -62,10 +59,6 @@ class AuthorizationServiceProvider extends ServiceProvider
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AuthorizationPlugin()));
 
-        $this->app->singleton(AuthorizationPermissionRegistry::class, function () {
-            return new AuthorizationPermissionRegistry();
-        });
-
         $this->app->singleton(AuthorizationRoleRegistry::class, function () {
             return new AuthorizationRoleRegistry();
         });
@@ -74,14 +67,10 @@ class AuthorizationServiceProvider extends ServiceProvider
             return new LogoutController();
         });
 
-        $this->app->scoped(GetPermissionGroupId::class, function () {
-            return new GetPermissionGroupId();
-        });
-
         app('config')->set('permission', require base_path('app-modules/authorization/config/permission.php'));
     }
 
-    public function boot(AuthorizationPermissionRegistry $permissionRegistry, AuthorizationRoleRegistry $roleRegistry): void
+    public function boot(): void
     {
         Relation::morphMap([
             'role' => Role::class,
@@ -101,7 +90,7 @@ class AuthorizationServiceProvider extends ServiceProvider
             listener: GoogleExtendSocialite::class . '@handle'
         );
 
-        RoleBasedAccessControlRegistry::register(AuthorizationRbacRegistry::class);
+        AuthorizationRoleRegistry::register(AuthorizationRbacRegistry::class);
     }
 
     public function registerObservers(): void

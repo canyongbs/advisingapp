@@ -34,48 +34,56 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Actions;
+namespace Database\Migrations\Concerns;
 
-use Exception;
-use AdvisingApp\Authorization\Models\PermissionGroup;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
-class GetPermissionGroupId
+trait CanModifyPermissions
 {
-    protected array $groups;
-
-    public function __construct()
+    /**
+     * @param array<string, string> $names The keys of the array should be the permission names and the values should be the name of the group they belong to.
+     */
+    public function createPermissions(array $names, string $guardName): void
     {
-        $this->groups = PermissionGroup::query()
+        $groups = DB::table('permission_groups')
             ->pluck('id', 'name')
             ->all();
-    }
 
-    public function __invoke(string $name): string
-    {
-        if (! str($name)->contains('.')) {
-            throw new Exception("Invalid permission name: [{$name}] does not contain a period.");
-        }
+        [$newGroups, $groupsToCreate] = collect($names)
+            ->values()
+            ->unique()
+            ->diff(array_keys($groups))
+            ->reduce(function (array $carry, string $name) {
+                $id = (string) Str::orderedUuid();
 
-        $groupName = match ((string) str($name)->before('.')) {
-            'sla' => 'SLA',
-            'sms_template' => 'SMS Template',
-            'in-app-communication' => 'In-App Communication',
-            'integration-aws-ses-event-handling' => 'Integration: AWS SES Event Handling',
-            'integration-google-analytics' => 'Integration: Google Analytics',
-            'integration-google-recaptcha' => 'Integration: Google reCAPTCHA',
-            'integration-microsoft-clarity' => 'Integration: Microsoft Clarity',
-            'integration-twilio' => 'Integration: Twilio',
-            default => (string) str($name)
-                ->before('.')
-                ->headline(),
-        };
+                $carry[0][$name] = $id;
+                $carry[1][] = [
+                    'id' => $id,
+                    'name' => $name,
+                    'created_at' => now(),
+                ];
 
-        if (blank($this->groups[$groupName] ?? null)) {
-            $this->groups[$groupName] = PermissionGroup::create([
-                'name' => $groupName,
-            ])->id;
-        }
+                return $carry;
+            }, [[], []]);
 
-        return $this->groups[$groupName];
+        DB::table('permission_groups')
+            ->insert($groupsToCreate);
+
+        $groups = [
+            ...$groups,
+            ...$newGroups,
+        ];
+
+        DB::table('permissions')
+            ->insert(array_map(function (string $name, string $groupName) use ($groups, $guardName): array {
+                return [
+                    'id' => (string) Str::orderedUuid(),
+                    'group_id' => $groups[$groupName],
+                    'guard_name' => $guardName,
+                    'name' => $name,
+                    'created_at' => now(),
+                ];
+            }, array_keys($names), array_values($names)));
     }
 }

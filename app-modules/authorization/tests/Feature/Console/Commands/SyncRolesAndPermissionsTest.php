@@ -39,7 +39,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Artisan;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Tests\Helpers;
-use AdvisingApp\Authorization\Console\Commands\SyncRolesAndPermissions;
+use AdvisingApp\Authorization\Console\Commands\SyncRoles;
 
 beforeEach(function () {
     (new Helpers())->truncateTables();
@@ -71,7 +71,7 @@ it('will assign permissions to roles as defined in our configuration', function 
 
     // When we run the SyncRolesAndPermissions command
     Artisan::call(
-        command: SyncRolesAndPermissions::class,
+        command: SyncRoles::class,
         parameters: [
             "--tenant={$currentTenant->id}",
         ],
