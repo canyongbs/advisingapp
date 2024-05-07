@@ -37,6 +37,7 @@
 namespace App\Multitenancy\Tasks;
 
 use App\Notifications\MailMessage;
+use Illuminate\Contracts\Mail\Factory as MailFactory;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -131,11 +132,12 @@ class SwitchMailTask implements SwitchTenantTask
             ]
         );
 
-        app()->forgetInstance('mail.manager');
-        app()->forgetInstance(MailMessage::class);
-        app()->forgetInstance('mail');
-
-        Mail::alwaysFrom(config('mail.from.address'), config('mail.from.name'));
+//        app()->forgetInstance('mail.manager');
+//        app()->forgetInstance(MailMessage::class);
+//        app()->forgetInstance('mail');
+//        app()->forgetInstance(MailFactory::class);
+//
+//        Mail::alwaysFrom(config('mail.from.address'), config('mail.from.name'));
 
 //        collect(get_declared_classes())
 //            ->filter(fn ($className) => is_subclass_of($className, Facade::class))
