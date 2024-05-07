@@ -77,12 +77,12 @@ class AuthorizationRoleRegistry
 
     public function registerApiRoles(string $module, string $path)
     {
-        $this->registerRoles($module, $path, $this->apiRoles, $this->apiPermissions);
+        $this->registerModuleRoles($module, $path, $this->apiRoles, $this->apiPermissions);
     }
 
     public function registerWebRoles(string $module, string $path)
     {
-        $this->registerRoles($module, $path, $this->webRoles, $this->webPermissions);
+        $this->registerModuleRoles($module, $path, $this->webRoles, $this->webPermissions);
     }
 
     public function getWebRoles(): array
@@ -95,7 +95,21 @@ class AuthorizationRoleRegistry
         return $this->apiRoles;
     }
 
-    protected function registerRoles(string $module, string $path, &$roleRegistry, &$permissionRegistry): void
+    public function registerRole(string $roleName, array $permissions, array &$roleRegistry, array $permissionRegistry): void
+    {
+        if ($permissions === ['*']) {
+            $roleRegistry[$roleName] = array_values($permissionRegistry);
+
+            return;
+        }
+
+        $this->registerRoleModelPermissions($permissions['model'] ?? [], $roleName, $roleRegistry, $permissionRegistry);
+        $this->registerRoleCustomPermissions($permissions['custom'] ?? [], $roleName, $roleRegistry, $permissionRegistry);
+
+        $roleRegistry[$roleName] = array_unique($roleRegistry[$roleName]);
+    }
+
+    protected function registerModuleRoles(string $module, string $path, array &$roleRegistry, array $permissionRegistry): void
     {
         foreach (File::files(base_path("app-modules/{$module}/config/{$path}")) as $file) {
             $roleName = "{$module}.{$file->getFilenameWithoutExtension()}";
@@ -104,49 +118,45 @@ class AuthorizationRoleRegistry
 
             $permissions = require $file->getPathname();
 
-            if ($permissions === ['*']) {
-                $roleRegistry[$roleName] = array_values($permissionRegistry);
+            $this->registerRole($roleName, $permissions, $roleRegistry, $permissionRegistry);
+        }
+    }
 
-                continue;
-            }
-
-            foreach ($permissions['model'] ?? [] as $model => $operations) {
-                if (is_string($operations)) {
-                    dd($operations, $module, $path);
-                }
-
-                foreach ($operations as $operation) {
-                    if ($operation === '*') {
-                        foreach ($permissionRegistry as $permissionName => $permissionId) {
-                            if (! str($permissionName)->startsWith("{$model}.")) {
-                                continue;
-                            }
-
-                            $roleRegistry[$roleName][] = $permissionId;
+    protected function registerRoleModelPermissions(array $permissions, string $roleName, array &$roleRegistry, array $permissionRegistry): void
+    {
+        foreach ($permissions as $model => $operations) {
+            foreach ($operations as $operation) {
+                if ($operation === '*') {
+                    foreach ($permissionRegistry as $permissionName => $permissionId) {
+                        if (! str($permissionName)->startsWith("{$model}.")) {
+                            continue;
                         }
 
-                        continue;
+                        $roleRegistry[$roleName][] = $permissionId;
                     }
 
-                    $permissionName = "{$model}.{$operation}";
-
-                    if (! array_key_exists($permissionName, $permissionRegistry)) {
-                        continue;
-                    }
-
-                    $roleRegistry[$roleName][] = $permissionRegistry[$permissionName];
+                    continue;
                 }
-            }
 
-            foreach ($permissions['custom'] ?? [] as $permissionName) {
+                $permissionName = "{$model}.{$operation}";
+
                 if (! array_key_exists($permissionName, $permissionRegistry)) {
                     continue;
                 }
 
                 $roleRegistry[$roleName][] = $permissionRegistry[$permissionName];
             }
+        }
+    }
 
-            $roleRegistry[$roleName] = array_unique($roleRegistry[$roleName]);
+    protected function registerRoleCustomPermissions(array $permissions, string $roleName, array &$roleRegistry, array $permissionRegistry): void
+    {
+        foreach ($permissions as $permissionName) {
+            if (! array_key_exists($permissionName, $permissionRegistry)) {
+                continue;
+            }
+
+            $roleRegistry[$roleName][] = $permissionRegistry[$permissionName];
         }
     }
 }

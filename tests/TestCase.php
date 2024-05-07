@@ -117,7 +117,7 @@ abstract class TestCase extends BaseTestCase
                 command: SetupRoles::class,
                 parameters: [
                     '--tenant' => $tenant->id,
-                ]
+                ],
             );
 
             dispatch_sync(new UpdateTenantLicenseData(

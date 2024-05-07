@@ -34,7 +34,11 @@
 </COPYRIGHT>
 */
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use AdvisingApp\Authorization\Models\Permission;
+use AdvisingApp\Authorization\Models\PermissionGroup;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 
 beforeEach(function () {
     DB::table('roles')->truncate();
@@ -44,4 +48,48 @@ beforeEach(function () {
     DB::table('model_has_permissions')->truncate();
 });
 
-it('will assign permissions to roles as defined in our configuration', function () {});
+$createPermissions = function (array $permissions) {
+    $permissionGroupId = PermissionGroup::create([
+        'name' => 'Test',
+    ])->id;
+
+    $ids = [];
+
+    Permission::insert(array_map(
+        function (string $permissionName) use (&$ids, $permissionGroupId): array {
+            return [
+                'id' => $ids[] = (string) Str::orderedUuid(),
+                'name' => $permissionName,
+                'group_id' => $permissionGroupId,
+                'guard_name' => 'web',
+                'created_at' => now(),
+            ];
+        },
+        $permissions,
+    ));
+
+    return [
+        Permission::query()
+            ->where('guard_name', 'web')
+            ->pluck('id', 'name')
+            ->all(),
+        ...$ids,
+    ];
+};
+
+it('will assign custom permissions to roles', function () use ($createPermissions) {
+    $registry = app(AuthorizationRoleRegistry::class);
+
+    [$permissions, $testPermissionId] = $createPermissions(['test']);
+
+    $roles = [];
+
+    $registry->registerRole('Test Role', [
+        'custom' => [
+            'test',
+        ],
+    ], $roles, $permissions);
+
+    expect($roles['Test Role'])
+        ->toBe([$testPermissionId]);
+});

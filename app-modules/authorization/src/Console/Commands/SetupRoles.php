@@ -56,17 +56,21 @@ class SetupRoles extends Command
 
         $roleRegistry = resolve(AuthorizationRoleRegistry::class);
 
+        $rolePermissions = [];
+
         foreach ($roleRegistry->getWebRoles() as $roleName => $permissionIds) {
             $roleId = Role::create([
                 'name' => $roleName,
                 'guard_name' => 'web',
             ])->id;
 
-            DB::table('role_has_permissions')
-                ->insert(array_map(fn (string $permissionId) => [
+            $rolePermissions = [
+                ...$rolePermissions,
+                array_map(fn (string $permissionId) => [
                     'permission_id' => $permissionId,
                     'role_id' => $roleId,
-                ], $permissionIds));
+                ], $permissionIds),
+            ];
         }
 
         foreach ($roleRegistry->getApiRoles() as $roleName => $permissionIds) {
@@ -75,12 +79,17 @@ class SetupRoles extends Command
                 'guard_name' => 'api',
             ])->id;
 
-            DB::table('role_has_permissions')
-                ->insert(array_map(fn (string $permissionId) => [
+            $rolePermissions = [
+                ...$rolePermissions,
+                array_map(fn (string $permissionId) => [
                     'permission_id' => $permissionId,
                     'role_id' => $roleId,
-                ], $permissionIds));
+                ], $permissionIds),
+            ];
         }
+
+        DB::table('role_has_permissions')
+            ->insert($rolePermissions);
 
         $this->info('Roles created successfully!');
 
