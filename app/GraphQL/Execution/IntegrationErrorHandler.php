@@ -38,6 +38,7 @@ namespace App\GraphQL\Execution;
 
 use Closure;
 use GraphQL\Error\Error;
+use Illuminate\Support\Facades\Log;
 use App\Exceptions\IntegrationException;
 use Nuwave\Lighthouse\Execution\ErrorHandler;
 
@@ -50,7 +51,7 @@ class IntegrationErrorHandler implements ErrorHandler
         }
 
         if ($error->getPrevious() instanceof IntegrationException) {
-            report($error->getPrevious());
+            Log::info($error->getPrevious());
         }
 
         return $next($error);
