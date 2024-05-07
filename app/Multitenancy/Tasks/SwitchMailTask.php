@@ -36,7 +36,6 @@
 
 namespace App\Multitenancy\Tasks;
 
-use Illuminate\Support\Facades\Mail;
 use Spatie\Multitenancy\Models\Tenant;
 use Illuminate\Notifications\ChannelManager;
 use Spatie\Multitenancy\Tasks\SwitchTenantTask;
@@ -132,7 +131,5 @@ class SwitchMailTask implements SwitchTenantTask
         app()->forgetInstance('mail.manager');
         app()->forgetInstance(ChannelManager::class);
         app()->forgetInstance(MailChannel::class);
-
-        Mail::alwaysFrom(config('mail.from.address'), config('mail.from.name'));
     }
 }
