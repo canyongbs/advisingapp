@@ -41,10 +41,10 @@ use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Performance;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
 use AdvisingApp\StudentDataModel\Registries\StudentDataModelRbacRegistry;
 
@@ -66,7 +66,7 @@ class StudentDataModelServiceProvider extends ServiceProvider
             'program' => Program::class,
         ]);
 
-        RoleBasedAccessControlRegistry::register(StudentDataModelRbacRegistry::class);
+        AuthorizationRoleRegistry::register(StudentDataModelRbacRegistry::class);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
     }

@@ -80,8 +80,10 @@ trait HasSharedEventFormConfiguration
                 ->minValue(1)
                 ->nullable(),
             DateTimePicker::make('starts_at')
+                ->seconds(false)
                 ->required(),
             DateTimePicker::make('ends_at')
+                ->seconds(false)
                 ->required(),
             Fieldset::make('Registration Form')
                 ->relationship('eventRegistrationForm')

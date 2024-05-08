@@ -41,8 +41,8 @@ use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\CareTeam\CareTeamPlugin;
 use AdvisingApp\CareTeam\Models\CareTeam;
-use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\CareTeam\Registries\CareTeamRbacRegistry;
 
 class CareTeamServiceProvider extends ServiceProvider
@@ -62,6 +62,6 @@ class CareTeamServiceProvider extends ServiceProvider
 
         $this->discoverSchema(__DIR__ . '/../../graphql/care-team.graphql');
 
-        RoleBasedAccessControlRegistry::register(CareTeamRbacRegistry::class);
+        AuthorizationRoleRegistry::register(CareTeamRbacRegistry::class);
     }
 }

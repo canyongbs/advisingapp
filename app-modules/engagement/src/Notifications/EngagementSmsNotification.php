@@ -70,7 +70,7 @@ class EngagementSmsNotification extends BaseNotification implements SmsNotificat
         $this->deliverable->markDeliveryFailed($exception->getMessage());
 
         if (is_null($this->deliverable->engagement->engagement_batch_id)) {
-            $this->deliverable->engagement->user->notify(new EngagementFailedNotification($this->deliverable->engagement));
+            $this->deliverable->engagement->user?->notify(new EngagementFailedNotification($this->deliverable->engagement));
         }
     }
 

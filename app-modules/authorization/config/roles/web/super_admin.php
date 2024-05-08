@@ -34,12 +34,4 @@
 </COPYRIGHT>
 */
 
-return [
-    'custom' => [
-        '*',
-    ],
-
-    'model' => [
-        '*',
-    ],
-];
+return [];

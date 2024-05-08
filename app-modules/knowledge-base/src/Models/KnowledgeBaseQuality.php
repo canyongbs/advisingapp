@@ -57,9 +57,9 @@ class KnowledgeBaseQuality extends BaseModel implements Auditable
         'name',
     ];
 
-    public function knowledgeBaseItems(): HasMany
+    public function knowledgeBaseArticles(): HasMany
     {
-        return $this->hasMany(KnowledgeBaseItem::class, 'quality_id');
+        return $this->hasMany(KnowledgeBaseArticle::class, 'quality_id');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

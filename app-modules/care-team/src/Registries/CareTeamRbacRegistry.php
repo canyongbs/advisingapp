@@ -37,25 +37,12 @@
 namespace AdvisingApp\CareTeam\Registries;
 
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use App\Registries\Contracts\RegistersRolesAndPermissions;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\Registries\Contracts\RegistersRolesAndPermissions;
 
 class CareTeamRbacRegistry implements RegistersRolesAndPermissions
 {
-    public function registerRolesAndPermissions(): void
+    public function __invoke(): void
     {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'care-team',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'care-team',
-            path: 'permissions/web/custom'
-        );
-
         $roleRegistry = app(AuthorizationRoleRegistry::class);
 
         $roleRegistry->registerApiRoles(

@@ -37,8 +37,10 @@
 namespace AdvisingApp\Authorization\Console\Commands;
 
 use Illuminate\Console\Command;
-use AdvisingApp\Authorization\Actions\CreateRoles;
+use Illuminate\Support\Facades\DB;
+use AdvisingApp\Authorization\Models\Role;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 
 class SetupRoles extends Command
 {
@@ -46,13 +48,48 @@ class SetupRoles extends Command
 
     protected $signature = 'roles:setup {--tenant=*}';
 
-    protected $description = 'This command will create all of the roles defined in the roles config directory.';
+    protected $description = 'This command will create all of the roles defined in the roles config directories.';
 
     public function handle(): int
     {
         $this->line('Creating roles...');
 
-        resolve(CreateRoles::class)->handle();
+        $roleRegistry = resolve(AuthorizationRoleRegistry::class);
+
+        $rolePermissions = [];
+
+        foreach ($roleRegistry->getWebRoles() as $roleName => $permissionIds) {
+            $roleId = Role::create([
+                'name' => $roleName,
+                'guard_name' => 'web',
+            ])->id;
+
+            $rolePermissions = [
+                ...$rolePermissions,
+                ...array_map(fn (string $permissionId) => [
+                    'permission_id' => $permissionId,
+                    'role_id' => $roleId,
+                ], $permissionIds),
+            ];
+        }
+
+        foreach ($roleRegistry->getApiRoles() as $roleName => $permissionIds) {
+            $roleId = Role::create([
+                'name' => $roleName,
+                'guard_name' => 'api',
+            ])->id;
+
+            $rolePermissions = [
+                ...$rolePermissions,
+                ...array_map(fn (string $permissionId) => [
+                    'permission_id' => $permissionId,
+                    'role_id' => $roleId,
+                ], $permissionIds),
+            ];
+        }
+
+        DB::table('role_has_permissions')
+            ->insert($rolePermissions);
 
         $this->info('Roles created successfully!');
 

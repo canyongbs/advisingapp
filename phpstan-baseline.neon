@@ -1,6 +1,0 @@
-parameters:
-	ignoreErrors:
-		-
-			message: "#^Class Mockery_3_App_Models_User not found\\.$#"
-			count: 1
-			path: app-modules/authorization/tests/Feature/Actions/CreatePermissionsForModelTest.php

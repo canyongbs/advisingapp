@@ -36,12 +36,10 @@
 
 namespace AdvisingApp\StudentDataModel\Models;
 
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 
 /**
  * @mixin IdeHelperProgram
@@ -49,7 +47,6 @@ use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 class Program extends Model
 {
     use HasFactory;
-    use DefinesPermissions;
     use UsesTenantConnection;
 
     protected $table = 'programs';
@@ -66,16 +63,6 @@ class Program extends Model
         'change_dt' => 'datetime',
         'declare_dt' => 'datetime',
     ];
-
-    public function getWebPermissions(): Collection
-    {
-        return collect(['view-any', '*.view']);
-    }
-
-    public function getApiPermissions(): Collection
-    {
-        return collect(['view-any', '*.view']);
-    }
 
     public function student(): BelongsTo
     {

@@ -83,12 +83,6 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
-    'twilio' => [
-        'test_from_number' => env('TWILIO_TEST_FROM_NUMBER'),
-        'test_to_number' => env('TWILIO_TEST_TO_NUMBER'),
-        'enable_test_sender' => env('TWILIO_ENABLE_TEST_SENDER', false),
-    ],
-
     // TODO Find a way to move this setting to the Integration AI module
     'azure_open_ai' => [
         'endpoint' => env('AZURE_OPEN_AI_BASE_ENDPOINT'),

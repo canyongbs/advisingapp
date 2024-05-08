@@ -971,6 +971,7 @@ namespace AdvisingApp\Assistant\Models{
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant default()
+ * @method static \AdvisingApp\Assistant\Database\Factories\AiAssistantFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant onlyTrashed()
@@ -2168,6 +2169,8 @@ namespace AdvisingApp\Form\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \AdvisingApp\Form\Models\FormStep|null $step
  * @property-read \AdvisingApp\Form\Models\Form $submissible
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormSubmission> $submissions
+ * @property-read int|null $submissions_count
  * @method static \AdvisingApp\Form\Database\Factories\FormFieldFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|FormField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormField newQuery()
@@ -2189,6 +2192,33 @@ namespace AdvisingApp\Form\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperFormField {}
+}
+
+namespace AdvisingApp\Form\Models{
+/**
+ * AdvisingApp\Form\Models\FormFieldSubmission
+ *
+ * @property string $id
+ * @property array $response
+ * @property string $field_id
+ * @property string $submission_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\Form\Models\FormField $field
+ * @property-read \AdvisingApp\Form\Models\FormSubmission $submission
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission query()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission whereFieldId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission whereResponse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission whereSubmissionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperFormFieldSubmission {}
 }
 
 namespace AdvisingApp\Form\Models{
@@ -2965,6 +2995,113 @@ namespace AdvisingApp\InventoryManagement\Models{
 
 namespace AdvisingApp\KnowledgeBase\Models{
 /**
+ * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle
+ *
+ * @property string $id
+ * @property bool $public
+ * @property string $title
+ * @property array|null $article_details
+ * @property string|null $notes
+ * @property string|null $quality_id
+ * @property string|null $status_id
+ * @property string|null $category_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory|null $category
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Division\Models\Division> $division
+ * @property-read int|null $division_count
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality|null $quality
+ * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus|null $status
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticleUpvote> $upvotes
+ * @property-read int|null $upvotes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticleView> $views
+ * @property-read int|null $views_count
+ * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseArticleFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle public()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle query()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereArticleDetails($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle wherePublic($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereQualityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereStatusId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperKnowledgeBaseArticle {}
+}
+
+namespace AdvisingApp\KnowledgeBase\Models{
+/**
+ * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticleUpvote
+ *
+ * @property string $id
+ * @property string $knowledge_base_item_id
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle $knowledgeBaseArticle
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote query()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereKnowledgeBaseItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperKnowledgeBaseArticleUpvote {}
+}
+
+namespace AdvisingApp\KnowledgeBase\Models{
+/**
+ * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticleView
+ *
+ * @property string $id
+ * @property string $knowledge_base_item_id
+ * @property string|null $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle $knowledgeBaseArticle
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView query()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereKnowledgeBaseItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperKnowledgeBaseArticleView {}
+}
+
+namespace AdvisingApp\KnowledgeBase\Models{
+/**
  * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory
  *
  * @property string $id
@@ -2976,8 +3113,8 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
- * @property-read int|null $knowledge_base_items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle> $knowledgeBaseArticles
+ * @property-read int|null $knowledge_base_articles_count
  * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseCategoryFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory newQuery()
@@ -3000,113 +3137,6 @@ namespace AdvisingApp\KnowledgeBase\Models{
 
 namespace AdvisingApp\KnowledgeBase\Models{
 /**
- * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem
- *
- * @property string $id
- * @property bool $public
- * @property string $title
- * @property array|null $article_details
- * @property string|null $notes
- * @property string|null $quality_id
- * @property string|null $status_id
- * @property string|null $category_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory|null $category
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Division\Models\Division> $division
- * @property-read int|null $division_count
- * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
- * @property-read int|null $media_count
- * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality|null $quality
- * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus|null $status
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItemUpvote> $upvotes
- * @property-read int|null $upvotes_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItemView> $views
- * @property-read int|null $views_count
- * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseItemFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem public()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem query()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereArticleDetails($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereCategoryId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereNotes($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem wherePublic($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereQualityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereStatusId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperKnowledgeBaseItem {}
-}
-
-namespace AdvisingApp\KnowledgeBase\Models{
-/**
- * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItemUpvote
- *
- * @property string $id
- * @property string $knowledge_base_item_id
- * @property string $user_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem $knowledgeBaseItem
- * @property-read \App\Models\User $user
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote query()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereKnowledgeBaseItemId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemUpvote whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperKnowledgeBaseItemUpvote {}
-}
-
-namespace AdvisingApp\KnowledgeBase\Models{
-/**
- * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItemView
- *
- * @property string $id
- * @property string $knowledge_base_item_id
- * @property string|null $user_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem $knowledgeBaseItem
- * @property-read \App\Models\User|null $user
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView query()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereKnowledgeBaseItemId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItemView whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperKnowledgeBaseItemView {}
-}
-
-namespace AdvisingApp\KnowledgeBase\Models{
-/**
  * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality
  *
  * @property string $id
@@ -3116,8 +3146,8 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
- * @property-read int|null $knowledge_base_items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle> $knowledgeBaseArticles
+ * @property-read int|null $knowledge_base_articles_count
  * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseQualityFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality newQuery()
@@ -3147,8 +3177,8 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
- * @property-read int|null $knowledge_base_items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle> $knowledgeBaseArticles
+ * @property-read int|null $knowledge_base_articles_count
  * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseStatusFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus newQuery()
@@ -4882,6 +4912,8 @@ namespace AdvisingApp\Survey\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \AdvisingApp\Survey\Models\SurveyStep|null $step
  * @property-read \AdvisingApp\Survey\Models\Survey $submissible
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Survey\Models\SurveySubmission> $submissions
+ * @property-read int|null $submissions_count
  * @method static \AdvisingApp\Survey\Database\Factories\SurveyFieldFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|SurveyField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SurveyField newQuery()
@@ -4903,6 +4935,33 @@ namespace AdvisingApp\Survey\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperSurveyField {}
+}
+
+namespace AdvisingApp\Survey\Models{
+/**
+ * AdvisingApp\Survey\Models\SurveyFieldSubmission
+ *
+ * @property string $id
+ * @property array $response
+ * @property string $field_id
+ * @property string $submission_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\Survey\Models\SurveyField $field
+ * @property-read \AdvisingApp\Survey\Models\SurveySubmission $submission
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereFieldId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereResponse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereSubmissionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperSurveyFieldSubmission {}
 }
 
 namespace AdvisingApp\Survey\Models{

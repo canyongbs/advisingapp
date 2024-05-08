@@ -38,8 +38,8 @@ namespace AdvisingApp\InAppCommunication\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\InAppCommunication\InAppCommunicationPlugin;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\InAppCommunication\Registries\InAppCommunicationRbacRegistry;
@@ -59,6 +59,6 @@ class InAppCommunicationServiceProvider extends ServiceProvider
             ]
         );
 
-        RoleBasedAccessControlRegistry::register(InAppCommunicationRbacRegistry::class);
+        AuthorizationRoleRegistry::register(InAppCommunicationRbacRegistry::class);
     }
 }

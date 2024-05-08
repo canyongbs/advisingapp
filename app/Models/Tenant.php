@@ -56,10 +56,12 @@ class Tenant extends SpatieTenant
         'domain',
         'key',
         'config',
+        'setup_complete',
     ];
 
     protected $casts = [
         'key' => LandlordEncrypted::class,
         'config' => LandlordEncrypted::class,
+        'setup_complete' => 'boolean',
     ];
 }
