@@ -48,7 +48,7 @@ class SampleSuperAdminUserSeeder extends Seeder
     {
         $superAdminRole = Role::where('name', 'authorization.super_admin')->firstOrFail();
 
-        if (app()->environment('local')) {
+        if (app()->isLocal()) {
             $superAdmin = User::factory()->licensed(LicenseType::cases())->create([
                 'name' => 'Super Admin',
                 'email' => config('local_development.super_admin.email'),

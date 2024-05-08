@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,20 +30,16 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use App\Enums\Integration;
+    use App\Exceptions\IntegrationException;
 
-return [
-    'super_admin' => [
-        'email' => 'sampleadmin@advising.app',
-    ],
-    'internal_users' => [
-        'emails' => env('DEMO_INTERNAL_USER_EMAILS') ? explode(',', env('DEMO_INTERNAL_USER_EMAILS')) : null,
-    ],
-    'twilio' => [
-        'account_sid' => env('TWILIO_ACCOUNT_SID'),
-        'auth_token' => env('TWILIO_AUTH_TOKEN'),
-        'from_number' => env('TWILIO_TEST_FROM_NUMBER', env('TWILIO_FROM_NUMBER', env('TWILIO_PHONE_NUMBER'))),
-        'to_number' => env('TWILIO_TEST_TO_NUMBER', env('TWILIO_TO_NUMBER')),
-        'enable_test_sender' => env('TWILIO_ENABLE_TEST_SENDER', false),
-    ],
-];
+    /** @var Integration $integration */
+
+@endphp
+
+@props(['integration'])
+<x-filament-panels::page>
+    {{ IntegrationException::make($integration)->getMessage() }}
+</x-filament-panels::page>

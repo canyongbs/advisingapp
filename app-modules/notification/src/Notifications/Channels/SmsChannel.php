@@ -107,7 +107,7 @@ class SmsChannel
 
         try {
             $message = $client->messages->create(
-                ! is_null(config('services.twilio.test_to_number')) ? config('services.twilio.test_to_number') : $twilioMessage->getRecipientPhoneNumber(),
+                config('local_development.twilio.to_number') ?: $twilioMessage->getRecipientPhoneNumber(),
                 $messageContent
             );
 

@@ -34,18 +34,57 @@
 </COPYRIGHT>
 */
 
-return [
-    'super_admin' => [
-        'email' => 'sampleadmin@advising.app',
-    ],
-    'internal_users' => [
-        'emails' => env('DEMO_INTERNAL_USER_EMAILS') ? explode(',', env('DEMO_INTERNAL_USER_EMAILS')) : null,
-    ],
-    'twilio' => [
-        'account_sid' => env('TWILIO_ACCOUNT_SID'),
-        'auth_token' => env('TWILIO_AUTH_TOKEN'),
-        'from_number' => env('TWILIO_TEST_FROM_NUMBER', env('TWILIO_FROM_NUMBER', env('TWILIO_PHONE_NUMBER'))),
-        'to_number' => env('TWILIO_TEST_TO_NUMBER', env('TWILIO_TO_NUMBER')),
-        'enable_test_sender' => env('TWILIO_ENABLE_TEST_SENDER', false),
-    ],
-];
+namespace App\Enums;
+
+use App\Settings\IntegrationSettings;
+use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
+
+enum Integration: string implements HasLabel
+{
+    case Twilio = 'twilio';
+
+    public function settings(): IntegrationSettings
+    {
+        return app(match ($this) {
+            Integration::Twilio => TwilioSettings::class,
+        });
+    }
+
+    public function isOn(): bool
+    {
+        return $this->settings()->isOn();
+    }
+
+    public function isOff(): bool
+    {
+        return $this->settings()->isOff();
+    }
+
+    public function isConfigured(): bool
+    {
+        return $this->settings()->isConfigured();
+    }
+
+    public function isNotConfigured(): bool
+    {
+        return $this->settings()->isNotConfigured();
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->settings()->isEnabled();
+    }
+
+    public function isDisabled(): bool
+    {
+        return $this->settings()->isDisabled();
+    }
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            Integration::Twilio => 'Twilio',
+        };
+    }
+}

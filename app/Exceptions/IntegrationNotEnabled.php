@@ -34,6 +34,9 @@
 </COPYRIGHT>
 */
 
-return [
-    'emails' => env('DEMO_INTERNAL_USER_EMAILS') ? explode(',', env('DEMO_INTERNAL_USER_EMAILS')) : null,
-];
+namespace App\Exceptions;
+
+class IntegrationNotEnabled extends IntegrationException
+{
+    protected $message = 'A required setting is disabled. Please contact your administrator to enable it.';
+}

@@ -34,18 +34,38 @@
 </COPYRIGHT>
 */
 
-return [
-    'super_admin' => [
-        'email' => 'sampleadmin@advising.app',
-    ],
-    'internal_users' => [
-        'emails' => env('DEMO_INTERNAL_USER_EMAILS') ? explode(',', env('DEMO_INTERNAL_USER_EMAILS')) : null,
-    ],
-    'twilio' => [
-        'account_sid' => env('TWILIO_ACCOUNT_SID'),
-        'auth_token' => env('TWILIO_AUTH_TOKEN'),
-        'from_number' => env('TWILIO_TEST_FROM_NUMBER', env('TWILIO_FROM_NUMBER', env('TWILIO_PHONE_NUMBER'))),
-        'to_number' => env('TWILIO_TEST_TO_NUMBER', env('TWILIO_TO_NUMBER')),
-        'enable_test_sender' => env('TWILIO_ENABLE_TEST_SENDER', false),
-    ],
-];
+namespace App\Settings;
+
+use Spatie\LaravelSettings\Settings;
+
+abstract class IntegrationSettings extends Settings
+{
+    public bool $is_enabled;
+
+    abstract public function isConfigured(): bool;
+
+    public function isNotConfigured(): bool
+    {
+        return ! $this->isConfigured();
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->is_enabled;
+    }
+
+    public function isDisabled(): bool
+    {
+        return ! $this->isEnabled();
+    }
+
+    public function isOn(): bool
+    {
+        return $this->is_enabled && $this->isConfigured();
+    }
+
+    public function isOff(): bool
+    {
+        return ! $this->isOn();
+    }
+}
