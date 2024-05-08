@@ -41,12 +41,10 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use AdvisingApp\Authorization\Models\Concerns\HasRolesWithPivot;
-use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 
 abstract class Authenticatable extends BaseAuthenticatable
 {
     use HasRolesWithPivot;
-    use DefinesPermissions;
     use CanOrElse;
     use UsesTenantConnection;
 

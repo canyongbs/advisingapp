@@ -41,12 +41,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 
 abstract class BaseModel extends Model
 {
     use HasFactory;
-    use DefinesPermissions;
     use HasUuids;
     use UsesTenantConnection;
 

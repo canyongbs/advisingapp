@@ -36,43 +36,127 @@
 
 namespace AdvisingApp\Authorization;
 
-use App\Actions\Finders\ApplicationModules;
+use Exception;
+use App\Models\Tenant;
+use Illuminate\Support\Facades\File;
+use AdvisingApp\Authorization\Models\Permission;
 
 class AuthorizationRoleRegistry
 {
-    protected $moduleWebRoles = [];
+    protected array $webPermissions = [];
 
-    protected $moduleApiRoles = [];
+    protected array $apiPermissions = [];
+
+    protected array $webRoles = [];
+
+    protected array $apiRoles = [];
+
+    public function __construct()
+    {
+        if (! Tenant::current()) {
+            throw new Exception('No current tenant set');
+        }
+
+        $this->webPermissions = Permission::query()
+            ->where('guard_name', 'web')
+            ->pluck('id', 'name')
+            ->all();
+
+        $this->apiPermissions = Permission::query()
+            ->where('guard_name', 'api')
+            ->pluck('id', 'name')
+            ->all();
+    }
+
+    public static function register(string $class): void
+    {
+        app()->resolving(AuthorizationRoleRegistry::class, function () use ($class) {
+            app()->call($class);
+        });
+    }
 
     public function registerApiRoles(string $module, string $path)
     {
-        $roles = resolve(ApplicationModules::class)
-            ->moduleConfigDirectory(
-                module: $module,
-                path: $path
-            );
-
-        $this->moduleApiRoles[$module] = $roles;
+        $this->registerModuleRoles($module, $path, $this->apiRoles, $this->apiPermissions);
     }
 
     public function registerWebRoles(string $module, string $path)
     {
-        $roles = resolve(ApplicationModules::class)
-            ->moduleConfigDirectory(
-                module: $module,
-                path: $path
-            );
-
-        $this->moduleWebRoles[$module] = $roles;
+        $this->registerModuleRoles($module, $path, $this->webRoles, $this->webPermissions);
     }
 
-    public function getModuleWebRoles(): array
+    public function getWebRoles(): array
     {
-        return $this->moduleWebRoles;
+        return $this->webRoles;
     }
 
-    public function getModuleApiRoles(): array
+    public function getApiRoles(): array
     {
-        return $this->moduleApiRoles;
+        return $this->apiRoles;
+    }
+
+    public function registerRole(string $roleName, array $permissions, array &$roleRegistry, array $permissionRegistry): void
+    {
+        if ($permissions === ['*']) {
+            $roleRegistry[$roleName] = array_values($permissionRegistry);
+
+            return;
+        }
+
+        $this->registerRoleModelPermissions($permissions['model'] ?? [], $roleName, $roleRegistry, $permissionRegistry);
+        $this->registerRoleCustomPermissions($permissions['custom'] ?? [], $roleName, $roleRegistry, $permissionRegistry);
+
+        $roleRegistry[$roleName] = array_unique($roleRegistry[$roleName]);
+    }
+
+    protected function registerModuleRoles(string $module, string $path, array &$roleRegistry, array $permissionRegistry): void
+    {
+        foreach (File::files(base_path("app-modules/{$module}/config/{$path}")) as $file) {
+            $roleName = "{$module}.{$file->getFilenameWithoutExtension()}";
+
+            $roleRegistry[$roleName] ??= [];
+
+            $permissions = require $file->getPathname();
+
+            $this->registerRole($roleName, $permissions, $roleRegistry, $permissionRegistry);
+        }
+    }
+
+    protected function registerRoleModelPermissions(array $permissions, string $roleName, array &$roleRegistry, array $permissionRegistry): void
+    {
+        foreach ($permissions as $model => $operations) {
+            foreach ($operations as $operation) {
+                if ($operation === '*') {
+                    foreach ($permissionRegistry as $permissionName => $permissionId) {
+                        if (! str($permissionName)->startsWith("{$model}.")) {
+                            continue;
+                        }
+
+                        $roleRegistry[$roleName][] = $permissionId;
+                    }
+
+                    continue;
+                }
+
+                $permissionName = "{$model}.{$operation}";
+
+                if (! array_key_exists($permissionName, $permissionRegistry)) {
+                    continue;
+                }
+
+                $roleRegistry[$roleName][] = $permissionRegistry[$permissionName];
+            }
+        }
+    }
+
+    protected function registerRoleCustomPermissions(array $permissions, string $roleName, array &$roleRegistry, array $permissionRegistry): void
+    {
+        foreach ($permissions as $permissionName) {
+            if (! array_key_exists($permissionName, $permissionRegistry)) {
+                continue;
+            }
+
+            $roleRegistry[$roleName][] = $permissionRegistry[$permissionName];
+        }
     }
 }

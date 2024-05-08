@@ -36,13 +36,11 @@
 
 namespace AdvisingApp\IntegrationTwilio\Settings;
 
-use Spatie\LaravelSettings\Settings;
+use App\Settings\IntegrationSettings;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioApiKey;
 
-class TwilioSettings extends Settings
+class TwilioSettings extends IntegrationSettings
 {
-    public bool $is_enabled;
-
     public ?TwilioApiKey $api_key;
 
     public ?string $account_sid;
@@ -64,5 +62,10 @@ class TwilioSettings extends Settings
             'auth_token',
             'from_number',
         ];
+    }
+
+    public function isConfigured(): bool
+    {
+        return $this->account_sid && $this->auth_token && $this->from_number;
     }
 }

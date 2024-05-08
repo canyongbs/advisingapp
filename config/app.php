@@ -232,6 +232,7 @@ return [
         App\Providers\FilamentServiceProvider::class,
         MultiConnectionParallelTestingServiceProvider::class,
         WhereConditionsServiceProvider::class,
+        Nuwave\Lighthouse\Pennant\PennantServiceProvider::class,
     ],
 
     /*

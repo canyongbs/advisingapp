@@ -971,6 +971,7 @@ namespace AdvisingApp\Assistant\Models{
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant default()
+ * @method static \AdvisingApp\Assistant\Database\Factories\AiAssistantFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant onlyTrashed()
@@ -2168,6 +2169,8 @@ namespace AdvisingApp\Form\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \AdvisingApp\Form\Models\FormStep|null $step
  * @property-read \AdvisingApp\Form\Models\Form $submissible
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormSubmission> $submissions
+ * @property-read int|null $submissions_count
  * @method static \AdvisingApp\Form\Database\Factories\FormFieldFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|FormField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormField newQuery()
@@ -2189,6 +2192,33 @@ namespace AdvisingApp\Form\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperFormField {}
+}
+
+namespace AdvisingApp\Form\Models{
+/**
+ * AdvisingApp\Form\Models\FormFieldSubmission
+ *
+ * @property string $id
+ * @property array $response
+ * @property string $field_id
+ * @property string $submission_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\Form\Models\FormField $field
+ * @property-read \AdvisingApp\Form\Models\FormSubmission $submission
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission query()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission whereFieldId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission whereResponse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission whereSubmissionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormFieldSubmission whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperFormFieldSubmission {}
 }
 
 namespace AdvisingApp\Form\Models{
@@ -3020,11 +3050,23 @@ namespace AdvisingApp\KnowledgeBase\Models{
 /**
  * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticleUpvote
  *
- * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle|null $knowledgeBaseArticle
- * @property-read \App\Models\User|null $user
+ * @property string $id
+ * @property string $knowledge_base_item_id
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle $knowledgeBaseArticle
+ * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote query()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereKnowledgeBaseItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereUserId($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -3035,11 +3077,23 @@ namespace AdvisingApp\KnowledgeBase\Models{
 /**
  * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticleView
  *
- * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle|null $knowledgeBaseArticle
+ * @property string $id
+ * @property string $knowledge_base_item_id
+ * @property string|null $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle $knowledgeBaseArticle
  * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView query()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereKnowledgeBaseItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereUserId($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -4858,6 +4912,8 @@ namespace AdvisingApp\Survey\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \AdvisingApp\Survey\Models\SurveyStep|null $step
  * @property-read \AdvisingApp\Survey\Models\Survey $submissible
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Survey\Models\SurveySubmission> $submissions
+ * @property-read int|null $submissions_count
  * @method static \AdvisingApp\Survey\Database\Factories\SurveyFieldFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|SurveyField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SurveyField newQuery()
@@ -4879,6 +4935,33 @@ namespace AdvisingApp\Survey\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperSurveyField {}
+}
+
+namespace AdvisingApp\Survey\Models{
+/**
+ * AdvisingApp\Survey\Models\SurveyFieldSubmission
+ *
+ * @property string $id
+ * @property array $response
+ * @property string $field_id
+ * @property string $submission_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\Survey\Models\SurveyField $field
+ * @property-read \AdvisingApp\Survey\Models\SurveySubmission $submission
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereFieldId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereResponse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereSubmissionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyFieldSubmission whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperSurveyFieldSubmission {}
 }
 
 namespace AdvisingApp\Survey\Models{

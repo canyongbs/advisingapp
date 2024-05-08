@@ -38,7 +38,6 @@ namespace App\Filament\Resources\UserResource\RelationManagers;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Laravel\Pennant\Feature;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Tables\Columns\IdColumn;
@@ -70,8 +69,7 @@ class PermissionsRelationManager extends RelationManager
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('group.name')
-                    ->sortable()
-                    ->visible(Feature::active('permission-groups')),
+                    ->sortable(),
                 TextColumn::make('name'),
                 TextColumn::make('guard_name'),
             ])
@@ -80,8 +78,7 @@ class PermissionsRelationManager extends RelationManager
                     ->relationship('group', 'name')
                     ->searchable()
                     ->preload()
-                    ->multiple()
-                    ->visible(Feature::active('permission-groups')),
+                    ->multiple(),
             ])
             ->headerActions([
             ])
