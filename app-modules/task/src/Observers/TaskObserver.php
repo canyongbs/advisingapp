@@ -67,7 +67,7 @@ class TaskObserver
     public function creating(Task $task): void
     {
         Permission::create([
-            'name' => $permissionName = "task.{$task->id}.update",
+            'name' => "task.{$task->id}.update",
             'guard_name' => 'web',
             'group_id' => PermissionGroup::query()
                 ->where('name', 'Task')
