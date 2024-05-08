@@ -40,11 +40,15 @@ use Filament\Tables\Table;
 use AdvisingApp\Form\Models\Form;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\Action;
+use Filament\Forms\Form as FormsForm;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TextInput;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Form\Filament\Resources\FormResource;
 
@@ -68,6 +72,28 @@ class ListForms extends ListRecords
                     ->openUrlInNewTab()
                     ->color('gray'),
                 EditAction::make(),
+                ReplicateAction::make('Duplicate')
+                    ->label('Duplicate')
+                    ->modalHeading('Duplicate Form')
+                    ->modalSubmitActionLabel('Duplicate')
+                    ->mutateRecordDataUsing(function (array $data): array {
+                        $data['name'] = "Copy - {$data['name']}";
+
+                        return $data;
+                    })
+                    ->form(function (FormsForm $form): FormsForm {
+                        return $form->schema([
+                            TextInput::make('name')
+                                ->label('Name')
+                                ->required(),
+                        ]);
+                    })
+                    ->beforeReplicaSaved(function (Model $replica, array $data): void {
+                        $replica->name = $data['name'];
+                    })
+                    ->after(function (Form $replica, Form $record): void {
+                        $replica->replicateRelatedData($record);
+                    }),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

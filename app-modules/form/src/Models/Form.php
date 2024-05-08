@@ -37,13 +37,15 @@
 namespace AdvisingApp\Form\Models;
 
 use AdvisingApp\Form\Enums\Rounding;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Contracts\CanBeReplicated;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @mixin IdeHelperForm
  */
-class Form extends Submissible
+class Form extends Submissible implements CanBeReplicated
 {
     protected $fillable = [
         'name',
@@ -87,5 +89,77 @@ class Form extends Submissible
     public function emailAutoReply(): HasOne
     {
         return $this->hasOne(FormEmailAutoReply::class);
+    }
+
+    public function replicateRelatedData(Model $original): void
+    {
+        $stepMap = $this->replicateSteps($original);
+        $fieldMap = $this->replicateFields($original, $stepMap);
+        $this->updateStepContent($fieldMap);
+        $this->replicateEmailAutoReply($original);
+    }
+
+    protected function replicateSteps(Model $original): array
+    {
+        $stepMap = [];
+
+        $original->steps()->each(function (FormStep $step) use (&$stepMap) {
+            $newStep = $step->replicate();
+            $newStep->form_id = $this->id;
+            $newStep->save();
+
+            $stepMap[$step->id] = $newStep->id;
+        });
+
+        return $stepMap;
+    }
+
+    protected function replicateFields(Model $original, array $stepMap): array
+    {
+        $fieldMap = [];
+
+        $original->fields()->each(function (FormField $field) use (&$fieldMap, $stepMap) {
+            $newField = $field->replicate();
+            $newField->form_id = $this->id;
+            $newField->step_id = $stepMap[$field->step_id] ?? null;
+            $newField->save();
+
+            $fieldMap[$field->id] = $newField->id;
+        });
+
+        return $fieldMap;
+    }
+
+    protected function updateStepContent(array $fieldMap): void
+    {
+        $this->steps()->each(function (FormStep $step) use ($fieldMap) {
+            $step->update([
+                'content' => $this->replaceIdsInContent($step->content, $fieldMap),
+            ]);
+        });
+    }
+
+    protected function replicateEmailAutoReply(Model $original): void
+    {
+        if ($original->emailAutoReply) {
+            $original->emailAutoReply->replicate()->save();
+        }
+    }
+
+    protected function replaceIdsInContent(&$content, $fieldMap)
+    {
+        if (is_array($content)) {
+            foreach ($content as $key => &$value) {
+                if (is_array($value)) {
+                    $this->replaceIdsInContent($value, $fieldMap);
+                } else {
+                    if ($key === 'id' && isset($fieldMap[$value])) {
+                        $value = $fieldMap[$value];
+                    }
+                }
+            }
+        }
+
+        return $content;
     }
 }
