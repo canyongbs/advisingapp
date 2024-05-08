@@ -69,10 +69,12 @@ class EngagementBatchBlock extends CampaignActionBlock
         return [
             Select::make($fieldPrefix . 'delivery_method')
                 ->columnSpanFull()
-                ->reactive()
+                ->live()
                 ->label('How would you like to send this engagement?')
-                ->options(EngagementDeliveryMethod::class)
+                ->options(EngagementDeliveryMethod::getOptions())
                 ->default(EngagementDeliveryMethod::Email->value)
+                ->disableOptionWhen(fn (string $value): bool => EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
+                ->selectablePlaceholder(false)
                 ->validationAttribute('Delivery Method')
                 ->required(),
             TextInput::make($fieldPrefix . 'subject')

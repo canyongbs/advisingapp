@@ -34,18 +34,21 @@
 </COPYRIGHT>
 */
 
-return [
-    'super_admin' => [
-        'email' => 'sampleadmin@advising.app',
-    ],
-    'internal_users' => [
-        'emails' => env('DEMO_INTERNAL_USER_EMAILS') ? explode(',', env('DEMO_INTERNAL_USER_EMAILS')) : null,
-    ],
-    'twilio' => [
-        'account_sid' => env('TWILIO_ACCOUNT_SID'),
-        'auth_token' => env('TWILIO_AUTH_TOKEN'),
-        'from_number' => env('TWILIO_TEST_FROM_NUMBER', env('TWILIO_FROM_NUMBER', env('TWILIO_PHONE_NUMBER'))),
-        'to_number' => env('TWILIO_TEST_TO_NUMBER', env('TWILIO_TO_NUMBER')),
-        'enable_test_sender' => env('TWILIO_ENABLE_TEST_SENDER', false),
-    ],
-];
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Migrations\Migration;
+
+return new class () extends Migration {
+    public function up(): void
+    {
+        if (Schema::hasColumn('tenants', 'setup_complete')) {
+            DB::table('tenants')->update(['setup_complete' => true]);
+        }
+    }
+
+    public function down(): void
+    {
+        if (Schema::hasColumn('tenants', 'setup_complete')) {
+            DB::table('tenants')->update(['setup_complete' => false]);
+        }
+    }
+};

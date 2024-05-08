@@ -122,7 +122,7 @@ class EditKnowledgeBaseArticle extends EditRecord
                 ->color('primary')
                 ->label('Save Article Details'),
             EditAction::make()
-                ->label('Edit Article Metadata')
+                ->label('Edit Article Properties')
                 ->button()
                 ->outlined()
                 ->record($this->record)

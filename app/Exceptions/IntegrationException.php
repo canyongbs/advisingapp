@@ -34,18 +34,42 @@
 </COPYRIGHT>
 */
 
-return [
-    'super_admin' => [
-        'email' => 'sampleadmin@advising.app',
-    ],
-    'internal_users' => [
-        'emails' => env('DEMO_INTERNAL_USER_EMAILS') ? explode(',', env('DEMO_INTERNAL_USER_EMAILS')) : null,
-    ],
-    'twilio' => [
-        'account_sid' => env('TWILIO_ACCOUNT_SID'),
-        'auth_token' => env('TWILIO_AUTH_TOKEN'),
-        'from_number' => env('TWILIO_TEST_FROM_NUMBER', env('TWILIO_FROM_NUMBER', env('TWILIO_PHONE_NUMBER'))),
-        'to_number' => env('TWILIO_TEST_TO_NUMBER', env('TWILIO_TO_NUMBER')),
-        'enable_test_sender' => env('TWILIO_ENABLE_TEST_SENDER', false),
-    ],
-];
+namespace App\Exceptions;
+
+use Exception;
+use App\Enums\Integration;
+use GraphQL\Error\ClientAware;
+
+class IntegrationException extends Exception implements ClientAware
+{
+    protected $message = 'Something has gone wrong. Please contact your administrator.';
+
+    final private function __construct(
+        protected Integration $integration
+    ) {
+        parent::__construct();
+    }
+
+    public static function make(Integration $integration): static
+    {
+        if ($integration->isNotConfigured()) {
+            return new IntegrationNotConfigured($integration);
+        }
+
+        if ($integration->isDisabled()) {
+            return new IntegrationNotEnabled($integration);
+        }
+
+        return new static($integration);
+    }
+
+    public function context(): array
+    {
+        return ['integration' => $this->integration->value];
+    }
+
+    public function isClientSafe(): bool
+    {
+        return true;
+    }
+}

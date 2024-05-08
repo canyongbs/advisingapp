@@ -39,8 +39,8 @@ namespace AdvisingApp\MeetingCenter\Providers;
 use Filament\Panel;
 use App\Models\Tenant;
 use Livewire\Livewire;
+use App\Models\Scopes\SetupIsComplete;
 use Illuminate\Support\ServiceProvider;
-use Spatie\Multitenancy\TenantCollection;
 use AdvisingApp\MeetingCenter\Models\Event;
 use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\MeetingCenter\Models\Calendar;
@@ -82,14 +82,14 @@ class MeetingCenterServiceProvider extends ServiceProvider
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
             $schedule->call(function () {
-                /** @var TenantCollection $tenants */
-                $tenants = Tenant::cursor();
-
-                $tenants->each(function (Tenant $tenant) {
-                    $tenant->execute(function () {
-                        dispatch(new SyncCalendars());
+                Tenant::query()
+                    ->tap(new SetupIsComplete())
+                    ->cursor()
+                    ->each(function (Tenant $tenant) {
+                        $tenant->execute(function () {
+                            dispatch(new SyncCalendars());
+                        });
                     });
-                });
             })
                 ->everyMinute()
                 ->name('SyncCalendars')
