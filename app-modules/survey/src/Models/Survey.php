@@ -126,8 +126,10 @@ class Survey extends Submissible implements CanBeReplicated
     protected function updateStepContent(array $fieldMap): void
     {
         $this->steps()->each(function (SurveyStep $step) use ($fieldMap) {
+            $content = $step->content;
+
             $step->update([
-                'content' => $this->replaceIdsInContent($step->content, $fieldMap),
+                'content' => $this->replaceIdsInContent($content, $fieldMap),
             ]);
         });
     }

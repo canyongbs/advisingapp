@@ -99,19 +99,19 @@ class ListEvents extends ListRecords
                     ->modalHeading('Duplicate Event')
                     ->modalSubmitActionLabel('Duplicate')
                     ->mutateRecordDataUsing(function (array $data): array {
-                        $data['name'] = "Copy - {$data['name']}";
+                        $data['title'] = "Copy - {$data['title']}";
 
                         return $data;
                     })
                     ->form(function (Form $form): Form {
                         return $form->schema([
-                            TextInput::make('name')
-                                ->label('Name')
+                            TextInput::make('title')
+                                ->label('Title')
                                 ->required(),
                         ]);
                     })
                     ->beforeReplicaSaved(function (Model $replica, array $data): void {
-                        $replica->name = $data['name'];
+                        $replica->title = $data['title'];
                     })
                     ->after(function (Event $replica, Event $record): void {
                         $replica->replicateRelatedData($record);

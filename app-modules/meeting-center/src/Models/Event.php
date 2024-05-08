@@ -86,7 +86,7 @@ class Event extends BaseModel implements CanBeReplicated
     {
         $stepMap = [];
 
-        $original->steps()->each(function (EventRegistrationFormStep $step) use (&$stepMap) {
+        $original->eventRegistrationForm->steps()->each(function (EventRegistrationFormStep $step) use (&$stepMap) {
             $newStep = $step->replicate();
             $newStep->form_id = $this->eventRegistrationForm->id;
             $newStep->save();
@@ -101,7 +101,7 @@ class Event extends BaseModel implements CanBeReplicated
     {
         $fieldMap = [];
 
-        $original->fields()->each(function (EventRegistrationFormField $field) use (&$fieldMap, $stepMap) {
+        $original->eventRegistrationForm->fields()->each(function (EventRegistrationFormField $field) use (&$fieldMap, $stepMap) {
             $newField = $field->replicate();
             $newField->form_id = $this->eventRegistrationForm->id;
             $newField->step_id = $stepMap[$field->step_id] ?? null;
@@ -115,9 +115,10 @@ class Event extends BaseModel implements CanBeReplicated
 
     protected function updateStepContent(array $fieldMap): void
     {
-        $this->steps()->each(function (EventRegistrationFormStep $step) use ($fieldMap) {
+        $this->eventRegistrationForm->steps()->each(function (EventRegistrationFormStep $step) use ($fieldMap) {
+            $content = $step->content;
             $step->update([
-                'content' => $this->replaceIdsInContent($step->content, $fieldMap),
+                'content' => $this->replaceIdsInContent($content, $fieldMap),
             ]);
         });
     }
@@ -139,8 +140,11 @@ class Event extends BaseModel implements CanBeReplicated
         return $content;
     }
 
-    protected function replicateEventRegistrationForm(Event $original): EventRegistrationForm
+    protected function replicateEventRegistrationForm(Event $original): void
     {
-        return $original->eventRegistrationForm->replicate()->save();
+        $eventRegistrationForm = $original->eventRegistrationForm->replicate();
+        $eventRegistrationForm->event_id = $this->id;
+
+        $eventRegistrationForm->save();
     }
 }
