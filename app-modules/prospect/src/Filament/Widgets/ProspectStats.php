@@ -53,7 +53,7 @@ class ProspectStats extends StatsOverviewWidget
         $user = auth()->user();
 
         return [
-            Stat::make('My Prospects', Number::abbreviate(
+            Stat::make('Total Prospects', Number::abbreviate(
                 Cache::tags(['prospects'])
                     ->remember('prospects-count', now()->addHour(), function (): int {
                         return Prospect::count();
