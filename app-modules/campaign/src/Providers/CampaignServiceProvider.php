@@ -44,9 +44,9 @@ use AdvisingApp\Campaign\CampaignPlugin;
 use AdvisingApp\Campaign\Models\Campaign;
 use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\Campaign\Models\CampaignAction;
-use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Campaign\Observers\CampaignObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Campaign\Actions\ExecuteCampaignActions;
 use AdvisingApp\Campaign\Registries\CampaignRbacRegistry;
 
@@ -83,7 +83,7 @@ class CampaignServiceProvider extends ServiceProvider
 
         $this->registerObservers();
 
-        RoleBasedAccessControlRegistry::register(CampaignRbacRegistry::class);
+        AuthorizationRoleRegistry::register(CampaignRbacRegistry::class);
     }
 
     public function registerObservers(): void

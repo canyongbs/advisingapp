@@ -43,9 +43,9 @@ use AdvisingApp\Prospect\ProspectPlugin;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Prospect\Observers\ProspectObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Prospect\Registries\ProspectRbacRegistry;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Observers\ProspectStatusObserver;
@@ -75,6 +75,6 @@ class ProspectServiceProvider extends ServiceProvider
         $this->registerEnum(ProspectStatusColorOptions::class);
         $this->registerEnum(SystemProspectClassification::class);
 
-        RoleBasedAccessControlRegistry::register(ProspectRbacRegistry::class);
+        AuthorizationRoleRegistry::register(ProspectRbacRegistry::class);
     }
 }

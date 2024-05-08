@@ -39,10 +39,10 @@ namespace AdvisingApp\InventoryManagement\Providers;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\InventoryManagement\Models\Asset;
-use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\InventoryManagement\Models\AssetType;
 use AdvisingApp\InventoryManagement\Models\AssetStatus;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
 use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
 use AdvisingApp\InventoryManagement\Models\AssetLocation;
@@ -76,7 +76,7 @@ class InventoryManagementServiceProvider extends ServiceProvider
 
         $this->registerObservers();
 
-        RoleBasedAccessControlRegistry::register(InventoryManagementRbacRegistry::class);
+        AuthorizationRoleRegistry::register(InventoryManagementRbacRegistry::class);
     }
 
     public function registerObservers(): void

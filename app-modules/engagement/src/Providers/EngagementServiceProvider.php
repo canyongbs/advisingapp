@@ -48,10 +48,10 @@ use AdvisingApp\Engagement\Models\SmsTemplate;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Engagement\Models\EngagementBatch;
-use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Actions\DeliverEngagements;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
 use AdvisingApp\Engagement\Models\EngagementFileEntities;
@@ -105,7 +105,7 @@ class EngagementServiceProvider extends ServiceProvider
 
         $this->registerGraphQL();
 
-        RoleBasedAccessControlRegistry::register(EngagementRbacRegistry::class);
+        AuthorizationRoleRegistry::register(EngagementRbacRegistry::class);
     }
 
     public function registerObservers(): void

@@ -110,11 +110,6 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, E
         }
     }
 
-    public function getWebPermissions(): Collection
-    {
-        return collect(['import', ...$this->webPermissions()]);
-    }
-
     public function getStateMachineFields(): array
     {
         return [

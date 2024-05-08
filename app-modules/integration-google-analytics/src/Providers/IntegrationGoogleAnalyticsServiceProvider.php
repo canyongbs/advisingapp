@@ -38,8 +38,8 @@ namespace AdvisingApp\IntegrationGoogleAnalytics\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\IntegrationGoogleAnalytics\IntegrationGoogleAnalyticsPlugin;
 use AdvisingApp\IntegrationGoogleAnalytics\Registries\IntegrationGoogleAnalyticsRbacRegistry;
 
@@ -54,6 +54,6 @@ class IntegrationGoogleAnalyticsServiceProvider extends ServiceProvider
     {
         Relation::morphMap([]);
 
-        RoleBasedAccessControlRegistry::register(IntegrationGoogleAnalyticsRbacRegistry::class);
+        AuthorizationRoleRegistry::register(IntegrationGoogleAnalyticsRbacRegistry::class);
     }
 }

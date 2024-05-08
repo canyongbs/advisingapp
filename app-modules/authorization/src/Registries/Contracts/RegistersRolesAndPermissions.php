@@ -34,38 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+namespace AdvisingApp\Authorization\Registries\Contracts;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-
-/**
- * @mixin IdeHelperProgram
- */
-class Program extends Model
+interface RegistersRolesAndPermissions
 {
-    use HasFactory;
-    use UsesTenantConnection;
-
-    protected $table = 'programs';
-
-    protected $primaryKey = 'sisid';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
-    public $timestamps = false;
-
-    protected $casts = [
-        'change_dt' => 'datetime',
-        'declare_dt' => 'datetime',
-    ];
-
-    public function student(): BelongsTo
-    {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
-    }
+    public function __invoke(): void;
 }

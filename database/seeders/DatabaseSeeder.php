@@ -47,6 +47,7 @@ use AdvisingApp\Alert\Database\Seeders\AlertSeeder;
 use AdvisingApp\Assistant\Database\Seeders\PromptSeeder;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSeeder;
+use AdvisingApp\Authorization\Console\Commands\SetupRoles;
 use AdvisingApp\MeetingCenter\Database\Seeders\EventSeeder;
 use AdvisingApp\Assistant\Database\Seeders\PromptTypeSeeder;
 use AdvisingApp\Interaction\Database\Seeders\InteractionSeeder;
@@ -55,7 +56,6 @@ use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
 use AdvisingApp\InventoryManagement\Database\Seeders\AssetSeeder;
 use AdvisingApp\Analytics\Database\Seeders\AnalyticsResourceSeeder;
-use AdvisingApp\Authorization\Console\Commands\SyncRolesAndPermissions;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestSeeder;
 use AdvisingApp\Analytics\Database\Seeders\AnalyticsResourceSourceSeeder;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
@@ -81,7 +81,7 @@ class DatabaseSeeder extends Seeder
         $currentTenant = Tenant::current();
 
         Artisan::call(
-            command: SyncRolesAndPermissions::class,
+            command: SetupRoles::class,
             parameters: [
                 '--tenant' => $currentTenant->id,
             ],

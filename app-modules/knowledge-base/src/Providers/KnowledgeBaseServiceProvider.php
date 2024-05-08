@@ -40,8 +40,8 @@ use Filament\Panel;
 use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\KnowledgeBase\KnowledgeBasePlugin;
-use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
@@ -70,7 +70,7 @@ class KnowledgeBaseServiceProvider extends ServiceProvider
         $this->registerObservers();
         $this->discoverSchema(__DIR__ . '/../../graphql/knowledge-base-article.graphql');
 
-        RoleBasedAccessControlRegistry::register(KnowledgeBaseRbacRegistry::class);
+        AuthorizationRoleRegistry::register(KnowledgeBaseRbacRegistry::class);
     }
 
     public function registerObservers(): void

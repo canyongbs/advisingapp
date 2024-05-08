@@ -34,61 +34,56 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CareTeam\Models;
+namespace Database\Migrations\Concerns;
 
-use Exception;
-use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\MorphPivot;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 
-/**
- * @mixin IdeHelperCareTeam
- */
-class CareTeam extends MorphPivot implements ExecutableFromACampaignAction
+trait CanModifyPermissions
 {
-    use HasFactory;
-    use HasUuids;
-
-    public $timestamps = true;
-
-    protected $table = 'care_teams';
-
-    /** @return MorphTo<Educatable> */
-    public function educatable(): MorphTo
+    /**
+     * @param array<string, string> $names The keys of the array should be the permission names and the values should be the name of the group they belong to.
+     */
+    public function createPermissions(array $names, string $guardName): void
     {
-        return $this->morphTo();
-    }
+        $groups = DB::table('permission_groups')
+            ->pluck('id', 'name')
+            ->all();
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
+        [$newGroups, $groupsToCreate] = collect($names)
+            ->values()
+            ->unique()
+            ->diff(array_keys($groups))
+            ->reduce(function (array $carry, string $name) {
+                $id = (string) Str::orderedUuid();
 
-    public static function executeFromCampaignAction(CampaignAction $action): bool|string
-    {
-        try {
-            DB::beginTransaction();
+                $carry[0][$name] = $id;
+                $carry[1][] = [
+                    'id' => $id,
+                    'name' => $name,
+                    'created_at' => now(),
+                ];
 
-            $action->campaign->caseload->retrieveRecords()->each(function (Educatable $educatable) use ($action) {
-                $educatable->careTeam()->sync(ids: $action->data['user_ids'], detaching: $action->data['remove_prior']);
-            });
+                return $carry;
+            }, [[], []]);
 
-            DB::commit();
+        DB::table('permission_groups')
+            ->insert($groupsToCreate);
 
-            return true;
-        } catch (Exception $e) {
-            DB::rollBack();
+        $groups = [
+            ...$groups,
+            ...$newGroups,
+        ];
 
-            return $e->getMessage();
-        }
-
-        // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
+        DB::table('permissions')
+            ->insert(array_map(function (string $name, string $groupName) use ($groups, $guardName): array {
+                return [
+                    'id' => (string) Str::orderedUuid(),
+                    'group_id' => $groups[$groupName],
+                    'guard_name' => $guardName,
+                    'name' => $name,
+                    'created_at' => now(),
+                ];
+            }, array_keys($names), array_values($names)));
     }
 }

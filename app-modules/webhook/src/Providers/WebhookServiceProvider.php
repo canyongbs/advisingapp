@@ -41,9 +41,9 @@ use Aws\Sns\MessageValidator;
 use AdvisingApp\Webhook\WebhookPlugin;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Webhook\Models\InboundWebhook;
-use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Webhook\Registries\WebhookRbacRegistry;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 
 class WebhookServiceProvider extends ServiceProvider
 {
@@ -63,6 +63,6 @@ class WebhookServiceProvider extends ServiceProvider
             'inbound_webhook' => InboundWebhook::class,
         ]);
 
-        RoleBasedAccessControlRegistry::register(WebhookRbacRegistry::class);
+        AuthorizationRoleRegistry::register(WebhookRbacRegistry::class);
     }
 }

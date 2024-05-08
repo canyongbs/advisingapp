@@ -45,13 +45,13 @@ use AdvisingApp\Assistant\AssistantPlugin;
 use AdvisingApp\Assistant\Models\PromptType;
 use AdvisingApp\Assistant\Models\AiAssistant;
 use AdvisingApp\Assistant\Models\AssistantChat;
-use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Assistant\Observers\PromptObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Assistant\Models\AssistantChatFolder;
 use AdvisingApp\Assistant\Models\AssistantChatMessage;
 use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
 use AdvisingApp\Assistant\Observers\AiAssistantObserver;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 use AdvisingApp\Assistant\Registries\AssistantRbacRegistry;
 use AdvisingApp\Assistant\Listeners\LogAssistantChatMessage;
@@ -82,7 +82,7 @@ class AssistantServiceProvider extends ServiceProvider
 
         $this->registerEvents();
 
-        RoleBasedAccessControlRegistry::register(AssistantRbacRegistry::class);
+        AuthorizationRoleRegistry::register(AssistantRbacRegistry::class);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
         $this->registerEnum(AIChatMessageFrom::class);
