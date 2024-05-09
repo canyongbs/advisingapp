@@ -33,10 +33,13 @@
 --}}
 <?php
 
+use App\Enums\Feature;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Vite;
+use Filament\Support\Enums\ActionSize;
+use Filament\Support\Facades\FilamentAsset;
 use AdvisingApp\Assistant\Models\AiAssistant;
 use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
-use Filament\Support\Facades\FilamentAsset;
-use Illuminate\Support\Facades\Vite;
 
 ?>
 
@@ -52,9 +55,7 @@ use Illuminate\Support\Facades\Vite;
             >
                 <div class="col-span-1">
                     <div class="flex flex-col gap-y-2">
-                        @if (
-                            \Illuminate\Support\Facades\Gate::check(\App\Enums\Feature::CustomAiAssistants->getGateName()) &&
-                                count($assistants = AiAssistant::all()) > 1)
+                        @if (Gate::check(Feature::CustomAiAssistants->getGateName()) && count($assistants = AiAssistant::all()) > 1)
                             <x-filament::dropdown>
                                 <x-slot name="trigger">
                                     <x-filament::button
@@ -238,7 +239,9 @@ use Illuminate\Support\Facades\Vite;
                     @endphp
 
                     @if ($aiAssistant)
-                        <h1>{{ $aiAssistant->name }}</h1>
+                        <x-filament::badge :size="ActionSize::Large">
+                            <span class="text-sm"> {{ $aiAssistant->name }} </span>
+                        </x-filament::badge>
                     @endif
                     <div
                         class="flex max-h-[calc(100dvh-20rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
