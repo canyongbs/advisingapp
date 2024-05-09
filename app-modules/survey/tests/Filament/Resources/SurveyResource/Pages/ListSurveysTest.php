@@ -38,9 +38,10 @@ use function Tests\asSuperAdmin;
 use function Pest\Livewire\livewire;
 
 use AdvisingApp\Survey\Models\Survey;
+use AdvisingApp\Survey\Models\SurveySubmission;
 use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\ListSurveys;
 
-it('can duplicate a survey and all of its content', function () {
+it('can duplicate a survey its steps and its fields', function () {
     asSuperAdmin();
 
     // Given that we have a survey
@@ -58,4 +59,24 @@ it('can duplicate a survey and all of its content', function () {
     expect(Survey::where('id', '<>', $survey->id)->first()->name)->toBe("Copy - {$survey->name}");
     expect(Survey::where('id', '<>', $survey->id)->first()->fields->count())->toBe($survey->fields->count());
     expect(Survey::where('id', '<>', $survey->id)->first()->steps->count())->toBe($survey->steps->count());
+});
+
+it('will not duplicate survey submissions if they exist', function () {
+    asSuperAdmin();
+
+    // Given that we have a survey
+    $survey = Survey::factory()->create();
+
+    $submissionCount = $survey->submissions()->count();
+
+    // And we duplicate it
+    livewire(ListSurveys::class)
+        ->assertStatus(200)
+        ->callTableAction('Duplicate', $survey);
+
+    // The survey submissions should not be duplicated
+    expect(SurveySubmission::count())->toBe($submissionCount);
+    $duplicatedSurvey = Survey::where('id', '<>', $survey->id)->first();
+
+    expect($duplicatedSurvey->submissions()->count())->toBe(0);
 });

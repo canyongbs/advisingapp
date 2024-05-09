@@ -57,8 +57,8 @@ class EventAttendeeFactory extends Factory
             'status' => fake()->randomElement(EventAttendeeStatus::class),
             'email' => fake()->unique()->randomElement([
                 fake()->email(),
-                Student::inRandomOrder()->value('email'),
-                Prospect::inRandomOrder()->value('email'),
+                Student::inRandomOrder()->value('email') ?? Student::factory()->create()->email,
+                Prospect::inRandomOrder()->value('email') ?? Prospect::factory()->create()->email,
             ]),
             'event_id' => Event::inRandomOrder()->first() ?? Event::factory()->create(),
         ];

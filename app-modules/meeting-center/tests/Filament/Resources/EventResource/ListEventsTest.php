@@ -35,50 +35,55 @@
 */
 
 use function Tests\asSuperAdmin;
-
-use AdvisingApp\Form\Models\Form;
-
 use function Pest\Livewire\livewire;
 
-use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ListForms;
+use AdvisingApp\Survey\Models\Survey;
+use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ListEvents;
 
-it('can duplicate a form its steps and its fields', function () {
+it('can duplicate a event its registration form its steps and its fields', function () {
     asSuperAdmin();
 
-    // Given that we have a form
-    $form = Form::factory()->create();
+    // Given that we have a survey
+    $event = Event::factory()->create();
 
-    expect(Form::count())->toBe(1);
+    expect(Event::count())->toBe(1);
+    expect(EventRegistrationForm::count())->toBe(1);
 
     // And we duplicate it
-    livewire(ListForms::class)
+    livewire(ListEvents::class)
         ->assertStatus(200)
-        ->callTableAction('Duplicate', $form);
+        ->callTableAction('Duplicate', $event);
 
-    // The form, along with all of its content, should be duplicated
-    expect(Form::count())->toBe(2);
-    expect(Form::where('id', '<>', $form->id)->first()->name)->toBe("Copy - {$form->name}");
-    expect(Form::where('id', '<>', $form->id)->first()->fields->count())->toBe($form->fields->count());
-    expect(Form::where('id', '<>', $form->id)->first()->steps->count())->toBe($form->steps->count());
+    // The event, registration form, along with all of its content, should be duplicated
+    expect(Event::count())->toBe(2);
+    expect(EventRegistrationForm::count())->toBe(2);
+
+    $duplicatedEvent = Event::where('id', '<>', $event->id)->first();
+
+    expect($duplicatedEvent->title)->toBe("Copy - {$event->title}");
+    expect($duplicatedEvent->eventRegistrationForm->fields->count())->toBe($event->eventRegistrationForm->fields->count());
+    expect($duplicatedEvent->eventRegistrationForm->steps->count())->toBe($event->eventRegistrationForm->steps->count());
 });
 
-it('will not duplicate form submissions if they exist', function () {
+it('will not duplicate event registration form submissions if they exist', function () {
     asSuperAdmin();
 
-    // Given that we have a form
-    $form = Form::factory()->create();
+    // Given that we have an event
+    $event = Event::factory()->create();
 
-    $submissionCount = $form->submissions()->count();
+    $submissionCount = $event->eventRegistrationForm->submissions()->count();
 
     // And we duplicate it
-    livewire(ListForms::class)
+    livewire(ListEvents::class)
         ->assertStatus(200)
-        ->callTableAction('Duplicate', $form);
+        ->callTableAction('Duplicate', $event);
 
-    // The form submissions should not be duplicated
-    expect(FormSubmission::count())->toBe($submissionCount);
-    $duplicatedForm = Form::where('id', '<>', $form->id)->first();
+    // The survey submissions should not be duplicated
+    expect(EventRegistrationFormSubmission::count())->toBe($submissionCount);
+    $duplicatedEvent = Event::where('id', '<>', $event->id)->first();
 
-    expect($duplicatedForm->submissions()->count())->toBe(0);
+    expect($duplicatedEvent->eventRegistrationForm->submissions()->count())->toBe(0);
 });

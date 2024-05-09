@@ -142,9 +142,8 @@ class Event extends BaseModel implements CanBeReplicated
 
     protected function replicateEventRegistrationForm(Event $original): void
     {
-        $eventRegistrationForm = $original->eventRegistrationForm->replicate();
-        $eventRegistrationForm->event_id = $this->id;
-
-        $eventRegistrationForm->save();
+        $duplicatedEventRegistrationForm = $original->eventRegistrationForm->replicate();
+        $duplicatedEventRegistrationForm->event_id = $this->id;
+        $duplicatedEventRegistrationForm->save();
     }
 }
