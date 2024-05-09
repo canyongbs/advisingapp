@@ -37,8 +37,6 @@
 namespace AdvisingApp\MeetingCenter\Models;
 
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
-use App\Models\Contracts\CanBeReplicated;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -46,7 +44,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @mixin IdeHelperEvent
  */
-class Event extends BaseModel implements CanBeReplicated
+class Event extends BaseModel
 {
     use SoftDeletes;
 
@@ -72,78 +70,5 @@ class Event extends BaseModel implements CanBeReplicated
     public function attendees(): HasMany
     {
         return $this->hasMany(EventAttendee::class, 'event_id');
-    }
-
-    public function replicateRelatedData(Model $original): void
-    {
-        $this->replicateEventRegistrationForm($original);
-        $stepMap = $this->replicateSteps($original);
-        $fieldMap = $this->replicateFields($original, $stepMap);
-        $this->updateStepContent($fieldMap);
-    }
-
-    protected function replicateSteps(Model $original): array
-    {
-        $stepMap = [];
-
-        $original->eventRegistrationForm->steps()->each(function (EventRegistrationFormStep $step) use (&$stepMap) {
-            $newStep = $step->replicate();
-            $newStep->form_id = $this->eventRegistrationForm->id;
-            $newStep->save();
-
-            $stepMap[$step->id] = $newStep->id;
-        });
-
-        return $stepMap;
-    }
-
-    protected function replicateFields(Model $original, array $stepMap): array
-    {
-        $fieldMap = [];
-
-        $original->eventRegistrationForm->fields()->each(function (EventRegistrationFormField $field) use (&$fieldMap, $stepMap) {
-            $newField = $field->replicate();
-            $newField->form_id = $this->eventRegistrationForm->id;
-            $newField->step_id = $stepMap[$field->step_id] ?? null;
-            $newField->save();
-
-            $fieldMap[$field->id] = $newField->id;
-        });
-
-        return $fieldMap;
-    }
-
-    protected function updateStepContent(array $fieldMap): void
-    {
-        $this->eventRegistrationForm->steps()->each(function (EventRegistrationFormStep $step) use ($fieldMap) {
-            $content = $step->content;
-            $step->update([
-                'content' => $this->replaceIdsInContent($content, $fieldMap),
-            ]);
-        });
-    }
-
-    protected function replaceIdsInContent(&$content, $fieldMap)
-    {
-        if (is_array($content)) {
-            foreach ($content as $key => &$value) {
-                if (is_array($value)) {
-                    $this->replaceIdsInContent($value, $fieldMap);
-                } else {
-                    if ($key === 'id' && isset($fieldMap[$value])) {
-                        $value = $fieldMap[$value];
-                    }
-                }
-            }
-        }
-
-        return $content;
-    }
-
-    protected function replicateEventRegistrationForm(Event $original): void
-    {
-        $duplicatedEventRegistrationForm = $original->eventRegistrationForm->replicate();
-        $duplicatedEventRegistrationForm->event_id = $this->id;
-        $duplicatedEventRegistrationForm->save();
     }
 }

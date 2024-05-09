@@ -81,8 +81,9 @@ it('will not duplicate event registration form submissions if they exist', funct
         ->assertStatus(200)
         ->callTableAction('Duplicate', $event);
 
-    // The survey submissions should not be duplicated
+    // The event registration form submissions should not be duplicated
     expect(EventRegistrationFormSubmission::count())->toBe($submissionCount);
+
     $duplicatedEvent = Event::where('id', '<>', $event->id)->first();
 
     expect($duplicatedEvent->eventRegistrationForm->submissions()->count())->toBe(0);

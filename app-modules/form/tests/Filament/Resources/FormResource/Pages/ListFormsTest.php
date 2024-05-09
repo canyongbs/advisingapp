@@ -58,9 +58,12 @@ it('can duplicate a form its steps and its fields', function () {
 
     // The form, along with all of its content, should be duplicated
     expect(Form::count())->toBe(2);
-    expect(Form::where('id', '<>', $form->id)->first()->name)->toBe("Copy - {$form->name}");
-    expect(Form::where('id', '<>', $form->id)->first()->fields->count())->toBe($form->fields->count());
-    expect(Form::where('id', '<>', $form->id)->first()->steps->count())->toBe($form->steps->count());
+
+    $duplicatedForm = Form::where('id', '<>', $form->id)->first();
+
+    expect($duplicatedForm->name)->toBe("Copy - {$form->name}");
+    expect($duplicatedForm->fields->count())->toBe($form->fields->count());
+    expect($duplicatedForm->steps->count())->toBe($form->steps->count());
 });
 
 it('will not duplicate form submissions if they exist', function () {
@@ -78,6 +81,7 @@ it('will not duplicate form submissions if they exist', function () {
 
     // The form submissions should not be duplicated
     expect(FormSubmission::count())->toBe($submissionCount);
+
     $duplicatedForm = Form::where('id', '<>', $form->id)->first();
 
     expect($duplicatedForm->submissions()->count())->toBe(0);

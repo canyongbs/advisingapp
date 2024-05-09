@@ -47,6 +47,7 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
+use AdvisingApp\Form\Actions\DuplicateForm;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -92,7 +93,7 @@ class ListForms extends ListRecords
                         $replica->name = $data['name'];
                     })
                     ->after(function (Form $replica, Form $record): void {
-                        $replica->replicateRelatedData($record);
+                        resolve(DuplicateForm::class, ['original' => $record, 'replica' => $replica])();
                     }),
             ])
             ->bulkActions([

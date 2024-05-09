@@ -56,9 +56,12 @@ it('can duplicate a survey its steps and its fields', function () {
 
     // The survey, along with all of its content, should be duplicated
     expect(Survey::count())->toBe(2);
-    expect(Survey::where('id', '<>', $survey->id)->first()->name)->toBe("Copy - {$survey->name}");
-    expect(Survey::where('id', '<>', $survey->id)->first()->fields->count())->toBe($survey->fields->count());
-    expect(Survey::where('id', '<>', $survey->id)->first()->steps->count())->toBe($survey->steps->count());
+
+    $duplicatedSurvey = Survey::where('id', '<>', $survey->id)->first();
+
+    expect($duplicatedSurvey->name)->toBe("Copy - {$survey->name}");
+    expect($duplicatedSurvey->fields->count())->toBe($survey->fields->count());
+    expect($duplicatedSurvey->steps->count())->toBe($survey->steps->count());
 });
 
 it('will not duplicate survey submissions if they exist', function () {
@@ -76,6 +79,7 @@ it('will not duplicate survey submissions if they exist', function () {
 
     // The survey submissions should not be duplicated
     expect(SurveySubmission::count())->toBe($submissionCount);
+
     $duplicatedSurvey = Survey::where('id', '<>', $survey->id)->first();
 
     expect($duplicatedSurvey->submissions()->count())->toBe(0);

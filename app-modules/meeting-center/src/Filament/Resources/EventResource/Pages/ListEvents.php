@@ -53,6 +53,7 @@ use AdvisingApp\MeetingCenter\Models\Event;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\MeetingCenter\Actions\DuplicateEvent;
 use App\Filament\Tables\Columns\OpenSearch\TextColumn;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 
@@ -114,7 +115,7 @@ class ListEvents extends ListRecords
                         $replica->title = $data['title'];
                     })
                     ->after(function (Event $replica, Event $record): void {
-                        $replica->replicateRelatedData($record);
+                        resolve(DuplicateEvent::class, ['original' => $record, 'replica' => $replica])();
                     }),
             ])
             ->bulkActions([

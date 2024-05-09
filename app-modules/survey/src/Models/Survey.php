@@ -37,15 +37,13 @@
 namespace AdvisingApp\Survey\Models;
 
 use AdvisingApp\Form\Enums\Rounding;
-use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Form\Models\Submissible;
-use App\Models\Contracts\CanBeReplicated;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @mixin IdeHelperSurvey
  */
-class Survey extends Submissible implements CanBeReplicated
+class Survey extends Submissible
 {
     protected $fillable = [
         'name',
@@ -83,71 +81,5 @@ class Survey extends Submissible implements CanBeReplicated
     public function submissions(): HasMany
     {
         return $this->hasMany(SurveySubmission::class);
-    }
-
-    public function replicateRelatedData(Model $original): void
-    {
-        $stepMap = $this->replicateSteps($original);
-        $fieldMap = $this->replicateFields($original, $stepMap);
-        $this->updateStepContent($fieldMap);
-    }
-
-    protected function replicateSteps(Model $original): array
-    {
-        $stepMap = [];
-
-        $original->steps()->each(function (SurveyStep $step) use (&$stepMap) {
-            $newStep = $step->replicate();
-            $newStep->survey_id = $this->id;
-            $newStep->save();
-
-            $stepMap[$step->id] = $newStep->id;
-        });
-
-        return $stepMap;
-    }
-
-    protected function replicateFields(Model $original, array $stepMap): array
-    {
-        $fieldMap = [];
-
-        $original->fields()->each(function (SurveyField $field) use (&$fieldMap, $stepMap) {
-            $newField = $field->replicate();
-            $newField->survey_id = $this->id;
-            $newField->step_id = $stepMap[$field->step_id] ?? null;
-            $newField->save();
-
-            $fieldMap[$field->id] = $newField->id;
-        });
-
-        return $fieldMap;
-    }
-
-    protected function updateStepContent(array $fieldMap): void
-    {
-        $this->steps()->each(function (SurveyStep $step) use ($fieldMap) {
-            $content = $step->content;
-
-            $step->update([
-                'content' => $this->replaceIdsInContent($content, $fieldMap),
-            ]);
-        });
-    }
-
-    protected function replaceIdsInContent(&$content, $fieldMap)
-    {
-        if (is_array($content)) {
-            foreach ($content as $key => &$value) {
-                if (is_array($value)) {
-                    $this->replaceIdsInContent($value, $fieldMap);
-                } else {
-                    if ($key === 'id' && isset($fieldMap[$value])) {
-                        $value = $fieldMap[$value];
-                    }
-                }
-            }
-        }
-
-        return $content;
     }
 }

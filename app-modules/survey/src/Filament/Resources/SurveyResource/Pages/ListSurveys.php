@@ -50,6 +50,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\Survey\Actions\DuplicateSurvey;
 use AdvisingApp\Survey\Filament\Resources\SurveyResource;
 
 class ListSurveys extends ListRecords
@@ -92,7 +93,7 @@ class ListSurveys extends ListRecords
                         $replica->name = $data['name'];
                     })
                     ->after(function (Survey $replica, Survey $record): void {
-                        $replica->replicateRelatedData($record);
+                        resolve(DuplicateSurvey::class, ['original' => $record, 'replica' => $replica])();
                     }),
             ])
             ->bulkActions([
