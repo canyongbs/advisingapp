@@ -41,10 +41,10 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Application\ApplicationPlugin;
 use AdvisingApp\Application\Models\Application;
-use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Application\Models\ApplicationStep;
 use AdvisingApp\Application\Models\ApplicationField;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
@@ -74,7 +74,7 @@ class ApplicationServiceProvider extends ServiceProvider
         $this->registerObservers();
         $this->registerEvents();
 
-        RoleBasedAccessControlRegistry::register(ApplicationRbacRegistry::class);
+        AuthorizationRoleRegistry::register(ApplicationRbacRegistry::class);
     }
 
     public function registerObservers(): void

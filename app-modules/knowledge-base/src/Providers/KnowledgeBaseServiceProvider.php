@@ -40,14 +40,14 @@ use Filament\Panel;
 use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\KnowledgeBase\KnowledgeBasePlugin;
-use App\Registries\RoleBasedAccessControlRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
-use AdvisingApp\KnowledgeBase\Observers\KnowledgeBaseItemObserver;
 use AdvisingApp\KnowledgeBase\Registries\KnowledgeBaseRbacRegistry;
+use AdvisingApp\KnowledgeBase\Observers\KnowledgeBaseArticleObserver;
 
 class KnowledgeBaseServiceProvider extends ServiceProvider
 {
@@ -61,20 +61,20 @@ class KnowledgeBaseServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([
-            'knowledge_base_item' => KnowledgeBaseItem::class,
+            'knowledge_base_article' => KnowledgeBaseArticle::class,
             'knowledge_base_category' => KnowledgeBaseCategory::class,
             'knowledge_base_quality' => KnowledgeBaseQuality::class,
             'knowledge_base_status' => KnowledgeBaseStatus::class,
         ]);
 
         $this->registerObservers();
-        $this->discoverSchema(__DIR__ . '/../../graphql/knowledge-base-item.graphql');
+        $this->discoverSchema(__DIR__ . '/../../graphql/knowledge-base-article.graphql');
 
-        RoleBasedAccessControlRegistry::register(KnowledgeBaseRbacRegistry::class);
+        AuthorizationRoleRegistry::register(KnowledgeBaseRbacRegistry::class);
     }
 
     public function registerObservers(): void
     {
-        KnowledgeBaseItem::observe(KnowledgeBaseItemObserver::class);
+        KnowledgeBaseArticle::observe(KnowledgeBaseArticleObserver::class);
     }
 }

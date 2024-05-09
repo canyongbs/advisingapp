@@ -38,7 +38,6 @@ namespace AdvisingApp\Assistant\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Audit\Settings\AuditSettings;
 use Illuminate\Database\Eloquent\MassPrunable;
@@ -81,16 +80,6 @@ class AssistantChatMessageLog extends BaseModel
                     ->assistant_chat_message_logs_retention_duration_in_days
             ),
         );
-    }
-
-    public function getWebPermissions(): Collection
-    {
-        return collect(['view-any', '*.view']);
-    }
-
-    public function getApiPermissions(): Collection
-    {
-        return collect(['view-any', '*.view']);
     }
 
     protected static function booted(): void

@@ -41,11 +41,11 @@ use App\Concerns\ImplementsGraphQL;
 use AdvisingApp\Consent\ConsentPlugin;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Consent\Models\ConsentAgreement;
-use App\Registries\RoleBasedAccessControlRegistry;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Consent\Models\UserConsentAgreement;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Consent\Registries\ConsentRbacRegistry;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Consent\Observers\ConsentAgreementObserver;
 
 class ConsentServiceProvider extends ServiceProvider
@@ -66,7 +66,7 @@ class ConsentServiceProvider extends ServiceProvider
 
         $this->registerObservers();
 
-        RoleBasedAccessControlRegistry::register(ConsentRbacRegistry::class);
+        AuthorizationRoleRegistry::register(ConsentRbacRegistry::class);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
         $this->registerEnum(ConsentAgreementType::class);

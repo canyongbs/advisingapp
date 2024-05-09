@@ -41,6 +41,7 @@ use App\Models\User;
 use App\Enums\Feature;
 use Twilio\Rest\Client;
 use Filament\Pages\Page;
+use App\Enums\Integration;
 use Twilio\Jwt\AccessToken;
 use Filament\Actions\Action;
 use Livewire\Attributes\Url;
@@ -103,6 +104,15 @@ class UserChat extends Page implements HasForms, HasActions
     protected static string $view = 'in-app-communication::filament.pages.user-chat';
 
     protected static ?string $title = 'Realtime Chat';
+
+    public function getView(): string
+    {
+        if (Integration::Twilio->isOff()) {
+            return 'filament.pages.integration-problem';
+        }
+
+        return parent::getView();
+    }
 
     public static function canAccess(): bool
     {
@@ -723,6 +733,12 @@ class UserChat extends Page implements HasForms, HasActions
 
     protected function getViewData(): array
     {
+        if (Integration::Twilio->isOff()) {
+            return [
+                'integration' => Integration::Twilio,
+            ];
+        }
+
         return [
             'users' => $this->conversation?->participants()->pluck('name', 'id')->all() ?? [],
         ];

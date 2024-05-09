@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Engagement\GraphQL\Mutations;
 
+use App\Enums\Integration;
+use App\Exceptions\IntegrationException;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
 use AdvisingApp\Engagement\Models\Engagement;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
@@ -47,6 +49,10 @@ class UpdateSMS
 {
     public function __invoke(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Engagement
     {
+        if (Integration::Twilio->isOff()) {
+            throw IntegrationException::make(Integration::Twilio);
+        }
+
         $engagement = Engagement::findOrFail($args['id']);
 
         $mergeTags = collect(Engagement::getMergeTags($engagement->recipient::class))

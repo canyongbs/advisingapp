@@ -43,7 +43,6 @@ use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
 use Spatie\MediaLibrary\HasMedia;
 use App\Support\HasAdvancedFilter;
-use Illuminate\Support\Collection;
 use AdvisingApp\Team\Models\TeamUser;
 use App\Filament\Resources\UserResource;
 use Filament\Models\Contracts\HasAvatar;
@@ -84,7 +83,6 @@ use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestResponse;
-use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
@@ -98,7 +96,6 @@ use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
  */
 class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, NotifiableInterface, HasFilamentResource, ProvidesDynamicContext
 {
-    use DefinesPermissions;
     use HasFactory;
     use HasAdvancedFilter;
     use Notifiable;
@@ -192,11 +189,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'roles.title',
         'locale',
     ];
-
-    public function getWebPermissions(): Collection
-    {
-        return collect(['import', ...$this->webPermissions()]);
-    }
 
     public function defaultAssistantChatFoldersHaveBeenCreated(): bool
     {
@@ -493,11 +485,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function revokeLicense(LicenseType $type): bool
     {
         return (bool) $this->licenses()->where('type', $type)->get()->each->delete();
-    }
-
-    public function getApiPermissions(): Collection
-    {
-        return collect(['view-email', ...$this->apiPermissions()]);
     }
 
     public function getDynamicContext(): string

@@ -36,10 +36,11 @@
 
 namespace AdvisingApp\Application\Exports;
 
-use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Illuminate\Database\Eloquent\Collection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use AdvisingApp\Application\Models\ApplicationField;
 
 class ApplicationSubmissionExport implements FromCollection, WithHeadings, WithMapping
 {
@@ -47,15 +48,17 @@ class ApplicationSubmissionExport implements FromCollection, WithHeadings, WithM
 
     public function collection(): Collection
     {
-        return $this->submissions;
+        return $this->submissions->load(['fields', 'submissible.fields']);
     }
 
     public function headings(): array
     {
+        $submissible = $this->submissions->first()?->submissible;
+
         return [
             'id',
-            'form_id',
-            'content',
+            'application_id',
+            ...$submissible?->fields()->pluck('label')->all() ?? [],
             'created_at',
             'updated_at',
         ];
@@ -65,8 +68,10 @@ class ApplicationSubmissionExport implements FromCollection, WithHeadings, WithM
     {
         return [
             $row->id,
-            $row->form_id,
-            $row->content,
+            $row->application_id,
+            ...$row->submissible->fields
+                ->map(fn (ApplicationField $field) => $row->fields->where('id', $field->id)->first()?->pivot->response)
+                ->all(),
             $row->created_at,
             $row->updated_at,
         ];

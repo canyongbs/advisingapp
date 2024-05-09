@@ -38,13 +38,16 @@ namespace AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Relat
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Support\Facades\Storage;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\Engagement\Models\EngagementFile;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
@@ -79,6 +82,17 @@ class EngagementFilesRelationManager extends RelationManager
                 CreateAction::make(),
             ])
             ->actions([
+                Action::make('download')
+                    ->icon('heroicon-o-arrow-down-on-square')
+                    ->action(
+                        fn (EngagementFile $record) => Storage::disk('s3')
+                            ->download(
+                                $record
+                                    ->getMedia('file')
+                                    ->first()
+                                    ->getPathRelativeToRoot()
+                            )
+                    ),
                 EditAction::make(),
                 DeleteAction::make(),
             ])

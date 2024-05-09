@@ -40,7 +40,6 @@ use Exception;
 use App\Models\User;
 use App\Models\BaseModel;
 use App\Models\Authenticatable;
-use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -93,11 +92,6 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function getWebPermissions(): Collection
-    {
-        return collect(['import', ...$this->webPermissions()]);
     }
 
     public function getSubscribable(): ?Subscribable

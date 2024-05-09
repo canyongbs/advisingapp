@@ -77,6 +77,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                 TextColumn::make('name')
                     ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
                     ->color('primary'),
+                TextColumn::make('job_title'),
             ])
             ->headerActions([
                 AttachAction::make()

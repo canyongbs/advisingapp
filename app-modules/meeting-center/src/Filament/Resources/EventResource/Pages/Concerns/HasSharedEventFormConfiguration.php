@@ -84,9 +84,11 @@ trait HasSharedEventFormConfiguration
                 ->minValue(1)
                 ->nullable(),
             DateTimePicker::make('starts_at')
+                ->seconds(false)
                 ->timezone($user->timezone)
                 ->required(),
             DateTimePicker::make('ends_at')
+                ->seconds(false)
                 ->timezone($user->timezone)
                 ->required(),
             Fieldset::make('Registration Form')

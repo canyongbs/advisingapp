@@ -49,7 +49,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
-use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
@@ -61,7 +60,6 @@ class Subscription extends MorphPivot implements ExecutableFromACampaignAction
 {
     use BelongsToEducatable;
     use HasFactory;
-    use DefinesPermissions;
     use HasUuids;
 
     public $timestamps = true;

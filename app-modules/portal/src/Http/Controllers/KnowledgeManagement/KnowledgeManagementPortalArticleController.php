@@ -39,14 +39,14 @@ namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Support\MediaEncoding\TiptapMediaEncoder;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
 
 class KnowledgeManagementPortalArticleController extends Controller
 {
-    public function show(KnowledgeBaseCategory $category, KnowledgeBaseItem $article): JsonResponse
+    public function show(KnowledgeBaseCategory $category, KnowledgeBaseArticle $article): JsonResponse
     {
         return response()->json([
             'category' => KnowledgeBaseCategoryData::from([

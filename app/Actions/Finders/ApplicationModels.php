@@ -42,7 +42,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 
 class ApplicationModels
 {
@@ -70,21 +69,5 @@ class ApplicationModels
 
                 return $isModel;
             });
-    }
-
-    public function implementingPermissions(): Collection
-    {
-        return $this->all()->filter(function ($class) {
-            $implementsPermissions = false;
-
-            $reflection = new ReflectionClass($class);
-            $parentClass = $reflection->getParentClass();
-
-            if (in_array(DefinesPermissions::class, $reflection->getTraitNames()) || in_array(DefinesPermissions::class, $parentClass->getTraitNames())) {
-                $implementsPermissions = true;
-            }
-
-            return $implementsPermissions;
-        });
     }
 }
