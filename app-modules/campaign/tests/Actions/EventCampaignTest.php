@@ -36,7 +36,13 @@
 
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
+
+use function PHPUnit\Framework\assertTrue;
+
 use AdvisingApp\MeetingCenter\Models\Event;
+
+use function PHPUnit\Framework\assertCount;
+
 use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -77,8 +83,8 @@ it('will create the event records for caseload', function (Collection $educatabl
 
     $action->execute();
 
-    $this->assertCount(3, $caseload->subjects); // Check if 3 subjects were created for the caseload
-    $this->assertTrue($campaign->hasBeenExecuted());
+    assertCount(3, $caseload->subjects); // Check if 3 subjects were created for the caseload
+    assertTrue($campaign->hasBeenExecuted());
 })->with([
     'prospects' => [
         'educatables' => fn () => Prospect::factory()->count(3)->create(),
