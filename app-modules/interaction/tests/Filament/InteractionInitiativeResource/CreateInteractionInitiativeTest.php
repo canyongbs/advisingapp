@@ -34,24 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+use App\Models\User;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use function Pest\Laravel\actingAs;
 
-/**
- * @mixin IdeHelperInteractionCampaign
- */
-class InteractionCampaign extends BaseModel implements Auditable
-{
-    use AuditableTrait;
-    use HasManyInteractions;
-    use SoftDeletes;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
 
-    protected $fillable = [
-        'name',
-    ];
-}
+test('CreateInteractionInitiative is gated with proper access control', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    actingAs($user)
+        ->get(
+            InteractionInitiativeResource::getUrl('create')
+        )->assertForbidden();
+
+    $user->givePermissionTo('interaction_initiative.view-any');
+    $user->givePermissionTo('interaction_initiative.create');
+
+    actingAs($user)
+        ->get(
+            InteractionInitiativeResource::getUrl('create')
+        )->assertSuccessful();
+});

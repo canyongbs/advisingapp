@@ -33,11 +33,11 @@ type Interaction
     "The relation of the interaction."
     relation: InteractionRelation @belongsTo
 
-    "The campaign of the interaction."
-    campaign: InteractionCampaign @belongsTo
-
     "The driver of the interaction."
     driver: InteractionDriver @belongsTo
+
+    "The initiative of the interaction."
+    initiative: InteractionInitiative @belongsTo
 
     "The status of the interaction."
     status: InteractionStatus @belongsTo
@@ -76,8 +76,8 @@ input InteractionsQuery {
     interactable_id: InteractableId
     interactable_type: InteractableType
     relation: InteractionRelationQuery
-    campaign: InteractionCampaignQuery
     driver: InteractionDriverQuery
+    initiative: InteractionInitiativeQuery
     status: InteractionStatusesQuery
     outcome: InteractionOutcomeQuery
     division: DivisionQuery
@@ -137,13 +137,13 @@ input CreateInteractionInput {
     interaction_relation_id: UUID!
         @rules(apply: ["required", "exists:interaction_relations,id"])
 
-    "The campaign of the interaction."
-    interaction_campaign_id: UUID!
-        @rules(apply: ["required", "exists:interaction_campaigns,id"])
-
     "The driver of the interaction."
     interaction_driver_id: UUID!
         @rules(apply: ["required", "exists:interaction_drivers,id"])
+
+    "The initiative of the interaction."
+    interaction_initiative_id: UUID!
+        @rules(apply: ["required", "exists:interaction_initiatives,id"])
 
     "The status of the interaction."
     interaction_status_id: UUID!
@@ -200,12 +200,12 @@ input UpdateInteractionInput {
     interaction_relation_id: UUID
         @rules(apply: ["exists:interaction_relations,id"])
 
-    "The campaign of the interaction."
-    interaction_campaign_id: UUID
-        @rules(apply: ["exists:interaction_campaigns,id"])
-
     "The driver of the interaction."
     interaction_driver_id: UUID @rules(apply: ["exists:interaction_drivers,id"])
+
+    "The initiative of the interaction."
+    interaction_initiative_id: UUID
+        @rules(apply: ["exists:interaction_initiatives,id"])
 
     "The status of the interaction."
     interaction_status_id: UUID
@@ -256,7 +256,7 @@ extend type Mutation {
     interaction: InteractionMutations! @namespaced
 }
 
-#import ./interaction-campaign.graphql
+#import ./interaction-initiative.graphql
 #import ./interaction-driver.graphql
 #import ./interaction-outcome.graphql
 #import ./interaction-relation.graphql

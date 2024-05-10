@@ -51,8 +51,8 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
-use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionRelation;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
 
 class InteractionsImporter extends Importer
 {
@@ -130,9 +130,9 @@ class InteractionsImporter extends Importer
                 )
                 ->requiredMapping()
                 ->example(fn (): ?string => InteractionRelation::query()->value('name')),
-            ImportColumn::make('campaign')
+            ImportColumn::make('initiative')
                 ->relationship(
-                    resolveUsing: fn (mixed $state) => InteractionCampaign::query()
+                    resolveUsing: fn (mixed $state) => InteractionInitiative::query()
                         ->when(
                             str($state)->isUuid(),
                             fn (Builder $query) => $query->whereKey($state),
@@ -141,7 +141,7 @@ class InteractionsImporter extends Importer
                         ->first(),
                 )
                 ->requiredMapping()
-                ->example(fn (): ?string => InteractionCampaign::query()->value('name')),
+                ->example(fn (): ?string => InteractionInitiative::query()->value('name')),
             ImportColumn::make('driver')
                 ->relationship(
                     resolveUsing: fn (mixed $state) => InteractionDriver::query()

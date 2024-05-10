@@ -37,11 +37,9 @@
 namespace AdvisingApp\Interaction\Filament\Resources;
 
 use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\InteractionManagement;
-use App\Features\EnableInteractionInitiativesFeature;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages\EditInteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages\ListInteractionInitiatives;
@@ -58,11 +56,6 @@ class InteractionInitiativeResource extends Resource
     protected static ?int $navigationSort = 1;
 
     protected static ?string $cluster = InteractionManagement::class;
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return Feature::active(EnableInteractionInitiativesFeature::class);
-    }
 
     public static function form(Form $form): Form
     {

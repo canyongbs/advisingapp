@@ -38,9 +38,6 @@ In order to access the application in a web browser either in local or remote de
 127.0.0.1 advisingapp.local
 127.0.0.1 mail.tools.advisingapp.local
 127.0.0.1 redis.tools.advisingapp.local
-127.0.0.1 storage.tools.advisingapp.local
-127.0.0.1 media.tools.advisingapp.local
-127.0.0.1 advisingapp-minio
 127.0.0.1 test.advisingapp.local
 ```
 
@@ -127,8 +124,6 @@ FORWARD_REDIS_PORT=6379
 FORWARD_MEILISEARCH_PORT=7700
 FORWARD_MAILPIT_PORT=1025
 FORWARD_MAILPIT_DASHBOARD_PORT=8025
-FORWARD_MINIO_PORT=9000
-FORWARD_MINIO_CONSOLE_PORT=8900
 ```
 
 Those variables will allow you to edit particular settings and forwarding ports for your local containers. A great example of this usage is within the database section below.
@@ -140,34 +135,34 @@ If port 3306 is already in use on your system or you prefer to use another port,
 you can set the `FORWARD_DB_PORT` in your `.env` file to whatever available
 port you want.
 
-### Minio (S3 Compatible Storage)
-Minio is a S3 compatible storage solution that is used for storing files locally.
-
-When first setting up you will need to create a bucket. This can be done by going to `localhost:8900` in your browser and logging in with `advisingapp` as the username and `password` as the password. Once logged in, you can create a bucket.
-
-By default, the application is set up in the `.env.example` to reference a bucket named `local`. Create a bucket with this name in Minio. Then change its access policy to "Custom" with the following policy configuration:
+### Storage
+This application makes use of S3 for storage. If you would like to use local storage. In order to do so, create a new public s3 bucket with the following policy:
 
 ```json
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "AllowPublicRead",
-            "Effect": "Allow",
-            "Principal": {
-                "AWS": [
-                    "*"
-                ]
-            },
-            "Action": [
-                "s3:GetObject"
-            ],
-            "Resource": [
-                "arn:aws:s3:::local/PUBLIC/*"
-            ]
-        }
-    ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowPublicRead",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::[YOUR_S3_BUCKET_NAME]/PUBLIC/*"
+    }
+  ]
 }
+```
+
+After creating the bucket, you can set the following variables in your `.env` file:
+
+```dotenv
+AWS_S3_ACCESS_KEY_ID=
+AWS_S3_SECRET_ACCESS_KEY=
+AWS_S3_DEFAULT_REGION=
+AWS_S3_BUCKET=
+AWS_S3_ROOT=
 ```
 
 ### Queue and Scheduler

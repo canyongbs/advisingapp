@@ -37,7 +37,6 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages;
 
 use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Fieldset;
@@ -52,9 +51,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionStatus;
-use App\Features\EnableInteractionInitiativesFeature;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
-use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -85,19 +82,12 @@ class EditInteraction extends EditRecord
                     ->columnSpanFull(),
                 Fieldset::make('Details')
                     ->schema([
-                        Feature::active(EnableInteractionInitiativesFeature::class)
-                        ? Select::make('interaction_initiative_id')
+                        Select::make('interaction_initiative_id')
                             ->relationship('initiative', 'name')
                             ->preload()
                             ->label('Initiative')
                             ->required()
-                            ->exists((new InteractionInitiative())->getTable(), 'id')
-                        : Select::make('interaction_campaign_id')
-                            ->relationship('campaign', 'name')
-                            ->preload()
-                            ->label('Initiative')
-                            ->required()
-                            ->exists((new InteractionCampaign())->getTable(), 'id'),
+                            ->exists((new InteractionInitiative())->getTable(), 'id'),
                         Select::make('interaction_driver_id')
                             ->relationship('driver', 'name')
                             ->preload()
