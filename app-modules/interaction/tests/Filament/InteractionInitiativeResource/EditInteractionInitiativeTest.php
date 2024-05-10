@@ -34,30 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Observers;
+use App\Models\User;
 
-use Illuminate\Support\Facades\Schema;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Interaction\Models\InteractionCampaign;
+use function Pest\Laravel\actingAs;
+
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
 
-class InteractionCampaignObserver
-{
-    public function created(InteractionCampaign $campaign): void
-    {
-        if (Schema::hasTable('interaction_initiatives') && Schema::hasColumn((new Interaction())->getTable(), 'interaction_initiative_id')) {
-            InteractionInitiative::create([
-                'name' => $campaign->name,
-            ]);
-        }
-    }
+test('EditInteractionInitiative is gated with proper access control', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    public function updated(InteractionCampaign $campaign): void
-    {
-        if (Schema::hasTable('interaction_initiatives') && Schema::hasColumn((new Interaction())->getTable(), 'interaction_initiative_id')) {
-            InteractionInitiative::where('name', $campaign->name)->update([
-                'name' => $campaign->name,
-            ]);
-        }
-    }
-}
+    $initiative = InteractionInitiative::factory()->create();
+
+    actingAs($user)
+        ->get(
+            InteractionInitiativeResource::getUrl('edit', ['record' => $initiative])
+        )->assertForbidden();
+
+    $user->givePermissionTo('interaction_initiative.view-any');
+    $user->givePermissionTo('interaction_initiative.*.update');
+
+    actingAs($user)
+        ->get(
+            InteractionInitiativeResource::getUrl('edit', ['record' => $initiative])
+        )->assertSuccessful();
+});

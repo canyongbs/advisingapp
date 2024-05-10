@@ -38,7 +38,6 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Relatio
 
 use Filament\Tables\Table;
 use Carbon\CarbonInterface;
-use Laravel\Pennant\Feature;
 use Filament\Infolists\Infolist;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
@@ -47,7 +46,6 @@ use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
-use App\Features\EnableInteractionInitiativesFeature;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class HasManyMorphedInteractionsRelationManager extends RelationManager
@@ -60,10 +58,7 @@ class HasManyMorphedInteractionsRelationManager extends RelationManager
                     ->label('Created By'),
                 Fieldset::make('Details')
                     ->schema([
-                        Feature::active(EnableInteractionInitiativesFeature::class)
-                        ? TextEntry::make('initiative.name')
-                        : TextEntry::make('campaign.name')
-                            ->label('Initiative'),
+                        TextEntry::make('initiative.name'),
                         TextEntry::make('driver.name'),
                         TextEntry::make('division.name'),
                         TextEntry::make('outcome.name'),
@@ -97,10 +92,7 @@ class HasManyMorphedInteractionsRelationManager extends RelationManager
             ->recordTitleAttribute('id')
             ->columns([
                 IdColumn::make(),
-                Feature::active(EnableInteractionInitiativesFeature::class)
-                    ? TextColumn::make('initiative.name')
-                    : TextColumn::make('campaign.name')
-                        ->label('Initiative'),
+                TextColumn::make('initiative.name'),
                 TextColumn::make('driver.name'),
                 TextColumn::make('division.name'),
                 TextColumn::make('outcome.name'),

@@ -60,9 +60,9 @@ use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\IntegrationAI\Client\BaseAIChatClient;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
-use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Report\Settings\ReportAssistantSettings;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\Chat;
 
@@ -175,7 +175,7 @@ class AiReportChatClient extends BaseAIChatClient
         return collect([
             Alert::class,
             CareTeam::class,
-            Interaction::class, InteractionCampaign::class, InteractionDriver::class, InteractionOutcome::class, InteractionRelation::class, InteractionStatus::class, InteractionType::class,
+            Interaction::class, InteractionInitiative::class, InteractionDriver::class, InteractionOutcome::class, InteractionRelation::class, InteractionStatus::class, InteractionType::class,
             Prospect::class, ProspectSource::class, ProspectStatus::class,
             Student::class, Enrollment::class, Performance::class, Program::class,
             Subscription::class,

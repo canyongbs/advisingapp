@@ -39,20 +39,20 @@ use App\Models\User;
 use function Pest\Laravel\actingAs;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
 
-test('ListInteractionCampaigns is gated with proper access control', function () {
+test('ListInteractionInitiatives is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(
-            InteractionCampaignResource::getUrl('index')
+            InteractionInitiativeResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('interaction_campaign.view-any');
+    $user->givePermissionTo('interaction_initiative.view-any');
 
     actingAs($user)
         ->get(
-            InteractionCampaignResource::getUrl('index')
+            InteractionInitiativeResource::getUrl('index')
         )->assertSuccessful();
 });

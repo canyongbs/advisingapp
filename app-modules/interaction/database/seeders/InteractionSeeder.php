@@ -51,7 +51,6 @@ class InteractionSeeder extends Seeder
     public static function metadataSeeders(): array
     {
         return [
-            InteractionCampaignSeeder::class,
             InteractionDriverSeeder::class,
             InteractionInitiativeSeeder::class,
             InteractionOutcomeSeeder::class,

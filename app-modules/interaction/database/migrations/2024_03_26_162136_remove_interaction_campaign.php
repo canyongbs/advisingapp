@@ -34,46 +34,34 @@
 </COPYRIGHT>
 */
 
-/*
-|--------------------------------------------------------------------------
-| Test Case
-|--------------------------------------------------------------------------
-|
-| The closure you provide to your test functions is always bound to a specific PHPUnit test
-| case class. By default, that class is "PHPUnit\Framework\TestCase". Of course, you may
-| need to change it using the "uses()" function to bind a different classes or traits.
-|
-*/
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-// uses(Tests\TestCase::class)->in('Feature');
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('interactions', function (Blueprint $table) {
+            $table->dropForeign(['interaction_campaign_id']);
+            $table->dropColumn('interaction_campaign_id');
+        });
 
-/*
-|--------------------------------------------------------------------------
-| Expectations
-|--------------------------------------------------------------------------
-|
-| When you're writing tests, you often need to check that values meet certain conditions. The
-| "expect()" function gives you access to a set of "expectations" methods that you can use
-| to assert different things. Of course, you may extend the Expectation API at any time.
-|
-*/
+        Schema::dropIfExists('interaction_campaigns');
+    }
 
-// expect()->extend('toBeOne', function () {
-//     return $this->toBe(1);
-// });
+    public function down(): void
+    {
+        Schema::create('interaction_campaigns', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-/*
-|--------------------------------------------------------------------------
-| Functions
-|--------------------------------------------------------------------------
-|
-| While Pest is very powerful out-of-the-box, you may have some testing code specific to your
-| project that you don't want to repeat in every file. Here you can also expose helpers as
-| global functions to help you to reduce the number of lines of code in your test files.
-|
-*/
+            $table->string('name');
 
-function something()
-{
-    // ..
-}
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::table('interactions', function (Blueprint $table) {
+            $table->foreignUuid('interaction_campaign_id')->nullable()->constrained('interaction_campaigns');
+        });
+    }
+};
