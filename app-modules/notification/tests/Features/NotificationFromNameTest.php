@@ -34,43 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\NotificationSettingResource\Pages;
+use App\Models\User;
+use App\Models\NotificationSetting;
+use Illuminate\Support\Facades\Notification;
+use AdvisingApp\Notification\Tests\Features\TestEmailSettingFromNameNotification;
 
-use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use App\Filament\Forms\Components\ColorSelect;
-use App\Filament\Resources\NotificationSettingResource;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+it('sets the mail from name based on settings fromName if set', function () {
+    Notification::fake();
 
-class CreateNotificationSetting extends CreateRecord
-{
-    protected static string $resource = NotificationSettingResource::class;
+    $user = User::factory()->create();
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->columns(1)
-            ->schema([
-                TextInput::make('name')
-                    ->string()
-                    ->required()
-                    ->autocomplete(false),
-                TextInput::make('from_name')
-                    ->string()
-                    ->maxLength(150)
-                    ->autocomplete(false)
-                    ->visible(Feature::active('notification-settings-from-name')),
-                Textarea::make('description')
-                    ->string(),
-                ColorSelect::make('primary_color'),
-                SpatieMediaLibraryFileUpload::make('logo')
-                    ->disk('s3')
-                    ->collection('logo')
-                    ->visibility('private')
-                    ->image(),
-            ]);
-    }
-}
+    $notificationSetting = new NotificationSetting();
+
+    $notificationSetting->from_name = fake()->name();
+
+    $notification = new TestEmailSettingFromNameNotification($notificationSetting);
+
+    $user->notify($notification);
+
+    Notification::assertSentTo(
+        $user,
+        function (TestEmailSettingFromNameNotification $notification, array $channels) use ($notificationSetting, $user) {
+            $mailMessage = $notification->toMail($user);
+
+            return $mailMessage->from[1] === $notificationSetting->from_name;
+        }
+    );
+});

@@ -34,43 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\NotificationSettingResource\Pages;
+namespace AdvisingApp\Notification\Tests\Features;
 
-use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use App\Filament\Forms\Components\ColorSelect;
-use App\Filament\Resources\NotificationSettingResource;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Models\NotificationSetting;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
-class CreateNotificationSetting extends CreateRecord
+class TestEmailSettingFromNameNotification extends BaseNotification implements EmailNotification
 {
-    protected static string $resource = NotificationSettingResource::class;
+    use EmailChannelTrait;
 
-    public function form(Form $form): Form
+    public function __construct(
+        public NotificationSetting $setting,
+    ) {}
+
+    public function toEmail(object $notifiable): MailMessage
     {
-        return $form
-            ->columns(1)
-            ->schema([
-                TextInput::make('name')
-                    ->string()
-                    ->required()
-                    ->autocomplete(false),
-                TextInput::make('from_name')
-                    ->string()
-                    ->maxLength(150)
-                    ->autocomplete(false)
-                    ->visible(Feature::active('notification-settings-from-name')),
-                Textarea::make('description')
-                    ->string(),
-                ColorSelect::make('primary_color'),
-                SpatieMediaLibraryFileUpload::make('logo')
-                    ->disk('s3')
-                    ->collection('logo')
-                    ->visibility('private')
-                    ->image(),
-            ]);
+        return MailMessage::make()
+            ->settings($this->setting)
+            ->subject('Test Subject')
+            ->greeting('Test Greeting')
+            ->content('This is a test email')
+            ->salutation('Test Salutation');
     }
 }

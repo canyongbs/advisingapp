@@ -34,43 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\NotificationSettingResource\Pages;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use App\Filament\Forms\Components\ColorSelect;
-use App\Filament\Resources\NotificationSettingResource;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-
-class CreateNotificationSetting extends CreateRecord
-{
-    protected static string $resource = NotificationSettingResource::class;
-
-    public function form(Form $form): Form
+return new class () extends Migration {
+    public function up(): void
     {
-        return $form
-            ->columns(1)
-            ->schema([
-                TextInput::make('name')
-                    ->string()
-                    ->required()
-                    ->autocomplete(false),
-                TextInput::make('from_name')
-                    ->string()
-                    ->maxLength(150)
-                    ->autocomplete(false)
-                    ->visible(Feature::active('notification-settings-from-name')),
-                Textarea::make('description')
-                    ->string(),
-                ColorSelect::make('primary_color'),
-                SpatieMediaLibraryFileUpload::make('logo')
-                    ->disk('s3')
-                    ->collection('logo')
-                    ->visibility('private')
-                    ->image(),
-            ]);
+        $groupId = (string) Str::orderedUuid();
+
+        DB::table('permission_groups')
+            ->insert(
+                [
+                    'id' => $groupId,
+                    'name' => 'Amazon S3',
+                    'created_at' => now(),
+                ]
+            );
+
+        DB::table('permissions')->insert(
+            [
+                'id' => (string) Str::orderedUuid(),
+                'group_id' => $groupId,
+                'guard_name' => 'web',
+                'name' => 'amazon-s3.manage_s3_settings',
+                'created_at' => now(),
+            ]
+        );
     }
-}
+
+    public function down(): void
+    {
+        DB::table('permissions')
+            ->where('name', 'amazon-s3.manage_s3_settings')
+            ->delete();
+
+        DB::table('permission_groups')
+            ->where('name', 'Amazon S3')
+            ->delete();
+    }
+};

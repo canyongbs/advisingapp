@@ -34,43 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\NotificationSettingResource\Pages;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use App\Filament\Forms\Components\ColorSelect;
-use App\Filament\Resources\NotificationSettingResource;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-
-class CreateNotificationSetting extends CreateRecord
-{
-    protected static string $resource = NotificationSettingResource::class;
-
-    public function form(Form $form): Form
+return new class () extends Migration {
+    public function up(): void
     {
-        return $form
-            ->columns(1)
-            ->schema([
-                TextInput::make('name')
-                    ->string()
-                    ->required()
-                    ->autocomplete(false),
-                TextInput::make('from_name')
-                    ->string()
-                    ->maxLength(150)
-                    ->autocomplete(false)
-                    ->visible(Feature::active('notification-settings-from-name')),
-                Textarea::make('description')
-                    ->string(),
-                ColorSelect::make('primary_color'),
-                SpatieMediaLibraryFileUpload::make('logo')
-                    ->disk('s3')
-                    ->collection('logo')
-                    ->visibility('private')
-                    ->image(),
-            ]);
+        Schema::table('notification_settings', function (Blueprint $table) {
+            $table->string('from_name')->nullable();
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('notification_settings', function (Blueprint $table) {
+            $table->dropColumn('from_name');
+        });
+    }
+};

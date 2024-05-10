@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,45 +30,18 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<x-filament-panels::page>
+    <form wire:submit="save">
+        {{ $this->form }}
 
-namespace App\Filament\Resources\NotificationSettingResource\Pages;
+        <x-filament::button
+            class="mt-4"
+            type="submit"
+        >
+            Submit
+        </x-filament::button>
+    </form>
 
-use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use App\Filament\Forms\Components\ColorSelect;
-use App\Filament\Resources\NotificationSettingResource;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-
-class CreateNotificationSetting extends CreateRecord
-{
-    protected static string $resource = NotificationSettingResource::class;
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->columns(1)
-            ->schema([
-                TextInput::make('name')
-                    ->string()
-                    ->required()
-                    ->autocomplete(false),
-                TextInput::make('from_name')
-                    ->string()
-                    ->maxLength(150)
-                    ->autocomplete(false)
-                    ->visible(Feature::active('notification-settings-from-name')),
-                Textarea::make('description')
-                    ->string(),
-                ColorSelect::make('primary_color'),
-                SpatieMediaLibraryFileUpload::make('logo')
-                    ->disk('s3')
-                    ->collection('logo')
-                    ->visibility('private')
-                    ->image(),
-            ]);
-    }
-}
+    <x-filament-actions::modals />
+</x-filament-panels::page>

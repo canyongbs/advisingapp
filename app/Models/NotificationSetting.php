@@ -56,6 +56,7 @@ class NotificationSetting extends BaseModel implements HasMedia
         'primary_color',
         'related_to_type',
         'related_to_id',
+        'from_name',
     ];
 
     public function registerMediaCollections(): void
