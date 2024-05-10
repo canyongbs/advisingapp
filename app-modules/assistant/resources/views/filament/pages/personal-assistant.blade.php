@@ -239,7 +239,7 @@ use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                     @endphp
 
                     @if ($aiAssistant)
-                        <div class="flex justify-center">
+                        <div class="flex">
                             <x-filament::badge :size="ActionSize::Large">
                                 <span class="text-sm"> {{ $aiAssistant->name }} </span>
                             </x-filament::badge>
@@ -425,17 +425,17 @@ use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                         x-data="{
                                             init() {
                                                     this.render()
-                                        
+
                                                     setInterval(this.render, 500)
                                                 },
-                                        
+
                                                 render() {
                                                     $refs.chatContainer.style.maxHeight = 'calc(100dvh - 20rem)'
-                                        
+
                                                     if ($el.scrollHeight > 0) {
                                                         $el.style.height = '5rem'
                                                         $el.style.height = `min(${$el.scrollHeight}px, 35dvh)`
-                                        
+
                                                         $refs.chatContainer.style.maxHeight = `calc(100dvh - 15rem - ${$el.style.height})`
                                                     }
                                                 },
