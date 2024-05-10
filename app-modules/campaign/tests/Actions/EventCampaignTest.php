@@ -41,11 +41,10 @@ use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
+use Illuminate\Support\Facades\Event as FakeEvent;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
-use Illuminate\Support\Facades\Event as FakeEvent;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\MeetingCenter\Jobs\CreateEventAttendees;
 
 it('will create the event records for caseload', function (Collection $educatables) {
     $caseload = Caseload::factory()->create([
@@ -70,7 +69,7 @@ it('will create the event records for caseload', function (Collection $educatabl
         ->create([
             'type' => CampaignActionType::Event,
             'data' => [
-              'event' => $event->id
+                'event' => $event->id,
             ],
         ]);
 
@@ -80,7 +79,6 @@ it('will create the event records for caseload', function (Collection $educatabl
 
     $this->assertCount(3, $caseload->subjects); // Check if 3 subjects were created for the caseload
     $this->assertTrue($campaign->hasBeenExecuted());
-
 })->with([
     'prospects' => [
         'educatables' => fn () => Prospect::factory()->count(3)->create(),
