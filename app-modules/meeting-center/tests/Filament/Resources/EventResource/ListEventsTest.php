@@ -37,7 +37,6 @@
 use function Tests\asSuperAdmin;
 use function Pest\Livewire\livewire;
 
-use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
@@ -46,7 +45,7 @@ use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ListEvents;
 it('can duplicate a event its registration form its steps and its fields', function () {
     asSuperAdmin();
 
-    // Given that we have a survey
+    // Given that we have an event
     $event = Event::factory()->create();
 
     expect(Event::count())->toBe(1);
@@ -71,7 +70,7 @@ it('can duplicate a event its registration form its steps and its fields', funct
 it('will not duplicate event registration form submissions if they exist', function () {
     asSuperAdmin();
 
-    // Given that we have an event
+    // Given that we have an event with registration form submissions
     $event = Event::factory()->create();
 
     $submissionCount = $event->eventRegistrationForm->submissions()->count();
