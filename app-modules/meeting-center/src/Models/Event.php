@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
+use Exception;
 use App\Models\BaseModel;
 use App\Settings\LicenseSettings;
 use Illuminate\Database\Eloquent\SoftDeletes;
