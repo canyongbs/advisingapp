@@ -78,32 +78,32 @@ class Event extends BaseModel
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {
         if (app(LicenseSettings::class)->data->addons->eventManagement) {
-            // try {
-            \DB::beginTransaction();
+            try {
+              \DB::beginTransaction();
 
-            $event = Event::find($action->data['event']);
+              $event = Event::find($action->data['event']);
 
-            $user = $action->campaign->user;
+              $user = $action->campaign->user;
 
-            $emails = $action
-                ->campaign
-                ->caseload
-                ->retrieveRecords()
-                ->whereNotNull('email')
-                ->whereNotIn('email', $event->attendees()->pluck('email')->toArray())
-                ->pluck('email')
-                ->toArray();
+              $emails = $action
+                  ->campaign
+                  ->caseload
+                  ->retrieveRecords()
+                  ->whereNotNull('email')
+                  ->whereNotIn('email', $event->attendees()->pluck('email')->toArray())
+                  ->pluck('email')
+                  ->toArray();
 
-            dispatch(new CreateEventAttendees($event, $emails, $user));
+              dispatch(new CreateEventAttendees($event, $emails, $user));
 
-            \DB::commit();
+              \DB::commit();
 
-            return true;
-            // } catch (Exception $e) {
-            //     \DB::rollBack();
+              return true;
+            } catch (Exception $e) {
+                \DB::rollBack();
 
-            //     return $e->getMessage();
-            // }
+                return $e->getMessage();
+            }
         }
 
         // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
