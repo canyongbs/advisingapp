@@ -239,9 +239,11 @@ use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                     @endphp
 
                     @if ($aiAssistant)
-                        <x-filament::badge :size="ActionSize::Large">
-                            <span class="text-sm"> {{ $aiAssistant->name }} </span>
-                        </x-filament::badge>
+                        <div class="flex justify-center">
+                            <x-filament::badge :size="ActionSize::Large">
+                                <span class="text-sm"> {{ $aiAssistant->name }} </span>
+                            </x-filament::badge>
+                        </div>
                     @endif
                     <div
                         class="flex max-h-[calc(100dvh-20rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
@@ -423,17 +425,17 @@ use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                         x-data="{
                                             init() {
                                                     this.render()
-                                        
+
                                                     setInterval(this.render, 500)
                                                 },
-                                        
+
                                                 render() {
                                                     $refs.chatContainer.style.maxHeight = 'calc(100dvh - 20rem)'
-                                        
+
                                                     if ($el.scrollHeight > 0) {
                                                         $el.style.height = '5rem'
                                                         $el.style.height = `min(${$el.scrollHeight}px, 35dvh)`
-                                        
+
                                                         $refs.chatContainer.style.maxHeight = `calc(100dvh - 15rem - ${$el.style.height})`
                                                     }
                                                 },
