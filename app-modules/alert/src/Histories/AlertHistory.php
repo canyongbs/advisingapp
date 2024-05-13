@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Alert\Histories;
 
-use Laravel\Pennant\Feature;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Alert\Enums\AlertStatus;
@@ -56,12 +55,8 @@ class AlertHistory extends History implements ProvidesATimeline
 
     public static function getTimelineData(Model $forModel): Collection
     {
-        if (Feature::active('educatable-alerts-timeline')) {
-            /* @var Student|Prospect $forModel */
-            return $forModel->alertHistories()->get();
-        }
-
-        return collect();
+        /* @var Student|Prospect $forModel */
+        return $forModel->alertHistories()->get();
     }
 
     public function getFormattedValueForKey(string $key): array

@@ -233,6 +233,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $from_name
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Division\Models\Division> $divisions
  * @property-read int|null $divisions_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
@@ -246,6 +247,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereFromName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting wherePrimaryColor($value)
@@ -956,16 +958,7 @@ namespace AdvisingApp\Assistant\Models{
 /**
  * AdvisingApp\Assistant\Models\AiAssistant
  *
- * @property string $id
- * @property string|null $assistant_id
- * @property string $name
- * @property \AdvisingApp\Assistant\Enums\AiAssistantType|null $type
- * @property string|null $description
- * @property string|null $instructions
- * @property string|null $knowledge
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \AdvisingApp\Assistant\Enums\AiAssistantType $type
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChat> $assistantChats
  * @property-read int|null $assistant_chats_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
@@ -976,16 +969,6 @@ namespace AdvisingApp\Assistant\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant query()
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereAssistantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereInstructions($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereKnowledge($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant withoutTrashed()
  * @mixin \Eloquent
@@ -1005,8 +988,8 @@ namespace AdvisingApp\Assistant\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $assistant_id
  * @property string|null $thread_id
- * @property string|null $ai_assistant_id
  * @property-read \AdvisingApp\Assistant\Models\AiAssistant|null $assistant
  * @property-read \AdvisingApp\Assistant\Models\AssistantChatFolder|null $folder
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChatMessage> $messages
@@ -1017,8 +1000,8 @@ namespace AdvisingApp\Assistant\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat query()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereAiAssistantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereAssistantChatFolderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereAssistantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereId($value)
@@ -2407,7 +2390,6 @@ namespace AdvisingApp\Interaction\Models{
  * @property string|null $interaction_initiative_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Interaction\Models\InteractionCampaign|null $campaign
  * @property-read \AdvisingApp\Division\Models\Division|null $division
  * @property-read \AdvisingApp\Interaction\Models\InteractionDriver|null $driver
  * @property-read \AdvisingApp\Interaction\Models\InteractionInitiative|null $initiative
@@ -2448,37 +2430,6 @@ namespace AdvisingApp\Interaction\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperInteraction {}
-}
-
-namespace AdvisingApp\Interaction\Models{
-/**
- * AdvisingApp\Interaction\Models\InteractionCampaign
- *
- * @property string $id
- * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
- * @property-read int|null $interactions_count
- * @method static \AdvisingApp\Interaction\Database\Factories\InteractionCampaignFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign query()
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperInteractionCampaign {}
 }
 
 namespace AdvisingApp\Interaction\Models{

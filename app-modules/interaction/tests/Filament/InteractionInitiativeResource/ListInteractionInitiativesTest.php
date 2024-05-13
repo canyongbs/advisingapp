@@ -34,51 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
+use App\Models\User;
 
-use Filament\Tables\Table;
-use Filament\Actions\CreateAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Resources\Pages\ListRecords;
-use Illuminate\Contracts\Support\Htmlable;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
+use function Pest\Laravel\actingAs;
 
-class ListInteractionCampaigns extends ListRecords
-{
-    protected static string $resource = InteractionCampaignResource::class;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
 
-    public function getTitle(): string | Htmlable
-    {
-        return 'Interaction Initiatives';
-    }
+test('ListInteractionInitiatives is gated with proper access control', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    public function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name')
-                    ->searchable(),
-            ])
-            ->actions([
-                EditAction::make(),
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
+    actingAs($user)
+        ->get(
+            InteractionInitiativeResource::getUrl('index')
+        )->assertForbidden();
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make()
-                ->label('New Interaction Initiative'),
-        ];
-    }
-}
+    $user->givePermissionTo('interaction_initiative.view-any');
+
+    actingAs($user)
+        ->get(
+            InteractionInitiativeResource::getUrl('index')
+        )->assertSuccessful();
+});

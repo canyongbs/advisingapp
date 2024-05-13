@@ -34,30 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Observers;
-
 use Illuminate\Support\Facades\Schema;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Interaction\Models\InteractionCampaign;
-use AdvisingApp\Interaction\Models\InteractionInitiative;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-class InteractionCampaignObserver
-{
-    public function created(InteractionCampaign $campaign): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (Schema::hasTable('interaction_initiatives') && Schema::hasColumn((new Interaction())->getTable(), 'interaction_initiative_id')) {
-            InteractionInitiative::create([
-                'name' => $campaign->name,
-            ]);
-        }
+        Schema::table('notification_settings', function (Blueprint $table) {
+            $table->string('from_name')->nullable();
+        });
     }
 
-    public function updated(InteractionCampaign $campaign): void
+    public function down(): void
     {
-        if (Schema::hasTable('interaction_initiatives') && Schema::hasColumn((new Interaction())->getTable(), 'interaction_initiative_id')) {
-            InteractionInitiative::where('name', $campaign->name)->update([
-                'name' => $campaign->name,
-            ]);
-        }
+        Schema::table('notification_settings', function (Blueprint $table) {
+            $table->dropColumn('from_name');
+        });
     }
-}
+};

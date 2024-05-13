@@ -37,6 +37,7 @@
 namespace App\Filament\Resources\NotificationSettingResource\Pages;
 
 use Filament\Forms\Form;
+use Laravel\Pennant\Feature;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
@@ -57,6 +58,11 @@ class CreateNotificationSetting extends CreateRecord
                     ->string()
                     ->required()
                     ->autocomplete(false),
+                TextInput::make('from_name')
+                    ->string()
+                    ->maxLength(150)
+                    ->autocomplete(false)
+                    ->visible(Feature::active('notification-settings-from-name')),
                 Textarea::make('description')
                     ->string(),
                 ColorSelect::make('primary_color'),

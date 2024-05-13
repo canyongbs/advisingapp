@@ -34,24 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('interactions', function (Blueprint $table) {
+            $table->dropForeign(['interaction_campaign_id']);
+            $table->dropColumn('interaction_campaign_id');
+        });
 
-/**
- * @mixin IdeHelperInteractionCampaign
- */
-class InteractionCampaign extends BaseModel implements Auditable
-{
-    use AuditableTrait;
-    use HasManyInteractions;
-    use SoftDeletes;
+        Schema::dropIfExists('interaction_campaigns');
+    }
 
-    protected $fillable = [
-        'name',
-    ];
-}
+    public function down(): void
+    {
+        Schema::create('interaction_campaigns', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+
+            $table->string('name');
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::table('interactions', function (Blueprint $table) {
+            $table->foreignUuid('interaction_campaign_id')->nullable()->constrained('interaction_campaigns');
+        });
+    }
+};
