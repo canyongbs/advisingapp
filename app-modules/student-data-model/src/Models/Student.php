@@ -116,6 +116,16 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return $this->sisid;
     }
 
+    public static function displayFirstNameKey(): string
+    {
+        return 'first';
+    }
+
+    public static function displayLastNameKey(): string
+    {
+        return 'last';
+    }
+
     public static function displayNameKey(): string
     {
         return 'full_name';

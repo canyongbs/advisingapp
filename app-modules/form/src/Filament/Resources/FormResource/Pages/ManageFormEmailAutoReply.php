@@ -98,6 +98,8 @@ class ManageFormEmailAutoReply extends EditRecord
                             ->visibility('public')
                             ->directory('editor-images/engagements')
                             ->mergeTags([
+                                'student first name',
+                                'student last name',
                                 'student full name',
                                 'student email',
                             ])
