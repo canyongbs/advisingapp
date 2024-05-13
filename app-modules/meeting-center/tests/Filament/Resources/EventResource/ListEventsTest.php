@@ -54,6 +54,7 @@ it('can duplicate a event its registration form its steps and its fields', funct
     // And we duplicate it
     livewire(ListEvents::class)
         ->assertStatus(200)
+        ->removeTableFilter('pastEvents')
         ->callTableAction('Duplicate', $event);
 
     // The event, registration form, along with all of its content, should be duplicated
