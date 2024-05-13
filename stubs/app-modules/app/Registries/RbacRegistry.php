@@ -37,7 +37,6 @@
 namespace StubModuleNamespace\StubClassNamePrefix\Registries;
 
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Authorization\Registries\Contracts\RegistersRolesAndPermissions;
 
 class StubClassNamePrefixRbacRegistry implements RegistersRolesAndPermissions
