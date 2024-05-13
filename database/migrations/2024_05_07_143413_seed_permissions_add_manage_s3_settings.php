@@ -34,25 +34,42 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
 
-use function Pest\Laravel\actingAs;
+return new class () extends Migration {
+    public function up(): void
+    {
+        $groupId = (string) Str::orderedUuid();
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
+        DB::table('permission_groups')
+            ->insert(
+                [
+                    'id' => $groupId,
+                    'name' => 'Amazon S3',
+                    'created_at' => now(),
+                ]
+            );
 
-test('ListInteractionCampaigns is gated with proper access control', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
+        DB::table('permissions')->insert(
+            [
+                'id' => (string) Str::orderedUuid(),
+                'group_id' => $groupId,
+                'guard_name' => 'web',
+                'name' => 'amazon-s3.manage_s3_settings',
+                'created_at' => now(),
+            ]
+        );
+    }
 
-    actingAs($user)
-        ->get(
-            InteractionCampaignResource::getUrl('index')
-        )->assertForbidden();
+    public function down(): void
+    {
+        DB::table('permissions')
+            ->where('name', 'amazon-s3.manage_s3_settings')
+            ->delete();
 
-    $user->givePermissionTo('interaction_campaign.view-any');
-
-    actingAs($user)
-        ->get(
-            InteractionCampaignResource::getUrl('index')
-        )->assertSuccessful();
-});
+        DB::table('permission_groups')
+            ->where('name', 'Amazon S3')
+            ->delete();
+    }
+};

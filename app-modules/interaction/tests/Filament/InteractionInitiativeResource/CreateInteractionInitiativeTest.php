@@ -34,35 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Database\Seeders;
+use App\Models\User;
 
-use Illuminate\Database\Seeder;
-use AdvisingApp\Interaction\Models\InteractionCampaign;
+use function Pest\Laravel\actingAs;
 
-class InteractionCampaignSeeder extends Seeder
-{
-    public function run(): void
-    {
-        InteractionCampaign::factory()
-            ->createManyQuietly(
-                [
-                    ['name' => 'N/A'],
-                    ['name' => 'College Applicant to Matriculation'],
-                    ['name' => 'College Inquiry to Applicant'],
-                    ['name' => 'College Matriculation to Enroll'],
-                    ['name' => 'College RFI'],
-                    ['name' => 'District Inquiry to Applicant'],
-                    ['name' => 'Dual Reengagement'],
-                    ['name' => 'Early College Plan Update'],
-                    ['name' => 'Early College Transition'],
-                    ['name' => 'Enrollment Cancellation Outreach'],
-                    ['name' => 'Enrollment Cancellation Recovery'],
-                    ['name' => 'Financial Aid Awarded Not Enrolled'],
-                    ['name' => 'Financial Aid Task List'],
-                    ['name' => 'MIH Follow Up'],
-                    ['name' => 'MIH Text'],
-                    ['name' => 'Third Party SEM'],
-                ]
-            );
-    }
-}
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
+
+test('CreateInteractionInitiative is gated with proper access control', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    actingAs($user)
+        ->get(
+            InteractionInitiativeResource::getUrl('create')
+        )->assertForbidden();
+
+    $user->givePermissionTo('interaction_initiative.view-any');
+    $user->givePermissionTo('interaction_initiative.create');
+
+    actingAs($user)
+        ->get(
+            InteractionInitiativeResource::getUrl('create')
+        )->assertSuccessful();
+});

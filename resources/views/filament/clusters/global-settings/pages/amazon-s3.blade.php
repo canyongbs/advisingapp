@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,28 +30,18 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<x-filament-panels::page>
+    <form wire:submit="save">
+        {{ $this->form }}
 
-namespace AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
+        <x-filament::button
+            class="mt-4"
+            type="submit"
+        >
+            Submit
+        </x-filament::button>
+    </form>
 
-use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
-use Illuminate\Contracts\Support\Htmlable;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
-
-class EditInteractionCampaign extends EditRecord
-{
-    protected static string $resource = InteractionCampaignResource::class;
-
-    public function getTitle(): string | Htmlable
-    {
-        return 'Edit Interaction Initiative';
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            DeleteAction::make(),
-        ];
-    }
-}
+    <x-filament-actions::modals />
+</x-filament-panels::page>

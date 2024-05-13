@@ -34,29 +34,17 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use function Pest\Laravel\actingAs;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Feature::activate('notification-settings-from-name');
+    }
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Models\InteractionCampaign;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
-
-test('EditInteractionCampaign is gated with proper access control', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
-
-    $campaign = InteractionCampaign::factory()->create();
-
-    actingAs($user)
-        ->get(
-            InteractionCampaignResource::getUrl('edit', ['record' => $campaign])
-        )->assertForbidden();
-
-    $user->givePermissionTo('interaction_campaign.view-any');
-    $user->givePermissionTo('interaction_campaign.*.update');
-
-    actingAs($user)
-        ->get(
-            InteractionCampaignResource::getUrl('edit', ['record' => $campaign])
-        )->assertSuccessful();
-});
+    public function down(): void
+    {
+        Feature::deactivate('notification-settings-from-name');
+    }
+};

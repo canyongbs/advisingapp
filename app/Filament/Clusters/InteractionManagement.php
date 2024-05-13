@@ -41,8 +41,8 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
 
 class InteractionManagement extends Cluster
 {
@@ -53,8 +53,8 @@ class InteractionManagement extends Cluster
     protected static ?int $navigationSort = 90;
 
     protected array $children = [
-        InteractionCampaignResource::class,
         InteractionDriverResource::class,
+        InteractionInitiativeResource::class,
         InteractionOutcomeResource::class,
         InteractionRelationResource::class,
         InteractionStatusResource::class,

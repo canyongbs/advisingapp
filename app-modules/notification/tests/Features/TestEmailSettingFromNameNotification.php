@@ -34,18 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
+namespace AdvisingApp\Notification\Tests\Features;
 
-use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Contracts\Support\Htmlable;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
+use App\Models\NotificationSetting;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
-class CreateInteractionCampaign extends CreateRecord
+class TestEmailSettingFromNameNotification extends BaseNotification implements EmailNotification
 {
-    protected static string $resource = InteractionCampaignResource::class;
+    use EmailChannelTrait;
 
-    public function getTitle(): string | Htmlable
+    public function __construct(
+        public NotificationSetting $setting,
+    ) {}
+
+    public function toEmail(object $notifiable): MailMessage
     {
-        return 'Create Interaction Initiative';
+        return MailMessage::make()
+            ->settings($this->setting)
+            ->subject('Test Subject')
+            ->greeting('Test Greeting')
+            ->content('This is a test email')
+            ->salutation('Test Salutation');
     }
 }
