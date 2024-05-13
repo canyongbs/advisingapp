@@ -42,4 +42,9 @@ return new class () extends Migration {
     {
         Feature::activate('display-settings');
     }
+
+    public function down(): void
+    {
+        Feature::purge('display-settings');
+    }
 };

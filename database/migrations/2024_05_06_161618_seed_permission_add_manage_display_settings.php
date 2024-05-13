@@ -57,4 +57,15 @@ return new class () extends Migration {
                 'created_at' => now(),
             ]);
     }
+
+    public function down(): void
+    {
+        DB::table('permissions')
+            ->where('name', 'display_settings.manage')
+            ->delete();
+
+        DB::table('permission_groups')
+            ->where('name', 'Display Settings')
+            ->delete();
+    }
 };
