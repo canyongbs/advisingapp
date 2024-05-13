@@ -79,6 +79,7 @@ it('will not duplicate event registration form submissions if they exist', funct
     // And we duplicate it
     livewire(ListEvents::class)
         ->assertStatus(200)
+        ->removeTableFilter('pastEvents')
         ->callTableAction('Duplicate', $event);
 
     // The event registration form submissions should not be duplicated
