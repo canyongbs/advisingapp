@@ -88,6 +88,8 @@ class EngagementBatchBlock extends CampaignActionBlock
                 ->directory('editor-images/engagements')
                 ->label('Body')
                 ->mergeTags([
+                    'student first name',
+                    'student last name',
                     'student full name',
                     'student email',
                 ])
