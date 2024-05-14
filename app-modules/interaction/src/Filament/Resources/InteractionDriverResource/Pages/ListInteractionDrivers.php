@@ -38,6 +38,7 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\P
 
 use Filament\Actions;
 use Filament\Tables\Table;
+use Laravel\Pennant\Feature;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
@@ -48,7 +49,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
-use Laravel\Pennant\Feature;
 
 class ListInteractionDrivers extends ListRecords
 {

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Interaction\Filament\Resources;
 
 use Filament\Forms\Form;
+use Laravel\Pennant\Feature;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
@@ -45,7 +46,6 @@ use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages\EditInteractionDriver;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages\ListInteractionDrivers;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages\CreateInteractionDriver;
-use Laravel\Pennant\Feature;
 
 class InteractionDriverResource extends Resource
 {

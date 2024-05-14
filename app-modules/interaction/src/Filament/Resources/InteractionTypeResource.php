@@ -37,6 +37,7 @@
 namespace AdvisingApp\Interaction\Filament\Resources;
 
 use Filament\Forms\Form;
+use Laravel\Pennant\Feature;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
@@ -45,7 +46,6 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource\Pages\EditInteractionType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource\Pages\ListInteractionTypes;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource\Pages\CreateInteractionType;
-use Laravel\Pennant\Feature;
 
 class InteractionTypeResource extends Resource
 {
