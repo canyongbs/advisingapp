@@ -34,33 +34,55 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Database\Factories;
+use function Tests\asSuperAdmin;
 
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use AdvisingApp\Form\Models\Form;
 
-/**
- * @extends Factory<EventAttendee>
- */
-class EventAttendeeFactory extends Factory
-{
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            'status' => fake()->randomElement(EventAttendeeStatus::class),
-            'email' => fake()->unique()->randomElement([
-                fake()->email(),
-                Student::factory()->create()->email,
-                Prospect::factory()->create()->email,
-            ]),
-            'event_id' => Event::inRandomOrder()->first() ?? Event::factory()->create(),
-        ];
-    }
-}
+use function Pest\Livewire\livewire;
+
+use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ListForms;
+
+it('can duplicate a form its steps and its fields', function () {
+    asSuperAdmin();
+
+    // Given that we have a form
+    $form = Form::factory()->create();
+
+    expect(Form::count())->toBe(1);
+
+    // And we duplicate it
+    livewire(ListForms::class)
+        ->assertStatus(200)
+        ->callTableAction('Duplicate', $form);
+
+    // The form, along with all of its content, should be duplicated
+    expect(Form::count())->toBe(2);
+
+    $duplicatedForm = Form::where('id', '<>', $form->id)->first();
+
+    expect($duplicatedForm->name)->toBe("Copy - {$form->name}");
+    expect($duplicatedForm->fields->count())->toBe($form->fields->count());
+    expect($duplicatedForm->steps->count())->toBe($form->steps->count());
+});
+
+it('will not duplicate form submissions if they exist', function () {
+    asSuperAdmin();
+
+    // Given that we have a form
+    $form = Form::factory()->create();
+
+    $submissionCount = $form->submissions()->count();
+
+    // And we duplicate it
+    livewire(ListForms::class)
+        ->assertStatus(200)
+        ->callTableAction('Duplicate', $form);
+
+    // The form submissions should not be duplicated
+    expect(FormSubmission::count())->toBe($submissionCount);
+
+    $duplicatedForm = Form::where('id', '<>', $form->id)->first();
+
+    expect($duplicatedForm->submissions()->count())->toBe(0);
+});
