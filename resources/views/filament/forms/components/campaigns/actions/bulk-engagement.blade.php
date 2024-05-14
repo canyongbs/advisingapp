@@ -43,7 +43,7 @@
         @if ($action['delivery_method'] === EngagementDeliveryMethod::Email->value)
             Email
         @else
-            Text
+            Text Message
         @endif
     </x-slot>
 

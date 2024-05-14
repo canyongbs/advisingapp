@@ -49,7 +49,7 @@ class EngagementBatchSmsBlock extends CampaignActionBlock
     {
         parent::setUp();
 
-        $this->label('Text');
+        $this->label('Text Message');
 
         $this->schema($this->createFields());
     }

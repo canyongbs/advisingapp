@@ -101,7 +101,7 @@ enum CampaignActionType: string implements HasLabel
     {
         return match ($this) {
             CampaignActionType::BulkEngagementEmail => 'Email',
-            CampaignActionType::BulkEngagementSms => 'Text',
+            CampaignActionType::BulkEngagementSms => 'Text Message',
             CampaignActionType::ServiceRequest => 'Service Request',
             CampaignActionType::ProactiveAlert => 'Proactive Alert',
             CampaignActionType::CareTeam => 'Care Team',
