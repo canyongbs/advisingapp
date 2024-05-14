@@ -34,14 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace App\Listeners;
+namespace App\Listeners\Contracts;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
 use Spatie\LaravelSettings\Events\SettingsSaved;
-use App\Listeners\Contracts\HandleSettingsSaved as HandleSettingsSavedContract;
 
-class HandleSettingsSaved implements HandleSettingsSavedContract, ShouldQueue, NotTenantAware
+interface HandleSettingsSaved
 {
-    public function handle(SettingsSaved $event): void {}
+    public function handle(SettingsSaved $event);
 }
