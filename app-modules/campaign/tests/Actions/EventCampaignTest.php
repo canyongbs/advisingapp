@@ -34,33 +34,62 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Database\Factories;
-
+use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 
-/**
- * @extends Factory<EventAttendee>
- */
-class EventAttendeeFactory extends Factory
-{
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            'status' => fake()->randomElement(EventAttendeeStatus::class),
-            'email' => fake()->unique()->randomElement([
-                fake()->email(),
-                Student::factory()->create()->value('email'),
-                Prospect::factory()->create()->value('email'),
-            ]),
-            'event_id' => Event::inRandomOrder()->first() ?? Event::factory()->create(),
-        ];
-    }
-}
+use function PHPUnit\Framework\assertTrue;
+
+use AdvisingApp\MeetingCenter\Models\Event;
+
+use function PHPUnit\Framework\assertCount;
+
+use Illuminate\Database\Eloquent\Collection;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Campaign\Enums\CampaignActionType;
+use Illuminate\Support\Facades\Event as FakeEvent;
+use AdvisingApp\CaseloadManagement\Models\Caseload;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+
+it('will create the event records for caseload', function (Collection $educatables) {
+    $caseload = Caseload::factory()->create([
+        'type' => CaseloadType::Static,
+    ]);
+
+    $educatables->each(function (Educatable $prospect) use ($caseload) {
+        $caseload->subjects()->create([
+            'subject_id' => $prospect->getKey(),
+            'subject_type' => $prospect->getMorphClass(),
+        ]);
+    });
+
+    $campaign = Campaign::factory()->create([
+        'caseload_id' => $caseload->id,
+    ]);
+
+    $event = Event::factory()->create();
+
+    $action = CampaignAction::factory()
+        ->for($campaign, 'campaign')
+        ->create([
+            'type' => CampaignActionType::Event,
+            'data' => [
+                'event' => $event->id,
+            ],
+        ]);
+
+    FakeEvent::fake();
+
+    $action->execute();
+
+    assertCount(3, $caseload->subjects); // Check if 3 subjects were created for the caseload
+    assertTrue($campaign->hasBeenExecuted());
+})->with([
+    'prospects' => [
+        'educatables' => fn () => Prospect::factory()->count(3)->create(),
+    ],
+    'students' => [
+        'educatables' => fn () => Student::factory()->count(3)->create(),
+    ],
+]);

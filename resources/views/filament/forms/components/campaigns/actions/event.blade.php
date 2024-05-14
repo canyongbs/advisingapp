@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,35 +30,28 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use Carbon\Carbon;
+    use AdvisingApp\MeetingCenter\Models\Event;
+    use AdvisingApp\Campaign\Settings\CampaignSettings;
+@endphp
 
-namespace AdvisingApp\MeetingCenter\Database\Factories;
+<x-filament::fieldset>
+    <x-slot name="label">
+        Event
+    </x-slot>
 
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+    <dl class="max-w-md divide-y divide-gray-200 text-gray-900 dark:divide-gray-700 dark:text-white">
+        <div class="flex flex-col pb-3">
+            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Event</dt>
+            <dd class="text-sm font-semibold">{{ Event::find($action['event'])?->title }}</dd>
+        </div>
+        <div class="flex flex-col pt-3">
+            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Execute At</dt>
+            <dd class="text-sm font-semibold">{{ Carbon::parse($action['execute_at'])->format('M j, Y H:i:s') }}
+                {{ app(CampaignSettings::class)->getActionExecutionTimezoneLabel() }}</dd>
+        </div>
+    </dl>
 
-/**
- * @extends Factory<EventAttendee>
- */
-class EventAttendeeFactory extends Factory
-{
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            'status' => fake()->randomElement(EventAttendeeStatus::class),
-            'email' => fake()->unique()->randomElement([
-                fake()->email(),
-                Student::factory()->create()->value('email'),
-                Prospect::factory()->create()->value('email'),
-            ]),
-            'event_id' => Event::inRandomOrder()->first() ?? Event::factory()->create(),
-        ];
-    }
-}
+</x-filament::fieldset>

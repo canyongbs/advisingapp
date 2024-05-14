@@ -34,33 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Database\Factories;
+namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use AdvisingApp\Prospect\Models\Prospect;
+use Carbon\CarbonImmutable;
+use Filament\Forms\Components\Select;
 use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
 
-/**
- * @extends Factory<EventAttendee>
- */
-class EventAttendeeFactory extends Factory
+class EventBlock extends CampaignActionBlock
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->label = 'Invite Event';
+
+        $this->model(Event::class);
+
+        $this->schema($this->createFields());
+    }
+
+    public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            'status' => fake()->randomElement(EventAttendeeStatus::class),
-            'email' => fake()->unique()->randomElement([
-                fake()->email(),
-                Student::factory()->create()->value('email'),
-                Prospect::factory()->create()->value('email'),
-            ]),
-            'event_id' => Event::inRandomOrder()->first() ?? Event::factory()->create(),
+            Select::make($fieldPrefix . 'event')
+                ->label('Select Event')
+                ->options(Event::where('ends_at', '>=', now())->pluck('title', 'id')->toArray())
+                ->nullable()
+                ->searchable(),
+            DateTimePicker::make($fieldPrefix . 'execute_at')
+                ->label('When should the journey step be executed?')
+                ->columnSpanFull()
+                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+                ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
+                ->lazy()
+                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
+                ->required()
+                ->minDate(now()),
         ];
+    }
+
+    public static function type(): string
+    {
+        return 'event';
     }
 }
