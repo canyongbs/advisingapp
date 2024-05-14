@@ -34,41 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
 
-use Laravel\Pennant\Feature;
-use App\Settings\DisplaySettings;
-use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
-use App\Support\MediaEncoding\TiptapMediaEncoder;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
-
-class KnowledgeManagementPortalArticleController extends Controller
-{
-    public function show(KnowledgeBaseCategory $category, KnowledgeBaseArticle $article): JsonResponse
+return new class () extends Migration {
+    public function up(): void
     {
-        $articleUpdatedAt = $article->updated_at;
+        DB::table('permission_groups')
+            ->insert([
+                'id' => $groupId = Str::orderedUuid(),
+                'name' => 'Display Settings',
+                'created_at' => now(),
+            ]);
 
-        if (Feature::active('display-settings')) {
-            $articleUpdatedAt = $articleUpdatedAt->setTimezone(app(DisplaySettings::class)->timezone);
-        }
-
-        return response()->json([
-            'category' => KnowledgeBaseCategoryData::from([
-                'id' => $category->getKey(),
-                'name' => $category->name,
-                'description' => $category->description,
-            ]),
-            'article' => KnowledgeBaseArticleData::from([
-                'id' => $article->getKey(),
-                'categoryId' => $article->category_id,
-                'name' => $article->title,
-                'lastUpdated' => $articleUpdatedAt->format('M d Y, h:m a'),
-                'content' => tiptap_converter()->asHTML(TiptapMediaEncoder::decode($article->article_details)),
-            ]),
-        ]);
+        DB::table('permissions')
+            ->insert([
+                'id' => Str::orderedUuid(),
+                'name' => 'display_settings.manage',
+                'guard_name' => 'web',
+                'group_id' => $groupId,
+                'created_at' => now(),
+            ]);
     }
-}
+
+    public function down(): void
+    {
+        DB::table('permissions')
+            ->where('name', 'display_settings.manage')
+            ->delete();
+
+        DB::table('permission_groups')
+            ->where('name', 'Display Settings')
+            ->delete();
+    }
+};

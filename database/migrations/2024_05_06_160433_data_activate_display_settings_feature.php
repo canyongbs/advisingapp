@@ -34,41 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
-
 use Laravel\Pennant\Feature;
-use App\Settings\DisplaySettings;
-use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
-use App\Support\MediaEncoding\TiptapMediaEncoder;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
+use Illuminate\Database\Migrations\Migration;
 
-class KnowledgeManagementPortalArticleController extends Controller
-{
-    public function show(KnowledgeBaseCategory $category, KnowledgeBaseArticle $article): JsonResponse
+return new class () extends Migration {
+    public function up(): void
     {
-        $articleUpdatedAt = $article->updated_at;
-
-        if (Feature::active('display-settings')) {
-            $articleUpdatedAt = $articleUpdatedAt->setTimezone(app(DisplaySettings::class)->timezone);
-        }
-
-        return response()->json([
-            'category' => KnowledgeBaseCategoryData::from([
-                'id' => $category->getKey(),
-                'name' => $category->name,
-                'description' => $category->description,
-            ]),
-            'article' => KnowledgeBaseArticleData::from([
-                'id' => $article->getKey(),
-                'categoryId' => $article->category_id,
-                'name' => $article->title,
-                'lastUpdated' => $articleUpdatedAt->format('M d Y, h:m a'),
-                'content' => tiptap_converter()->asHTML(TiptapMediaEncoder::decode($article->article_details)),
-            ]),
-        ]);
+        Feature::activate('display-settings');
     }
-}
+
+    public function down(): void
+    {
+        Feature::purge('display-settings');
+    }
+};

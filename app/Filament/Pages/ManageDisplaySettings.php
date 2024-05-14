@@ -34,4 +34,42 @@
 </COPYRIGHT>
 */
 
-return [];
+namespace App\Filament\Pages;
+
+use Filament\Forms\Form;
+use Laravel\Pennant\Feature;
+use Filament\Pages\SettingsPage;
+use App\Settings\DisplaySettings;
+use App\Filament\Clusters\GlobalSettings;
+use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
+
+class ManageDisplaySettings extends SettingsPage
+{
+    protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
+
+    protected static ?string $navigationLabel = 'Display';
+
+    protected static ?int $navigationSort = 70;
+
+    protected static string $settings = DisplaySettings::class;
+
+    protected static ?string $cluster = GlobalSettings::class;
+
+    public static function canAccess(): bool
+    {
+        if (! Feature::active('display-settings')) {
+            return false;
+        }
+
+        return auth()->user()->can('display_settings.manage');
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TimezoneSelect::make('timezone')
+                    ->helperText('Default: ' . config('app.timezone')),
+            ]);
+    }
+}

@@ -34,29 +34,38 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
+namespace App\Settings;
 
-use function Pest\Laravel\actingAs;
+use Spatie\LaravelSettings\Settings;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
+class DisplaySettings extends Settings
+{
+    public ?string $timezone = null;
 
-test('EditInteractionInitiative is gated with proper access control', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
+    public static function group(): string
+    {
+        return 'display';
+    }
 
-    $initiative = InteractionInitiative::factory()->create();
+    public function getTimezone(): string
+    {
+        if (filled($userTimezone = auth()->user()->timezone)) {
+            return $userTimezone;
+        }
 
-    actingAs($user)
-        ->get(
-            InteractionInitiativeResource::getUrl('edit', ['record' => $initiative])
-        )->assertForbidden();
+        if (filled($this->timezone)) {
+            return $this->timezone;
+        }
 
-    $user->givePermissionTo('interaction_initiative.view-any');
-    $user->givePermissionTo('interaction_initiative.*.update');
+        return config('app.timezone');
+    }
 
-    actingAs($user)
-        ->get(
-            InteractionInitiativeResource::getUrl('edit', ['record' => $initiative])
-        )->assertSuccessful();
-});
+    public function getTimezoneLabel(): string
+    {
+        return str_replace(
+            ['/', '_', 'St '],
+            [', ', ' ', 'St. '],
+            $this->getTimezone(),
+        );
+    }
+}
