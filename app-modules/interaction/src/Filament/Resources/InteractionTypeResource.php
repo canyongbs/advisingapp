@@ -45,6 +45,7 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource\Pages\EditInteractionType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource\Pages\ListInteractionTypes;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource\Pages\CreateInteractionType;
+use Laravel\Pennant\Feature;
 
 class InteractionTypeResource extends Resource
 {
@@ -90,7 +91,8 @@ class InteractionTypeResource extends Resource
                         return "The current default status is '{$currentDefault}', you are replacing it.";
                     })
                     ->hintColor('danger')
-                    ->columnStart(1),
+                    ->columnStart(1)
+                    ->visible(fn (): bool => Feature::active('interaction_type_default')),
             ]);
     }
 

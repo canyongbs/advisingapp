@@ -48,6 +48,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
+use Laravel\Pennant\Feature;
 
 class ListInteractionDrivers extends ListRecords
 {
@@ -62,11 +63,13 @@ class ListInteractionDrivers extends ListRecords
                     ->searchable(),
                 IconColumn::make('is_default')
                     ->label('Default')
-                    ->boolean(),
+                    ->boolean()
+                    ->visible(fn (): bool => Feature::active('interaction_driver_default')),
             ])
             ->filters([
                 Filter::make('is_default')
                     ->label('Default')
+                    ->visible(fn (): bool => Feature::active('interaction_driver_default'))
                     ->query(fn (Builder $query) => $query->where('is_default', true)),
             ])
             ->actions([

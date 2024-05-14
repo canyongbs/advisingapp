@@ -60,6 +60,7 @@ use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
+use Laravel\Pennant\Feature;
 
 class CreateInteraction extends CreateRecord
 {
@@ -113,19 +114,19 @@ class CreateInteraction extends CreateRecord
                             ->preload()
                             ->label('Initiative')
                             ->required()
-                            ->default(fn () => InteractionInitiative::query()
+                            ->default(fn () => Feature::active('interaction_initiative_default') ? InteractionInitiative::query()
                             ->where('is_default', true)
                             ->first()
-                            ?->getKey())
+                            ?->getKey() : '')
                             ->exists((new InteractionInitiative())->getTable(), 'id'),
                         Select::make('interaction_driver_id')
                             ->relationship('driver', 'name')
                             ->preload()
                             ->label('Driver')
-                            ->default(fn () => InteractionDriver::query()
-                                ->where('is_default', true)
-                                ->first()
-                                ?->getKey())
+                            ->default(fn () => Feature::active('interaction_driver_default') ? InteractionDriver::query()
+                            ->where('is_default', true)
+                            ->first()
+                            ?->getKey() : '')
                             ->required()
                             ->exists((new InteractionDriver())->getTable(), 'id'),
                         Select::make('division_id')
@@ -168,10 +169,10 @@ class CreateInteraction extends CreateRecord
                         Select::make('interaction_type_id')
                             ->relationship('type', 'name')
                             ->preload()
-                            ->default(fn () => InteractionType::query()
+                            ->default(fn () => Feature::active('interaction_type_default') ? InteractionType::query()
                             ->where('is_default', true)
                             ->first()
-                            ?->getKey())
+                            ?->getKey() : '')
                             ->label('Type')
                             ->required()
                             ->exists((new InteractionType())->getTable(), 'id'),

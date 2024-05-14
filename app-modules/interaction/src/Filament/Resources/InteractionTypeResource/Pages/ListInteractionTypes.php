@@ -48,6 +48,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
+use Laravel\Pennant\Feature;
 
 class ListInteractionTypes extends ListRecords
 {
@@ -62,11 +63,13 @@ class ListInteractionTypes extends ListRecords
                     ->searchable(),
                 IconColumn::make('is_default')
                     ->label('Default')
+                    ->visible(fn (): bool => Feature::active('interaction_type_default'))
                     ->boolean(),
             ])
             ->filters([
                 Filter::make('is_default')
                     ->label('Default')
+                    ->visible(fn (): bool => Feature::active('interaction_type_default'))
                     ->query(fn (Builder $query) => $query->where('is_default', true)),
             ])
             ->actions([

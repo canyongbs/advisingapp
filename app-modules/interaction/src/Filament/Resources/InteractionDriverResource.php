@@ -45,6 +45,7 @@ use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages\EditInteractionDriver;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages\ListInteractionDrivers;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages\CreateInteractionDriver;
+use Laravel\Pennant\Feature;
 
 class InteractionDriverResource extends Resource
 {
@@ -90,7 +91,8 @@ class InteractionDriverResource extends Resource
                         return "The current default status is '{$currentDefault}', you are replacing it.";
                     })
                     ->hintColor('danger')
-                    ->columnStart(1),
+                    ->columnStart(1)
+                    ->visible(fn (): bool => Feature::active('interaction_driver_default')),
             ]);
     }
 

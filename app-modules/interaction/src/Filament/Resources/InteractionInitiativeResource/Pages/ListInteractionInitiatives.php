@@ -48,6 +48,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
+use Laravel\Pennant\Feature;
 
 class ListInteractionInitiatives extends ListRecords
 {
@@ -62,11 +63,13 @@ class ListInteractionInitiatives extends ListRecords
                     ->searchable(),
                 IconColumn::make('is_default')
                     ->label('Default')
+                    ->visible(fn (): bool => Feature::active('interaction_initiative_default'))
                     ->boolean(),
             ])
             ->filters([
                 Filter::make('is_default')
                     ->label('Default')
+                    ->visible(fn (): bool => Feature::active('interaction_initiative_default'))
                     ->query(fn (Builder $query) => $query->where('is_default', true)),
             ])
             ->actions([

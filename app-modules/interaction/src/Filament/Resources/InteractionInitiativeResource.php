@@ -45,6 +45,7 @@ use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages\EditInteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages\ListInteractionInitiatives;
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages\CreateInteractionInitiative;
+use Laravel\Pennant\Feature;
 
 class InteractionInitiativeResource extends Resource
 {
@@ -90,7 +91,8 @@ class InteractionInitiativeResource extends Resource
                         return "The current default status is '{$currentDefault}', you are replacing it.";
                     })
                     ->hintColor('danger')
-                    ->columnStart(1),
+                    ->columnStart(1)
+                    ->visible(fn (): bool => Feature::active('interaction_initiative_default')),
             ]);
     }
 

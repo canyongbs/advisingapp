@@ -8,15 +8,15 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('interaction_initiatives', function (Blueprint $table) {
-            $table->boolean('is_default')->after('name')->default(false);
+            $table->boolean('is_default')->default(false);
         });
 
         Schema::table('interaction_drivers', function (Blueprint $table) {
-            $table->boolean('is_default')->after('name')->default(false);
+            $table->boolean('is_default')->default(false);
         });
 
         Schema::table('interaction_types', function (Blueprint $table) {
-            $table->boolean('is_default')->after('name')->default(false);
+            $table->boolean('is_default')->default(false);
         });
     }
 
