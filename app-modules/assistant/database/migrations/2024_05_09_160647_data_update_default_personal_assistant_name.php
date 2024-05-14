@@ -34,55 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Actions;
-
 use App\Models\Tenant;
-use Laravel\Pennant\Feature;
-use AdvisingApp\Assistant\Models\AiAssistant;
+use Illuminate\Database\Migrations\Migration;
 use AdvisingApp\Assistant\Enums\AiAssistantType;
-use AdvisingApp\IntegrationAI\Settings\AISettings;
-use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
 
-class CreateDefaultInstitutionAiAssistant
-{
-    public function __construct(
-        private AiChatClient $ai
-    ) {}
+return new class () extends Migration {
+    public function up(): void
+    {
+        DB::table('ai_assistants')
+            ->where('type', AiAssistantType::Default)
+            ->update([
+                'name' => 'Institutional Assistant',
+                'updated_at' => now(),
+            ]);
+    }
 
-    public function create()
+    public function down(): void
     {
         $tenant = Tenant::current();
 
-        $settings = resolve(AISettings::class);
-
-        $name = 'Institutional Assistant';
-        $description = "An AI Assistant for {$tenant->name}";
-        $instructions = $settings->prompt_system_context;
-
-        if (Feature::active('custom-ai-assistants')) {
-            $aiAssistant = AiAssistant::create([
-                'name' => $name,
-                'description' => $description,
-                'instructions' => $instructions,
-                'type' => AiAssistantType::Default,
+        DB::table('ai_assistants')
+            ->where('type', AiAssistantType::Default)
+            ->update([
+                'name' => "{$tenant->name} AI Assistant",
+                'updated_at' => now(),
             ]);
-        }
-
-        $clientAssistantId = resolve(CreateAiAssistant::class)->from(
-            name: $name,
-            description: $description,
-            instructions: $instructions
-        );
-
-        if (Feature::active('custom-ai-assistants')) {
-            $aiAssistant->update([
-                'assistant_id' => $clientAssistantId,
-            ]);
-        }
-
-        $settings->assistant_id = $clientAssistantId;
-        $settings->save();
-
-        return $settings->assistant_id;
     }
-}
+};
