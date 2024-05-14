@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
 
-use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
@@ -53,9 +52,6 @@ class EditCalendarEvent extends EditRecord
 
     public function form(Form $form): Form
     {
-        /** @var User $user */
-        $user = auth()->user();
-
         return $form->schema([
             TextInput::make('title')
                 ->string()
@@ -64,10 +60,8 @@ class EditCalendarEvent extends EditRecord
                 ->string()
                 ->nullable(),
             DateTimePicker::make('starts_at')
-                ->timezone($user->timezone)
                 ->required(),
             DateTimePicker::make('ends_at')
-                ->timezone($user->timezone)
                 ->required(),
             TagsInput::make('attendees')
                 ->placeholder('Add attendee email')

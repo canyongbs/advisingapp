@@ -34,29 +34,22 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use function Pest\Laravel\actingAs;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('notification_settings', function (Blueprint $table) {
+            $table->string('from_name')->nullable();
+        });
+    }
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
-
-test('EditInteractionInitiative is gated with proper access control', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
-
-    $initiative = InteractionInitiative::factory()->create();
-
-    actingAs($user)
-        ->get(
-            InteractionInitiativeResource::getUrl('edit', ['record' => $initiative])
-        )->assertForbidden();
-
-    $user->givePermissionTo('interaction_initiative.view-any');
-    $user->givePermissionTo('interaction_initiative.*.update');
-
-    actingAs($user)
-        ->get(
-            InteractionInitiativeResource::getUrl('edit', ['record' => $initiative])
-        )->assertSuccessful();
-});
+    public function down(): void
+    {
+        Schema::table('notification_settings', function (Blueprint $table) {
+            $table->dropColumn('from_name');
+        });
+    }
+};

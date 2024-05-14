@@ -37,7 +37,9 @@
 namespace App\Multitenancy\Tasks;
 
 use Spatie\Multitenancy\Models\Tenant;
+use Illuminate\Notifications\ChannelManager;
 use Spatie\Multitenancy\Tasks\SwitchTenantTask;
+use Illuminate\Notifications\Channels\MailChannel;
 
 class SwitchMailTask implements SwitchTenantTask
 {
@@ -125,5 +127,9 @@ class SwitchMailTask implements SwitchTenantTask
                 'mail.mailers.smtp.local_domain' => $smtpLocalDomain,
             ]
         );
+
+        app()->forgetInstance('mail.manager');
+        app()->forgetInstance(ChannelManager::class);
+        app()->forgetInstance(MailChannel::class);
     }
 }

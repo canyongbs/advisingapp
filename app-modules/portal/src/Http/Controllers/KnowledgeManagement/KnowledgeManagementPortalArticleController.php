@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
+use Laravel\Pennant\Feature;
+use App\Settings\DisplaySettings;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Support\MediaEncoding\TiptapMediaEncoder;
@@ -48,6 +50,12 @@ class KnowledgeManagementPortalArticleController extends Controller
 {
     public function show(KnowledgeBaseCategory $category, KnowledgeBaseArticle $article): JsonResponse
     {
+        $articleUpdatedAt = $article->updated_at;
+
+        if (Feature::active('display-settings')) {
+            $articleUpdatedAt = $articleUpdatedAt->setTimezone(app(DisplaySettings::class)->timezone);
+        }
+
         return response()->json([
             'category' => KnowledgeBaseCategoryData::from([
                 'id' => $category->getKey(),
@@ -58,7 +66,7 @@ class KnowledgeManagementPortalArticleController extends Controller
                 'id' => $article->getKey(),
                 'categoryId' => $article->category_id,
                 'name' => $article->title,
-                'lastUpdated' => $article->updated_at->format('M d Y, h:m a'),
+                'lastUpdated' => $articleUpdatedAt->format('M d Y, h:m a'),
                 'content' => tiptap_converter()->asHTML(TiptapMediaEncoder::decode($article->article_details)),
             ]),
         ]);

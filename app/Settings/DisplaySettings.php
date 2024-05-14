@@ -34,4 +34,38 @@
 </COPYRIGHT>
 */
 
-return [];
+namespace App\Settings;
+
+use Spatie\LaravelSettings\Settings;
+
+class DisplaySettings extends Settings
+{
+    public ?string $timezone = null;
+
+    public static function group(): string
+    {
+        return 'display';
+    }
+
+    public function getTimezone(): string
+    {
+        if (filled($userTimezone = auth()->user()->timezone)) {
+            return $userTimezone;
+        }
+
+        if (filled($this->timezone)) {
+            return $this->timezone;
+        }
+
+        return config('app.timezone');
+    }
+
+    public function getTimezoneLabel(): string
+    {
+        return str_replace(
+            ['/', '_', 'St '],
+            [', ', ' ', 'St. '],
+            $this->getTimezone(),
+        );
+    }
+}

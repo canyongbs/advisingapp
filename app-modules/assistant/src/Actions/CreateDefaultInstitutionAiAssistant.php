@@ -55,8 +55,7 @@ class CreateDefaultInstitutionAiAssistant
 
         $settings = resolve(AISettings::class);
 
-        // TODO Update to reflect desired institutional defaults
-        $name = "{$tenant->name} AI Assistant";
+        $name = 'Institutional Assistant';
         $description = "An AI Assistant for {$tenant->name}";
         $instructions = $settings->prompt_system_context;
 
