@@ -121,8 +121,6 @@ return [
         'database/factories/.gitkeep' => base_path('stubs/app-modules/.gitkeep'),
         'database/migrations/.gitkeep' => base_path('stubs/app-modules/.gitkeep'),
         'database/seeders/.gitkeep' => base_path('stubs/app-modules/.gitkeep'),
-        'config/permissions/api/custom.php' => base_path('stubs/app-modules/config/permissions/api/custom.php'),
-        'config/permissions/web/custom.php' => base_path('stubs/app-modules/config/permissions/web/custom.php'),
         'config/roles/api/StubModuleName_roles.php' => base_path('stubs/app-modules/config/roles/api/module_roles.php'),
         'config/roles/web/StubModuleName_roles.php' => base_path('stubs/app-modules/config/roles/web/module_roles.php'),
     ],

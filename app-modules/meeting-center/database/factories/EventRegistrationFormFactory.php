@@ -87,22 +87,20 @@ class EventRegistrationFormFactory extends Factory
                 $eventRegistrationForm->save();
             }
 
-            if (fake()->boolean()) {
-                EventRegistrationFormSubmission::factory()
-                    ->count(rand(1, 10))
-                    ->create([
-                        'form_id' => $eventRegistrationForm->getKey(),
-                    ])
-                    ->each(
-                        fn (EventRegistrationFormSubmission $eventRegistrationFormSubmission) => $eventRegistrationFormSubmission
-                            ->author()
-                            ->associate(EventAttendee::factory()->create([
-                                'status' => $eventRegistrationFormSubmission->attendee_status,
-                                'event_id' => $eventRegistrationForm->event->getKey(),
-                            ]))
-                            ->save()
-                    );
-            }
+            EventRegistrationFormSubmission::factory()
+                ->count(rand(1, 10))
+                ->create([
+                    'form_id' => $eventRegistrationForm->getKey(),
+                ])
+                ->each(
+                    fn (EventRegistrationFormSubmission $eventRegistrationFormSubmission) => $eventRegistrationFormSubmission
+                        ->author()
+                        ->associate(EventAttendee::factory()->create([
+                            'status' => $eventRegistrationFormSubmission->attendee_status,
+                            'event_id' => $eventRegistrationForm->event->getKey(),
+                        ]))
+                        ->save()
+                );
         });
     }
 

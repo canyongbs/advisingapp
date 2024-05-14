@@ -66,10 +66,20 @@ abstract class CampaignActionBlock extends Block
 
     abstract public static function type(): string;
 
-    public function generateUserTimezoneHint(CarbonInterface $dateTime): string
+    public function generateUserTimezoneHint(CarbonInterface $dateTime): ?string
     {
+        if (blank(auth()->user()->timezone)) {
+            return null;
+        }
+
+        $actionExecutionTimezone = app(CampaignSettings::class)->getActionExecutionTimezone();
+
+        if (auth()->user()->timezone === $actionExecutionTimezone) {
+            return null;
+        }
+
         return $dateTime
-            ->shiftTimezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+            ->shiftTimezone($actionExecutionTimezone)
             ->setTimezone(auth()->user()->timezone)->format('M j, Y H:i:s') . ' in your timezone';
     }
 }

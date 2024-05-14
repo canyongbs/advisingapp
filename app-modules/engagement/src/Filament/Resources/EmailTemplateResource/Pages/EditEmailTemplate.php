@@ -64,6 +64,8 @@ class EditEmailTemplate extends EditRecord
                     ->disk('s3-public')
                     ->visibility('public')
                     ->mergeTags([
+                        'student first name',
+                        'student last name',
                         'student full name',
                         'student email',
                     ])

@@ -51,9 +51,6 @@ class CreateCalendarEvent extends CreateRecord
 
     public function form(Form $form): Form
     {
-        /** @var User $user */
-        $user = auth()->user();
-
         return $form->schema([
             TextInput::make('title')
                 ->string()
@@ -62,14 +59,12 @@ class CreateCalendarEvent extends CreateRecord
                 ->string()
                 ->nullable(),
             DateTimePicker::make('starts_at')
-                ->timezone($user->timezone)
                 ->required(),
             DateTimePicker::make('ends_at')
-                ->timezone($user->timezone)
                 ->required(),
             TagsInput::make('attendees')
                 ->placeholder('Add attendee email')
-                ->default([$user->calendar->provider_email])
+                ->default([auth()->user()->calendar->provider_email])
                 ->nestedRecursiveRules(['email']),
         ]);
     }

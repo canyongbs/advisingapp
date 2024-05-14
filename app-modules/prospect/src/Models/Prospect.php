@@ -227,6 +227,16 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return 'email';
     }
 
+    public static function displayFirstNameKey(): string
+    {
+        return 'first_name';
+    }
+
+    public static function displayLastNameKey(): string
+    {
+        return 'last_name';
+    }
+
     public static function filamentResource(): string
     {
         return ProspectResource::class;

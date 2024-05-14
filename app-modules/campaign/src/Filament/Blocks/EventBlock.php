@@ -34,29 +34,49 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
+namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use function Pest\Laravel\actingAs;
+use Carbon\CarbonImmutable;
+use Filament\Forms\Components\Select;
+use AdvisingApp\MeetingCenter\Models\Event;
+use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
+class EventBlock extends CampaignActionBlock
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-test('EditInteractionInitiative is gated with proper access control', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
+        $this->label = 'Invite Event';
 
-    $initiative = InteractionInitiative::factory()->create();
+        $this->model(Event::class);
 
-    actingAs($user)
-        ->get(
-            InteractionInitiativeResource::getUrl('edit', ['record' => $initiative])
-        )->assertForbidden();
+        $this->schema($this->createFields());
+    }
 
-    $user->givePermissionTo('interaction_initiative.view-any');
-    $user->givePermissionTo('interaction_initiative.*.update');
+    public function generateFields(string $fieldPrefix = ''): array
+    {
+        return [
+            Select::make($fieldPrefix . 'event')
+                ->label('Select Event')
+                ->options(Event::where('ends_at', '>=', now())->pluck('title', 'id')->toArray())
+                ->nullable()
+                ->searchable(),
+            DateTimePicker::make($fieldPrefix . 'execute_at')
+                ->label('When should the journey step be executed?')
+                ->columnSpanFull()
+                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+                ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
+                ->lazy()
+                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
+                ->required()
+                ->minDate(now()),
+        ];
+    }
 
-    actingAs($user)
-        ->get(
-            InteractionInitiativeResource::getUrl('edit', ['record' => $initiative])
-        )->assertSuccessful();
-});
+    public static function type(): string
+    {
+        return 'event';
+    }
+}
