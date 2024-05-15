@@ -34,25 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+namespace AdvisingApp\Interaction\Observers;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Interaction\Models\InteractionType;
 
-/**
- * @mixin IdeHelperInteractionInitiative
- */
-class InteractionInitiative extends BaseModel implements Auditable
+class InteractionTypesObserver
 {
-    use AuditableTrait;
-    use HasManyInteractions;
-    use HasFactory;
-
-    protected $fillable = [
-        'name',
-        'is_default',
-    ];
+    public function saving(InteractionType $interactionType): void
+    {
+        if ($interactionType->is_default) {
+            InteractionType::query()
+                ->where('is_default', true)
+                ->update(['is_default' => false]);
+        }
+    }
 }

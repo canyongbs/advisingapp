@@ -34,25 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('interaction_initiatives', function (Blueprint $table) {
+            $table->boolean('is_default')->default(false);
+        });
 
-/**
- * @mixin IdeHelperInteractionInitiative
- */
-class InteractionInitiative extends BaseModel implements Auditable
-{
-    use AuditableTrait;
-    use HasManyInteractions;
-    use HasFactory;
+        Schema::table('interaction_drivers', function (Blueprint $table) {
+            $table->boolean('is_default')->default(false);
+        });
 
-    protected $fillable = [
-        'name',
-        'is_default',
-    ];
-}
+        Schema::table('interaction_types', function (Blueprint $table) {
+            $table->boolean('is_default')->default(false);
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('interaction_initiatives', function (Blueprint $table) {
+            $table->dropColumn('is_default');
+        });
+
+        Schema::table('interaction_drivers', function (Blueprint $table) {
+            $table->dropColumn('is_default');
+        });
+
+        Schema::table('interaction_types', function (Blueprint $table) {
+            $table->dropColumn('is_default');
+        });
+    }
+};

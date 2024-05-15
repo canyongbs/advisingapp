@@ -34,25 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Feature::activate('interaction_initiative_default');
+        Feature::activate('interaction_driver_default');
+        Feature::activate('interaction_type_default');
+    }
 
-/**
- * @mixin IdeHelperInteractionInitiative
- */
-class InteractionInitiative extends BaseModel implements Auditable
-{
-    use AuditableTrait;
-    use HasManyInteractions;
-    use HasFactory;
-
-    protected $fillable = [
-        'name',
-        'is_default',
-    ];
-}
+    public function down(): void
+    {
+        Feature::deactivate('interaction_initiative_default');
+        Feature::deactivate('interaction_driver_default');
+        Feature::deactivate('interaction_type_default');
+    }
+};
