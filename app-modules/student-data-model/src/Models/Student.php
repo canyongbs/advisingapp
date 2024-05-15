@@ -156,8 +156,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             foreignPivotKey: 'entity_id',
             relatedPivotKey: 'engagement_file_id',
             relation: 'engagementFiles',
-        )
-            ->using(EngagementFileEntities::class)
+        )->using(EngagementFileEntities::class)
             ->withTimestamps();
     }
 
