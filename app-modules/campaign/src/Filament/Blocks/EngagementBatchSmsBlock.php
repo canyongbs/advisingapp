@@ -34,53 +34,48 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Database\Factories;
+namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use Carbon\Carbon;
-use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Campaign\Enums\CampaignActionType;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Carbon\CarbonImmutable;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Campaign\Models\CampaignAction>
- */
-class CampaignActionFactory extends Factory
+class EngagementBatchSmsBlock extends CampaignActionBlock
 {
-    public function definition(): array
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->label('Text Message');
+
+        $this->schema($this->createFields());
+    }
+
+    public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            'campaign_id' => Campaign::factory(),
-            'type' => fake()->randomElement([
-                CampaignActionType::BulkEngagementEmail,
-                CampaignActionType::BulkEngagementSms,
-            ]),
-            'data' => [],
-            'execute_at' => fake()->dateTimeBetween('+1 week', '+1 year'),
+            TextInput::make($fieldPrefix . 'delivery_method')
+                ->default(EngagementDeliveryMethod::Sms->value)
+                ->hidden()
+                ->disabled(),
+            EngagementSmsBodyField::make(context: 'create'),
+            DateTimePicker::make('execute_at')
+                ->label('When should the journey step be executed?')
+                ->columnSpanFull()
+                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+                ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
+                ->lazy()
+                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
+                ->required()
+                ->minDate(now()),
         ];
     }
 
-    public function successfulExecution(?Carbon $at = null): self
+    public static function type(): string
     {
-        return $this->state([
-            'execute_at' => $at ?? now(),
-            'last_execution_attempt_at' => $at ?? now(),
-            'successfully_executed_at' => $at ?? now(),
-        ]);
-    }
-
-    public function failedExecution(?Carbon $at = null): self
-    {
-        return $this->state([
-            'execute_at' => $at ?? now(),
-            'last_execution_attempt_at' => $at ?? now(),
-            'last_execution_attempt_error' => fake()->sentence(),
-        ]);
-    }
-
-    public function campaignDisabled(): self
-    {
-        return $this->state([
-            'campaign_id' => Campaign::factory()->disabled(),
-        ]);
+        return 'bulk_engagement_sms';
     }
 }
