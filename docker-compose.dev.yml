@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  advisingapp-app:
+  advisingapp.local:
     build:
       target: development
     environment:

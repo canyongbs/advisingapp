@@ -69,7 +69,7 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace)
                 ->as('landlord.api.')
                 ->domain(
-                    (string) str(config('app.internal_url'))
+                    (string) str(config('app.landlord_url'))
                         ->after('http://')
                         ->after('https://')
                         ->rtrim('/'),

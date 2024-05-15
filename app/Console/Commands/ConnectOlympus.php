@@ -63,7 +63,7 @@ class ConnectOlympus extends Command
     public function handle(): int
     {
         $response = Http::post($this->argument('url'), [
-            'url' => config('app.internal_url'),
+            'url' => config('app.landlord_url'),
         ])->throw();
 
         $olympusSettings = app(OlympusSettings::class);
