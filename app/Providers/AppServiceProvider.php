@@ -41,11 +41,9 @@ use App\Models\SystemUser;
 use Laravel\Pennant\Feature;
 use Illuminate\Support\Facades\URL;
 use App\Listeners\HandleSettingsSaved;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Octane\Commands\ReloadCommand;
 use Filament\Actions\Imports\Jobs\ImportCsv;
-use App\Listeners\HandleSettingsSavedForTenant;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use OpenSearch\Migrations\Filesystem\MigrationStorage;
 use App\Overrides\Filament\Actions\Imports\Jobs\ImportCsvOverride;
@@ -67,13 +65,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(GraphQLSearchByTypesCondition::class, GraphQLSearchByTypesConditionOverride::class);
         $this->app->bind(GraphQLSearchByDirectiveAlias::class, GraphQLSearchByDirectiveOverride::class);
         $this->app->bind(ImportCsv::class, ImportCsvOverride::class);
-        $this->app->bind(HandleSettingsSavedContract::class, function () {
-            if (app(config('multitenancy.current_tenant_container_key'))) {
-                return new HandleSettingsSavedForTenant();
-            }
-
-            return new HandleSettingsSaved();
-        });
+        $this->app->bind(HandleSettingsSavedContract::class, fn () => new HandleSettingsSaved());
 
         // Laravel Octane does not register the `ReloadCommand` when the application is not running in the console.
         // We need to call this command from the `UpdateBrandSettingsController` during an HTTP request.
