@@ -66,7 +66,28 @@ class EngagementFile extends BaseModel implements HasMedia, Auditable
         $this
             ->addMediaCollection('file')
             ->useDisk('s3')
-            ->singleFile();
+            ->singleFile()
+            ->acceptsMimeTypes([
+                'image/png',
+                'image/jpeg',
+                'image/gif',
+                'application/pdf',
+                'application/msword',
+                'text/csv',
+                'application/vnd.ms-excel',
+                'application/msexcel',
+                'application/ms-excel',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.ms-powerpoint',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                'text/plain',
+                'audio/mpeg',
+                'video/mp4',
+                'application/x-zip-compressed',
+                'application/zip',
+                'application/x-zip',
+            ]);
     }
 
     public function students(): MorphToMany
