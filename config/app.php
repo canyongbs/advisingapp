@@ -96,8 +96,6 @@ return [
 
     'url' => env('APP_URL', env('LANDLORD_APP_URL', 'http://localhost')),
 
-    'internal_url' => env('INTERNAL_URL', 'http://localhost'),
-
     'force_https' => env('APP_FORCE_HTTPS', true),
 
     'asset_url' => env('ASSET_URL', '/'),

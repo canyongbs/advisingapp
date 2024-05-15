@@ -34,48 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace App\Console\Commands;
+namespace App\Multitenancy\Tasks;
 
-use App\Settings\BrandSettings;
-use Illuminate\Console\Command;
-use App\Settings\OlympusSettings;
-use Illuminate\Support\Facades\Http;
+use App\Listeners\HandleSettingsSaved;
+use Spatie\Multitenancy\Models\Tenant;
+use App\Listeners\HandleSettingsSavedForTenant;
+use Spatie\Multitenancy\Tasks\SwitchTenantTask;
+use App\Listeners\Contracts\HandleSettingsSaved as HandleSettingsSavedContract;
 
-class ConnectOlympus extends Command
+class SwitchBindings implements SwitchTenantTask
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'olympus:connect {url}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Connect the app to communicate with Olympus.';
-
-    /**
-     * Execute the console command.
-     */
-    public function handle(): int
+    public function makeCurrent(Tenant $tenant): void
     {
-        $response = Http::post($this->argument('url'), [
-            'url' => config('app.landlord_url'),
-        ])->throw();
+        app()->bind(HandleSettingsSavedContract::class, fn () => new HandleSettingsSavedForTenant());
+    }
 
-        $olympusSettings = app(OlympusSettings::class);
-        $olympusSettings->fill($response->json('olympus'));
-        $olympusSettings->save();
-
-        $brandSettings = app(BrandSettings::class);
-        $brandSettings->fill($response->json('brand'));
-        $brandSettings->save();
-
-        $this->info('The app has been connected to Olympus.');
-
-        return static::SUCCESS;
+    public function forgetCurrent(): void
+    {
+        app()->bind(HandleSettingsSavedContract::class, fn () => new HandleSettingsSaved());
     }
 }
