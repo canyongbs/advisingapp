@@ -76,12 +76,14 @@ class EngagementFilesRelationManager extends RelationManager
                 TextColumn::make('description'),
                 IconColumn::make('media')
                     ->tooltip(fn ($record) => match ($record->getMedia('file')?->first()?->mime_type) {
+                        default => 'File',
                         'image/png' => 'Image (.png)',
                         'image/jpeg' => 'Image (.jpeg)',
                         'image/gif' => 'Image (.gif)',
                         'application/pdf' => 'PDF',
                         'application/msword' => 'Document',
                         'text/csv' => 'CSV',
+                        'application/vnd.ms-excel' => 'Spreadsheet',
                         'application/msexcel' => 'Spreadsheet',
                         'application/ms-excel' => 'Spreadsheet',
                         'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'Document',
@@ -93,12 +95,14 @@ class EngagementFilesRelationManager extends RelationManager
                         'application/zip' => 'Zip File'
                     })
                     ->icon(fn ($state) => match ($state->mime_type) {
+                        default => 'heroicon-o-paper-clip',
                         'image/png' => 'heroicon-o-photo',
                         'image/jpeg' => 'heroicon-o-camera',
                         'image/gif' => 'heroicon-o-gif',
                         'application/pdf' => 'heroicon-o-document-text',
                         'application/msword' => 'heroicon-o-document-text',
                         'text/csv' => 'heroicon-o-table-cells',
+                        'application/vnd.ms-excel' => 'heroicon-o-table-cells',
                         'application/msexcel' => 'heroicon-o-table-cells',
                         'application/ms-excel' => 'heroicon-o-table-cells',
                         'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'heroicon-o-document-text',
