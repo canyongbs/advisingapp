@@ -36,6 +36,9 @@
 
 namespace App\Models;
 
+use AdvisingApp\Ai\Models\AiAssistantUpvote;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiThreadFolder;
 use Filament\Panel;
 use DateTimeInterface;
 use Illuminate\Support\Arr;
@@ -351,6 +354,21 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function assistantChats(): HasMany
     {
         return $this->hasMany(AssistantChat::class);
+    }
+
+    public function aiThreads(): HasMany
+    {
+        return $this->hasMany(AiThread::class);
+    }
+
+    public function aiThreadFolders(): HasMany
+    {
+        return $this->hasMany(AiThreadFolder::class);
+    }
+
+    public function aiAssistantUpvotes(): HasMany
+    {
+        return $this->hasMany(AiAssistantUpvote::class);
     }
 
     public function assistantChatFolders(): HasMany
