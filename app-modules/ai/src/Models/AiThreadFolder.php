@@ -2,13 +2,12 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use App\Models\BaseModel;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\BaseModel;
+use AdvisingApp\Ai\Enums\AiApplication;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AiThreadFolder extends BaseModel
 {
@@ -16,7 +15,12 @@ class AiThreadFolder extends BaseModel
 
     protected $fillable = [
         'name',
+        'application',
         'user_id',
+    ];
+
+    protected $casts = [
+        'application' => AiApplication::class,
     ];
 
     public function threads(): HasMany

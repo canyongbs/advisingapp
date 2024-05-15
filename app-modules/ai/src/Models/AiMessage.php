@@ -2,15 +2,15 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use App\Models\BaseModel;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
 
 class AiMessage extends BaseModel
 {
+    use AsPivot;
     use SoftDeletes;
 
     protected $fillable = [
@@ -19,6 +19,8 @@ class AiMessage extends BaseModel
         'thread_id',
         'user_id',
     ];
+
+    protected $table = 'ai_messages';
 
     public function thread(): BelongsTo
     {

@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Ai\Providers;
 
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiThreadFolder;
-use AdvisingApp\Ai\Models\AiMessage;
 use Filament\Panel;
+use AdvisingApp\Ai\AiPlugin;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Ai\Models\AiThreadFolder;
+use AdvisingApp\Ai\Registries\AiRbacRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Ai\AiPlugin;
-use AdvisingApp\Ai\Registries\AiRbacRegistry;
 
 class AiServiceProvider extends ServiceProvider
 {

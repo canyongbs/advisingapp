@@ -37,7 +37,7 @@
 namespace AdvisingApp\Assistant\DataTransferObjects;
 
 use Spatie\LaravelData\Data;
-use AdvisingApp\IntegrationAI\Settings\AISettings;
+use AdvisingApp\Ai\Settings\AISettings;
 
 class AiAssistantUpdateData extends Data
 {

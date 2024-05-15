@@ -46,13 +46,13 @@ class AiRbacRegistry implements RegistersRolesAndPermissions
         $roleRegistry = app(AuthorizationRoleRegistry::class);
 
         $roleRegistry->registerApiRoles(
-            module: '',
-            path: ''
+            module: 'ai',
+            path: 'roles/api'
         );
 
         $roleRegistry->registerWebRoles(
-            module: '',
-            path: ''
+            module: 'ai',
+            path: 'roles/web'
         );
     }
 }

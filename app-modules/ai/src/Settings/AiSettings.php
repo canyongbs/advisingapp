@@ -34,15 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAI\Settings;
+namespace AdvisingApp\Ai\Settings;
 
+use AdvisingApp\Ai\Enums\AiModel;
 use Spatie\LaravelSettings\Settings;
 
-class AISettings extends Settings
+class AiSettings extends Settings
 {
     public ?string $assistant_id = null;
 
     public string $prompt_system_context;
+
+    public ?AiModel $default_model = null;
 
     public int $max_tokens;
 
@@ -51,5 +54,10 @@ class AISettings extends Settings
     public static function group(): string
     {
         return 'ai';
+    }
+
+    public function getDefaultModel(): AiModel
+    {
+        return $this->default_model ?? AiModel::OpenAiGpt35;
     }
 }

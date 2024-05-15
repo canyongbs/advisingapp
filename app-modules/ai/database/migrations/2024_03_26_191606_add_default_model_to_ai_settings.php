@@ -34,4 +34,16 @@
 </COPYRIGHT>
 */
 
-return [];
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
+
+return new class () extends SettingsMigration {
+    public function up(): void
+    {
+        $this->migrator->add('ai.default_model');
+    }
+
+    public function down(): void
+    {
+        $this->migrator->deleteIfExists('ai.default_model');
+    }
+};

@@ -83,17 +83,6 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
-    // TODO Find a way to move this setting to the Integration AI module
-    'azure_open_ai' => [
-        'endpoint' => env('AZURE_OPEN_AI_BASE_ENDPOINT'),
-        'api_key' => env('AZURE_OPEN_AI_API_KEY'),
-        'personal_assistant_api_version' => env('AZURE_OPEN_AI_PERSONAL_ASSISTANT_API_VERSION'),
-        'report_assistant_api_version' => env('AZURE_OPEN_AI_REPORT_ASSISTANT_API_VERSION'),
-        'personal_assistant_deployment_name' => env('AZURE_OPEN_AI_PERSONAL_ASSISTANT_DEPLOYMENT_NAME'),
-        'report_assistant_deployment_name' => env('AZURE_OPEN_AI_REPORT_ASSISTANT_DEPLOYMENT_NAME'),
-        'enable_test_mode' => env('AZURE_OPEN_AI_ENABLE_TEST_MODE', true),
-    ],
-
     'microsoft_graph' => [
         'client_id' => env('MICROSOFT_GRAPH_CLIENT_ID'),
         'client_secret' => env('MICROSOFT_GRAPH_CLIENT_SECRET'),

@@ -2,28 +2,32 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Services\Contracts\AiService;
-use AdvisingApp\IntegrationAI\Settings\AISettings;
-use OpenAI;
+use Throwable;
 use OpenAI\Client;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Settings\AISettings;
+use AdvisingApp\Ai\Services\Contracts\AiService;
+use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
 
 abstract class BaseOpenAiService implements AiService
 {
+    public const FORMATTING_INSTRUCTIONS = 'When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.';
+
     protected Client $client;
 
     abstract public function getModel(): string;
 
-    const FORMATTING_INSTRUCTIONS = 'When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.';
-
     public function createAssistant(AiAssistant $assistant): void
     {
         $response = $this->client->assistants()->create([
-            'instructions' => $this->generateAssistantInstructions($assistant),
             'name' => $assistant->name,
+            'instructions' => $this->generateAssistantInstructions($assistant),
             'model' => $this->getModel(),
+            'metadata' => [
+                'last_updated_at' => now(),
+            ],
         ]);
 
         $assistant->assistant_id = $response->id;
@@ -45,6 +49,13 @@ abstract class BaseOpenAiService implements AiService
         $thread->thread_id = $response->id;
     }
 
+    public function deleteThread(AiThread $thread): void
+    {
+        $this->client->threads()->delete($thread->thread_id);
+
+        $thread->thread_id = null;
+    }
+
     public function sendMessage(AiMessage $message): AiMessage
     {
         $response = $this->client->threads()->messages()->create($message->thread->thread_id, [
@@ -53,10 +64,32 @@ abstract class BaseOpenAiService implements AiService
         ]);
 
         $message->message_id = $response->id;
+        $message->save();
 
-        $this->client->threads()->runs()->create($message->thread->thread_id, [
+        $response = $this->client->threads()->runs()->create($message->thread->thread_id, [
             'assistant_id' => $message->thread->assistant->assistant_id,
         ]);
+
+        $runId = $response->id;
+
+        $timeout = 20;
+
+        while ($response->status !== 'completed') {
+            if ($timeout <= 0) {
+                try {
+                    $this->client->threads()->runs()->cancel($message->thread->thread_id, $runId);
+                } catch (Throwable $exception) {
+                }
+
+                throw new MessageResponseTimeoutException();
+            }
+
+            usleep(500000);
+
+            $response = $this->client->threads()->runs()->retrieve($message->thread->thread_id, $runId);
+
+            $timeout--;
+        }
 
         $response = $this->client->threads()->messages()->list($message->thread->thread_id, [
             'order' => 'desc',
@@ -68,25 +101,6 @@ abstract class BaseOpenAiService implements AiService
         $response->content = $responseContent;
 
         return $response;
-    }
-
-    protected function generateAssistantInstructions(AiAssistant $assistant): string
-    {
-        $assistantInstructions = rtrim($assistant->instructions, '. ');
-
-        $maxAssistantInstructionsLength = $this->getMaxAssistantInstructionsLength();
-        if (strlen($assistantInstructions) > $maxAssistantInstructionsLength) {
-            $truncationEnd = '... [truncated]';
-
-            $assistantInstructions = (string) str($assistantInstructions)
-                ->limit($maxAssistantInstructionsLength - strlen($truncationEnd), $truncationEnd);
-        }
-
-        $systemContext = rtrim(resolve(AISettings::class)->prompt_system_context, '. ');
-        $dynamicContext = rtrim(auth()->user()->getDynamicContext(), '. ');
-        $formattingInstructions = static::FORMATTING_INSTRUCTIONS;
-
-        return "{$systemContext}. {$assistantInstructions}. {$dynamicContext}. {$formattingInstructions}";
     }
 
     public function getMaxAssistantInstructionsLength(): int
@@ -101,5 +115,24 @@ abstract class BaseOpenAiService implements AiService
         $limit -= ($limit % 100); // Round down to the nearest 100.
 
         return $limit;
+    }
+
+    protected function generateAssistantInstructions(AiAssistant $assistant): string
+    {
+        $assistantInstructions = rtrim($assistant->instructions, '. ');
+
+        $maxAssistantInstructionsLength = $this->getMaxAssistantInstructionsLength();
+
+        if (strlen($assistantInstructions) > $maxAssistantInstructionsLength) {
+            $truncationEnd = '... [truncated]';
+
+            $assistantInstructions = (string) str($assistantInstructions)
+                ->limit($maxAssistantInstructionsLength - strlen($truncationEnd), $truncationEnd);
+        }
+
+        $dynamicContext = rtrim(auth()->user()->getDynamicContext(), '. ');
+        $formattingInstructions = static::FORMATTING_INSTRUCTIONS;
+
+        return "{$assistantInstructions}. {$dynamicContext}. {$formattingInstructions}";
     }
 }

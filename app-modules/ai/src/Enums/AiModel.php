@@ -2,10 +2,10 @@
 
 namespace AdvisingApp\Ai\Enums;
 
-use AdvisingApp\Ai\Services\Contracts\AiService;
-use AdvisingApp\Ai\Services\TestAiService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt35Service;
 use Exception;
+use AdvisingApp\Ai\Services\TestAiService;
+use AdvisingApp\Ai\Services\Contracts\AiService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt35Service;
 
 enum AiModel: string
 {
@@ -24,5 +24,14 @@ enum AiModel: string
         app()->scopedIf($service);
 
         return app($service);
+    }
+
+    public function isVisibleForApplication(AiApplication $aiApplication): bool
+    {
+        return match ($this) {
+            self::OpenAiGpt35 => $aiApplication === AiApplication::PersonalAssistant,
+            self::Test => true,
+            default => throw new Exception('AI model visibility for application has not been implemented yet.'),
+        };
     }
 }

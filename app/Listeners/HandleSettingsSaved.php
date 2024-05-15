@@ -36,9 +36,9 @@
 
 namespace App\Listeners;
 
+use AdvisingApp\Ai\Settings\AISettings;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Spatie\LaravelSettings\Events\SettingsSaved;
-use AdvisingApp\IntegrationAI\Settings\AISettings;
 use AdvisingApp\Assistant\Actions\UpdateAiAssistant;
 use AdvisingApp\Assistant\DataTransferObjects\AiAssistantUpdateData;
 use AdvisingApp\Assistant\Actions\CreateDefaultInstitutionAiAssistant;
