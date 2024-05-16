@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Http\Controllers\RetryMessageController;
 use Illuminate\Support\Facades\Route;
 use AdvisingApp\Ai\Http\Controllers\ShowThreadController;
 use AdvisingApp\Ai\Http\Controllers\SendMessageController;
+use AdvisingApp\Ai\Http\Controllers\RetryMessageController;
 
 Route::middleware(['web', 'auth'])
     ->name('ai.')

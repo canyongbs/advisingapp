@@ -36,13 +36,11 @@
 
 namespace AdvisingApp\Ai\Http\Controllers;
 
-use AdvisingApp\Ai\Actions\RetryMessage;
+use Throwable;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Actions\SendMessage;
-use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
-use Throwable;
+use AdvisingApp\Ai\Actions\RetryMessage;
 
 class RetryMessageController
 {

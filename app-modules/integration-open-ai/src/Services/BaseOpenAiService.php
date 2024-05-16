@@ -36,14 +36,13 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
-use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
-use Throwable;
 use OpenAI\Client;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AISettings;
 use AdvisingApp\Ai\Services\Contracts\AiService;
+use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
 
 abstract class BaseOpenAiService implements AiService
@@ -158,6 +157,20 @@ abstract class BaseOpenAiService implements AiService
         return $response;
     }
 
+    public function getMaxAssistantInstructionsLength(): int
+    {
+        $limit = 32768;
+
+        $limit -= strlen(resolve(AISettings::class)->prompt_system_context);
+        $limit -= strlen(auth()->user()->getDynamicContext());
+        $limit -= strlen(static::FORMATTING_INSTRUCTIONS);
+
+        $limit -= 250; // For good measure.
+        $limit -= ($limit % 100); // Round down to the nearest 100.
+
+        return $limit;
+    }
+
     protected function awaitThreadRunCompletion(ThreadRunResponse $threadRunResponse): void
     {
         $runId = $threadRunResponse->id;
@@ -175,20 +188,6 @@ abstract class BaseOpenAiService implements AiService
 
             $timeout -= 0.5;
         }
-    }
-
-    public function getMaxAssistantInstructionsLength(): int
-    {
-        $limit = 32768;
-
-        $limit -= strlen(resolve(AISettings::class)->prompt_system_context);
-        $limit -= strlen(auth()->user()->getDynamicContext());
-        $limit -= strlen(static::FORMATTING_INSTRUCTIONS);
-
-        $limit -= 250; // For good measure.
-        $limit -= ($limit % 100); // Round down to the nearest 100.
-
-        return $limit;
     }
 
     protected function generateAssistantInstructions(AiAssistant $assistant, bool $withDynamicContext = false): string
