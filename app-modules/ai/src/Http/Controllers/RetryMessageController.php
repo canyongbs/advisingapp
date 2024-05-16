@@ -34,20 +34,43 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Http\Controllers\RetryMessageController;
-use Illuminate\Support\Facades\Route;
-use AdvisingApp\Ai\Http\Controllers\ShowThreadController;
-use AdvisingApp\Ai\Http\Controllers\SendMessageController;
+namespace AdvisingApp\Ai\Http\Controllers;
 
-Route::middleware(['web', 'auth'])
-    ->name('ai.')
-    ->group(function () {
-        Route::get('ai/threads/{thread}', ShowThreadController::class)
-            ->name('threads.show');
+use AdvisingApp\Ai\Actions\RetryMessage;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Actions\SendMessage;
+use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
+use Throwable;
 
-        Route::post('ai/threads/{thread}/messages', SendMessageController::class)
-            ->name('threads.messages.send');
+class RetryMessageController
+{
+    public function __invoke(AiThread $thread, Request $request): JsonResponse
+    {
+        if (! $thread->user()->is(auth()->user())) {
+            abort(404);
+        }
 
-        Route::post('ai/threads/{thread}/messages/retry', RetryMessageController::class)
-            ->name('threads.messages.retry');
-    });
+        $content = $request->validate([
+            'content' => ['required', 'max:1000'],
+        ])['content'];
+
+        try {
+            $responseContent = app(RetryMessage::class)(
+                $thread,
+                $content,
+            );
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json([
+                'message' => 'The assistant has failed. Please retry later.',
+            ], 500);
+        }
+
+        return response()->json([
+            'content' => $responseContent,
+        ]);
+    }
+}

@@ -41,6 +41,7 @@ use Illuminate\Http\JsonResponse;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Actions\SendMessage;
 use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
+use Throwable;
 
 class SendMessageController
 {
@@ -55,11 +56,16 @@ class SendMessageController
         ])['content'];
 
         try {
-            $responseContent = app(SendMessage::class)($thread, $content);
-        } catch (MessageResponseTimeoutException $exception) {
+            $responseContent = app(SendMessage::class)(
+                $thread,
+                $content,
+            );
+        } catch (Throwable $exception) {
+            report($exception);
+
             return response()->json([
-                'message' => 'The assistant is taking too long to respond. Please try again later.',
-            ], 408);
+                'message' => 'The assistant has failed. Please retry later.',
+            ], 500);
         }
 
         return response()->json([

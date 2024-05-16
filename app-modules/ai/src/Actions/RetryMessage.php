@@ -34,20 +34,28 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Http\Controllers\RetryMessageController;
-use Illuminate\Support\Facades\Route;
-use AdvisingApp\Ai\Http\Controllers\ShowThreadController;
-use AdvisingApp\Ai\Http\Controllers\SendMessageController;
+namespace AdvisingApp\Ai\Actions;
 
-Route::middleware(['web', 'auth'])
-    ->name('ai.')
-    ->group(function () {
-        Route::get('ai/threads/{thread}', ShowThreadController::class)
-            ->name('threads.show');
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiMessage;
 
-        Route::post('ai/threads/{thread}/messages', SendMessageController::class)
-            ->name('threads.messages.send');
+class RetryMessage
+{
+    public function __invoke(AiThread $thread, string $content): string
+    {
+        $message = $thread->messages()->whereBelongsTo(auth()->user())->latest()->first();
 
-        Route::post('ai/threads/{thread}/messages/retry', RetryMessageController::class)
-            ->name('threads.messages.retry');
-    });
+        if ($message?->content !== $content) {
+            $message = new AiMessage();
+            $message->content = $content;
+            $message->thread()->associate($thread);
+            $message->user()->associate(auth()->user());
+        }
+
+        $response = $thread->assistant->model->getService()->retryMessage($message);
+        $response->thread()->associate($thread);
+        $response->save();
+
+        return $response->content;
+    }
+}

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
+use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use Throwable;
 use OpenAI\Client;
 use AdvisingApp\Ai\Models\AiThread;
@@ -102,28 +103,10 @@ abstract class BaseOpenAiService implements AiService
 
         $response = $this->client->threads()->runs()->create($message->thread->thread_id, [
             'assistant_id' => $message->thread->assistant->assistant_id,
+            'instructions' => $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true),
         ]);
 
-        $runId = $response->id;
-
-        $timeout = 20;
-
-        while ($response->status !== 'completed') {
-            if ($timeout <= 0) {
-                try {
-                    $this->client->threads()->runs()->cancel($message->thread->thread_id, $runId);
-                } catch (Throwable $exception) {
-                }
-
-                throw new MessageResponseTimeoutException();
-            }
-
-            usleep(500000);
-
-            $response = $this->client->threads()->runs()->retrieve($message->thread->thread_id, $runId);
-
-            $timeout--;
-        }
+        $this->awaitThreadRunCompletion($response);
 
         $response = $this->client->threads()->messages()->list($message->thread->thread_id, [
             'order' => 'desc',
@@ -135,6 +118,63 @@ abstract class BaseOpenAiService implements AiService
         $response->content = $responseContent;
 
         return $response;
+    }
+
+    public function retryMessage(AiMessage $message): AiMessage
+    {
+        $response = $this->client->threads()->runs()->list($message->thread->thread_id, [
+            'order' => 'desc',
+            'limit' => 1,
+        ])->data[0] ?? null;
+
+        if ((! $response) || $response?->status === 'completed') {
+            if (blank($message->message_id)) {
+                $response = $this->client->threads()->messages()->create($message->thread->thread_id, [
+                    'role' => 'user',
+                    'content' => $message->content,
+                ]);
+
+                $message->message_id = $response->id;
+                $message->save();
+            }
+
+            $response = $this->client->threads()->runs()->create($message->thread->thread_id, [
+                'assistant_id' => $message->thread->assistant->assistant_id,
+                'instructions' => $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true),
+            ]);
+        }
+
+        $this->awaitThreadRunCompletion($response);
+
+        $response = $this->client->threads()->messages()->list($message->thread->thread_id, [
+            'order' => 'desc',
+            'limit' => 1,
+        ]);
+        $responseContent = $response->data[0]->content[0]->text->value;
+
+        $response = new AiMessage();
+        $response->content = $responseContent;
+
+        return $response;
+    }
+
+    protected function awaitThreadRunCompletion(ThreadRunResponse $threadRunResponse): void
+    {
+        $runId = $threadRunResponse->id;
+
+        $timeout = 20;
+
+        while ($threadRunResponse->status !== 'completed') {
+            if ($timeout <= 0) {
+                throw new MessageResponseTimeoutException();
+            }
+
+            usleep(500000);
+
+            $threadRunResponse = $this->client->threads()->runs()->retrieve($threadRunResponse->threadId, $runId);
+
+            $timeout -= 0.5;
+        }
     }
 
     public function getMaxAssistantInstructionsLength(): int
@@ -151,7 +191,7 @@ abstract class BaseOpenAiService implements AiService
         return $limit;
     }
 
-    protected function generateAssistantInstructions(AiAssistant $assistant): string
+    protected function generateAssistantInstructions(AiAssistant $assistant, bool $withDynamicContext = false): string
     {
         $assistantInstructions = rtrim($assistant->instructions, '. ');
 
@@ -164,9 +204,14 @@ abstract class BaseOpenAiService implements AiService
                 ->limit($maxAssistantInstructionsLength - strlen($truncationEnd), $truncationEnd);
         }
 
-        $dynamicContext = rtrim(auth()->user()->getDynamicContext(), '. ');
         $formattingInstructions = static::FORMATTING_INSTRUCTIONS;
 
-        return "{$assistantInstructions}. {$dynamicContext}. {$formattingInstructions}";
+        if (! $withDynamicContext) {
+            return "{$assistantInstructions}.\n\n{$formattingInstructions}";
+        }
+
+        $dynamicContext = rtrim(auth()->user()->getDynamicContext(), '. ');
+
+        return "{$dynamicContext}.\n\n{$assistantInstructions}.\n\n{$formattingInstructions}";
     }
 }

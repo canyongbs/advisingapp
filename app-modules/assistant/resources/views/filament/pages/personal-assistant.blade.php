@@ -235,6 +235,7 @@ use Illuminate\Support\Facades\Vite;
                 <div
                     x-data="chat({
                         csrfToken: @js(csrf_token()),
+                        retryMessageUrl: @js(route('ai.threads.messages.retry', ['thread' => $thread])),
                         sendMessageUrl: @js(route('ai.threads.messages.send', ['thread' => $thread])),
                         showThreadUrl: @js(route('ai.threads.show', ['thread' => $thread])),
                         userId: @js(auth()->user()->id),
@@ -248,13 +249,17 @@ use Illuminate\Support\Facades\Vite;
                         class="flex max-h-[calc(100dvh-20rem)] overflow-y-scroll flex-1 flex-col-reverse rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
                         x-ref="chatContainer"
                     >
+                        <div x-cloak x-show="isError" class="bg-danger-100 dark:bg-danger-900 px-4 py-2">
+                            An error happened when sending your message, <x-filament::link x-on:click="retryMessage" tag="button" color="gray">click here to retry.</x-filament::link>
+                        </div>
+
                         <div x-show="isLoading" class="flex h-full w-full items-center justify-center">
                             <x-filament::loading-indicator class="h-12 w-12" />
 
                             Loading messages
                         </div>
 
-                        <div class="divide-y dark:divide-gray-800">
+                        <div x-cloak class="divide-y dark:divide-gray-800">
                             <template x-for="message in messages">
                                 <div class="group w-full bg-white dark:bg-gray-900">
                                     <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
@@ -326,6 +331,7 @@ use Illuminate\Support\Facades\Vite;
                                     x-intersect.once="render()"
                                     x-on:resize.window="render()"
                                     x-on:message-sent.window="$nextTick(render)"
+                                    x-on:keydown.enter="$event.shiftKey || $event.preventDefault() || sendMessage()"
                                     x-bind:disabled="isSendingMessage"
                                     placeholder="Type here..."
                                     required

@@ -79,5 +79,16 @@ interface AiService
      */
     public function sendMessage(AiMessage $message): AiMessage;
 
+    /**
+     * This method is passed an `AiMessage` model and should recover the
+     * request to the AI service. If that is successful, it should save the
+     * message before fetching the response, in case the response fails
+     * to generate.
+     *
+     * The method should return a new unsaved `AiMessage` model with the content
+     * from the AI service set only, the other attributes will be set later.
+     */
+    public function retryMessage(AiMessage $message): AiMessage;
+
     public function getMaxAssistantInstructionsLength(): int;
 }

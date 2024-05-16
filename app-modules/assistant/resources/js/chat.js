@@ -32,7 +32,8 @@
 </COPYRIGHT>
 */
 document.addEventListener('alpine:init', () => {
-    Alpine.data('chat', ({ csrfToken, sendMessageUrl, showThreadUrl, userId }) => ({
+    Alpine.data('chat', ({ csrfToken, retryMessageUrl, sendMessageUrl, showThreadUrl, userId }) => ({
+        isError: false,
         isLoading: true,
         isSendingMessage: false,
         message: '',
@@ -60,6 +61,7 @@ document.addEventListener('alpine:init', () => {
 
         sendMessage: async function () {
             this.isSendingMessage = true;
+            this.isError = false;
 
             this.messages.push({
                 content: this.message,
@@ -84,8 +86,41 @@ document.addEventListener('alpine:init', () => {
                 const response = await sendMessageResponse.json();
 
                 if (!sendMessageResponse.ok) {
-                    alert(response.message);
+                    this.isError = true;
+                    this.isSendingMessage = false;
 
+                    return;
+                }
+
+                this.messages.push({
+                    content: response.content,
+                });
+
+                this.isSendingMessage = false;
+            });
+        },
+
+        retryMessage: async function () {
+            this.isSendingMessage = true;
+            this.isError = false;
+
+            this.$nextTick(async () => {
+                const message = this.messages[this.messages.length - 1].content;
+
+                const retryMessageResponse = await fetch(retryMessageUrl, {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({ content: message }),
+                });
+
+                const response = await retryMessageResponse.json();
+
+                if (!retryMessageResponse.ok) {
+                    this.isError = true;
                     this.isSendingMessage = false;
 
                     return;

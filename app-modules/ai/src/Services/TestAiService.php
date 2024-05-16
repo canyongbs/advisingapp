@@ -60,6 +60,16 @@ class TestAiService implements Contracts\AiService
         return $response;
     }
 
+    public function retryMessage(AiMessage $message): AiMessage
+    {
+        $message->save();
+
+        $response = new AiMessage();
+        $response->content = fake()->paragraph();
+
+        return $response;
+    }
+
     public function getMaxAssistantInstructionsLength(): int
     {
         return 30000;
