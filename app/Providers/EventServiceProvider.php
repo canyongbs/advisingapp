@@ -37,8 +37,8 @@
 namespace App\Providers;
 
 use OwenIt\Auditing\Events\Auditing;
-use Illuminate\Auth\Events\Registered;
 use App\Listeners\HandleSettingsSaved;
+use Illuminate\Auth\Events\Registered;
 use Spatie\LaravelSettings\Events\SettingsSaved;
 use AdvisingApp\Audit\Listeners\AuditingListener;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
