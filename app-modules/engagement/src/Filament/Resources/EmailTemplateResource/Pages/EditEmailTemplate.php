@@ -41,7 +41,6 @@ use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use App\Filament\Forms\Components\TiptapEditor;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource;
 
@@ -70,7 +69,6 @@ class EditEmailTemplate extends EditRecord
                         'student email',
                     ])
                     ->profile('email')
-                    ->output(TiptapOutput::Json)
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->required(),
