@@ -40,7 +40,6 @@ use Illuminate\Queue\CallQueuedClosure;
 use App\Multitenancy\Tasks\SwitchAppUrl;
 use App\Multitenancy\Tasks\SwitchAppName;
 use Illuminate\Events\CallQueuedListener;
-use App\Multitenancy\Tasks\SwitchBindings;
 use App\Multitenancy\Tasks\SwitchMailTask;
 use App\Multitenancy\Tasks\PrefixCacheTask;
 use Illuminate\Broadcasting\BroadcastEvent;
@@ -79,7 +78,6 @@ return [
      */
     'switch_tenant_tasks' => [
         //SwitchAppKey::class,
-        SwitchBindings::class,
         PrefixCacheTask::class,
         SwitchTenantDatabasesTask::class,
         SwitchSessionDriver::class,

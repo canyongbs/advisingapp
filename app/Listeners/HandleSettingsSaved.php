@@ -36,12 +36,22 @@
 
 namespace App\Listeners;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
+use App\Models\Tenant;
 use Spatie\LaravelSettings\Events\SettingsSaved;
-use App\Listeners\Contracts\HandleSettingsSaved as HandleSettingsSavedContract;
+use AdvisingApp\IntegrationAI\Settings\AISettings;
+use AdvisingApp\Assistant\Jobs\UpdateAiAssistantJob;
+use AdvisingApp\Assistant\DataTransferObjects\AiAssistantUpdateData;
+use AdvisingApp\Assistant\Actions\CreateDefaultInstitutionAiAssistant;
 
-class HandleSettingsSaved implements HandleSettingsSavedContract, ShouldQueue, NotTenantAware
+class HandleSettingsSaved
 {
-    public function handle(SettingsSaved $event): void {}
+    public function handle(SettingsSaved $event): void
+    {
+        if ($event->settings instanceof AISettings && Tenant::checkCurrent()) {
+            UpdateAiAssistantJob::dispatch(
+                resolve(AISettings::class)->assistant_id ?? resolve(CreateDefaultInstitutionAiAssistant::class)->create(),
+                AiAssistantUpdateData::createFromSettings($event->settings)
+            );
+        }
+    }
 }

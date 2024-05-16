@@ -34,26 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace App\Listeners;
+namespace AdvisingApp\Assistant\Jobs;
 
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use App\Listeners\Contracts\HandleSettingsSaved;
-use Spatie\LaravelSettings\Events\SettingsSaved;
-use AdvisingApp\IntegrationAI\Settings\AISettings;
+use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Assistant\Actions\UpdateAiAssistant;
 use AdvisingApp\Assistant\DataTransferObjects\AiAssistantUpdateData;
-use AdvisingApp\Assistant\Actions\CreateDefaultInstitutionAiAssistant;
 
-class HandleSettingsSavedForTenant implements HandleSettingsSaved, ShouldQueue
+class UpdateAiAssistantJob implements ShouldQueue
 {
-    public function handle(SettingsSaved $event): void
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public function __construct(
+        public string $assistantId,
+        public AiAssistantUpdateData $data,
+    ) {}
+
+    public function handle(): void
     {
-        match (true) {
-            $event->settings instanceof AISettings => resolve(UpdateAiAssistant::class)->from(
-                assistantId: resolve(AISettings::class)->assistant_id ?? resolve(CreateDefaultInstitutionAiAssistant::class)->create(),
-                data: AiAssistantUpdateData::createFromSettings($event->settings)
-            ),
-            default => null,
-        };
+        resolve(UpdateAiAssistant::class)->from(
+            assistantId: $this->assistantId,
+            data: $this->data
+        );
     }
 }

@@ -40,14 +40,12 @@ use App\Models\Tenant;
 use App\Models\SystemUser;
 use Laravel\Pennant\Feature;
 use Illuminate\Support\Facades\URL;
-use App\Listeners\HandleSettingsSaved;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Octane\Commands\ReloadCommand;
 use Filament\Actions\Imports\Jobs\ImportCsv;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use OpenSearch\Migrations\Filesystem\MigrationStorage;
 use App\Overrides\Filament\Actions\Imports\Jobs\ImportCsvOverride;
-use App\Listeners\Contracts\HandleSettingsSaved as HandleSettingsSavedContract;
 use LastDragon_ru\LaraASP\GraphQL\SearchBy\Types\Condition as GraphQLSearchByTypesCondition;
 use LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByDirective as GraphQLSearchByDirectiveAlias;
 use App\Overrides\LastDragon_ru\LaraASP\GraphQL\SearchBy\Types\Condition as GraphQLSearchByTypesConditionOverride;
@@ -65,7 +63,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(GraphQLSearchByTypesCondition::class, GraphQLSearchByTypesConditionOverride::class);
         $this->app->bind(GraphQLSearchByDirectiveAlias::class, GraphQLSearchByDirectiveOverride::class);
         $this->app->bind(ImportCsv::class, ImportCsvOverride::class);
-        $this->app->bind(HandleSettingsSavedContract::class, fn () => new HandleSettingsSaved());
 
         // Laravel Octane does not register the `ReloadCommand` when the application is not running in the console.
         // We need to call this command from the `UpdateBrandSettingsController` during an HTTP request.
