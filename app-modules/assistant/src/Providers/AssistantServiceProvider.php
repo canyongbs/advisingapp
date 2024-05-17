@@ -69,33 +69,19 @@ class AssistantServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([
-            'ai_assistant' => AiAssistant::class,
-            'assistant_chat_folder' => AssistantChatFolder::class,
-            'assistant_chat_message_log' => AssistantChatMessageLog::class,
-            'assistant_chat_message' => AssistantChatMessage::class,
-            'assistant_chat' => AssistantChat::class,
             'prompt_type' => PromptType::class,
             'prompt' => Prompt::class,
         ]);
 
         $this->registerObservers();
 
-        $this->registerEvents();
-
         AuthorizationRoleRegistry::register(AssistantRbacRegistry::class);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        $this->registerEnum(AIChatMessageFrom::class);
     }
 
     protected function registerObservers(): void
     {
         Prompt::observe(PromptObserver::class);
-        AiAssistant::observe(AiAssistantObserver::class);
-    }
-
-    protected function registerEvents(): void
-    {
-        Event::listen(AIPromptInitiated::class, LogAssistantChatMessage::class);
     }
 }

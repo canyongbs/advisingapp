@@ -34,22 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Listeners;
+namespace AdvisingApp\Ai\Models\Concerns;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\Authenticatable;
+use Illuminate\Database\Eloquent\Builder;
 
-class LogAssistantChatMessage implements ShouldQueue
+trait CanAddAssistantLicenseGlobalScope
 {
-    public function handle(AIPromptInitiated $event): void
+    protected static function addAssistantLicenseGlobalScope(): void
     {
-        $prompt = $event->prompt;
+        static::addGlobalScope('licensed', function (Builder $builder) {
+            if (! auth()->check()) {
+                return;
+            }
 
-        $prompt->user->assistantChatMessageLogs()->create([
-            'message' => $prompt->message,
-            'metadata' => $prompt->metadata,
-            'request' => $prompt->request,
-            'sent_at' => $prompt->timestamp,
-        ]);
+            /** @var Authenticatable $user */
+            $user = auth()->user();
+
+            if (! $user->hasLicense(LicenseType::ConversationalAi)) {
+                $builder->whereRaw('1 = 0');
+            }
+        });
     }
 }

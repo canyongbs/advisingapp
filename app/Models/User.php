@@ -97,7 +97,7 @@ use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 /**
  * @mixin IdeHelperUser
  */
-class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, NotifiableInterface, HasFilamentResource, ProvidesDynamicContext
+class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, NotifiableInterface, HasFilamentResource
 {
     use HasFactory;
     use HasAdvancedFilter;

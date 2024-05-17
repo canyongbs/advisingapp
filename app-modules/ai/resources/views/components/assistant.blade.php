@@ -19,16 +19,16 @@
                         <ul
                             class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
                             id="folder-{{ null }}"
-                            @drop.prevent="drop('{{ null }}')"
-                            @dragenter.prevent
-                            @dragover.prevent
+                            x-on:drop.prevent="drop('{{ null }}')"
+                            x-on:dragenter.prevent
+                            x-on:dragover.prevent
                         >
                             @foreach ($this->threadsWithoutAFolder as $threadItem)
                                 <li
                                     id="chat-{{ $threadItem->id }}"
                                     draggable="true"
-                                    @dragstart="start('{{ $threadItem->id }}', '{{ null }}')"
-                                    @dragend="end"
+                                    x-on:dragstart="start('{{ $threadItem->id }}', '{{ null }}')"
+                                    x-on:dragend="end"
                                     wire:key="chat-{{ $threadItem->id }}"
                                     @class([
                                         'px-2 group cursor-move flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
@@ -60,9 +60,9 @@
                         <div
                             class="flex flex-col gap-y-1 rounded-xl border border-dashed border-gray-950/5 bg-white p-2 text-gray-500 shadow-sm dark:border-white/10 dark:bg-gray-900"
                             x-show="dragging"
-                            @drop.prevent="drop('{{ null }}')"
-                            @dragenter.prevent
-                            @dragover.prevent
+                            x-on:drop.prevent="drop('{{ null }}')"
+                            x-on:dragenter.prevent
+                            x-on:dragover.prevent
                         >
                             <div>
                                 Drag chats here to uncategorize them
@@ -75,9 +75,9 @@
                             <ul
                                 class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
                                 id="folder-{{ $folder->id }}"
-                                @drop.prevent="drop('{{ $folder->id }}')"
-                                @dragenter.prevent
-                                @dragover.prevent
+                                x-on:drop.prevent="drop('{{ $folder->id }}')"
+                                x-on:dragenter.prevent
+                                x-on:dragover.prevent
                             >
                                 <span
                                     class="group flex w-full cursor-move items-center rounded-lg px-2 outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5"
@@ -120,8 +120,8 @@
                                             'bg-gray-100 dark:bg-white/5' => $this->thread->is($threadItem),
                                         ])
                                         draggable="true"
-                                        @dragstart="start('{{ $threadItem->id }}', '{{ $folder->id }}')"
-                                        @dragend="end"
+                                        x-on:dragstart="start('{{ $threadItem->id }}', '{{ $folder->id }}')"
+                                        x-on:dragend="end"
                                         wire:key="thread-{{ $threadItem->id }}"
                                         x-show="expanded('{{ $folder->id }}')"
                                     >
@@ -225,9 +225,9 @@
                                                         messageCopied: false,
                                                         copyMessage: function() {
                                                             navigator.clipboard.writeText(message.content.replace(/(<([^>]+)>)/gi, ''))
-                                                    
+
                                                             this.messageCopied = true
-                                                    
+
                                                             setTimeout(() => { this.messageCopied = false }, 2000)
                                                         }
                                                     }"
@@ -368,8 +368,8 @@
             </div>
     @endif
 
-    <script src="{{ url('js/canyon-gbs/assistant/chat.js') }}"></script>
-    <script src="{{ url('js/canyon-gbs/assistant/chats.js') }}"></script>
+    <script src="{{ url('js/canyon-gbs/ai/chat.js') }}"></script>
+    <script src="{{ url('js/canyon-gbs/ai/chats.js') }}"></script>
     <style>
         .choices__inner .prompt-upvotes-count {
             display: none;

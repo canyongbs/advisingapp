@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use App\Models\User;
 use App\Models\BaseModel;
 use AdvisingApp\Ai\Enums\AiApplication;
@@ -45,6 +46,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AiThreadFolder extends BaseModel
 {
+    use CanAddAssistantLicenseGlobalScope;
     use SoftDeletes;
 
     protected $fillable = [

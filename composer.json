@@ -32,7 +32,6 @@
         "canyon-gbs/advising-app-engagement": "*",
         "canyon-gbs/advising-app-form": "*",
         "canyon-gbs/advising-app-in-app-communication": "*",
-        "canyon-gbs/advising-app-integration-ai": "*",
         "canyon-gbs/advising-app-integration-aws-ses-event-handling": "*",
         "canyon-gbs/advising-app-integration-google-analytics": "*",
         "canyon-gbs/advising-app-integration-google-recaptcha": "*",

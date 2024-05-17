@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use App\Models\BaseModel;
 use AdvisingApp\Ai\Enums\AiModel;
 use Spatie\MediaLibrary\HasMedia;
@@ -46,6 +47,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AiAssistant extends BaseModel implements HasMedia
 {
+    use CanAddAssistantLicenseGlobalScope;
     use InteractsWithMedia;
     use SoftDeletes;
 

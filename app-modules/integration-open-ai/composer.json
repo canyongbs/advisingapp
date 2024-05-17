@@ -5,7 +5,8 @@
   "version": "1.0",
   "license": "proprietary",
   "require": {
-    "filament/filament": "^3.0.0"
+    "filament/filament": "^3.0.0",
+    "openai-php/client": "^0.8.4"
   },
   "autoload": {
     "psr-4": {

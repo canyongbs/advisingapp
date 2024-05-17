@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -45,6 +46,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class AiThread extends BaseModel
 {
+    use CanAddAssistantLicenseGlobalScope;
     use SoftDeletes;
 
     protected $fillable = [
