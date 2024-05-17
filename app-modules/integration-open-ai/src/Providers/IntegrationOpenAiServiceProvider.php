@@ -54,13 +54,6 @@ class IntegrationOpenAiServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        Relation::morphMap([
-            'ai_assistant' => AiAssistant::class,
-            'ai_thread' => AiThread::class,
-            'ai_thread_folder' => AiThreadFolder::class,
-            'ai_thread_message' => AiMessage::class,
-        ]);
-
         $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
     }
 }

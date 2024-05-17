@@ -62,7 +62,5 @@ class AiServiceProvider extends ServiceProvider
             'ai_thread_folder' => AiThreadFolder::class,
             'ai_message' => AiMessage::class,
         ]);
-
-        AuthorizationRoleRegistry::register(AiRbacRegistry::class);
     }
 }
