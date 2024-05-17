@@ -34,31 +34,92 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages\PersonalAssistant\Concerns;
+namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
 use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Actions\Action;
-use Laravel\Pennant\Feature;
+use Livewire\Attributes\Locked;
 use AdvisingApp\Team\Models\Team;
+use Livewire\Attributes\Computed;
 use Filament\Actions\StaticAction;
 use Illuminate\Support\Collection;
+use AdvisingApp\Ai\Models\AiThread;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\ActionSize;
+use AdvisingApp\Ai\Actions\CreateThread;
+use AdvisingApp\Ai\Actions\DeleteThread;
 use Filament\Forms\Components\TextInput;
-use AdvisingApp\Assistant\Models\AssistantChat;
+use AdvisingApp\Assistant\Models\AiAssistant;
 use AdvisingApp\Assistant\Enums\AssistantChatShareVia;
 use AdvisingApp\Assistant\Jobs\ShareAssistantChatsJob;
 use AdvisingApp\Assistant\Enums\AssistantChatShareWith;
-use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 trait CanManageThreads
 {
+    #[Locked]
+    public ?AiThread $thread = null;
+
+    public function createThread(?AiAssistant $assistant = null): void
+    {
+        if (! $assistant->exists) {
+            // Prevent dependency injection of an empty assistant model.
+            $assistant = null;
+        }
+
+        $this->thread = app(CreateThread::class)(static::APPLICATION, $assistant);
+    }
+
+    #[Computed]
+    public function threadsWithoutAFolder(): EloquentCollection
+    {
+        return auth()->user()
+            ->aiThreads()
+            ->whereRelation('assistant', 'application', static::APPLICATION)
+            ->whereNotNull('name')
+            ->doesntHave('folder')
+            ->latest('updated_at')
+            ->get();
+    }
+
+    public function loadFirstThread(): void
+    {
+        $this->selectThread($this->threadsWithoutAFolder->first());
+
+        if ($this->thread) {
+            return;
+        }
+
+        $this->createThread();
+    }
+
+    public function selectThread(?AiThread $thread): void
+    {
+        if (! $thread) {
+            return;
+        }
+
+        if (
+            $this->thread &&
+            blank($this->thread->name) &&
+            (! $this->thread->messages()->exists())
+        ) {
+            app(DeleteThread::class)($this->thread);
+        }
+
+        if (! $thread->user()->is(auth()->user())) {
+            abort(404);
+        }
+
+        $this->thread = $thread;
+    }
+
     public function saveThreadAction(): Action
     {
-        return Action::make('saveChat')
+        return Action::make('saveThread')
             ->label('Save')
             ->modalHeading('Save chat')
             ->modalSubmitActionLabel('Save')
@@ -75,46 +136,66 @@ trait CanManageThreads
             ])
             ->modalWidth('md')
             ->action(function (array $data) {
-                if (filled($this->thread->id)) {
+                $this->thread->name = $data['name'];
+                $this->thread->save();
+
+                $folder = auth()->user()->aiThreadFolders()
+                    ->where('application', static::APPLICATION)
+                    ->find($data['folder']);
+
+                if ($folder) {
+                    unset($this->threadsWithoutAFolder);
+
                     return;
                 }
 
-                /** @var User $user */
-                $user = auth()->user();
-
-                /** @var AssistantChat $assistantChat */
-                $assistantChat = $user->assistantChats()->create([
-                    'name' => $data['name'],
-                    ...((Feature::active('custom-ai-assistants') && $this->aiAssistant) ? [
-                        'ai_assistant_id' => $this->aiAssistant->getKey(),
-                    ] : []),
-                    'thread_id' => $this->thread->threadId,
-                ]);
-
-                $this->thread->messages->each(function (ChatMessage $message) use ($assistantChat) {
-                    $record = $assistantChat->messages()->make($message->toArray());
-                    $record->updated_at = $record->created_at;
-                    $record->save(['timestamps' => false]);
-                });
-
-                $this->thread->id = $assistantChat->id;
-
-                $folder = auth()->user()->assistantChatFolders()->find($data['folder']);
-
-                if (! $folder) {
-                    return;
-                }
-
-                $this->moveChat($assistantChat, $folder);
+                $this->moveThread($this->thread, $folder);
+                unset($this->folders);
             });
+    }
+
+    public function deleteThreadAction(): Action
+    {
+        return Action::make('deleteThread')
+            ->size(ActionSize::ExtraSmall)
+            ->requiresConfirmation()
+            ->action(function (array $arguments) {
+                $thread = auth()->user()->aiThreads()
+                    ->whereRelation('assistant', 'application', static::APPLICATION)
+                    ->find($arguments['thread']);
+
+                if (! $thread) {
+                    return;
+                }
+
+                $thread->delete();
+
+                if ($thread->is($this->thread)) {
+                    $this->createThread();
+                }
+
+                unset($this->threadsWithoutAFolder, $this->folders);
+            })
+            ->icon('heroicon-o-trash')
+            ->color('danger')
+            ->iconButton()
+            ->extraAttributes([
+                'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
+            ]);
     }
 
     public function editThreadAction(): Action
     {
-        return Action::make('editChat')
+        return Action::make('editThread')
             ->modalSubmitActionLabel('Save')
             ->modalWidth('md')
             ->size(ActionSize::ExtraSmall)
+            ->fillForm(fn (array $arguments) => [
+                'name' => auth()->user()->aiThreads()
+                    ->whereRelation('assistant', 'application', static::APPLICATION)
+                    ->find($arguments['thread'])
+                    ?->name,
+            ])
             ->form([
                 TextInput::make('name')
                     ->label('Name')
@@ -123,21 +204,18 @@ trait CanManageThreads
                     ->required(),
             ])
             ->action(function (array $arguments, array $data) {
-                $chat = auth()->user()->assistantChats()->find($arguments['chat']);
+                $thread = auth()->user()->aiThreads()
+                    ->whereRelation('assistant', 'application', static::APPLICATION)
+                    ->find($arguments['thread']);
 
-                if (! $chat) {
+                if (! $thread) {
                     return;
                 }
 
-                $chat->update($data);
+                $thread->name = $data['name'];
+                $thread->save();
 
-                $this->threads = $this->threads->map(function (AssistantChat $chat) use ($arguments, $data) {
-                    if ($chat->id === $arguments['chat']) {
-                        $chat->name = $data['name'];
-                    }
-
-                    return $chat;
-                });
+                unset($this->threadsWithoutAFolder, $this->folders);
             })
             ->icon('heroicon-o-pencil')
             ->color('warning')
@@ -180,16 +258,15 @@ trait CanManageThreads
                     ->required(),
             ])
             ->action(function (array $arguments, array $data) {
-                /** @var User $sender */
-                $sender = auth()->user();
+                $thread = auth()->user()->aiThreads()
+                    ->whereRelation('assistant', 'application', static::APPLICATION)
+                    ->find($arguments['thread']);
 
-                $chat = auth()->user()->assistantChats()->find($arguments['thread']);
-
-                if (! $chat) {
+                if (! $thread) {
                     return;
                 }
 
-                dispatch(new ShareAssistantChatsJob($chat, AssistantChatShareVia::Internal, $data['target_type'], $data['target_ids'], $sender));
+                dispatch(new ShareAssistantChatsJob($thread, AssistantChatShareVia::Internal, $data['target_type'], $data['target_ids'], auth()->user()));
             })
             ->link()
             ->icon('heroicon-m-document-duplicate')
@@ -229,16 +306,15 @@ trait CanManageThreads
                     ->required(),
             ])
             ->action(function (array $arguments, array $data) {
-                /** @var User $sender */
-                $sender = auth()->user();
+                $thread = auth()->user()->aiThreads()
+                    ->whereRelation('assistant', 'application', static::APPLICATION)
+                    ->find($arguments['thread']);
 
-                $chat = auth()->user()->assistantChats()->find($arguments['thread']);
-
-                if (! $chat) {
+                if (! $thread) {
                     return;
                 }
 
-                dispatch(new ShareAssistantChatsJob($chat, AssistantChatShareVia::Email, $data['target_type'], $data['target_ids'], $sender));
+                dispatch(new ShareAssistantChatsJob($thread, AssistantChatShareVia::Email, $data['target_type'], $data['target_ids'], auth()->user()));
             })
             ->link()
             ->icon('heroicon-m-envelope')

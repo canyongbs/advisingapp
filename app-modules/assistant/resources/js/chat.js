@@ -36,6 +36,7 @@ document.addEventListener('alpine:init', () => {
         isError: false,
         isLoading: true,
         isSendingMessage: false,
+        latestMessage: '',
         message: '',
         messages: [],
         users: [],
@@ -60,11 +61,19 @@ document.addEventListener('alpine:init', () => {
         },
 
         sendMessage: async function () {
+            if (!this.message.replace(/\s/g, '').length) {
+                // The message is empty / whitespace only.
+
+                return;
+            }
+
             this.isSendingMessage = true;
             this.isError = false;
 
+            this.latestMessage = this.message;
+
             this.messages.push({
-                content: this.message,
+                content: this.message.replace(/(?:\r\n|\r|\n)/g, '<br />'),
                 user_id: userId,
             });
 
@@ -105,8 +114,6 @@ document.addEventListener('alpine:init', () => {
             this.isError = false;
 
             this.$nextTick(async () => {
-                const message = this.messages[this.messages.length - 1].content;
-
                 const retryMessageResponse = await fetch(retryMessageUrl, {
                     method: 'POST',
                     headers: {
@@ -114,7 +121,7 @@ document.addEventListener('alpine:init', () => {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
                     },
-                    body: JSON.stringify({ content: message }),
+                    body: JSON.stringify({ content: this.latestMessage }),
                 });
 
                 const response = await retryMessageResponse.json();

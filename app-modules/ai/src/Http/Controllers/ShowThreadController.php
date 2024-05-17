@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Stringable;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Http\Requests\ShowThreadRequest;
@@ -51,7 +52,18 @@ class ShowThreadController
                 ->oldest()
                 ->get()
                 ->toBase()
-                ->map(fn (AiMessage $message): array => $message->attributesToArray())
+                ->map(fn (AiMessage $message): array => [
+                    ...$message->attributesToArray(),
+                    'content' => (string) str($message->content)
+                        ->when(
+                            $message->user,
+                            fn (Stringable $string): Stringable => $string
+                                ->pipe(nl2br(...))
+                                ->stripTags(allowedTags: ['br']),
+                            fn (Stringable $string): Stringable => $string->markdown(),
+                        )
+                        ->sanitizeHtml(),
+                ])
                 ->all(),
             'users' => $thread->users()
                 ->distinct()

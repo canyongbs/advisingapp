@@ -52,6 +52,10 @@ class SendMessage
         $response->thread()->associate($thread);
         $response->save();
 
-        return $response->content;
+        $thread->touch();
+
+        return (string) str($response->content)
+            ->markdown()
+            ->sanitizeHtml();
     }
 }

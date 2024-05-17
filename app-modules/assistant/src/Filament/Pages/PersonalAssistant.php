@@ -38,19 +38,13 @@ namespace AdvisingApp\Assistant\Filament\Pages;
 
 use App\Models\User;
 use Filament\Pages\Page;
-use Livewire\Attributes\Locked;
-use Livewire\Attributes\Computed;
-use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Ai\Actions\CreateThread;
-use AdvisingApp\Ai\Actions\DeleteThread;
-use AdvisingApp\Assistant\Models\AiAssistant;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant\Concerns\CanManageConsent;
-use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant\Concerns\CanManageFolders;
-use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant\Concerns\CanManageThreads;
-use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant\Concerns\CanManagePromptLibrary;
+use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
+use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
+use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
+use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
 
 /**
  * @property EloquentCollection $chats
@@ -62,6 +56,8 @@ class PersonalAssistant extends Page
     use CanManagePromptLibrary;
     use CanManageThreads;
 
+    public const APPLICATION = AiApplication::PersonalAssistant;
+
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static string $view = 'assistant::filament.pages.personal-assistant';
@@ -69,9 +65,6 @@ class PersonalAssistant extends Page
     protected static ?string $navigationGroup = 'Artificial Intelligence';
 
     protected static ?int $navigationSort = 10;
-
-    #[Locked]
-    public ?AiThread $thread = null;
 
     public static function canAccess(): bool
     {
@@ -83,54 +76,5 @@ class PersonalAssistant extends Page
         }
 
         return $user->can('assistant.access');
-    }
-
-    public function createThread(?AiAssistant $assistant = null): void
-    {
-        $this->thread = app(CreateThread::class)($assistant);
-    }
-
-    #[Computed]
-    public function threadsWithoutAFolder(): EloquentCollection
-    {
-        return auth()->user()
-            ->aiThreads()
-            ->whereRelation('assistant', 'application', AiApplication::PersonalAssistant)
-            ->whereNotNull('name')
-            ->doesntHave('folder')
-            ->latest()
-            ->get();
-    }
-
-    public function loadFirstThread(): void
-    {
-        $this->selectThread($this->threadsWithoutAFolder->first());
-
-        if ($this->thread) {
-            return;
-        }
-
-        $this->createThread();
-    }
-
-    public function selectThread(?AiThread $thread): void
-    {
-        if (! $thread) {
-            return;
-        }
-
-        if (
-            $this->thread &&
-            blank($this->thread->name) &&
-            (! $this->thread->messages()->exists())
-        ) {
-            app(DeleteThread::class)($this->thread);
-        }
-
-        if (! $thread->user()->is(auth()->user())) {
-            abort(404);
-        }
-
-        $this->thread = $thread;
     }
 }

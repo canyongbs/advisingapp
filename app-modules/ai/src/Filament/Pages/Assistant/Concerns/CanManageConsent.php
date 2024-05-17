@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages\PersonalAssistant\Concerns;
+namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
 use App\Filament\Pages\Dashboard;
 use Livewire\Attributes\Computed;

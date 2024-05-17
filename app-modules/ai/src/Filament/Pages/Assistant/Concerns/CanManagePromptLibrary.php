@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages\PersonalAssistant\Concerns;
+namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -145,11 +145,11 @@ trait CanManagePromptLibrary
                     return;
                 }
 
-                $this->message = $prompt->prompt;
+                $this->dispatch('set-chat-message', content: $prompt->prompt);
 
-                $prompt->uses()->create([
-                    'user_id' => auth()->id(),
-                ]);
+                $use = $prompt->uses()->make();
+                $use->user()->associate(auth()->user());
+                $use->save();
             });
     }
 }

@@ -34,22 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages\PersonalAssistant\Concerns;
+namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
 use Exception;
-use App\Models\User;
 use Filament\Actions\Action;
 use Illuminate\Http\JsonResponse;
 use Livewire\Attributes\Computed;
 use Filament\Actions\StaticAction;
+use AdvisingApp\Ai\Models\AiThread;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Validation\Rules\Unique;
 use Filament\Forms\Components\TextInput;
+use AdvisingApp\Ai\Models\AiThreadFolder;
 use Symfony\Component\HttpFoundation\Response;
-use AdvisingApp\Assistant\Models\AssistantChat;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Assistant\Models\AssistantChatFolder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 trait CanManageFolders
@@ -57,10 +56,11 @@ trait CanManageFolders
     #[Computed]
     public function folders(): EloquentCollection
     {
-        return AssistantChatFolder::query()
-            ->whereBelongsTo(auth()->user())
+        return auth()->user()
+            ->aiThreadFolders()
+            ->where('application', static::APPLICATION)
             ->with([
-                'chats' => fn (HasMany $query) => $query->orderByDesc('updated_at'),
+                'threads' => fn (HasMany $query) => $query->latest('updated_at'),
             ])
             ->orderBy('name')
             ->get();
@@ -76,16 +76,17 @@ trait CanManageFolders
                 TextInput::make('name')
                     ->autocomplete(false)
                     ->required()
-                    ->unique(AssistantChatFolder::class, modifyRuleUsing: function (Unique $rule) {
-                        return $rule->where('user_id', auth()->id());
+                    ->unique(AiThreadFolder::class, modifyRuleUsing: function (Unique $rule) {
+                        return $rule
+                            ->where('user_id', auth()->id())
+                            ->where('application', static::APPLICATION);
                     }),
             ])
             ->action(function (array $arguments, array $data) {
-                $folder = new AssistantChatFolder(['name' => $data['name']]);
-
-                /** @var User $user */
-                $user = auth()->user();
-                $folder->user()->associate($user);
+                $folder = new AiThreadFolder();
+                $folder->name = $data['name'];
+                $folder->application = static::APPLICATION;
+                $folder->user()->associate(auth()->user());
                 $folder->save();
             })
             ->icon('heroicon-m-folder-plus')
@@ -99,21 +100,31 @@ trait CanManageFolders
             ->modalSubmitActionLabel('Rename')
             ->modalWidth('md')
             ->size(ActionSize::ExtraSmall)
+            ->fillForm(fn (array $arguments) => [
+                'name' => auth()->user()->aiThreadFolders()
+                    ->where('application', static::APPLICATION)
+                    ->find($arguments['folder'])
+                    ?->name,
+            ])
             ->form([
                 TextInput::make('name')
                     ->label('Name')
                     ->autocomplete(false)
                     ->placeholder('Rename this folder')
                     ->required()
-                    ->unique(AssistantChatFolder::class, modifyRuleUsing: function (Unique $rule) {
-                        return $rule->where('user_id', auth()->id());
+                    ->unique(AiThreadFolder::class, modifyRuleUsing: function (Unique $rule) {
+                        return $rule
+                            ->where('user_id', auth()->id())
+                            ->where('application', static::APPLICATION);
                     }),
             ])
             ->action(function (array $arguments, array $data) {
-                auth()->user()->assistantChatFolders()->find($arguments['folder'])
+                auth()->user()->aiThreadFolders()
+                    ->where('application', static::APPLICATION)
+                    ->find($arguments['folder'])
                     ?->update(['name' => $data['name']]);
 
-                unset($this->folders, $this->threads);
+                unset($this->folders);
             })
             ->icon('heroicon-o-pencil')
             ->color('warning')
@@ -131,10 +142,12 @@ trait CanManageFolders
             ->requiresConfirmation()
             ->modalDescription('Are you sure you wish to delete this folder? Any chats stored within this folder will also be deleted and this action is not reversible.')
             ->action(function (array $arguments) {
-                auth()->user()->assistantChatFolders()->find($arguments['folder'])
+                auth()->user()->aiThreadFolders()
+                    ->where('application', static::APPLICATION)
+                    ->find($arguments['folder'])
                     ?->delete();
 
-                unset($this->folders, $this->threads);
+                unset($this->folders);
             })
             ->icon('heroicon-o-trash')
             ->color('danger')
@@ -155,15 +168,19 @@ trait CanManageFolders
                 $this->folderSelect(),
             ])
             ->action(function (array $arguments, array $data) {
-                $chat = auth()->user()->assistantChats()->find($arguments['chat']);
+                $thread = auth()->user()->aiThreads()
+                    ->whereRelation('assistant', 'application', static::APPLICATION)
+                    ->find($arguments['thread']);
 
-                if (! $chat) {
+                if (! $thread) {
                     return;
                 }
 
-                $folder = auth()->user()->assistantChatFolders()->find($data['folder']);
+                $folder = auth()->user()->aiThreadFolders()
+                    ->where('application', static::APPLICATION)
+                    ->find($data['folder']);
 
-                $this->moveChat($chat, $folder);
+                $this->moveThread($thread, $folder);
             })
             ->icon('heroicon-o-arrow-up-tray')
             ->color('warning')
@@ -174,23 +191,27 @@ trait CanManageFolders
             ]);
     }
 
-    public function movedChat(string $chatId, ?string $folderId): JsonResponse
+    public function movedThread(string $threadId, ?string $folderId): JsonResponse
     {
-        $chat = auth()->user()->assistantChats()->find($chatId);
+        $thread = auth()->user()->aiThreads()
+            ->whereRelation('assistant', 'application', static::APPLICATION)
+            ->find($threadId);
 
-        if (! $chat) {
+        if (! $thread) {
             return response()->json([
                 'success' => false,
                 'message' => 'Chat could not be found.',
             ], Response::HTTP_NOT_FOUND);
         }
 
-        $folder = auth()->user()->assistantChatFolders()->find($folderId);
+        $folder = auth()->user()->aiThreadFolders()
+            ->where('application', static::APPLICATION)
+            ->find($folderId);
 
         try {
-            $this->moveChat($chat, $folder);
-        } catch (Exception $e) {
-            report($e);
+            $this->moveThread($thread, $folder);
+        } catch (Exception $exception) {
+            report($exception);
 
             return response()->json([
                 'success' => false,
@@ -204,59 +225,30 @@ trait CanManageFolders
         ], Response::HTTP_OK);
     }
 
-    public function deleteThreadAction(): Action
-    {
-        return Action::make('deleteChat')
-            ->size(ActionSize::ExtraSmall)
-            ->requiresConfirmation()
-            ->action(function (array $arguments) {
-                $chat = auth()->user()->assistantChats()->find($arguments['chat']);
-
-                if (! $chat) {
-                    return;
-                }
-
-                $chat->delete();
-
-                if ($this->thread->id === $arguments['chat']) {
-                    $this->newChat();
-                }
-            })
-            ->icon('heroicon-o-trash')
-            ->color('danger')
-            ->iconButton()
-            ->extraAttributes([
-                'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
-            ]);
-    }
-
-    private function folderSelect(): Select
+    protected function folderSelect(): Select
     {
         return Select::make('folder')
-            ->options(function () {
-                /** @var User $user */
-                $user = auth()->user();
-
-                return $user
-                    ->assistantChatFolders()
-                    ->orderBy('name')
-                    ->pluck('name', 'id');
-            })
+            ->options(fn (): array => auth()->user()
+                ->aiThreadFolders()
+                ->where('application', static::APPLICATION)
+                ->orderBy('name')
+                ->pluck('name', 'id')
+                ->all())
             ->placeholder('-');
     }
 
-    private function moveChat(AssistantChat $chat, ?AssistantChatFolder $folder): void
+    protected function moveThread(AiThread $thread, ?AiThreadFolder $folder): void
     {
         if ($folder) {
-            $chat->folder()
+            $thread->folder()
                 ->associate($folder)
                 ->save();
         } else {
-            $chat->folder()
+            $thread->folder()
                 ->disassociate()
                 ->save();
         }
 
-        unset($this->folders, $this->threads);
+        unset($this->threadsWithoutAFolder, $this->folders);
     }
 }

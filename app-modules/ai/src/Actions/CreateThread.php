@@ -42,9 +42,9 @@ use AdvisingApp\Assistant\Models\AiAssistant;
 
 class CreateThread
 {
-    public function __invoke(?AiAssistant $assistant = null): AiThread
+    public function __invoke(AiApplication $application, ?AiAssistant $assistant = null): AiThread
     {
-        $assistant ??= app(GetDefaultAiAssistant::class)(AiApplication::PersonalAssistant);
+        $assistant ??= app(GetDefaultAiAssistant::class)($application);
 
         $existingThread = auth()->user()->aiThreads()
             ->whereNull('name')

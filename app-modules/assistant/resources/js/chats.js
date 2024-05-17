@@ -32,8 +32,8 @@
 </COPYRIGHT>
 */
 document.addEventListener('alpine:init', () => {
-    Alpine.data('chats', ($wire) => ({
-        chatId: null,
+    Alpine.data('chats', () => ({
+        threadId: null,
         startFolder: null,
         dragging: false,
         expandedFolder: null,
@@ -43,7 +43,7 @@ document.addEventListener('alpine:init', () => {
                     return;
                 }
 
-                const result = await $wire.movedChat(this.chatId, folderId);
+                const result = await this.$wire.movedThread(this.threadId, folderId);
 
                 if (result.original.success) {
                     this.expandedFolder = folderId;
@@ -60,20 +60,20 @@ document.addEventListener('alpine:init', () => {
                         .iconColor('danger')
                         .send();
                 }
-            } catch (e) {
+            } catch (exception) {
                 new FilamentNotification()
                     .icon('heroicon-o-x-circle')
-                    .title('Something went wrong, please try again later')
+                    .title('Something went wrong, please try again later.')
                     .iconColor('danger')
                     .send();
             } finally {
-                this.chatId = null;
+                this.threadId = null;
                 this.startFolder = null;
             }
         },
-        start(chatId, folderId) {
+        start(threadId, folderId) {
             this.dragging = true;
-            this.chatId = chatId;
+            this.threadId = threadId;
             this.startFolder = folderId;
         },
         end() {
