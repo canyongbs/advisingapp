@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Ai\Models\Concerns;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
 trait CanAddAssistantLicenseGlobalScope
 {

@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
+use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 
 class AiMessage extends BaseModel
 {

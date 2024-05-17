@@ -225,9 +225,9 @@
                                                         messageCopied: false,
                                                         copyMessage: function() {
                                                             navigator.clipboard.writeText(message.content.replace(/(<([^>]+)>)/gi, ''))
-
+                                                    
                                                             this.messageCopied = true
-
+                                                    
                                                             setTimeout(() => { this.messageCopied = false }, 2000)
                                                         }
                                                     }"

@@ -91,7 +91,6 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
-use AdvisingApp\IntegrationAI\Models\Concerns\ProvidesDynamicContext;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 
 /**

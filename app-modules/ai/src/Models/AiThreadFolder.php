@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use App\Models\User;
 use App\Models\BaseModel;
 use AdvisingApp\Ai\Enums\AiApplication;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 
 class AiThreadFolder extends BaseModel
 {
