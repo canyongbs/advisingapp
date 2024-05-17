@@ -43,9 +43,7 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Ai\Models\AiThreadFolder;
-use AdvisingApp\Ai\Registries\AiRbacRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 
 class AiServiceProvider extends ServiceProvider
 {

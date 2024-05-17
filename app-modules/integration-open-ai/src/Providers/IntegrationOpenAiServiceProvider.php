@@ -37,12 +37,7 @@
 namespace AdvisingApp\IntegrationOpenAi\Providers;
 
 use Filament\Panel;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Ai\Models\AiThreadFolder;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
 
 class IntegrationOpenAiServiceProvider extends ServiceProvider

@@ -37,27 +37,19 @@
 namespace AdvisingApp\Ai\Http\Controllers;
 
 use Throwable;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Actions\SendMessage;
+use AdvisingApp\Ai\Http\Requests\SendMessageRequest;
 
 class SendMessageController
 {
-    public function __invoke(AiThread $thread, Request $request): JsonResponse
+    public function __invoke(SendMessageRequest $request, AiThread $thread): JsonResponse
     {
-        if (! $thread->user()->is(auth()->user())) {
-            abort(404);
-        }
-
-        $content = $request->validate([
-            'content' => ['required', 'max:1000'],
-        ])['content'];
-
         try {
             $responseContent = app(SendMessage::class)(
                 $thread,
-                $content,
+                $request->validated('content'),
             );
         } catch (Throwable $exception) {
             report($exception);
