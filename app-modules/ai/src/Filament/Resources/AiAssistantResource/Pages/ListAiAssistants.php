@@ -34,47 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages;
 
-use App\Models\User;
-use Filament\Pages\Page;
-use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
+use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Pages\ListRecords;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
-/**
- * @property EloquentCollection $chats
- */
-class PersonalAssistant extends Page
+class ListAiAssistants extends ListRecords
 {
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
+    protected static string $resource = AiAssistantResource::class;
 
-    public const APPLICATION = AiApplication::PersonalAssistant;
-
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
-
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
+    public function table(Table $table): Table
     {
-        /** @var User $user */
-        $user = auth()->user();
+        return $table
+            ->columns([
+                SpatieMediaLibraryImageColumn::make('avatar')
+                    ->collection('avatar')
+                    ->visibility('private'),
+                TextColumn::make('name')
+                    ->searchable()
+                    ->label('Name'),
+            ])
+            ->actions([
+                EditAction::make(),
+            ])
+            ->emptyStateHeading('No AI Assistants')
+            ->emptyStateDescription('Add a new custom AI Assistant by clicking the "Create AI Assistant" button above.');
+    }
 
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        return $user->can('assistant.access');
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make()
+                ->label('Create AI Assistant'),
+        ];
     }
 }

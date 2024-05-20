@@ -1121,7 +1121,7 @@ namespace AdvisingApp\Assistant\Models{
 	class IdeHelperAssistantChatMessageLog {}
 }
 
-namespace AdvisingApp\Assistant\Models{
+namespace AdvisingApp\Assistant\Models{use AdvisingApp\Ai\Models\Prompt;
 /**
  * AdvisingApp\Assistant\Models\Prompt
  *
@@ -1134,13 +1134,13 @@ namespace AdvisingApp\Assistant\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property string|null $user_id
- * @property-read \AdvisingApp\Assistant\Models\PromptType $type
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\PromptUpvote> $upvotes
+ * @property-read \AdvisingApp\Ai\Models\PromptType $type
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\PromptUpvote> $upvotes
  * @property-read int|null $upvotes_count
  * @property-read \App\Models\User|null $user
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\PromptUse> $uses
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\PromptUse> $uses
  * @property-read int|null $uses_count
- * @method static \AdvisingApp\Assistant\Database\Factories\PromptFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Ai\Database\Factories\PromptFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Prompt newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Prompt newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Prompt query()
@@ -1159,7 +1159,7 @@ namespace AdvisingApp\Assistant\Models{
 	class IdeHelperPrompt {}
 }
 
-namespace AdvisingApp\Assistant\Models{
+namespace AdvisingApp\Assistant\Models{use AdvisingApp\Ai\Models\PromptType;
 /**
  * AdvisingApp\Assistant\Models\PromptType
  *
@@ -1169,9 +1169,9 @@ namespace AdvisingApp\Assistant\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\Prompt> $prompts
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\Prompt> $prompts
  * @property-read int|null $prompts_count
- * @method static \AdvisingApp\Assistant\Database\Factories\PromptTypeFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Ai\Database\Factories\PromptTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|PromptType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PromptType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PromptType onlyTrashed()
@@ -1190,7 +1190,7 @@ namespace AdvisingApp\Assistant\Models{
 	class IdeHelperPromptType {}
 }
 
-namespace AdvisingApp\Assistant\Models{
+namespace AdvisingApp\Assistant\Models{use AdvisingApp\Ai\Models\PromptUpvote;
 /**
  * AdvisingApp\Assistant\Models\PromptUpvote
  *
@@ -1200,7 +1200,7 @@ namespace AdvisingApp\Assistant\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \AdvisingApp\Assistant\Models\Prompt $prompt
+ * @property-read \AdvisingApp\Ai\Models\Prompt $prompt
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote newQuery()
@@ -1220,7 +1220,7 @@ namespace AdvisingApp\Assistant\Models{
 	class IdeHelperPromptUpvote {}
 }
 
-namespace AdvisingApp\Assistant\Models{
+namespace AdvisingApp\Assistant\Models{use AdvisingApp\Ai\Models\PromptUse;
 /**
  * AdvisingApp\Assistant\Models\PromptUse
  *
@@ -1230,7 +1230,7 @@ namespace AdvisingApp\Assistant\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \AdvisingApp\Assistant\Models\Prompt $prompt
+ * @property-read \AdvisingApp\Ai\Models\Prompt $prompt
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUse newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PromptUse newQuery()

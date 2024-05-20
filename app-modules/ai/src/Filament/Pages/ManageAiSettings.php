@@ -34,37 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace AdvisingApp\Ai\Filament\Pages;
 
 use App\Models\User;
-use Filament\Pages\Page;
-use AdvisingApp\Ai\Enums\AiApplication;
+use Filament\Forms\Form;
+use Filament\Pages\SettingsPage;
+use AdvisingApp\Ai\Settings\AISettings;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
+use App\Filament\Clusters\ArtificialIntelligence;
 
-/**
- * @property EloquentCollection $chats
- */
-class PersonalAssistant extends Page
+class ManageAiSettings extends SettingsPage
 {
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
+    protected static string $settings = AISettings::class;
 
-    public const APPLICATION = AiApplication::PersonalAssistant;
+    protected static ?string $title = 'Manage AI Settings';
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+    protected static ?string $cluster = ArtificialIntelligence::class;
 
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?int $navigationSort = 10;
+    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
     public static function canAccess(): bool
     {
@@ -75,6 +64,33 @@ class PersonalAssistant extends Page
             return false;
         }
 
-        return $user->can('assistant.access');
+        return $user->can(['assistant.access_ai_settings']);
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Textarea::make('prompt_system_context')
+                    ->label('Base Prompt')
+                    ->required()
+                    ->string()
+                    ->rows(12)
+                    ->columnSpan('full'),
+                TextInput::make('max_tokens')
+                    ->label('Max Tokens')
+                    ->required()
+                    ->numeric()
+                    ->columnSpan('1/2'),
+                TextInput::make('temperature')
+                    ->label('Temperature')
+                    ->required()
+                    ->numeric()
+                    ->inputMode('decimal')
+                    ->step(0.1)
+                    ->minValue(0.0)
+                    ->maxValue(2.0)
+                    ->columnSpan('1/2'),
+            ]);
     }
 }

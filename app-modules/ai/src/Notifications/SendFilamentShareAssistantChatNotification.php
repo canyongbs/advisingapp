@@ -34,47 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace AdvisingApp\Ai\Notifications;
 
-use App\Models\User;
-use Filament\Pages\Page;
-use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
+use AdvisingApp\Ai\Enums\AssistantChatShareVia;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\DatabaseNotification;
+use Filament\Notifications\Notification as FilamentNotification;
+use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 
-/**
- * @property EloquentCollection $chats
- */
-class PersonalAssistant extends Page
+class SendFilamentShareAssistantChatNotification extends BaseNotification implements DatabaseNotification
 {
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
+    use DatabaseChannelTrait;
 
-    public const APPLICATION = AiApplication::PersonalAssistant;
+    public function __construct(
+        protected AssistantChatShareVia $via,
+        protected string $name,
+    ) {}
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
-
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
+    /**
+     * @return array<string, mixed>
+     */
+    public function toDatabase(object $notifiable): array
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        return $user->can('assistant.access');
+        return match ($this->via) {
+            AssistantChatShareVia::Email => FilamentNotification::make()
+                ->success()
+                ->title("You emailed an assistant chat to team {$this->name}.")
+                ->getDatabaseMessage(),
+            AssistantChatShareVia::Internal => FilamentNotification::make()
+                ->success()
+                ->title("You shared an assistant chat with team {$this->name}.")
+                ->getDatabaseMessage(),
+        };
     }
 }

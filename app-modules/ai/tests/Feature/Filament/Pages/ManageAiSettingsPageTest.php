@@ -34,47 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
-
 use App\Models\User;
-use Filament\Pages\Page;
-use AdvisingApp\Ai\Enums\AiApplication;
+
+use function Tests\asSuperAdmin;
+use function Pest\Laravel\actingAs;
+
 use AdvisingApp\Authorization\Enums\LicenseType;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
+use AdvisingApp\Ai\Filament\Pages\ManageAiSettings;
 
-/**
- * @property EloquentCollection $chats
- */
-class PersonalAssistant extends Page
-{
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
+it('renders successfully', function () {
+    asSuperAdmin();
 
-    public const APPLICATION = AiApplication::PersonalAssistant;
+    Livewire::test(ManageAiSettings::class)
+        ->assertStatus(200);
+});
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+it('does not load if you do not have any permissions to access', function () {
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
+    actingAs($user);
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    Livewire::test(ManageAiSettings::class)
+        ->assertStatus(403);
+});
 
-    protected static ?int $navigationSort = 10;
+it('loads if you have the correct access to ai settings', function () {
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
+    $user->givePermissionTo(['assistant.access_ai_settings']);
 
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
+    actingAs($user);
 
-        return $user->can('assistant.access');
-    }
-}
+    Livewire::test(ManageAiSettings::class)
+        ->assertStatus(200);
+});

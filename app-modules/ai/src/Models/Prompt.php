@@ -34,47 +34,75 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace AdvisingApp\Ai\Models;
 
 use App\Models\User;
-use Filament\Pages\Page;
-use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
+use App\Models\BaseModel;
+use AdvisingApp\Assistant\Models\IdeHelperPrompt;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property EloquentCollection $chats
+ * @mixin IdeHelperPrompt
  */
-class PersonalAssistant extends Page
+class Prompt extends BaseModel
 {
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
+    protected $fillable = [
+        'title',
+        'description',
+        'prompt',
+        'type_id',
+    ];
 
-    public const APPLICATION = AiApplication::PersonalAssistant;
+    protected ?bool $isUpvoted = null;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
-
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
+    public function type(): BelongsTo
     {
-        /** @var User $user */
-        $user = auth()->user();
+        return $this->belongsTo(PromptType::class);
+    }
 
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
+    public function upvotes(): HasMany
+    {
+        return $this->hasMany(PromptUpvote::class);
+    }
+
+    public function uses(): HasMany
+    {
+        return $this->hasMany(PromptUse::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function isUpvoted(): bool
+    {
+        return $this->isUpvoted ??= $this->upvotes()->whereBelongsTo(auth()->user())->exists();
+    }
+
+    public function upvote(): void
+    {
+        $this->upvotes()->create(['user_id' => auth()->id()]);
+
+        $this->isUpvoted = true;
+    }
+
+    public function cancelUpvote(): void
+    {
+        $this->upvotes()->whereBelongsTo(auth()->user())->delete();
+
+        $this->isUpvoted = false;
+    }
+
+    public function toggleUpvote(): void
+    {
+        if ($this->isUpvoted()) {
+            $this->cancelUpvote();
+
+            return;
         }
 
-        return $user->can('assistant.access');
+        $this->upvote();
     }
 }

@@ -34,47 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace AdvisingApp\Ai\Filament\Resources;
 
-use App\Models\User;
-use Filament\Pages\Page;
-use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
+use Filament\Resources\Resource;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\EditAiAssistant;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\ListAiAssistants;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\CreateAiAssistant;
 
-/**
- * @property EloquentCollection $chats
- */
-class PersonalAssistant extends Page
+class AiAssistantResource extends Resource
 {
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
+    protected static ?string $model = AiAssistant::class;
 
-    public const APPLICATION = AiApplication::PersonalAssistant;
-
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
-
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     protected static ?string $navigationGroup = 'Artificial Intelligence';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?string $navigationLabel = 'Assistant Library';
 
-    public static function canAccess(): bool
+    protected static ?string $modelLabel = 'AI assistant';
+
+    protected static ?int $navigationSort = 30;
+
+    public static function getPages(): array
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        return $user->can('assistant.access');
+        return [
+            'index' => ListAiAssistants::route('/'),
+            'create' => CreateAiAssistant::route('/create'),
+            'edit' => EditAiAssistant::route('/{record}/edit'),
+        ];
     }
 }

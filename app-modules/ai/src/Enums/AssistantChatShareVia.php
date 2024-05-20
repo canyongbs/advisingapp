@@ -34,47 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace AdvisingApp\Ai\Enums;
 
-use App\Models\User;
-use Filament\Pages\Page;
-use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
+use Filament\Support\Contracts\HasLabel;
 
-/**
- * @property EloquentCollection $chats
- */
-class PersonalAssistant extends Page
+enum AssistantChatShareVia: string implements HasLabel
 {
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
+    case Email = 'email';
+    case Internal = 'internal';
 
-    public const APPLICATION = AiApplication::PersonalAssistant;
-
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
-
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
+    public function getLabel(): ?string
     {
-        /** @var User $user */
-        $user = auth()->user();
+        return $this->name;
+    }
 
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        return $user->can('assistant.access');
+    public static function default(): AssistantChatShareVia
+    {
+        return AssistantChatShareVia::Internal;
     }
 }

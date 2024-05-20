@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Ai\Enums;
 
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
 use Exception;
 use AdvisingApp\Ai\Services\TestAiService;
 use AdvisingApp\Ai\Services\Contracts\AiService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt35Service;
 
 enum AiModel: string

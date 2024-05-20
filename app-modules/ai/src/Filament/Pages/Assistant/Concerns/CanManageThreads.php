@@ -54,9 +54,9 @@ use Filament\Support\Enums\ActionSize;
 use AdvisingApp\Ai\Actions\CreateThread;
 use AdvisingApp\Ai\Actions\DeleteThread;
 use Filament\Forms\Components\TextInput;
-use AdvisingApp\Assistant\Enums\AssistantChatShareVia;
-use AdvisingApp\Assistant\Jobs\ShareAssistantChatsJob;
-use AdvisingApp\Assistant\Enums\AssistantChatShareWith;
+use AdvisingApp\Ai\Enums\AssistantChatShareVia;
+use AdvisingApp\Ai\Jobs\ShareAssistantChatsJob;
+use AdvisingApp\Ai\Enums\AssistantChatShareWith;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 trait CanManageThreads

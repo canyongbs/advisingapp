@@ -39,13 +39,13 @@ namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Actions\Action;
+use AdvisingApp\Ai\Models\Prompt;
 use Filament\Support\Enums\MaxWidth;
+use AdvisingApp\Ai\Models\PromptType;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Checkbox;
-use AdvisingApp\Assistant\Models\Prompt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use AdvisingApp\Assistant\Models\PromptType;
 use Filament\Forms\Components\Actions\Action as FormComponentAction;
 
 trait CanManagePromptLibrary

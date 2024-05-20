@@ -34,47 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace AdvisingApp\Ai\Filament\Resources;
 
-use App\Models\User;
-use Filament\Pages\Page;
-use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
+use Filament\Resources\Resource;
+use AdvisingApp\Ai\Models\PromptType;
+use App\Filament\Clusters\ArtificialIntelligence;
+use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages\EditPromptType;
+use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages\ViewPromptType;
+use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages\ListPromptTypes;
+use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages\CreatePromptType;
+use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\RelationManagers\PromptsRelationManager;
 
-/**
- * @property EloquentCollection $chats
- */
-class PersonalAssistant extends Page
+class PromptTypeResource extends Resource
 {
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
+    protected static ?string $model = PromptType::class;
 
-    public const APPLICATION = AiApplication::PersonalAssistant;
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+    protected static ?int $navigationSort = 20;
 
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
+    protected static ?string $cluster = ArtificialIntelligence::class;
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
+    public static function getRelations(): array
     {
-        /** @var User $user */
-        $user = auth()->user();
+        return [
+            PromptsRelationManager::class,
+        ];
+    }
 
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        return $user->can('assistant.access');
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListPromptTypes::route('/'),
+            'create' => CreatePromptType::route('/create'),
+            'view' => ViewPromptType::route('/{record}'),
+            'edit' => EditPromptType::route('/{record}/edit'),
+        ];
     }
 }

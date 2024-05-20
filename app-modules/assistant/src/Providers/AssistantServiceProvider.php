@@ -37,20 +37,13 @@
 namespace AdvisingApp\Assistant\Providers;
 
 use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Assistant\Models\Prompt;
 use AdvisingApp\Assistant\AssistantPlugin;
-use AdvisingApp\Assistant\Models\PromptType;
-use AdvisingApp\Assistant\Observers\PromptObserver;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Assistant\Registries\AssistantRbacRegistry;
 
 class AssistantServiceProvider extends ServiceProvider
 {
-    use ImplementsGraphQL;
-
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AssistantPlugin()));
@@ -58,20 +51,6 @@ class AssistantServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Relation::morphMap([
-            'prompt_type' => PromptType::class,
-            'prompt' => Prompt::class,
-        ]);
-
-        $this->registerObservers();
-
         AuthorizationRoleRegistry::register(AssistantRbacRegistry::class);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-    }
-
-    protected function registerObservers(): void
-    {
-        Prompt::observe(PromptObserver::class);
     }
 }

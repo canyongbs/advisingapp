@@ -34,47 +34,71 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+use function Pest\Laravel\get;
 
-use App\Models\User;
-use Filament\Pages\Page;
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Models\Prompt;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function Pest\Laravel\assertDatabaseCount;
+
 use AdvisingApp\Authorization\Enums\LicenseType;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
+use AdvisingApp\Ai\Filament\Resources\PromptResource;
+use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ListPrompts;
 
-/**
- * @property EloquentCollection $chats
- */
-class PersonalAssistant extends Page
-{
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
+/** @var array<LicenseType> $licenses */
+$licenses = [
+    LicenseType::ConversationalAi,
+];
 
-    public const APPLICATION = AiApplication::PersonalAssistant;
+$permissions = [
+    'prompt.view-any',
+    'prompt.create',
+    'prompt.*.view',
+];
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+it('cannot render without a license', function () use ($permissions) {
+    actingAs(user(
+        permissions: $permissions
+    ));
 
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
+    get(PromptResource::getUrl())
+        ->assertForbidden();
+});
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+it('cannot render without permissions', function () use ($licenses) {
+    actingAs(user(
+        licenses: $licenses,
+    ));
 
-    protected static ?int $navigationSort = 10;
+    get(PromptResource::getUrl())
+        ->assertForbidden();
+});
 
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
+it('can render', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
 
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
+    get(PromptResource::getUrl())
+        ->assertSuccessful();
+});
 
-        return $user->can('assistant.access');
-    }
-}
+it('can list records', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    assertDatabaseCount(Prompt::class, 0);
+
+    $records = Prompt::factory()->count(10)->create();
+
+    assertDatabaseCount(Prompt::class, $records->count());
+
+    livewire(ListPrompts::class)
+        ->assertSuccessful()
+        ->assertCountTableRecords($records->count())
+        ->assertCanSeeTableRecords($records);
+});

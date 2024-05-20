@@ -48,10 +48,15 @@ class AiPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel->discoverResources(
-            in: __DIR__ . '/Filament/Resources',
-            for: 'AdvisingApp\\Ai\\Filament\\Resources'
-        );
+        $panel
+            ->discoverResources(
+                in: __DIR__ . '/Filament/Resources',
+                for: 'AdvisingApp\\Ai\\Filament\\Resources'
+            )
+            ->discoverPages(
+                in: __DIR__ . '/Filament/Pages',
+                for: 'AdvisingApp\\Ai\\Filament\\Pages'
+            );
     }
 
     public function boot(Panel $panel): void {}

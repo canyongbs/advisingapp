@@ -34,47 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace AdvisingApp\Ai\Filament\Resources\AiMessageLogResource\Pages;
 
-use App\Models\User;
-use Filament\Pages\Page;
-use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
+use Filament\Actions\ExportAction;
+use Filament\Resources\Pages\ManageRecords;
+use AdvisingApp\Ai\Filament\Exports\AiMessageExporter;
+use AdvisingApp\Ai\Filament\Resources\AiMessageLogResource;
 
-/**
- * @property EloquentCollection $chats
- */
-class PersonalAssistant extends Page
+class ManageAiMessageLogs extends ManageRecords
 {
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
+    protected static string $resource = AiMessageLogResource::class;
 
-    public const APPLICATION = AiApplication::PersonalAssistant;
-
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
-
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
+    protected function getHeaderActions(): array
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        return $user->can('assistant.access');
+        return [
+            ExportAction::make()
+                ->label('Export message logs')
+                ->exporter(AiMessageExporter::class),
+        ];
     }
 }

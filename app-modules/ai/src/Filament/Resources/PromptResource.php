@@ -34,47 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace AdvisingApp\Ai\Filament\Resources;
 
-use App\Models\User;
-use Filament\Pages\Page;
-use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
+use Filament\Resources\Resource;
+use AdvisingApp\Ai\Models\Prompt;
+use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\EditPrompt;
+use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ViewPrompt;
+use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ListPrompts;
+use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\CreatePrompt;
 
-/**
- * @property EloquentCollection $chats
- */
-class PersonalAssistant extends Page
+class PromptResource extends Resource
 {
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
+    protected static ?string $model = Prompt::class;
 
-    public const APPLICATION = AiApplication::PersonalAssistant;
-
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
-
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
+    protected static ?string $navigationIcon = 'heroicon-o-building-library';
 
     protected static ?string $navigationGroup = 'Artificial Intelligence';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?string $navigationLabel = 'Prompt Library';
 
-    public static function canAccess(): bool
+    protected static ?int $navigationSort = 20;
+
+    public static function getPages(): array
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        return $user->can('assistant.access');
+        return [
+            'index' => ListPrompts::route('/'),
+            'create' => CreatePrompt::route('/create'),
+            'view' => ViewPrompt::route('/{record}'),
+            'edit' => EditPrompt::route('/{record}/edit'),
+        ];
     }
 }

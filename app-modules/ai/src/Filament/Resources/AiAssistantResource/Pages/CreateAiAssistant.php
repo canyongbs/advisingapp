@@ -34,47 +34,55 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages;
 
-use App\Models\User;
-use Filament\Pages\Page;
+use Throwable;
+use Filament\Forms\Form;
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
 
-/**
- * @property EloquentCollection $chats
- */
-class PersonalAssistant extends Page
+class CreateAiAssistant extends CreateRecord
 {
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
+    protected static string $resource = AiAssistantResource::class;
 
-    public const APPLICATION = AiApplication::PersonalAssistant;
-
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
-
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
+    public function form(Form $form): Form
     {
-        /** @var User $user */
-        $user = auth()->user();
+        return resolve(AiAssistantForm::class)->form($form);
+    }
 
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['application'] = AiApplication::PersonalAssistant;
+        $data['model'] ??= AiModel::OpenAiGpt35;
+
+        return $data;
+    }
+
+    protected function handleRecordCreation(array $data): Model
+    {
+        $record = new ($this->getModel())($data);
+
+        try {
+            $record->model->getService()->createAssistant($record);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            Notification::make()
+                ->title('Could not create assistant')
+                ->body('We failed to connect to the AI service. Support has been notified about this problem. Please try again later.')
+                ->danger()
+                ->send();
+
+            $this->halt();
         }
 
-        return $user->can('assistant.access');
+        $record->save();
+
+        return $record;
     }
 }
