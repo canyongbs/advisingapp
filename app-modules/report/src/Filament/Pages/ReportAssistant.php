@@ -36,6 +36,11 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
+use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
+use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
+use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
+use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
 use App\Models\User;
 use App\Enums\Feature;
 use Filament\Pages\Page;
@@ -61,6 +66,11 @@ use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
  */
 class ReportAssistant extends Page
 {
+    use CanManageConsent;
+    use CanManageFolders;
+    use CanManagePromptLibrary;
+    use CanManageThreads;
+
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static string $view = 'report::filament.pages.report-assistant';
@@ -69,26 +79,7 @@ class ReportAssistant extends Page
 
     protected static ?int $navigationSort = 40;
 
-    public Chat $chat;
-
-    #[Rule(['required', 'string'])]
-    public string $message = '';
-
-    public string $prompt = '';
-
-    public bool $showCurrentResponse = false;
-
-    public string $currentResponse = '';
-
-    public bool $renderError = false;
-
-    public string $error = '';
-
-    public ConsentAgreement $consentAgreement;
-
-    public bool $consentedToTerms = false;
-
-    public bool $loading = true;
+    public const APPLICATION = AiApplication::ReportAssistant;
 
     public static function canAccess(): bool
     {
@@ -104,150 +95,5 @@ class ReportAssistant extends Page
         }
 
         return $user->can('report.access_assistant');
-    }
-
-    public function mount(): void
-    {
-        $this->consentAgreement = ConsentAgreement::where('type', ConsentAgreementType::AzureOpenAI)->first();
-
-        /** @var AssistantChat $chat */
-        $chat = $this->chats->first();
-
-        $this->chat = new Chat(
-            id: $chat?->id ?? null,
-            messages: ChatMessage::collection($chat?->messages ?? []),
-            assistantId: null,
-            threadId: null,
-        );
-    }
-
-    #[Computed]
-    public function chats(): EloquentCollection
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user
-            ->assistantChats()
-            ->doesntHave('folder')
-            ->latest()
-            ->get();
-    }
-
-    public function determineIfConsentWasGiven(): void
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if ($user->hasNotConsentedTo($this->consentAgreement)) {
-            $this->dispatch('open-modal', id: 'consent-agreement');
-        } else {
-            $this->consentedToTerms = true;
-        }
-
-        $this->loading = false;
-    }
-
-    public function confirmConsent(): void
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if ($this->consentedToTerms === false) {
-            return;
-        }
-
-        $user->consentTo($this->consentAgreement);
-
-        if (! $user->defaultAssistantChatFoldersHaveBeenCreated()) {
-            foreach (AssistantChatFolder::defaults() as $default) {
-                $user->assistantChatFolders()->create([
-                    'name' => $default,
-                ]);
-            }
-
-            $user->update([
-                'default_assistant_chat_folders_created' => true,
-            ]);
-        }
-
-        $this->dispatch('close-modal', id: 'consent-agreement');
-    }
-
-    public function denyConsent(): void
-    {
-        $this->redirect(Dashboard::getUrl());
-    }
-
-    public function sendMessage(): void
-    {
-        $this->showCurrentResponse = true;
-
-        $this->reset('renderError');
-        $this->reset('error');
-
-        $this->validate();
-
-        $this->prompt = $this->message;
-
-        $this->message = '';
-
-        $this->setMessage($this->prompt, AIChatMessageFrom::User);
-
-        $this->js('$wire.ask()');
-    }
-
-    #[On('ask')]
-    public function ask(AiReportChatClient $ai): void
-    {
-        try {
-            $this->currentResponse = $ai->ask($this->chat, function (string $partial) {
-                $this->stream('currentResponse', nl2br($partial));
-            });
-        } catch (ContentFilterException | TokensExceededException $e) {
-            $this->renderError = true;
-            $this->error = $e->getMessage();
-        }
-
-        $this->reset('showCurrentResponse');
-
-        if ($this->renderError === false) {
-            $this->setMessage($this->currentResponse, AIChatMessageFrom::Assistant);
-        }
-
-        $this->reset('currentResponse');
-    }
-
-    public function newChat(): void
-    {
-        $this->reset(['message', 'prompt', 'renderError', 'error']);
-
-        $this->chat = new Chat(
-            id: null,
-            messages: ChatMessage::collection([]),
-            assistantId: null,
-            threadId: null,
-        );
-    }
-
-    protected function setMessage(string $message, AIChatMessageFrom $from): void
-    {
-        if (filled($this->chat->id)) {
-            /** @var User $user */
-            $user = auth()->user();
-
-            /** @var AssistantChat $assistantChat */
-            $assistantChat = $user->assistantChats()->findOrFail($this->chat->id);
-
-            $assistantChat->messages()->create([
-                'message' => $message,
-                'from' => $from,
-            ]);
-        }
-
-        $this->chat->messages[] = new ChatMessage(
-            message: $message,
-            from: $from,
-        );
     }
 }

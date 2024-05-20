@@ -56,8 +56,6 @@ class PersonalAssistant extends Page
     use CanManagePromptLibrary;
     use CanManageThreads;
 
-    public const APPLICATION = AiApplication::PersonalAssistant;
-
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static string $view = 'assistant::filament.pages.personal-assistant';
@@ -65,6 +63,8 @@ class PersonalAssistant extends Page
     protected static ?string $navigationGroup = 'Artificial Intelligence';
 
     protected static ?int $navigationSort = 10;
+
+    public const APPLICATION = AiApplication::PersonalAssistant;
 
     public static function canAccess(): bool
     {

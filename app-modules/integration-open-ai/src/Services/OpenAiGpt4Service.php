@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,8 +32,27 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
+*/
 
-<x-filament-panels::page full-height="true">
-    <x-ai::assistant />
-</x-filament-panels::page>
+namespace AdvisingApp\IntegrationOpenAi\Services;
+
+use OpenAI;
+
+class OpenAiGpt4Service extends BaseOpenAiService
+{
+    public function __construct()
+    {
+        $this->client = OpenAI::factory()
+            ->withBaseUri(config('integration-open-ai.gpt_4_base_uri'))
+            ->withHttpHeader('api-key', config('integration-open-ai.gpt_4_api_key'))
+            ->withQueryParam('api-version', config('integration-open-ai.gpt_4_api_version'))
+            ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
+            ->withHttpHeader('Accept', '*/*')
+            ->make();
+    }
+
+    public function getModel(): string
+    {
+        return config('integration-open-ai.gpt_4_model');
+    }
+}
