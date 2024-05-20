@@ -38,27 +38,48 @@ namespace AdvisingApp\Ai\Providers;
 
 use Filament\Panel;
 use AdvisingApp\Ai\AiPlugin;
+use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\AiThread;
+use App\Concerns\ImplementsGraphQL;
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Ai\Models\AiThreadFolder;
+use AdvisingApp\Ai\Observers\PromptObserver;
+use AdvisingApp\Ai\Registries\AiRbacRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 
 class AiServiceProvider extends ServiceProvider
 {
-    public function register()
+    use ImplementsGraphQL;
+
+    public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new AiPlugin()));
     }
 
-    public function boot()
+    public function boot(): void
     {
         Relation::morphMap([
             'ai_assistant' => AiAssistant::class,
             'ai_thread' => AiThread::class,
             'ai_thread_folder' => AiThreadFolder::class,
             'ai_message' => AiMessage::class,
+            'prompt_type' => PromptType::class,
+            'prompt' => Prompt::class,
         ]);
+
+        $this->registerObservers();
+
+        AuthorizationRoleRegistry::register(AiRbacRegistry::class);
+
+        $this->discoverSchema(__DIR__ . '/../../graphql/*');
+    }
+
+    protected function registerObservers(): void
+    {
+        Prompt::observe(PromptObserver::class);
     }
 }

@@ -42,9 +42,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 
 class AiThread extends BaseModel
 {
+    use CanAddAssistantLicenseGlobalScope;
     use SoftDeletes;
 
     protected $fillable = [

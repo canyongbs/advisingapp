@@ -42,4 +42,12 @@ return [
     'gpt_35_api_version' => env('OPEN_AI_GPT_35_API_VERSION'),
 
     'gpt_35_model' => env('OPEN_AI_GPT_35_MODEL'),
+
+    'gpt_4_base_uri' => env('OPEN_AI_GPT_4_BASE_URI'),
+
+    'gpt_4_api_key' => env('OPEN_AI_GPT_4_API_KEY'),
+
+    'gpt_4_api_version' => env('OPEN_AI_GPT_4_API_VERSION'),
+
+    'gpt_4_model' => env('OPEN_AI_GPT_4_MODEL'),
 ];

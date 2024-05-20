@@ -52,6 +52,7 @@ class TestAiService implements Contracts\AiService
 
     public function sendMessage(AiMessage $message): AiMessage
     {
+        $message->context = fake()->paragraph();
         $message->save();
 
         $response = new AiMessage();

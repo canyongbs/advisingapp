@@ -42,9 +42,11 @@ use AdvisingApp\Ai\Enums\AiApplication;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 
 class AiThreadFolder extends BaseModel
 {
+    use CanAddAssistantLicenseGlobalScope;
     use SoftDeletes;
 
     protected $fillable = [
@@ -60,6 +62,11 @@ class AiThreadFolder extends BaseModel
     public function threads(): HasMany
     {
         return $this->hasMany(AiThread::class, 'folder_id');
+    }
+
+    public static function defaults(): array
+    {
+        return config('assistant.default_chat_folders');
     }
 
     public function user(): BelongsTo

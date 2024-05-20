@@ -37,30 +37,13 @@
 namespace AdvisingApp\Assistant\Providers;
 
 use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Assistant\Models\Prompt;
 use AdvisingApp\Assistant\AssistantPlugin;
-use AdvisingApp\Assistant\Models\PromptType;
-use AdvisingApp\Assistant\Models\AiAssistant;
-use AdvisingApp\Assistant\Models\AssistantChat;
-use AdvisingApp\Assistant\Observers\PromptObserver;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Assistant\Models\AssistantChatFolder;
-use AdvisingApp\Assistant\Models\AssistantChatMessage;
-use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
-use AdvisingApp\Assistant\Observers\AiAssistantObserver;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 use AdvisingApp\Assistant\Registries\AssistantRbacRegistry;
-use AdvisingApp\Assistant\Listeners\LogAssistantChatMessage;
-use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 
 class AssistantServiceProvider extends ServiceProvider
 {
-    use ImplementsGraphQL;
-
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AssistantPlugin()));
@@ -68,34 +51,6 @@ class AssistantServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Relation::morphMap([
-            'ai_assistant' => AiAssistant::class,
-            'assistant_chat_folder' => AssistantChatFolder::class,
-            'assistant_chat_message_log' => AssistantChatMessageLog::class,
-            'assistant_chat_message' => AssistantChatMessage::class,
-            'assistant_chat' => AssistantChat::class,
-            'prompt_type' => PromptType::class,
-            'prompt' => Prompt::class,
-        ]);
-
-        $this->registerObservers();
-
-        $this->registerEvents();
-
         AuthorizationRoleRegistry::register(AssistantRbacRegistry::class);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        $this->registerEnum(AIChatMessageFrom::class);
-    }
-
-    protected function registerObservers(): void
-    {
-        Prompt::observe(PromptObserver::class);
-        AiAssistant::observe(AiAssistantObserver::class);
-    }
-
-    protected function registerEvents(): void
-    {
-        Event::listen(AIPromptInitiated::class, LogAssistantChatMessage::class);
     }
 }

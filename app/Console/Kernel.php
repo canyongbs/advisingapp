@@ -40,12 +40,12 @@ use Throwable;
 use App\Models\Tenant;
 use AdvisingApp\Audit\Models\Audit;
 use Illuminate\Support\Facades\Log;
+use AdvisingApp\Ai\Models\AiMessage;
 use App\Models\Scopes\SetupIsComplete;
 use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use Filament\Actions\Imports\Models\FailedImportRow;
-use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
 
@@ -80,8 +80,8 @@ class Kernel extends ConsoleKernel
                         ->sentryMonitor();
 
                     collect([
+                        AiMessage::class,
                         Audit::class,
-                        AssistantChatMessageLog::class,
                         EngagementFile::class,
                         FailedImportRow::class,
                         FormAuthentication::class,

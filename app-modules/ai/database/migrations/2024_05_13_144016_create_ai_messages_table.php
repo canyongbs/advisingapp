@@ -45,6 +45,8 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
             $table->string('message_id')->nullable();
             $table->text('content');
+            $table->text('context')->nullable();
+            $table->json('request')->nullable();
             $table->foreignUuid('thread_id')->constrained('ai_threads')->cascadeOnDelete();
             $table->foreignUuid('user_id')->nullable()->constrained();
             $table->timestamps();
