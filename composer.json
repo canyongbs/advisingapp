@@ -54,6 +54,8 @@
         "canyon-gbs/advising-app-theme": "*",
         "canyon-gbs/advising-app-timeline": "*",
         "canyon-gbs/advising-app-webhook": "*",
+        "canyon-gbs/ai": "*",
+        "canyon-gbs/integration-open-ai": "*",
         "composer/composer": "^2.7",
         "filament/filament": "^3.2",
         "filament/spatie-laravel-media-library-plugin": "^3.1",
