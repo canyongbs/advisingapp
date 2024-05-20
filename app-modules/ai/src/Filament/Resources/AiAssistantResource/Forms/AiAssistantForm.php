@@ -75,7 +75,7 @@ class AiAssistantForm
                             ->helperText('Instructions are used to provide context to the AI Assistant on how to respond to user queries.')
                             ->required()
                             ->maxLength(fn (?AiAssistant $record): int => ($record?->model ?? AiModel::OpenAiGpt35)->getService()->getMaxAssistantInstructionsLength()),
-                        Textarea::make('knowledge'),
+                        // Textarea::make('knowledge'),
                     ]),
             ]);
     }
