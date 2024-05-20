@@ -39,27 +39,29 @@ namespace AdvisingApp\Assistant\Filament\Resources;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use AdvisingApp\Ai\Models\AiMessage;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Clusters\UsageAuditing;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\ExportBulkAction;
 use App\Filament\Infolists\Components\CodeEntry;
-use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
-use AdvisingApp\Assistant\Filament\Exports\AssistantChatMessageLogExporter;
-use AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource\Pages\ManageAssistantChatMessageLogs;
+use AdvisingApp\Ai\Models\Scopes\AuditableAiMessages;
+use AdvisingApp\Ai\Filament\Exports\AiMessageExporter;
+use AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource\Pages\ManageAiMessageLogs;
 
-class AssistantChatMessageLogResource extends Resource
+class AiMessageLogResource extends Resource
 {
-    protected static ?string $model = AssistantChatMessageLog::class;
+    protected static ?string $model = AiMessage::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
 
-    protected static ?string $navigationLabel = 'Personal Assistant';
+    protected static ?string $navigationLabel = 'AI Assistants';
 
     protected static ?int $navigationSort = 30;
 
@@ -71,14 +73,16 @@ class AssistantChatMessageLogResource extends Resource
     {
         return $infolist
             ->schema([
-                TextEntry::make('user.name'),
-                TextEntry::make('sent_at')
+                TextEntry::make('user.name')
+                    ->default('Assistant'),
+                TextEntry::make('created_at')
                     ->label('Sent')
                     ->dateTime(),
-                TextEntry::make('message')
+                TextEntry::make('thread.assistant.application'),
+                TextEntry::make('content')
                     ->prose()
                     ->columnSpanFull(),
-                CodeEntry::make('metadata')
+                TextEntry::make('context')
                     ->columnSpanFull(),
                 CodeEntry::make('request')
                     ->columnSpanFull(),
@@ -90,11 +94,12 @@ class AssistantChatMessageLogResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('user.name')
+                    ->default('Assistant')
                     ->searchable(),
-                TextColumn::make('message')
+                TextColumn::make('content')
                     ->limit(50)
                     ->searchable(),
-                TextColumn::make('sent_at')
+                TextColumn::make('created_at')
                     ->label('Sent')
                     ->sortable()
                     ->dateTime(),
@@ -112,16 +117,22 @@ class AssistantChatMessageLogResource extends Resource
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     ExportBulkAction::make()
-                        ->exporter(AssistantChatMessageLogExporter::class),
+                        ->exporter(AiMessageExporter::class),
                 ]),
             ])
-            ->defaultSort('sent_at', 'desc');
+            ->defaultSort('created_at', 'desc');
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ManageAssistantChatMessageLogs::route('/'),
+            'index' => ManageAiMessageLogs::route('/'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->tap(app(AuditableAiMessages::class));
     }
 }

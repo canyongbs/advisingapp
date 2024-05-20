@@ -97,12 +97,15 @@ abstract class BaseOpenAiService implements AiService
             'content' => $message->content,
         ]);
 
+        $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
+
+        $message->context = $instructions;
         $message->message_id = $response->id;
         $message->save();
 
         $response = $this->client->threads()->runs()->create($message->thread->thread_id, [
             'assistant_id' => $message->thread->assistant->assistant_id,
-            'instructions' => $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true),
+            'instructions' => $instructions,
         ]);
 
         $this->awaitThreadRunCompletion($response);
@@ -127,19 +130,22 @@ abstract class BaseOpenAiService implements AiService
         ])->data[0] ?? null;
 
         if ((! $response) || $response?->status === 'completed') {
+            $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
+
             if (blank($message->message_id)) {
                 $response = $this->client->threads()->messages()->create($message->thread->thread_id, [
                     'role' => 'user',
                     'content' => $message->content,
                 ]);
 
+                $message->context = $instructions;
                 $message->message_id = $response->id;
                 $message->save();
             }
 
             $response = $this->client->threads()->runs()->create($message->thread->thread_id, [
                 'assistant_id' => $message->thread->assistant->assistant_id,
-                'instructions' => $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true),
+                'instructions' => $instructions,
             ]);
         }
 

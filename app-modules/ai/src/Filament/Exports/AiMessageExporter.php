@@ -34,40 +34,53 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Services;
+namespace AdvisingApp\Ai\Filament\Exports;
 
-use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\AiAssistant;
+use Filament\Actions\Exports\Exporter;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Actions\Exports\ExportColumn;
+use Filament\Actions\Exports\Models\Export;
+use Filament\Actions\Exports\Enums\ExportFormat;
+use AdvisingApp\Ai\Models\Scopes\AuditableAiMessages;
 
-class TestAiService implements Contracts\AiService
+class AiMessageExporter extends Exporter
 {
-    public function createAssistant(AiAssistant $assistant): void {}
+    protected static ?string $model = AiMessage::class;
 
-    public function updateAssistant(AiAssistant $assistant): void {}
-
-    public function createThread(AiThread $thread): void {}
-
-    public function deleteThread(AiThread $thread): void {}
-
-    public function sendMessage(AiMessage $message): AiMessage
+    public static function modifyQuery(Builder $query): Builder
     {
-        $message->context = fake()->paragraph();
-        $message->save();
-
-        $response = new AiMessage();
-        $response->content = fake()->paragraph();
-
-        return $response;
+        return $query->tap(app(AuditableAiMessages::class));
     }
 
-    public function retryMessage(AiMessage $message): AiMessage
+    public static function getColumns(): array
     {
-        return $this->sendMessage($message);
+        return [
+            ExportColumn::make('content'),
+            ExportColumn::make('context'),
+            ExportColumn::make('user.name'),
+            ExportColumn::make('request')
+                ->listAsJson(),
+            ExportColumn::make('created_at'),
+        ];
     }
 
-    public function getMaxAssistantInstructionsLength(): int
+    public static function getCompletedNotificationBody(Export $export): string
     {
-        return 30000;
+        $body = 'Your chat message log export has completed and ' . number_format($export->successful_rows) . ' ' . str('row')->plural($export->successful_rows) . ' exported.';
+
+        if ($failedRowsCount = $export->getFailedRowsCount()) {
+            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to export.';
+        }
+
+        return $body;
+    }
+
+    /**
+     * Using CSV format causes issues with the JSON commas not being properly escaped by league/csv.
+     */
+    public function getFormats(): array
+    {
+        return [ExportFormat::Xlsx];
     }
 }

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Actions;
 
+use Illuminate\Support\Arr;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 
@@ -45,6 +46,13 @@ class SendMessage
     {
         $message = new AiMessage();
         $message->content = $content;
+        $message->request = [
+            'headers' => Arr::only(
+                request()->headers->all(),
+                ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
+            ),
+            'ip' => request()->ip(),
+        ];
         $message->thread()->associate($thread);
         $message->user()->associate(auth()->user());
 

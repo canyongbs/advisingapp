@@ -38,20 +38,19 @@ namespace AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResour
 
 use Filament\Actions\ExportAction;
 use Filament\Resources\Pages\ManageRecords;
-use AdvisingApp\Assistant\Filament\Exports\AssistantChatMessageLogExporter;
-use AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource;
+use AdvisingApp\Ai\Filament\Exports\AiMessageExporter;
+use AdvisingApp\Assistant\Filament\Resources\AiMessageLogResource;
 
-class ManageAssistantChatMessageLogs extends ManageRecords
+class ManageAiMessageLogs extends ManageRecords
 {
-    protected static string $resource = AssistantChatMessageLogResource::class;
-
-    protected static ?string $title = 'Personal Assistant';
+    protected static string $resource = AiMessageLogResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
             ExportAction::make()
-                ->exporter(AssistantChatMessageLogExporter::class),
+                ->label('Export message logs')
+                ->exporter(AiMessageExporter::class),
         ];
     }
 }

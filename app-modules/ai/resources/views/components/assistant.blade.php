@@ -15,7 +15,7 @@
                         x-data="{ isSearchingAssistants: false }"
                     >
                         <div class="flex flex-col gap-2">
-                            <div class="w-full grid grid-cols-2 gap-2">
+                            <div class="grid w-full grid-cols-2 gap-2">
                                 <x-filament::button
                                     icon="heroicon-m-plus"
                                     wire:click="createThread"
@@ -312,9 +312,9 @@
                                                         messageCopied: false,
                                                         copyMessage: function() {
                                                             navigator.clipboard.writeText(message.content.replace(/(<([^>]+)>)/gi, ''))
-
+                                                    
                                                             this.messageCopied = true
-
+                                                    
                                                             setTimeout(() => { this.messageCopied = false }, 2000)
                                                         }
                                                     }"

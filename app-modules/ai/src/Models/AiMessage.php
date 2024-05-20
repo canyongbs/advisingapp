@@ -38,22 +38,32 @@ namespace AdvisingApp\Ai\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\MassPrunable;
+use AdvisingApp\Ai\Models\Scopes\AuditableAiMessages;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 
 class AiMessage extends BaseModel
 {
-    use CanAddAssistantLicenseGlobalScope;
     use AsPivot;
+    use CanAddAssistantLicenseGlobalScope;
+    use MassPrunable;
     use SoftDeletes;
 
     protected $fillable = [
         'message_id',
         'content',
+        'context',
+        'request',
         'thread_id',
         'user_id',
+    ];
+
+    protected $casts = [
+        'request' => 'array',
     ];
 
     protected $table = 'ai_messages';
@@ -66,5 +76,12 @@ class AiMessage extends BaseModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function prunable(): Builder
+    {
+        return static::query()
+            ->whereNot(fn (Builder $query) => $query->tap(app(AuditableAiMessages::class)))
+            ->whereHas('thread', fn (Builder $query) => $query->whereNull('name'));
     }
 }
