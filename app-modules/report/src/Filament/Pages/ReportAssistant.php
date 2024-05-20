@@ -36,30 +36,16 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
 use App\Models\User;
 use App\Enums\Feature;
 use Filament\Pages\Page;
-use Livewire\Attributes\On;
-use Livewire\Attributes\Rule;
-use App\Filament\Pages\Dashboard;
-use Livewire\Attributes\Computed;
-use AdvisingApp\Assistant\Models\AssistantChat;
+use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Consent\Models\ConsentAgreement;
-use AdvisingApp\Report\Client\AiReportChatClient;
-use AdvisingApp\Consent\Enums\ConsentAgreementType;
-use AdvisingApp\Assistant\Models\AssistantChatFolder;
-use AdvisingApp\IntegrationAI\Exceptions\ContentFilterException;
-use AdvisingApp\IntegrationAI\Exceptions\TokensExceededException;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
-use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\Chat;
-use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
+use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
+use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
+use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
+use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
 
 /**
  * @property EloquentCollection $chats
@@ -71,6 +57,8 @@ class ReportAssistant extends Page
     use CanManagePromptLibrary;
     use CanManageThreads;
 
+    public const APPLICATION = AiApplication::ReportAssistant;
+
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static string $view = 'report::filament.pages.report-assistant';
@@ -78,8 +66,6 @@ class ReportAssistant extends Page
     protected static ?string $navigationGroup = 'Reporting';
 
     protected static ?int $navigationSort = 40;
-
-    public const APPLICATION = AiApplication::ReportAssistant;
 
     public static function canAccess(): bool
     {
