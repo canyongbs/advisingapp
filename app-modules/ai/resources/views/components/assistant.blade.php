@@ -8,32 +8,34 @@
             class="grid flex-1 grid-cols-1 gap-6 md:grid-cols-3 2xl:grid-cols-4"
             x-data="chats"
         >
-            <div class="col-span-1">
+            <div class="col-span-1 select-none">
                 <div class="flex h-screen max-h-[calc(100dvh-20rem)] flex-col gap-y-2">
                     <div
                         class="relative"
                         x-data="{ isSearchingAssistants: false }"
                     >
-                        <x-filament::button.group>
-                            <x-filament::button
-                                grouped
-                                icon="heroicon-m-plus"
-                                wire:click="createThread"
-                            >
-                                New chat
-                            </x-filament::button>
+                        <div class="flex flex-col gap-2">
+                            <div class="w-full grid grid-cols-2 gap-2">
+                                <x-filament::button
+                                    icon="heroicon-m-plus"
+                                    wire:click="createThread"
+                                >
+                                    New chat
+                                </x-filament::button>
+
+                                {{ $this->newFolderAction }}
+                            </div>
 
                             @if ($this->customAssistants)
                                 <x-filament::button
-                                    grouped
                                     color="gray"
                                     icon="heroicon-m-magnifying-glass"
                                     x-on:click="isSearchingAssistants = ! isSearchingAssistants"
                                 >
-                                    with assistant
+                                    New chat with assistant
                                 </x-filament::button>
                             @endif
-                        </x-filament::button.group>
+                        </div>
 
                         @if ($this->customAssistants)
                             <div
@@ -46,8 +48,6 @@
                             </div>
                         @endif
                     </div>
-
-                    {{ $this->newFolderAction }}
 
                     @if (count($this->threadsWithoutAFolder))
                         <ul
@@ -312,9 +312,9 @@
                                                         messageCopied: false,
                                                         copyMessage: function() {
                                                             navigator.clipboard.writeText(message.content.replace(/(<([^>]+)>)/gi, ''))
-                                                    
+
                                                             this.messageCopied = true
-                                                    
+
                                                             setTimeout(() => { this.messageCopied = false }, 2000)
                                                         }
                                                     }"

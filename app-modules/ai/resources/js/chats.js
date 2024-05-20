@@ -46,7 +46,9 @@ document.addEventListener('alpine:init', () => {
                 const result = await this.$wire.movedThread(this.threadId, folderId);
 
                 if (result.original.success) {
-                    this.expandedFolder = folderId;
+                    if (folderId) {
+                        this.expandedFolder = folderId;
+                    }
 
                     new FilamentNotification()
                         .icon('heroicon-o-check-circle')

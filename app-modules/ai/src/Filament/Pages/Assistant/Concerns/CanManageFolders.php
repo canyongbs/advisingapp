@@ -191,8 +191,12 @@ trait CanManageFolders
             ]);
     }
 
-    public function movedThread(string $threadId, ?string $folderId): JsonResponse
+    public function movedThread(?string $threadId, ?string $folderId): ?JsonResponse
     {
+        if (blank($threadId)) {
+            return null;
+        }
+
         $thread = auth()->user()->aiThreads()
             ->whereRelation('assistant', 'application', static::APPLICATION)
             ->find($threadId);
