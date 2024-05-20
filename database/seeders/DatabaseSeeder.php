@@ -36,16 +36,16 @@
 
 namespace Database\Seeders;
 
-use PromptSeeder;
-use PromptTypeSeeder;
 use App\Models\Tenant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification;
+use AdvisingApp\Ai\Database\Seeders\PromptSeeder;
 use AdvisingApp\Form\Database\Seeders\FormSeeder;
 use AdvisingApp\Task\Database\Seeders\TaskSeeder;
 use AdvisingApp\Team\Database\Seeders\TeamSeeder;
 use AdvisingApp\Alert\Database\Seeders\AlertSeeder;
+use AdvisingApp\Ai\Database\Seeders\PromptTypeSeeder;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSeeder;
 use AdvisingApp\Authorization\Console\Commands\SetupRoles;
