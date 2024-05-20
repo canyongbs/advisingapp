@@ -206,6 +206,8 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function getMergeData(): array
     {
         return [
+            'student first name' => $this->recipient->getAttribute($this->recipient->displayFirstNameKey()),
+            'student last name' => $this->recipient->getAttribute($this->recipient->displayLastNameKey()),
             'student full name' => $this->recipient->getAttribute($this->recipient->displayNameKey()),
             'student email' => $this->recipient->getAttribute($this->recipient->displayEmailKey()),
         ];
@@ -218,6 +220,8 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     {
         return match ($type) {
             Student::class => [
+                'student first name',
+                'student last name',
                 'student full name',
                 'student email',
             ],

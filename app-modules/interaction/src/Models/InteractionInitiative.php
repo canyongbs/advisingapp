@@ -53,5 +53,6 @@ class InteractionInitiative extends BaseModel implements Auditable
 
     protected $fillable = [
         'name',
+        'is_default',
     ];
 }

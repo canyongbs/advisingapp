@@ -51,15 +51,14 @@ use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
-use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 
-class EngagementBatchBlock extends CampaignActionBlock
+class EngagementBatchEmailBlock extends CampaignActionBlock
 {
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label('Email or Text');
+        $this->label('Email');
 
         $this->schema($this->createFields());
     }
@@ -67,27 +66,22 @@ class EngagementBatchBlock extends CampaignActionBlock
     public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            Select::make($fieldPrefix . 'delivery_method')
-                ->columnSpanFull()
-                ->live()
-                ->label('How would you like to send this engagement?')
-                ->options(EngagementDeliveryMethod::getOptions())
+            TextInput::make($fieldPrefix . 'delivery_method')
                 ->default(EngagementDeliveryMethod::Email->value)
-                ->disableOptionWhen(fn (string $value): bool => EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
-                ->selectablePlaceholder(false)
-                ->validationAttribute('Delivery Method')
-                ->required(),
+                ->hidden()
+                ->disabled(),
             TextInput::make($fieldPrefix . 'subject')
                 ->columnSpanFull()
                 ->placeholder(__('Subject'))
-                ->required()
-                ->hidden(fn (callable $get) => collect($get($fieldPrefix . 'delivery_method'))->doesntContain(EngagementDeliveryMethod::Email->value)),
+                ->required(),
             TiptapEditor::make($fieldPrefix . 'body')
                 ->disk('s3-public')
                 ->visibility('public')
                 ->directory('editor-images/engagements')
                 ->label('Body')
                 ->mergeTags([
+                    'student first name',
+                    'student last name',
                     'student full name',
                     'student email',
                 ])
@@ -143,11 +137,8 @@ class EngagementBatchBlock extends CampaignActionBlock
 
                         $component->state($template->content);
                     }))
-                ->hidden(fn (Get $get): bool => $get($fieldPrefix . 'delivery_method') === EngagementDeliveryMethod::Sms->value)
                 ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                 ->columnSpanFull(),
-            EngagementSmsBodyField::make(context: 'create')
-                ->hidden(fn (Get $get): bool => $get($fieldPrefix . 'delivery_method') === EngagementDeliveryMethod::Email->value),
             DateTimePicker::make('execute_at')
                 ->label('When should the journey step be executed?')
                 ->columnSpanFull()
@@ -162,6 +153,6 @@ class EngagementBatchBlock extends CampaignActionBlock
 
     public static function type(): string
     {
-        return 'bulk_engagement';
+        return 'bulk_engagement_email';
     }
 }

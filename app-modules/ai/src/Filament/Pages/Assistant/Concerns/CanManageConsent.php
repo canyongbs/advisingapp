@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
+use AdvisingApp\Ai\Models\AiThreadFolder;
 use App\Filament\Pages\Dashboard;
 use Livewire\Attributes\Computed;
 use AdvisingApp\Consent\Models\ConsentAgreement;
@@ -71,8 +72,8 @@ trait CanManageConsent
         unset($this->isConsented);
 
         if (! $user->defaultAssistantChatFoldersHaveBeenCreated()) {
-            foreach (AssistantChatFolder::defaults() as $default) {
-                $user->assistantChatFolders()->create([
+            foreach (AiThreadFolder::defaults() as $default) {
+                $user->aiThreadFolders()->create([
                     'name' => $default,
                 ]);
             }

@@ -65,6 +65,8 @@ class CreateEmailTemplate extends CreateRecord
                     ->visibility('public')
                     ->directory('editor-images/email-templates')
                     ->mergeTags([
+                        'student first name',
+                        'student last name',
                         'student full name',
                         'student email',
                     ])

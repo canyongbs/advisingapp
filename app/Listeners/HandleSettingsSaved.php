@@ -37,23 +37,21 @@
 namespace App\Listeners;
 
 use AdvisingApp\Ai\Settings\AISettings;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Spatie\LaravelSettings\Events\SettingsSaved;
-use AdvisingApp\Assistant\Actions\UpdateAiAssistant;
+use App\Models\Tenant;
+use AdvisingApp\Assistant\Jobs\UpdateAiAssistantJob;
 use AdvisingApp\Assistant\DataTransferObjects\AiAssistantUpdateData;
 use AdvisingApp\Assistant\Actions\CreateDefaultInstitutionAiAssistant;
 
-class HandleSettingsSaved implements ShouldQueue
+class HandleSettingsSaved
 {
     public function handle(SettingsSaved $event): void
     {
-        match (true) {
-            $event->settings instanceof AISettings => resolve(UpdateAiAssistant::class)->from(
-                // Might make sense to create the default assistant at some point other than this, if this is first interaction
-                assistantId: resolve(AISettings::class)->assistant_id ?? resolve(CreateDefaultInstitutionAiAssistant::class)->create(),
-                data: AiAssistantUpdateData::createFromSettings($event->settings)
-            ),
-            default => null,
-        };
+        if ($event->settings instanceof AISettings && Tenant::checkCurrent()) {
+            UpdateAiAssistantJob::dispatch(
+                resolve(AISettings::class)->assistant_id ?? resolve(CreateDefaultInstitutionAiAssistant::class)->create(),
+                AiAssistantUpdateData::createFromSettings($event->settings)
+            );
+        }
     }
 }
