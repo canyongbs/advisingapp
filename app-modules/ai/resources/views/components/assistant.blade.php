@@ -79,7 +79,7 @@
                                                     'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
                                                 ])
                                             >
-                                                <x-heroicon-o-bars-2 class="h-6 w-6" />
+                                                <x-heroicon-m-bars-2 class="h-5 w-5" />
                                             </button>
                                         @endif
 
@@ -187,7 +187,7 @@
                                                     'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
                                                 ])
                                             >
-                                                <x-heroicon-o-bars-2 class="h-6 w-6" />
+                                                <x-heroicon-m-bars-2 class="h-5 w-5" />
                                             </button>
 
                                             <button
