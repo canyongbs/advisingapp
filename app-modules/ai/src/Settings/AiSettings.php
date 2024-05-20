@@ -34,12 +34,30 @@
 </COPYRIGHT>
 */
 
-return [
-    'gpt_35_base_uri' => env('OPEN_AI_GPT_35_BASE_URI'),
+namespace AdvisingApp\Ai\Settings;
 
-    'gpt_35_api_key' => env('OPEN_AI_GPT_35_API_KEY'),
+use AdvisingApp\Ai\Enums\AiModel;
+use Spatie\LaravelSettings\Settings;
 
-    'gpt_35_api_version' => env('OPEN_AI_GPT_35_API_VERSION'),
+class AiSettings extends Settings
+{
+    public ?string $assistant_id = null;
 
-    'gpt_35_model' => env('OPEN_AI_GPT_35_MODEL'),
-];
+    public string $prompt_system_context;
+
+    public ?AiModel $default_model = null;
+
+    public int $max_tokens;
+
+    public float $temperature;
+
+    public static function group(): string
+    {
+        return 'ai';
+    }
+
+    public function getDefaultModel(): AiModel
+    {
+        return $this->default_model ?? AiModel::OpenAiGpt35;
+    }
+}

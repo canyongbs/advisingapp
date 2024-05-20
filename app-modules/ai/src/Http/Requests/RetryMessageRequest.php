@@ -34,25 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Registries;
+namespace AdvisingApp\Ai\Http\Requests;
 
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\Registries\Contracts\RegistersRolesAndPermissions;
+use Illuminate\Http\Request;
+use Illuminate\Foundation\Http\FormRequest;
 
-class AiRbacRegistry implements RegistersRolesAndPermissions
+class RetryMessageRequest extends FormRequest
 {
-    public function __invoke(): void
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
     {
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
+        return $this->thread->user()->is(auth()->user());
+    }
 
-        $roleRegistry->registerApiRoles(
-            module: '',
-            path: ''
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: '',
-            path: ''
-        );
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'content' => ['required', 'max:1000'],
+        ];
     }
 }

@@ -36,16 +36,14 @@
 
 namespace AdvisingApp\Ai\Providers;
 
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiThreadFolder;
-use AdvisingApp\Ai\Models\AiMessage;
 use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Ai\AiPlugin;
-use AdvisingApp\Ai\Registries\AiRbacRegistry;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiAssistant;
+use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Ai\Models\AiThreadFolder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class AiServiceProvider extends ServiceProvider
 {
@@ -62,7 +60,5 @@ class AiServiceProvider extends ServiceProvider
             'ai_thread_folder' => AiThreadFolder::class,
             'ai_message' => AiMessage::class,
         ]);
-
-        AuthorizationRoleRegistry::register(AiRbacRegistry::class);
     }
 }

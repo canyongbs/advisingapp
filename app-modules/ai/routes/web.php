@@ -34,12 +34,20 @@
 </COPYRIGHT>
 */
 
-return [
-    'gpt_35_base_uri' => env('OPEN_AI_GPT_35_BASE_URI'),
+use Illuminate\Support\Facades\Route;
+use AdvisingApp\Ai\Http\Controllers\ShowThreadController;
+use AdvisingApp\Ai\Http\Controllers\SendMessageController;
+use AdvisingApp\Ai\Http\Controllers\RetryMessageController;
 
-    'gpt_35_api_key' => env('OPEN_AI_GPT_35_API_KEY'),
+Route::middleware(['web', 'auth'])
+    ->name('ai.')
+    ->group(function () {
+        Route::get('ai/threads/{thread}', ShowThreadController::class)
+            ->name('threads.show');
 
-    'gpt_35_api_version' => env('OPEN_AI_GPT_35_API_VERSION'),
+        Route::post('ai/threads/{thread}/messages', SendMessageController::class)
+            ->name('threads.messages.send');
 
-    'gpt_35_model' => env('OPEN_AI_GPT_35_MODEL'),
-];
+        Route::post('ai/threads/{thread}/messages/retry', RetryMessageController::class)
+            ->name('threads.messages.retry');
+    });

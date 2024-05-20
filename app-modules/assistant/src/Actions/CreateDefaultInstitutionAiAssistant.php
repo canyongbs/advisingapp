@@ -38,9 +38,9 @@ namespace AdvisingApp\Assistant\Actions;
 
 use App\Models\Tenant;
 use Laravel\Pennant\Feature;
+use AdvisingApp\Ai\Settings\AISettings;
 use AdvisingApp\Assistant\Models\AiAssistant;
 use AdvisingApp\Assistant\Enums\AiAssistantType;
-use AdvisingApp\IntegrationAI\Settings\AISettings;
 use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
 
 class CreateDefaultInstitutionAiAssistant

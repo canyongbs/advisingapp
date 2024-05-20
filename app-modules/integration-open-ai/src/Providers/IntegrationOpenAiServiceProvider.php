@@ -36,16 +36,9 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Providers;
 
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiThreadFolder;
-use AdvisingApp\Ai\Models\AiMessage;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
-use AdvisingApp\IntegrationOpenAi\Registries\IntegrationOpenAiRbacRegistry;
 
 class IntegrationOpenAiServiceProvider extends ServiceProvider
 {
@@ -56,13 +49,6 @@ class IntegrationOpenAiServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        Relation::morphMap([
-            'ai_assistant' => AiAssistant::class,
-            'ai_thread' => AiThread::class,
-            'ai_thread_folder' => AiThreadFolder::class,
-            'ai_thread_message' => AiMessage::class,
-        ]);
-
-        AuthorizationRoleRegistry::register(IntegrationOpenAiRbacRegistry::class);
+        $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
     }
 }

@@ -86,8 +86,8 @@ const defaultOptions = {
 
 compile({
     ...defaultOptions,
-    entryPoints: ['./app-modules/assistant/resources/js/assistantCurrentResponse.js'],
-    outfile: './public/js/canyon-gbs/assistant/assistantCurrentResponse.js',
+    entryPoints: ['./app-modules/assistant/resources/js/chat.js'],
+    outfile: './public/js/canyon-gbs/assistant/chat.js',
 })
 
 compile({

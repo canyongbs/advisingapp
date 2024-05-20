@@ -34,22 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAI\Settings;
+namespace AdvisingApp\Ai\Actions;
 
-use Spatie\LaravelSettings\Settings;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiMessage;
 
-class AISettings extends Settings
+class RetryMessage
 {
-    public ?string $assistant_id = null;
-
-    public string $prompt_system_context;
-
-    public int $max_tokens;
-
-    public float $temperature;
-
-    public static function group(): string
+    public function __invoke(AiThread $thread, string $content): string
     {
-        return 'ai';
+        $message = $thread->messages()->whereBelongsTo(auth()->user())->latest()->first();
+
+        if ($message?->content !== $content) {
+            $message = new AiMessage();
+            $message->content = $content;
+            $message->thread()->associate($thread);
+            $message->user()->associate(auth()->user());
+        }
+
+        $response = $thread->assistant->model->getService()->retryMessage($message);
+        $response->thread()->associate($thread);
+        $response->save();
+
+        return $response->content;
     }
 }

@@ -34,12 +34,41 @@
 </COPYRIGHT>
 */
 
-return [
-    'gpt_35_base_uri' => env('OPEN_AI_GPT_35_BASE_URI'),
+namespace AdvisingApp\Ai\Actions;
 
-    'gpt_35_api_key' => env('OPEN_AI_GPT_35_API_KEY'),
+use App\Models\Tenant;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Settings\AISettings;
 
-    'gpt_35_api_version' => env('OPEN_AI_GPT_35_API_VERSION'),
+class GetDefaultAiAssistant
+{
+    public function __invoke(AiApplication $application): AiAssistant
+    {
+        $assistant = AiAssistant::query()
+            ->where('application', $application)
+            ->where('is_default', true)
+            ->first();
 
-    'gpt_35_model' => env('OPEN_AI_GPT_35_MODEL'),
-];
+        if ($assistant) {
+            return $assistant;
+        }
+
+        $tenant = Tenant::current();
+        $settings = app(AISettings::class);
+
+        $assistant = new AiAssistant();
+        $assistant->name = "{$tenant->name} AI Assistant";
+        $assistant->description = "An AI Assistant for {$tenant->name}";
+        $assistant->instructions = $settings->prompt_system_context;
+        $assistant->application = $application;
+        $assistant->model = $settings->getDefaultModel();
+        $assistant->is_default = true;
+
+        $assistant->model->getService()->createAssistant($assistant);
+
+        $assistant->save();
+
+        return $assistant;
+    }
+}

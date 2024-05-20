@@ -39,11 +39,11 @@ namespace AdvisingApp\Assistant\Filament\Pages;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
+use AdvisingApp\Ai\Settings\AISettings;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\IntegrationAI\Settings\AISettings;
 
 class ManageAiSettings extends SettingsPage
 {

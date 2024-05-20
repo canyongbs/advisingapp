@@ -34,12 +34,15 @@
 </COPYRIGHT>
 */
 
-return [
-    'gpt_35_base_uri' => env('OPEN_AI_GPT_35_BASE_URI'),
+namespace AdvisingApp\Ai\Actions;
 
-    'gpt_35_api_key' => env('OPEN_AI_GPT_35_API_KEY'),
+use AdvisingApp\Ai\Models\AiThread;
 
-    'gpt_35_api_version' => env('OPEN_AI_GPT_35_API_VERSION'),
-
-    'gpt_35_model' => env('OPEN_AI_GPT_35_MODEL'),
-];
+class DeleteThread
+{
+    public function __invoke(AiThread $thread): void
+    {
+        $thread->assistant->model->getService()->deleteThread($thread);
+        $thread->delete();
+    }
+}

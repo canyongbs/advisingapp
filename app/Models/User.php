@@ -36,9 +36,6 @@
 
 namespace App\Models;
 
-use AdvisingApp\Ai\Models\AiAssistantUpvote;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiThreadFolder;
 use Filament\Panel;
 use DateTimeInterface;
 use Illuminate\Support\Arr;
@@ -46,17 +43,20 @@ use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
 use Spatie\MediaLibrary\HasMedia;
 use App\Support\HasAdvancedFilter;
+use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Team\Models\TeamUser;
 use App\Filament\Resources\UserResource;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Authorization\Models\Role;
 use Lab404\Impersonate\Models\Impersonate;
 use Filament\Models\Contracts\FilamentUser;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use AdvisingApp\Ai\Models\AiAssistantUpvote;
 use AdvisingApp\Authorization\Models\License;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\MeetingCenter\Models\Calendar;

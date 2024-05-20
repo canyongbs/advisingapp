@@ -34,38 +34,24 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\Ai\Actions;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiMessage;
+
+class SendMessage
+{
+    public function __invoke(AiThread $thread, string $content): string
     {
-        Schema::create('ai_assistants', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('assistant_id')->nullable();
+        $message = new AiMessage();
+        $message->content = $content;
+        $message->thread()->associate($thread);
+        $message->user()->associate(auth()->user());
 
-            $table->string('name');
-            $table->string('type')->nullable();
-            $table->text('description')->nullable();
-            $table->longText('instructions')->nullable();
-            $table->longText('knowledge')->nullable();
+        $response = $thread->assistant->model->getService()->sendMessage($message);
+        $response->thread()->associate($thread);
+        $response->save();
 
-            $table->timestamps();
-            $table->softDeletes();
-        });
-
-        Schema::table('assistant_chats', function (Blueprint $table) {
-            $table->foreignUuid('ai_assistant_id')->nullable()->constrained('ai_assistants');
-        });
+        return $response->content;
     }
-
-    public function down(): void
-    {
-        Schema::table('assistant_chats', function (Blueprint $table) {
-            $table->dropColumn('ai_assistant_id');
-        });
-
-        Schema::dropIfExists('ai_assistants');
-    }
-};
+}

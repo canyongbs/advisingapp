@@ -34,25 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Registries;
+namespace AdvisingApp\Ai\Http\Controllers;
 
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\Registries\Contracts\RegistersRolesAndPermissions;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Http\Requests\ShowThreadRequest;
 
-class IntegrationOpenAiRbacRegistry implements RegistersRolesAndPermissions
+class ShowThreadController
 {
-    public function __invoke(): void
+    public function __invoke(ShowThreadRequest $request, AiThread $thread): JsonResponse
     {
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: '',
-            path: ''
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: '',
-            path: ''
-        );
+        return response()->json([
+            'messages' => $thread->messages()
+                ->oldest()
+                ->get()
+                ->toBase()
+                ->map(fn (AiMessage $message): array => $message->attributesToArray())
+                ->all(),
+            'users' => $thread->users()
+                ->distinct()
+                ->get()
+                ->toBase()
+                ->mapWithKeys(fn (User $user): array => [$user->id => [
+                    'name' => $user->name,
+                    'avatar_url' => $user->getFilamentAvatarUrl(),
+                ]])
+                ->all(),
+        ]);
     }
 }

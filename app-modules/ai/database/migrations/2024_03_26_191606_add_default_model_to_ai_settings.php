@@ -34,12 +34,16 @@
 </COPYRIGHT>
 */
 
-return [
-    'gpt_35_base_uri' => env('OPEN_AI_GPT_35_BASE_URI'),
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-    'gpt_35_api_key' => env('OPEN_AI_GPT_35_API_KEY'),
+return new class () extends SettingsMigration {
+    public function up(): void
+    {
+        $this->migrator->add('ai.default_model');
+    }
 
-    'gpt_35_api_version' => env('OPEN_AI_GPT_35_API_VERSION'),
-
-    'gpt_35_model' => env('OPEN_AI_GPT_35_MODEL'),
-];
+    public function down(): void
+    {
+        $this->migrator->deleteIfExists('ai.default_model');
+    }
+};

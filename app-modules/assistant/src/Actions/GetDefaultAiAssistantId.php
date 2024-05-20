@@ -38,8 +38,8 @@ namespace AdvisingApp\Assistant\Actions;
 
 use App\Enums\Feature;
 use Illuminate\Support\Facades\Gate;
+use AdvisingApp\Ai\Settings\AISettings;
 use AdvisingApp\Assistant\Models\AiAssistant;
-use AdvisingApp\IntegrationAI\Settings\AISettings;
 
 class GetDefaultAiAssistantId
 {

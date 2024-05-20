@@ -34,12 +34,33 @@
 </COPYRIGHT>
 */
 
-return [
-    'gpt_35_base_uri' => env('OPEN_AI_GPT_35_BASE_URI'),
+namespace AdvisingApp\Ai\Http\Controllers;
 
-    'gpt_35_api_key' => env('OPEN_AI_GPT_35_API_KEY'),
+use Throwable;
+use Illuminate\Http\JsonResponse;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Actions\RetryMessage;
+use AdvisingApp\Ai\Http\Requests\RetryMessageRequest;
 
-    'gpt_35_api_version' => env('OPEN_AI_GPT_35_API_VERSION'),
+class RetryMessageController
+{
+    public function __invoke(RetryMessageRequest $request, AiThread $thread): JsonResponse
+    {
+        try {
+            $responseContent = app(RetryMessage::class)(
+                $thread,
+                $request->validated('content'),
+            );
+        } catch (Throwable $exception) {
+            report($exception);
 
-    'gpt_35_model' => env('OPEN_AI_GPT_35_MODEL'),
-];
+            return response()->json([
+                'message' => 'The assistant has failed. Please retry later.',
+            ], 500);
+        }
+
+        return response()->json([
+            'content' => $responseContent,
+        ]);
+    }
+}

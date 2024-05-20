@@ -34,12 +34,8 @@
 </COPYRIGHT>
 */
 
-return [
-    'gpt_35_base_uri' => env('OPEN_AI_GPT_35_BASE_URI'),
+namespace AdvisingApp\Ai\Exceptions;
 
-    'gpt_35_api_key' => env('OPEN_AI_GPT_35_API_KEY'),
+use Exception;
 
-    'gpt_35_api_version' => env('OPEN_AI_GPT_35_API_VERSION'),
-
-    'gpt_35_model' => env('OPEN_AI_GPT_35_MODEL'),
-];
+class MessageResponseTimeoutException extends Exception {}
