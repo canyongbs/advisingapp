@@ -34,38 +34,49 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\Campaign\Filament\Blocks;
 
-return new class () extends Migration {
-    public function up(): void
+use Carbon\CarbonImmutable;
+use Filament\Forms\Components\Select;
+use AdvisingApp\MeetingCenter\Models\Event;
+use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
+
+class EventBlock extends CampaignActionBlock
+{
+    protected function setUp(): void
     {
-        DB::table('permission_groups')
-            ->insert([
-                'id' => $groupId = Str::orderedUuid(),
-                'name' => 'Display Settings',
-                'created_at' => now(),
-            ]);
+        parent::setUp();
 
-        DB::table('permissions')
-            ->insert([
-                'id' => Str::orderedUuid(),
-                'name' => 'display_settings.manage',
-                'guard_name' => 'web',
-                'group_id' => $groupId,
-                'created_at' => now(),
-            ]);
+        $this->label = 'Invite Event';
+
+        $this->model(Event::class);
+
+        $this->schema($this->createFields());
     }
 
-    public function down(): void
+    public function generateFields(string $fieldPrefix = ''): array
     {
-        DB::table('permissions')
-            ->where('name', 'display_settings.manage')
-            ->delete();
-
-        DB::table('permission_groups')
-            ->where('name', 'Display Settings')
-            ->delete();
+        return [
+            Select::make($fieldPrefix . 'event')
+                ->label('Select Event')
+                ->options(Event::where('ends_at', '>=', now())->pluck('title', 'id')->toArray())
+                ->nullable()
+                ->searchable(),
+            DateTimePicker::make($fieldPrefix . 'execute_at')
+                ->label('When should the journey step be executed?')
+                ->columnSpanFull()
+                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+                ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
+                ->lazy()
+                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
+                ->required()
+                ->minDate(now()),
+        ];
     }
-};
+
+    public static function type(): string
+    {
+        return 'event';
+    }
+}

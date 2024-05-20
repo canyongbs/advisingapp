@@ -36,10 +36,15 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
+use Exception;
 use App\Models\BaseModel;
+use App\Settings\LicenseSettings;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\MeetingCenter\Jobs\CreateEventAttendees;
 
 /**
  * @mixin IdeHelperEvent
@@ -70,5 +75,40 @@ class Event extends BaseModel
     public function attendees(): HasMany
     {
         return $this->hasMany(EventAttendee::class, 'event_id');
+    }
+
+    public static function executeFromCampaignAction(CampaignAction $action): bool|string
+    {
+        if (app(LicenseSettings::class)->data->addons->eventManagement) {
+            try {
+                DB::beginTransaction();
+
+                $event = Event::find($action->data['event']);
+
+                $user = $action->campaign->user;
+
+                $emails = $action
+                    ->campaign
+                    ->caseload
+                    ->retrieveRecords()
+                    ->whereNotNull('email')
+                    ->whereNotIn('email', $event->attendees()->pluck('email')->toArray())
+                    ->pluck('email')
+                    ->toArray();
+
+                dispatch(new CreateEventAttendees($event, $emails, $user));
+
+                DB::commit();
+
+                return true;
+            } catch (Exception $e) {
+                DB::rollBack();
+
+                return $e->getMessage();
+            }
+        }
+
+        return false;
+        // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
     }
 }

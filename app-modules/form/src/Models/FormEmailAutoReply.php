@@ -77,6 +77,8 @@ class FormEmailAutoReply extends BaseModel
     public function getMergeData(Student|Prospect|null $author): array
     {
         return [
+            'student first name' => $author->getAttribute($author->displayFirstNameKey()),
+            'student last name' => $author->getAttribute($author->displayLastNameKey()),
             'student full name' => $author->getAttribute($author->displayNameKey()),
             'student email' => $author->getAttribute($author->displayEmailKey()),
         ];

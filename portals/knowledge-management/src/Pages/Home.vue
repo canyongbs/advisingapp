@@ -70,11 +70,10 @@ const debounceSearch = debounce((value) => {
 
     post(props.searchUrl, {
         body: JSON.stringify({ search: value }),
-    })
-        .then((response) => {
-            searchResults.value = response.data;
-            loadingResults.value = false;
-        });
+    }).then((response) => {
+        searchResults.value = response.data;
+        loadingResults.value = false;
+    });
 }, 500);
 
 watch(searchQuery, (value) => {
@@ -95,9 +94,7 @@ function debounce(func, delay) {
 </script>
 
 <template>
-    <div
-        class="sticky top-0 z-40 flex flex-col items-center bg-gray-50"
-    >
+    <div class="top-0 z-40 flex flex-col items-center bg-gray-50">
         <button class="w-full p-3 lg:hidden" type="button" @click="$emit('sidebarOpened')">
             <span class="sr-only">Open sidebar</span>
 

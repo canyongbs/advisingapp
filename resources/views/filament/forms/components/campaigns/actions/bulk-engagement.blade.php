@@ -32,14 +32,19 @@
 </COPYRIGHT>
 --}}
 @php
-    use Carbon\Carbon;
     use AdvisingApp\Campaign\Settings\CampaignSettings;
+    use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
     use AdvisingApp\Engagement\Models\EngagementBatch;
+    use Carbon\Carbon;
 @endphp
 
 <x-filament::fieldset>
     <x-slot name="label">
-        Email or Text
+        @if ($action['delivery_method'] === EngagementDeliveryMethod::Email->value)
+            Email
+        @else
+            Text Message
+        @endif
     </x-slot>
 
     <dl class="max-w-md divide-y divide-gray-200 text-gray-900 dark:divide-gray-700 dark:text-white">
@@ -51,10 +56,12 @@
                 </x-filament::badge>
             </dd>
         </div>
-        <div class="flex flex-col pt-3">
-            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Subject</dt>
-            <dd class="text-sm font-semibold">{{ $action['subject'] }}</dd>
-        </div>
+        @if (isset($action['subject']))
+            <div class="flex flex-col pt-3">
+                <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Subject</dt>
+                <dd class="text-sm font-semibold">{{ $action['subject'] }}</dd>
+            </div>
+        @endif
         @if ($action['body'])
             <div class="flex flex-col pt-3">
                 <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Body</dt>

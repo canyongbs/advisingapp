@@ -61,6 +61,8 @@ class EngagementSmsBodyField
         return TiptapEditor::make('body')
             ->label('Body')
             ->mergeTags([
+                'student first name',
+                'student last name',
                 'student full name',
                 'student email',
             ])
