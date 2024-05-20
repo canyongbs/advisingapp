@@ -36,7 +36,12 @@
 
 namespace AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Pages;
 
+use Throwable;
 use Filament\Forms\Form;
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Enums\AiApplication;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource;
 use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
@@ -48,5 +53,36 @@ class CreateAiAssistant extends CreateRecord
     public function form(Form $form): Form
     {
         return resolve(AiAssistantForm::class)->form($form);
+    }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['application'] = AiApplication::PersonalAssistant;
+        $data['model'] ??= AiModel::OpenAiGpt35;
+
+        return $data;
+    }
+
+    protected function handleRecordCreation(array $data): Model
+    {
+        $record = new ($this->getModel())($data);
+
+        try {
+            $record->model->getService()->createAssistant($record);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            Notification::make()
+                ->title('Could not create assistant')
+                ->body('We failed to connect to the AI service. Support has been notified about this problem. Please try again later.')
+                ->danger()
+                ->send();
+
+            $this->halt();
+        }
+
+        $record->save();
+
+        return $record;
     }
 }

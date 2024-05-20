@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

@@ -36,7 +36,10 @@
 
 namespace AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Pages;
 
+use Throwable;
 use Filament\Forms\Form;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource;
 use AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
@@ -48,5 +51,28 @@ class EditAiAssistant extends EditRecord
     public function form(Form $form): Form
     {
         return resolve(AiAssistantForm::class)->form($form);
+    }
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        $record->fill($data);
+
+        try {
+            $record->model->getService()->updateAssistant($record);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            Notification::make()
+                ->title('Could not save assistant')
+                ->body('We failed to connect to the AI service. Support has been notified about this problem. Please try again later.')
+                ->danger()
+                ->send();
+
+            $this->halt();
+        }
+
+        $record->save();
+
+        return $record;
     }
 }

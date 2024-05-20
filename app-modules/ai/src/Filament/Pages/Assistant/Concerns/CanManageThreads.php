@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
 use App\Models\User;
 use Filament\Forms\Get;
+use Filament\Forms\Form;
 use Filament\Actions\Action;
 use Livewire\Attributes\Locked;
 use AdvisingApp\Team\Models\Team;
@@ -48,11 +49,11 @@ use AdvisingApp\Ai\Models\AiThread;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Alignment;
+use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Support\Enums\ActionSize;
 use AdvisingApp\Ai\Actions\CreateThread;
 use AdvisingApp\Ai\Actions\DeleteThread;
 use Filament\Forms\Components\TextInput;
-use AdvisingApp\Assistant\Models\AiAssistant;
 use AdvisingApp\Assistant\Enums\AssistantChatShareVia;
 use AdvisingApp\Assistant\Jobs\ShareAssistantChatsJob;
 use AdvisingApp\Assistant\Enums\AssistantChatShareWith;
@@ -63,9 +64,84 @@ trait CanManageThreads
     #[Locked]
     public ?AiThread $thread = null;
 
+    public $assistantSwitcher = null;
+
+    #[Computed]
+    public function customAssistants(): array
+    {
+        return AiAssistant::query()
+            ->where('application', static::APPLICATION)
+            ->where('is_default', false)
+            ->orderBy('name')
+            ->withCount('threads')
+            ->withCount('upvotes')
+            ->get()
+            ->mapWithKeys(fn (AiAssistant $assistant) => [
+                $assistant->id => view('ai::components.options.assistant', ['assistant' => $assistant])->render(),
+            ])
+            ->all();
+    }
+
+    public function assistantSwitcherForm(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Select::make('assistantSwitcher')
+                    ->label('Choose an assistant')
+                    ->placeholder('Search for an assistant')
+                    ->searchPrompt('Search')
+                    ->hiddenLabel()
+                    ->allowHtml()
+                    ->options(fn (): array => $this->customAssistants)
+                    ->getSearchResultsUsing(function (string $search): array {
+                        return AiAssistant::query()
+                            ->where('application', static::APPLICATION)
+                            ->where('is_default', false)
+                            ->where('name', 'like', "%{$search}%")
+                            ->orderBy('name')
+                            ->withCount('threads')
+                            ->withCount('upvotes')
+                            ->get()
+                            ->mapWithKeys(fn (AiAssistant $assistant) => [
+                                $assistant->id => view('ai::components.options.assistant', ['assistant' => $assistant])->render(),
+                            ])
+                            ->all();
+                    })
+                    ->live()
+                    ->afterStateUpdated(function ($component, $state) {
+                        if (blank($state)) {
+                            return;
+                        }
+
+                        $this->createThread(
+                            AiAssistant::query()
+                                ->where('application', static::APPLICATION)
+                                ->find($state),
+                        );
+
+                        $component->state(null);
+
+                        $this->dispatch('close-assistant-search');
+                    })
+                    ->searchable(),
+            ]);
+    }
+
+    public function getCanManageThreadsForms(): array
+    {
+        return [
+            'assistantSwitcherForm',
+        ];
+    }
+
+    public function toggleAssistantUpvote(): void
+    {
+        $this->thread->assistant->toggleUpvote();
+    }
+
     public function createThread(?AiAssistant $assistant = null): void
     {
-        if (! $assistant->exists) {
+        if (! $assistant?->exists) {
             // Prevent dependency injection of an empty assistant model.
             $assistant = null;
         }

@@ -68,6 +68,8 @@ class AiAssistant extends BaseModel implements HasMedia
         'model' => AiModel::class,
     ];
 
+    protected ?bool $isUpvoted = null;
+
     public function threads(): HasMany
     {
         return $this->hasMany(AiThread::class, 'assistant_id');
@@ -76,5 +78,35 @@ class AiAssistant extends BaseModel implements HasMedia
     public function upvotes(): HasMany
     {
         return $this->hasMany(AiAssistantUpvote::class, 'assistant_id');
+    }
+
+    public function isUpvoted(): bool
+    {
+        return $this->isUpvoted ??= $this->upvotes()->whereBelongsTo(auth()->user())->exists();
+    }
+
+    public function upvote(): void
+    {
+        $this->upvotes()->create(['user_id' => auth()->id()]);
+
+        $this->isUpvoted = true;
+    }
+
+    public function cancelUpvote(): void
+    {
+        $this->upvotes()->whereBelongsTo(auth()->user())->delete();
+
+        $this->isUpvoted = false;
+    }
+
+    public function toggleUpvote(): void
+    {
+        if ($this->isUpvoted()) {
+            $this->cancelUpvote();
+
+            return;
+        }
+
+        $this->upvote();
     }
 }

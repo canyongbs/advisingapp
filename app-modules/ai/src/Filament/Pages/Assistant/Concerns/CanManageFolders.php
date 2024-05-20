@@ -204,9 +204,11 @@ trait CanManageFolders
             ], Response::HTTP_NOT_FOUND);
         }
 
-        $folder = auth()->user()->aiThreadFolders()
-            ->where('application', static::APPLICATION)
-            ->find($folderId);
+        $folder = filled($folderId) ?
+            auth()->user()->aiThreadFolders()
+                ->where('application', static::APPLICATION)
+                ->find($folderId) :
+            null;
 
         try {
             $this->moveThread($thread, $folder);

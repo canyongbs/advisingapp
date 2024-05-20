@@ -59,7 +59,7 @@ trait CanManagePromptLibrary
             ->orderByDesc('upvotes_count')
             ->get()
             ->mapWithKeys(fn (Prompt $prompt) => [
-                $prompt->id => view('assistant::filament.pages.personal-assistant.prompt-option', ['prompt' => $prompt])->render(),
+                $prompt->id => view('ai::components.options.prompt', ['prompt' => $prompt])->render(),
             ])
             ->all();
 

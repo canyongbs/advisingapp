@@ -31,7 +31,15 @@
 
 </COPYRIGHT>
 --}}
+<div>
+    {{ $assistant->name }}
 
-<x-filament-panels::page full-height="true">
-    <x-ai::assistant />
-</x-filament-panels::page>
+    ({{ $assistant->upvotes_count }} {{ str('Like')->plural($assistant->upvotes_count) }} |
+    {{ $assistant->threads_count }} {{ str('Use')->plural($assistant->threads_count) }})
+</div>
+
+@if (filled($assistant->description))
+    <div class="text-xs text-gray-600 dark:text-gray-300">
+        {{ $assistant->description }}
+    </div>
+@endif

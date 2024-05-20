@@ -37,8 +37,8 @@
 namespace AdvisingApp\Ai\Actions;
 
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Assistant\Models\AiAssistant;
 
 class CreateThread
 {

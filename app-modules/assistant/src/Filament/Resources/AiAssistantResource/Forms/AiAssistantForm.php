@@ -37,10 +37,12 @@
 namespace AdvisingApp\Assistant\Filament\Resources\AiAssistantResource\Forms;
 
 use Filament\Forms\Form;
+use AdvisingApp\Ai\Enums\AiModel;
+use Filament\Forms\Components\Select;
+use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use AdvisingApp\Assistant\Enums\AiAssistantType;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class AiAssistantForm
@@ -55,10 +57,14 @@ class AiAssistantForm
                     ->collection('avatar')
                     ->visibility('private')
                     ->avatar()
-                    ->required()
                     ->columnSpanFull(),
                 TextInput::make('name')
                     ->required(),
+                Select::make('model')
+                    ->options(AiModel::class)
+                    ->required()
+                    ->visible(app()->hasDebugModeEnabled())
+                    ->hiddenOn('edit'),
                 Textarea::make('description')
                     ->columnSpanFull()
                     ->required(),
@@ -67,16 +73,10 @@ class AiAssistantForm
                     ->schema([
                         Textarea::make('instructions')
                             ->helperText('Instructions are used to provide context to the AI Assistant on how to respond to user queries.')
-                            ->required(),
+                            ->required()
+                            ->maxLength(fn (?AiAssistant $record): int => ($record?->model ?? AiModel::OpenAiGpt35)->getService()->getMaxAssistantInstructionsLength()),
                         Textarea::make('knowledge'),
                     ]),
             ]);
-    }
-
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        $data['type'] = AiAssistantType::Custom;
-
-        return $data;
     }
 }
