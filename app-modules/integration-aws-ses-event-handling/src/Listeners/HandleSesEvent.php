@@ -34,51 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Actions;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesEvent;
+use AdvisingApp\Notification\Actions\UpdateOutboundDeliverableEmailStatus;
+use AdvisingApp\Notification\Events\CouldNotFindOutboundDeliverableFromExternalReference;
 
-class UpdateOutboundDeliverableStatus implements ShouldQueue
+abstract class HandleSesEvent implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function __construct(
-        public OutboundDeliverable $deliverable,
-        public TwilioStatusCallbackData $data
-    ) {}
-
-    public function handle(): void
+    public function handle(SesEvent $event): void
     {
-        $data = UpdateDeliveryStatusData::from([
-            'data' => $this->data,
-        ]);
+        $outboundDeliverable = OutboundDeliverable::query()
+            ->where('external_reference_id', data_get($event->data->mail->tags, 'outbound_deliverable_id'))
+            ->first();
 
-        $this->deliverable->driver()->updateDeliveryStatus($data);
+        if (is_null($outboundDeliverable)) {
+            CouldNotFindOutboundDeliverableFromExternalReference::dispatch($event->data);
 
-        if ($this->deliverable->related) {
-            if (method_exists($this->deliverable->related, 'driver')) {
-                $this->deliverable->related->driver()->updateDeliveryStatus($data);
-            }
+            return;
         }
-    }
 
-    public function middleware(): array
-    {
-        return [
-            (new WithoutOverlapping($this->deliverable->id))
-                ->releaseAfter(30)
-                ->expireAfter(300),
-        ];
+        UpdateOutboundDeliverableEmailStatus::dispatch($outboundDeliverable, $event->data);
     }
 }

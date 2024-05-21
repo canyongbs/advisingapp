@@ -34,6 +34,6 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling\Events;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
-class SesOpenEvent extends SesEvent {}
+class HandleSesRejectEvent extends HandleSesEvent {}

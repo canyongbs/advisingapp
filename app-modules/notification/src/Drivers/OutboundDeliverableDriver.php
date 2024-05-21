@@ -36,9 +36,10 @@
 
 namespace AdvisingApp\Notification\Drivers;
 
-use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
+use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
+use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
 
 interface OutboundDeliverableDriver
 {
-    public function updateDeliveryStatus(UpdateDeliveryStatusData $data): void;
+    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void;
 }

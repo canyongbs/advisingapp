@@ -39,7 +39,8 @@ namespace AdvisingApp\Engagement\Drivers;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
 use AdvisingApp\Engagement\Actions\EngagementEmailChannelDelivery;
-use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
+use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
+use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
 
 class EngagementEmailDriver implements EngagementDeliverableDriver
 {
@@ -47,7 +48,7 @@ class EngagementEmailDriver implements EngagementDeliverableDriver
         protected EngagementDeliverable $deliverable
     ) {}
 
-    public function updateDeliveryStatus(UpdateDeliveryStatusData $data): void {}
+    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void {}
 
     public function jobForDelivery(): QueuedEngagementDelivery
     {

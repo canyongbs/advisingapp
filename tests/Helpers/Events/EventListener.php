@@ -34,6 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling\Events;
+namespace Tests\Helpers\Events;
 
-class SesOpenEvent extends SesEvent {}
+use Illuminate\Support\Facades\Event;
+
+function testEventIsBeingListenedTo(string $event, string $listener)
+{
+    test("{$event} is being listened to by {$listener}", function () use ($event, $listener) {
+        Event::fake();
+
+        Event::assertListening(
+            $event,
+            $listener
+        );
+    });
+}

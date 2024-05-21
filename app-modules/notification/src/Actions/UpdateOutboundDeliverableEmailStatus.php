@@ -34,6 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling\Events;
+namespace AdvisingApp\Notification\Actions;
 
-class SesOpenEvent extends SesEvent {}
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
+use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
+
+class UpdateOutboundDeliverableEmailStatus implements ShouldQueue
+{
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public function __construct(
+        public OutboundDeliverable $deliverable,
+        public SesEventData $data
+    ) {}
+
+    public function handle(): void
+    {
+        $data = UpdateEmailDeliveryStatusData::from([
+            'data' => $this->data,
+        ]);
+
+        $this->deliverable->driver()->updateDeliveryStatus($data);
+
+        if ($this->deliverable->related) {
+            if (method_exists($this->deliverable->related, 'driver')) {
+                $this->deliverable->related->driver()->updateDeliveryStatus($data);
+            }
+        }
+    }
+
+    public function middleware(): array
+    {
+        return [
+            (new WithoutOverlapping($this->deliverable->id))
+                ->releaseAfter(30)
+                ->expireAfter(300),
+        ];
+    }
+}

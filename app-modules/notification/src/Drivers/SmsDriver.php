@@ -37,8 +37,9 @@
 namespace AdvisingApp\Notification\Drivers;
 
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
+use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
+use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
 
 class SmsDriver implements OutboundDeliverableDriver
 {
@@ -46,7 +47,7 @@ class SmsDriver implements OutboundDeliverableDriver
         protected OutboundDeliverable $deliverable
     ) {}
 
-    public function updateDeliveryStatus(UpdateDeliveryStatusData $data): void
+    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void
     {
         /** @var TwilioStatusCallbackData $updateData */
         $updateData = $data->data;

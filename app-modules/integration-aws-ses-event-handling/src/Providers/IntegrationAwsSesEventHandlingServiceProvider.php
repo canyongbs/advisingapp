@@ -42,7 +42,23 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesSendEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRejectEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesDeliveryEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesComplaintEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesSubscriptionEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesDeliveryDelayEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesSendEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesBounceEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesRejectEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRenderingFailureEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesDeliveryEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesComplaintEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\IntegrationAwsSesEventHandlingPlugin;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesSubscriptionEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesDeliveryDelayEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesRenderingFailureEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\EnsureSesConfigurationSetHeadersArePresent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Registries\IntegrationAwsSesEventHandlingRbacRegistry;
 
@@ -67,6 +83,46 @@ class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
         Event::listen(
             MessageSending::class,
             EnsureSesConfigurationSetHeadersArePresent::class
+        );
+
+        Event::listen(
+            SesBounceEvent::class,
+            HandleSesBounceEvent::class
+        );
+
+        Event::listen(
+            SesComplaintEvent::class,
+            HandleSesComplaintEvent::class
+        );
+
+        Event::listen(
+            SesDeliveryEvent::class,
+            HandleSesDeliveryEvent::class
+        );
+
+        Event::listen(
+            SesDeliveryDelayEvent::class,
+            HandleSesDeliveryDelayEvent::class
+        );
+
+        Event::listen(
+            SesRejectEvent::class,
+            HandleSesRejectEvent::class
+        );
+
+        Event::listen(
+            SesRenderingFailureEvent::class,
+            HandleSesRenderingFailureEvent::class
+        );
+
+        Event::listen(
+            SesSendEvent::class,
+            HandleSesSendEvent::class
+        );
+
+        Event::listen(
+            SesSubscriptionEvent::class,
+            HandleSesSubscriptionEvent::class
         );
     }
 }

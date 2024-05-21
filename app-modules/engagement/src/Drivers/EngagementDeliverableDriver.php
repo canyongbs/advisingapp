@@ -37,11 +37,12 @@
 namespace AdvisingApp\Engagement\Drivers;
 
 use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
-use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
+use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
+use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
 
 interface EngagementDeliverableDriver
 {
-    public function updateDeliveryStatus(UpdateDeliveryStatusData $data): void;
+    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void;
 
     public function jobForDelivery(): QueuedEngagementDelivery;
 

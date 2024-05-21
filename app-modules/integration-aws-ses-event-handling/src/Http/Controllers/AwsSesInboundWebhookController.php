@@ -59,14 +59,16 @@ class AwsSesInboundWebhookController extends Controller
 
         match ($data->eventType) {
             'Bounce' => SesBounceEvent::dispatch($data),
+            // TODO We're not currently handling this - determine if we need to
+            'Click' => SesClickEvent::dispatch($data),
             'Complaint' => SesComplaintEvent::dispatch($data),
             'Delivery' => SesDeliveryEvent::dispatch($data),
-            'Send' => SesSendEvent::dispatch($data),
-            'Reject' => SesRejectEvent::dispatch($data),
-            'Open' => SesOpenEvent::dispatch($data),
-            'Click' => SesClickEvent::dispatch($data),
-            'Rendering Failure' => SesRenderingFailureEvent::dispatch($data),
             'DeliveryDelay' => SesDeliveryDelayEvent::dispatch($data),
+            // TODO We're not currently handling this - determine if we need to
+            'Open' => SesOpenEvent::dispatch($data),
+            'Reject' => SesRejectEvent::dispatch($data),
+            'RenderingFailure' => SesRenderingFailureEvent::dispatch($data),
+            'Send' => SesSendEvent::dispatch($data),
             'Subscription' => SesSubscriptionEvent::dispatch($data),
             default => throw new Exception('Unknown AWS SES event type'),
         };

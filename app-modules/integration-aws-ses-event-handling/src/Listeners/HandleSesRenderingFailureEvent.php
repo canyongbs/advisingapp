@@ -34,14 +34,6 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\DataTransferObjects;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
-use Spatie\LaravelData\Data;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
-
-class UpdateDeliveryStatusData extends Data
-{
-    public function __construct(
-        public TwilioStatusCallbackData $data
-    ) {}
-}
+class HandleSesRenderingFailureEvent extends HandleSesEvent {}
