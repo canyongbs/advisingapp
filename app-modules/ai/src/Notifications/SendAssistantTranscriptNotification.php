@@ -37,20 +37,20 @@
 namespace AdvisingApp\Ai\Notifications;
 
 use App\Models\User;
+use AdvisingApp\Ai\Models\AiThread;
 use App\Models\NotificationSetting;
-use AdvisingApp\Assistant\Models\AssistantChat;
+use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 
 class SendAssistantTranscriptNotification extends BaseNotification implements EmailNotification
 {
     use EmailChannelTrait;
 
     public function __construct(
-        protected AssistantChat $chat,
+        protected AiThread $thread,
         protected User $sender
     ) {}
 
@@ -63,34 +63,33 @@ class SendAssistantTranscriptNotification extends BaseNotification implements Em
         $senderIsNotifiable = $this->sender->is($notifiable);
 
         if ($senderIsNotifiable) {
-            $message->subject("Assistant Chat Transcript: {$this->chat->name}")
-                ->line('Here is a copy of your chat with Canyon:');
+            $message->subject("Assistant Chat Transcript: {$this->thread->name}")
+                ->line("Here is a copy of your chat with {$this->thread->assistant->name}:");
         } else {
-            $message->subject("An Assistant Chat Transcript has been shared with you: {$this->chat->name}")
-                ->line("Here is a copy of {$this->sender->name}'s chat with Canyon:");
+            $message->subject("An Assistant Chat Transcript has been shared with you: {$this->thread->name}")
+                ->line("Here is a copy of {$this->sender->name}'s chat with {$this->thread->assistant->name}:");
         }
 
-        $this->chat
-            ->messages
-            ->each(function ($chatMessage) use ($senderIsNotifiable, $message) {
-                if ($chatMessage->from !== AIChatMessageFrom::User) {
-                    return $message->line(str(nl2br($chatMessage->message))
-                        ->prepend('**Canyon:** ')
+        $this->thread->messages()->with('user')->get()
+            ->each(function (AiMessage $threadMessage) use ($senderIsNotifiable, $message) {
+                if (! $threadMessage->user) {
+                    return $message->line(str(nl2br($threadMessage->content))
+                        ->prepend("**{$this->thread->assistant->name}:** ")
                         ->markdown()
                         ->sanitizeHtml()
                         ->toHtmlString());
                 }
 
-                if ($senderIsNotifiable) {
-                    return $message->line(str(nl2br($chatMessage->message))
+                if ($senderIsNotifiable && $threadMessage->user()->is($this->sender)) {
+                    return $message->line(str(nl2br($threadMessage->content))
                         ->prepend('**You:** ')
                         ->markdown()
                         ->sanitizeHtml()
                         ->toHtmlString());
                 }
 
-                return $message->line(str(nl2br($chatMessage->message))
-                    ->prepend("**{$this->sender->name}:** ")
+                return $message->line(str(nl2br($threadMessage->content))
+                    ->prepend("**{$threadMessage->user->name}:** ")
                     ->markdown()
                     ->sanitizeHtml()
                     ->toHtmlString());
