@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Timeline\Listeners;
 
-use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
 
@@ -44,7 +43,6 @@ class RemoveRecordFromTimeline
 {
     public function handle(TimelineableRecordDeleted $event): void
     {
-        /** @var Model $entity */
         $entity = $event->entity;
 
         cache()->forget("timeline.synced.{$entity->getMorphClass()}.{$entity->getKey()}");
