@@ -9,7 +9,8 @@
         "destination": ["recipient@example.com"],
         "headersTruncated": false,
         "tags": {
-            "ses:configuration-set": ["ConfigSet"]
+            "ses:configuration-set": ["ConfigSet"],
+            "outbound_deliverable_id": ["xxx"]
         }
     },
     "failure": {

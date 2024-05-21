@@ -1,76 +1,75 @@
 {
-  "eventType": "Subscription",
-  "mail": {
-    "timestamp": "2022-01-12T01:00:14.340Z",
-    "source": "sender@example.com",
-    "sourceArn": "arn:aws:ses:us-east-1:123456789012:identity/sender@example.com",
-    "sendingAccountId": "123456789012",
-    "messageId": "EXAMPLEe4bccb684-777bc8de-afa7-4970-92b0-f515137b1497-000000",
-    "destination": ["recipient@example.com"],
-    "headersTruncated": false,
-    "headers": [
-      {
-        "name": "From",
-        "value": "sender@example.com"
-      },
-      {
-        "name": "To",
-        "value": "recipient@example.com"
-      },
-      {
-        "name": "Subject",
-        "value": "Message sent from Amazon SES"
-      },
-      {
-        "name": "MIME-Version",
-        "value": "1.0"
-      },
-      {
-        "name": "Content-Type",
-        "value": "text/html; charset=UTF-8"
-      },
-      {
-        "name": "Content-Transfer-Encoding",
-        "value": "7bit"
-      }
-    ],
-    "commonHeaders": {
-      "from": ["sender@example.com"],
-      "to": ["recipient@example.com"],
-      "messageId": "EXAMPLEe4bccb684-777bc8de-afa7-4970-92b0-f515137b1497-000000",
-      "subject": "Message sent from Amazon SES"
-    },
-    "tags": {
-      "ses:operation": ["SendEmail"],
-      "ses:configuration-set": ["ConfigSet"],
-      "ses:source-ip": ["192.0.2.0"],
-      "ses:from-domain": ["example.com"],
-      "ses:caller-identity": ["ses_user"],
-      "myCustomTag1": ["myCustomValue1"],
-      "myCustomTag2": ["myCustomValue2"]
-    }
-  },
-  "subscription": {
-    "contactList": "ContactListName",
-    "timestamp": "2022-01-12T01:00:17.910Z",
-    "source": "UnsubscribeHeader",
-    "newTopicPreferences": {
-      "unsubscribeAll": true,
-      "topicSubscriptionStatus": [
-        {
-          "topicName": "ExampleTopicName",
-          "subscriptionStatus": "OptOut"
+    "eventType": "Subscription",
+    "mail": {
+        "timestamp": "2022-01-12T01:00:14.340Z",
+        "source": "sender@example.com",
+        "sourceArn": "arn:aws:ses:us-east-1:123456789012:identity/sender@example.com",
+        "sendingAccountId": "123456789012",
+        "messageId": "EXAMPLEe4bccb684-777bc8de-afa7-4970-92b0-f515137b1497-000000",
+        "destination": ["recipient@example.com"],
+        "headersTruncated": false,
+        "headers": [
+            {
+                "name": "From",
+                "value": "sender@example.com"
+            },
+            {
+                "name": "To",
+                "value": "recipient@example.com"
+            },
+            {
+                "name": "Subject",
+                "value": "Message sent from Amazon SES"
+            },
+            {
+                "name": "MIME-Version",
+                "value": "1.0"
+            },
+            {
+                "name": "Content-Type",
+                "value": "text/html; charset=UTF-8"
+            },
+            {
+                "name": "Content-Transfer-Encoding",
+                "value": "7bit"
+            }
+        ],
+        "commonHeaders": {
+            "from": ["sender@example.com"],
+            "to": ["recipient@example.com"],
+            "messageId": "EXAMPLEe4bccb684-777bc8de-afa7-4970-92b0-f515137b1497-000000",
+            "subject": "Message sent from Amazon SES"
+        },
+        "tags": {
+            "ses:operation": ["SendEmail"],
+            "ses:configuration-set": ["ConfigSet"],
+            "ses:source-ip": ["192.0.2.0"],
+            "ses:from-domain": ["example.com"],
+            "ses:caller-identity": ["ses_user"],
+            "outbound_deliverable_id": ["xxx"]
         }
-      ]
     },
-    "oldTopicPreferences": {
-      "unsubscribeAll": false,
-      "topicSubscriptionStatus": [
-        {
-          "topicName": "ExampleTopicName",
-          "subscriptionStatus": "OptOut"
+    "subscription": {
+        "contactList": "ContactListName",
+        "timestamp": "2022-01-12T01:00:17.910Z",
+        "source": "UnsubscribeHeader",
+        "newTopicPreferences": {
+            "unsubscribeAll": true,
+            "topicSubscriptionStatus": [
+                {
+                    "topicName": "ExampleTopicName",
+                    "subscriptionStatus": "OptOut"
+                }
+            ]
+        },
+        "oldTopicPreferences": {
+            "unsubscribeAll": false,
+            "topicSubscriptionStatus": [
+                {
+                    "topicName": "ExampleTopicName",
+                    "subscriptionStatus": "OptOut"
+                }
+            ]
         }
-      ]
     }
-  }
 }
