@@ -81,7 +81,6 @@ class SesEventData extends Data
     {
         return match ($this->eventType) {
             'Bounce' => 'The email was not successfully delivered due to a permanent rejection from the recipient mail server.',
-            'Complaint' => 'The email was successfully delivered, but it was marked as spam.',
             'Delivery' => 'The email was successfully delivered.',
             'DeliveryDelay' => 'The email was not successfully delivered due to a temporary issue.',
             'Reject' => 'The email was not attempted to be delivered due to unsafe contents.',
