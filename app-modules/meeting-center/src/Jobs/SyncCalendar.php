@@ -53,7 +53,10 @@ class SyncCalendar implements ShouldQueue, ShouldBeUnique
     use Queueable;
     use SerializesModels;
 
-    public function __construct(protected Calendar $calendar) {}
+    public function __construct(protected Calendar $calendar)
+    {
+        $this->onQueue(config('meeting-center.queue'));
+    }
 
     public function uniqueId(): string
     {

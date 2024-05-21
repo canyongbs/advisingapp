@@ -52,7 +52,10 @@ class RefreshCalendarRefreshToken implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(public Calendar $calendar) {}
+    public function __construct(public Calendar $calendar)
+    {
+        $this->onQueue(config('meeting-center.queue'));
+    }
 
     public function handle(): void
     {

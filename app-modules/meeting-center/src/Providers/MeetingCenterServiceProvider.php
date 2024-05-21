@@ -64,6 +64,8 @@ class MeetingCenterServiceProvider extends ServiceProvider
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new MeetingCenterPlugin()));
+
+        app('config')->set('meeting-center', require base_path('app-modules/meeting-center/config/meeting-center.php'));
     }
 
     public function boot(): void
