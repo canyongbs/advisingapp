@@ -40,7 +40,7 @@ use OpenAI\Client;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Settings\AISettings;
+use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
@@ -167,7 +167,7 @@ abstract class BaseOpenAiService implements AiService
     {
         $limit = 32768;
 
-        $limit -= strlen(resolve(AISettings::class)->prompt_system_context);
+        $limit -= strlen(resolve(AiSettings::class)->prompt_system_context);
         $limit -= strlen(auth()->user()->getDynamicContext());
         $limit -= strlen(static::FORMATTING_INSTRUCTIONS);
 

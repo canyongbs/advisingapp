@@ -39,7 +39,7 @@ namespace AdvisingApp\Ai\Actions;
 use App\Models\Tenant;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Ai\Settings\AISettings;
+use AdvisingApp\Ai\Settings\AiSettings;
 
 class GetDefaultAiAssistant
 {
@@ -55,7 +55,7 @@ class GetDefaultAiAssistant
         }
 
         $tenant = Tenant::current();
-        $settings = app(AISettings::class);
+        $settings = app(AiSettings::class);
 
         $assistant = new AiAssistant();
         $assistant->name = "{$tenant->name} AI Assistant";

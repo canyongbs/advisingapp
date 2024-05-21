@@ -60,6 +60,10 @@ use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
+/**
+ * @property-read array $customAssistants
+ * @property-read EloquentCollection $threadsWithoutAFolder
+ */
 trait CanManageThreads
 {
     #[Locked]

@@ -42,6 +42,10 @@ use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 
+/**
+ * @property-read ConsentAgreement $consentAgreement
+ * @property-read bool $isConsented
+ */
 trait CanManageConsent
 {
     #[Computed]

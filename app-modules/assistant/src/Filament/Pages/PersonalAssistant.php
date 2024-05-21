@@ -46,9 +46,6 @@ use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
 
-/**
- * @property EloquentCollection $chats
- */
 class PersonalAssistant extends Page
 {
     use CanManageConsent;

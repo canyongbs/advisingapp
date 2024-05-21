@@ -39,7 +39,7 @@ namespace AdvisingApp\Ai\Filament\Pages;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
-use AdvisingApp\Ai\Settings\AISettings;
+use AdvisingApp\Ai\Settings\AiSettings;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -47,7 +47,7 @@ use App\Filament\Clusters\ArtificialIntelligence;
 
 class ManageAiSettings extends SettingsPage
 {
-    protected static string $settings = AISettings::class;
+    protected static string $settings = AiSettings::class;
 
     protected static ?string $title = 'Manage AI Settings';
 
