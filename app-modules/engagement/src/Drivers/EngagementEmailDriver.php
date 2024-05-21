@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Drivers;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
 use AdvisingApp\Engagement\Actions\EngagementEmailChannelDelivery;
+use AdvisingApp\Engagement\Drivers\Contracts\EngagementDeliverableDriver;
 use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
 use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
 

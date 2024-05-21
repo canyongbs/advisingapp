@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Drivers;
+namespace AdvisingApp\Notification\Drivers\Contracts;
 
 use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
 use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;

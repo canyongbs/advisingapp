@@ -44,8 +44,8 @@ use AdvisingApp\Engagement\Drivers\EngagementSmsDriver;
 use AdvisingApp\Engagement\Drivers\EngagementEmailDriver;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
-use AdvisingApp\Engagement\Drivers\EngagementDeliverableDriver;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Engagement\Drivers\Contracts\EngagementDeliverableDriver;
 
 /**
  * @mixin IdeHelperEngagementDeliverable

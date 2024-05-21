@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Drivers;
+namespace AdvisingApp\Engagement\Drivers\Contracts;
 
 use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
 use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
