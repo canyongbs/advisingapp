@@ -35,6 +35,13 @@ COPY ./docker/s6-overlay/scripts/ /etc/s6-overlay/scripts/
 COPY docker/s6-overlay/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
 COPY ./docker/s6-overlay/user/ /etc/s6-overlay/s6-rc.d/user/contents.d/
 
+ARG TOTAL_QUEUE_WORKERS=10
+
+RUN for run in $(seq 2 "$TOTAL_QUEUE_WORKERS"); do \
+    cp -r "/etc/s6-overlay/s6-rc.d/laravel-queue" "/etc/s6-overlay/s6-rc.d/laravel-queue-$run"; \
+    cp "/etc/s6-overlay/s6-rc.d/user/contents.d/laravel-queue" "/etc/s6-overlay/s6-rc.d/user/contents.d/laravel-queue-$run"; \
+done
+
 COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./docker/nginx/site-opts.d /etc/nginx/site-opts.d
 
