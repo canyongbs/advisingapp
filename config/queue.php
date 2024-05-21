@@ -122,4 +122,6 @@ return [
     ],
 
     'landlord_queue' => env('LANDLORD_SQS_QUEUE', 'landlord'),
+
+    'outbound_communication_queue' => env('OUTBOUND_COMMUNICATION_QUEUE', env('SQS_QUEUE', 'default'))
 ];
