@@ -40,7 +40,6 @@ use App\Models\User;
 use Filament\Pages\Page;
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
