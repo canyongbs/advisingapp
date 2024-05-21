@@ -47,4 +47,9 @@ class ImportCsvOverride extends ImportCsv
     {
         return null;
     }
+
+    public function getJobQueue(): ?string
+    {
+        return config('queue.import_export_queue');
+    }
 }
