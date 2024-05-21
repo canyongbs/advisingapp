@@ -57,11 +57,9 @@ class EmailDriver implements OutboundDeliverableDriver
             'external_status' => $updateData->eventType,
         ]);
 
-        // TODO Derive error message from the event data
-
         match ($this->deliverable->external_status) {
-            'delivery' => $this->deliverable->markDeliverySuccessful(),
-            'bounce', 'complaint', 'renderingFailure', 'reject', 'subscription', 'deliveryDelay' => $this->deliverable->markDeliveryFailed($updateData->errorMessage ?? null),
+            'Delivery' => $this->deliverable->markDeliverySuccessful(),
+            'Bounce', 'Complaint', 'RenderingFailure', 'Reject', 'Subscription', 'DeliveryDelay' => $this->deliverable->markDeliveryFailed($updateData->errorMessageFromType() ?? null),
             default => null,
         };
     }
