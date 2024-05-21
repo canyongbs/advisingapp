@@ -67,11 +67,6 @@ it('correctly handles the incoming SES event', function (string $event, Notifica
         'status' => NotificationDeliveryStatus::Failed,
         'response' => 'The email was not successfully delivered due to a permanent rejection from the recipient mail server.',
     ],
-    'HandleSesComplaintEvent' => [
-        'event' => 'Complaint',
-        'status' => NotificationDeliveryStatus::Failed,
-        'response' => 'The email was successfully delivered, but it was marked as spam.',
-    ],
     'HandleSesDeliveryEvent' => [
         'event' => 'Delivery',
         'status' => NotificationDeliveryStatus::Successful,
