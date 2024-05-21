@@ -45,6 +45,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 
+/**
+ * @mixin IdeHelperAiAssistant
+ */
 class AiAssistant extends BaseModel implements HasMedia
 {
     use CanAddAssistantLicenseGlobalScope;

@@ -46,7 +46,7 @@ return new class () extends Migration {
             $table->string('message_id')->nullable();
             $table->text('content');
             $table->text('context')->nullable();
-            $table->json('request')->nullable();
+            $table->text('request')->nullable();
             $table->foreignUuid('thread_id')->constrained('ai_threads')->cascadeOnDelete();
             $table->foreignUuid('user_id')->nullable()->constrained();
             $table->timestamps();
@@ -56,6 +56,6 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('ai_thread_messages');
+        Schema::dropIfExists('ai_messages');
     }
 };

@@ -69,6 +69,11 @@ class AiMessageLogResource extends Resource
 
     protected static ?string $cluster = UsageAuditing::class;
 
+    public static function canAccess(): bool
+    {
+        return false;
+    }
+
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist

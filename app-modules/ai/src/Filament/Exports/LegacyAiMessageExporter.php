@@ -34,50 +34,48 @@
 </COPYRIGHT>
 */
 
-namespace Database\Migrations\Concerns;
+namespace AdvisingApp\Ai\Filament\Exports;
 
-use Closure;
-use Illuminate\Support\Facades\DB;
+use Filament\Actions\Exports\Exporter;
+use Filament\Actions\Exports\ExportColumn;
+use Filament\Actions\Exports\Models\Export;
+use AdvisingApp\Ai\Models\LegacyAiMessageLog;
+use Filament\Actions\Exports\Enums\ExportFormat;
 
-trait CanModifySettings
+class LegacyAiMessageExporter extends Exporter
 {
-    /**
-     * @param Closure(mixed): mixed $modifyPayload
-     */
-    public function updateSettings(string $group, string $name, Closure $modifyPayload, bool $isEncrypted = false): void
+    protected static ?string $model = LegacyAiMessageLog::class;
+
+    public static function getColumns(): array
     {
-        $payload = $this->getSetting($group, $name, $isEncrypted);
-
-        $payload = $modifyPayload($payload);
-
-        if ($isEncrypted) {
-            $payload = encrypt($payload);
-        }
-
-        $payload = json_encode($payload);
-
-        DB::table('settings')
-            ->where('group', $group)
-            ->where('name', $name)
-            ->update([
-                'payload' => $payload,
-                'updated_at' => now(),
-            ]);
+        return [
+            ExportColumn::make('message'),
+            ExportColumn::make('metadata')
+                ->listAsJson(),
+            ExportColumn::make('user.name'),
+            ExportColumn::make('request')
+                ->listAsJson(),
+            ExportColumn::make('sent_at'),
+            ExportColumn::make('created_at'),
+        ];
     }
 
-    public function getSetting(string $group, string $name, bool $isEncrypted = false): mixed
+    public static function getCompletedNotificationBody(Export $export): string
     {
-        $payload = DB::table('settings')
-            ->where('group', $group)
-            ->where('name', $name)
-            ->value('payload');
+        $body = 'Your assistant chat message log export has completed and ' . number_format($export->successful_rows) . ' ' . str('row')->plural($export->successful_rows) . ' exported.';
 
-        $payload = json_decode($payload);
-
-        if ($isEncrypted) {
-            $payload = decrypt($payload);
+        if ($failedRowsCount = $export->getFailedRowsCount()) {
+            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to export.';
         }
 
-        return $payload;
+        return $body;
+    }
+
+    /**
+     * Using CSV format causes issues with the JSON commas not being properly escaped by league/csv.
+     */
+    public function getFormats(): array
+    {
+        return [ExportFormat::Xlsx];
     }
 }
