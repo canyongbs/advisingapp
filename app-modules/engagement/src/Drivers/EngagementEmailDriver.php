@@ -49,7 +49,21 @@ class EngagementEmailDriver implements EngagementDeliverableDriver
         protected EngagementDeliverable $deliverable
     ) {}
 
-    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void {}
+    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void
+    {
+        /** @var SesEventData $updateData */
+        $updateData = $data->data;
+
+        $this->deliverable->update([
+            'external_status' => $updateData->eventType,
+        ]);
+
+        match ($this->deliverable->external_status) {
+            'Delivery' => $this->deliverable->markDeliverySuccessful(),
+            'Bounce', 'Complaint', 'DeliveryDelay', 'Reject', 'RenderingFailure' => $this->deliverable->markDeliveryFailed($updateData->errorMessageFromType() ?? null),
+            default => null,
+        };
+    }
 
     public function jobForDelivery(): QueuedEngagementDelivery
     {
