@@ -59,7 +59,7 @@ class EmailDriver implements OutboundDeliverableDriver
 
         match ($this->deliverable->external_status) {
             'Delivery' => $this->deliverable->markDeliverySuccessful(),
-            'Bounce', 'Complaint', 'DeliveryDelay', 'Reject', 'RenderingFailure' => $this->deliverable->markDeliveryFailed($updateData->errorMessageFromType() ?? null),
+            'Bounce', 'DeliveryDelay', 'Reject', 'RenderingFailure' => $this->deliverable->markDeliveryFailed($updateData->errorMessageFromType() ?? null),
             default => null,
         };
     }
