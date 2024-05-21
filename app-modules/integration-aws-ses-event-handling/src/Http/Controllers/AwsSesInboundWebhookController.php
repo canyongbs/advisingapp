@@ -57,14 +57,14 @@ class AwsSesInboundWebhookController extends Controller
     {
         $data = SesEventData::fromRequest($request);
 
+        // We are currently not handling the "Click", "Complaint", "Open", "Send", or "Subscription" event types
+        // Since we are only looking to identify whether or not email delivery was successful/failed
         match ($data->eventType) {
             'Bounce' => SesBounceEvent::dispatch($data),
-            // TODO We're not currently handling this - determine if we need to
             'Click' => SesClickEvent::dispatch($data),
             'Complaint' => SesComplaintEvent::dispatch($data),
             'Delivery' => SesDeliveryEvent::dispatch($data),
             'DeliveryDelay' => SesDeliveryDelayEvent::dispatch($data),
-            // TODO We're not currently handling this - determine if we need to
             'Open' => SesOpenEvent::dispatch($data),
             'Reject' => SesRejectEvent::dispatch($data),
             'RenderingFailure' => SesRenderingFailureEvent::dispatch($data),

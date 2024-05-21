@@ -45,13 +45,11 @@ use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRejectEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesDeliveryEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesComplaintEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesDeliveryDelayEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesBounceEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesRejectEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRenderingFailureEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesDeliveryEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesComplaintEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\IntegrationAwsSesEventHandlingPlugin;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesDeliveryDelayEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesRenderingFailureEvent;
@@ -84,11 +82,6 @@ class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
         Event::listen(
             SesBounceEvent::class,
             HandleSesBounceEvent::class
-        );
-
-        Event::listen(
-            SesComplaintEvent::class,
-            HandleSesComplaintEvent::class
         );
 
         Event::listen(
