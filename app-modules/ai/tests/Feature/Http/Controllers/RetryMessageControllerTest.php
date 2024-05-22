@@ -52,6 +52,7 @@ it('retries sending a message to a thread', function () {
 
     $responseContent = AiMessage::factory()->make()->content;
 
+    /** @phpstan-ignore-next-line */
     $this->mock(
         RetryMessage::class,
         fn (MockInterface $mock) => $mock
@@ -80,6 +81,7 @@ it('retries sending a message to a thread', function () {
 it('returns a message if the assistant fails', function () {
     asSuperAdmin();
 
+    /** @phpstan-ignore-next-line */
     $this->mock(
         RetryMessage::class,
         fn (MockInterface $mock) => $mock
