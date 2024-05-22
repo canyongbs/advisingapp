@@ -47,6 +47,10 @@ class AiMessageObserver
             return;
         }
 
+        if (! $message->request) {
+            return;
+        }
+
         LegacyAiMessageLog::create([
             'message' => $message->content,
             'metadata' => [
