@@ -142,11 +142,11 @@ document.addEventListener('alpine:init', () => {
         },
 
         render: function () {
-            if (! this.$refs.chatContainer) {
+            if (!this.$refs.chatContainer) {
                 return;
             }
 
-            if (! this.$refs.messageInput) {
+            if (!this.$refs.messageInput) {
                 return;
             }
 
