@@ -224,7 +224,7 @@ trait CanManageThreads
                     ->where('application', static::APPLICATION)
                     ->find($data['folder']);
 
-                if ($folder) {
+                if (! $folder) {
                     unset($this->threadsWithoutAFolder);
 
                     return;

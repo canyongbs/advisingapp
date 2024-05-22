@@ -40,42 +40,32 @@ use Illuminate\Support\Str;
 
 use function Tests\asSuperAdmin;
 
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Team\Models\Team;
 use App\Filament\Pages\Dashboard;
+use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Support\Facades\Bus;
+use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\PromptUse;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Models\PromptUpvote;
-use AdvisingApp\Ai\Enums\AiThreadShareVia;
-use AdvisingApp\Ai\Jobs\ShareAiThreadsJob;
+use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
-use AdvisingApp\Assistant\Models\AiAssistant;
-use AdvisingApp\Assistant\Models\AssistantChat;
-use AdvisingApp\Assistant\Enums\AiAssistantType;
+use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
+use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
-
-use function Spatie\PestPluginTestTime\testTime;
-
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
-use AdvisingApp\Assistant\Models\AssistantChatFolder;
-use AdvisingApp\Assistant\Models\AssistantChatMessage;
 use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant;
-use AdvisingApp\IntegrationAI\Client\Contracts\AiChatClient;
-use AdvisingApp\IntegrationAI\Client\Playground\AzureOpenAI;
-use AdvisingApp\IntegrationAI\Exceptions\ContentFilterException;
-use AdvisingApp\IntegrationAI\Exceptions\TokensExceededException;
-use OpenAI\Testing\Responses\Fixtures\Threads\ThreadResponseFixture;
-use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
-use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\Chat;
-use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
 
 use function Pest\Laravel\{actingAs,
     assertDatabaseHas,
     assertDatabaseMissing,
     assertNotSoftDeleted,
-    assertSoftDeleted,
-    mock};
+    assertSoftDeleted
+};
 
 $setUp = function (
     bool $hasUserConsented = true,
@@ -93,16 +83,19 @@ $setUp = function (
         $user->consentTo($consentAgreement);
     }
 
-    AiAssistant::factory()->create([
-        'type' => AiAssistantType::Default,
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiApplication::PersonalAssistant,
+        'is_default' => true,
+        'model' => AiModel::Test,
     ]);
 
-    $chat = AssistantChat::factory()
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
         ->for($user)
-        ->has(AssistantChatMessage::factory()->count(5), 'messages')
+        ->has(AiMessage::factory()->count(5), 'messages')
         ->create();
 
-    return ['user' => $user, 'consentAgreement' => $consentAgreement, 'chat' => $chat];
+    return ['user' => $user, 'assistant' => $assistant, 'consentAgreement' => $consentAgreement, 'thread' => $thread];
 };
 
 it('renders successfully', function () {
@@ -140,8 +133,7 @@ it('will show a consent modal if the user has not yet agreed to the terms and co
     );
 
     Livewire::test(PersonalAssistant::class)
-        ->call('determineIfConsentWasGiven')
-        ->assertViewHas('consentedToTerms', false)
+        ->assertSet('isConsented', false)
         ->assertSee($consentAgreement->title)
         ->assertSeeHtml(str($consentAgreement->description)->markdown()->sanitizeHtml()->toHtmlString())
         ->assertSeeHtml(str($consentAgreement->body)->markdown()->sanitizeHtml()->toHtmlString());
@@ -151,8 +143,7 @@ it('will show the AI Assistant interface if the user has agreed to the terms and
     ['consentAgreement' => $consentAgreement] = $setUp();
 
     Livewire::test(PersonalAssistant::class)
-        ->call('determineIfConsentWasGiven')
-        ->assertViewHas('consentedToTerms', true)
+        ->assertSet('isConsented', true)
         ->assertDontSee($consentAgreement->title)
         ->assertDontSee($consentAgreement->description)
         ->assertDontSee($consentAgreement->body);
@@ -178,14 +169,12 @@ it('will allow a user to access the AI Assistant interface if they agree to the 
     $livewire = Livewire::test(PersonalAssistant::class);
 
     $livewire
-        ->call('determineIfConsentWasGiven')
-        ->assertViewHas('consentedToTerms', false)
+        ->assertSet('isConsented', false)
         ->assertSee($consentAgreement->title)
         ->assertSeeHtml(str($consentAgreement->description)->markdown()->sanitizeHtml()->toHtmlString())
         ->assertSeeHtml(str($consentAgreement->body)->markdown()->sanitizeHtml()->toHtmlString());
 
     $livewire
-        ->set('consentedToTerms', true)
         ->call('confirmConsent')
         ->assertDontSee($consentAgreement->title)
         ->assertDontSee($consentAgreement->description)
@@ -194,497 +183,171 @@ it('will allow a user to access the AI Assistant interface if they agree to the 
     expect($user->hasConsentedTo($consentAgreement))->toBeTrue();
 });
 
-it('will automatically set the current chat when it does not have a folder', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
+it('will automatically set the current thread when it does not have a folder', function () use ($setUp) {
+    ['thread' => $thread] = $setUp();
 
-    $livewire = Livewire::test(PersonalAssistant::class);
-
-    expect($livewire->chat->toArray())->toEqual(
-        (new Chat(
-            id: $chat->id,
-            messages: ChatMessage::collection($chat->messages),
-            assistantId: $chat->assistant->assistant_id,
-            threadId: null,
-        ))->toArray(),
-    );
+    Livewire::test(PersonalAssistant::class)
+        ->call('loadFirstThread')
+        ->assertSet('thread.id', $thread->id);
 });
 
-it('will automatically set the current chat to the most recent without a folder', function () use ($setUp) {
-    ['user' => $user] = $setUp();
+it('will automatically set the current thread to the most recently updated one without a folder', function () use ($setUp) {
+    ['user' => $user, 'assistant' => $assistant] = $setUp();
 
-    $newerChat = AssistantChat::factory()
+    $newerThread = AiThread::factory()
+        ->for($assistant, 'assistant')
         ->for($user)
-        ->has(AssistantChatMessage::factory()->count(5), 'messages')
+        ->has(AiMessage::factory()->count(5), 'messages')
         ->create([
-            'created_at' => now()->addMinute(),
+            'updated_at' => now()->addMinute(),
         ]);
 
-    $livewire = Livewire::test(PersonalAssistant::class);
-
-    expect($livewire->chat->toArray())->toEqual(
-        (new Chat(
-            id: $newerChat->id,
-            messages: ChatMessage::collection($newerChat->messages),
-            assistantId: $newerChat->assistant->assistant_id,
-            threadId: null,
-        ))->toArray(),
-    );
+    Livewire::test(PersonalAssistant::class)
+        ->call('loadFirstThread')
+        ->assertSet('thread.id', $newerThread->id);
 });
 
-it('will not automatically set the current chat to one with a folder', function () use ($setUp) {
-    ['user' => $user, 'chat' => $chat] = $setUp();
+it('will not automatically set the current thread to one with a folder', function () use ($setUp) {
+    ['user' => $user, 'thread' => $thread] = $setUp();
 
-    $chat->folder()->associate(AssistantChatFolder::factory()->for($user)->create());
-    $chat->save();
+    $thread->folder()->associate(AiThreadFolder::factory()->for($user)->create([
+        'application' => AiApplication::PersonalAssistant,
+    ]));
+    $thread->save();
 
-    $livewire = Livewire::test(PersonalAssistant::class);
-
-    expect($livewire->chat->toArray())->toEqual(
-        (new Chat(
-            id: null,
-            messages: ChatMessage::collection([]),
-            assistantId: $chat->assistant->assistant_id,
-            threadId: null,
-        ))->toArray(),
-    );
+    Livewire::test(PersonalAssistant::class)
+        ->call('loadFirstThread')
+        ->assertNotSet('thread.id', $thread->id);
 });
 
-it('will not automatically set the current chat to one belonging to another user', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
+it('will not automatically set the current thread to one belonging to another user', function () use ($setUp) {
+    ['thread' => $thread] = $setUp();
 
-    $chat->user()->associate(User::factory()->create());
-    $chat->save();
+    $thread->user()->associate(User::factory()->create());
+    $thread->save();
 
-    $livewire = Livewire::test(PersonalAssistant::class);
-
-    expect($livewire->chat->toArray())
-        ->toEqual(
-            (new Chat(
-                id: null,
-                messages: ChatMessage::collection([]),
-                assistantId: $chat->assistant->assistant_id,
-                threadId: null,
-            ))->toArray(),
-        );
+    Livewire::test(PersonalAssistant::class)
+        ->call('loadFirstThread')
+        ->assertNotSet('thread.id', $thread->id);
 });
 
-it('can send message to an existing chat', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
+it('can save threads', function () use ($setUp) {
+    ['user' => $user, 'assistant' => $assistant] = $setUp();
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for($user)
+        ->create([
+            'name' => null,
+        ]);
 
     Livewire::test(PersonalAssistant::class)
-        ->set('showCurrentResponse', false)
-        ->set('renderError', true)
-        ->set('error', Str::random())
-        ->set('message', $message = AssistantChatMessage::factory()->make()->message)
-        ->call('sendMessage')
-        ->assertSet('showCurrentResponse', true)
-        ->assertSet('renderError', false)
-        ->assertSet('error', null)
-        ->assertSet('prompt', $message)
-        ->assertSet('message', null);
-
-    assertDatabaseHas(AssistantChatMessage::class, [
-        'assistant_chat_id' => $chat->getKey(),
-        'message' => $message,
-        'from' => AIChatMessageFrom::User,
-    ]);
-});
-
-it('can send message to a new chat', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
-
-    $chat->delete();
-
-    testTime()->freeze();
-    $createdAt = now()->toDateTimeString();
-
-    $livewire = Livewire::test(PersonalAssistant::class)
-        ->set('showCurrentResponse', false)
-        ->set('renderError', true)
-        ->set('error', Str::random())
-        ->set('message', $message = AssistantChatMessage::factory()->make()->message)
-        ->call('sendMessage')
-        ->assertHasNoErrors()
-        ->assertSet('showCurrentResponse', true)
-        ->assertSet('renderError', false)
-        ->assertSet('error', null)
-        ->assertSet('prompt', $message)
-        ->assertSet('message', null);
-
-    expect($livewire->chat->toArray())
-        ->toEqual(
-            (new Chat(
-                id: null,
-                messages: ChatMessage::collection([
-                    new ChatMessage(
-                        message: $message,
-                        from: AIChatMessageFrom::User,
-                        created_at: $createdAt,
-                    ),
-                ]),
-                assistantId: $chat->assistant->assistant_id,
-                threadId: null,
-            ))->toArray(),
-        );
-});
-
-it('can not send a blank message', function () use ($setUp) {
-    $setUp();
-
-    Livewire::test(PersonalAssistant::class)
-        ->set('message', null)
-        ->call('sendMessage')
-        ->assertHasErrors(['message' => 'required']);
-});
-
-it('can ask the AI chat client in an existing chat', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
-
-    $aiChatClient = mock(AiChatClient::class, fn () => AzureOpenAI::class);
-    $aiChatClient->expects('provideDynamicContext')->once()->andReturnSelf();
-    $aiChatClient->expects('createThread')->once()->andReturn(ThreadResponseFixture::class);
-    $aiChatClient->expects('ask')->once()->andReturn($response = AssistantChatMessage::factory()->make()->message);
-
-    Livewire::test(PersonalAssistant::class)
-        ->set('showCurrentResponse', true)
-        ->assertSet('currentResponse', null)
-        ->call('ask')
-        ->assertSet('renderError', false)
-        ->assertSet('showCurrentResponse', false)
-        ->assertSet('currentResponse', null);
-
-    assertDatabaseHas(AssistantChatMessage::class, [
-        'assistant_chat_id' => $chat->getKey(),
-        'message' => $response,
-        'from' => AIChatMessageFrom::Assistant,
-    ]);
-})->skip();
-
-it('can ask the AI chat client in a new chat', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
-
-    $chat->delete();
-
-    $aiChatClient = mock(AiChatClient::class, fn () => AzureOpenAI::class);
-    $aiChatClient->expects('provideDynamicContext')->once()->andReturnSelf();
-    $aiChatClient->expects('createThread')->once()->andReturn(ThreadResponseFixture::class);
-    $aiChatClient->expects('ask')->once()->andReturn($response = AssistantChatMessage::factory()->make()->message);
-
-    $livewire = Livewire::test(PersonalAssistant::class)
-        ->set('showCurrentResponse', true)
-        ->assertSet('currentResponse', null)
-        ->call('ask')
-        ->assertSet('renderError', false)
-        ->assertSet('showCurrentResponse', false)
-        ->assertSet('currentResponse', null);
-
-    expect($livewire->chat->toArray())
-        ->toEqual(
-            (new Chat(
-                id: null,
-                messages: ChatMessage::collection([
-                    new ChatMessage(
-                        message: $response,
-                        from: AIChatMessageFrom::Assistant,
-                    ),
-                ]),
-                assistantId: $chat->assistant->assistant_id,
-                threadId: null,
-            ))->toArray(),
-        );
-})->skip();
-
-it('can ask the AI chat client and render a content filter error', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
-
-    $chat->delete();
-
-    $aiChatClient = mock(AiChatClient::class, fn () => AzureOpenAI::class);
-    $aiChatClient->expects('provideDynamicContext')->once()->andReturnSelf();
-    $aiChatClient->expects('createThread')->once()->andReturn(ThreadResponseFixture::class);
-    $aiChatClient->expects('ask')->once()->andThrow(new ContentFilterException($error = Str::random()));
-
-    Livewire::test(PersonalAssistant::class)
-        ->set('showCurrentResponse', true)
-        ->assertSet('currentResponse', null)
-        ->call('ask')
-        ->assertSet('renderError', true)
-        ->assertSet('error', $error)
-        ->assertSet('showCurrentResponse', false)
-        ->assertSet('currentResponse', null);
-})->skip();
-
-it('can ask the AI chat client and render a tokens exceeded error', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
-
-    $chat->delete();
-
-    $aiChatClient = mock(AiChatClient::class, fn () => AzureOpenAI::class);
-    $aiChatClient->expects('provideDynamicContext')->once()->andReturnSelf();
-    $aiChatClient->expects('ask')->once()->andThrow(new TokensExceededException($error = Str::random()));
-
-    Livewire::test(PersonalAssistant::class)
-        ->set('showCurrentResponse', true)
-        ->assertSet('currentResponse', null)
-        ->call('ask')
-        ->assertSet('renderError', true)
-        ->assertSet('error', $error)
-        ->assertSet('showCurrentResponse', false)
-        ->assertSet('currentResponse', null);
-})->skip();
-
-it('can save chats', function () use ($setUp) {
-    ['user' => $user, 'chat' => $chat] = $setUp();
-
-    $chat->delete();
-
-    Livewire::test(PersonalAssistant::class)
-        ->set('message', $message = AssistantChatMessage::factory()->make()->message)
-        ->call('sendMessage')
-        ->callAction('saveChat', [
+        ->call('selectThread', $thread)
+        ->callAction('saveThread', [
             'name' => $name = Str::random(),
         ])
         ->assertHasNoActionErrors();
 
-    assertDatabaseHas(AssistantChat::class, [
+    assertDatabaseHas(AiThread::class, [
+        'id' => $thread->getKey(),
         'user_id' => $user->getKey(),
         'name' => $name,
     ]);
-
-    $chat = AssistantChat::query()->latest()->first();
-
-    assertDatabaseHas(AssistantChatMessage::class, [
-        'assistant_chat_id' => $chat->getKey(),
-        'message' => $message,
-        'from' => AIChatMessageFrom::User,
-    ]);
 });
 
-it('can save chats into a folder', function () use ($setUp) {
-    ['user' => $user, 'chat' => $chat] = $setUp();
+it('can save threads into a folder', function () use ($setUp) {
+    ['user' => $user, 'assistant' => $assistant] = $setUp();
 
-    $chat->delete();
-
-    $folder = AssistantChatFolder::factory()
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
         ->for($user)
-        ->create();
+        ->create([
+            'name' => null,
+        ]);
 
-    testTime()->freeze();
-    $createdAt = now()->toDateTimeString();
+    $folder = AiThreadFolder::factory()
+        ->for($user)
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
-    $livewire = Livewire::test(PersonalAssistant::class)
-        ->set('message', $message = AssistantChatMessage::factory()->make()->message)
-        ->call('sendMessage')
-        ->callAction('saveChat', [
+    Livewire::test(PersonalAssistant::class)
+        ->call('selectThread', $thread)
+        ->callAction('saveThread', [
             'name' => $name = Str::random(),
             'folder' => $folder->getKey(),
         ])
         ->assertHasNoActionErrors();
 
-    assertDatabaseHas(AssistantChat::class, [
-        'user_id' => $user->getKey(),
+    assertDatabaseHas(AiThread::class, [
+        'id' => $thread->getKey(),
         'name' => $name,
-        'assistant_chat_folder_id' => $folder->getKey(),
-    ]);
-
-    $chat = AssistantChat::query()->latest()->first();
-
-    expect($livewire->chat->toArray())
-        ->toEqual(
-            (new Chat(
-                id: $chat->id,
-                messages: ChatMessage::collection([
-                    new ChatMessage(
-                        message: $message,
-                        from: AIChatMessageFrom::User,
-                        created_at: $createdAt,
-                    ),
-                ]),
-                assistantId: $chat->assistant->assistant_id,
-                threadId: null,
-            ))->toArray(),
-        );
-
-    assertDatabaseHas(AssistantChatMessage::class, [
-        'assistant_chat_id' => $chat->getKey(),
-        'message' => $message,
-        'from' => AIChatMessageFrom::User,
+        'folder_id' => $folder->getKey(),
     ]);
 });
 
-it('cannot save chats without a name', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
+it('cannot save threads without a name', function () use ($setUp) {
+    ['user' => $user, 'assistant' => $assistant] = $setUp();
 
-    $chat->delete();
+    AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for($user)
+        ->create([
+            'name' => null,
+        ]);
 
     Livewire::test(PersonalAssistant::class)
-        ->set('message', $message = AssistantChatMessage::factory()->make()->message)
-        ->call('sendMessage')
-        ->callAction('saveChat')
+        ->call('loadFirstThread')
+        ->callAction('saveThread')
         ->assertHasActionErrors(['name' => 'required']);
 });
 
-it('respects message creation time when saving chats', function () use ($setUp) {
-    ['user' => $user, 'chat' => $chat] = $setUp();
+it('can select a thread', function () use ($setUp) {
+    ['user' => $user, 'assistant' => $assistant, 'thread' => $thread] = $setUp();
 
-    $chat->delete();
-
-    // Given that a message was sent at a specific time
-    testTime()->freeze();
-    $createdAt = now()->toDateTimeString();
-
-    $personalAssistant = Livewire::test(PersonalAssistant::class)
-        ->set('message', $message = AssistantChatMessage::factory()->make()->message)
-        ->call('sendMessage');
-
-    // And time has elapsed since this message was sent
-    testTime()->addMinute();
-    testTime()->unfreeze();
-
-    // When the chat is saved
-    $personalAssistant
-        ->callAction('saveChat', [
-            'name' => $name = Str::random(),
-        ])
-        ->assertHasNoActionErrors();
-
-    assertDatabaseHas(AssistantChat::class, [
-        'user_id' => $user->getKey(),
-        'name' => $name,
-    ]);
-
-    $chat = AssistantChat::query()->latest()->first();
-
-    // Then the message should have been saved with the correct creation time
-    assertDatabaseHas(AssistantChatMessage::class, [
-        'assistant_chat_id' => $chat->getKey(),
-        'message' => $message,
-        'from' => AIChatMessageFrom::User,
-        'created_at' => $createdAt,
-    ]);
-})->skip();
-
-it('can select a chat', function () use ($setUp) {
-    ['user' => $user, 'chat' => $chat] = $setUp();
-
-    $newChat = AssistantChat::factory()
+    $newThread = AiThread::factory()
+        ->for($assistant, 'assistant')
         ->for($user)
-        ->for(AssistantChatFolder::factory()->for($user)->create(), 'folder')
-        ->has(AssistantChatMessage::factory()->count(5), 'messages')
+        ->for(AiThreadFolder::factory()->for($user)->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]), 'folder')
+        ->has(AiMessage::factory()->count(5), 'messages')
         ->create();
 
-    $livewire = Livewire::test(PersonalAssistant::class);
-
-    expect($livewire->chat->toArray())
-        ->toEqual(
-            (new Chat(
-                id: $chat->id,
-                messages: ChatMessage::collection($chat->messages),
-                assistantId: $chat->assistant->assistant_id,
-                threadId: null,
-            ))->toArray(),
-        );
-
-    $livewire
-        ->set('message', AssistantChatMessage::factory()->make()->message)
-        ->set('prompt', AssistantChatMessage::factory()->make()->message)
-        ->set('renderError', true)
-        ->set('error', Str::random())
-        ->call('selectChat', $newChat->getKey())
-        ->assertSet('message', null)
-        ->assertSet('prompt', null)
-        ->assertSet('renderError', false)
-        ->assertSet('error', null);
-
-    expect($livewire->chat->toArray())
-        ->toEqual(
-            (new Chat(
-                id: $newChat->id,
-                messages: ChatMessage::collection($newChat->messages),
-                assistantId: $newChat->assistant->assistant_id,
-                threadId: null,
-            ))->toArray(),
-        );
+    Livewire::test(PersonalAssistant::class)
+        ->call('loadFirstThread')
+        ->assertSet('thread.id', $thread->id)
+        ->call('selectThread', $newThread)
+        ->assertSet('thread.id', $newThread->id);
 });
 
-it('can not select a chat belonging to a different user', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
+it('can not select a thread belonging to a different user', function () use ($setUp) {
+    ['assistant' => $assistant, 'thread' => $thread] = $setUp();
 
-    $newChat = AssistantChat::factory()
+    $newThread = AiThread::factory()
+        ->for($assistant, 'assistant')
         ->for($otherUser = User::factory()->create())
-        ->for(AssistantChatFolder::factory()->for($otherUser)->create(), 'folder')
-        ->has(AssistantChatMessage::factory()->count(5), 'messages')
+        ->for(AiThreadFolder::factory()->for($otherUser)->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]), 'folder')
+        ->has(AiMessage::factory()->count(5), 'messages')
         ->create();
 
-    $livewire = Livewire::test(PersonalAssistant::class);
-
-    expect($livewire->chat->toArray())
-        ->toEqual(
-            (new Chat(
-                id: $chat->id,
-                messages: ChatMessage::collection($chat->messages),
-                assistantId: $chat->assistant->assistant_id,
-                threadId: null,
-            ))->toArray(),
-        );
-
-    $livewire
-        ->set('message', $message = AssistantChatMessage::factory()->make()->message)
-        ->set('prompt', $prompt = AssistantChatMessage::factory()->make()->message)
-        ->set('renderError', true)
-        ->set('error', $error = Str::random())
-        ->call('selectChat', $newChat->getKey())
-        ->assertSet('message', $message)
-        ->assertSet('prompt', $prompt)
-        ->assertSet('renderError', true)
-        ->assertSet('error', $error);
-
-    expect($livewire->chat->toArray())
-        ->toEqual(
-            (new Chat(
-                id: $chat->id,
-                messages: ChatMessage::collection($chat->messages),
-                assistantId: $chat->assistant->assistant_id,
-                threadId: null,
-            ))->toArray(),
-        );
+    Livewire::test(PersonalAssistant::class)
+        ->call('loadFirstThread')
+        ->assertSet('thread.id', $thread->id)
+        ->call('selectThread', $newThread)
+        ->assertNotFound();
 });
 
-it('can start a new chat', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
+it('can start a new thread', function () use ($setUp) {
+    ['thread' => $thread] = $setUp();
 
-    $livewire = Livewire::test(PersonalAssistant::class);
-
-    expect($livewire->chat->toArray())
-        ->toEqual(
-            (new Chat(
-                id: $chat->id,
-                messages: ChatMessage::collection($chat->messages),
-                assistantId: $chat->assistant->assistant_id,
-                threadId: null,
-            ))->toArray(),
-        );
-
-    $livewire
-        ->set('message', AssistantChatMessage::factory()->make()->message)
-        ->set('prompt', AssistantChatMessage::factory()->make()->message)
-        ->set('renderError', true)
-        ->set('error', Str::random())
-        ->call('newChat')
-        ->assertSet('message', null)
-        ->assertSet('prompt', null)
-        ->assertSet('renderError', false)
-        ->assertSet('error', null);
-
-    expect($livewire->chat->toArray())
-        ->toEqual(
-            (new Chat(
-                id: null,
-                messages: ChatMessage::collection([]),
-                assistantId: $chat->assistant->assistant_id,
-                threadId: null,
-            ))->toArray(),
-        );
+    Livewire::test(PersonalAssistant::class)
+        ->call('loadFirstThread')
+        ->assertSet('thread.id', $thread->id)
+        ->call('createThread')
+        ->assertNotSet('thread.id', $thread->id);
 });
 
 it('can create a folder', function () use ($setUp) {
@@ -692,11 +355,11 @@ it('can create a folder', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('newFolder', [
-            'name' => $name = AssistantChatFolder::factory()->make()->name,
+            'name' => $name = AiThreadFolder::factory()->make()->name,
         ])
         ->assertHasNoActionErrors();
 
-    assertDatabaseHas(AssistantChatFolder::class, [
+    assertDatabaseHas(AiThreadFolder::class, [
         'user_id' => $user->getKey(),
         'name' => $name,
     ]);
@@ -715,9 +378,11 @@ it('can not create a folder without a name', function () use ($setUp) {
 it('can not create a folder with a duplicate name', function () use ($setUp) {
     ['user' => $user] = $setUp();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for($user)
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('newFolder', [
@@ -729,9 +394,11 @@ it('can not create a folder with a duplicate name', function () use ($setUp) {
 it('can create a folder with a duplicate name but belonging to a different user', function () use ($setUp) {
     ['user' => $user] = $setUp();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for(User::factory()->create())
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('newFolder', [
@@ -739,7 +406,7 @@ it('can create a folder with a duplicate name but belonging to a different user'
         ])
         ->assertHasNoActionErrors();
 
-    assertDatabaseHas(AssistantChatFolder::class, [
+    assertDatabaseHas(AiThreadFolder::class, [
         'user_id' => $user->getKey(),
         'name' => $folder->name,
     ]);
@@ -748,19 +415,21 @@ it('can create a folder with a duplicate name but belonging to a different user'
 it('can rename a folder', function () use ($setUp) {
     ['user' => $user] = $setUp();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for($user)
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('renameFolder', [
-            'name' => $name = AssistantChatFolder::factory()->make()->name,
+            'name' => $name = AiThreadFolder::factory()->make()->name,
         ], arguments: [
             'folder' => $folder->getKey(),
         ])
         ->assertHasNoActionErrors();
 
-    assertDatabaseHas(AssistantChatFolder::class, [
+    assertDatabaseHas(AiThreadFolder::class, [
         'id' => $folder->getKey(),
         'name' => $name,
     ]);
@@ -769,9 +438,11 @@ it('can rename a folder', function () use ($setUp) {
 it('can not rename a folder without a name', function () use ($setUp) {
     ['user' => $user] = $setUp();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for($user)
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('renameFolder', [
@@ -785,13 +456,17 @@ it('can not rename a folder without a name', function () use ($setUp) {
 it('can not rename a folder with a duplicate name', function () use ($setUp) {
     ['user' => $user] = $setUp();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for($user)
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
-    $otherFolder = AssistantChatFolder::factory()
+    $otherFolder = AiThreadFolder::factory()
         ->for($user)
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('renameFolder', [
@@ -805,13 +480,17 @@ it('can not rename a folder with a duplicate name', function () use ($setUp) {
 it('can rename a folder with a duplicate name but belonging to a different user', function () use ($setUp) {
     ['user' => $user] = $setUp();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for($user)
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
-    $otherFolder = AssistantChatFolder::factory()
+    $otherFolder = AiThreadFolder::factory()
         ->for(User::factory()->create())
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('renameFolder', [
@@ -821,7 +500,7 @@ it('can rename a folder with a duplicate name but belonging to a different user'
         ])
         ->assertHasNoActionErrors();
 
-    assertDatabaseHas(AssistantChatFolder::class, [
+    assertDatabaseHas(AiThreadFolder::class, [
         'id' => $folder->getKey(),
         'name' => $otherFolder->name,
     ]);
@@ -830,20 +509,22 @@ it('can rename a folder with a duplicate name but belonging to a different user'
 it('can not rename a folder belonging to a different user', function () use ($setUp) {
     $setUp();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for(User::factory()->create())
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
     $oldFolderName = $folder->name;
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('renameFolder', [
-            'name' => $newFolderName = AssistantChatFolder::factory()->make()->name,
+            'name' => $newFolderName = AiThreadFolder::factory()->make()->name,
         ], arguments: [
             'folder' => $folder->getKey(),
         ]);
 
-    assertDatabaseHas(AssistantChatFolder::class, [
+    assertDatabaseHas(AiThreadFolder::class, [
         'id' => $folder->getKey(),
         'name' => $oldFolderName,
     ]);
@@ -855,16 +536,18 @@ it('can not rename a folder belonging to a different user', function () use ($se
 it('can delete a folder', function () use ($setUp) {
     ['user' => $user] = $setUp();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for($user)
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('deleteFolder', arguments: [
             'folder' => $folder->getKey(),
         ]);
 
-    assertSoftDeleted(AssistantChatFolder::class, [
+    assertSoftDeleted(AiThreadFolder::class, [
         'id' => $folder->getKey(),
     ]);
 });
@@ -872,268 +555,283 @@ it('can delete a folder', function () use ($setUp) {
 it('can not delete a folder belonging to a different user', function () use ($setUp) {
     $setUp();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for(User::factory()->create())
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('deleteFolder', arguments: [
             'folder' => $folder->getKey(),
         ]);
 
-    assertNotSoftDeleted(AssistantChatFolder::class, [
+    assertNotSoftDeleted(AiThreadFolder::class, [
         'id' => $folder->getKey(),
     ]);
 });
 
-it('can move a chat in to a folder', function () use ($setUp) {
-    ['user' => $user, 'chat' => $chat] = $setUp();
+it('can move a thread in to a folder', function () use ($setUp) {
+    ['user' => $user, 'thread' => $thread] = $setUp();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for($user)
-        ->create();
-
-    Livewire::test(PersonalAssistant::class)
-        ->callAction('moveChat', [
-            'folder' => $folder->getKey(),
-        ], arguments: [
-            'chat' => $chat->getKey(),
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
         ]);
 
-    assertDatabaseHas(AssistantChat::class, [
-        'id' => $chat->getKey(),
-        'assistant_chat_folder_id' => $folder->getKey(),
+    Livewire::test(PersonalAssistant::class)
+        ->callAction('moveThread', [
+            'folder' => $folder->getKey(),
+        ], arguments: [
+            'thread' => $thread->getKey(),
+        ]);
+
+    assertDatabaseHas(AiThread::class, [
+        'id' => $thread->getKey(),
+        'folder_id' => $folder->getKey(),
     ]);
 });
 
-it('can move a chat between folders', function () use ($setUp) {
-    ['user' => $user, 'chat' => $chat] = $setUp();
+it('can move a thread between folders', function () use ($setUp) {
+    ['user' => $user, 'thread' => $thread] = $setUp();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for($user)
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
-    $chat->folder()->associate($folder);
-    $chat->save();
+    $thread->folder()->associate($folder);
+    $thread->save();
 
-    $newFolder = AssistantChatFolder::factory()
+    $newFolder = AiThreadFolder::factory()
         ->for($user)
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
     Livewire::test(PersonalAssistant::class)
-        ->callAction('moveChat', [
+        ->callAction('moveThread', [
             'folder' => $newFolder->getKey(),
         ], arguments: [
-            'chat' => $chat->getKey(),
+            'thread' => $thread->getKey(),
         ]);
 
-    assertDatabaseHas(AssistantChat::class, [
-        'id' => $chat->getKey(),
-        'assistant_chat_folder_id' => $newFolder->getKey(),
+    assertDatabaseHas(AiThread::class, [
+        'id' => $thread->getKey(),
+        'folder_id' => $newFolder->getKey(),
     ]);
 });
 
-it('can move a chat out of a folder', function () use ($setUp) {
-    ['user' => $user, 'chat' => $chat] = $setUp();
+it('can move a thread out of a folder', function () use ($setUp) {
+    ['user' => $user, 'thread' => $thread] = $setUp();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for($user)
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
-    $chat->folder()->associate($folder);
-    $chat->save();
+    $thread->folder()->associate($folder);
+    $thread->save();
 
     Livewire::test(PersonalAssistant::class)
-        ->callAction('moveChat', [
+        ->callAction('moveThread', [
             'folder' => null,
         ], arguments: [
-            'chat' => $chat->getKey(),
+            'thread' => $thread->getKey(),
         ]);
 
-    assertDatabaseHas(AssistantChat::class, [
-        'id' => $chat->getKey(),
-        'assistant_chat_folder_id' => null,
+    assertDatabaseHas(AiThread::class, [
+        'id' => $thread->getKey(),
+        'folder_id' => null,
     ]);
 });
 
-it('can not move a chat belonging to a different user in to a folder', function () use ($setUp) {
-    ['user' => $user, 'chat' => $chat] = $setUp();
+it('can not move a thread belonging to a different user in to a folder', function () use ($setUp) {
+    ['user' => $user, 'thread' => $thread] = $setUp();
 
-    $chat->user()->associate(User::factory()->create());
-    $chat->save();
+    $thread->user()->associate(User::factory()->create());
+    $thread->save();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for($user)
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
     Livewire::test(PersonalAssistant::class)
-        ->callAction('moveChat', [
+        ->callAction('moveThread', [
             'folder' => $folder->getKey(),
         ], arguments: [
-            'chat' => $chat->getKey(),
+            'thread' => $thread->getKey(),
         ]);
 
-    assertDatabaseHas(AssistantChat::class, [
-        'id' => $chat->getKey(),
-        'assistant_chat_folder_id' => null,
+    assertDatabaseHas(AiThread::class, [
+        'id' => $thread->getKey(),
+        'folder_id' => null,
     ]);
 });
 
-it('can not move a chat in to a folder belonging to a different user', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
+it('can not move a thread in to a folder belonging to a different user', function () use ($setUp) {
+    ['thread' => $thread] = $setUp();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for(User::factory()->create())
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
     Livewire::test(PersonalAssistant::class)
-        ->callAction('moveChat', [
+        ->callAction('moveThread', [
             'folder' => $folder->getKey(),
         ], arguments: [
-            'chat' => $chat->getKey(),
+            'thread' => $thread->getKey(),
         ]);
 
-    assertDatabaseHas(AssistantChat::class, [
-        'id' => $chat->getKey(),
-        'assistant_chat_folder_id' => null,
+    assertDatabaseHas(AiThread::class, [
+        'id' => $thread->getKey(),
+        'folder_id' => null,
     ]);
 });
 
-it('can move a chat in to a folder with drag and drop', function () use ($setUp) {
-    ['user' => $user, 'chat' => $chat] = $setUp();
+it('can move a thread in to a folder with drag and drop', function () use ($setUp) {
+    ['user' => $user, 'thread' => $thread] = $setUp();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for($user)
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
     Livewire::test(PersonalAssistant::class)
-        ->call('movedChat', $chat->getKey(), $folder->getKey())
+        ->call('movedThread', $thread->getKey(), $folder->getKey())
         ->assertOk();
 
-    assertDatabaseHas(AssistantChat::class, [
-        'id' => $chat->getKey(),
-        'assistant_chat_folder_id' => $folder->getKey(),
+    assertDatabaseHas(AiThread::class, [
+        'id' => $thread->getKey(),
+        'folder_id' => $folder->getKey(),
     ]);
 });
 
-it('can move a chat between folders with drag and drop', function () use ($setUp) {
-    ['user' => $user, 'chat' => $chat] = $setUp();
+it('can move a thread between folders with drag and drop', function () use ($setUp) {
+    ['user' => $user, 'thread' => $thread] = $setUp();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for($user)
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
-    $chat->folder()->associate($folder);
-    $chat->save();
+    $thread->folder()->associate($folder);
+    $thread->save();
 
-    $newFolder = AssistantChatFolder::factory()
+    $newFolder = AiThreadFolder::factory()
         ->for($user)
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
     Livewire::test(PersonalAssistant::class)
-        ->call('movedChat', $chat->getKey(), $newFolder->getKey())
+        ->call('movedThread', $thread->getKey(), $newFolder->getKey())
         ->assertOk();
 
-    assertDatabaseHas(AssistantChat::class, [
-        'id' => $chat->getKey(),
-        'assistant_chat_folder_id' => $newFolder->getKey(),
+    assertDatabaseHas(AiThread::class, [
+        'id' => $thread->getKey(),
+        'folder_id' => $newFolder->getKey(),
     ]);
 });
 
-it('can move a chat out of a folder with drag and drop', function () use ($setUp) {
-    ['user' => $user, 'chat' => $chat] = $setUp();
+it('can move a thread out of a folder with drag and drop', function () use ($setUp) {
+    ['user' => $user, 'thread' => $thread] = $setUp();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for($user)
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
-    $chat->folder()->associate($folder);
-    $chat->save();
+    $thread->folder()->associate($folder);
+    $thread->save();
 
     Livewire::test(PersonalAssistant::class)
-        ->call('movedChat', $chat->getKey(), null)
+        ->call('movedThread', $thread->getKey(), null)
         ->assertOk();
 
-    assertDatabaseHas(AssistantChat::class, [
-        'id' => $chat->getKey(),
-        'assistant_chat_folder_id' => null,
+    assertDatabaseHas(AiThread::class, [
+        'id' => $thread->getKey(),
+        'folder_id' => null,
     ]);
 });
 
-it('can not move a chat belonging to a different user in to a folder with drag and drop', function () use ($setUp) {
-    ['user' => $user, 'chat' => $chat] = $setUp();
+it('can not move a thread belonging to a different user in to a folder with drag and drop', function () use ($setUp) {
+    ['user' => $user, 'thread' => $thread] = $setUp();
 
-    $chat->user()->associate(User::factory()->create());
-    $chat->save();
+    $thread->user()->associate(User::factory()->create());
+    $thread->save();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
         ->for($user)
-        ->create();
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
 
     Livewire::test(PersonalAssistant::class)
-        ->call('movedChat', $chat->getKey(), $folder->getKey())
+        ->call('movedThread', $thread->getKey(), $folder->getKey())
         ->assertOk();
 
-    assertDatabaseHas(AssistantChat::class, [
-        'id' => $chat->getKey(),
-        'assistant_chat_folder_id' => null,
+    assertDatabaseHas(AiThread::class, [
+        'id' => $thread->getKey(),
+        'folder_id' => null,
     ]);
 });
 
-it('can not move a chat in to a folder belonging to a different user with drag and drop', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
+it('can not move a thread in to a folder belonging to a different user with drag and drop', function () use ($setUp) {
+    ['thread' => $thread] = $setUp();
 
-    $folder = AssistantChatFolder::factory()
+    $folder = AiThreadFolder::factory()
+        ->for(User::factory()->create())
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
+
+    Livewire::test(PersonalAssistant::class)
+        ->call('movedThread', $thread->getKey(), $folder->getKey())
+        ->assertOk();
+
+    assertDatabaseHas(AiThread::class, [
+        'id' => $thread->getKey(),
+        'folder_id' => null,
+    ]);
+});
+
+it('can delete a thread', function () use ($setUp) {
+    ['thread' => $thread] = $setUp();
+
+    Livewire::test(PersonalAssistant::class)
+        ->callAction('deleteThread', arguments: [
+            'thread' => $thread->getKey(),
+        ]);
+
+    assertSoftDeleted($thread);
+});
+
+it('can not delete a thread belonging to a different user', function () use ($setUp) {
+    ['assistant' => $assistant] = $setUp();
+
+    $threadBelongingToAnotherUser = AiThread::factory()
+        ->for($assistant, 'assistant')
         ->for(User::factory()->create())
         ->create();
 
     Livewire::test(PersonalAssistant::class)
-        ->call('movedChat', $chat->getKey(), $folder->getKey())
-        ->assertOk();
-
-    assertDatabaseHas(AssistantChat::class, [
-        'id' => $chat->getKey(),
-        'assistant_chat_folder_id' => null,
-    ]);
-});
-
-it('can delete a chat', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
-
-    $livewire = Livewire::test(PersonalAssistant::class)
-        ->callAction('deleteChat', arguments: [
-            'chat' => $chat->getKey(),
+        ->callAction('deleteThread', arguments: [
+            'thread' => $threadBelongingToAnotherUser->getKey(),
         ]);
 
-    expect($livewire->chat->toArray())
-        ->toEqual(
-            (new Chat(
-                id: null,
-                messages: ChatMessage::collection([]),
-                assistantId: $chat->assistant->assistant_id,
-                threadId: null,
-            ))->toArray(),
-        );
-
-    assertSoftDeleted(AssistantChat::class, [
-        'id' => $chat->getKey(),
-    ]);
-});
-
-it('can not delete a chat belonging to a different user', function () use ($setUp) {
-    $setUp();
-
-    $chatBelongingToAnotherUser = AssistantChat::factory()
-        ->for(User::factory()->create())
-        ->create();
-
-    Livewire::test(PersonalAssistant::class)
-        ->callAction('deleteChat', arguments: [
-            'chat' => $chatBelongingToAnotherUser->getKey(),
-        ]);
-
-    assertNotSoftDeleted(AssistantChat::class, [
-        'id' => $chatBelongingToAnotherUser->getKey(),
+    assertNotSoftDeleted(AiThread::class, [
+        'id' => $threadBelongingToAnotherUser->getKey(),
     ]);
 });
 
@@ -1152,7 +850,7 @@ it('can insert a prompt from the library', function () use ($setUp) {
             'promptId' => $prompt->getKey(),
         ])
         ->assertHasNoActionErrors()
-        ->assertSet('message', $prompt->prompt);
+        ->assertDispatched('set-chat-message', content: $prompt->prompt);
 
     assertDatabaseHas(PromptUse::class, [
         'prompt_id' => $prompt->getKey(),
@@ -1217,86 +915,82 @@ it('can remove upvote from a prompt from the library while inserting it', functi
     ]);
 });
 
-it('can rename a chat', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
+it('can rename a thread', function () use ($setUp) {
+    ['thread' => $thread] = $setUp();
 
     Livewire::test(PersonalAssistant::class)
-        ->callAction('editChat', [
-            'name' => $name = AssistantChat::factory()->make()->name,
+        ->callAction('editThread', [
+            'name' => $name = AiThread::factory()->make()->name,
         ], arguments: [
-            'chat' => $chat->getKey(),
+            'thread' => $thread->getKey(),
         ])
         ->assertHasNoActionErrors();
 
-    assertDatabaseHas(AssistantChat::class, [
-        'id' => $chat->getKey(),
+    assertDatabaseHas(AiThread::class, [
+        'id' => $thread->getKey(),
         'name' => $name,
     ]);
 });
 
-it('can not rename a chat without a name', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
+it('can not rename a thread without a name', function () use ($setUp) {
+    ['thread' => $thread] = $setUp();
 
     Livewire::test(PersonalAssistant::class)
-        ->callAction('editChat', [
+        ->callAction('editThread', [
             'name' => null,
         ], arguments: [
-            'chat' => $chat->getKey(),
+            'thread' => $thread->getKey(),
         ])
         ->assertHasActionErrors(['name' => 'required']);
 });
 
-it('can not rename a chat belonging to a different user', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
+it('can not rename a thread belonging to a different user', function () use ($setUp) {
+    ['thread' => $thread] = $setUp();
 
-    $chat->user()->associate(User::factory()->create());
-    $chat->save();
+    $thread->user()->associate(User::factory()->create());
+    $thread->save();
 
-    $oldChatName = $chat->name;
+    $oldThreadName = $thread->name;
 
     Livewire::test(PersonalAssistant::class)
-        ->callAction('editChat', [
-            'name' => $newChatName = AssistantChat::factory()->make()->name,
+        ->callAction('editThread', [
+            'name' => $newThreadName = AiThread::factory()->make()->name,
         ], arguments: [
-            'chat' => $chat->getKey(),
+            'thread' => $thread->getKey(),
         ])
         ->assertHasNoActionErrors();
 
-    assertDatabaseHas(AssistantChat::class, [
-        'id' => $chat->getKey(),
-        'name' => $oldChatName,
+    assertDatabaseHas(AiThread::class, [
+        'id' => $thread->getKey(),
+        'name' => $oldThreadName,
     ]);
 
-    expect($oldChatName)
-        ->not->toEqual($newChatName);
+    expect($oldThreadName)
+        ->not->toEqual($newThreadName);
 });
 
-it('can clone a chat to a user', function () use ($setUp) {
+it('can clone a thread to a user', function () use ($setUp) {
     Bus::fake();
 
-    ['user' => $user, 'chat' => $chat] = $setUp();
+    ['user' => $user, 'thread' => $thread] = $setUp();
 
     $otherUser = User::factory()->create();
 
     Livewire::test(PersonalAssistant::class)
-        ->callAction('cloneChat', [
-            'target_type' => AiThreadShareTarget::User->value,
-            'target_ids' => [$otherUser->getKey()],
+        ->callAction('cloneThread', [
+            'targetType' => AiThreadShareTarget::User->value,
+            'targetIds' => [$otherUser->getKey()],
         ], arguments: [
-            'chat' => $chat->getKey(),
+            'thread' => $thread->getKey(),
         ])
         ->assertHasNoActionErrors();
 
-    Bus::assertDispatched(ShareAiThreadsJob::class, function (ShareAiThreadsJob $job) use ($chat, $otherUser, $user) {
-        if (! $job->thread->is($chat)) {
+    Bus::assertDispatched(PrepareAiThreadCloning::class, function (PrepareAiThreadCloning $job) use ($thread, $otherUser, $user) {
+        if (! $job->thread->is($thread)) {
             return false;
         }
 
-        if ($job->via !== AiThreadShareVia::Internal) {
-            return false;
-        }
-
-        if ($job->targetType !== AiThreadShareTarget::User) {
+        if ($job->targetType !== AiThreadShareTarget::User->value) {
             return false;
         }
 
@@ -1312,32 +1006,28 @@ it('can clone a chat to a user', function () use ($setUp) {
     });
 });
 
-it('can clone a chat to a team', function () use ($setUp) {
+it('can clone a thread to a team', function () use ($setUp) {
     Bus::fake();
 
-    ['user' => $user, 'chat' => $chat] = $setUp();
+    ['user' => $user, 'thread' => $thread] = $setUp();
 
     $team = Team::factory()->create();
 
     Livewire::test(PersonalAssistant::class)
-        ->callAction('cloneChat', [
-            'target_type' => AiThreadShareTarget::Team->value,
-            'target_ids' => [$team->getKey()],
+        ->callAction('cloneThread', [
+            'targetType' => AiThreadShareTarget::Team->value,
+            'targetIds' => [$team->getKey()],
         ], arguments: [
-            'chat' => $chat->getKey(),
+            'thread' => $thread->getKey(),
         ])
         ->assertHasNoActionErrors();
 
-    Bus::assertDispatched(ShareAiThreadsJob::class, function (ShareAiThreadsJob $job) use ($chat, $team, $user) {
-        if (! $job->thread->is($chat)) {
+    Bus::assertDispatched(PrepareAiThreadCloning::class, function (PrepareAiThreadCloning $job) use ($thread, $team, $user) {
+        if (! $job->thread->is($thread)) {
             return false;
         }
 
-        if ($job->via !== AiThreadShareVia::Internal) {
-            return false;
-        }
-
-        if ($job->targetType !== AiThreadShareTarget::Team) {
+        if ($job->targetType !== AiThreadShareTarget::Team->value) {
             return false;
         }
 
@@ -1353,81 +1043,77 @@ it('can clone a chat to a team', function () use ($setUp) {
     });
 });
 
-it('can not clone a chat without a target type', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
+it('can not clone a thread without a target type', function () use ($setUp) {
+    ['thread' => $thread] = $setUp();
 
     $otherUser = User::factory()->create();
 
     Livewire::test(PersonalAssistant::class)
-        ->callAction('cloneChat', [
-            'target_type' => null,
-            'target_ids' => [$otherUser->getKey()],
+        ->callAction('cloneThread', [
+            'targetType' => null,
+            'targetIds' => [$otherUser->getKey()],
         ], arguments: [
-            'chat' => $chat->getKey(),
+            'thread' => $thread->getKey(),
         ])
-        ->assertHasActionErrors(['target_type' => 'required']);
+        ->assertHasActionErrors(['targetType' => 'required']);
 });
 
-it('can not clone a chat without any targets', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
+it('can not clone a thread without any targets', function () use ($setUp) {
+    ['thread' => $thread] = $setUp();
 
     Livewire::test(PersonalAssistant::class)
-        ->callAction('cloneChat', [
-            'target_type' => AiThreadShareTarget::User->value,
-            'target_ids' => [],
+        ->callAction('cloneThread', [
+            'targetType' => AiThreadShareTarget::User->value,
+            'targetIds' => [],
         ], arguments: [
-            'chat' => $chat->getKey(),
+            'thread' => $thread->getKey(),
         ])
-        ->assertHasActionErrors(['target_ids' => 'required']);
+        ->assertHasActionErrors(['targetIds' => 'required']);
 });
 
-it('can not clone a chat belonging to a different user', function () use ($setUp) {
+it('can not clone a thread belonging to a different user', function () use ($setUp) {
     Bus::fake();
 
-    ['chat' => $chat] = $setUp();
+    ['thread' => $thread] = $setUp();
 
-    $chat->user()->associate(User::factory()->create());
-    $chat->save();
+    $thread->user()->associate(User::factory()->create());
+    $thread->save();
 
     $otherUser = User::factory()->create();
 
     Livewire::test(PersonalAssistant::class)
-        ->callAction('cloneChat', [
-            'target_type' => AiThreadShareTarget::User->value,
-            'target_ids' => [$otherUser->getKey()],
+        ->callAction('cloneThread', [
+            'targetType' => AiThreadShareTarget::User->value,
+            'targetIds' => [$otherUser->getKey()],
         ], arguments: [
-            'chat' => $chat->getKey(),
+            'thread' => $thread->getKey(),
         ]);
 
-    Bus::assertNotDispatched(ShareAiThreadsJob::class);
+    Bus::assertNotDispatched(PrepareAiThreadCloning::class);
 });
 
-it('can email a chat to a user', function () use ($setUp) {
+it('can email a thread to a user', function () use ($setUp) {
     Bus::fake();
 
-    ['user' => $user, 'chat' => $chat] = $setUp();
+    ['user' => $user, 'thread' => $thread] = $setUp();
 
     $otherUser = User::factory()->create();
 
     Livewire::test(PersonalAssistant::class)
-        ->callAction('emailChat', [
-            'target_type' => AiThreadShareTarget::User->value,
-            'target_ids' => [$otherUser->getKey()],
+        ->callAction('emailThread', [
+            'targetType' => AiThreadShareTarget::User->value,
+            'targetIds' => [$otherUser->getKey()],
         ], arguments: [
-            'chat' => $chat->getKey(),
+            'thread' => $thread->getKey(),
         ])
         ->assertHasNoActionErrors();
 
-    Bus::assertDispatched(ShareAiThreadsJob::class, function (ShareAiThreadsJob $job) use ($chat, $otherUser, $user) {
-        if (! $job->thread->is($chat)) {
+    Bus::assertDispatched(PrepareAiThreadEmailing::class, function (PrepareAiThreadEmailing $job) use ($thread, $otherUser, $user) {
+        if (! $job->thread->is($thread)) {
             return false;
         }
 
-        if ($job->via !== AiThreadShareVia::Email) {
-            return false;
-        }
-
-        if ($job->targetType !== AiThreadShareTarget::User) {
+        if ($job->targetType !== AiThreadShareTarget::User->value) {
             return false;
         }
 
@@ -1443,32 +1129,28 @@ it('can email a chat to a user', function () use ($setUp) {
     });
 });
 
-it('can email a chat to a team', function () use ($setUp) {
+it('can email a thread to a team', function () use ($setUp) {
     Bus::fake();
 
-    ['user' => $user, 'chat' => $chat] = $setUp();
+    ['user' => $user, 'thread' => $thread] = $setUp();
 
     $team = Team::factory()->create();
 
     Livewire::test(PersonalAssistant::class)
-        ->callAction('emailChat', [
-            'target_type' => AiThreadShareTarget::Team->value,
-            'target_ids' => [$team->getKey()],
+        ->callAction('emailThread', [
+            'targetType' => AiThreadShareTarget::Team->value,
+            'targetIds' => [$team->getKey()],
         ], arguments: [
-            'chat' => $chat->getKey(),
+            'thread' => $thread->getKey(),
         ])
         ->assertHasNoActionErrors();
 
-    Bus::assertDispatched(ShareAiThreadsJob::class, function (ShareAiThreadsJob $job) use ($chat, $team, $user) {
-        if (! $job->thread->is($chat)) {
+    Bus::assertDispatched(PrepareAiThreadEmailing::class, function (PrepareAiThreadEmailing $job) use ($thread, $team, $user) {
+        if (! $job->thread->is($thread)) {
             return false;
         }
 
-        if ($job->via !== AiThreadShareVia::Email) {
-            return false;
-        }
-
-        if ($job->targetType !== AiThreadShareTarget::Team) {
+        if ($job->targetType !== AiThreadShareTarget::Team->value) {
             return false;
         }
 
@@ -1484,51 +1166,51 @@ it('can email a chat to a team', function () use ($setUp) {
     });
 });
 
-it('can not email a chat without a target type', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
+it('can not email a thread without a target type', function () use ($setUp) {
+    ['thread' => $thread] = $setUp();
 
     $otherUser = User::factory()->create();
 
     Livewire::test(PersonalAssistant::class)
-        ->callAction('emailChat', [
-            'target_type' => null,
-            'target_ids' => [$otherUser->getKey()],
+        ->callAction('emailThread', [
+            'targetType' => null,
+            'targetIds' => [$otherUser->getKey()],
         ], arguments: [
-            'chat' => $chat->getKey(),
+            'thread' => $thread->getKey(),
         ])
-        ->assertHasActionErrors(['target_type' => 'required']);
+        ->assertHasActionErrors(['targetType' => 'required']);
 });
 
-it('can not email a chat without any targets', function () use ($setUp) {
-    ['chat' => $chat] = $setUp();
+it('can not email a thread without any targets', function () use ($setUp) {
+    ['thread' => $thread] = $setUp();
 
     Livewire::test(PersonalAssistant::class)
-        ->callAction('emailChat', [
-            'target_type' => AiThreadShareTarget::User->value,
-            'target_ids' => [],
+        ->callAction('emailThread', [
+            'targetType' => AiThreadShareTarget::User->value,
+            'targetIds' => [],
         ], arguments: [
-            'chat' => $chat->getKey(),
+            'thread' => $thread->getKey(),
         ])
-        ->assertHasActionErrors(['target_ids' => 'required']);
+        ->assertHasActionErrors(['targetIds' => 'required']);
 });
 
-it('can not email a chat belonging to a different user', function () use ($setUp) {
+it('can not email a thread belonging to a different user', function () use ($setUp) {
     Bus::fake();
 
-    ['chat' => $chat] = $setUp();
+    ['thread' => $thread] = $setUp();
 
-    $chat->user()->associate(User::factory()->create());
-    $chat->save();
+    $thread->user()->associate(User::factory()->create());
+    $thread->save();
 
     $otherUser = User::factory()->create();
 
     Livewire::test(PersonalAssistant::class)
-        ->callAction('emailChat', [
-            'target_type' => AiThreadShareTarget::User->value,
-            'target_ids' => [$otherUser->getKey()],
+        ->callAction('emailThread', [
+            'targetType' => AiThreadShareTarget::User->value,
+            'targetIds' => [$otherUser->getKey()],
         ], arguments: [
-            'chat' => $chat->getKey(),
+            'thread' => $thread->getKey(),
         ]);
 
-    Bus::assertNotDispatched(ShareAiThreadsJob::class);
+    Bus::assertNotDispatched(PrepareAiThreadEmailing::class);
 });

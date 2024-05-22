@@ -58,10 +58,10 @@ class PrepareAiThreadEmailing implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        protected AiThread $thread,
-        protected string $targetType,
-        protected array $targetIds,
-        protected User $sender,
+        public AiThread $thread,
+        public string $targetType,
+        public array $targetIds,
+        public User $sender,
     ) {}
 
     public function handle(): void
