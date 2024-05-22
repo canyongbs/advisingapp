@@ -263,11 +263,13 @@
                 wire:key="thread{{ $this->thread->id }}"
             >
                 <div class="flex flex-col items-center justify-between gap-3 md:flex-row">
-                    <x-filament::badge :size="ActionSize::Large">
-                        <h1 class="text-base">
-                            {{ $this->thread->assistant->name }}
-                        </h1>
-                    </x-filament::badge>
+                    @if ($this->customAssistants)
+                        <x-filament::badge :size="ActionSize::Large">
+                            <h1 class="text-base">
+                                {{ $this->thread->assistant->name }}
+                            </h1>
+                        </x-filament::badge>
+                    @endif
 
                     @if (!$this->thread->assistant->is_default)
                         <x-filament::link
