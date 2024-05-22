@@ -50,7 +50,7 @@ class ShowThreadController
     {
         return response()->json([
             'messages' => $thread->messages()
-                ->oldest()
+                ->oldest('id')
                 ->get()
                 ->toBase()
                 ->map(fn (AiMessage $message): array => [
