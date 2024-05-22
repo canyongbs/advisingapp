@@ -37,7 +37,10 @@
 namespace AdvisingApp\Notification\Drivers;
 
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
+use AdvisingApp\Notification\Drivers\Contracts\OutboundDeliverableDriver;
+use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
+use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
+use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
 
 class EmailDriver implements OutboundDeliverableDriver
 {
@@ -45,5 +48,19 @@ class EmailDriver implements OutboundDeliverableDriver
         protected OutboundDeliverable $deliverable
     ) {}
 
-    public function updateDeliveryStatus(UpdateDeliveryStatusData $data): void {}
+    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void
+    {
+        /** @var SesEventData $updateData */
+        $updateData = $data->data;
+
+        $this->deliverable->update([
+            'external_status' => $updateData->eventType,
+        ]);
+
+        match ($this->deliverable->external_status) {
+            'Delivery' => $this->deliverable->markDeliverySuccessful(),
+            'Bounce', 'DeliveryDelay', 'Reject', 'RenderingFailure' => $this->deliverable->markDeliveryFailed($updateData->errorMessageFromType() ?? null),
+            default => null,
+        };
+    }
 }

@@ -34,33 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Drivers;
+namespace AdvisingApp\Notification\Actions;
 
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Drivers\Contracts\OutboundDeliverableDriver;
-use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
+use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
 
-class SmsDriver implements OutboundDeliverableDriver
+class UpdateOutboundDeliverableEmailStatus implements ShouldQueue
 {
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
     public function __construct(
-        protected OutboundDeliverable $deliverable
+        public OutboundDeliverable $deliverable,
+        public SesEventData $data
     ) {}
 
-    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void
+    public function handle(): void
     {
-        /** @var TwilioStatusCallbackData $updateData */
-        $updateData = $data->data;
-
-        $this->deliverable->update([
-            'external_status' => $updateData->messageStatus ?? null,
+        $data = UpdateEmailDeliveryStatusData::from([
+            'data' => $this->data,
         ]);
 
-        match ($this->deliverable->external_status) {
-            'delivered' => $this->deliverable->markDeliverySuccessful(),
-            'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($updateData->errorMessage ?? null),
-            default => null,
-        };
+        $this->deliverable->driver()->updateDeliveryStatus($data);
+
+        if ($this->deliverable->related) {
+            if (method_exists($this->deliverable->related, 'driver')) {
+                $this->deliverable->related->driver()->updateDeliveryStatus($data);
+            }
+        }
+    }
+
+    public function middleware(): array
+    {
+        return [
+            (new WithoutOverlapping($this->deliverable->id))
+                ->releaseAfter(30)
+                ->expireAfter(300),
+        ];
     }
 }

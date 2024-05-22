@@ -34,33 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Drivers;
+namespace AdvisingApp\Engagement\Drivers\Contracts;
 
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Drivers\Contracts\OutboundDeliverableDriver;
+use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
 use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
 
-class SmsDriver implements OutboundDeliverableDriver
+interface EngagementDeliverableDriver
 {
-    public function __construct(
-        protected OutboundDeliverable $deliverable
-    ) {}
+    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void;
 
-    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void
-    {
-        /** @var TwilioStatusCallbackData $updateData */
-        $updateData = $data->data;
+    public function jobForDelivery(): QueuedEngagementDelivery;
 
-        $this->deliverable->update([
-            'external_status' => $updateData->messageStatus ?? null,
-        ]);
-
-        match ($this->deliverable->external_status) {
-            'delivered' => $this->deliverable->markDeliverySuccessful(),
-            'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($updateData->errorMessage ?? null),
-            default => null,
-        };
-    }
+    public function deliver(): void;
 }

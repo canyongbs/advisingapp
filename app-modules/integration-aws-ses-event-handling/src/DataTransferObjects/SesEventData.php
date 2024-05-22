@@ -76,4 +76,16 @@ class SesEventData extends Data
             subscription: isset($data['subscription']) ? SesSubscriptionData::from($data['subscription']) : Optional::create(),
         );
     }
+
+    public function errorMessageFromType(): ?string
+    {
+        return match ($this->eventType) {
+            'Bounce' => 'The email was not successfully delivered due to a permanent rejection from the recipient mail server.',
+            'Delivery' => 'The email was successfully delivered.',
+            'DeliveryDelay' => 'The email was not successfully delivered due to a temporary issue.',
+            'Reject' => 'The email was not attempted to be delivered due to unsafe contents.',
+            'RenderingFailure' => 'The email not successfully delivered due to a template rendering error.',
+            default => null,
+        };
+    }
 }

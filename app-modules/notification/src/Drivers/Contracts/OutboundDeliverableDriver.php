@@ -34,33 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Drivers;
+namespace AdvisingApp\Notification\Drivers\Contracts;
 
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Drivers\Contracts\OutboundDeliverableDriver;
 use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
 
-class SmsDriver implements OutboundDeliverableDriver
+interface OutboundDeliverableDriver
 {
-    public function __construct(
-        protected OutboundDeliverable $deliverable
-    ) {}
-
-    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void
-    {
-        /** @var TwilioStatusCallbackData $updateData */
-        $updateData = $data->data;
-
-        $this->deliverable->update([
-            'external_status' => $updateData->messageStatus ?? null,
-        ]);
-
-        match ($this->deliverable->external_status) {
-            'delivered' => $this->deliverable->markDeliverySuccessful(),
-            'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($updateData->errorMessage ?? null),
-            default => null,
-        };
-    }
+    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void;
 }

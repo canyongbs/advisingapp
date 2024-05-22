@@ -34,51 +34,6 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Actions;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
-
-class UpdateOutboundDeliverableStatus implements ShouldQueue
-{
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function __construct(
-        public OutboundDeliverable $deliverable,
-        public TwilioStatusCallbackData $data
-    ) {}
-
-    public function handle(): void
-    {
-        $data = UpdateDeliveryStatusData::from([
-            'data' => $this->data,
-        ]);
-
-        $this->deliverable->driver()->updateDeliveryStatus($data);
-
-        if ($this->deliverable->related) {
-            if (method_exists($this->deliverable->related, 'driver')) {
-                $this->deliverable->related->driver()->updateDeliveryStatus($data);
-            }
-        }
-    }
-
-    public function middleware(): array
-    {
-        return [
-            (new WithoutOverlapping($this->deliverable->id))
-                ->releaseAfter(30)
-                ->expireAfter(300),
-        ];
-    }
-}
+class HandleSesRenderingFailureEvent extends HandleSesEvent {}

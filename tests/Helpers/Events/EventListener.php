@@ -34,33 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Drivers;
+namespace Tests\Helpers\Events;
 
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Drivers\Contracts\OutboundDeliverableDriver;
-use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
-use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
+use Illuminate\Support\Facades\Event;
 
-class SmsDriver implements OutboundDeliverableDriver
+function testEventIsBeingListenedTo(string $event, string $listener)
 {
-    public function __construct(
-        protected OutboundDeliverable $deliverable
-    ) {}
+    test("{$event} is being listened to by {$listener}", function () use ($event, $listener) {
+        Event::fake();
 
-    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void
-    {
-        /** @var TwilioStatusCallbackData $updateData */
-        $updateData = $data->data;
-
-        $this->deliverable->update([
-            'external_status' => $updateData->messageStatus ?? null,
-        ]);
-
-        match ($this->deliverable->external_status) {
-            'delivered' => $this->deliverable->markDeliverySuccessful(),
-            'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($updateData->errorMessage ?? null),
-            default => null,
-        };
-    }
+        Event::assertListening(
+            $event,
+            $listener
+        );
+    });
 }

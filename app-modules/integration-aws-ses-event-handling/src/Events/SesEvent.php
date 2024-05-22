@@ -34,16 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Drivers;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Events;
 
-use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
-use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
 
-interface EngagementDeliverableDriver
+abstract class SesEvent
 {
-    public function updateDeliveryStatus(UpdateDeliveryStatusData $data): void;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
-    public function jobForDelivery(): QueuedEngagementDelivery;
-
-    public function deliver(): void;
+    public function __construct(
+        public SesEventData $data,
+    ) {}
 }

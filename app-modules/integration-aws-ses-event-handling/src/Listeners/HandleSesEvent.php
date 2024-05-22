@@ -34,33 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Drivers;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Drivers\Contracts\OutboundDeliverableDriver;
-use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
-use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesEvent;
+use AdvisingApp\Notification\Actions\UpdateOutboundDeliverableEmailStatus;
+use AdvisingApp\Notification\Events\CouldNotFindOutboundDeliverableFromExternalReference;
 
-class SmsDriver implements OutboundDeliverableDriver
+abstract class HandleSesEvent implements ShouldQueue
 {
-    public function __construct(
-        protected OutboundDeliverable $deliverable
-    ) {}
-
-    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void
+    public function handle(SesEvent $event): void
     {
-        /** @var TwilioStatusCallbackData $updateData */
-        $updateData = $data->data;
+        $outboundDeliverable = OutboundDeliverable::query()
+            ->where('id', data_get($event->data->mail->tags, 'outbound_deliverable_id'))
+            ->first();
 
-        $this->deliverable->update([
-            'external_status' => $updateData->messageStatus ?? null,
-        ]);
+        if (is_null($outboundDeliverable)) {
+            CouldNotFindOutboundDeliverableFromExternalReference::dispatch($event->data);
 
-        match ($this->deliverable->external_status) {
-            'delivered' => $this->deliverable->markDeliverySuccessful(),
-            'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($updateData->errorMessage ?? null),
-            default => null,
-        };
+            return;
+        }
+
+        UpdateOutboundDeliverableEmailStatus::dispatch($outboundDeliverable, $event->data);
     }
 }

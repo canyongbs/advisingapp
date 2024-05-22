@@ -34,14 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\DataTransferObjects;
+use function Tests\Helpers\Events\testEventIsBeingListenedTo;
 
-use Spatie\LaravelData\Data;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesBounceEvent;
 
-class UpdateDeliveryStatusData extends Data
-{
-    public function __construct(
-        public TwilioStatusCallbackData $data
-    ) {}
-}
+testEventIsBeingListenedTo(
+    event: SesBounceEvent::class,
+    listener: HandleSesBounceEvent::class
+);
