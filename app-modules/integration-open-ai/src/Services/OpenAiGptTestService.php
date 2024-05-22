@@ -34,48 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Enums;
+namespace AdvisingApp\IntegrationOpenAi\Services;
 
-use Exception;
-use AdvisingApp\Ai\Services\TestAiService;
-use AdvisingApp\Ai\Services\Contracts\AiService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt35Service;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
+use OpenAI;
 
-enum AiModel: string
+class OpenAiGptTestService extends BaseOpenAiService
 {
-    case OpenAiGpt35 = 'openai_gpt_3.5';
-
-    case OpenAiGpt4 = 'openai_gpt_4';
-
-    case OpenAiGptTest = 'openai_gpt_test';
-
-    case Test = 'test';
-
-    public function getService(): AiService
+    public function __construct()
     {
-        $service = match ($this) {
-            self::OpenAiGpt35 => OpenAiGpt35Service::class,
-            self::OpenAiGpt4 => OpenAiGpt4Service::class,
-            self::OpenAiGptTest => OpenAiGptTestService::class,
-            self::Test => TestAiService::class,
-            default => throw new Exception('AI model service has not been implemented yet.'),
-        };
-
-        app()->scopedIf($service);
-
-        return app($service);
+        $this->client = new OpenAI\Testing\ClientFake();
     }
 
-    public function isVisibleForApplication(AiApplication $aiApplication): bool
+    public function getModel(): string
     {
-        return match ($this) {
-            self::OpenAiGpt35 => $aiApplication === AiApplication::PersonalAssistant,
-            self::OpenAiGpt4 => $aiApplication === AiApplication::ReportAssistant,
-            self::OpenAiGptTest => false,
-            self::Test => true,
-            default => throw new Exception('AI model visibility for application has not been implemented yet.'),
-        };
+        return 'test';
     }
 }
