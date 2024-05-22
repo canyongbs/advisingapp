@@ -122,3 +122,9 @@ it('prevents users who do not own the thread from retrying sending messages to i
     ])
         ->assertForbidden();
 });
+
+todo('prevents users from retrying an empty message');
+
+todo('prevents users from retrying a non-string message');
+
+todo('prevents users from retrying a message over 1000 characters');

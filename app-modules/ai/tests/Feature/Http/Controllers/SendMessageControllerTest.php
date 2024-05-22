@@ -122,3 +122,9 @@ it('prevents users who do not own the thread from sending messages to it', funct
     ])
         ->assertForbidden();
 });
+
+todo('prevents users from sending an empty message');
+
+todo('prevents users from sending a non-string message');
+
+todo('prevents users from sending a message over 1000 characters');
