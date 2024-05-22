@@ -333,7 +333,7 @@ trait CanManageThreads
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
                             AiThreadShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
-                            AiThreadShareTarget::User->value => User::orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::User->value => User::whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
                         };
                     })
                     ->searchable()
