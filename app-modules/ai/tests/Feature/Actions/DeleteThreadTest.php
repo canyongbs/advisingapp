@@ -34,41 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Actions;
+use Mockery\MockInterface;
 
-use App\Models\Tenant;
+use function Tests\asSuperAdmin;
+
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Ai\Settings\AiSettings;
+use AdvisingApp\Ai\Actions\DeleteThread;
+use AdvisingApp\Ai\Services\TestAiService;
 
-class GetDefaultAiAssistant
-{
-    public function __invoke(AiApplication $application): AiAssistant
-    {
-        $assistant = AiAssistant::query()
-            ->where('application', $application)
-            ->where('is_default', true)
-            ->first();
+use function Pest\Laravel\assertSoftDeleted;
 
-        if ($assistant) {
-            return $assistant;
-        }
+it('deletes a thread', function () {
+    asSuperAdmin();
 
-        $tenant = Tenant::current();
-        $settings = app(AiSettings::class);
+    $this->mock(
+        TestAiService::class,
+        fn (MockInterface $mock) => $mock
+            ->shouldReceive('deleteThread')->once(),
+    );
 
-        $assistant = new AiAssistant();
-        $assistant->name = "{$tenant->name} AI Assistant";
-        $assistant->description = "An AI Assistant for {$tenant->name}";
-        $assistant->instructions = $settings->prompt_system_context;
-        $assistant->application = $application;
-        $assistant->model = $settings->getDefaultModel();
-        $assistant->is_default = true;
+    $thread = AiThread::factory()
+        ->for(AiAssistant::factory()->create([
+            'application' => AiApplication::PersonalAssistant,
+            'is_default' => true,
+            'model' => AiModel::Test,
+        ]), 'assistant')
+        ->for(auth()->user())
+        ->create();
 
-        $assistant->model->getService()->createAssistant($assistant);
+    app(DeleteThread::class)($thread);
 
-        $assistant->save();
-
-        return $assistant;
-    }
-}
+    assertSoftDeleted($thread);
+});
