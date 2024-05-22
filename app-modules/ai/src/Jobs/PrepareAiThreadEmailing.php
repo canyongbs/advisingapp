@@ -48,7 +48,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use Filament\Notifications\Notification as FilamentNotification;
-use AdvisingApp\Ai\Notifications\SendAssistantTranscriptNotification;
 
 class PrepareAiThreadEmailing implements ShouldQueue
 {
@@ -92,9 +91,6 @@ class PrepareAiThreadEmailing implements ShouldQueue
                 ->with('users')
                 ->get()
                 ->each(function (Team $team) use ($sender) {
-                    $team->users()->whereKeyNot($this->sender)->get()
-                        ->each(fn (User $recipient) => $recipient->notify(new SendAssistantTranscriptNotification($this->thread, $this->sender)));
-
                     Bus::batch(
                         $team->users()->whereKeyNot($this->sender)->get()
                             ->map(fn (User $recipient) => new EmailAiThread($this->thread, $this->sender, $recipient))
