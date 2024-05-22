@@ -34,22 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Enums;
+namespace AdvisingApp\Ai\Jobs;
 
-use Filament\Support\Contracts\HasLabel;
+use App\Models\User;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use AdvisingApp\Ai\Models\AiThread;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
+use AdvisingApp\Ai\Notifications\SendAssistantTranscriptNotification;
 
-enum AssistantChatShareWith: string implements HasLabel
+class EmailAiThread implements ShouldQueue
 {
-    case User = 'user';
-    case Team = 'team';
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    public function getLabel(): ?string
+    public function __construct(
+        protected AiThread $thread,
+        protected User $sender,
+        protected User $recipient,
+    ) {}
+
+    public function middleware(): array
     {
-        return $this->name;
+        return [new SkipIfBatchCancelled()];
     }
 
-    public static function default(): AssistantChatShareWith
+    public function handle(): void
     {
-        return AssistantChatShareWith::User;
+        $this->recipient->notify(new SendAssistantTranscriptNotification($this->thread, $this->sender));
     }
 }

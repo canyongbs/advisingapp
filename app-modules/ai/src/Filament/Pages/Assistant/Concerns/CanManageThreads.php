@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
 use App\Models\User;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Actions\Action;
 use Livewire\Attributes\Locked;
@@ -54,9 +55,9 @@ use Filament\Support\Enums\ActionSize;
 use AdvisingApp\Ai\Actions\CreateThread;
 use AdvisingApp\Ai\Actions\DeleteThread;
 use Filament\Forms\Components\TextInput;
-use AdvisingApp\Ai\Enums\AssistantChatShareVia;
-use AdvisingApp\Ai\Jobs\ShareAssistantChatsJob;
-use AdvisingApp\Ai\Enums\AssistantChatShareWith;
+use AdvisingApp\Ai\Enums\AiThreadShareTarget;
+use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
+use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 trait CanManageThreads
@@ -304,29 +305,31 @@ trait CanManageThreads
 
     public function cloneThreadAction(): Action
     {
-        return Action::make('cloneChat')
+        return Action::make('cloneThread')
             ->label('Clone')
+            ->modalHeading('Clone chat')
             ->modalSubmitActionLabel('Continue')
             ->modalFooterActionsAlignment(Alignment::Center)
             ->modalWidth('md')
             ->form([
-                Radio::make('target_type')
-                    ->label('With')
-                    ->options(AssistantChatShareWith::class)
-                    ->enum(AssistantChatShareWith::class)
-                    ->default(AssistantChatShareWith::default())
+                Radio::make('targetType')
+                    ->label('To')
+                    ->options(AiThreadShareTarget::class)
+                    ->enum(AiThreadShareTarget::class)
+                    ->default(AiThreadShareTarget::default()->value)
                     ->required()
-                    ->live(),
-                Select::make('target_ids')
-                    ->label(fn (Get $get): string => match ($get('target_type')) {
-                        AssistantChatShareWith::Team => 'Select Teams',
-                        AssistantChatShareWith::User => 'Select Users',
+                    ->live()
+                    ->afterStateUpdated(fn (Set $set) => $set('targetIds', [])),
+                Select::make('targetIds')
+                    ->label(fn (Get $get): string => match ($get('targetType')) {
+                        AiThreadShareTarget::Team->value => 'Select Teams',
+                        AiThreadShareTarget::User->value => 'Select Users',
                     })
-                    ->visible(fn (Get $get): bool => filled($get('target_type')))
+                    ->visible(fn (Get $get): bool => filled($get('targetType')))
                     ->options(function (Get $get): Collection {
-                        return match ($get('target_type')) {
-                            AssistantChatShareWith::Team => Team::orderBy('name')->pluck('name', 'id'),
-                            AssistantChatShareWith::User => User::whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
+                        return match ($get('targetType')) {
+                            AiThreadShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::User->value => User::whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
                         };
                     })
                     ->searchable()
@@ -342,7 +345,7 @@ trait CanManageThreads
                     return;
                 }
 
-                dispatch(new ShareAssistantChatsJob($thread, AssistantChatShareVia::Internal, $data['target_type'], $data['target_ids'], auth()->user()));
+                dispatch(new PrepareAiThreadCloning($thread, $data['targetType'], $data['targetIds'], auth()->user()));
             })
             ->link()
             ->icon('heroicon-m-document-duplicate')
@@ -352,29 +355,31 @@ trait CanManageThreads
 
     public function emailThreadAction(): Action
     {
-        return Action::make('emailChat')
+        return Action::make('emailThread')
             ->label('Email')
+            ->modalHeading('Email chat')
             ->modalSubmitActionLabel('Continue')
             ->modalFooterActionsAlignment(Alignment::Center)
             ->modalWidth('md')
             ->form([
-                Radio::make('target_type')
-                    ->label('With')
-                    ->options(AssistantChatShareWith::class)
-                    ->enum(AssistantChatShareWith::class)
-                    ->default(AssistantChatShareWith::default())
+                Radio::make('targetType')
+                    ->label('To')
+                    ->options(AiThreadShareTarget::class)
+                    ->enum(AiThreadShareTarget::class)
+                    ->default(AiThreadShareTarget::default()->value)
                     ->required()
-                    ->live(),
-                Select::make('target_ids')
-                    ->label(fn (Get $get): string => match ($get('target_type')) {
-                        AssistantChatShareWith::Team => 'Select Teams',
-                        AssistantChatShareWith::User => 'Select Users',
+                    ->live()
+                    ->afterStateUpdated(fn (Set $set) => $set('targetIds', [])),
+                Select::make('targetIds')
+                    ->label(fn (Get $get): string => match ($get('targetType')) {
+                        AiThreadShareTarget::Team->value => 'Select Teams',
+                        AiThreadShareTarget::User->value => 'Select Users',
                     })
-                    ->visible(fn (Get $get): bool => filled($get('target_type')))
+                    ->visible(fn (Get $get): bool => filled($get('targetType')))
                     ->options(function (Get $get): Collection {
-                        return match ($get('target_type')) {
-                            AssistantChatShareWith::Team => Team::orderBy('name')->pluck('name', 'id'),
-                            AssistantChatShareWith::User => User::orderBy('name')->pluck('name', 'id'),
+                        return match ($get('targetType')) {
+                            AiThreadShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::User->value => User::orderBy('name')->pluck('name', 'id'),
                         };
                     })
                     ->searchable()
@@ -390,7 +395,7 @@ trait CanManageThreads
                     return;
                 }
 
-                dispatch(new ShareAssistantChatsJob($thread, AssistantChatShareVia::Email, $data['target_type'], $data['target_ids'], auth()->user()));
+                dispatch(new PrepareAiThreadEmailing($thread, $data['targetType'], $data['targetIds'], auth()->user()));
             })
             ->link()
             ->icon('heroicon-m-envelope')

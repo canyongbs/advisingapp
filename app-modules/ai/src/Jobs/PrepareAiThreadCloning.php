@@ -39,18 +39,17 @@ namespace AdvisingApp\Ai\Jobs;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Queue\SerializesModels;
 use Filament\Notifications\Notification;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\Ai\Enums\AssistantChatShareVia;
-use AdvisingApp\Assistant\Models\AssistantChat;
-use AdvisingApp\Ai\Enums\AssistantChatShareWith;
-use AdvisingApp\Ai\Notifications\SendFilamentShareAssistantChatNotification;
+use AdvisingApp\Ai\Enums\AiThreadShareTarget;
+use Filament\Notifications\Notification as FilamentNotification;
 
-class ShareAssistantChatsJob implements ShouldQueue
+class PrepareAiThreadCloning implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -58,62 +57,52 @@ class ShareAssistantChatsJob implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        public AssistantChat $chat,
-        public AssistantChatShareVia $via,
-        public AssistantChatShareWith $targetType,
-        public array $targetIds,
-        public User $sender
+        protected AiThread $thread,
+        protected string $targetType,
+        protected array $targetIds,
+        protected User $sender,
     ) {}
 
     public function handle(): void
     {
-        if ($this->targetType === AssistantChatShareWith::User) {
+        if ($this->targetType === AiThreadShareTarget::User->value) {
             User::query()
                 ->whereKey($this->targetIds)
                 ->get()
-                ->each(function (User $user) {
-                    dispatch(new ShareAssistantChatJob($this->chat, $this->via, $user, $this->sender));
+                ->each(function (User $recipient) {
+                    dispatch(new CloneAiThread($this->thread, $this->sender, $recipient));
 
-                    switch ($this->via) {
-                        case AssistantChatShareVia::Email:
-                            $name = $this->sender->is($user) ? 'yourself' : $user->name;
-                            Notification::make()
-                                ->success()
-                                ->title("You emailed an assistant chat to {$name}.")
-                                ->sendToDatabase($this->sender);
+                    $recipientName = $this->sender->is($recipient) ? 'yourself' : $recipient->name;
 
-                            break;
-                        case AssistantChatShareVia::Internal:
-                            Notification::make()
-                                ->success()
-                                ->title("You shared an assistant chat with {$user->name}.")
-                                ->sendToDatabase($this->sender);
-
-                            break;
-                    }
+                    Notification::make()
+                        ->success()
+                        ->title("You cloned an AI chat to {$recipientName}.")
+                        ->sendToDatabase($this->sender);
                 });
 
             return;
         }
 
-        if ($this->targetType === AssistantChatShareWith::Team) {
+        if ($this->targetType === AiThreadShareTarget::Team->value) {
             $sender = $this->sender;
-            $via = $this->via;
 
             Team::query()
                 ->whereKey($this->targetIds)
                 ->with('users')
                 ->get()
-                ->each(function (Team $team) use ($sender, $via) {
-                    $jobs = $team
-                        ->users()
-                        ->whereKeyNot($sender->id)
-                        ->get()
-                        ->map(fn (User $user) => new ShareAssistantChatJob($this->chat, $this->via, $user, $this->sender));
-
-                    Bus::batch($jobs)
-                        ->name("ShareAssistantChatJobs with Team: {$team->id}")
-                        ->then(fn () => $sender->notify(new SendFilamentShareAssistantChatNotification($via, $team->name)))
+                ->each(function (Team $team) use ($sender) {
+                    Bus::batch(
+                        $team->users()->whereKeyNot($this->sender)->get()
+                            ->map(fn (User $recipient) => new CloneAiThread($this->thread, $this->sender, $recipient))
+                            ->all(),
+                    )
+                        ->name("PrepareAiThreadCloning for team {$team->id}")
+                        ->then(function () use ($sender, $team) {
+                            FilamentNotification::make()
+                                ->success()
+                                ->title("You cloned an AI chat to users in team {$team->name}.")
+                                ->sendToDatabase($sender);
+                        })
                         ->dispatch();
                 });
         }

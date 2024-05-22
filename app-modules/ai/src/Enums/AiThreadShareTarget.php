@@ -38,18 +38,27 @@ namespace AdvisingApp\Ai\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 
-enum AssistantChatShareVia: string implements HasLabel
+enum AiThreadShareTarget: string implements HasLabel
 {
-    case Email = 'email';
-    case Internal = 'internal';
+    case User = 'user';
+    case Team = 'team';
 
     public function getLabel(): ?string
     {
         return $this->name;
     }
 
-    public static function default(): AssistantChatShareVia
+    public static function default(): AiThreadShareTarget
     {
-        return AssistantChatShareVia::Internal;
+        return AiThreadShareTarget::User;
+    }
+
+    public static function parse($value): static
+    {
+        if ($value instanceof static) {
+            return $value;
+        }
+
+        return static::from($value);
     }
 }

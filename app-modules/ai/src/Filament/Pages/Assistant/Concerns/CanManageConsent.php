@@ -73,6 +73,7 @@ trait CanManageConsent
         if (! $user->defaultAssistantChatFoldersHaveBeenCreated()) {
             foreach (AiThreadFolder::defaults() as $default) {
                 $user->aiThreadFolders()->create([
+                    'application' => static::APPLICATION,
                     'name' => $default,
                 ]);
             }

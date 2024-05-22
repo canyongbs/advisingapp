@@ -46,11 +46,11 @@ use App\Filament\Pages\Dashboard;
 use Illuminate\Support\Facades\Bus;
 use AdvisingApp\Ai\Models\PromptUse;
 use AdvisingApp\Ai\Models\PromptUpvote;
+use AdvisingApp\Ai\Enums\AiThreadShareVia;
+use AdvisingApp\Ai\Jobs\ShareAiThreadsJob;
+use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Assistant\Models\AiAssistant;
-use AdvisingApp\Ai\Enums\AssistantChatShareVia;
-use AdvisingApp\Ai\Jobs\ShareAssistantChatsJob;
 use AdvisingApp\Assistant\Models\AssistantChat;
-use AdvisingApp\Ai\Enums\AssistantChatShareWith;
 use AdvisingApp\Assistant\Enums\AiAssistantType;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
@@ -1280,23 +1280,23 @@ it('can clone a chat to a user', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('cloneChat', [
-            'target_type' => AssistantChatShareWith::User->value,
+            'target_type' => AiThreadShareTarget::User->value,
             'target_ids' => [$otherUser->getKey()],
         ], arguments: [
             'chat' => $chat->getKey(),
         ])
         ->assertHasNoActionErrors();
 
-    Bus::assertDispatched(ShareAssistantChatsJob::class, function (ShareAssistantChatsJob $job) use ($chat, $otherUser, $user) {
-        if (! $job->chat->is($chat)) {
+    Bus::assertDispatched(ShareAiThreadsJob::class, function (ShareAiThreadsJob $job) use ($chat, $otherUser, $user) {
+        if (! $job->thread->is($chat)) {
             return false;
         }
 
-        if ($job->via !== AssistantChatShareVia::Internal) {
+        if ($job->via !== AiThreadShareVia::Internal) {
             return false;
         }
 
-        if ($job->targetType !== AssistantChatShareWith::User) {
+        if ($job->targetType !== AiThreadShareTarget::User) {
             return false;
         }
 
@@ -1321,23 +1321,23 @@ it('can clone a chat to a team', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('cloneChat', [
-            'target_type' => AssistantChatShareWith::Team->value,
+            'target_type' => AiThreadShareTarget::Team->value,
             'target_ids' => [$team->getKey()],
         ], arguments: [
             'chat' => $chat->getKey(),
         ])
         ->assertHasNoActionErrors();
 
-    Bus::assertDispatched(ShareAssistantChatsJob::class, function (ShareAssistantChatsJob $job) use ($chat, $team, $user) {
-        if (! $job->chat->is($chat)) {
+    Bus::assertDispatched(ShareAiThreadsJob::class, function (ShareAiThreadsJob $job) use ($chat, $team, $user) {
+        if (! $job->thread->is($chat)) {
             return false;
         }
 
-        if ($job->via !== AssistantChatShareVia::Internal) {
+        if ($job->via !== AiThreadShareVia::Internal) {
             return false;
         }
 
-        if ($job->targetType !== AssistantChatShareWith::Team) {
+        if ($job->targetType !== AiThreadShareTarget::Team) {
             return false;
         }
 
@@ -1373,7 +1373,7 @@ it('can not clone a chat without any targets', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('cloneChat', [
-            'target_type' => AssistantChatShareWith::User->value,
+            'target_type' => AiThreadShareTarget::User->value,
             'target_ids' => [],
         ], arguments: [
             'chat' => $chat->getKey(),
@@ -1393,13 +1393,13 @@ it('can not clone a chat belonging to a different user', function () use ($setUp
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('cloneChat', [
-            'target_type' => AssistantChatShareWith::User->value,
+            'target_type' => AiThreadShareTarget::User->value,
             'target_ids' => [$otherUser->getKey()],
         ], arguments: [
             'chat' => $chat->getKey(),
         ]);
 
-    Bus::assertNotDispatched(ShareAssistantChatsJob::class);
+    Bus::assertNotDispatched(ShareAiThreadsJob::class);
 });
 
 it('can email a chat to a user', function () use ($setUp) {
@@ -1411,23 +1411,23 @@ it('can email a chat to a user', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('emailChat', [
-            'target_type' => AssistantChatShareWith::User->value,
+            'target_type' => AiThreadShareTarget::User->value,
             'target_ids' => [$otherUser->getKey()],
         ], arguments: [
             'chat' => $chat->getKey(),
         ])
         ->assertHasNoActionErrors();
 
-    Bus::assertDispatched(ShareAssistantChatsJob::class, function (ShareAssistantChatsJob $job) use ($chat, $otherUser, $user) {
-        if (! $job->chat->is($chat)) {
+    Bus::assertDispatched(ShareAiThreadsJob::class, function (ShareAiThreadsJob $job) use ($chat, $otherUser, $user) {
+        if (! $job->thread->is($chat)) {
             return false;
         }
 
-        if ($job->via !== AssistantChatShareVia::Email) {
+        if ($job->via !== AiThreadShareVia::Email) {
             return false;
         }
 
-        if ($job->targetType !== AssistantChatShareWith::User) {
+        if ($job->targetType !== AiThreadShareTarget::User) {
             return false;
         }
 
@@ -1452,23 +1452,23 @@ it('can email a chat to a team', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('emailChat', [
-            'target_type' => AssistantChatShareWith::Team->value,
+            'target_type' => AiThreadShareTarget::Team->value,
             'target_ids' => [$team->getKey()],
         ], arguments: [
             'chat' => $chat->getKey(),
         ])
         ->assertHasNoActionErrors();
 
-    Bus::assertDispatched(ShareAssistantChatsJob::class, function (ShareAssistantChatsJob $job) use ($chat, $team, $user) {
-        if (! $job->chat->is($chat)) {
+    Bus::assertDispatched(ShareAiThreadsJob::class, function (ShareAiThreadsJob $job) use ($chat, $team, $user) {
+        if (! $job->thread->is($chat)) {
             return false;
         }
 
-        if ($job->via !== AssistantChatShareVia::Email) {
+        if ($job->via !== AiThreadShareVia::Email) {
             return false;
         }
 
-        if ($job->targetType !== AssistantChatShareWith::Team) {
+        if ($job->targetType !== AiThreadShareTarget::Team) {
             return false;
         }
 
@@ -1504,7 +1504,7 @@ it('can not email a chat without any targets', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('emailChat', [
-            'target_type' => AssistantChatShareWith::User->value,
+            'target_type' => AiThreadShareTarget::User->value,
             'target_ids' => [],
         ], arguments: [
             'chat' => $chat->getKey(),
@@ -1524,11 +1524,11 @@ it('can not email a chat belonging to a different user', function () use ($setUp
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('emailChat', [
-            'target_type' => AssistantChatShareWith::User->value,
+            'target_type' => AiThreadShareTarget::User->value,
             'target_ids' => [$otherUser->getKey()],
         ], arguments: [
             'chat' => $chat->getKey(),
         ]);
 
-    Bus::assertNotDispatched(ShareAssistantChatsJob::class);
+    Bus::assertNotDispatched(ShareAiThreadsJob::class);
 });
