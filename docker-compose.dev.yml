@@ -20,6 +20,7 @@ services:
       CACHE_FILAMENT_COMPONENTS: '${CACHE_FILAMENT_COMPONENTS:-false}'
       PUID: '${SPIN_USER_ID:-9999}'
       PGID: '${SPIN_GROUP_ID:-9999}'
+      SQS_QUEUE: '${SQS_QUEUE:-default}'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.advisingapp-app.rule=HostRegexp(`advisingapp.local`, `{subdomain:[a-z0-9]+}.advisingapp.local`)"

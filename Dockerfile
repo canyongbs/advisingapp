@@ -34,11 +34,13 @@ RUN echo "source $NVM_DIR/nvm.sh \
 COPY ./docker/s6-overlay/scripts/ /etc/s6-overlay/scripts/
 COPY docker/s6-overlay/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
 COPY ./docker/s6-overlay/user/ /etc/s6-overlay/s6-rc.d/user/contents.d/
+COPY ./docker/s6-overlay/templates/ /tmp/s6-overlay-templates
 
 ARG TOTAL_QUEUE_WORKERS=10
 
 RUN for run in $(seq 2 "$TOTAL_QUEUE_WORKERS"); do \
-    cp -r "/etc/s6-overlay/s6-rc.d/laravel-queue" "/etc/s6-overlay/s6-rc.d/laravel-queue-$run"; \
+    cp -r "/tmp/s6-overlay-templates/laravel-queue" "/etc/s6-overlay/s6-rc.d/laravel-queue-$run"; \
+    sed -i -e 's/VAR_QUEUE/\$SQS_QUEUE/g' "/etc/s6-overlay/s6-rc.d/laravel-queue-$run/run"; \
     cp "/etc/s6-overlay/s6-rc.d/user/contents.d/laravel-queue" "/etc/s6-overlay/s6-rc.d/user/contents.d/laravel-queue-$run"; \
 done
 
