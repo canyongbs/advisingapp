@@ -50,6 +50,7 @@ use function Pest\Laravel\assertSoftDeleted;
 it('deletes a thread', function () {
     asSuperAdmin();
 
+    /** @phpstan-ignore-next-line */
     $this->mock(
         TestAiService::class,
         fn (MockInterface $mock) => $mock
