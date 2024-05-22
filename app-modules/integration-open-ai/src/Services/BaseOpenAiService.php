@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
-use OpenAI\Client;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
+use OpenAI\Contracts\ClientContract;
 use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Settings\AISettings;
+use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
@@ -49,9 +49,14 @@ abstract class BaseOpenAiService implements AiService
 {
     public const FORMATTING_INSTRUCTIONS = 'When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.';
 
-    protected Client $client;
+    protected ClientContract $client;
 
     abstract public function getModel(): string;
+
+    public function getClient(): ClientContract
+    {
+        return $this->client;
+    }
 
     public function createAssistant(AiAssistant $assistant): void
     {
@@ -78,7 +83,16 @@ abstract class BaseOpenAiService implements AiService
 
     public function createThread(AiThread $thread): void
     {
-        $response = $this->client->threads()->create([]);
+        $threadParameters = [];
+
+        if ($thread->exists) {
+            $threadParameters['messages'] = $thread->messages->toBase()->map(fn (AiMessage $message): array => [
+                'content' => $message->content,
+                'role' => $message->user_id ? 'user' : 'assistant',
+            ])->all();
+        }
+
+        $response = $this->client->threads()->create($threadParameters);
 
         $thread->thread_id = $response->id;
     }
@@ -115,9 +129,11 @@ abstract class BaseOpenAiService implements AiService
             'limit' => 1,
         ]);
         $responseContent = $response->data[0]->content[0]->text->value;
+        $responseId = $response->data[0]->id;
 
         $response = new AiMessage();
         $response->content = $responseContent;
+        $response->message_id = $responseId;
 
         return $response;
     }
@@ -129,7 +145,7 @@ abstract class BaseOpenAiService implements AiService
             'limit' => 1,
         ])->data[0] ?? null;
 
-        if ((! $response) || $response?->status === 'completed') {
+        if ((! $response) || ($response?->status === 'completed') || blank($message->message_id)) {
             $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
             if (blank($message->message_id)) {
@@ -156,9 +172,11 @@ abstract class BaseOpenAiService implements AiService
             'limit' => 1,
         ]);
         $responseContent = $response->data[0]->content[0]->text->value;
+        $responseId = $response->data[0]->id;
 
         $response = new AiMessage();
         $response->content = $responseContent;
+        $response->message_id = $responseId;
 
         return $response;
     }
@@ -167,7 +185,7 @@ abstract class BaseOpenAiService implements AiService
     {
         $limit = 32768;
 
-        $limit -= strlen(resolve(AISettings::class)->prompt_system_context);
+        $limit -= strlen(resolve(AiSettings::class)->prompt_system_context);
         $limit -= strlen(auth()->user()->getDynamicContext());
         $limit -= strlen(static::FORMATTING_INSTRUCTIONS);
 

@@ -42,6 +42,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 
+/**
+ * @mixin IdeHelperAiAssistantUpvote
+ */
 class AiAssistantUpvote extends BaseModel
 {
     use CanAddAssistantLicenseGlobalScope;

@@ -56,7 +56,7 @@ class RetryMessageController
 
             return response()->json([
                 'message' => 'The assistant has failed. Please retry later.',
-            ], 500);
+            ], 503);
         }
 
         return response()->json([

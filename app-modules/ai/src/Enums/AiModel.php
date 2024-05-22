@@ -41,12 +41,15 @@ use AdvisingApp\Ai\Services\TestAiService;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt35Service;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
 
 enum AiModel: string
 {
     case OpenAiGpt35 = 'openai_gpt_3.5';
 
     case OpenAiGpt4 = 'openai_gpt_4';
+
+    case OpenAiGptTest = 'openai_gpt_test';
 
     case Test = 'test';
 
@@ -55,6 +58,7 @@ enum AiModel: string
         $service = match ($this) {
             self::OpenAiGpt35 => OpenAiGpt35Service::class,
             self::OpenAiGpt4 => OpenAiGpt4Service::class,
+            self::OpenAiGptTest => OpenAiGptTestService::class,
             self::Test => TestAiService::class,
             default => throw new Exception('AI model service has not been implemented yet.'),
         };
@@ -69,6 +73,7 @@ enum AiModel: string
         return match ($this) {
             self::OpenAiGpt35 => $aiApplication === AiApplication::PersonalAssistant,
             self::OpenAiGpt4 => $aiApplication === AiApplication::ReportAssistant,
+            self::OpenAiGptTest => false,
             self::Test => true,
             default => throw new Exception('AI model visibility for application has not been implemented yet.'),
         };

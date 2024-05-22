@@ -41,9 +41,22 @@ use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
 use AdvisingApp\Ai\Models\AiAssistant;
+use App\Concerns\PerformsLicenseChecks;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
 class AiAssistantPolicy
 {
+    use PerformsLicenseChecks;
+
+    public function before(Authenticatable $authenticatable): ?Response
+    {
+        if (! is_null($response = $this->hasLicenses($authenticatable, LicenseType::ConversationalAi))) {
+            return $response;
+        }
+
+        return null;
+    }
+
     public function viewAny(Authenticatable $authenticatable): Response
     {
         if (! Gate::check(Feature::CustomAiAssistants->getGateName())) {

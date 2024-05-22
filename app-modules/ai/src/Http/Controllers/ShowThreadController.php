@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Http\Controllers;
 
 use App\Models\User;
+use Filament\Facades\Filament;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Stringable;
 use AdvisingApp\Ai\Models\AiThread;
@@ -71,7 +72,7 @@ class ShowThreadController
                 ->toBase()
                 ->mapWithKeys(fn (User $user): array => [$user->id => [
                     'name' => $user->name,
-                    'avatar_url' => $user->getFilamentAvatarUrl(),
+                    'avatar_url' => Filament::getUserAvatarUrl($user),
                 ]])
                 ->all(),
         ]);

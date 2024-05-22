@@ -36,15 +36,17 @@
 
 namespace AdvisingApp\Ai\Actions;
 
+use App\Models\Tenant;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Settings\AiSettings;
 
 class CreateThread
 {
     public function __invoke(AiApplication $application, ?AiAssistant $assistant = null): AiThread
     {
-        $assistant ??= app(GetDefaultAiAssistant::class)($application);
+        $assistant ??= $this->getDefaultAiAssistant($application);
 
         $existingThread = auth()->user()->aiThreads()
             ->whereNull('name')
@@ -65,5 +67,34 @@ class CreateThread
         $thread->save();
 
         return $thread;
+    }
+
+    protected function getDefaultAiAssistant(AiApplication $application): AiAssistant
+    {
+        $assistant = AiAssistant::query()
+            ->where('application', $application)
+            ->where('is_default', true)
+            ->first();
+
+        if ($assistant) {
+            return $assistant;
+        }
+
+        $tenant = Tenant::current();
+        $settings = app(AiSettings::class);
+
+        $assistant = new AiAssistant();
+        $assistant->name = "{$tenant->name} AI Assistant";
+        $assistant->description = "An AI Assistant for {$tenant->name}";
+        $assistant->instructions = $settings->prompt_system_context;
+        $assistant->application = $application;
+        $assistant->model = $settings->getDefaultModel();
+        $assistant->is_default = true;
+
+        $assistant->model->getService()->createAssistant($assistant);
+
+        $assistant->save();
+
+        return $assistant;
     }
 }

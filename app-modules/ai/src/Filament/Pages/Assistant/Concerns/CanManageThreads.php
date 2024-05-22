@@ -60,6 +60,10 @@ use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
+/**
+ * @property-read array $customAssistants
+ * @property-read EloquentCollection $threadsWithoutAFolder
+ */
 trait CanManageThreads
 {
     #[Locked]
@@ -220,7 +224,7 @@ trait CanManageThreads
                     ->where('application', static::APPLICATION)
                     ->find($data['folder']);
 
-                if ($folder) {
+                if (! $folder) {
                     unset($this->threadsWithoutAFolder);
 
                     return;
@@ -253,7 +257,7 @@ trait CanManageThreads
 
                 unset($this->threadsWithoutAFolder, $this->folders);
             })
-            ->icon('heroicon-o-trash')
+            ->icon('heroicon-m-trash')
             ->color('danger')
             ->iconButton()
             ->extraAttributes([
@@ -294,7 +298,7 @@ trait CanManageThreads
 
                 unset($this->threadsWithoutAFolder, $this->folders);
             })
-            ->icon('heroicon-o-pencil')
+            ->icon('heroicon-m-pencil')
             ->color('warning')
             ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
             ->iconButton()

@@ -69,7 +69,6 @@ class CloneAiThread implements ShouldQueue
     {
         $threadReplica = $this->thread->replicate(except: ['id', 'thread_id', 'folder_id']);
         $threadReplica->user()->associate($this->recipient);
-        $threadReplica->assistant->model->getService()->createThread($threadReplica);
         $threadReplica->save();
 
         foreach ($this->thread->messages as $message) {
@@ -77,5 +76,8 @@ class CloneAiThread implements ShouldQueue
             $messageReplica->thread()->associate($threadReplica);
             $messageReplica->save();
         }
+
+        $threadReplica->assistant->model->getService()->createThread($threadReplica);
+        $threadReplica->save();
     }
 }

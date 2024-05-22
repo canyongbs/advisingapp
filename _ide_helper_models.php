@@ -393,6 +393,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property bool $setup_complete
  * @method static \Spatie\Multitenancy\TenantCollection<int, static> all($columns = ['*'])
  * @method static \Database\Factories\TenantFactory factory($count = null, $state = [])
  * @method static \Spatie\Multitenancy\TenantCollection<int, static> get($columns = ['*'])
@@ -407,6 +408,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSetupComplete($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Tenant withoutTrashed()
@@ -458,14 +460,14 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Carbon\CarbonImmutable|null $last_chat_ping_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiAssistantUpvote> $aiAssistantUpvotes
+ * @property-read int|null $ai_assistant_upvotes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiThreadFolder> $aiThreadFolders
+ * @property-read int|null $ai_thread_folders_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiThread> $aiThreads
+ * @property-read int|null $ai_threads_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Task\Models\Task> $assignedTasks
  * @property-read int|null $assigned_tasks_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChatFolder> $assistantChatFolders
- * @property-read int|null $assistant_chat_folders_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChatMessageLog> $assistantChatMessageLogs
- * @property-read int|null $assistant_chat_message_logs_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChat> $assistantChats
- * @property-read int|null $assistant_chats_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \AdvisingApp\MeetingCenter\Models\Calendar|null $calendar
@@ -576,6 +578,357 @@ namespace App\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperUser {}
+}
+
+namespace AdvisingApp\Ai\Models{
+/**
+ * AdvisingApp\Ai\Models\AiAssistant
+ *
+ * @property string $id
+ * @property string|null $assistant_id
+ * @property string $name
+ * @property string|null $description
+ * @property string|null $instructions
+ * @property string|null $knowledge
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \AdvisingApp\Ai\Enums\AiApplication $application
+ * @property bool $is_default
+ * @property \AdvisingApp\Ai\Enums\AiModel $model
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiThread> $threads
+ * @property-read int|null $threads_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiAssistantUpvote> $upvotes
+ * @property-read int|null $upvotes_count
+ * @method static \AdvisingApp\Ai\Database\Factories\AiAssistantFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereApplication($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereAssistantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereInstructions($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereIsDefault($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereKnowledge($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereModel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperAiAssistant {}
+}
+
+namespace AdvisingApp\Ai\Models{
+/**
+ * AdvisingApp\Ai\Models\AiAssistantUpvote
+ *
+ * @property string $id
+ * @property string $assistant_id
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Ai\Models\AiAssistant $assistant
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote whereAssistantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperAiAssistantUpvote {}
+}
+
+namespace AdvisingApp\Ai\Models{
+/**
+ * AdvisingApp\Ai\Models\AiMessage
+ *
+ * @property string $id
+ * @property string|null $message_id
+ * @property string $content
+ * @property string|null $context
+ * @property array|null $request
+ * @property string $thread_id
+ * @property string|null $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Ai\Models\AiThread $thread
+ * @property-read \App\Models\User|null $user
+ * @method static \AdvisingApp\Ai\Database\Factories\AiMessageFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereContext($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereMessageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereRequest($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereThreadId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperAiMessage {}
+}
+
+namespace AdvisingApp\Ai\Models{
+/**
+ * AdvisingApp\Ai\Models\AiThread
+ *
+ * @property string $id
+ * @property string|null $thread_id
+ * @property string|null $name
+ * @property string $assistant_id
+ * @property string|null $folder_id
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Ai\Models\AiAssistant $assistant
+ * @property-read \AdvisingApp\Ai\Models\AiThreadFolder|null $folder
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiMessage> $messages
+ * @property-read int|null $messages_count
+ * @property-read \App\Models\User $user
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
+ * @property-read int|null $users_count
+ * @method static \AdvisingApp\Ai\Database\Factories\AiThreadFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereAssistantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereFolderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereThreadId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperAiThread {}
+}
+
+namespace AdvisingApp\Ai\Models{
+/**
+ * AdvisingApp\Ai\Models\AiThreadFolder
+ *
+ * @property string $id
+ * @property string $name
+ * @property \AdvisingApp\Ai\Enums\AiApplication $application
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiThread> $threads
+ * @property-read int|null $threads_count
+ * @property-read \App\Models\User $user
+ * @method static \AdvisingApp\Ai\Database\Factories\AiThreadFolderFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder whereApplication($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperAiThreadFolder {}
+}
+
+namespace AdvisingApp\Ai\Models{
+/**
+ * AdvisingApp\Ai\Models\LegacyAiMessageLog
+ *
+ * @property string $id
+ * @property string $message
+ * @property array $metadata
+ * @property string $user_id
+ * @property array $request
+ * @property \Illuminate\Support\Carbon $sent_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog query()
+ * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereMessage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereMetadata($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereRequest($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereSentAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperLegacyAiMessageLog {}
+}
+
+namespace AdvisingApp\Ai\Models{
+/**
+ * AdvisingApp\Ai\Models\Prompt
+ *
+ * @property string $id
+ * @property string $title
+ * @property string|null $description
+ * @property string $prompt
+ * @property string $type_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property string|null $user_id
+ * @property-read \AdvisingApp\Ai\Models\PromptType $type
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\PromptUpvote> $upvotes
+ * @property-read int|null $upvotes_count
+ * @property-read \App\Models\User|null $user
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\PromptUse> $uses
+ * @property-read int|null $uses_count
+ * @method static \AdvisingApp\Ai\Database\Factories\PromptFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt wherePrompt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperPrompt {}
+}
+
+namespace AdvisingApp\Ai\Models{
+/**
+ * AdvisingApp\Ai\Models\PromptType
+ *
+ * @property string $id
+ * @property string $title
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\Prompt> $prompts
+ * @property-read int|null $prompts_count
+ * @method static \AdvisingApp\Ai\Database\Factories\PromptTypeFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperPromptType {}
+}
+
+namespace AdvisingApp\Ai\Models{
+/**
+ * AdvisingApp\Ai\Models\PromptUpvote
+ *
+ * @property string $id
+ * @property string $prompt_id
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Ai\Models\Prompt $prompt
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote wherePromptId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperPromptUpvote {}
+}
+
+namespace AdvisingApp\Ai\Models{
+/**
+ * AdvisingApp\Ai\Models\PromptUse
+ *
+ * @property string $id
+ * @property string $prompt_id
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Ai\Models\Prompt $prompt
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse wherePromptId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptUse withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperPromptUse {}
 }
 
 namespace AdvisingApp\Alert\Models{
@@ -952,302 +1305,6 @@ namespace AdvisingApp\Application\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperApplicationSubmissionState {}
-}
-
-namespace AdvisingApp\Assistant\Models{
-/**
- * AdvisingApp\Assistant\Models\AiAssistant
- *
- * @property \AdvisingApp\Assistant\Enums\AiAssistantType $type
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChat> $assistantChats
- * @property-read int|null $assistant_chats_count
- * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
- * @property-read int|null $media_count
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant default()
- * @method static \AdvisingApp\Assistant\Database\Factories\AiAssistantFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant query()
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAiAssistant {}
-}
-
-namespace AdvisingApp\Assistant\Models{
-/**
- * AdvisingApp\Assistant\Models\AssistantChat
- *
- * @property string $id
- * @property string $name
- * @property string $user_id
- * @property string|null $assistant_chat_folder_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property string|null $assistant_id
- * @property string|null $thread_id
- * @property-read \AdvisingApp\Assistant\Models\AiAssistant|null $assistant
- * @property-read \AdvisingApp\Assistant\Models\AssistantChatFolder|null $folder
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChatMessage> $messages
- * @property-read int|null $messages_count
- * @property-read \App\Models\User $user
- * @method static \AdvisingApp\Assistant\Database\Factories\AssistantChatFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat query()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereAssistantChatFolderId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereAssistantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereThreadId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAssistantChat {}
-}
-
-namespace AdvisingApp\Assistant\Models{
-/**
- * AdvisingApp\Assistant\Models\AssistantChatFolder
- *
- * @property string $id
- * @property string $name
- * @property string $user_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChat> $chats
- * @property-read int|null $chats_count
- * @property-read \App\Models\User $user
- * @method static \AdvisingApp\Assistant\Database\Factories\AssistantChatFolderFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder query()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAssistantChatFolder {}
-}
-
-namespace AdvisingApp\Assistant\Models{
-/**
- * AdvisingApp\Assistant\Models\AssistantChatMessage
- *
- * @property string $id
- * @property string $assistant_chat_id
- * @property \AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom $from
- * @property string|null $message
- * @property string|null $name
- * @property array|null $function_call
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property string|null $message_id
- * @property string|null $run_id
- * @property mixed|null $file_ids
- * @property-read \AdvisingApp\Assistant\Models\AssistantChat $chat
- * @method static \AdvisingApp\Assistant\Database\Factories\AssistantChatMessageFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage query()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereAssistantChatId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereFileIds($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereFrom($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereFunctionCall($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereMessage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereMessageId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereRunId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAssistantChatMessage {}
-}
-
-namespace AdvisingApp\Assistant\Models{
-/**
- * AdvisingApp\Assistant\Models\AssistantChatMessageLog
- *
- * @property string $id
- * @property string $message
- * @property array $metadata
- * @property string $user_id
- * @property array $request
- * @property \Illuminate\Support\Carbon $sent_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\User $user
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog query()
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog whereMessage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog whereMetadata($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog whereRequest($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog whereSentAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAssistantChatMessageLog {}
-}
-
-namespace AdvisingApp\Assistant\Models{use AdvisingApp\Ai\Models\Prompt;
-/**
- * AdvisingApp\Assistant\Models\Prompt
- *
- * @property string $id
- * @property string $title
- * @property string|null $description
- * @property string $prompt
- * @property string $type_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property string|null $user_id
- * @property-read \AdvisingApp\Ai\Models\PromptType $type
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\PromptUpvote> $upvotes
- * @property-read int|null $upvotes_count
- * @property-read \App\Models\User|null $user
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\PromptUse> $uses
- * @property-read int|null $uses_count
- * @method static \AdvisingApp\Ai\Database\Factories\PromptFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Prompt newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Prompt newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Prompt query()
- * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prompt wherePrompt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperPrompt {}
-}
-
-namespace AdvisingApp\Assistant\Models{use AdvisingApp\Ai\Models\PromptType;
-/**
- * AdvisingApp\Assistant\Models\PromptType
- *
- * @property string $id
- * @property string $title
- * @property string|null $description
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\Prompt> $prompts
- * @property-read int|null $prompts_count
- * @method static \AdvisingApp\Ai\Database\Factories\PromptTypeFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|PromptType newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|PromptType newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|PromptType onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|PromptType query()
- * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptType withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|PromptType withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperPromptType {}
-}
-
-namespace AdvisingApp\Assistant\Models{use AdvisingApp\Ai\Models\PromptUpvote;
-/**
- * AdvisingApp\Assistant\Models\PromptUpvote
- *
- * @property string $id
- * @property string $prompt_id
- * @property string $user_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \AdvisingApp\Ai\Models\Prompt $prompt
- * @property-read \App\Models\User $user
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote query()
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote wherePromptId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUpvote withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperPromptUpvote {}
-}
-
-namespace AdvisingApp\Assistant\Models{use AdvisingApp\Ai\Models\PromptUse;
-/**
- * AdvisingApp\Assistant\Models\PromptUse
- *
- * @property string $id
- * @property string $prompt_id
- * @property string $user_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \AdvisingApp\Ai\Models\Prompt $prompt
- * @property-read \App\Models\User $user
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUse newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUse newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUse onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUse query()
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUse wherePromptId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUse whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUse withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|PromptUse withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperPromptUse {}
 }
 
 namespace AdvisingApp\Audit\Models{
@@ -2377,7 +2434,6 @@ namespace AdvisingApp\Interaction\Models{
  * @property string|null $interactable_type
  * @property string|null $interaction_type_id
  * @property string|null $interaction_relation_id
- * @property string|null $interaction_campaign_id
  * @property string|null $interaction_driver_id
  * @property string|null $interaction_status_id
  * @property string|null $interaction_outcome_id
@@ -2413,7 +2469,6 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractableType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractionCampaignId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractionDriverId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractionInitiativeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractionOutcomeId($value)
@@ -2441,6 +2496,7 @@ namespace AdvisingApp\Interaction\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property bool $is_default
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
@@ -2453,6 +2509,7 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver whereIsDefault($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver withTrashed()
@@ -2472,6 +2529,7 @@ namespace AdvisingApp\Interaction\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property bool $is_default
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
@@ -2483,6 +2541,7 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative whereIsDefault($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative whereUpdatedAt($value)
  * @mixin \Eloquent
@@ -2601,6 +2660,7 @@ namespace AdvisingApp\Interaction\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property bool $is_default
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
@@ -2613,6 +2673,7 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionType whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionType whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InteractionType whereIsDefault($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionType whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionType whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionType withTrashed()

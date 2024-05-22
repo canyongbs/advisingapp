@@ -1,4 +1,4 @@
-type PromptType @model(class: "AdvisingApp\\Assistant\\Models\\PromptType") {
+type PromptType @model(class: "AdvisingApp\\Ai\\Models\\PromptType") {
     id: UUID!
 
     title: String!

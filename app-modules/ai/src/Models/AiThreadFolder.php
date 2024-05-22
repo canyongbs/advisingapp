@@ -44,6 +44,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 
+/**
+ * @mixin IdeHelperAiThreadFolder
+ */
 class AiThreadFolder extends BaseModel
 {
     use CanAddAssistantLicenseGlobalScope;

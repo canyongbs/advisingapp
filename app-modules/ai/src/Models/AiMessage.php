@@ -46,6 +46,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 
+/**
+ * @mixin IdeHelperAiMessage
+ */
 class AiMessage extends BaseModel
 {
     use AsPivot;
@@ -63,7 +66,7 @@ class AiMessage extends BaseModel
     ];
 
     protected $casts = [
-        'request' => 'array',
+        'request' => 'encrypted:array',
     ];
 
     protected $table = 'ai_messages';
