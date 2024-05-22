@@ -35,6 +35,7 @@
 */
 
 use App\Models\User;
+use Filament\Facades\Filament;
 
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
@@ -180,11 +181,11 @@ it('lists users involved in a thread once', function () {
         ->assertJsonCount(2, 'users')
         ->assertJsonFragment([
             'name' => auth()->user()->name,
-            'avatar_url' => auth()->user()->getFilamentAvatarUrl(),
+            'avatar_url' => Filament::getUserAvatarUrl(auth()->user()),
         ])
         ->assertJsonFragment([
             'name' => $anotherUser->name,
-            'avatar_url' => $anotherUser->getFilamentAvatarUrl(),
+            'avatar_url' => Filament::getUserAvatarUrl($anotherUser),
         ]);
 });
 

@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 // phpcs:ignoreFile
 /**
@@ -233,6 +199,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $from_name
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Division\Models\Division> $divisions
  * @property-read int|null $divisions_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
@@ -246,6 +213,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereFromName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting wherePrimaryColor($value)
@@ -591,8 +559,8 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property string|null $type
  * @property \AdvisingApp\Ai\Enums\AiApplication $application
+ * @property bool $is_default
  * @property \AdvisingApp\Ai\Enums\AiModel $model
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
@@ -605,15 +573,17 @@ namespace AdvisingApp\Ai\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereApplication($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereAssistantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereInstructions($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereIsDefault($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereKnowledge($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereModel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant withoutTrashed()
@@ -627,12 +597,24 @@ namespace AdvisingApp\Ai\Models{
 /**
  * AdvisingApp\Ai\Models\AiAssistantUpvote
  *
- * @property-read \AdvisingApp\Ai\Models\AiAssistant|null $assistant
- * @property-read \App\Models\User|null $user
+ * @property string $id
+ * @property string $assistant_id
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Ai\Models\AiAssistant $assistant
+ * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote whereAssistantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantUpvote withoutTrashed()
  * @mixin \Eloquent
@@ -645,13 +627,33 @@ namespace AdvisingApp\Ai\Models{
 /**
  * AdvisingApp\Ai\Models\AiMessage
  *
- * @property-read \AdvisingApp\Ai\Models\AiThread|null $thread
+ * @property string $id
+ * @property string|null $message_id
+ * @property string $content
+ * @property string|null $context
+ * @property array|null $request
+ * @property string $thread_id
+ * @property string|null $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Ai\Models\AiThread $thread
  * @property-read \App\Models\User|null $user
  * @method static \AdvisingApp\Ai\Database\Factories\AiMessageFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|AiMessage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AiMessage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AiMessage onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AiMessage query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereContext($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereMessageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereRequest($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereThreadId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessage whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiMessage withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AiMessage withoutTrashed()
  * @mixin \Eloquent
@@ -664,11 +666,20 @@ namespace AdvisingApp\Ai\Models{
 /**
  * AdvisingApp\Ai\Models\AiThread
  *
- * @property-read \AdvisingApp\Ai\Models\AiAssistant|null $assistant
+ * @property string $id
+ * @property string|null $thread_id
+ * @property string|null $name
+ * @property string $assistant_id
+ * @property string|null $folder_id
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Ai\Models\AiAssistant $assistant
  * @property-read \AdvisingApp\Ai\Models\AiThreadFolder|null $folder
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiMessage> $messages
  * @property-read int|null $messages_count
- * @property-read \App\Models\User|null $user
+ * @property-read \App\Models\User $user
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
  * @method static \AdvisingApp\Ai\Database\Factories\AiThreadFactory factory($count = null, $state = [])
@@ -676,6 +687,15 @@ namespace AdvisingApp\Ai\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereAssistantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereFolderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereThreadId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread withoutTrashed()
  * @mixin \Eloquent
@@ -688,15 +708,28 @@ namespace AdvisingApp\Ai\Models{
 /**
  * AdvisingApp\Ai\Models\AiThreadFolder
  *
+ * @property string $id
+ * @property string $name
  * @property \AdvisingApp\Ai\Enums\AiApplication $application
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiThread> $threads
  * @property-read int|null $threads_count
- * @property-read \App\Models\User|null $user
+ * @property-read \App\Models\User $user
  * @method static \AdvisingApp\Ai\Database\Factories\AiThreadFolderFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder whereApplication($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AiThreadFolder withoutTrashed()
  * @mixin \Eloquent
@@ -2429,6 +2462,7 @@ namespace AdvisingApp\Interaction\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property bool $is_default
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
@@ -2441,6 +2475,7 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver whereIsDefault($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver withTrashed()
@@ -2460,6 +2495,7 @@ namespace AdvisingApp\Interaction\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property bool $is_default
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
@@ -2471,6 +2507,7 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative whereIsDefault($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionInitiative whereUpdatedAt($value)
  * @mixin \Eloquent
@@ -2589,6 +2626,7 @@ namespace AdvisingApp\Interaction\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property bool $is_default
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
@@ -2601,6 +2639,7 @@ namespace AdvisingApp\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionType whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionType whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InteractionType whereIsDefault($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionType whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionType whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionType withTrashed()

@@ -107,12 +107,22 @@
                                                 x-on:dragstart="start('{{ $threadItem->id }}', '{{ null }}')"
                                                 x-on:dragend="end"
                                                 @class([
-                                                    'cursor-move',
+                                                    'flex items-center cursor-move',
                                                     'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
                                                     'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
                                                 ])
                                             >
-                                                <x-heroicon-m-bars-2 class="h-5 w-5" />
+                                                <x-heroicon-m-bars-2
+                                                    class="h-5 w-5"
+                                                    wire:target="selectThread('{{ $threadItem->id }}')"
+                                                    wire:loading.remove.delay.none
+                                                />
+
+                                                <x-filament::loading-indicator
+                                                    class="h-5 w-5"
+                                                    wire:target="selectThread('{{ $threadItem->id }}')"
+                                                    wire:loading.delay.none
+                                                />
                                             </button>
                                         @endif
 
@@ -131,7 +141,7 @@
                                         </button>
                                     </div>
 
-                                    <div>
+                                    <div class="flex items-center gap-1">
                                         {{ ($this->moveThreadAction)(['thread' => $threadItem->id]) }}
                                         {{ ($this->editThreadAction)(['thread' => $threadItem->id]) }}
                                         {{ ($this->deleteThreadAction)(['thread' => $threadItem->id]) }}
@@ -176,27 +186,26 @@
                                         x-on:click="expand('{{ $folder->id }}')"
                                     />
 
-                                    <span
-                                        class="group flex w-full cursor-pointer items-center space-x-1 rounded-lg px-2 outline-none transition duration-75 focus:bg-gray-100 dark:focus:bg-white/5"
-                                    >
-                                        <span
+                                    <div
+                                        class="group flex w-full cursor-pointer items-center space-x-1 rounded-lg px-2 outline-none transition duration-75 focus:bg-gray-100 dark:focus:bg-white/5">
+                                        <div
                                             class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm"
                                             x-on:click="expand('{{ $folder->id }}')"
                                         >
-                                            <span class="flex-1 truncate">
+                                            <div class="flex-1 truncate">
                                                 @if ($folder->threads->count())
                                                     {{ $folder->name }} ({{ $folder->threads->count() }})
                                                 @else
                                                     {{ $folder->name }}
                                                 @endif
-                                            </span>
-                                        </span>
+                                            </div>
+                                        </div>
 
-                                        <span>
+                                        <div class="flex items-center gap-1">
                                             {{ ($this->renameFolderAction)(['folder' => $folder->id]) }}
                                             {{ ($this->deleteFolderAction)(['folder' => $folder->id]) }}
-                                        </span>
-                                    </span>
+                                        </div>
+                                    </div>
                                 </span>
                                 @foreach ($folder->threads as $threadItem)
                                     <li
@@ -215,12 +224,22 @@
                                                 x-on:dragstart="start('{{ $threadItem->id }}', '{{ $folder->id }}')"
                                                 x-on:dragend="end"
                                                 @class([
-                                                    'cursor-move',
+                                                    'flex items-center cursor-move',
                                                     'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
                                                     'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
                                                 ])
                                             >
-                                                <x-heroicon-m-bars-2 class="h-5 w-5" />
+                                                <x-heroicon-m-bars-2
+                                                    class="h-5 w-5"
+                                                    wire:target="selectThread('{{ $threadItem->id }}')"
+                                                    wire:loading.remove.delay.none
+                                                />
+
+                                                <x-filament::loading-indicator
+                                                    class="h-5 w-5"
+                                                    wire:target="selectThread('{{ $threadItem->id }}')"
+                                                    wire:loading.delay.none
+                                                />
                                             </button>
 
                                             <button
@@ -238,7 +257,7 @@
                                             </button>
                                         </div>
 
-                                        <div>
+                                        <div class="flex items-center gap-1">
                                             {{ ($this->moveThreadAction)(['thread' => $threadItem->id]) }}
                                             {{ ($this->editThreadAction)(['thread' => $threadItem->id]) }}
                                             {{ ($this->deleteThreadAction)(['thread' => $threadItem->id]) }}

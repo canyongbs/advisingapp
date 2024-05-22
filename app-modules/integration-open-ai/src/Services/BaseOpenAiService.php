@@ -78,7 +78,16 @@ abstract class BaseOpenAiService implements AiService
 
     public function createThread(AiThread $thread): void
     {
-        $response = $this->client->threads()->create([]);
+        $threadParameters = [];
+
+        if ($thread->exists) {
+            $threadParameters['messages'] = $thread->messages->toBase()->map(fn (AiMessage $message): array => [
+                'content' => $message->content,
+                'role' => $message->user_id ? 'user' : 'assistant',
+            ])->all();
+        }
+
+        $response = $this->client->threads()->create($threadParameters);
 
         $thread->thread_id = $response->id;
     }

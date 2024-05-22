@@ -126,7 +126,7 @@ trait CanManageFolders
 
                 unset($this->folders);
             })
-            ->icon('heroicon-o-pencil')
+            ->icon('heroicon-m-pencil')
             ->color('warning')
             ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
             ->iconButton()
@@ -149,7 +149,7 @@ trait CanManageFolders
 
                 unset($this->folders);
             })
-            ->icon('heroicon-o-trash')
+            ->icon('heroicon-m-trash')
             ->color('danger')
             ->iconButton()
             ->extraAttributes([
@@ -159,7 +159,7 @@ trait CanManageFolders
 
     public function moveThreadAction(): Action
     {
-        return Action::make('moveChat')
+        return Action::make('moveThread')
             ->label('Move chat to a different folder')
             ->modalSubmitActionLabel('Move')
             ->modalWidth('md')
@@ -182,7 +182,7 @@ trait CanManageFolders
 
                 $this->moveThread($thread, $folder);
             })
-            ->icon('heroicon-o-arrow-up-tray')
+            ->icon('heroicon-m-arrow-down-on-square')
             ->color('warning')
             ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
             ->iconButton()
