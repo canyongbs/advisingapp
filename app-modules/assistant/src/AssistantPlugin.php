@@ -49,10 +49,6 @@ class AssistantPlugin implements Plugin
     public function register(Panel $panel): void
     {
         $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Assistant\\Filament\\Resources'
-            )
             ->discoverPages(
                 in: __DIR__ . '/Filament/Pages',
                 for: 'AdvisingApp\\Assistant\\Filament\\Pages'

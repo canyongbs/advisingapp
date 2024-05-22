@@ -69,7 +69,7 @@ return new class () extends Migration {
                 $groupId = $groups[$groupName] ?? null;
 
                 if (blank($groupId)) {
-                    $groupId = $groups[$groupName] = (string) Str::uuid();
+                    $groupId = $groups[$groupName] = (string) Str::orderedUuid();
 
                     DB::table('permission_groups')->insert([
                         'id' => $groupId,
