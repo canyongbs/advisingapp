@@ -21,6 +21,11 @@ services:
       PUID: '${SPIN_USER_ID:-9999}'
       PGID: '${SPIN_GROUP_ID:-9999}'
       SQS_QUEUE: '${SQS_QUEUE:-default}'
+      LANDLORD_SQS_QUEUE: '${LANDLORD_SQS_QUEUE:-landlord}'
+      OUTBOUND_COMMUNICATION_QUEUE: '${OUTBOUND_COMMUNICATION_QUEUE:-outbound-communication}'
+      AUDIT_QUEUE_QUEUE: '${AUDIT_QUEUE_QUEUE:-audit}'
+      MEETING_CENTER_QUEUE: '${MEETING_CENTER_QUEUE:-meeting-center}'
+      IMPORT_EXPORT_QUEUE: '${IMPORT_EXPORT_QUEUE:-import-export}'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.advisingapp-app.rule=HostRegexp(`advisingapp.local`, `{subdomain:[a-z0-9]+}.advisingapp.local`)"

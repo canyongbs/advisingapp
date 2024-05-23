@@ -3,6 +3,8 @@
 # Exit on error
 set -e
 
+SLEEP_TIME=TEMPLATE_SLEEP
+
 # Check to see if an Artisan file exists and assume it means Laravel is configured.
 if [ -f "$WEBUSER_HOME/artisan" ] && [ "${LARAVEL_QUEUE_ENABLED:="true"}" == "true" ]; then
         echo "Starting Laravel Queue Worker for queue VAR_QUEUE..."
@@ -11,7 +13,7 @@ if [ -f "$WEBUSER_HOME/artisan" ] && [ "${LARAVEL_QUEUE_ENABLED:="true"}" == "tr
 
         USERNAME=$(id -nu "$PUID")
 
-        s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" queue:work --sleep=3 --queue=VAR_QUEUE
+        s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" queue:work --sleep=$SLEEP_TIME --queue=VAR_QUEUE
 else
     echo "👉 Skipping Laravel Queue Worker because we could not detect a Laravel install or it was specifically disabled..."
 
