@@ -39,7 +39,6 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Actions\ViewAction;
-use App\Models\Scopes\HasLicense;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
@@ -190,19 +189,6 @@ class EditProspect extends EditRecord
                             ->exists(
                                 table: (new User())->getTable(),
                                 column: (new User())->getKeyName()
-                            ),
-                        Select::make('assigned_to_id')
-                            ->label('Assigned To')
-                            ->relationship(
-                                'assignedTo',
-                                'name',
-                                fn (Builder $query) => $query->tap(new HasLicense(Prospect::getLicenseType())),
-                            )
-                            ->searchable()
-                            ->nullable()
-                            ->exists(
-                                table: (new User())->getTable(),
-                                column: (new User())->getKeyName(),
                             ),
                     ])
                     ->columns(2),
