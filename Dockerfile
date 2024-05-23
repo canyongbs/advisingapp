@@ -43,12 +43,6 @@ RUN chmod +x /generate-queues.sh
 RUN /generate-queues.sh
 RUN rm /generate-queues.sh
 
-#RUN for run in $(seq "$TOTAL_QUEUE_WORKERS"); do \
-#    cp -r "/tmp/s6-overlay-templates/laravel-queue" "/etc/s6-overlay/s6-rc.d/laravel-queue-$run"; \
-#    sed -i -e 's/VAR_QUEUE/\$SQS_QUEUE/g' "/etc/s6-overlay/s6-rc.d/laravel-queue-$run/run"; \
-#    cp "/etc/s6-overlay/s6-rc.d/user/contents.d/laravel-queue" "/etc/s6-overlay/s6-rc.d/user/contents.d/laravel-queue-$run"; \
-#done
-
 COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./docker/nginx/site-opts.d /etc/nginx/site-opts.d
 

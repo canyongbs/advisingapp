@@ -19,9 +19,8 @@ generate_services () {
 }
 
 generate_services "default" "\$SQS_QUEUE"
-
-#for run in $(seq "$TOTAL_QUEUE_WORKERS"); do
-#    cp -r "/tmp/s6-overlay-templates/laravel-queue/service" "/etc/s6-overlay/s6-rc.d/laravel-queue-$run";
-#    sed -i -e 's/VAR_QUEUE/\$SQS_QUEUE/g' "/etc/s6-overlay/s6-rc.d/laravel-queue-$run/run";
-#    cp "/tmp/s6-overlay-templates/laravel-queue/laravel-queue" "/etc/s6-overlay/s6-rc.d/user/contents.d/laravel-queue-$run";
-#done
+generate_services "landlord" "\$LANDLORD_SQS_QUEUE"
+generate_services "outbound-communication" "\$OUTBOUND_COMMUNICATION_QUEUE"
+generate_services "audit" "\$AUDIT_QUEUE_QUEUE"
+generate_services "meeting-center" "\$MEETING_CENTER_QUEUE"
+generate_services "import-export" "\$IMPORT_EXPORT_QUEUE"
