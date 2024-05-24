@@ -36,6 +36,9 @@
 
 use App\Models\User;
 use App\Settings\LicenseSettings;
+
+use function PHPUnit\Framework\assertEquals;
+
 use AdvisingApp\Authorization\Enums\LicenseType;
 
 test('Users are counted in the available seats', function (LicenseType $licenseType) {
@@ -53,8 +56,8 @@ test('Users are counted in the available seats', function (LicenseType $licenseT
 
     $superAdmin->grantLicense($licenseType);
 
-    $this->assertEquals(1, $licenseType->getSeatsInUse());
-    $this->assertEquals($totalSeats - 1, $licenseType->getAvailableSeats());
+    assertEquals(1, $licenseType->getSeatsInUse());
+    assertEquals($totalSeats - 1, $licenseType->getAvailableSeats());
 })
     ->with([
         LicenseType::ConversationalAi,
@@ -78,8 +81,8 @@ test('Users with a Super Admin role are not counted in the available seats', fun
 
     $superAdmin->grantLicense($licenseType);
 
-    $this->assertEquals(0, $licenseType->getSeatsInUse());
-    $this->assertEquals($totalSeats, $licenseType->getAvailableSeats());
+    assertEquals(0, $licenseType->getSeatsInUse());
+    assertEquals($totalSeats, $licenseType->getAvailableSeats());
 })
     ->with([
         LicenseType::ConversationalAi,
