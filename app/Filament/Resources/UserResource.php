@@ -147,7 +147,7 @@ class UserResource extends Resource
                     AssignLicensesBulkAction::make()
                         ->visible(fn () => auth()->user()->can('create', License::class)),
                 ]),
-            ]);
+            ])->defaultSort('name', 'asc');
     }
 
     public static function getRelations(): array
