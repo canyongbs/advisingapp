@@ -34,10 +34,13 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Portal\Http\Middleware\AuthenticateIfRequiredByPortalDefinition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpFoundation\Response;
+use AdvisingApp\Portal\Settings\PortalSettings;
+use App\Multitenancy\Http\Middleware\NeedsTenant;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
-use AdvisingApp\Portal\Http\Middleware\AuthenticateIfRequiredByPortalDefinition;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
 use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalController;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized;
@@ -52,19 +55,23 @@ Route::prefix('api')
     ->name('api.')
     ->middleware([
         'api',
+        NeedsTenant::class,
         EnsureKnowledgeManagementPortalIsEnabled::class,
         EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
     ])
     ->group(function () {
-        Route::middleware(['auth:sanctum'])->group(function () {
-            Route::get('/user', function (Request $request) {
-                $user = auth('student')->user() ?? auth('prospect')->user() ?? $request->user();
+        Route::middleware(['auth:sanctum'])
+            ->group(function () {
+                Route::get('/user', function (Request $request) {
+                    $user = $request->user('student') ?? $request->user('prospect') ?? null;
 
-                if (! auth('web')->check()) {
-                    return $user;
-                }
-            })->name('user.auth-check');
-        });
+                    if ($user?->tokenCan('knowledge-management-portal')) {
+                        return $user;
+                    }
+
+                    abort(Response::HTTP_FORBIDDEN);
+                })->name('user.auth-check');
+            });
 
         Route::prefix('portal/knowledge-management')
             ->name('portal.knowledge-management.')

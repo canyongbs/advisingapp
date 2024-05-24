@@ -76,7 +76,9 @@ class KnowledgeManagementPortalAuthenticateController extends Controller
             default => throw new EducatableIsNotAuthenticatable('The educatable type is not supported.'),
         };
 
-        $token = $educatable->createToken('knowledge-management-portal-access-token');
+        $token = $educatable->createToken('knowledge-management-portal-access-token', [
+            'knowledge-management-portal',
+        ]);
 
         if ($request->hasSession()) {
             $request->session()->regenerate();

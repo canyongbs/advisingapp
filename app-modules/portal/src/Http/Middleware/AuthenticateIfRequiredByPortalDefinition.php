@@ -37,6 +37,7 @@
 namespace AdvisingApp\Portal\Http\Middleware;
 
 use Closure;
+use Laravel\Sanctum\Guard;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\Portal\Settings\PortalSettings;
@@ -51,8 +52,16 @@ class AuthenticateIfRequiredByPortalDefinition
             return $next($request);
         }
 
-        if (! auth('sanctum')->check()) {
-            abort(403);
+        ray(app(Guard::class)($request));
+
+        ray($request);
+
+        $user = $request->user('student') ?? $request->user('prospect') ?? null;
+
+        ray($user, $user->currentAccessToken());
+
+        if (! $user?->tokenCan('knowledge-management-portal')) {
+            abort(Response::HTTP_FORBIDDEN);
         }
 
         return $next($request);
