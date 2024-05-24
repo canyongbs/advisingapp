@@ -83,6 +83,8 @@ test('Users with a Super Admin role are not counted in the available seats', fun
 
     assertEquals(0, $licenseType->getSeatsInUse());
     assertEquals($totalSeats, $licenseType->getAvailableSeats());
+
+    // This is a test
 })
     ->with([
         LicenseType::ConversationalAi,
