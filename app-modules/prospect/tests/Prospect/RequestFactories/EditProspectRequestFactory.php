@@ -66,7 +66,6 @@ class EditProspectRequestFactory extends RequestFactory
             'address_2' => $this->faker->address(),
             'birthdate' => $this->faker->date(),
             'hsgrad' => $this->faker->year(),
-            'assigned_to_id' => User::factory()->create()->id,
             'created_by_id' => User::factory()->create()->id,
         ];
     }

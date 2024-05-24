@@ -34,39 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Tests\Prospect\RequestFactories;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\User;
-use Worksome\RequestFactories\RequestFactory;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-
-class CreateProspectRequestFactory extends RequestFactory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        $firstName = $this->faker->firstName();
-        $lastName = $this->faker->lastName();
-
-        return [
-            'status_id' => ProspectStatus::inRandomOrder()->first() ?? ProspectStatus::factory()->create()->id,
-            'source_id' => ProspectSource::inRandomOrder()->first() ?? ProspectSource::factory()->create()->id,
-            'first_name' => $firstName,
-            'last_name' => $lastName,
-            'full_name' => "{$firstName} {$lastName}",
-            'preferred' => $this->faker->firstName(),
-            'description' => $this->faker->paragraph(),
-            'email' => $this->faker->email(),
-            'email_2' => $this->faker->email(),
-            'mobile' => $this->faker->phoneNumber(),
-            'sms_opt_out' => $this->faker->boolean(),
-            'email_bounce' => $this->faker->boolean(),
-            'phone' => $this->faker->phoneNumber(),
-            'address' => $this->faker->address(),
-            'address_2' => $this->faker->address(),
-            'birthdate' => $this->faker->date(),
-            'hsgrad' => $this->faker->year(),
-            'created_by_id' => User::factory()->create()->id,
-        ];
+        Schema::table('prospects', function (Blueprint $table) {
+            $table->dropColumn('assigned_to_id');
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('prospects', function (Blueprint $table) {
+            $table->foreignUuid('assigned_to_id')->nullable()->references('id')->on('users');
+        });
+    }
+};

@@ -36,11 +36,9 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
-use App\Models\Scopes\HasLicense;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
@@ -202,23 +200,6 @@ class CreateProspect extends CreateRecord
                             ->label('Email Bounce')
                             ->default(false)
                             ->boolean(),
-                    ])
-                    ->columns(2),
-                Section::make('Record Details')
-                    ->schema([
-                        Select::make('assigned_to_id')
-                            ->label('Assigned To')
-                            ->relationship(
-                                'assignedTo',
-                                'name',
-                                fn (Builder $query) => $query->tap(new HasLicense(Prospect::getLicenseType())),
-                            )
-                            ->searchable()
-                            ->nullable()
-                            ->exists(
-                                table: (new User())->getTable(),
-                                column: (new User())->getKeyName()
-                            ),
                     ])
                     ->columns(2),
             ]);

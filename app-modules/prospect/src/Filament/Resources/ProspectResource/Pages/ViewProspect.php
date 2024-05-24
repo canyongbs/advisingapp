@@ -138,9 +138,6 @@ class ViewProspect extends ViewRecord
                         TextEntry::make('createdBy.name')
                             ->label('Created By')
                             ->translateLabel(),
-                        TextEntry::make('assignedTo.name')
-                            ->label('Assigned To')
-                            ->translateLabel(),
                     ])
                     ->columns(2),
             ]);

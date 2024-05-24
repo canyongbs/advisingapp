@@ -139,11 +139,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return $this->id;
     }
 
-    public function assignedTo(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function serviceRequests(): MorphMany
     {
         return $this->morphMany(
