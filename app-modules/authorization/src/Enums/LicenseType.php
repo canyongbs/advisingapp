@@ -38,7 +38,6 @@ namespace AdvisingApp\Authorization\Enums;
 
 use App\Settings\LicenseSettings;
 use Filament\Support\Contracts\HasLabel;
-use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Authorization\Models\License;
 
 enum LicenseType: string implements HasLabel
