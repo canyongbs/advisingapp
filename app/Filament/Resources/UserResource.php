@@ -49,6 +49,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\UserManagement;
 use App\Filament\Tables\Columns\IdColumn;
+use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Forms\Components\Licenses;
 use Filament\Tables\Actions\BulkActionGroup;
 use AdvisingApp\Authorization\Models\License;
@@ -152,6 +153,16 @@ class UserResource extends Resource
                         ->visible(fn () => auth()->user()->can('create', License::class)),
                 ]),
             ])->defaultSort('name', 'asc');
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+                    ->when(!auth()->user()->getIsAdminAttribute(),function(Builder $query){
+                        $query->whereDoesntHave('roles', function ($q) {
+                            $q->where('name','authorization.super_admin');
+                        });
+                    });
     }
 
     public static function getRelations(): array
