@@ -36,34 +36,22 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use AdvisingApp\Authorization\Models\License;
-use App\Filament\Forms\Components\Licenses;
-use App\Models\User;
-use Filament\Actions\EditAction;
-use App\Filament\Resources\UserResource;
 use Carbon\Carbon;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
+use App\Models\User;
 use Filament\Forms\Form;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Section;
+use App\Filament\Resources\UserResource;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ViewRecord;
+use App\Filament\Forms\Components\Licenses;
+use AdvisingApp\Authorization\Models\License;
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 
 class ViewUser extends ViewRecord
 {
     protected static string $resource = UserResource::class;
-
-    protected function getHeaderActions(): array
-    {
-        /** @var User $user */
-        $user = $this->getRecord();
-
-        return [
-            Impersonate::make()
-                ->record($user),
-            EditAction::make(),
-        ];
-    }
 
     public function form(Form $form): Form
     {
@@ -103,5 +91,17 @@ class ViewUser extends ViewRecord
                         return $user->cannot('create', License::class);
                     }),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        /** @var User $user */
+        $user = $this->getRecord();
+
+        return [
+            Impersonate::make()
+                ->record($user),
+            EditAction::make(),
+        ];
     }
 }

@@ -34,14 +34,16 @@
 </COPYRIGHT>
 */
 
-use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Models\User;
 
+use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+use function Pest\Laravel\assertDatabaseHas;
 
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
+use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ViewUser;
 
 it('renders impersonate button for non super admin users when user is super admin', function () {
@@ -93,18 +95,18 @@ it('does not render super admin profile for regular user', function () {
     asSuperAdmin($superAdmin);
 
     // Verify super admin user exists
-    $this->assertDatabaseHas('users', ['id' => $superAdmin->id]);
+    assertDatabaseHas('users', ['id' => $superAdmin->id]);
 
     // Create another user
     $user = User::factory()->create();
     actingAs($user);
 
     // Verify the user exists
-    $this->assertDatabaseHas('users', ['id' => $user->id]);
+    assertDatabaseHas('users', ['id' => $user->id]);
 
     // Attempt to load the EditUser component with the super admin's route key
-    $this->get(route(ViewUser::getRouteName(), ['record' => $superAdmin->getRouteKey()]))
-         ->assertStatus(404);
+    get(route(ViewUser::getRouteName(), ['record' => $superAdmin->getRouteKey()]))
+        ->assertStatus(404);
 });
 
 it('allows super admin user to impersonate', function () {

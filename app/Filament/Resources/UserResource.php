@@ -37,29 +37,13 @@
 namespace App\Filament\Resources;
 
 use App\Models\User;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Illuminate\Support\Carbon;
 use Filament\Resources\Resource;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Section;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\UserManagement;
-use App\Filament\Tables\Columns\IdColumn;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Forms\Components\Licenses;
-use Filament\Tables\Actions\BulkActionGroup;
-use AdvisingApp\Authorization\Models\License;
-use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ViewUser;
-use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
-use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\PermissionsRelationManager;
 
@@ -82,11 +66,11 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-                    ->when(!auth()->user()->getIsAdminAttribute(),function(Builder $query){
-                        $query->whereDoesntHave('roles', function ($q) {
-                            $q->where('name','authorization.super_admin');
-                        });
-                    });
+            ->when(! auth()->user()->getIsAdminAttribute(), function (Builder $query) {
+                $query->whereDoesntHave('roles', function ($q) {
+                    $q->where('name', 'authorization.super_admin');
+                });
+            });
     }
 
     public static function getRelations(): array

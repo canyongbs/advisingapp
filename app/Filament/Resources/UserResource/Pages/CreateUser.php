@@ -36,17 +36,17 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use AdvisingApp\Authorization\Models\License;
-use App\Filament\Forms\Components\Licenses;
-use App\Models\User;
-use App\Filament\Resources\UserResource;
-use Filament\Resources\Pages\CreateRecord;
-use App\Notifications\SetPasswordNotification;
 use Carbon\Carbon;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
+use App\Models\User;
 use Filament\Forms\Form;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Section;
+use App\Filament\Resources\UserResource;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Forms\Components\Licenses;
+use AdvisingApp\Authorization\Models\License;
+use App\Notifications\SetPasswordNotification;
 
 class CreateUser extends CreateRecord
 {

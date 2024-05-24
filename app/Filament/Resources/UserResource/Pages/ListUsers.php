@@ -36,23 +36,23 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use AdvisingApp\Authorization\Models\License;
 use App\Models\User;
+use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
 use App\Filament\Imports\UserImporter;
-use App\Filament\Resources\UserResource;
-use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use App\Filament\Resources\UserResource;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Resources\Pages\ListRecords;
 use Illuminate\Contracts\Support\Htmlable;
+use Filament\Tables\Actions\BulkActionGroup;
+use AdvisingApp\Authorization\Models\License;
+use Filament\Tables\Actions\DeleteBulkAction;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
+use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
 
 class ListUsers extends ListRecords
 {
@@ -70,16 +70,6 @@ class ListUsers extends ListRecords
         //])->render());
 
         return null;
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ImportAction::make()
-                ->importer(UserImporter::class)
-                ->authorize('import', User::class),
-            CreateAction::make(),
-        ];
     }
 
     public function table(Table $table): Table
@@ -116,5 +106,15 @@ class ListUsers extends ListRecords
                         ->visible(fn () => auth()->user()->can('create', License::class)),
                 ]),
             ])->defaultSort('name', 'asc');
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            ImportAction::make()
+                ->importer(UserImporter::class)
+                ->authorize('import', User::class),
+            CreateAction::make(),
+        ];
     }
 }
