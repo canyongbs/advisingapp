@@ -130,11 +130,13 @@ class UserResource extends Resource
                 TextColumn::make('created_at')
                     ->label('Created At')
                     ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                     ->label('Updated At')
                     ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
                 Impersonate::make(),
