@@ -36,7 +36,7 @@ COPY docker/s6-overlay/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
 COPY ./docker/s6-overlay/user/ /etc/s6-overlay/s6-rc.d/user/contents.d/
 COPY ./docker/s6-overlay/templates/ /tmp/s6-overlay-templates
 
-ARG TOTAL_QUEUE_WORKERS=10
+ARG TOTAL_QUEUE_WORKERS=3
 
 COPY ./docker/generate-queues.sh /generate-queues.sh
 RUN chmod +x /generate-queues.sh
