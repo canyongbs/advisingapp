@@ -36,6 +36,8 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use AdvisingApp\Authorization\Models\License;
+use App\Filament\Forms\Components\Licenses;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -43,6 +45,11 @@ use App\Filament\Resources\UserResource;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use App\Notifications\SetPasswordNotification;
+use Carbon\Carbon;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 
 class EditUser extends EditRecord
@@ -75,5 +82,45 @@ class EditUser extends EditRecord
                 }),
             DeleteAction::make(),
         ];
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->disabled(false)
+            ->schema([
+                Section::make()
+                    ->columns()
+                    ->schema([
+                        TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('email')
+                            ->label('Email address')
+                            ->email()
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('job_title')
+                            ->string()
+                            ->maxLength(255),
+                        Toggle::make('is_external')
+                            ->label('User can only log in via a social provider.'),
+                        TextInput::make('created_at')
+                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->disabled(),
+                        TextInput::make('updated_at')
+                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->disabled(),
+                    ])
+                    ->disabled(fn (string $operation) => $operation === 'view'),
+                Licenses::make()
+                    ->hidden(fn (?User $record) => is_null($record))
+                    ->disabled(function () {
+                        /** @var User $user */
+                        $user = auth()->user();
+
+                        return $user->cannot('create', License::class);
+                    }),
+            ]);
     }
 }
