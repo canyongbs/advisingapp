@@ -52,6 +52,11 @@ class SyncCalendars implements ShouldQueue, ShouldBeUnique
     use Queueable;
     use SerializesModels;
 
+    public function __construct()
+    {
+        $this->onQueue(config('meeting-center.queue'));
+    }
+
     public function uniqueId(): string
     {
         return Tenant::current()->id;

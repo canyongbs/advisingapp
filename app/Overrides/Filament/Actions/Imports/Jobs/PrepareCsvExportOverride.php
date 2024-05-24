@@ -34,25 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Events;
+namespace App\Overrides\Filament\Actions\Imports\Jobs;
 
-use App\Models\User;
-use Illuminate\Queue\SerializesModels;
-use AdvisingApp\Authorization\Models\Role;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Broadcasting\InteractsWithSockets;
+use Carbon\CarbonInterface;
+use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 
-class RoleRemovedFromUser
+class PrepareCsvExportOverride extends PrepareCsvExport
 {
-    use Dispatchable;
-    use InteractsWithSockets;
-    use SerializesModels;
+    public int $tries = 2;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct(
-        public Role $role,
-        public User $user
-    ) {}
+    public function retryUntil(): ?CarbonInterface
+    {
+        return null;
+    }
+
+    public function getJobQueue(): ?string
+    {
+        return config('queue.import_export_queue');
+    }
 }

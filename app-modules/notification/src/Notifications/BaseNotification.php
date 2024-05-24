@@ -84,6 +84,15 @@ abstract class BaseNotification extends Notification implements ShouldQueue
             ->toArray();
     }
 
+    public function viaQueues(): array
+    {
+        return [
+            DatabaseChannel::class => config('queue.outbound_communication_queue'),
+            EmailChannel::class => config('queue.outbound_communication_queue'),
+            SmsChannel::class => config('queue.outbound_communication_queue'),
+        ];
+    }
+
     public function beforeSend(object $notifiable, string $channel): OutboundDeliverable|false
     {
         $deliverable = resolve(MakeOutboundDeliverable::class)->handle($this, $notifiable, $channel);

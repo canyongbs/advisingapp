@@ -34,16 +34,6 @@
 </COPYRIGHT>
 */
 
-namespace App\Jobs\Middleware;
-
-class SkipIfNotLocal
-{
-    public function handle($job, $next): void
-    {
-        if (! app()->environment('local', 'testing')) {
-            return;
-        }
-
-        $next($job);
-    }
-}
+return [
+    'queue' => env('MEETING_CENTER_QUEUE', env('SQS_QUEUE', 'default')),
+];
