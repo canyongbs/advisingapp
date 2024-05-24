@@ -38,6 +38,7 @@ namespace AdvisingApp\Authorization\Enums;
 
 use App\Settings\LicenseSettings;
 use Filament\Support\Contracts\HasLabel;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Authorization\Models\License;
 
 enum LicenseType: string implements HasLabel
@@ -80,7 +81,12 @@ enum LicenseType: string implements HasLabel
 
     public function getSeatsInUse(): int
     {
-        return License::query()->where('type', $this)->count();
+        return License::query()
+            ->whereDoesntHave('user', function ($query) {
+                $query->role('authorization.super_admin');
+            })
+            ->where('type', $this)
+            ->count();
     }
 
     public function getAvailableSeats(): int
