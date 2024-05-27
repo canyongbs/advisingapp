@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Jobs;
 
 use Illuminate\Bus\Queueable;
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiMessage;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Spatie\Multitenancy\Jobs\TenantAware;
@@ -65,5 +66,17 @@ class ReInitializeAiThread implements ShouldQueue, TenantAware
     {
         $this->thread->assistant->model->getService()->createThread($this->thread);
         $this->thread->save();
+
+        auth()->setUser($this->thread->user);
+
+        AiMessage::withoutEvents(function () {
+            $message = new AiMessage(['content' => 'Hello']);
+
+            $message->thread()->associate($this->thread);
+
+            $this->thread->assistant->model->getService()->sendMessage($message);
+
+            $message->forceDelete();
+        });
     }
 }
