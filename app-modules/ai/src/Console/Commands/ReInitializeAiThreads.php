@@ -67,8 +67,8 @@ class ReInitializeAiThreads extends Command
         AiThread::query()
             ->whereNotNull('name')
             ->eachById(function (AiThread $thread) {
-            dispatch(new ReInitializeAiThread($thread));
-        }, count: 250);
+                dispatch(new ReInitializeAiThread($thread));
+            }, count: 250);
 
         return static::SUCCESS;
     }
