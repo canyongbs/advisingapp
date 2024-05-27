@@ -44,6 +44,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Spatie\Multitenancy\Jobs\TenantAware;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
 
 class ReInitializeAiThread implements ShouldQueue, TenantAware
 {
@@ -70,13 +71,23 @@ class ReInitializeAiThread implements ShouldQueue, TenantAware
         auth()->setUser($this->thread->user);
 
         AiMessage::withoutEvents(function () {
-            $message = new AiMessage(['content' => 'Hello']);
+            $service = $this->thread->assistant->model->getService();
 
-            $message->thread()->associate($this->thread);
+            if (! ($service instanceof BaseOpenAiService)) {
+                return;
+            }
 
-            $this->thread->assistant->model->getService()->sendMessage($message);
+            $client = $service->getClient();
 
-            $message->forceDelete();
+            $client->threads()->messages()->create($this->thread->thread_id, [
+                'role' => 'user',
+                'content' => 'Hello',
+            ]);
+
+            $client->threads()->runs()->create($this->thread->thread_id, [
+                'assistant_id' => $this->thread->assistant->assistant_id,
+                'instructions' => invade($client)->generateAssistantInstructions($this->thread->assistant, withDynamicContext: true),
+            ]);
         });
     }
 }
