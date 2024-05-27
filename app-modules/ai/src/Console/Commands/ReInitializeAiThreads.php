@@ -64,9 +64,11 @@ class ReInitializeAiThreads extends Command
      */
     public function handle(): int
     {
-        AiThread::query()->eachById(function (AiThread $thread) {
-            dispatch(new ReInitializeAiThread($thread));
-        }, count: 250);
+        AiThread::query()
+            ->whereNotNull('name')
+            ->eachById(function (AiThread $thread) {
+                dispatch(new ReInitializeAiThread($thread));
+            }, count: 250);
 
         return static::SUCCESS;
     }

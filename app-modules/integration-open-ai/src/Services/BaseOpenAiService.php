@@ -86,10 +86,14 @@ abstract class BaseOpenAiService implements AiService
         $threadParameters = [];
 
         if ($thread->exists) {
-            $threadParameters['messages'] = $thread->messages->toBase()->map(fn (AiMessage $message): array => [
-                'content' => $message->content,
-                'role' => $message->user_id ? 'user' : 'assistant',
-            ])
+            $threadParameters['messages'] = $thread->messages()
+                ->orderBy('id')
+                ->get()
+                ->toBase()
+                ->map(fn (AiMessage $message): array => [
+                    'content' => $message->content,
+                    'role' => $message->user_id ? 'user' : 'assistant',
+                ])
                 ->all();
         }
 
