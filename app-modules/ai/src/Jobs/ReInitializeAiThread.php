@@ -86,7 +86,7 @@ class ReInitializeAiThread implements ShouldQueue, TenantAware
 
             $client->threads()->runs()->create($this->thread->thread_id, [
                 'assistant_id' => $this->thread->assistant->assistant_id,
-                'instructions' => invade($client)->generateAssistantInstructions($this->thread->assistant, withDynamicContext: true),
+                'instructions' => invade($service)->generateAssistantInstructions($this->thread->assistant, withDynamicContext: true),
             ]);
         });
     }
