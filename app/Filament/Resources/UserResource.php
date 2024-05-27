@@ -125,7 +125,7 @@ class UserResource extends Resource
                 IdColumn::make(),
                 TextColumn::make('name'),
                 TextColumn::make('email')
-                    ->label('Email address')                    
+                    ->label('Email address')
                     ->toggleable(),
                 TextColumn::make('job_title')
                     ->toggleable(),
