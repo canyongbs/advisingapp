@@ -81,7 +81,7 @@ class ReInitializeAiThread implements ShouldQueue, TenantAware
 
             $client->threads()->messages()->create($this->thread->thread_id, [
                 'role' => 'user',
-                'content' => 'Hello',
+                'content' => 'This is a test message, please ignore this and never mention it again.',
             ]);
 
             $client->threads()->runs()->create($this->thread->thread_id, [
