@@ -37,28 +37,14 @@
 namespace App\Filament\Resources;
 
 use App\Models\User;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Illuminate\Support\Carbon;
 use Filament\Resources\Resource;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Section;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
+use App\Models\Scopes\WithoutSuperAdmin;
 use App\Filament\Clusters\UserManagement;
-use App\Filament\Tables\Columns\IdColumn;
-use App\Filament\Forms\Components\Licenses;
-use Filament\Tables\Actions\BulkActionGroup;
-use AdvisingApp\Authorization\Models\License;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ViewUser;
-use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
-use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\PermissionsRelationManager;
 
@@ -78,80 +64,13 @@ class UserResource extends Resource
 
     protected static ?string $modelLabel = 'User';
 
-    public static function form(Form $form): Form
+    public static function getEloquentQuery(): Builder
     {
-        return $form
-            ->disabled(false)
-            ->schema([
-                Section::make()
-                    ->columns()
-                    ->schema([
-                        TextInput::make('name')
-                            ->required()
-                            ->maxLength(255),
-                        TextInput::make('email')
-                            ->label('Email address')
-                            ->email()
-                            ->required()
-                            ->maxLength(255),
-                        TextInput::make('job_title')
-                            ->string()
-                            ->maxLength(255),
-                        Toggle::make('is_external')
-                            ->label('User can only log in via a social provider.'),
-                        TextInput::make('created_at')
-                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
-                            ->disabled(),
-                        TextInput::make('updated_at')
-                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
-                            ->disabled(),
-                    ])
-                    ->disabled(fn (string $operation) => $operation === 'view'),
-                Licenses::make()
-                    ->hidden(fn (?User $record) => is_null($record))
-                    ->disabled(function () {
-                        /** @var User $user */
-                        $user = auth()->user();
-
-                        return $user->cannot('create', License::class);
-                    }),
-            ]);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name'),
-                TextColumn::make('email')
-                    ->label('Email address')
-                    ->toggleable(),
-                TextColumn::make('job_title')
-                    ->toggleable(),
-                TextColumn::make('created_at')
-                    ->label('Created At')
-                    ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->label('Updated At')
-                    ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->actions([
-                Impersonate::make(),
-                ViewAction::make(),
-                EditAction::make(),
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    AssignLicensesBulkAction::make()
-                        ->visible(fn () => auth()->user()->can('create', License::class)),
-                ]),
-            ])->defaultSort('name', 'asc');
+        return parent::getEloquentQuery()
+            ->unless(
+                auth()->user()->hasRole('authorization.super_admin'),
+                fn (Builder $query) => $query->tap(new WithoutSuperAdmin())
+            );
     }
 
     public static function getRelations(): array

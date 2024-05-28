@@ -37,12 +37,22 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Models\User;
+use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
 use App\Filament\Imports\UserImporter;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Contracts\Support\Htmlable;
+use Filament\Tables\Actions\BulkActionGroup;
+use AdvisingApp\Authorization\Models\License;
+use Filament\Tables\Actions\DeleteBulkAction;
+use STS\FilamentImpersonate\Tables\Actions\Impersonate;
+use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
 
 class ListUsers extends ListRecords
 {
@@ -60,6 +70,43 @@ class ListUsers extends ListRecords
         //])->render());
 
         return null;
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name'),
+                TextColumn::make('email')
+                    ->label('Email address')
+                    ->toggleable(),
+                TextColumn::make('job_title')
+                    ->toggleable(),
+                TextColumn::make('created_at')
+                    ->label('Created At')
+                    ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->label('Updated At')
+                    ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->actions([
+                Impersonate::make(),
+                ViewAction::make(),
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    AssignLicensesBulkAction::make()
+                        ->visible(fn () => auth()->user()->can('create', License::class)),
+                ]),
+            ])
+            ->defaultSort('name', 'asc');
     }
 
     protected function getHeaderActions(): array

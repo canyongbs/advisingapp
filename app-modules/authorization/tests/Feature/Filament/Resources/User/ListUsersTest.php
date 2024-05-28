@@ -74,7 +74,7 @@ it('does not render impersonate button for super admin users when user is not su
 
     $component
         ->assertSuccessful()
-        ->assertCountTableRecords(2)
+        ->assertCountTableRecords(1)
         ->assertTableActionHidden(Impersonate::class, $superAdmin);
 });
 
@@ -107,7 +107,7 @@ it('does not render impersonate button for super admin users even if user has pe
 
     $component
         ->assertSuccessful()
-        ->assertCountTableRecords(2)
+        ->assertCountTableRecords(1)
         ->assertTableActionHidden(Impersonate::class, $superAdmin);
 });
 

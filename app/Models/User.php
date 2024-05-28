@@ -324,7 +324,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function getIsAdminAttribute()
     {
-        return $this->roles()->where('title', 'Admin')->exists();
+        return $this->roles()->where('name', 'authorization.super_admin')->exists();
     }
 
     public function scopeAdmins()
