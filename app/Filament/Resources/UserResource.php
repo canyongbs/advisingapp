@@ -125,8 +125,10 @@ class UserResource extends Resource
                 IdColumn::make(),
                 TextColumn::make('name'),
                 TextColumn::make('email')
-                    ->label('Email address'),
-                TextColumn::make('job_title'),
+                    ->label('Email address')
+                    ->toggleable(),
+                TextColumn::make('job_title')
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->label('Created At')
                     ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
