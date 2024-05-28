@@ -38,6 +38,7 @@ namespace App\Filament\Resources;
 
 use App\Models\User;
 use Filament\Resources\Resource;
+use App\Models\Scopes\WithoutSuperAdmin;
 use App\Filament\Clusters\UserManagement;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\UserResource\Pages\EditUser;
@@ -46,7 +47,6 @@ use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\PermissionsRelationManager;
-use App\Models\Scopes\WithoutSuperAdmin;
 
 class UserResource extends Resource
 {
@@ -67,9 +67,10 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-                    ->unless(auth()->user()->hasRole('authorization.super_admin'), fn(Builder $query) => 
-                      $query->tap(new WithoutSuperAdmin())
-                    );
+            ->unless(
+                auth()->user()->hasRole('authorization.super_admin'),
+                fn (Builder $query) => $query->tap(new WithoutSuperAdmin())
+            );
     }
 
     public static function getRelations(): array
