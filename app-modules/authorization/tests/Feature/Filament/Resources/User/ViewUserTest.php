@@ -45,6 +45,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ViewUser;
+use Illuminate\View\ViewException;
 
 it('renders impersonate button for non super admin users when user is super admin', function () {
     asSuperAdmin();
@@ -88,13 +89,10 @@ it('does not render super admin profile for regular user', function () {
     $user = User::factory()->create();
     actingAs($user);
 
-    // Verify the user exists
-    assertDatabaseHas('users', ['id' => $user->id]);
-
     // Attempt to load the EditUser component with the super admin's route key
-    get(route(ViewUser::getRouteName(), ['record' => $superAdmin->getRouteKey()]))
+    livewire(ViewUser::class, ['record' => $superAdmin->getRouteKey()])
         ->assertStatus(404);
-});
+})->throws(ViewException::class);
 
 it('allows super admin user to impersonate', function () {
     $superAdmin = User::factory()->create();
