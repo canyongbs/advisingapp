@@ -36,12 +36,20 @@
 
 namespace AdvisingApp\IntegrationAwsSesEventHandling\Filament\Pages;
 
+use Throwable;
 use App\Models\User;
+use App\Models\Tenant;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
+use Illuminate\Support\Facades\DB;
+use Filament\Support\Exceptions\Halt;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\GlobalSettings;
+
+use function Filament\Support\is_app_url;
+
+use Filament\Support\Facades\FilamentView;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 
 class ManageAmazonSesSettings extends SettingsPage
@@ -77,7 +85,115 @@ class ManageAmazonSesSettings extends SettingsPage
                     ->schema([
                         TextInput::make('configuration_set')
                             ->label('Configuration Set'),
+                        TextInput::make('fromAddress')
+                            ->label('From Address')
+                            ->email()
+                            ->required(),
+                        TextInput::make('fromName')
+                            ->label('From Name')
+                            ->string()
+                            ->maxLength(150)
+                            ->required(),
                     ]),
             ]);
+    }
+
+    public function save(): void
+    {
+        try {
+            $this->beginDatabaseTransaction();
+            DB::connection('landlord')->beginTransaction();
+
+            $this->callHook('beforeValidate');
+
+            $data = $this->form->getState();
+
+            $this->callHook('afterValidate');
+
+            $data = $this->mutateFormDataBeforeSave($data);
+
+            $this->callHook('beforeSave');
+
+            $this->saveTenantData(
+                emailFrom: $data['fromAddress'],
+                emailName: $data['fromName'],
+            );
+
+            unset($data['fromAddress'], $data['fromName']);
+
+            $settings = app(static::getSettings());
+
+            $settings->fill($data);
+            $settings->save();
+
+            $this->callHook('afterSave');
+
+            $this->commitDatabaseTransaction();
+            DB::connection('landlord')->commit();
+        } catch (Halt $exception) {
+            if ($exception->shouldRollbackDatabaseTransaction()) {
+                $this->rollBackDatabaseTransaction();
+                DB::connection('landlord')->rollBack();
+            } else {
+                $this->commitDatabaseTransaction();
+                DB::connection('landlord')->commit();
+            }
+
+            return;
+        } catch (Throwable $exception) {
+            $this->rollBackDatabaseTransaction();
+            DB::connection('landlord')->rollBack();
+
+            throw $exception;
+        }
+
+        $this->rememberData();
+
+        $this->getSavedNotification()?->send();
+
+        if ($redirectUrl = $this->getRedirectUrl()) {
+            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
+        }
+    }
+
+    protected function fillForm(): void
+    {
+        $this->callHook('beforeFill');
+
+        $settings = app(static::getSettings());
+
+        /** @var Tenant $tenant */
+        $tenant = Tenant::current();
+
+        /** @var TenantConfig $config */
+        $config = $tenant->config;
+
+        $data = $this->mutateFormDataBeforeFill(
+            [
+                ...$settings->toArray(),
+                'fromAddress' => $config->mail->fromAddress,
+                'fromName' => $config->mail->fromName,
+            ]
+        );
+
+        $this->form->fill($data);
+
+        $this->callHook('afterFill');
+    }
+
+    protected function saveTenantData(string $emailFrom, string $emailName): void
+    {
+        /** @var Tenant $tenant */
+        $tenant = Tenant::current();
+
+        /** @var TenantConfig $config */
+        $config = $tenant->config;
+
+        $config->mail->fromAddress = $emailFrom;
+        $config->mail->fromName = $emailName;
+
+        $tenant->config = $config;
+
+        $tenant->save();
     }
 }
