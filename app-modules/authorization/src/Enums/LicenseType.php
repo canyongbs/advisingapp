@@ -80,7 +80,12 @@ enum LicenseType: string implements HasLabel
 
     public function getSeatsInUse(): int
     {
-        return License::query()->where('type', $this)->count();
+        return License::query()
+            ->whereDoesntHave('user', function ($query) {
+                $query->role('authorization.super_admin');
+            })
+            ->where('type', $this)
+            ->count();
     }
 
     public function getAvailableSeats(): int
