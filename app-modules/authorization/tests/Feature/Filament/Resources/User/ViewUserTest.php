@@ -60,19 +60,6 @@ it('renders impersonate button for non super admin users when user is super admi
         ->assertActionVisible(Impersonate::class);
 });
 
-it('does not render impersonate button for super admin users when user is not super admin', function () {
-    $superAdmin = User::factory()->create();
-    asSuperAdmin($superAdmin);
-
-    $component = livewire(ViewUser::class, [
-        'record' => $superAdmin->getRouteKey(),
-    ]);
-
-    $component
-        ->assertSuccessful()
-        ->assertActionHidden(Impersonate::class);
-});
-
 it('does not render impersonate button for super admin users at all', function () {
     $superAdmin = User::factory()->create();
     asSuperAdmin($superAdmin);

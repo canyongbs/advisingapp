@@ -46,6 +46,7 @@ use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\PermissionsRelationManager;
+use App\Models\Scopes\WithoutSuperAdmin;
 
 class UserResource extends Resource
 {
@@ -66,11 +67,9 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->when(! auth()->user()->getIsAdminAttribute(), function (Builder $query) {
-                $query->whereDoesntHave('roles', function ($q) {
-                    $q->where('name', 'authorization.super_admin');
-                });
-            });
+                    ->unless(auth()->user()->hasRole('authorization.super_admin'), fn(Builder $query) => 
+                      $query->tap(new WithoutSuperAdmin())
+                    );
     }
 
     public static function getRelations(): array

@@ -44,8 +44,6 @@ use Filament\Forms\Components\Section;
 use App\Filament\Resources\UserResource;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
-use App\Filament\Forms\Components\Licenses;
-use AdvisingApp\Authorization\Models\License;
 use App\Notifications\SetPasswordNotification;
 
 class CreateUser extends CreateRecord
@@ -79,16 +77,7 @@ class CreateUser extends CreateRecord
                         TextInput::make('updated_at')
                             ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
-                    ])
-                    ->disabled(fn (string $operation) => $operation === 'view'),
-                Licenses::make()
-                    ->hidden(fn (?User $record) => is_null($record))
-                    ->disabled(function () {
-                        /** @var User $user */
-                        $user = auth()->user();
-
-                        return $user->cannot('create', License::class);
-                    }),
+                    ]),
             ]);
     }
 

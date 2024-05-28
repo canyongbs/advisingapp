@@ -105,7 +105,8 @@ class ListUsers extends ListRecords
                     AssignLicensesBulkAction::make()
                         ->visible(fn () => auth()->user()->can('create', License::class)),
                 ]),
-            ])->defaultSort('name', 'asc');
+            ])
+            ->defaultSort('name', 'asc');
     }
 
     protected function getHeaderActions(): array
