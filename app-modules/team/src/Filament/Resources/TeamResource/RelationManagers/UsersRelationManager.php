@@ -51,7 +51,7 @@ class UsersRelationManager extends RelationManager
 {
     protected static string $relationship = 'users';
 
-    protected static ?string $recordTitleAttribute = 'email';
+    protected static ?string $recordTitleAttribute = 'name';
 
     public function form(Form $form): Form
     {
@@ -74,6 +74,7 @@ class UsersRelationManager extends RelationManager
             ->headerActions([
                 AttachAction::make()
                     ->label('Add user to this team')
+                    ->recordSelectSearchColumns(['name', 'email'])
                     //TODO: remove this if we support multiple teams
                     ->form(fn (AttachAction $action): array => [
                         $action->getRecordSelect()

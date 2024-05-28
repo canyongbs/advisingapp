@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
@@ -170,7 +169,6 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                         ->form([
                             Select::make('field')
                                 ->options([
-                                    'assigned_to_id' => 'Assigned To',
                                     'description' => 'Description',
                                     'email_bounce' => 'Email Bounce',
                                     'hsgrad' => 'High School Graduation Date',
@@ -180,16 +178,6 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                                 ])
                                 ->required()
                                 ->live(),
-                            Select::make('assigned_to_id')
-                                ->label('Assigned To')
-                                ->relationship('assignedTo', 'name')
-                                ->searchable()
-                                ->exists(
-                                    table: (new User())->getTable(),
-                                    column: (new User())->getKeyName()
-                                )
-                                ->required()
-                                ->visible(fn (Get $get) => $get('field') === 'assigned_to_id'),
                             Textarea::make('description')
                                 ->string()
                                 ->required()

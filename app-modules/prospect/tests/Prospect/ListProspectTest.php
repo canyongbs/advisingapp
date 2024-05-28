@@ -91,11 +91,6 @@ test('ListProspects can bulk update characteristics', function () {
 
     $component
         ->callTableBulkAction('bulk_update', $prospects, [
-            'field' => 'assigned_to_id',
-            'assigned_to_id' => $user->id,
-        ])
-        ->assertHasNoTableBulkActionErrors()
-        ->callTableBulkAction('bulk_update', $prospects, [
             'field' => 'description',
             'description' => $description,
         ])
@@ -130,7 +125,6 @@ test('ListProspects can bulk update characteristics', function () {
         ->each(
             fn ($prospect) => $prospect
                 ->refresh()
-                ->assigned_to_id->toBe($user->id)
                 ->description->toBe($description)
                 ->email_bounce->toBeTrue()
                 ->hsgrad->toBe($hsgrad)

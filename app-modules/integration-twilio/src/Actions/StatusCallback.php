@@ -42,7 +42,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Actions\UpdateOutboundDeliverableStatus;
+use AdvisingApp\Notification\Actions\UpdateOutboundDeliverableSmsStatus;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 use AdvisingApp\Notification\Events\CouldNotFindOutboundDeliverableFromExternalReference;
 
@@ -80,6 +80,6 @@ class StatusCallback implements ShouldQueue
         // delivered, undelivered, failed, etc... statuses.
         // https://canyongbs.atlassian.net/browse/ADVAPP-113
 
-        UpdateOutboundDeliverableStatus::dispatch($outboundDeliverable, $this->data);
+        UpdateOutboundDeliverableSmsStatus::dispatch($outboundDeliverable, $this->data);
     }
 }

@@ -61,7 +61,7 @@ beforeEach(function () {
 it('handles a bounce event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'bounce'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'Bounce'));
 
     $response = withHeaders(
         [
@@ -88,7 +88,7 @@ it('handles a bounce event', function () {
 it('handles a complaint event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'complaint'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'Complaint'));
 
     $response = withHeaders(
         [
@@ -115,7 +115,7 @@ it('handles a complaint event', function () {
 it('handles a delivery event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'delivery'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'Delivery'));
 
     $response = withHeaders(
         [
@@ -142,7 +142,7 @@ it('handles a delivery event', function () {
 it('handles a send event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'send'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'Send'));
 
     $response = withHeaders(
         [
@@ -169,7 +169,7 @@ it('handles a send event', function () {
 it('handles a reject event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'reject'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'Reject'));
 
     $response = withHeaders(
         [
@@ -196,7 +196,7 @@ it('handles a reject event', function () {
 it('handles a open event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'open'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'Open'));
 
     $response = withHeaders(
         [
@@ -223,7 +223,7 @@ it('handles a open event', function () {
 it('handles a click event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'click'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'Click'));
 
     $response = withHeaders(
         [
@@ -250,7 +250,7 @@ it('handles a click event', function () {
 it('handles a renderingFailure event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'renderingFailure'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'RenderingFailure'));
 
     $response = withHeaders(
         [

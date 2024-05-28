@@ -39,6 +39,7 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
+use Laravel\Pennant\Feature;
 use Illuminate\Support\Carbon;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Fieldset;
@@ -113,11 +114,19 @@ class CreateInteraction extends CreateRecord
                             ->preload()
                             ->label('Initiative')
                             ->required()
+                            ->default(fn () => Feature::active('interaction_initiative_default') ? InteractionInitiative::query()
+                                ->where('is_default', true)
+                                ->first()
+                                ?->getKey() : '')
                             ->exists((new InteractionInitiative())->getTable(), 'id'),
                         Select::make('interaction_driver_id')
                             ->relationship('driver', 'name')
                             ->preload()
                             ->label('Driver')
+                            ->default(fn () => Feature::active('interaction_driver_default') ? InteractionDriver::query()
+                                ->where('is_default', true)
+                                ->first()
+                                ?->getKey() : '')
                             ->required()
                             ->exists((new InteractionDriver())->getTable(), 'id'),
                         Select::make('division_id')
@@ -160,6 +169,10 @@ class CreateInteraction extends CreateRecord
                         Select::make('interaction_type_id')
                             ->relationship('type', 'name')
                             ->preload()
+                            ->default(fn () => Feature::active('interaction_type_default') ? InteractionType::query()
+                                ->where('is_default', true)
+                                ->first()
+                                ?->getKey() : '')
                             ->label('Type')
                             ->required()
                             ->exists((new InteractionType())->getTable(), 'id'),

@@ -132,7 +132,7 @@ return [
             FlushOnce::class,
             FlushTemporaryContainerInstances::class,
             // DisconnectFromDatabases::class,
-            CollectGarbage::class,
+            //CollectGarbage::class,
         ],
 
         WorkerErrorOccurred::class => [
@@ -231,7 +231,7 @@ return [
     |
     */
 
-    'garbage' => 50,
+    'garbage' => 10000,
 
     /*
     |--------------------------------------------------------------------------

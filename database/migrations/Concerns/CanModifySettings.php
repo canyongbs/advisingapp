@@ -46,16 +46,7 @@ trait CanModifySettings
      */
     public function updateSettings(string $group, string $name, Closure $modifyPayload, bool $isEncrypted = false): void
     {
-        $payload = DB::table('settings')
-            ->where('group', $group)
-            ->where('name', $name)
-            ->value('payload');
-
-        $payload = json_decode($payload);
-
-        if ($isEncrypted) {
-            $payload = decrypt($payload);
-        }
+        $payload = $this->getSetting($group, $name, $isEncrypted);
 
         $payload = $modifyPayload($payload);
 
@@ -72,5 +63,21 @@ trait CanModifySettings
                 'payload' => $payload,
                 'updated_at' => now(),
             ]);
+    }
+
+    public function getSetting(string $group, string $name, bool $isEncrypted = false): mixed
+    {
+        $payload = DB::table('settings')
+            ->where('group', $group)
+            ->where('name', $name)
+            ->value('payload');
+
+        $payload = json_decode($payload);
+
+        if ($isEncrypted) {
+            $payload = decrypt($payload);
+        }
+
+        return $payload;
     }
 }

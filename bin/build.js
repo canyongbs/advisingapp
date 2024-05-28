@@ -86,20 +86,14 @@ const defaultOptions = {
 
 compile({
     ...defaultOptions,
-    entryPoints: ['./app-modules/assistant/resources/js/assistantCurrentResponse.js'],
-    outfile: './public/js/canyon-gbs/assistant/assistantCurrentResponse.js',
+    entryPoints: ['./app-modules/ai/resources/js/chat.js'],
+    outfile: './public/js/canyon-gbs/ai/chat.js',
 })
 
 compile({
     ...defaultOptions,
-    entryPoints: ['./app-modules/assistant/resources/js/chats.js'],
-    outfile: './public/js/canyon-gbs/assistant/chats.js',
-})
-
-compile({
-    ...defaultOptions,
-    entryPoints: ['./app-modules/in-app-communication/resources/js/userToUserChat.js'],
-    outfile: './public/js/canyon-gbs/in-app-communication/userToUserChat.js',
+    entryPoints: ['./app-modules/ai/resources/js/chats.js'],
+    outfile: './public/js/canyon-gbs/ai/chats.js',
 })
 
 compile({

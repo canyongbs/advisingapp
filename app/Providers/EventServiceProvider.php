@@ -37,9 +37,7 @@
 namespace App\Providers;
 
 use OwenIt\Auditing\Events\Auditing;
-use App\Listeners\HandleSettingsSaved;
 use Illuminate\Auth\Events\Registered;
-use Spatie\LaravelSettings\Events\SettingsSaved;
 use AdvisingApp\Audit\Listeners\AuditingListener;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -58,9 +56,6 @@ class EventServiceProvider extends ServiceProvider
         // TODO: Move this to the auditing Module somehow
         Auditing::class => [
             AuditingListener::class,
-        ],
-        SettingsSaved::class => [
-            HandleSettingsSaved::class,
         ],
     ];
 

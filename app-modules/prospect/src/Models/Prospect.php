@@ -139,11 +139,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return $this->id;
     }
 
-    public function assignedTo(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function serviceRequests(): MorphMany
     {
         return $this->morphMany(
@@ -225,6 +220,16 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     public static function displayEmailKey(): string
     {
         return 'email';
+    }
+
+    public static function displayFirstNameKey(): string
+    {
+        return 'first_name';
+    }
+
+    public static function displayLastNameKey(): string
+    {
+        return 'last_name';
     }
 
     public static function filamentResource(): string

@@ -82,8 +82,6 @@ type Prospect @model(class: "AdvisingApp\\Prospect\\Models\\Prospect") {
     audits_count: Int @count(relation: "audits")
 
     created_by: User @belongsTo(relation: "createdBy")
-
-    assigned_to: User @belongsTo(relation: "assignedTo")
 }
 
 input ProspectsQuery {
@@ -171,8 +169,6 @@ input ProspectsQuery {
     audits: AuditsQuery
 
     created_by: UsersQuery
-
-    assigned_to: UsersQuery
 }
 
 type ProspectQueries {
@@ -261,9 +257,6 @@ input CreateProspectInput {
 
     "The user that created the prospect."
     created_by_id: UUID @rules(apply: ["exists:users,id"])
-
-    "The user the prospect is assigned to."
-    assigned_to_id: UUID @rules(apply: ["exists:users,id"])
 }
 
 input UpdateProspectInput {
@@ -332,9 +325,6 @@ input UpdateProspectInput {
 
     "The user that created the prospect."
     created_by_id: UUID @rules(apply: ["exists:users,id"])
-
-    "The user the prospect is assigned to."
-    assigned_to_id: UUID @rules(apply: ["exists:users,id"])
 }
 
 type ProspectMutations {

@@ -43,21 +43,23 @@ use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
 use Spatie\MediaLibrary\HasMedia;
 use App\Support\HasAdvancedFilter;
+use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Team\Models\TeamUser;
 use App\Filament\Resources\UserResource;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Authorization\Models\Role;
 use Lab404\Impersonate\Models\Impersonate;
 use Filament\Models\Contracts\FilamentUser;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use AdvisingApp\Ai\Models\AiAssistantUpvote;
 use AdvisingApp\Authorization\Models\License;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\MeetingCenter\Models\Calendar;
-use AdvisingApp\Assistant\Models\AssistantChat;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
@@ -68,14 +70,12 @@ use AdvisingApp\Consent\Models\Concerns\CanConsent;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Assistant\Models\AssistantChatFolder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use AdvisingApp\ServiceManagement\Models\ChangeRequest;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
@@ -88,13 +88,12 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
-use AdvisingApp\IntegrationAI\Models\Concerns\ProvidesDynamicContext;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 
 /**
  * @mixin IdeHelperUser
  */
-class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, NotifiableInterface, HasFilamentResource, ProvidesDynamicContext
+class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, NotifiableInterface, HasFilamentResource
 {
     use HasFactory;
     use HasAdvancedFilter;
@@ -325,7 +324,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function getIsAdminAttribute()
     {
-        return $this->roles()->where('title', 'Admin')->exists();
+        return $this->roles()->where('name', 'authorization.super_admin')->exists();
     }
 
     public function scopeAdmins()
@@ -348,14 +347,19 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->locale;
     }
 
-    public function assistantChats(): HasMany
+    public function aiThreads(): HasMany
     {
-        return $this->hasMany(AssistantChat::class);
+        return $this->hasMany(AiThread::class);
     }
 
-    public function assistantChatFolders(): HasMany
+    public function aiThreadFolders(): HasMany
     {
-        return $this->hasMany(AssistantChatFolder::class);
+        return $this->hasMany(AiThreadFolder::class);
+    }
+
+    public function aiAssistantUpvotes(): HasMany
+    {
+        return $this->hasMany(AiAssistantUpvote::class);
     }
 
     public function events(): HasMany
@@ -376,11 +380,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function calendar(): HasOne
     {
         return $this->hasOne(Calendar::class);
-    }
-
-    public function assistantChatMessageLogs(): HasMany
-    {
-        return $this->hasMany(AssistantChatMessageLog::class);
     }
 
     public function canAccessPanel(Panel $panel): bool

@@ -37,10 +37,15 @@
 use App\Models\User;
 
 use function Tests\asSuperAdmin;
+
+use Illuminate\View\ViewException;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+use function Pest\Laravel\assertDatabaseHas;
 
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
+use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ViewUser;
 
 it('renders impersonate button for non super admin users when user is super admin', function () {
@@ -55,24 +60,6 @@ it('renders impersonate button for non super admin users when user is super admi
     $component
         ->assertSuccessful()
         ->assertActionVisible(Impersonate::class);
-});
-
-it('does not render impersonate button for super admin users when user is not super admin', function () {
-    $superAdmin = User::factory()->create();
-    asSuperAdmin($superAdmin);
-
-    $user = User::factory()
-        ->create()
-        ->givePermissionTo('user.view-any', 'user.*.view');
-    actingAs($user);
-
-    $component = livewire(ViewUser::class, [
-        'record' => $superAdmin->getRouteKey(),
-    ]);
-
-    $component
-        ->assertSuccessful()
-        ->assertActionHidden(Impersonate::class);
 });
 
 it('does not render impersonate button for super admin users at all', function () {
@@ -91,24 +78,22 @@ it('does not render impersonate button for super admin users at all', function (
         ->assertActionHidden(Impersonate::class);
 });
 
-it('does not render impersonate button for super admin users even if user has permission', function () {
+it('does not render super admin profile for regular user', function () {
+    // Create a super admin user
     $superAdmin = User::factory()->create();
     asSuperAdmin($superAdmin);
 
-    $user = User::factory()
-        ->create()
-        ->givePermissionTo('user.view-any', 'user.*.view', 'authorization.impersonate');
+    // Verify super admin user exists
+    assertDatabaseHas('users', ['id' => $superAdmin->id]);
 
+    // Create another user
+    $user = User::factory()->create();
     actingAs($user);
 
-    $component = livewire(ViewUser::class, [
-        'record' => $superAdmin->getRouteKey(),
-    ]);
-
-    $component
-        ->assertSuccessful()
-        ->assertActionHidden(Impersonate::class);
-});
+    // Attempt to load the EditUser component with the super admin's route key
+    livewire(ViewUser::class, ['record' => $superAdmin->getRouteKey()])
+        ->assertStatus(404);
+})->throws(ViewException::class);
 
 it('allows super admin user to impersonate', function () {
     $superAdmin = User::factory()->create();

@@ -58,7 +58,9 @@ class CreateEventAttendees implements ShouldQueue
         protected Event $event,
         protected array $emails,
         protected User $sender,
-    ) {}
+    ) {
+        $this->onQueue(config('meeting-center.queue'));
+    }
 
     public function handle(): void
     {

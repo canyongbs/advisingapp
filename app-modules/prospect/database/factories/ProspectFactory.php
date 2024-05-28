@@ -75,7 +75,6 @@ class ProspectFactory extends Factory
             'postal' => str(fake()->postcode())->before('-')->toString(),
             'birthdate' => fake()->date(),
             'hsgrad' => fake()->year(),
-            'assigned_to_id' => User::factory(),
             'created_by_id' => User::factory(),
         ];
     }

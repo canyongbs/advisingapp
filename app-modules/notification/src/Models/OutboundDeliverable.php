@@ -48,8 +48,8 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Notification\Drivers\OutboundDeliverableDriver;
 use AdvisingApp\Timeline\Timelines\OutboundDeliverableTimeline;
+use AdvisingApp\Notification\Drivers\Contracts\OutboundDeliverableDriver;
 
 /**
  * @mixin IdeHelperOutboundDeliverable

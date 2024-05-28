@@ -1,0 +1,112 @@
+type PromptType @model(class: "AdvisingApp\\Ai\\Models\\PromptType") {
+    id: UUID!
+
+    title: String!
+
+    description: String
+
+    created_at: DateTime
+
+    updated_at: DateTime
+
+    prompts: [Prompt!] @hasMany
+
+    prompts_count: Int @count(relation: "prompts")
+}
+
+input PromptTypesQuery {
+    id: UUID
+
+    title: String
+
+    description: String
+
+    created_at: DateTime
+
+    updated_at: DateTime
+
+    prompts: PromptsQuery
+}
+
+type PromptTypeQueries {
+    "Get a specific prompt type by ID."
+    find(
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:prompt_types"])
+    ): PromptType @find @softDeletes @canResolved(ability: "view")
+
+    "List multiple prompt types."
+    list(
+        "Filter by the prompt types attributes and relations."
+        where: PromptTypesQuery @searchBy
+        order: PromptTypesQuery @sortBy
+    ): [PromptType!]! @paginate @softDeletes @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    promptType: PromptTypeQueries! @namespaced
+}
+
+input CreatePromptTypeInput {
+    "The title of the prompt type."
+    title: String!
+        @rules(
+            apply: [
+                "required"
+                "string"
+                "max:255"
+                "unique:prompt_types,title"
+            ]
+        )
+
+    "The description of the prompt type."
+    description: String @rules(apply: ["nullable", "string", "max:65535"])
+}
+
+input UpdatePromptTypeInput {
+    "The title of the prompt type."
+    title: String
+        @rules(
+            apply: [
+                "nullable"
+                "string"
+                "max:255"
+                "unique:prompt_types,title"
+            ]
+        )
+
+    "The description of the prompt type."
+    description: String @rules(apply: ["nullable", "string", "max:65535"])
+}
+
+type PromptTypeMutations {
+    "Create a new prompt type."
+    create(
+        "The attributes to create a prompt type."
+        input: CreatePromptTypeInput! @spread
+    ): PromptType! @create @canModel(ability: "create")
+
+    "Update an existing prompt type."
+    update(
+        "The identifier of the prompt type you would like to update."
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:prompt_types"])
+
+        "The attributes to update a prompt type."
+        input: UpdatePromptTypeInput! @spread
+    ): PromptType! @update @canFind(ability: "update", find: "id")
+
+    "Delete an existing prompt type."
+    delete(
+        "The identifier of the prompt type you would like to delete."
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:prompt_types"])
+    ): PromptType @delete @canFind(ability: "delete", find: "id")
+}
+
+extend type Mutation {
+    promptType: PromptTypeMutations! @namespaced
+}

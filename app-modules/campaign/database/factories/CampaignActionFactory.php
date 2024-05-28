@@ -51,7 +51,8 @@ class CampaignActionFactory extends Factory
         return [
             'campaign_id' => Campaign::factory(),
             'type' => fake()->randomElement([
-                CampaignActionType::BulkEngagement,
+                CampaignActionType::BulkEngagementEmail,
+                CampaignActionType::BulkEngagementSms,
             ]),
             'data' => [],
             'execute_at' => fake()->dateTimeBetween('+1 week', '+1 year'),

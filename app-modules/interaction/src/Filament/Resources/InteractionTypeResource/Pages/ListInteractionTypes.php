@@ -38,10 +38,14 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource\Pag
 
 use Filament\Actions;
 use Filament\Tables\Table;
+use Laravel\Pennant\Feature;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
@@ -57,6 +61,16 @@ class ListInteractionTypes extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('name')
                     ->searchable(),
+                IconColumn::make('is_default')
+                    ->label('Default')
+                    ->visible(fn (): bool => Feature::active('interaction_type_default'))
+                    ->boolean(),
+            ])
+            ->filters([
+                Filter::make('is_default')
+                    ->label('Default')
+                    ->visible(fn (): bool => Feature::active('interaction_type_default'))
+                    ->query(fn (Builder $query) => $query->where('is_default', true)),
             ])
             ->actions([
                 EditAction::make(),

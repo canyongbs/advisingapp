@@ -36,18 +36,24 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
+use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Livewire\Attributes\Url;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TextInput;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\MeetingCenter\Models\Event;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\MeetingCenter\Actions\DuplicateEvent;
 use App\Filament\Tables\Columns\OpenSearch\TextColumn;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 
@@ -89,6 +95,28 @@ class ListEvents extends ListRecords
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
+                ReplicateAction::make('Duplicate')
+                    ->label('Duplicate')
+                    ->modalHeading('Duplicate Event')
+                    ->modalSubmitActionLabel('Duplicate')
+                    ->mutateRecordDataUsing(function (array $data): array {
+                        $data['title'] = "Copy - {$data['title']}";
+
+                        return $data;
+                    })
+                    ->form(function (Form $form): Form {
+                        return $form->schema([
+                            TextInput::make('title')
+                                ->label('Title')
+                                ->required(),
+                        ]);
+                    })
+                    ->beforeReplicaSaved(function (Model $replica, array $data): void {
+                        $replica->title = $data['title'];
+                    })
+                    ->after(function (Event $replica, Event $record): void {
+                        resolve(DuplicateEvent::class, ['original' => $record, 'replica' => $replica])();
+                    }),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

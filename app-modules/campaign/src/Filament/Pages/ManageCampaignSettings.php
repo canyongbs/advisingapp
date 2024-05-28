@@ -37,7 +37,9 @@
 namespace AdvisingApp\Campaign\Filament\Pages;
 
 use Filament\Forms\Form;
+use Laravel\Pennant\Feature;
 use Filament\Pages\SettingsPage;
+use App\Settings\DisplaySettings;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
@@ -68,7 +70,7 @@ class ManageCampaignSettings extends SettingsPage
             ->schema([
                 TimezoneSelect::make('action_execution_timezone')
                     ->label('Journey step execution timezone')
-                    ->placeholder(fn (TimezoneSelect $component): string => $component->getOptions()[config('app.timezone')]),
+                    ->placeholder(fn (TimezoneSelect $component): string => $component->getOptions()[(Feature::active('display-settings') ? app(DisplaySettings::class)->timezone : null) ?? config('app.timezone')]),
             ]);
     }
 }

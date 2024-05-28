@@ -1,8 +1,10 @@
 version: '3.8'
 services:
-  advisingapp-app:
+  advisingapp.local:
     build:
       target: development
+      args:
+        TOTAL_QUEUE_WORKERS: '${TOTAL_QUEUE_WORKERS:-10}'
     environment:
       SSL_MODE: "mixed"
       LANDLORD_MIGRATE: '${LANDLORD_MIGRATE:-true}'
@@ -18,6 +20,12 @@ services:
       CACHE_FILAMENT_COMPONENTS: '${CACHE_FILAMENT_COMPONENTS:-false}'
       PUID: '${SPIN_USER_ID:-9999}'
       PGID: '${SPIN_GROUP_ID:-9999}'
+      SQS_QUEUE: '${SQS_QUEUE:-default}'
+      LANDLORD_SQS_QUEUE: '${LANDLORD_SQS_QUEUE:-landlord}'
+      OUTBOUND_COMMUNICATION_QUEUE: '${OUTBOUND_COMMUNICATION_QUEUE:-outbound-communication}'
+      AUDIT_QUEUE_QUEUE: '${AUDIT_QUEUE_QUEUE:-audit}'
+      MEETING_CENTER_QUEUE: '${MEETING_CENTER_QUEUE:-meeting-center}'
+      IMPORT_EXPORT_QUEUE: '${IMPORT_EXPORT_QUEUE:-import-export}'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.advisingapp-app.rule=HostRegexp(`advisingapp.local`, `{subdomain:[a-z0-9]+}.advisingapp.local`)"

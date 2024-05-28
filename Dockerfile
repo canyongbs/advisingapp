@@ -34,6 +34,14 @@ RUN echo "source $NVM_DIR/nvm.sh \
 COPY ./docker/s6-overlay/scripts/ /etc/s6-overlay/scripts/
 COPY docker/s6-overlay/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
 COPY ./docker/s6-overlay/user/ /etc/s6-overlay/s6-rc.d/user/contents.d/
+COPY ./docker/s6-overlay/templates/ /tmp/s6-overlay-templates
+
+ARG TOTAL_QUEUE_WORKERS=3
+
+COPY ./docker/generate-queues.sh /generate-queues.sh
+RUN chmod +x /generate-queues.sh
+RUN /generate-queues.sh
+RUN rm /generate-queues.sh
 
 COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./docker/nginx/site-opts.d /etc/nginx/site-opts.d
@@ -56,8 +64,10 @@ FROM base AS development
 #RUN docker-php-serversideup-set-id www-data ${USER_ID} ${GROUP_ID}
 
 RUN chown -R "$PUID":"$PGID" /var/www/html \
-    && chgrp "$PGID" /var/www/html/storage/logs \
-    && chmod g+s /var/www/html/storage/logs
+    && if [[ -d /var/www/html/storage/logs ]] ; then \
+    chgrp "$PGID" /var/www/html/storage/logs \
+    && chmod g+s /var/www/html/storage/logs \
+    ; fi
 
 FROM base AS deploy
 

@@ -36,15 +36,62 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use Carbon\Carbon;
 use App\Models\User;
+use Filament\Forms\Form;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Section;
 use App\Filament\Resources\UserResource;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ViewRecord;
+use App\Filament\Forms\Components\Licenses;
+use AdvisingApp\Authorization\Models\License;
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 
 class ViewUser extends ViewRecord
 {
     protected static string $resource = UserResource::class;
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->disabled(false)
+            ->schema([
+                Section::make()
+                    ->columns()
+                    ->schema([
+                        TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('email')
+                            ->label('Email address')
+                            ->email()
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('job_title')
+                            ->string()
+                            ->maxLength(255),
+                        Toggle::make('is_external')
+                            ->label('User can only log in via a social provider.'),
+                        TextInput::make('created_at')
+                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->disabled(),
+                        TextInput::make('updated_at')
+                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->disabled(),
+                    ])
+                    ->disabled(),
+                Licenses::make()
+                    ->hidden(fn (?User $record) => is_null($record))
+                    ->disabled(function () {
+                        /** @var User $user */
+                        $user = auth()->user();
+
+                        return $user->cannot('create', License::class);
+                    }),
+            ]);
+    }
 
     protected function getHeaderActions(): array
     {
