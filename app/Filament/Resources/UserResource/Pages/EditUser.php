@@ -76,7 +76,7 @@ class EditUser extends EditRecord
                             ->string()
                             ->maxLength(255),
                         Toggle::make('is_external')
-                            ->label('User can only log in via a social provider.'),
+                            ->label('User can only login via Single Sign-On (SSO)'),
                         TextInput::make('created_at')
                             ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
