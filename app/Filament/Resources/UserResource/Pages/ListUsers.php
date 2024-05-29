@@ -87,48 +87,21 @@ class ListUsers extends ListRecords
                     ->toggleable(),
                 IconColumn::make(LicenseType::ConversationalAi->value . '_enabled')
                     ->label('AI Assistant')
-                    ->state(function ($record) {
-                        return $record->hasLicense(LicenseType::ConversationalAi);
-                    })
-                    ->tooltip(fn ($state) => $state ? 'Licensed' : 'Unlicensed')
-                    ->icon(fn ($state) => match ($state) {
-                        true => 'heroicon-o-check-circle',
-                        false => 'heroicon-o-x-circle',
-                    })
-                    ->color(fn ($state) => match ($state) {
-                        true => 'success',
-                        false => 'danger',
-                    })
+                    ->state(fn (User $record): bool => $record->hasLicense(LicenseType::ConversationalAi))
+                    ->boolean()
+                    ->tooltip(fn (bool $state): string => $state ? 'Licensed' : 'Unlicensed')
                     ->toggleable(),
                 IconColumn::make(LicenseType::RetentionCrm->value . '_enabled')
                     ->label('Retention')
-                    ->state(function ($record) {
-                        return $record->hasLicense(LicenseType::RetentionCrm);
-                    })
-                    ->tooltip(fn ($state) => $state ? 'Licensed' : 'Unlicensed')
-                    ->icon(fn ($state) => match ($state) {
-                        true => 'heroicon-o-check-circle',
-                        false => 'heroicon-o-x-circle',
-                    })
-                    ->color(fn ($state) => match ($state) {
-                        true => 'success',
-                        false => 'danger',
-                    })
+                    ->state(fn (User $record): bool => $record->hasLicense(LicenseType::RetentionCrm))
+                    ->boolean()
+                    ->tooltip(fn (bool $state): string => $state ? 'Licensed' : 'Unlicensed')
                     ->toggleable(),
                 IconColumn::make(LicenseType::RecruitmentCrm->value . '_enabled')
                     ->label('Recruitment')
-                    ->state(function ($record) {
-                        return $record->hasLicense(LicenseType::RecruitmentCrm);
-                    })
-                    ->tooltip(fn ($state) => $state ? 'Licensed' : 'Unlicensed')
-                    ->icon(fn ($state) => match ($state) {
-                        true => 'heroicon-o-check-circle',
-                        false => 'heroicon-o-x-circle',
-                    })
-                    ->color(fn ($state) => match ($state) {
-                        true => 'success',
-                        false => 'danger',
-                    })
+                    ->state(fn (User $record): bool => $record->hasLicense(LicenseType::RecruitmentCrm))
+                    ->boolean()
+                    ->tooltip(fn (bool $state): string => $state ? 'Licensed' : 'Unlicensed')
                     ->toggleable(),
                 TextColumn::make('created_at')
                     ->label('Created At')
