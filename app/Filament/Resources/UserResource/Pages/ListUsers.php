@@ -40,6 +40,7 @@ use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
+use Filament\Support\Colors\Color;
 use App\Filament\Imports\UserImporter;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
@@ -47,10 +48,12 @@ use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Tables\Actions\BulkActionGroup;
 use AdvisingApp\Authorization\Models\License;
 use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
 
@@ -83,6 +86,40 @@ class ListUsers extends ListRecords
                     ->toggleable(),
                 TextColumn::make('job_title')
                     ->toggleable(),
+                ToggleColumn::make(LicenseType::ConversationalAi->value . '_enabled')
+                    ->label('Conversational AI')
+                    ->offColor(Color::Red)
+                    ->onColor(Color::Green)
+                    ->tooltip(fn ($state) => $state ? 'Licensed' : 'Unlicensed')
+                    ->state(function ($record) {
+                        return $record->hasLicense(LicenseType::ConversationalAi);
+                    })
+                    ->updateStateUsing(
+                        fn ($state, User $record) => $state ? $record->grantLicense(LicenseType::ConversationalAi) : $record->revokeLicense(LicenseType::ConversationalAi)
+                    ),
+
+                ToggleColumn::make(LicenseType::RetentionCrm->value . '_enabled')
+                    ->label('Retention CRM')
+                    ->offColor(Color::Red)
+                    ->onColor(Color::Green)
+                    ->tooltip(fn ($state) => $state ? 'Licensed' : 'Unlicensed')
+                    ->state(function ($record) {
+                        return $record->hasLicense(LicenseType::RetentionCrm);
+                    })
+                    ->updateStateUsing(
+                        fn ($state, User $record) => $state ? $record->grantLicense(LicenseType::RetentionCrm) : $record->revokeLicense(LicenseType::RetentionCrm)
+                    ),
+                ToggleColumn::make(LicenseType::RecruitmentCrm->value . '_enabled')
+                    ->label('Recruitment CRM')
+                    ->offColor(Color::Red)
+                    ->onColor(Color::Green)
+                    ->tooltip(fn ($state) => $state ? 'Licensed' : 'Unlicensed')
+                    ->state(function ($record) {
+                        return $record->hasLicense(LicenseType::RecruitmentCrm);
+                    })
+                    ->updateStateUsing(
+                        fn ($state, User $record) => $state ? $record->grantLicense(LicenseType::RecruitmentCrm) : $record->revokeLicense(LicenseType::RecruitmentCrm)
+                    ),
                 TextColumn::make('created_at')
                     ->label('Created At')
                     ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
