@@ -37,6 +37,7 @@
 namespace App\Multitenancy\Tasks;
 
 use Spatie\Multitenancy\Models\Tenant;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Multitenancy\Tasks\SwitchTenantTask;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 
@@ -119,5 +120,7 @@ class SwitchS3PublicFilesystemTask implements SwitchTenantTask
             'filesystems.disks.s3-public.throw' => $throw,
             'filesystems.disks.s3-public.root' => $root,
         ]);
+
+        Storage::forgetDisk('s3-public');
     }
 }
