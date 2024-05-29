@@ -70,7 +70,9 @@ class EditSystemUser extends EditRecord
         $systemUser = $this->getRecord();
 
         if (! $systemUser->tokens()->where('name', 'api')->first()) {
-            $token = str($systemUser->createToken('api')->plainTextToken)->after('|')->toString();
+            $token = str($systemUser->createToken('api', ['graphql-api'])->plainTextToken)
+                ->after('|')
+                ->toString();
 
             $data['token'] = $token;
         }
@@ -85,7 +87,9 @@ class EditSystemUser extends EditRecord
                 ->action(function (SystemUser $record) {
                     $record->tokens()->where('name', 'api')->delete();
 
-                    $token = str($record->createToken('api')->plainTextToken)->after('|')->toString();
+                    $token = str($record->createToken('api', ['graphql-api'])->plainTextToken)
+                        ->after('|')
+                        ->toString();
 
                     $this->data['token'] = $token;
                 }),

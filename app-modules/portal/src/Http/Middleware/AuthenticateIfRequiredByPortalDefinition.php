@@ -40,6 +40,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\Portal\Settings\PortalSettings;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
 class AuthenticateIfRequiredByPortalDefinition
 {
@@ -51,8 +52,14 @@ class AuthenticateIfRequiredByPortalDefinition
             return $next($request);
         }
 
-        if (! auth('sanctum')->check()) {
-            abort(403);
+        $user = auth('sanctum')->user();
+
+        if (! $user instanceof Educatable) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
+        if (! $user->tokenCan('knowledge-management-portal')) {
+            abort(Response::HTTP_FORBIDDEN);
         }
 
         return $next($request);

@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Multitenancy\Http\Middleware\NeedsTenant;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use AdvisingApp\Portal\Http\Middleware\AuthenticateIfRequiredByPortalDefinition;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
@@ -52,19 +52,16 @@ Route::prefix('api')
     ->name('api.')
     ->middleware([
         'api',
+        NeedsTenant::class,
         EnsureKnowledgeManagementPortalIsEnabled::class,
         EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
     ])
     ->group(function () {
-        Route::middleware(['auth:sanctum'])->group(function () {
-            Route::get('/user', function (Request $request) {
-                $user = auth('student')->user() ?? auth('prospect')->user() ?? $request->user();
-
-                if (! auth('web')->check()) {
-                    return $user;
-                }
-            })->name('user.auth-check');
-        });
+        Route::middleware(['auth:sanctum', 'abilities:knowledge-management-portal'])
+            ->group(function () {
+                Route::get('/user', fn () => auth()->user())
+                    ->name('user.auth-check');
+            });
 
         Route::prefix('portal/knowledge-management')
             ->name('portal.knowledge-management.')
