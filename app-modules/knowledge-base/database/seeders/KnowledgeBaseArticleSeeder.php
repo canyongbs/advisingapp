@@ -37,8 +37,6 @@
 namespace AdvisingApp\KnowledgeBase\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use AdvisingApp\Form\Enums\Rounding;
-use AdvisingApp\Portal\Settings\PortalSettings;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
 
 class KnowledgeBaseArticleSeeder extends Seeder
@@ -48,12 +46,5 @@ class KnowledgeBaseArticleSeeder extends Seeder
         KnowledgeBaseArticle::factory()
             ->count(25)
             ->create();
-
-        $settings = app(PortalSettings::class);
-        $settings->knowledge_management_portal_enabled = true;
-        $settings->knowledge_management_portal_primary_color = 'emerald';
-        $settings->knowledge_management_portal_rounding = Rounding::None->value;
-        $settings->knowledge_management_portal_service_management = true;
-        $settings->save();
     }
 }

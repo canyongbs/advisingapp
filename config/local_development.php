@@ -38,15 +38,8 @@ return [
     'super_admin' => [
         'email' => 'sampleadmin@advising.app',
     ],
-    'users' => [
-        'emails' => env('DEV_USER_EMAILS', env('DEMO_INTERNAL_USER_EMAILS'))
-            ? explode(',', env('DEV_USER_EMAILS', env('DEMO_INTERNAL_USER_EMAILS')))
-            : null,
-    ],
-    'prospects' => [
-        'emails' => env('DEV_PROSPECT_EMAILS')
-            ? explode(',', env('DEV_PROSPECT_EMAILS'))
-            : null,
+    'internal_users' => [
+        'emails' => env('DEMO_INTERNAL_USER_EMAILS') ? explode(',', env('DEMO_INTERNAL_USER_EMAILS')) : null,
     ],
     'twilio' => [
         'account_sid' => env('TWILIO_ACCOUNT_SID'),
