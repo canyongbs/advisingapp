@@ -43,6 +43,7 @@ use Filament\Actions\ImportAction;
 use App\Filament\Imports\UserImporter;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
@@ -51,6 +52,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Filament\Tables\Actions\BulkActionGroup;
 use AdvisingApp\Authorization\Models\License;
 use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
 
@@ -82,6 +84,24 @@ class ListUsers extends ListRecords
                     ->label('Email address')
                     ->toggleable(),
                 TextColumn::make('job_title')
+                    ->toggleable(),
+                IconColumn::make(LicenseType::ConversationalAi->value . '_enabled')
+                    ->label('AI Assistant')
+                    ->state(fn (User $record): bool => $record->hasLicense(LicenseType::ConversationalAi))
+                    ->boolean()
+                    ->tooltip(fn (bool $state): string => $state ? 'Licensed' : 'Unlicensed')
+                    ->toggleable(),
+                IconColumn::make(LicenseType::RetentionCrm->value . '_enabled')
+                    ->label('Retention')
+                    ->state(fn (User $record): bool => $record->hasLicense(LicenseType::RetentionCrm))
+                    ->boolean()
+                    ->tooltip(fn (bool $state): string => $state ? 'Licensed' : 'Unlicensed')
+                    ->toggleable(),
+                IconColumn::make(LicenseType::RecruitmentCrm->value . '_enabled')
+                    ->label('Recruitment')
+                    ->state(fn (User $record): bool => $record->hasLicense(LicenseType::RecruitmentCrm))
+                    ->boolean()
+                    ->tooltip(fn (bool $state): string => $state ? 'Licensed' : 'Unlicensed')
                     ->toggleable(),
                 TextColumn::make('created_at')
                     ->label('Created At')
