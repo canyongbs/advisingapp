@@ -62,7 +62,9 @@ class KnowledgeManagementPortalRequestAuthenticationController extends Controlle
             ]);
         }
 
-        $code = random_int(100000, 999999);
+        $code = app()->isLocal() && collect(config('local_development.prospects.emails'))->contains($email)
+            ? 123456
+            : random_int(100000, 999999);
 
         $authentication = new PortalAuthentication();
         $authentication->educatable()->associate($educatable);

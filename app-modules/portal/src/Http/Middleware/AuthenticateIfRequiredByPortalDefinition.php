@@ -39,8 +39,10 @@ namespace AdvisingApp\Portal\Http\Middleware;
 use Closure;
 use Laravel\Sanctum\Guard;
 use Illuminate\Http\Request;
+use AdvisingApp\Prospect\Models\Prospect;
 use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\Portal\Settings\PortalSettings;
+use AdvisingApp\StudentDataModel\Models\Student;
 
 class AuthenticateIfRequiredByPortalDefinition
 {
@@ -52,15 +54,13 @@ class AuthenticateIfRequiredByPortalDefinition
             return $next($request);
         }
 
-        ray(app(Guard::class)($request));
+        $user = app(Guard::class)($request);
 
-        ray($request);
+        if (! $user instanceof Student && ! $user instanceof Prospect) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
-        $user = $request->user('student') ?? $request->user('prospect') ?? null;
-
-        ray($user, $user->currentAccessToken());
-
-        if (! $user?->tokenCan('knowledge-management-portal')) {
+        if (! $user->tokenCan('knowledge-management-portal')) {
             abort(Response::HTTP_FORBIDDEN);
         }
 

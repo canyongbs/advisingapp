@@ -38,10 +38,11 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Enums\Integration;
-use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
 class LocalDevelopmentSeeder extends Seeder
 {
@@ -49,6 +50,7 @@ class LocalDevelopmentSeeder extends Seeder
     {
         if (app()->isLocal()) {
             $this->internalAdminUsers();
+            $this->prospects();
             $this->twilio();
         }
     }
@@ -61,19 +63,39 @@ class LocalDevelopmentSeeder extends Seeder
             return;
         }
 
-        collect(config('local_development.internal_users.emails'))->each(function ($email) use ($superAdminRole) {
+        collect(config('local_development.users.emails'))->each(function ($email) use ($superAdminRole) {
             $user = User::where('email', $email)->first();
 
             if (is_null($user)) {
-                $user = User::factory()->create([
-                    'name' => Str::title(Str::replace('.', ' ', Str::before($email, '@'))),
-                    'email' => $email,
-                    'password' => Hash::make('password'),
-                    'is_external' => true,
-                ]);
+                $user = User::factory()
+                    ->licensed(LicenseType::cases())
+                    ->create([
+                        'name' => str($email)->replace('.', ' ')->before('@')->title(),
+                        'email' => $email,
+                        'password' => Hash::make('password'),
+                        'is_external' => true,
+                    ]);
             }
 
             $user->roles()->sync($superAdminRole);
+        });
+    }
+
+    private function prospects(): void
+    {
+        collect(config('local_development.prospects.emails'))->each(function ($email) {
+            $contact = Prospect::where('email', $email)->first();
+
+            if (is_null($contact)) {
+                $name = str($email)->replace('.', ' ')->before('@')->title();
+
+                Prospect::factory()->create([
+                    'full_name' => $name,
+                    'first_name' => $name->before(' '),
+                    'last_name' => $name->after(' '),
+                    'email' => $email,
+                ]);
+            }
         });
     }
 
