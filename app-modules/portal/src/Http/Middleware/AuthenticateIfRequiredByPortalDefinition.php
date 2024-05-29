@@ -39,10 +39,9 @@ namespace AdvisingApp\Portal\Http\Middleware;
 use Closure;
 use Laravel\Sanctum\Guard;
 use Illuminate\Http\Request;
-use AdvisingApp\Prospect\Models\Prospect;
 use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\Portal\Settings\PortalSettings;
-use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
 class AuthenticateIfRequiredByPortalDefinition
 {
@@ -56,7 +55,7 @@ class AuthenticateIfRequiredByPortalDefinition
 
         $user = app(Guard::class)($request);
 
-        if (! $user instanceof Student && ! $user instanceof Prospect) {
+        if (! $user instanceof Educatable) {
             abort(Response::HTTP_FORBIDDEN);
         }
 
