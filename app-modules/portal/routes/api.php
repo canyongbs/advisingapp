@@ -34,13 +34,12 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Portal\Http\Middleware\AuthenticateIfRequiredByPortalDefinition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Response;
-use AdvisingApp\Portal\Settings\PortalSettings;
 use App\Multitenancy\Http\Middleware\NeedsTenant;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+use AdvisingApp\Portal\Http\Middleware\AuthenticateIfRequiredByPortalDefinition;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
 use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalController;
 use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized;
