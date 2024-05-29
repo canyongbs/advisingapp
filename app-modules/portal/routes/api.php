@@ -34,9 +34,7 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Symfony\Component\HttpFoundation\Response;
 use App\Multitenancy\Http\Middleware\NeedsTenant;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use AdvisingApp\Portal\Http\Middleware\AuthenticateIfRequiredByPortalDefinition;
@@ -59,17 +57,10 @@ Route::prefix('api')
         EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
     ])
     ->group(function () {
-        Route::middleware(['auth:sanctum'])
+        Route::middleware(['auth:sanctum', 'abilities:knowledge-management-portal'])
             ->group(function () {
-                Route::get('/user', function (Request $request) {
-                    $user = $request->user('student') ?? $request->user('prospect') ?? null;
-
-                    if ($user?->tokenCan('knowledge-management-portal')) {
-                        return $user;
-                    }
-
-                    abort(Response::HTTP_FORBIDDEN);
-                })->name('user.auth-check');
+                Route::get('/user', fn () => auth()->user())
+                    ->name('user.auth-check');
             });
 
         Route::prefix('portal/knowledge-management')

@@ -38,14 +38,11 @@ namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
 
 class KnowledgeManagementPortalLogoutController extends Controller
 {
     public function __invoke(Request $request)
     {
-        /** @var Student|Prospect $user */
         $user = auth('sanctum')->user();
 
         if (! $user) {

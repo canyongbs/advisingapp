@@ -37,7 +37,6 @@
 namespace AdvisingApp\Portal\Http\Middleware;
 
 use Closure;
-use Laravel\Sanctum\Guard;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\Portal\Settings\PortalSettings;
@@ -53,7 +52,7 @@ class AuthenticateIfRequiredByPortalDefinition
             return $next($request);
         }
 
-        $user = app(Guard::class)($request);
+        $user = auth('sanctum')->user();
 
         if (! $user instanceof Educatable) {
             abort(Response::HTTP_FORBIDDEN);
