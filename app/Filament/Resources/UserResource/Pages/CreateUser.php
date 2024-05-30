@@ -45,6 +45,9 @@ use App\Filament\Resources\UserResource;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use App\Notifications\SetPasswordNotification;
+use Filament\Actions\Action;
+use AdvisingApp\Authorization\Settings\AzureSsoSettings;
+use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 
 class CreateUser extends CreateRecord
 {
@@ -52,6 +55,9 @@ class CreateUser extends CreateRecord
 
     public function form(Form $form): Form
     {
+      $azureSsoSettings = app(AzureSsoSettings::class)->is_enabled;
+      $googleSsoSettings = app(GoogleSsoSettings::class)->is_enabled;
+
         return $form
             ->disabled(false)
             ->schema([
@@ -70,7 +76,10 @@ class CreateUser extends CreateRecord
                             ->string()
                             ->maxLength(255),
                         Toggle::make('is_external')
-                            ->label('User can only login via Single Sign-On (SSO)'),
+                            ->label('User can only login via Single Sign-On (SSO)')
+                            ->live()                            
+                            ->afterStateUpdated(fn (Toggle $component, $state) => $state ? null : (($azureSsoSettings || $googleSsoSettings) ? $component->state(true) && $this->mountAction('showSSOModal') : null))
+                            ->default(($azureSsoSettings || $googleSsoSettings)),
                         TextInput::make('created_at')
                             ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
@@ -79,6 +88,16 @@ class CreateUser extends CreateRecord
                             ->disabled(),
                     ]),
             ]);
+    }
+
+    public function showSSOModal(): Action
+    {
+      return Action::make('Warning')
+        ->action(fn () =>  $this->data['is_external'] = false)
+        ->requiresConfirmation()
+        ->modalDescription('Are you sure you would like to create this user as a local account instead of using one of the configured SSO options?')
+        ->modalSubmitActionLabel('Continue')
+        ->modalCancelAction();
     }
 
     protected function afterCreate(): void
