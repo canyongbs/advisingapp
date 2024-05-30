@@ -41,10 +41,12 @@ use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
+use App\Models\Scopes\WithoutSuperAdmin;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class UsersRelationManager extends RelationManager
@@ -74,14 +76,21 @@ class UsersRelationManager extends RelationManager
             ->headerActions([
                 AttachAction::make()
                     ->label('Add user to this team')
-                    ->recordSelectSearchColumns(['name', 'email'])
-                    //TODO: remove this if we support multiple teams
+                    ->recordSelectOptionsQuery(function (Builder $query) {
+                        $query->tap(new WithoutSuperAdmin());
+                    })
                     ->form(fn (AttachAction $action): array => [
                         $action->getRecordSelect()
                             ->rules([
                                 fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                                    //TODO: remove this if we support multiple teams
                                     if (User::findOrFail($value)->teams()->count() > 0) {
                                         $fail('This user already belongs to a team.');
+                                    }
+
+                                    //TODO: remove this if we want to allow super admin user as team member.
+                                    if (User::findOrFail($value)->hasRole('authorization.super_admin')) {
+                                        $fail('Super admin users cannot be added to a team.');
                                     }
                                 },
                             ]),
