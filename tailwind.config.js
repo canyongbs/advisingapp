@@ -67,6 +67,9 @@ export default {
             colors: {
                 gray: require('tailwindcss/colors').zinc,
             },
+            fontSize: {
+                'xxs': ['.5rem','.75rem'],
+            },
         },
         // Changes to colors also need to be reflected in FilamentServiceProvider
         colors: {
@@ -175,6 +178,7 @@ export default {
                 950: '#4b0c2f',
             },
         },
+      
     },
     plugins: [
         forms,
