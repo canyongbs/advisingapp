@@ -417,21 +417,28 @@
                                 required
                             ></textarea>
                         </div>
-                        <div class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
-                            <div class="w-full flex flex-col gap-3 sm:flex-row sm:w-auto sm:items-center">
-                                <x-filament::button type="submit" class="w-full sm:w-auto">
+                        <div
+                            class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
+                            <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+                                <x-filament::button
+                                    class="w-full sm:w-auto"
+                                    type="submit"
+                                >
                                     Send
                                 </x-filament::button>
-                        
+
                                 {{ $this->insertFromPromptLibraryAction }}
-                        
-                                <div class="py-2" x-show="isSendingMessage">
+
+                                <div
+                                    class="py-2"
+                                    x-show="isSendingMessage"
+                                >
                                     <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
                                 </div>
                             </div>
-                        
+
                             @if (blank($this->thread->name))
-                                <div class="flex w-full justify-center pt-3 sm:pl-2 sm:pt-0 sm:w-auto">
+                                <div class="flex w-full justify-center pt-3 sm:w-auto sm:pl-2 sm:pt-0">
                                     {{ $this->saveThreadAction }}
                                 </div>
                             @else
@@ -440,7 +447,7 @@
                                     {{ ($this->emailThreadAction)(['thread' => $this->thread->id]) }}
                                 </div>
                             @endif
-                        </div>                        
+                        </div>
                     </div>
                 </form>
             </div>
