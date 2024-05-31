@@ -83,8 +83,7 @@ class EditUser extends EditRecord
                         Toggle::make('is_external')
                             ->label('User can only login via Single Sign-On (SSO)')
                             ->live()                            
-                            ->afterStateUpdated(fn (Toggle $component, $state) => $state ? null : (($azureSsoSettings || $googleSsoSettings) ? $component->state(true) && $this->mountAction('showSSOModal') : null))
-                            ->default(($azureSsoSettings || $googleSsoSettings)),
+                            ->afterStateUpdated(fn (Toggle $component, $state) => $state ? null : (($azureSsoSettings || $googleSsoSettings) ? $component->state(true) && $this->mountAction('showSSOModal') : null)),
                         TextInput::make('created_at')
                             ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
