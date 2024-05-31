@@ -417,9 +417,13 @@
                                 required
                             ></textarea>
                         </div>
-                        <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
-                            <div class="flex w-full items-center gap-3">
-                                <x-filament::button type="submit">
+                        <div
+                            class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
+                            <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+                                <x-filament::button
+                                    class="w-full sm:w-auto"
+                                    type="submit"
+                                >
                                     Send
                                 </x-filament::button>
 
@@ -434,11 +438,11 @@
                             </div>
 
                             @if (blank($this->thread->name))
-                                <div class="flex pl-0 sm:pl-2">
+                                <div class="flex w-full justify-center pt-3 sm:w-auto sm:pl-2 sm:pt-0">
                                     {{ $this->saveThreadAction }}
                                 </div>
                             @else
-                                <div class="flex gap-3">
+                                <div class="flex w-full justify-center gap-1.5 pt-3 sm:w-auto sm:pt-0">
                                     {{ ($this->cloneThreadAction)(['thread' => $this->thread->id]) }}
                                     {{ ($this->emailThreadAction)(['thread' => $this->thread->id]) }}
                                 </div>
