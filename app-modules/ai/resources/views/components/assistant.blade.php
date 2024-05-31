@@ -271,7 +271,7 @@
             </div>
 
             <div
-                class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-2 2xl:col-span-3"
+                class="col-span-1 flex h-full md:h-screen md:max-h-[calc(100dvh-20rem)] flex-col gap-2 overflow-hidden md:col-span-2 2xl:col-span-3"
                 x-data="chat({
                     csrfToken: @js(csrf_token()),
                     retryMessageUrl: @js(route('ai.threads.messages.retry', ['thread' => $this->thread])),
