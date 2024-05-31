@@ -107,22 +107,22 @@ it('correctly edits the Amazon S3 settings for the Tenant', function () {
 
     $tenant->refresh();
 
-    expect($tenant->config->s3Filesystem->key)->toBe('new-key');
-    expect($tenant->config->s3Filesystem->secret)->toBe('new-secret');
-    expect($tenant->config->s3Filesystem->region)->toBe('new-region');
-    expect($tenant->config->s3Filesystem->bucket)->toBe('new-bucket');
-    expect($tenant->config->s3Filesystem->url)->toBe('new-url');
-    expect($tenant->config->s3Filesystem->endpoint)->toBe('new-endpoint');
-    expect($tenant->config->s3Filesystem->usePathStyleEndpoint)->toBe(true);
-    expect($tenant->config->s3Filesystem->throw)->toBe(true);
-    expect($tenant->config->s3Filesystem->root)->toBe('new-root');
-    expect($tenant->config->s3PublicFilesystem->key)->toBe('new-public-key');
-    expect($tenant->config->s3PublicFilesystem->secret)->toBe('new-public-secret');
-    expect($tenant->config->s3PublicFilesystem->region)->toBe('new-public-region');
-    expect($tenant->config->s3PublicFilesystem->bucket)->toBe('new-public-bucket');
-    expect($tenant->config->s3PublicFilesystem->url)->toBe('new-public-url');
-    expect($tenant->config->s3PublicFilesystem->endpoint)->toBe('new-public-endpoint');
-    expect($tenant->config->s3PublicFilesystem->usePathStyleEndpoint)->toBe(true);
-    expect($tenant->config->s3PublicFilesystem->throw)->toBe(true);
-    expect($tenant->config->s3PublicFilesystem->root)->toBe('new-public-root');
+    expect($tenant->config->s3Filesystem->key)->toBe('new-key')
+        ->and($tenant->config->s3Filesystem->secret)->toBe('new-secret')
+        ->and($tenant->config->s3Filesystem->region)->toBe('new-region')
+        ->and($tenant->config->s3Filesystem->bucket)->toBe('new-bucket')
+        ->and($tenant->config->s3Filesystem->url)->toBe('new-url')
+        ->and($tenant->config->s3Filesystem->endpoint)->toBe('new-endpoint')
+        ->and($tenant->config->s3Filesystem->usePathStyleEndpoint)->toBe(true)
+        ->and($tenant->config->s3Filesystem->throw)->toBe(true)
+        ->and($tenant->config->s3Filesystem->root)->toBe('new-root')
+        ->and($tenant->config->s3PublicFilesystem->key)->toBe('new-public-key')
+        ->and($tenant->config->s3PublicFilesystem->secret)->toBe('new-public-secret')
+        ->and($tenant->config->s3PublicFilesystem->region)->toBe('new-public-region')
+        ->and($tenant->config->s3PublicFilesystem->bucket)->toBe('new-public-bucket')
+        ->and($tenant->config->s3PublicFilesystem->url)->toBe('new-public-url')
+        ->and($tenant->config->s3PublicFilesystem->endpoint)->toBe('new-public-endpoint')
+        ->and($tenant->config->s3PublicFilesystem->usePathStyleEndpoint)->toBe(true)
+        ->and($tenant->config->s3PublicFilesystem->throw)->toBe(true)
+        ->and($tenant->config->s3PublicFilesystem->root)->toBe('new-public-root');
 });
