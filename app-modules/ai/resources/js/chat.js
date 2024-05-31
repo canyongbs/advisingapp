@@ -150,13 +150,13 @@ document.addEventListener('alpine:init', () => {
                 return;
             }
 
-            this.$refs.chatContainer.style.maxHeight = 'calc(100dvh - 20rem)';
+            this.$refs.chatContainer.style.maxHeight = 'calc(100dvh - 15rem)';
 
             if (this.$refs.messageInput.scrollHeight > 0) {
                 this.$refs.messageInput.style.height = '5rem';
                 this.$refs.messageInput.style.height = `min(${this.$refs.messageInput.scrollHeight}px, 35dvh)`;
 
-                this.$refs.chatContainer.style.maxHeight = `calc(100dvh - 15rem - ${this.$refs.messageInput.style.height})`;
+                this.$refs.chatContainer.style.maxHeight = `calc(100dvh - 10rem - ${this.$refs.messageInput.style.height})`;
             }
         },
     }));
