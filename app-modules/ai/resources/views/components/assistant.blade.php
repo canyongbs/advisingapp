@@ -415,6 +415,7 @@
                                 x-bind:disabled="isSendingMessage"
                                 placeholder="Type here..."
                                 required
+                                maxlength="25000"
                             ></textarea>
                         </div>
                         <div
