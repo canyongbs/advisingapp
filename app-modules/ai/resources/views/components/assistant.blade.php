@@ -65,7 +65,7 @@
                                     icon="heroicon-m-magnifying-glass"
                                     x-on:click="isSearchingAssistants = ! isSearchingAssistants"
                                 >
-                                    New chat with assistant
+                                    Use Custom Assistant
                                 </x-filament::button>
                             @endif
                         </div>
