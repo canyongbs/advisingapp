@@ -284,7 +284,7 @@
                 <div class="flex flex-col items-center justify-between gap-3 md:flex-row">
                     @if ($this->customAssistants)
                         <x-filament::badge :size="ActionSize::Large">
-                            <h1 class="text-xxs uppercase">
+                            <h1 class="text-xxs leading-3 uppercase">
                                 {{ $this->thread->assistant->name }}
                             </h1>
                         </x-filament::badge>

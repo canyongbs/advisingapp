@@ -68,7 +68,7 @@ export default {
                 gray: require('tailwindcss/colors').zinc,
             },
             fontSize: {
-                'xxs': ['.5rem','.75rem'],
+                'xxs': ['.5rem'],
             },
         },
         // Changes to colors also need to be reflected in FilamentServiceProvider
