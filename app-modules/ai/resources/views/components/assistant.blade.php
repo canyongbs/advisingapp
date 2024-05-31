@@ -415,6 +415,7 @@
                                 x-bind:disabled="isSendingMessage"
                                 placeholder="Type here..."
                                 required
+                                maxlength="25000"
                             ></textarea>
                         </div>
                         <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
