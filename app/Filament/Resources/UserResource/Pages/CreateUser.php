@@ -39,13 +39,13 @@ namespace App\Filament\Resources\UserResource\Pages;
 use Carbon\Carbon;
 use App\Models\User;
 use Filament\Forms\Form;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use App\Filament\Resources\UserResource;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use App\Notifications\SetPasswordNotification;
-use Filament\Actions\Action;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 
@@ -55,8 +55,8 @@ class CreateUser extends CreateRecord
 
     public function form(Form $form): Form
     {
-      $azureSsoSettings = app(AzureSsoSettings::class)->is_enabled;
-      $googleSsoSettings = app(GoogleSsoSettings::class)->is_enabled;
+        $azureSsoSettings = app(AzureSsoSettings::class)->is_enabled;
+        $googleSsoSettings = app(GoogleSsoSettings::class)->is_enabled;
 
         return $form
             ->disabled(false)
@@ -77,7 +77,7 @@ class CreateUser extends CreateRecord
                             ->maxLength(255),
                         Toggle::make('is_external')
                             ->label('User can only login via Single Sign-On (SSO)')
-                            ->live()                            
+                            ->live()
                             ->afterStateUpdated(fn (Toggle $component, $state) => $state ? null : (($azureSsoSettings || $googleSsoSettings) ? $component->state(true) && $this->mountAction('showSSOModal') : null))
                             ->default(($azureSsoSettings || $googleSsoSettings)),
                         TextInput::make('created_at')
@@ -92,12 +92,12 @@ class CreateUser extends CreateRecord
 
     public function showSSOModal(): Action
     {
-      return Action::make('Warning')
-        ->action(fn () =>  $this->data['is_external'] = false)
-        ->requiresConfirmation()
-        ->modalDescription('Are you sure you would like to create this user as a local account instead of using one of the configured SSO options?')
-        ->modalSubmitActionLabel('Continue')
-        ->modalCancelAction();
+        return Action::make('Warning')
+            ->action(fn () => $this->data['is_external'] = false)
+            ->requiresConfirmation()
+            ->modalDescription('Are you sure you would like to create this user as a local account instead of using one of the configured SSO options?')
+            ->modalSubmitActionLabel('Continue')
+            ->modalCancelAction();
     }
 
     protected function afterCreate(): void
