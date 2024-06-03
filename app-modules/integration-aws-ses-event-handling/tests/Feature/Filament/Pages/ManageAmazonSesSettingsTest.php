@@ -100,9 +100,6 @@ it('correctly edits the Amazon SES settings for the Tenant', function () {
     /** @var Tenant $tenant */
     $tenant = Tenant::current();
 
-    /** @var TenantConfig $config */
-    $config = $tenant->config;
-
     livewire(ManageAmazonSesSettings::class)
         ->fillForm(
             [

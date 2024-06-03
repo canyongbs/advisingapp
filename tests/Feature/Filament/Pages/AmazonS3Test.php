@@ -112,9 +112,6 @@ it('correctly edits the Amazon S3 settings for the Tenant', function () {
     /** @var Tenant $tenant */
     $tenant = Tenant::current();
 
-    /** @var TenantConfig $config */
-    $config = $tenant->config;
-
     livewire(AmazonS3::class)
         ->fillForm([
             's3.key' => 'new-key',
