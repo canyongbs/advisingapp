@@ -68,6 +68,25 @@ it('will create an outbound deliverable for each of the channels that the notifi
     expect(OutboundDeliverable::where('channel', NotificationChannel::Database)->count())->toBe(1);
 });
 
+it('will not count email or sms sent to Super Admins against quota usage', function () {
+    // Given that we have a super admin user
+    $user = User::factory()->create();
+    $nonSuperAdminUser = User::factory()->create();
+
+    $user->assignRole('authorization.super_admin');
+
+    // And they are sent a deliverable of any kind
+    $notification = new TestMultipleChannelNotification();
+    $user->notify($notification);
+
+    $notification = new TestMultipleChannelNotification();
+    $nonSuperAdminUser->notify($notification);
+
+    // Then the quota usage for the super admin user should be 0
+    expect(OutboundDeliverable::where('recipient_id', $user->id)->where('channel', NotificationChannel::Email)->first()->quota_usage)->toBe(0);
+    expect(OutboundDeliverable::where('recipient_id', $nonSuperAdminUser->id)->where('channel', NotificationChannel::Email)->first()->quota_usage)->toBe(1);
+});
+
 class TestMultipleChannelNotification extends BaseNotification implements EmailNotification, DatabaseNotification
 {
     use EmailChannelTrait;
