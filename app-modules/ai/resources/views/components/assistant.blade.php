@@ -42,7 +42,7 @@
             x-data="chats"
         >
             <div class="col-span-1 select-none">
-                <div class="flex md:max-h-screen flex-col gap-y-2">
+                <div class="flex flex-col gap-y-2 md:max-h-screen">
                     <div
                         class="relative"
                         x-data="{ isSearchingAssistants: false }"
