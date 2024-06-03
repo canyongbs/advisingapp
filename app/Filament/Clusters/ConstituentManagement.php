@@ -38,13 +38,11 @@ namespace App\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
 
-class ProspectManagement extends Cluster
+class ConstituentManagement extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?int $navigationSort = 50;
-
-    protected static ?string $navigationLabel = 'Constituent Management';
 }
