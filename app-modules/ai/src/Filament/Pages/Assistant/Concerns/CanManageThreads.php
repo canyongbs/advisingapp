@@ -345,7 +345,7 @@ trait CanManageThreads
                         fn (): Closure => function (string $attribute, $value, Closure $fail) {
                             foreach($value as $v) {
                                 if(User::findOrFail($v)->hasRole('authorization.super_admin')) {
-                                    $fail('Super admin users cannot have a thread emailed to them.');
+                                    $fail('Super admin users cannot have a thread shared with them.');
                                 }
                             }
                         }

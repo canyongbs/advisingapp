@@ -1253,7 +1253,7 @@ it('can not clone a thread to a super admin', function () use ($setUp) {
 });
 
 it('Super admin users do not show up in email user search', function () use ($setUp) {
-    ['thread' => $thread] = $setUp();
+    $setUp();
 
     $superAdmin = User::factory()->create();
 
@@ -1269,7 +1269,7 @@ it('Super admin users do not show up in email user search', function () use ($se
 });
 
 it('Super admin users do not show up in clone user search', function () use ($setUp) {
-    ['thread' => $thread] = $setUp();
+    $setUp();
 
     $superAdmin = User::factory()->create();
 
