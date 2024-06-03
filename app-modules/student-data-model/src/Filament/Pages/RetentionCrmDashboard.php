@@ -49,7 +49,7 @@ class RetentionCrmDashboard extends BaseDashboard
 
     protected static ?int $navigationSort = 10;
 
-    protected static ?string $navigationLabel = 'Dashboard';
+    protected static ?string $navigationLabel = 'My Dashboard';
 
     protected static ?string $title = 'Retention CRM Dashboard';
 
