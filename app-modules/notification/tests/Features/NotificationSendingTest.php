@@ -68,7 +68,7 @@ it('will create an outbound deliverable for each of the channels that the notifi
     expect(OutboundDeliverable::where('channel', NotificationChannel::Database)->count())->toBe(1);
 });
 
-it('will not count email or sms sent to Super Admins against quota usage', function () {
+it('will not count emails sent to Super Admin Users against quota usage', function () {
     // Given that we have a super admin user
     $user = User::factory()->create();
     $nonSuperAdminUser = User::factory()->create();
