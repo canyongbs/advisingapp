@@ -35,7 +35,7 @@
     use Filament\Support\Enums\ActionSize;
 @endphp
 
-<div class="flex h-full flex-col">
+<div class="flex flex-col md:h-[calc(100dvh-20rem)]">
     @if ($this->isConsented && $this->thread)
         <div
             class="grid flex-1 grid-cols-1 gap-6 md:grid-cols-3 2xl:grid-cols-4"
@@ -165,7 +165,7 @@
 
                     @if (count($this->folders))
                         <ul
-                            class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
+                            class="flex flex-col gap-y-1 overflow-y-scroll rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900 md:h-[calc(100dvh-23rem)]"
                             id="folder-container"
                         >
                             @foreach ($this->folders as $folder)
@@ -309,7 +309,7 @@
                 </div>
 
                 <div
-                    class="flex max-h-[calc(100dvh-20rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
+                    class="flex max-h-[calc(100dvh-30rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 bg-white text-sm shadow-sm dark:border-white/10 dark:bg-gray-900"
                     x-ref="chatContainer"
                 >
                     <div
@@ -408,14 +408,11 @@
                                 for="message_input"
                             >Type here</label>
                             <textarea
-                                class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                                class="h-[5rem] w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
                                 id="message_input"
                                 x-ref="messageInput"
                                 x-model="message"
                                 x-on:set-chat-message.window="message = $event.detail.content"
-                                x-on:input="render()"
-                                x-intersect.once="render()"
-                                x-on:resize.window="render()"
                                 x-on:keydown.enter="$event.shiftKey || $event.preventDefault() || sendMessage()"
                                 x-bind:disabled="isSendingMessage"
                                 placeholder="Type here..."
