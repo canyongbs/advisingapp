@@ -60,7 +60,6 @@ use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
  */
 class AmazonS3 extends Page implements HasForms
 {
-    // TODO: test
     use InteractsWithForms;
     use CanUseDatabaseTransactions;
     use HasUnsavedDataChangesAlert;
