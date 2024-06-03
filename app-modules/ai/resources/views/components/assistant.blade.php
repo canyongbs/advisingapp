@@ -166,10 +166,7 @@
                     @if (count($this->folders))
                         <ul
                             class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
-                            id="folder-{{ null }}"
-                            x-on:drop.prevent="drop('{{ null }}')"
-                            x-on:dragenter.prevent
-                            x-on:dragover.prevent
+                            id="folder-container"
                         >
                             @foreach ($this->folders as $folder)
                                 <ul
