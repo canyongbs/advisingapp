@@ -45,4 +45,6 @@ class ProspectManagement extends Cluster
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?int $navigationSort = 50;
+
+    protected static ?string $navigationLabel = 'Constituent Management';
 }
