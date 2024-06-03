@@ -1249,7 +1249,7 @@ it('can not clone a thread to a super admin', function () use ($setUp) {
             'thread' => $thread->getKey(),
         ])
         ->assertHasActionErrors(['targetIds'])
-        ->assertSeeText('Super admin users cannot have a thread emailed to them.');
+        ->assertSeeText('Super admin users cannot have a thread shared with them.');
 });
 
 it('Super admin users do not show up in email user search', function () use ($setUp) {
