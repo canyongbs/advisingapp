@@ -59,6 +59,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant;
+use Filament\Forms\Components\Select;
 
 use function Pest\Laravel\{actingAs,
     assertDatabaseHas,
@@ -1213,4 +1214,72 @@ it('can not email a thread belonging to a different user', function () use ($set
         ]);
 
     Bus::assertNotDispatched(PrepareAiThreadEmailing::class);
+});
+
+it('can not email a thread to a super admin', function () use ($setUp) {
+    ['thread' => $thread] = $setUp();
+
+    $superAdmin = User::factory()->create();
+
+    $superAdmin->assignRole('authorization.super_admin');
+
+    Livewire::test(PersonalAssistant::class)
+        ->callAction('emailThread', [
+            'targetType' => AiThreadShareTarget::User->value,
+            'targetIds' => [$superAdmin->getKey()],
+        ], arguments: [
+            'thread' => $thread->getKey(),
+        ])
+        ->assertHasActionErrors(['targetIds'])
+        ->assertSeeText('Super admin users cannot have a thread emailed to them.');
+});
+
+it('can not clone a thread to a super admin', function () use ($setUp) {
+    ['thread' => $thread] = $setUp();
+
+    $superAdmin = User::factory()->create();
+
+    $superAdmin->assignRole('authorization.super_admin');
+
+    Livewire::test(PersonalAssistant::class)
+        ->callAction('cloneThread', [
+            'targetType' => AiThreadShareTarget::User->value,
+            'targetIds' => [$superAdmin->getKey()],
+        ], arguments: [
+            'thread' => $thread->getKey(),
+        ])
+        ->assertHasActionErrors(['targetIds'])
+        ->assertSeeText('Super admin users cannot have a thread emailed to them.');
+});
+
+it('Super admin users do not show up in email user search', function () use ($setUp) {
+    ['thread' => $thread] = $setUp();
+
+    $superAdmin = User::factory()->create();
+
+    $superAdmin->assignRole('authorization.super_admin');
+
+    Livewire::test(PersonalAssistant::class)
+        ->mountAction('emailThread')
+        ->assertFormFieldExists('targetIds', 'mountedActionForm', function(Select $select) use ($superAdmin) {
+            $options = $select->getOptions();
+            $searchOptions = $select->getSearchResults($superAdmin->name);
+            return !in_array($superAdmin->name, $options) && empty($searchOptions);
+        });
+});
+
+it('Super admin users do not show up in clone user search', function () use ($setUp) {
+    ['thread' => $thread] = $setUp();
+
+    $superAdmin = User::factory()->create();
+
+    $superAdmin->assignRole('authorization.super_admin');
+
+    Livewire::test(PersonalAssistant::class)
+        ->mountAction('cloneThread')
+        ->assertFormFieldExists('targetIds', 'mountedActionForm', function(Select $select) use ($superAdmin) {
+            $options = $select->getOptions();
+            $searchOptions = $select->getSearchResults($superAdmin->name);
+            return !in_array($superAdmin->name, $options) && empty($searchOptions);
+        });
 });

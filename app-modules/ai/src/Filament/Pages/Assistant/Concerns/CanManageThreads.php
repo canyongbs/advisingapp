@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
+use Closure;
 use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -54,6 +55,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Support\Enums\ActionSize;
 use AdvisingApp\Ai\Actions\CreateThread;
 use AdvisingApp\Ai\Actions\DeleteThread;
+use App\Models\Scopes\WithoutSuperAdmin;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
@@ -333,12 +335,21 @@ trait CanManageThreads
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
                             AiThreadShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
-                            AiThreadShareTarget::User->value => User::whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::User->value => User::tap(new WithoutSuperAdmin())->whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
                         };
                     })
                     ->searchable()
                     ->multiple()
-                    ->required(),
+                    ->required()
+                    ->rules([
+                        fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                            foreach($value as $v) {
+                                if(User::findOrFail($v)->hasRole('authorization.super_admin')) {
+                                    $fail('Super admin users cannot have a thread emailed to them.');
+                                }
+                            }
+                        }
+                    ]),
             ])
             ->action(function (array $arguments, array $data) {
                 $thread = auth()->user()->aiThreads()
@@ -383,12 +394,21 @@ trait CanManageThreads
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
                             AiThreadShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
-                            AiThreadShareTarget::User->value => User::orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::User->value => User::tap(new WithoutSuperAdmin())->orderBy('name')->pluck('name', 'id'),
                         };
                     })
                     ->searchable()
                     ->multiple()
-                    ->required(),
+                    ->required()
+                    ->rules([
+                        fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                            foreach($value as $v) {
+                                if(User::findOrFail($v)->hasRole('authorization.super_admin')) {
+                                    $fail('Super admin users cannot have a thread emailed to them.');
+                                }
+                            }
+                        }
+                    ]),
             ])
             ->action(function (array $arguments, array $data) {
                 $thread = auth()->user()->aiThreads()
