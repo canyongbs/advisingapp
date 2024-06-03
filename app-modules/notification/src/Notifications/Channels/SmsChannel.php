@@ -37,6 +37,7 @@
 namespace AdvisingApp\Notification\Notifications\Channels;
 
 use Exception;
+use App\Models\User;
 use Twilio\Rest\Client;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\DB;
@@ -127,7 +128,7 @@ class SmsChannel
                 'external_reference_id' => $result->message->sid,
                 'external_status' => $result->message->status,
                 'delivery_status' => NotificationDeliveryStatus::Dispatched,
-                'quota_usage' => $result->message->numSegments,
+                'quota_usage' => self::determineQuotaUsage($result),
             ]);
         } else {
             $deliverable->update([
@@ -135,6 +136,17 @@ class SmsChannel
                 'delivery_response' => $result->error,
             ]);
         }
+    }
+
+    public static function determineQuotaUsage(SmsChannelResultData $result): int
+    {
+        if ($user = User::where('phone_number', $result->message->to)->first()) {
+            if ($user->hasRole('authorization.super_admin')) {
+                return 0;
+            }
+        }
+
+        return $result->message->numSegments;
     }
 
     public function canSendWithinQuotaLimits(SmsNotification $notification, object $notifiable): bool
