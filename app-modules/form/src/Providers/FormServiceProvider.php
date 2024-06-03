@@ -49,7 +49,9 @@ use AdvisingApp\Form\Events\FormSubmissionCreated;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Form\Observers\FormSubmissionObserver;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Form\Listeners\ClearFormFormSubmissionCountCache;
 use AdvisingApp\Form\Listeners\NotifySubscribersOfFormSubmission;
+use AdvisingApp\Form\Listeners\ClearAuthorFormSubmissionCountCache;
 use AdvisingApp\Form\Listeners\SendFormSubmissionAutoReplyEmailToSubmitter;
 
 class FormServiceProvider extends ServiceProvider
@@ -89,6 +91,16 @@ class FormServiceProvider extends ServiceProvider
         Event::listen(
             events: FormSubmissionCreated::class,
             listener: SendFormSubmissionAutoReplyEmailToSubmitter::class,
+        );
+
+        Event::listen(
+            events: FormSubmissionCreated::class,
+            listener: ClearAuthorFormSubmissionCountCache::class,
+        );
+
+        Event::listen(
+            events: FormSubmissionCreated::class,
+            listener: ClearFormFormSubmissionCountCache::class,
         );
     }
 }
