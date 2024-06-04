@@ -60,6 +60,7 @@ use Filament\Forms\Components\TextInput;
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
+use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 /**
@@ -341,15 +342,7 @@ trait CanManageThreads
                     ->searchable()
                     ->multiple()
                     ->required()
-                    ->rules([
-                        fn (): Closure => function (string $attribute, $value, Closure $fail) {
-                            foreach($value as $v) {
-                                if(User::findOrFail($v)->hasRole('authorization.super_admin')) {
-                                    $fail('Super admin users cannot have a thread shared with them.');
-                                }
-                            }
-                        }
-                    ]),
+                    ->rules([new RestrictSuperAdmin('clone')]),
             ])
             ->action(function (array $arguments, array $data) {
                 $thread = auth()->user()->aiThreads()
@@ -400,15 +393,7 @@ trait CanManageThreads
                     ->searchable()
                     ->multiple()
                     ->required()
-                    ->rules([
-                        fn (): Closure => function (string $attribute, $value, Closure $fail) {
-                            foreach($value as $v) {
-                                if(User::findOrFail($v)->hasRole('authorization.super_admin')) {
-                                    $fail('Super admin users cannot have a thread emailed to them.');
-                                }
-                            }
-                        }
-                    ]),
+                    ->rules([new RestrictSuperAdmin('email')]),
             ])
             ->action(function (array $arguments, array $data) {
                 $thread = auth()->user()->aiThreads()

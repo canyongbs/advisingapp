@@ -55,6 +55,7 @@ use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
+use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
@@ -1230,8 +1231,7 @@ it('can not email a thread to a super admin', function () use ($setUp) {
         ], arguments: [
             'thread' => $thread->getKey(),
         ])
-        ->assertHasActionErrors(['targetIds'])
-        ->assertSeeText('Super admin users cannot have a thread emailed to them.');
+        ->assertHasActionErrors(['targetIds' => 'Super admin users cannot have a thread emailed to them.']);
 });
 
 it('can not clone a thread to a super admin', function () use ($setUp) {
@@ -1248,8 +1248,7 @@ it('can not clone a thread to a super admin', function () use ($setUp) {
         ], arguments: [
             'thread' => $thread->getKey(),
         ])
-        ->assertHasActionErrors(['targetIds'])
-        ->assertSeeText('Super admin users cannot have a thread shared with them.');
+        ->assertHasActionErrors(['targetIds' => 'Super admin users cannot have a thread shared with them.']);
 });
 
 it('Super admin users do not show up in email user search', function () use ($setUp) {
