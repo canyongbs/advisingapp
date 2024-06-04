@@ -35,10 +35,10 @@
     use Filament\Support\Enums\ActionSize;
 @endphp
 
-<div class="flex flex-col md:h-[calc(100dvh-20rem)]">
+<div class="flex flex-col md:max-h-[calc(100dvh-20rem)]">
     @if ($this->isConsented && $this->thread)
         <div
-            class="grid flex-1 grid-cols-1 gap-6 md:grid-cols-3 2xl:grid-cols-4"
+            class="grid flex-1 grid-cols-1 gap-6 md:h-[calc(100dvh-20rem)] md:grid-cols-3 2xl:grid-cols-4"
             x-data="chats"
         >
             <div class="col-span-1 select-none">
@@ -165,7 +165,7 @@
 
                     @if (count($this->folders))
                         <ul
-                            class="flex flex-col gap-y-1 overflow-y-scroll rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900 md:h-[calc(100dvh-23rem)]"
+                            class="flex flex-col gap-y-1 overflow-y-scroll rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900 md:max-h-[calc(100dvh-28rem)]"
                             id="folder-container"
                         >
                             @foreach ($this->folders as $folder)
