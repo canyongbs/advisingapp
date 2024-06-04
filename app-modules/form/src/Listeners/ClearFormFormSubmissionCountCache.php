@@ -34,15 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Form\Listeners;
 
-use Filament\Clusters\Cluster;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use AdvisingApp\Form\Events\FormSubmissionCreated;
 
-class ProspectManagement extends Cluster
+class ClearFormFormSubmissionCountCache implements ShouldQueue
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
-    protected static ?string $navigationGroup = 'Product Administration';
-
-    protected static ?int $navigationSort = 50;
+    public function handle(FormSubmissionCreated $event): void
+    {
+        Cache::tags('form-submission-count')
+            ->forget(
+                "form-submission-count-{$event->submission->submissible->getKey()}"
+            );
+    }
 }

@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,20 +30,18 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<x-filament-panels::page>
+    <form wire:submit="save">
+        {{ $this->form }}
 
-namespace AdvisingApp\Form\Observers;
+        <x-filament::button
+            class="mt-4"
+            type="submit"
+        >
+            Submit
+        </x-filament::button>
+    </form>
 
-use Illuminate\Support\Facades\Event;
-use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Form\Events\FormSubmissionCreated;
-
-class FormSubmissionObserver
-{
-    public function created(FormSubmission $submission): void
-    {
-        Event::dispatch(
-            event: new FormSubmissionCreated(submission: $submission)
-        );
-    }
-}
+    <x-filament-actions::modals />
+</x-filament-panels::page>

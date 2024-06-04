@@ -34,18 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Observers;
+namespace App\Filament\Clusters;
 
-use Illuminate\Support\Facades\Event;
-use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Form\Events\FormSubmissionCreated;
+use Filament\Clusters\Cluster;
 
-class FormSubmissionObserver
+class ConstituentManagement extends Cluster
 {
-    public function created(FormSubmission $submission): void
-    {
-        Event::dispatch(
-            event: new FormSubmissionCreated(submission: $submission)
-        );
-    }
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 50;
 }

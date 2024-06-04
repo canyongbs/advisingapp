@@ -49,7 +49,7 @@ class ManageAiSettings extends SettingsPage
 {
     protected static string $settings = AiSettings::class;
 
-    protected static ?string $title = 'Manage AI Settings';
+    protected static ?string $title = 'Institutional Assistant';
 
     protected static ?string $cluster = ArtificialIntelligence::class;
 
@@ -72,7 +72,7 @@ class ManageAiSettings extends SettingsPage
         return $form
             ->schema([
                 Textarea::make('prompt_system_context')
-                    ->label('Base Prompt')
+                    ->label('Institutional Knowledge')
                     ->required()
                     ->string()
                     ->rows(12)
