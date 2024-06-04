@@ -34,24 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Enums;
+namespace AdvisingApp\Report\Filament\Pages;
 
-use Filament\Support\Contracts\HasLabel;
+use Filament\Pages\Page;
+use AdvisingApp\Ai\Enums\AiApplication;
 
-enum AiApplication: string implements HasLabel
+class ReportLibrary extends Page
 {
-    case PersonalAssistant = 'personal_assistant';
+    public const APPLICATION = AiApplication::ReportLibrary;
 
-    case ReportAssistant = 'report_assistant';
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
-    case ReportLibrary = 'report_library';
+    protected static string $view = 'filament.pages.coming-soon';
 
-    public function getLabel(): string
-    {
-        return match ($this) {
-            static::PersonalAssistant => 'Personal Assistant',
-            static::ReportAssistant => 'Report Assistant',
-            static::ReportLibrary => 'Report Library',
-        };
-    }
+    protected static ?string $navigationGroup = 'Reporting';
+
+    protected static ?int $navigationSort = 40;
 }
