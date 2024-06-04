@@ -133,14 +133,26 @@ class EmailChannel extends MailChannel
         })->count();
     }
 
-    public function canSendWithinQuotaLimits(Notification $notification, object $notifiable): bool
+    public function canSendWithinQuotaLimits(BaseNotification $notification, object $notifiable): bool
     {
         if (! $notification instanceof EmailNotification) {
             throw new Exception('Invalid notification type.');
         }
 
+        $primaryRecipientUsage = 1;
+
+        if ($notification->getMetadata()['outbound_deliverable_id']) {
+            $deliverable = OutboundDeliverable::with('recipient')->find($notification->getMetadata()['outbound_deliverable_id']);
+
+            $recipient = $deliverable->recipient;
+
+            if ($recipient instanceof User && $recipient->hasRole('authorization.super_admin')) {
+                $primaryRecipientUsage = 0;
+            }
+        }
+
         // 1 for the primary recipient, plus the number of cc and bcc recipients
-        $estimatedQuotaUsage = 1 + count($notification->toMail($notifiable)->cc) + count($notification->toMail($notifiable)->bcc);
+        $estimatedQuotaUsage = $primaryRecipientUsage + count($notification->toMail($notifiable)->cc) + count($notification->toMail($notifiable)->bcc);
 
         $licenseSettings = app(LicenseSettings::class);
 

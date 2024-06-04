@@ -81,6 +81,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
+use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestResponse;
 use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
@@ -107,6 +108,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     use CanConsent;
     use Impersonate;
     use InteractsWithMedia;
+    use NotifiableViaSms;
 
     protected $hidden = [
         'remember_token',
@@ -495,6 +497,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         }
 
         return "{$context}. When you respond please use this information about me to tailor your response. You should refer to me by my name and remember what my name and job title are, using it in your responses when appropriate.";
+    }
+
+    public function routeNotificationForSms(): string
+    {
+        return $this->phone_number;
     }
 
     protected function serializeDate(DateTimeInterface $date): string

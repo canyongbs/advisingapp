@@ -120,6 +120,11 @@ abstract class BaseNotification extends Notification implements ShouldQueue
         $this->afterSendHook($notifiable, $deliverable);
     }
 
+    public function getMetadata(): array
+    {
+        return $this->metadata;
+    }
+
     protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void {}
 
     protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void {}

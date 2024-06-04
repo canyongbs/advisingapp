@@ -47,6 +47,7 @@ use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use Talkroute\MessageSegmentCalculator\SegmentCalculator;
 use AdvisingApp\Notification\Notifications\SmsNotification;
+use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
@@ -152,6 +153,18 @@ class SmsChannel
     public function canSendWithinQuotaLimits(SmsNotification $notification, object $notifiable): bool
     {
         $estimatedQuotaUsage = SegmentCalculator::segmentsCount($notification->toSms($notifiable)->getContent());
+
+        if ($notification instanceof BaseNotification) {
+            if ($notification->getMetadata()['outbound_deliverable_id']) {
+                $deliverable = OutboundDeliverable::with('recipient')->find($notification->getMetadata()['outbound_deliverable_id']);
+
+                $recipient = $deliverable->recipient;
+
+                if ($recipient instanceof User && $recipient->hasRole('authorization.super_admin')) {
+                    $estimatedQuotaUsage = 0;
+                }
+            }
+        }
 
         $licenseSettings = app(LicenseSettings::class);
 

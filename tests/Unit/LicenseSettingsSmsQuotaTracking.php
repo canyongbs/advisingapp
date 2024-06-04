@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use App\Models\User;
 use Twilio\Rest\Client;
 use Tests\Unit\ClientMock;
 use Twilio\Rest\Api\V2010;
@@ -50,7 +51,7 @@ use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 
-it('An sms is allowed to be sent if there is available quota and it\'s quota usage is tracked', function () {
+it('An sms is allowed to be sent if there is available quota and its quota usage is tracked', function () {
     $notifiable = Prospect::factory()->create();
 
     $notification = new Tests\Unit\TestSmsNotification();
@@ -145,4 +146,54 @@ it('An sms is prevented from being sent if there is no available quota', functio
         ->toThrow(NotificationQuotaExceeded::class);
 
     assertDatabaseCount(OutboundDeliverable::class, 0);
+});
+
+it('An sms is sent to a super admin user even if there is no available quota', function () {
+    $notifiable = User::factory()->create();
+
+    $notifiable->assignRole('authorization.super_admin');
+
+    $notification = new Tests\Unit\TestSmsNotification();
+
+    $settings = app()->make(TwilioSettings::class);
+
+    $settings->account_sid = 'abc123';
+    $settings->auth_token = 'abc123';
+    $settings->from_number = '+11231231234';
+
+    $settings->save();
+
+    $licenseSettings = app(LicenseSettings::class);
+
+    $licenseSettings->data->limits->sms = 0;
+    $licenseSettings->save();
+
+    $mockMessageList = mock(MessageList::class);
+
+    $numSegments = rand(1, 5);
+
+    $mockMessageList->shouldReceive('create')->andReturn(
+        new MessageInstance(
+            new V2010(new MessagingBase(new Client())),
+            [
+                'sid' => 'abc123',
+                'status' => 'queued',
+                'from' => '+11231231234',
+                'to' => $notifiable->phone_number,
+                'body' => 'test',
+                'num_segments' => $numSegments,
+            ],
+            'abc123'
+        )
+    );
+
+    app()->bind(Client::class, fn () => new ClientMock(
+        messageList: $mockMessageList,
+        username: $settings->account_sid,
+        password: $settings->auth_token,
+    ));
+
+    $notifiable->notify($notification);
+
+    assertDatabaseCount(OutboundDeliverable::class, 1);
 });
