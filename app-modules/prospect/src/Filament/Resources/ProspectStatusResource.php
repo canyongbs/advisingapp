@@ -57,6 +57,8 @@ class ProspectStatusResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
+    protected static ?string $navigationGroup = 'Prospect Management';
+
     public static function form(Form $form): Form
     {
         return $form
