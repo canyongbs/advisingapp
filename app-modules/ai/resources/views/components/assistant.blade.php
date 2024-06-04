@@ -84,8 +84,14 @@
 
                     @if (count($this->threadsWithoutAFolder))
                         <ul
-                            class="flex flex-col gap-y-1 overflow-y-scroll rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
                             id="folder-{{ null }}"
+                            @class([
+                                'flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900',
+                                'overflow-y-scroll' => count($this->threadsWithoutAFolder) > 5,
+                            ])
+                            @style([
+                                sprintf('min-height: %spx;', 16 + min(count($this->threadsWithoutAFolder), 5) * 40) => true,
+                            ])
                             x-on:drop.prevent="drop('{{ null }}')"
                             x-on:dragenter.prevent
                             x-on:dragover.prevent
