@@ -127,7 +127,7 @@ class EmailChannel extends MailChannel
     public static function determineQuotaUsage(array $recipients): int
     {
         return collect($recipients)->filter(function ($recipient) {
-            $user = User::where('email', $recipient->getAddress())->first();
+            $user = User::with('roles')->where('email', $recipient->getAddress())->first();
 
             return ! $user || ! $user->hasRole('authorization.super_admin');
         })->count();

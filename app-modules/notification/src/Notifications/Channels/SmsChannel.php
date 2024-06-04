@@ -141,7 +141,7 @@ class SmsChannel
 
     public static function determineQuotaUsage(SmsChannelResultData $result): int
     {
-        if ($user = User::where('phone_number', $result->message->to)->first()) {
+        if ($user = User::with('roles')->where('phone_number', $result->message->to)->first()) {
             if ($user->hasRole('authorization.super_admin')) {
                 return 0;
             }

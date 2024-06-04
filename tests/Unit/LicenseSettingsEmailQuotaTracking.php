@@ -37,6 +37,7 @@
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Event;
+use Tests\Unit\TestEmailNotification;
 use Illuminate\Mail\Events\MessageSent;
 
 use function Pest\Laravel\assertDatabaseCount;
@@ -56,7 +57,7 @@ it('An email is allowed to be sent if there is available quota and its quota usa
 
     $notifiable = User::factory()->create();
 
-    $notification = new Tests\Unit\TestEmailNotification();
+    $notification = new TestEmailNotification();
 
     $notifiable->notify($notification);
 
@@ -89,7 +90,7 @@ it('An email is prevented from being sent if there is no available quota', funct
 
     $notifiable = User::factory()->create();
 
-    $notification = new Tests\Unit\TestEmailNotification();
+    $notification = new TestEmailNotification();
 
     expect(fn () => $notifiable->notify($notification))->toThrow(NotificationQuotaExceeded::class);
 
@@ -116,7 +117,7 @@ it('An email is sent to a super admin user even if there is no available quota',
 
     $notifiable->assignRole('authorization.super_admin');
 
-    $notification = new Tests\Unit\TestEmailNotification();
+    $notification = new TestEmailNotification();
 
     $notifiable->notify($notification);
 
