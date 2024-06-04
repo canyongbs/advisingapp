@@ -34,18 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Observers;
+namespace AdvisingApp\Form\Listeners;
 
-use Illuminate\Support\Facades\Event;
-use AdvisingApp\Form\Models\FormSubmission;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use AdvisingApp\Form\Events\FormSubmissionCreated;
 
-class FormSubmissionObserver
+class ClearFormFormSubmissionCountCache implements ShouldQueue
 {
-    public function created(FormSubmission $submission): void
+    public function handle(FormSubmissionCreated $event): void
     {
-        Event::dispatch(
-            event: new FormSubmissionCreated(submission: $submission)
-        );
+        Cache::tags('form-submission-count')
+            ->forget(
+                "form-submission-count-{$event->submission->submissible->getKey()}"
+            );
     }
 }

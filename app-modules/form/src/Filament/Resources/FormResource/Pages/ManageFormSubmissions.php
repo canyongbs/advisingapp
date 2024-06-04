@@ -38,8 +38,10 @@ namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
 
 use Filament\Tables\Table;
 use Carbon\CarbonInterface;
+use AdvisingApp\Form\Models\Form;
 use Filament\Tables\Actions\Action;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Cache;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -144,5 +146,24 @@ class ManageFormSubmissions extends ManageRelatedRecords
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function getNavigationItems(array $urlParameters = []): array
+    {
+        $item = parent::getNavigationItems($urlParameters)[0];
+
+        $ownerRecord = $urlParameters['record'];
+
+        /** @var Form $ownerRecord */
+        $formSubmissionsCount = Cache::tags('form-submission-count')
+            ->remember(
+                "form-submission-count-{$ownerRecord->getKey()}",
+                now()->addMinutes(5),
+                fn (): int => $ownerRecord->submissions()->count(),
+            );
+
+        $item->badge($formSubmissionsCount);
+
+        return [$item];
     }
 }
