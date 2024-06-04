@@ -36,6 +36,8 @@
 
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Illuminate\Support\Facades\Event;
+use Tests\Unit\TestEmailNotification;
 use Illuminate\Mail\Events\MessageSent;
 
 use function Pest\Laravel\assertDatabaseCount;
@@ -44,7 +46,7 @@ use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 
-it('An email is allowed to be sent if there is available quota and it\'s quota usage is tracked', function () {
+it('An email is allowed to be sent if there is available quota and its quota usage is tracked', function () {
     Event::fake(MessageSent::class);
 
     $configurationSet = 'test';
@@ -55,7 +57,7 @@ it('An email is allowed to be sent if there is available quota and it\'s quota u
 
     $notifiable = User::factory()->create();
 
-    $notification = new Tests\Unit\TestEmailNotification();
+    $notification = new TestEmailNotification();
 
     $notifiable->notify($notification);
 
@@ -88,11 +90,38 @@ it('An email is prevented from being sent if there is no available quota', funct
 
     $notifiable = User::factory()->create();
 
-    $notification = new Tests\Unit\TestEmailNotification();
+    $notification = new TestEmailNotification();
 
     expect(fn () => $notifiable->notify($notification))->toThrow(NotificationQuotaExceeded::class);
 
     Event::assertNotDispatched(MessageSent::class);
 
     assertDatabaseCount(OutboundDeliverable::class, 0);
+});
+
+it('An email is sent to a super admin user even if there is no available quota', function () {
+    Event::fake(MessageSent::class);
+
+    $configurationSet = 'test';
+
+    $settings = app(SesSettings::class);
+    $settings->configuration_set = $configurationSet;
+    $settings->save();
+
+    $licenseSettings = app(LicenseSettings::class);
+
+    $licenseSettings->data->limits->emails = 0;
+    $licenseSettings->save();
+
+    $notifiable = User::factory()->create();
+
+    $notifiable->assignRole('authorization.super_admin');
+
+    $notification = new TestEmailNotification();
+
+    $notifiable->notify($notification);
+
+    Event::assertDispatched(MessageSent::class);
+
+    assertDatabaseCount(OutboundDeliverable::class, 1);
 });

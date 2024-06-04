@@ -37,6 +37,7 @@
 namespace AdvisingApp\Notification\Notifications\Channels;
 
 use Exception;
+use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Notifications\Notification;
@@ -114,7 +115,7 @@ class EmailChannel extends MailChannel
         if ($result->success) {
             $deliverable->update([
                 'delivery_status' => NotificationDeliveryStatus::Dispatched,
-                'quota_usage' => count($result->recipients),
+                'quota_usage' => self::determineQuotaUsage($result->recipients),
             ]);
         } else {
             $deliverable->update([
@@ -123,14 +124,35 @@ class EmailChannel extends MailChannel
         }
     }
 
-    public function canSendWithinQuotaLimits(Notification $notification, object $notifiable): bool
+    public static function determineQuotaUsage(array $recipients): int
+    {
+        return collect($recipients)->filter(function ($recipient) {
+            $user = User::with('roles')->where('email', $recipient->getAddress())->first();
+
+            return ! $user || ! $user->hasRole('authorization.super_admin');
+        })->count();
+    }
+
+    public function canSendWithinQuotaLimits(BaseNotification $notification, object $notifiable): bool
     {
         if (! $notification instanceof EmailNotification) {
             throw new Exception('Invalid notification type.');
         }
 
+        $primaryRecipientUsage = 1;
+
+        if ($notification->getMetadata()['outbound_deliverable_id']) {
+            $deliverable = OutboundDeliverable::with('recipient')->find($notification->getMetadata()['outbound_deliverable_id']);
+
+            $recipient = $deliverable->recipient;
+
+            if ($recipient instanceof User && $recipient->hasRole('authorization.super_admin')) {
+                $primaryRecipientUsage = 0;
+            }
+        }
+
         // 1 for the primary recipient, plus the number of cc and bcc recipients
-        $estimatedQuotaUsage = 1 + count($notification->toMail($notifiable)->cc) + count($notification->toMail($notifiable)->bcc);
+        $estimatedQuotaUsage = $primaryRecipientUsage + count($notification->toMail($notifiable)->cc) + count($notification->toMail($notifiable)->bcc);
 
         $licenseSettings = app(LicenseSettings::class);
 

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Notification\Notifications\Channels;
 
 use Exception;
+use App\Models\User;
 use Twilio\Rest\Client;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\DB;
@@ -46,6 +47,7 @@ use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use Talkroute\MessageSegmentCalculator\SegmentCalculator;
 use AdvisingApp\Notification\Notifications\SmsNotification;
+use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
@@ -127,7 +129,7 @@ class SmsChannel
                 'external_reference_id' => $result->message->sid,
                 'external_status' => $result->message->status,
                 'delivery_status' => NotificationDeliveryStatus::Dispatched,
-                'quota_usage' => $result->message->numSegments,
+                'quota_usage' => self::determineQuotaUsage($result),
             ]);
         } else {
             $deliverable->update([
@@ -137,9 +139,32 @@ class SmsChannel
         }
     }
 
+    public static function determineQuotaUsage(SmsChannelResultData $result): int
+    {
+        if ($user = User::with('roles')->where('phone_number', $result->message->to)->first()) {
+            if ($user->hasRole('authorization.super_admin')) {
+                return 0;
+            }
+        }
+
+        return $result->message->numSegments;
+    }
+
     public function canSendWithinQuotaLimits(SmsNotification $notification, object $notifiable): bool
     {
         $estimatedQuotaUsage = SegmentCalculator::segmentsCount($notification->toSms($notifiable)->getContent());
+
+        if ($notification instanceof BaseNotification) {
+            if ($notification->getMetadata()['outbound_deliverable_id']) {
+                $deliverable = OutboundDeliverable::with('recipient')->find($notification->getMetadata()['outbound_deliverable_id']);
+
+                $recipient = $deliverable->recipient;
+
+                if ($recipient instanceof User && $recipient->hasRole('authorization.super_admin')) {
+                    $estimatedQuotaUsage = 0;
+                }
+            }
+        }
 
         $licenseSettings = app(LicenseSettings::class);
 
