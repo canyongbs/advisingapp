@@ -35,14 +35,14 @@
     use Filament\Support\Enums\ActionSize;
 @endphp
 
-<div class="flex flex-col md:max-h-[calc(100dvh-20rem)]">
+<div class="flex h-full flex-col md:max-h-[calc(100dvh-20rem)]">
     @if ($this->isConsented && $this->thread)
         <div
-            class="grid flex-1 grid-cols-1 gap-6 md:h-[calc(100dvh-20rem)] md:grid-cols-3 2xl:grid-cols-4"
+            class="flex h-full max-h-full flex-col gap-6 md:flex-row"
             x-data="chats"
         >
-            <div class="col-span-1 select-none">
-                <div class="flex flex-col gap-y-2 md:max-h-screen">
+            <div class="flex select-none">
+                <div class="flex flex-1 flex-col gap-y-2">
                     <div
                         class="relative"
                         x-data="{ isSearchingAssistants: false }"
@@ -84,7 +84,7 @@
 
                     @if (count($this->threadsWithoutAFolder))
                         <ul
-                            class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
+                            class="flex flex-col gap-y-1 overflow-y-scroll rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
                             id="folder-{{ null }}"
                             x-on:drop.prevent="drop('{{ null }}')"
                             x-on:dragenter.prevent
@@ -165,7 +165,7 @@
 
                     @if (count($this->folders))
                         <ul
-                            class="flex flex-col gap-y-1 overflow-y-scroll rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900 md:max-h-[calc(100dvh-28rem)]"
+                            class="flex flex-col gap-y-1 overflow-y-scroll rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
                             id="folder-container"
                         >
                             @foreach ($this->folders as $folder)
@@ -276,7 +276,7 @@
             </div>
 
             <div
-                class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-2 2xl:col-span-3"
+                class="col-span-1 flex h-full max-h-full flex-1 flex-col gap-2 overflow-hidden md:col-span-2 2xl:col-span-3"
                 x-data="chat({
                     csrfToken: @js(csrf_token()),
                     retryMessageUrl: @js(route('ai.threads.messages.retry', ['thread' => $this->thread])),
@@ -309,7 +309,7 @@
                 </div>
 
                 <div
-                    class="flex max-h-[calc(100dvh-30rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 bg-white text-sm shadow-sm dark:border-white/10 dark:bg-gray-900"
+                    class="flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 bg-white text-sm shadow-sm dark:border-white/10 dark:bg-gray-900"
                     x-ref="chatContainer"
                 >
                     <div
