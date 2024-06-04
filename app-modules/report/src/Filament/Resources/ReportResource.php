@@ -52,9 +52,9 @@ class ReportResource extends Resource
 
     protected static ?int $navigationSort = 10;
 
-    protected static ?string $navigationLabel = 'Report Center';
+    protected static ?string $navigationLabel = 'Custom Reports';
 
-    protected static ?string $breadcrumb = 'Report Center';
+    protected static ?string $breadcrumb = 'Custom Reports';
 
     public static function getPages(): array
     {
