@@ -41,7 +41,6 @@ use Filament\Forms\Form;
 use Filament\Actions\Action;
 use AdvisingApp\Ai\Enums\AiModel;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Bus;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
