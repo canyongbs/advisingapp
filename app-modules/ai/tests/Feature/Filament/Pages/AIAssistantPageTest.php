@@ -48,6 +48,7 @@ use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Support\Facades\Bus;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\PromptUse;
+use Filament\Forms\Components\Select;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Models\PromptUpvote;
@@ -59,7 +60,6 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant;
-use Filament\Forms\Components\Select;
 
 use function Pest\Laravel\{actingAs,
     assertDatabaseHas,
@@ -1259,10 +1259,11 @@ it('Super admin users do not show up in email user search', function () use ($se
 
     Livewire::test(PersonalAssistant::class)
         ->mountAction('emailThread')
-        ->assertFormFieldExists('targetIds', 'mountedActionForm', function(Select $select) use ($superAdmin) {
+        ->assertFormFieldExists('targetIds', 'mountedActionForm', function (Select $select) use ($superAdmin) {
             $options = $select->getOptions();
             $searchOptions = $select->getSearchResults($superAdmin->name);
-            return !in_array($superAdmin->name, $options) && empty($searchOptions);
+
+            return ! in_array($superAdmin->name, $options) && empty($searchOptions);
         });
 });
 
@@ -1275,9 +1276,10 @@ it('Super admin users do not show up in clone user search', function () use ($se
 
     Livewire::test(PersonalAssistant::class)
         ->mountAction('cloneThread')
-        ->assertFormFieldExists('targetIds', 'mountedActionForm', function(Select $select) use ($superAdmin) {
+        ->assertFormFieldExists('targetIds', 'mountedActionForm', function (Select $select) use ($superAdmin) {
             $options = $select->getOptions();
             $searchOptions = $select->getSearchResults($superAdmin->name);
-            return !in_array($superAdmin->name, $options) && empty($searchOptions);
+
+            return ! in_array($superAdmin->name, $options) && empty($searchOptions);
         });
 });
