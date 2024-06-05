@@ -56,6 +56,10 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Clusters\ArtificialIntelligence;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
 
+/**
+ * @property-read ?AiAssistant $defaultAssistant
+
+ */
 class ManageAiSettings extends SettingsPage
 {
     protected static string $settings = AiSettings::class;
