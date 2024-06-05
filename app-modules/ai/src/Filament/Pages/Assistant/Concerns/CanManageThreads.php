@@ -71,6 +71,8 @@ trait CanManageThreads
 
     public $assistantSwitcher = null;
 
+    public $assistantSwitcherMobile = null;
+
     #[Computed]
     public function customAssistants(): array
     {
@@ -87,11 +89,11 @@ trait CanManageThreads
             ->all();
     }
 
-    public function assistantSwitcherForm(Form $form): Form
+    public function assistantSwitcherForm(Form $form, string $propertyName = 'assistantSwitcher'): Form
     {
         return $form
             ->schema([
-                Select::make('assistantSwitcher')
+                Select::make($propertyName)
                     ->label('Choose an assistant')
                     ->placeholder('Search for an assistant')
                     ->searchPrompt('Search')
@@ -127,15 +129,22 @@ trait CanManageThreads
                         $component->state(null);
 
                         $this->dispatch('close-assistant-search');
+                        $this->dispatch('close-assistant-sidebar');
                     })
                     ->searchable(),
             ]);
+    }
+
+    public function assistantSwitcherMobileForm(Form $form): Form
+    {
+        return $this->assistantSwitcherForm($form, 'assistantSwitcherMobile');
     }
 
     public function getCanManageThreadsForms(): array
     {
         return [
             'assistantSwitcherForm',
+            'assistantSwitcherMobileForm',
         ];
     }
 

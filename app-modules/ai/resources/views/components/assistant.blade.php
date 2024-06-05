@@ -37,7 +37,7 @@
 
 <div class="h-[calc(100dvh-4rem)]">
     @if ($this->isConsented && $this->thread)
-        @capture($sidebarContent)
+        @capture($sidebarContent, $assistantSwitcherForm)
             <div class="flex select-none flex-col gap-y-2">
                 <div
                     class="relative"
@@ -73,7 +73,7 @@
                             x-on:click.outside="isSearchingAssistants = false"
                             x-on:close-assistant-search.window="isSearchingAssistants = false"
                         >
-                            {{ $this->assistantSwitcherForm }}
+                            {{ $assistantSwitcherForm }}
                         </div>
                     @endif
                 </div>
@@ -276,15 +276,15 @@
         @endcapture
 
         <div
-            class="grid h-full flex-1 grid-cols-1 gap-6 md:grid-cols-3 2xl:grid-cols-4"
+            class="grid h-full flex-1 grid-cols-1 gap-2 lg:grid-cols-3 lg:gap-6 2xl:grid-cols-4"
             x-data="chats"
         >
-            <div class="col-span-1 hidden h-full overflow-y-auto py-3 md:block">
-                {{ $sidebarContent() }}
+            <div class="col-span-1 hidden h-full overflow-y-auto px-px pt-3 lg:block lg:pt-6">
+                {{ $sidebarContent($this->assistantSwitcherForm) }}
             </div>
 
             <div
-                class="col-span-1 flex flex-col gap-2 overflow-hidden py-3 md:col-span-2 2xl:col-span-3"
+                class="col-span-1 flex flex-col gap-2 overflow-hidden pt-3 lg:col-span-2 lg:pt-6 2xl:col-span-3"
                 x-data="chat({
                     csrfToken: @js(csrf_token()),
                     retryMessageUrl: @js(route('ai.threads.messages.retry', ['thread' => $this->thread])),
@@ -294,14 +294,36 @@
                 })"
                 wire:key="thread{{ $this->thread->id }}"
             >
-                <div class="flex flex-col items-center justify-between gap-3 md:flex-row">
-                    @if ($this->customAssistants)
-                        <x-filament::badge :size="ActionSize::Large">
-                            <h1 class="text-xxs uppercase leading-3">
-                                {{ $this->thread->assistant->name }}
-                            </h1>
-                        </x-filament::badge>
-                    @endif
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="lg:hidden">
+                            <x-filament::dropdown
+                                shift
+                                placement="bottom-start"
+                                width="lg"
+                                x-on:close-assistant-sidebar.window="close"
+                            >
+                                <x-slot name="trigger">
+                                    <x-filament::icon-button
+                                        label="Open menu"
+                                        icon="heroicon-s-bars-3"
+                                    />
+                                </x-slot>
+
+                                <div class="p-3">
+                                    {{ $sidebarContent($this->assistantSwitcherMobileForm) }}
+                                </div>
+                            </x-filament::dropdown>
+                        </div>
+
+                        @if ($this->customAssistants)
+                            <x-filament::badge :size="ActionSize::Large">
+                                <h1 class="text-xxs uppercase leading-3">
+                                    {{ $this->thread->assistant->name }}
+                                </h1>
+                            </x-filament::badge>
+                        @endif
+                    </div>
 
                     @if (!$this->thread->assistant->is_default)
                         <x-filament::link
@@ -459,6 +481,17 @@
                     </div>
                 </form>
             </div>
+
+            <div class="col-span-full hidden md:block">
+                <x-footer />
+            </div>
+
+            <div class="col-span-full mb-2 text-center text-xs md:hidden">
+                © 2016-{{ date('Y') }} <a
+                    class="text-blue-600 underline dark:text-blue-400"
+                    href="https://canyongbs.com/"
+                >Canyon GBS LLC</a>.
+            </div>
         </div>
     @elseif (!$this->isConsented)
         <div x-init="$nextTick(() => $dispatch('open-modal', { id: 'consent-agreement' }))">
@@ -533,4 +566,6 @@
             display: none
         }
     </style>
+
+    <x-filament-actions::modals />
 </div>
