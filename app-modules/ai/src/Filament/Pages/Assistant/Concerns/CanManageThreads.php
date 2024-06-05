@@ -54,7 +54,9 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Support\Enums\ActionSize;
 use AdvisingApp\Ai\Actions\CreateThread;
 use AdvisingApp\Ai\Actions\DeleteThread;
+use App\Models\Scopes\WithoutSuperAdmin;
 use Filament\Forms\Components\TextInput;
+use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
@@ -342,12 +344,17 @@ trait CanManageThreads
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
                             AiThreadShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
-                            AiThreadShareTarget::User->value => User::whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::User->value => User::tap(new WithoutSuperAdmin())->whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
                         };
                     })
                     ->searchable()
                     ->multiple()
-                    ->required(),
+                    ->required()
+                    ->rules([fn (Get $get) => match ($get('targetType')) {
+                        AiThreadShareTarget::User->value => new RestrictSuperAdmin('clone'),
+                        AiThreadShareTarget::Team->value => null,
+                    },
+                    ]),
             ])
             ->action(function (array $arguments, array $data) {
                 $thread = auth()->user()->aiThreads()
@@ -392,12 +399,17 @@ trait CanManageThreads
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
                             AiThreadShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
-                            AiThreadShareTarget::User->value => User::orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::User->value => User::tap(new WithoutSuperAdmin())->orderBy('name')->pluck('name', 'id'),
                         };
                     })
                     ->searchable()
                     ->multiple()
-                    ->required(),
+                    ->required()
+                    ->rules([fn (Get $get) => match ($get('targetType')) {
+                        AiThreadShareTarget::User->value => new RestrictSuperAdmin('email'),
+                        AiThreadShareTarget::Team->value => null,
+                    },
+                    ]),
             ])
             ->action(function (array $arguments, array $data) {
                 $thread = auth()->user()->aiThreads()
