@@ -78,16 +78,8 @@ class EngagementDeliverablesRelationManager extends RelationManager
                 IdColumn::make(),
                 TextColumn::make('channel'),
                 IconColumn::make('delivery_status')
-                    ->icon(fn (EngagementDeliveryStatus $state): string => match ($state) {
-                        EngagementDeliveryStatus::Successful => 'heroicon-o-check-circle',
-                        EngagementDeliveryStatus::Awaiting => 'heroicon-o-clock',
-                        EngagementDeliveryStatus::Failed => 'heroicon-o-x-circle',
-                    })
-                    ->color(fn (EngagementDeliveryStatus $state): string => match ($state) {
-                        EngagementDeliveryStatus::Successful => 'success',
-                        EngagementDeliveryStatus::Awaiting => 'info',
-                        EngagementDeliveryStatus::Failed => 'danger',
-                    }),
+                    ->icon(fn (EngagementDeliveryStatus $state): string => $state->getIconClass())
+                    ->color(fn (EngagementDeliveryStatus $state): string => $state->getColor()),
             ])
             ->headerActions([
                 CreateAction::make(),
