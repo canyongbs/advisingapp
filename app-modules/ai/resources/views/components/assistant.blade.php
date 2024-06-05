@@ -164,108 +164,117 @@
                     @endif
 
                     @if (count($this->folders))
-                        @foreach ($this->folders as $folder)
-                            <ul
-                                class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
-                                id="folder-{{ $folder->id }}"
-                                x-on:drop.prevent="drop('{{ $folder->id }}')"
-                                x-on:dragenter.prevent
-                                x-on:dragover.prevent
-                            >
-                                <span
-                                    class="group flex w-full cursor-move items-center rounded-lg px-2 outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5"
+                        <div
+                            class="flex flex-col gap-y-3 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
+                            @foreach ($this->folders as $folder)
+                                <ul
+                                    class="flex flex-col gap-y-1"
+                                    id="folder-{{ $folder->id }}"
+                                    x-on:drop.prevent="drop('{{ $folder->id }}')"
+                                    x-on:dragenter.prevent
+                                    x-on:dragover.prevent
                                 >
-                                    <x-filament::icon-button
-                                        icon="heroicon-o-folder-open"
-                                        x-show="expanded('{{ $folder->id }}')"
-                                        x-on:click="expand('{{ $folder->id }}')"
-                                    />
-                                    <x-filament::icon-button
-                                        icon="heroicon-o-folder"
-                                        x-show="expanded('{{ $folder->id }}') === false"
-                                        x-on:click="expand('{{ $folder->id }}')"
-                                    />
-
-                                    <div
-                                        class="group flex w-full cursor-pointer items-center space-x-1 rounded-lg px-2 outline-none transition duration-75 focus:bg-gray-100 dark:focus:bg-white/5">
-                                        <div
-                                            class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm"
+                                    <span
+                                        class="group flex w-full cursor-move items-center rounded-lg px-2 outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5"
+                                    >
+                                        <x-filament::icon-button
+                                            icon="heroicon-o-folder-open"
+                                            x-show="expanded('{{ $folder->id }}')"
                                             x-on:click="expand('{{ $folder->id }}')"
-                                        >
-                                            <div class="flex-1 truncate">
-                                                @if ($folder->threads->count())
-                                                    {{ $folder->name }} ({{ $folder->threads->count() }})
-                                                @else
-                                                    {{ $folder->name }}
-                                                @endif
+                                        />
+                                        <x-filament::icon-button
+                                            icon="heroicon-o-folder"
+                                            x-show="! expanded('{{ $folder->id }}')"
+                                            x-on:click="expand('{{ $folder->id }}')"
+                                        />
+
+                                        <div
+                                            class="group flex w-full cursor-pointer items-center space-x-1 rounded-lg px-2 outline-none transition duration-75 focus:bg-gray-100 dark:focus:bg-white/5">
+                                            <div
+                                                class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm"
+                                                x-on:click="expand('{{ $folder->id }}')"
+                                            >
+                                                <div
+                                                    class="flex-1 truncate"
+                                                    x-bind:class="{
+                                                        'text-primary-600 dark:text-primary-400': expanded(
+                                                            '{{ $folder->id }}')
+                                                    }"
+                                                >
+                                                    @if ($folder->threads->count())
+                                                        {{ $folder->name }} ({{ $folder->threads->count() }})
+                                                    @else
+                                                        {{ $folder->name }}
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <div class="flex items-center gap-1">
+                                                {{ ($this->renameFolderAction)(['folder' => $folder->id]) }}
+                                                {{ ($this->deleteFolderAction)(['folder' => $folder->id]) }}
                                             </div>
                                         </div>
+                                    </span>
+                                    @foreach ($folder->threads as $threadItem)
+                                        <li
+                                            id="chat-{{ $threadItem->id }}"
+                                            wire:key="chat-{{ $threadItem->id }}"
+                                            x-show="expanded('{{ $folder->id }}')"
+                                            @class([
+                                                'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
+                                                'bg-gray-100 dark:bg-white/5' => $this->thread->is($threadItem),
+                                            ])
+                                        >
+                                            <div class="flex flex-1 items-center gap-3">
+                                                <button
+                                                    type="button"
+                                                    draggable="true"
+                                                    x-on:dragstart="start('{{ $threadItem->id }}', '{{ $folder->id }}')"
+                                                    x-on:dragend="end"
+                                                    @class([
+                                                        'flex items-center cursor-move',
+                                                        'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
+                                                        'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
+                                                    ])
+                                                >
+                                                    <x-heroicon-m-bars-2
+                                                        class="h-5 w-5"
+                                                        wire:target="selectThread('{{ $threadItem->id }}')"
+                                                        wire:loading.remove.delay.none
+                                                    />
 
-                                        <div class="flex items-center gap-1">
-                                            {{ ($this->renameFolderAction)(['folder' => $folder->id]) }}
-                                            {{ ($this->deleteFolderAction)(['folder' => $folder->id]) }}
-                                        </div>
-                                    </div>
-                                </span>
-                                @foreach ($folder->threads as $threadItem)
-                                    <li
-                                        id="chat-{{ $threadItem->id }}"
-                                        wire:key="chat-{{ $threadItem->id }}"
-                                        x-show="expanded('{{ $folder->id }}')"
-                                        @class([
-                                            'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
-                                            'bg-gray-100 dark:bg-white/5' => $this->thread->is($threadItem),
-                                        ])
-                                    >
-                                        <div class="flex flex-1 items-center gap-3">
-                                            <button
-                                                type="button"
-                                                draggable="true"
-                                                x-on:dragstart="start('{{ $threadItem->id }}', '{{ $folder->id }}')"
-                                                x-on:dragend="end"
-                                                @class([
-                                                    'flex items-center cursor-move',
-                                                    'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
-                                                    'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
-                                                ])
-                                            >
-                                                <x-heroicon-m-bars-2
-                                                    class="h-5 w-5"
-                                                    wire:target="selectThread('{{ $threadItem->id }}')"
-                                                    wire:loading.remove.delay.none
-                                                />
+                                                    <x-filament::loading-indicator
+                                                        class="h-5 w-5"
+                                                        wire:target="selectThread('{{ $threadItem->id }}')"
+                                                        wire:loading.delay.none
+                                                    />
+                                                </button>
 
-                                                <x-filament::loading-indicator
-                                                    class="h-5 w-5"
-                                                    wire:target="selectThread('{{ $threadItem->id }}')"
-                                                    wire:loading.delay.none
-                                                />
-                                            </button>
+                                                <button
+                                                    class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
+                                                    type="button"
+                                                    wire:click="selectThread('{{ $threadItem->id }}')"
+                                                >
+                                                    <span @class([
+                                                        'flex-1 truncate',
+                                                        'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
+                                                        'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
+                                                    ])>
+                                                        {{ $threadItem->name }}
+                                                    </span>
+                                                </button>
+                                            </div>
 
-                                            <button
-                                                class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
-                                                type="button"
-                                                wire:click="selectThread('{{ $threadItem->id }}')"
-                                            >
-                                                <span @class([
-                                                    'flex-1 truncate',
-                                                    'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
-                                                    'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
-                                                ])>
-                                                    {{ $threadItem->name }}
-                                                </span>
-                                            </button>
-                                        </div>
-
-                                        <div class="flex items-center gap-1">
-                                            {{ ($this->moveThreadAction)(['thread' => $threadItem->id]) }}
-                                            {{ ($this->editThreadAction)(['thread' => $threadItem->id]) }}
-                                            {{ ($this->deleteThreadAction)(['thread' => $threadItem->id]) }}
-                                        </div>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        @endforeach
+                                            <div class="flex items-center gap-1">
+                                                {{ ($this->moveThreadAction)(['thread' => $threadItem->id]) }}
+                                                {{ ($this->editThreadAction)(['thread' => $threadItem->id]) }}
+                                                {{ ($this->deleteThreadAction)(['thread' => $threadItem->id]) }}
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endforeach
+                        </div>
                     @endif
                 </div>
             </div>
