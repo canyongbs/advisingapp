@@ -39,14 +39,12 @@ namespace AdvisingApp\Ai\Jobs;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Spatie\Multitenancy\Jobs\TenantAware;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
-use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
 
 class ReInitializeAiThread implements ShouldQueue, TenantAware
 {
