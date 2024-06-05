@@ -90,32 +90,51 @@ abstract class BaseOpenAiService implements AiService
 
     public function createThread(AiThread $thread): void
     {
-        $threadParameters = [];
+        $existingMessagePopulationLimit = 32;
+        $existingMessages = [];
+        $existingMessagesOverflow = [];
 
         if ($thread->exists) {
-            $threadParameters['messages'] = $thread->messages()
+            $allExistingMessages = $thread->messages()
                 ->orderBy('id')
                 ->get()
                 ->toBase()
                 ->map(fn (AiMessage $message): array => [
                     'content' => $message->content,
                     'role' => $message->user_id ? 'user' : 'assistant',
-                ])
-                ->take(-32)
+                ]);
+
+            $existingMessages = $allExistingMessages
+                ->take($existingMessagePopulationLimit)
+                ->values()
+                ->all();
+
+            $existingMessagesOverflow = $allExistingMessages
+                ->slice($existingMessagePopulationLimit)
                 ->values()
                 ->all();
         }
 
-        $response = $this->client->threads()->create($threadParameters);
+        $response = $this->client->threads()->create([
+            'messages' => $existingMessages,
+        ]);
 
         $thread->thread_id = $response->id;
 
-        if (count($threadParameters['messages'] ?? [])) {
-            $this->client->threads()->messages()->create($thread->thread_id, [
-                'role' => 'user',
-                'content' => 'This is a test message, please ignore this and never mention it again.',
-            ]);
+        $hasExistingMessages = count($existingMessages);
 
+        if (count($existingMessagesOverflow)) {
+            foreach ($existingMessagesOverflow as $overflowMessage) {
+                $this->client->threads()->messages()->create($thread->thread_id, $overflowMessage);
+            }
+        } elseif ($hasExistingMessages) {
+            $this->client->threads()->messages()->create($thread->thread_id, [
+                'content' => 'This is a test message, please ignore this and never mention it again.',
+                'role' => 'user',
+            ]);
+        }
+
+        if ($hasExistingMessages) {
             $this->client->threads()->runs()->create($thread->thread_id, [
                 'assistant_id' => $thread->assistant->assistant_id,
                 'instructions' => $this->generateAssistantInstructions($thread->assistant, withDynamicContext: true),
