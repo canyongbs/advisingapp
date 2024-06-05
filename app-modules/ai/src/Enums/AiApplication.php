@@ -44,14 +44,11 @@ enum AiApplication: string implements HasLabel
 
     case ReportAssistant = 'report_assistant';
 
-    case ReportLibrary = 'report_library';
-
     public function getLabel(): string
     {
         return match ($this) {
             static::PersonalAssistant => 'Personal Assistant',
             static::ReportAssistant => 'Report Assistant',
-            static::ReportLibrary => 'Report Library',
         };
     }
 }

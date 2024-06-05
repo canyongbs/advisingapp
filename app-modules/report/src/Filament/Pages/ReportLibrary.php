@@ -37,12 +37,9 @@
 namespace AdvisingApp\Report\Filament\Pages;
 
 use Filament\Pages\Page;
-use AdvisingApp\Ai\Enums\AiApplication;
 
 class ReportLibrary extends Page
 {
-    public const APPLICATION = AiApplication::ReportLibrary;
-
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static string $view = 'filament.pages.coming-soon';
@@ -50,4 +47,12 @@ class ReportLibrary extends Page
     protected static ?string $navigationGroup = 'Reporting';
 
     protected static ?int $navigationSort = 40;
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('report-library.view-any');
+    }
 }
