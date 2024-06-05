@@ -36,31 +36,45 @@
 
 namespace AdvisingApp\Ai\Enums;
 
-use Exception;
+use Filament\Support\Contracts\HasLabel;
 use AdvisingApp\Ai\Services\TestAiService;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt35Service;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
 
-enum AiModel: string
+enum AiModel: string implements HasLabel
 {
     case OpenAiGpt35 = 'openai_gpt_3.5';
 
     case OpenAiGpt4 = 'openai_gpt_4';
 
+    case OpenAiGpt4o = 'openai_gpt_4o';
+
     case OpenAiGptTest = 'openai_gpt_test';
 
     case Test = 'test';
+
+    public function getLabel(): ?string
+    {
+        return match ($this) {
+            self::OpenAiGpt35 => 'OpenAI GPT-3.5',
+            self::OpenAiGpt4 => 'OpenAI GPT-4',
+            self::OpenAiGpt4o => 'OpenAI GPT-4o',
+            self::OpenAiGptTest => 'OpenAI GPT Test',
+            self::Test => 'Test',
+        };
+    }
 
     public function getService(): AiService
     {
         $service = match ($this) {
             self::OpenAiGpt35 => OpenAiGpt35Service::class,
             self::OpenAiGpt4 => OpenAiGpt4Service::class,
+            self::OpenAiGpt4o => OpenAiGpt4oService::class,
             self::OpenAiGptTest => OpenAiGptTestService::class,
             self::Test => TestAiService::class,
-            default => throw new Exception('AI model service has not been implemented yet.'),
         };
 
         app()->scopedIf($service);
@@ -71,11 +85,34 @@ enum AiModel: string
     public function isVisibleForApplication(AiApplication $aiApplication): bool
     {
         return match ($this) {
-            self::OpenAiGpt35 => $aiApplication === AiApplication::PersonalAssistant,
+            self::OpenAiGpt35, self::OpenAiGpt4o => $aiApplication === AiApplication::PersonalAssistant,
             self::OpenAiGpt4 => $aiApplication === AiApplication::ReportAssistant,
             self::OpenAiGptTest => false,
             self::Test => true,
-            default => throw new Exception('AI model visibility for application has not been implemented yet.'),
         };
+    }
+
+    public function isSharedDeployment(AiModel $model): bool
+    {
+        if ($this === $model) {
+            return true;
+        }
+
+        $deployment = $model->getService()->getDeployment();
+
+        if (blank($deployment)) {
+            return true;
+        }
+
+        return $deployment === $this->getService()->getDeployment();
+    }
+
+    public static function parse(string | self $value): self
+    {
+        if ($value instanceof self) {
+            return $value;
+        }
+
+        return self::from($value);
     }
 }

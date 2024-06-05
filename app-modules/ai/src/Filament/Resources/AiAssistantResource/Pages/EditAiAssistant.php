@@ -38,9 +38,16 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages;
 
 use Throwable;
 use Filament\Forms\Form;
+use Filament\Actions\Action;
+use AdvisingApp\Ai\Enums\AiModel;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Bus;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\Ai\Actions\ResetAiServiceIds;
+use AdvisingApp\Ai\Jobs\ReInitializeAiService;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
 
@@ -51,6 +58,48 @@ class EditAiAssistant extends EditRecord
     public function form(Form $form): Form
     {
         return resolve(AiAssistantForm::class)->form($form);
+    }
+
+    public function getSaveFormAction(): Action
+    {
+        return parent::getSaveFormAction()
+            ->submit(null)
+            ->requiresConfirmation()
+            ->modalHeading('Sync all chats to this new service?')
+            ->modalDescription('If you are moving to a new account, you will need to sync all the data to the new service to minimize disruption. Advising App can do this for you, but if you just want to save the settings and do it yourself, you can choose to do so.')
+            ->modalWidth(MaxWidth::TwoExtraLarge)
+            ->modalSubmitActionLabel('Save and sync all chats')
+            ->modalHidden(function () {
+                $newModel = AiModel::parse($this->form->getRawState()['model']);
+
+                return $this->getRecord()->model->isSharedDeployment($newModel);
+            })
+            ->extraModalFooterActions([
+                Action::make('justSave')
+                    ->label('Just save the settings')
+                    ->color('gray')
+                    ->action(fn () => $this->save())
+                    ->cancelParentActions(),
+            ])
+            ->action(function (ResetAiServiceIds $resetAiServiceIds) {
+                $newModel = AiModel::parse($this->form->getState()['model']);
+
+                $modelDeploymentIsShared = $this->getRecord()->model->isSharedDeployment($newModel);
+
+                if (! $modelDeploymentIsShared) {
+                    DB::transaction(function () use ($resetAiServiceIds) {
+                        $resetAiServiceIds($this->getRecord()->model);
+                    });
+                }
+
+                $this->save();
+
+                if (! $modelDeploymentIsShared) {
+                    Bus::batch([
+                        app(ReInitializeAiService::class, ['model' => $newModel->value]),
+                    ])->dispatch();
+                }
+            });
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model

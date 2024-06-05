@@ -47,8 +47,46 @@ enum AiApplication: string implements HasLabel
     public function getLabel(): string
     {
         return match ($this) {
-            static::PersonalAssistant => 'Personal Assistant',
-            static::ReportAssistant => 'Report Assistant',
+            self::PersonalAssistant => 'Personal Assistant',
+            self::ReportAssistant => 'Report Assistant',
         };
+    }
+
+    public static function getDefault(): self
+    {
+        return self::PersonalAssistant;
+    }
+
+    public function getModels(): array
+    {
+        return [
+            ...match ($this) {
+                self::PersonalAssistant => [
+                    AiModel::OpenAiGpt35,
+                    AiModel::OpenAiGpt4o,
+                ],
+                self::ReportAssistant => [
+                    AiModel::OpenAiGpt4,
+                ],
+            },
+            ...(app()->hasDebugModeEnabled() ? [AiModel::Test] : []),
+        ];
+    }
+
+    public function getDefaultModel(): AiModel
+    {
+        return match ($this) {
+            self::PersonalAssistant => AiModel::OpenAiGpt4o,
+            self::ReportAssistant => AiModel::OpenAiGpt4,
+        };
+    }
+
+    public static function parse(string | self $value): self
+    {
+        if ($value instanceof self) {
+            return $value;
+        }
+
+        return self::from($value);
     }
 }

@@ -70,4 +70,9 @@ class TestAiService implements Contracts\AiService
     {
         return 30000;
     }
+
+    public function getDeployment(): ?string
+    {
+        return null;
+    }
 }

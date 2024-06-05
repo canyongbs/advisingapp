@@ -49,4 +49,9 @@ class OpenAiGptTestService extends BaseOpenAiService
     {
         return 'test';
     }
+
+    public function getDeployment(): ?string
+    {
+        return null;
+    }
 }

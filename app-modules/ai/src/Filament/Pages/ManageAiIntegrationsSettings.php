@@ -39,7 +39,6 @@ namespace AdvisingApp\Ai\Filament\Pages;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Actions\Action;
-use Livewire\Attributes\Locked;
 use Filament\Pages\SettingsPage;
 use AdvisingApp\Ai\Enums\AiModel;
 use Illuminate\Support\Facades\DB;
@@ -67,9 +66,6 @@ class ManageAiIntegrationsSettings extends SettingsPage
     protected static ?string $navigationGroup = 'Product Integrations';
 
     protected static ?string $cluster = GlobalSettings::class;
-
-    #[Locked]
-    public ?array $originalData = null;
 
     public static function canAccess(): bool
     {
@@ -115,6 +111,20 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                 TextInput::make('open_ai_gpt_4_model')
                                     ->label('Model'),
                             ]),
+                        Section::make('GPT 4o')
+                            ->collapsible()
+                            ->schema([
+                                TextInput::make('open_ai_gpt_4o_base_uri')
+                                    ->label('Base URI')
+                                    ->placeholder('https://example.openai.azure.com/openai')
+                                    ->url(),
+                                TextInput::make('open_ai_gpt_4o_api_key')
+                                    ->label('API Key')
+                                    ->password()
+                                    ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_4o_model')
+                                    ->label('Model'),
+                            ]),
                     ]),
             ]);
     }
@@ -128,6 +138,23 @@ class ManageAiIntegrationsSettings extends SettingsPage
             ->modalDescription('If you are moving to a new account, you will need to sync all the data to the new service to minimize disruption. Advising App can do this for you, but if you just want to save the settings and do it yourself, you can choose to do so.')
             ->modalWidth(MaxWidth::TwoExtraLarge)
             ->modalSubmitActionLabel('Save and sync all chats')
+            ->modalHidden(function (AiIntegrationsSettings $originalSettings) {
+                $newSettings = $this->form->getRawState();
+
+                if ($originalSettings->open_ai_gpt_35_base_uri !== $newSettings['open_ai_gpt_35_base_uri']) {
+                    return false;
+                }
+
+                if ($originalSettings->open_ai_gpt_4_base_uri !== $newSettings['open_ai_gpt_4_base_uri']) {
+                    return false;
+                }
+
+                if ($originalSettings->open_ai_gpt_4o_base_uri !== $newSettings['open_ai_gpt_4o_base_uri']) {
+                    return false;
+                }
+
+                return true;
+            })
             ->extraModalFooterActions([
                 Action::make('justSave')
                     ->label('Just save the settings')
@@ -135,17 +162,24 @@ class ManageAiIntegrationsSettings extends SettingsPage
                     ->action(fn () => $this->save())
                     ->cancelParentActions(),
             ])
-            ->action(function (ResetAiServiceIds $resetAiServiceIds) {
-                $openAiGpt35HasChanged = $this->originalData['open_ai_gpt_35_base_uri'] !== $this->data['open_ai_gpt_35_base_uri'];
-                $openAiGpt4HasChanged = $this->originalData['open_ai_gpt_4_base_uri'] !== $this->data['open_ai_gpt_4_base_uri'];
+            ->action(function (AiIntegrationsSettings $originalSettings, ResetAiServiceIds $resetAiServiceIds) {
+                $newSettings = $this->form->getState();
 
-                DB::transaction(function () use ($openAiGpt35HasChanged, $openAiGpt4HasChanged, $resetAiServiceIds) {
+                $openAiGpt35HasChanged = $originalSettings->open_ai_gpt_35_base_uri !== $newSettings['open_ai_gpt_35_base_uri'];
+                $openAiGpt4HasChanged = $originalSettings->open_ai_gpt_4_base_uri !== $newSettings['open_ai_gpt_4_base_uri'];
+                $openAiGpt4oHasChanged = $originalSettings->open_ai_gpt_4o_base_uri !== $newSettings['open_ai_gpt_4o_base_uri'];
+
+                DB::transaction(function () use ($openAiGpt35HasChanged, $openAiGpt4HasChanged, $openAiGpt4oHasChanged, $resetAiServiceIds) {
                     if ($openAiGpt35HasChanged) {
                         $resetAiServiceIds(AiModel::OpenAiGpt35);
                     }
 
                     if ($openAiGpt4HasChanged) {
                         $resetAiServiceIds(AiModel::OpenAiGpt4);
+                    }
+
+                    if ($openAiGpt4oHasChanged) {
+                        $resetAiServiceIds(AiModel::OpenAiGpt4o);
                     }
                 });
 
@@ -162,13 +196,12 @@ class ManageAiIntegrationsSettings extends SettingsPage
                         app(ReInitializeAiService::class, ['model' => AiModel::OpenAiGpt4->value]),
                     ])->dispatch();
                 }
+
+                if ($openAiGpt4oHasChanged) {
+                    Bus::batch([
+                        app(ReInitializeAiService::class, ['model' => AiModel::OpenAiGpt4o->value]),
+                    ])->dispatch();
+                }
             });
-    }
-
-    protected function rememberData(): void
-    {
-        parent::rememberData();
-
-        $this->originalData = $this->data;
     }
 }

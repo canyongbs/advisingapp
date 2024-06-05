@@ -43,6 +43,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
+use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
 
 abstract class BaseOpenAiService implements AiService
@@ -101,6 +102,7 @@ abstract class BaseOpenAiService implements AiService
                     'role' => $message->user_id ? 'user' : 'assistant',
                 ])
                 ->take(-32)
+                ->values()
                 ->all();
         }
 
@@ -177,7 +179,15 @@ abstract class BaseOpenAiService implements AiService
             'limit' => 1,
         ])->data[0] ?? null;
 
-        if ((! $response) || ($response?->status === 'completed') || blank($message->message_id)) {
+        if (in_array($response?->status, ['failed', 'expired'])) {
+            report(new MessageResponseException('Thread run was not successful: [' . json_encode($response->toArray()) . '].'));
+        }
+
+        if (
+            (! $response) ||
+            in_array($response?->status, ['completed', 'failed', 'expired']) ||
+            blank($message->message_id)
+        ) {
             $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
             if (blank($message->message_id)) {
@@ -256,6 +266,10 @@ abstract class BaseOpenAiService implements AiService
         while ($threadRunResponse->status !== 'completed') {
             if ($timeout <= 0) {
                 throw new MessageResponseTimeoutException();
+            }
+
+            if (in_array($threadRunResponse->status, ['failed', 'expired'])) {
+                throw new MessageResponseException('Thread run not successful: [' . json_encode($threadRunResponse->toArray()) . '].');
             }
 
             usleep(500000);

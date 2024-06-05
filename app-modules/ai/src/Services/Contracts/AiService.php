@@ -91,4 +91,6 @@ interface AiService
     public function retryMessage(AiMessage $message): AiMessage;
 
     public function getMaxAssistantInstructionsLength(): int;
+
+    public function getDeployment(): ?string;
 }
