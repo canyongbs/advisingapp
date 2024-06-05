@@ -48,10 +48,6 @@ class SendMessageController
     public function __invoke(SendMessageRequest $request, AiThread $thread): JsonResponse
     {
         try {
-            if ($thread->locked_at) {
-                throw new AiThreadLockedException();
-            }
-
             $responseContent = app(SendMessage::class)(
                 $thread,
                 $request->validated('content'),

@@ -48,10 +48,6 @@ class RetryMessageController
     public function __invoke(RetryMessageRequest $request, AiThread $thread): JsonResponse
     {
         try {
-            if ($thread->locked_at) {
-                throw new AiThreadLockedException();
-            }
-
             $responseContent = app(RetryMessage::class)(
                 $thread,
                 $request->validated('content'),
