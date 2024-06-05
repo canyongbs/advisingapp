@@ -34,42 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Console\Commands;
+namespace AdvisingApp\Ai\Jobs;
 
-use Illuminate\Console\Command;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Jobs\ReInitializeAiThread;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use AdvisingApp\Ai\Models\AiAssistant;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Spatie\Multitenancy\Jobs\TenantAware;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 
-class ReInitializeAiThreads extends Command
+class ReInitializeAiAssistant implements ShouldQueue, TenantAware
 {
-    use TenantAware;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
-     * The name and signature of the console command.
+     * Create a new job instance.
+     */
+    public function __construct(
+        protected AiAssistant $assistant,
+    ) {}
+
+    /**
+     * Get the middleware the job should pass through.
      *
-     * @var string
+     * @return array<int, object>
      */
-    protected $signature = 'ai:re-initialize-threads {--tenant=*}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Re-initialise all AI threads in the system.';
-
-    /**
-     * Execute the console command.
-     */
-    public function handle(): int
+    public function middleware(): array
     {
-        AiThread::query()
-            ->whereNotNull('name')
-            ->eachById(function (AiThread $thread) {
-                dispatch(new ReInitializeAiThread($thread));
-            }, count: 250);
+        return [(new WithoutOverlapping("reinitialise-{$this->assistant->model->value}"))->releaseAfter(10)];
+    }
 
-        return static::SUCCESS;
+    /**
+     * Execute the job.
+     */
+    public function handle(): void
+    {
+        $this->assistant->model->getService()->createAssistant($this->assistant);
+        $this->assistant->save();
     }
 }

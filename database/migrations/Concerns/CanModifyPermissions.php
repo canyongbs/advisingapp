@@ -86,4 +86,15 @@ trait CanModifyPermissions
                 ];
             }, array_keys($names), array_values($names)));
     }
+
+    /**
+     * @param array<string> $names
+     */
+    public function deletePermissions(array $names, string $guardName): void
+    {
+        DB::table('permissions')
+            ->where('guard_name', $guardName)
+            ->whereIn('name', $names)
+            ->delete();
+    }
 }

@@ -37,14 +37,16 @@
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
 use OpenAI;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 
 class OpenAiGpt4Service extends BaseOpenAiService
 {
-    public function __construct()
-    {
+    public function __construct(
+        protected AiIntegrationsSettings $settings,
+    ) {
         $this->client = OpenAI::factory()
-            ->withBaseUri(config('integration-open-ai.gpt_4_base_uri'))
-            ->withHttpHeader('api-key', config('integration-open-ai.gpt_4_api_key'))
+            ->withBaseUri($this->settings->open_ai_gpt_4_base_uri ?? config('integration-open-ai.gpt_4_base_uri'))
+            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_4_api_key ?? config('integration-open-ai.gpt_4_api_key'))
             ->withQueryParam('api-version', config('integration-open-ai.gpt_4_api_version'))
             ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
             ->withHttpHeader('Accept', '*/*')
@@ -53,6 +55,6 @@ class OpenAiGpt4Service extends BaseOpenAiService
 
     public function getModel(): string
     {
-        return config('integration-open-ai.gpt_4_model');
+        return $this->settings->open_ai_gpt_4_model ?? config('integration-open-ai.gpt_4_model');
     }
 }

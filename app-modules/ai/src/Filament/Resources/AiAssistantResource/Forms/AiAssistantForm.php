@@ -64,7 +64,7 @@ class AiAssistantForm
                     ->options(AiModel::class)
                     ->required()
                     ->visible(app()->hasDebugModeEnabled())
-                    ->hiddenOn('edit'),
+                    ->disabledOn('edit'),
                 Textarea::make('description')
                     ->columnSpanFull()
                     ->required(),
