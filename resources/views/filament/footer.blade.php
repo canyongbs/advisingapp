@@ -31,8 +31,8 @@
 
 </COPYRIGHT>
 --}}
-<div class="flex w-full flex-col">
 
+<div class="footer flex w-full flex-col">
     <div class="mt-4 flex w-full justify-center">
         <img
             class="hidden h-5 dark:block"
@@ -56,5 +56,4 @@
             >https://canyongbs.com/</a>.
         </span>
     </div>
-
 </div>

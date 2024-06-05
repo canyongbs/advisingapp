@@ -35,7 +35,7 @@
     use Filament\Support\Enums\ActionSize;
 @endphp
 
-<div class="flex h-full flex-col">
+<div class="grid h-[calc(100dvh-4rem)] bg-red-500 lg:grid-cols-4">
     @if ($this->isConsented && $this->thread)
         <div
             class="grid flex-1 grid-cols-1 gap-6 md:grid-cols-3 2xl:grid-cols-4"
@@ -457,66 +457,67 @@
                     </div>
                 </form>
             </div>
-        @elseif (!$this->isConsented)
-            <div x-init="$nextTick(() => $dispatch('open-modal', { id: 'consent-agreement' }))">
-                <x-filament::modal
-                    id="consent-agreement"
-                    width="5xl"
-                    alignment="left"
-                    :close-by-clicking-away="false"
-                    :close-button="false"
-                >
-                    <x-slot name="header">
-                        <h2 class="text-left text-xl font-semibold text-gray-950 dark:text-white">
-                            {{ $this->consentAgreement->title }}
-                        </h2>
-                    </x-slot>
-
-                    <div class="prose max-w-none text-left dark:prose-invert">
-                        {{ str($this->consentAgreement->description)->markdown()->sanitizeHtml()->toHtmlString() }}
-                    </div>
-
-                    <x-filament::section>
-                        <div class="prose max-w-none text-left text-[.7rem] leading-4 dark:prose-invert">
-                            {{ str($this->consentAgreement->body)->markdown()->sanitizeHtml()->toHtmlString() }}
-                        </div>
-                    </x-filament::section>
-
-                    <x-slot name="footer">
-                        <form
-                            class="flex w-full flex-col gap-6"
-                            wire:submit="confirmConsent"
-                        >
-                            <label>
-                                <x-filament::input.checkbox required />
-
-                                <span class="ml-2 text-sm font-medium">
-                                    I agree to the terms and conditions
-                                </span>
-                            </label>
-
-                            <div class="flex justify-start gap-3">
-                                <x-filament::button
-                                    wire:click="denyConsent"
-                                    outlined
-                                >
-                                    Cancel
-                                </x-filament::button>
-                                <x-filament::button type="submit">
-                                    Continue
-                                </x-filament::button>
-                            </div>
-                        </form>
-                    </x-slot>
-                </x-filament::modal>
-            </div>
-        @elseif (!$this->thread)
-            <div
-                class="flex h-full w-full items-center justify-center"
-                wire:init="loadFirstThread"
+        </div>
+    @elseif (!$this->isConsented)
+        <div x-init="$nextTick(() => $dispatch('open-modal', { id: 'consent-agreement' }))">
+            <x-filament::modal
+                id="consent-agreement"
+                width="5xl"
+                alignment="left"
+                :close-by-clicking-away="false"
+                :close-button="false"
             >
-                <x-filament::loading-indicator class="h-12 w-12" />
-            </div>
+                <x-slot name="header">
+                    <h2 class="text-left text-xl font-semibold text-gray-950 dark:text-white">
+                        {{ $this->consentAgreement->title }}
+                    </h2>
+                </x-slot>
+
+                <div class="prose max-w-none text-left dark:prose-invert">
+                    {{ str($this->consentAgreement->description)->markdown()->sanitizeHtml()->toHtmlString() }}
+                </div>
+
+                <x-filament::section>
+                    <div class="prose max-w-none text-left text-[.7rem] leading-4 dark:prose-invert">
+                        {{ str($this->consentAgreement->body)->markdown()->sanitizeHtml()->toHtmlString() }}
+                    </div>
+                </x-filament::section>
+
+                <x-slot name="footer">
+                    <form
+                        class="flex w-full flex-col gap-6"
+                        wire:submit="confirmConsent"
+                    >
+                        <label>
+                            <x-filament::input.checkbox required />
+
+                            <span class="ml-2 text-sm font-medium">
+                                I agree to the terms and conditions
+                            </span>
+                        </label>
+
+                        <div class="flex justify-start gap-3">
+                            <x-filament::button
+                                wire:click="denyConsent"
+                                outlined
+                            >
+                                Cancel
+                            </x-filament::button>
+                            <x-filament::button type="submit">
+                                Continue
+                            </x-filament::button>
+                        </div>
+                    </form>
+                </x-slot>
+            </x-filament::modal>
+        </div>
+    @elseif (!$this->thread)
+        <div
+            class="flex h-full w-full items-center justify-center"
+            wire:init="loadFirstThread"
+        >
+            <x-filament::loading-indicator class="h-12 w-12" />
+        </div>
     @endif
 
     <script src="{{ url('js/canyon-gbs/ai/chat.js') }}"></script>
@@ -524,6 +525,10 @@
     <style>
         .choices__inner .prompt-upvotes-count {
             display: none;
+        }
+
+        .footer {
+            display: none
         }
     </style>
 </div>
