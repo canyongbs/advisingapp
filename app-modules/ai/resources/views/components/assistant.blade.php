@@ -35,138 +35,136 @@
     use Filament\Support\Enums\ActionSize;
 @endphp
 
-<div class="flex h-full flex-col">
+<div class="h-[calc(100dvh-4rem)]">
     @if ($this->isConsented && $this->thread)
-        <div
-            class="grid flex-1 grid-cols-1 gap-6 md:grid-cols-3 2xl:grid-cols-4"
-            x-data="chats"
-        >
-            <div class="col-span-1 select-none">
-                <div class="flex flex-col gap-y-2">
-                    <div
-                        class="relative"
-                        x-data="{ isSearchingAssistants: false }"
-                    >
-                        <div class="flex flex-col gap-2">
-                            <div class="grid w-full grid-cols-2 gap-2">
-                                <x-filament::button
-                                    icon="heroicon-m-plus"
-                                    wire:click="createThread"
-                                >
-                                    New chat
-                                </x-filament::button>
+        @capture($sidebarContent, $assistantSwitcherForm)
+            <div class="flex select-none flex-col gap-y-2">
+                <div
+                    class="relative"
+                    x-data="{ isSearchingAssistants: false }"
+                >
+                    <div class="flex flex-col gap-2">
+                        <div class="grid w-full grid-cols-2 gap-2">
+                            <x-filament::button
+                                icon="heroicon-m-plus"
+                                wire:click="createThread"
+                            >
+                                New chat
+                            </x-filament::button>
 
-                                {{ $this->newFolderAction }}
-                            </div>
-
-                            @if ($this->customAssistants)
-                                <x-filament::button
-                                    color="gray"
-                                    icon="heroicon-m-magnifying-glass"
-                                    x-on:click="isSearchingAssistants = ! isSearchingAssistants"
-                                >
-                                    Use Custom Assistant
-                                </x-filament::button>
-                            @endif
+                            {{ $this->newFolderAction }}
                         </div>
 
                         @if ($this->customAssistants)
-                            <div
-                                class="absolute right-0 z-10 mt-2 w-full rounded-lg bg-white p-2 shadow-lg ring-1 ring-gray-950/5 transition dark:bg-gray-900 dark:ring-white/10"
-                                x-show="isSearchingAssistants"
-                                x-on:click.outside="isSearchingAssistants = false"
-                                x-on:close-assistant-search.window="isSearchingAssistants = false"
+                            <x-filament::button
+                                color="gray"
+                                icon="heroicon-m-magnifying-glass"
+                                x-on:click="isSearchingAssistants = ! isSearchingAssistants"
                             >
-                                {{ $this->assistantSwitcherForm }}
-                            </div>
+                                Use Custom Assistant
+                            </x-filament::button>
                         @endif
                     </div>
 
-                    @if (count($this->threadsWithoutAFolder))
-                        <ul
-                            class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
-                            id="folder-{{ null }}"
-                            x-on:drop.prevent="drop('{{ null }}')"
-                            x-on:dragenter.prevent
-                            x-on:dragover.prevent
-                        >
-                            @foreach ($this->threadsWithoutAFolder as $threadItem)
-                                <li
-                                    id="chat-{{ $threadItem->id }}"
-                                    wire:key="chat-{{ $threadItem->id }}"
-                                    @class([
-                                        'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
-                                        'bg-gray-100 dark:bg-white/5' => $this->thread->is($threadItem),
-                                    ])
-                                >
-                                    <div class="flex flex-1 items-center gap-3">
-                                        @if (count($this->folders))
-                                            <button
-                                                type="button"
-                                                draggable="true"
-                                                x-on:dragstart="start('{{ $threadItem->id }}', '{{ null }}')"
-                                                x-on:dragend="end"
-                                                @class([
-                                                    'flex items-center cursor-move',
-                                                    'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
-                                                    'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
-                                                ])
-                                            >
-                                                <x-heroicon-m-bars-2
-                                                    class="h-5 w-5"
-                                                    wire:target="selectThread('{{ $threadItem->id }}')"
-                                                    wire:loading.remove.delay.none
-                                                />
-
-                                                <x-filament::loading-indicator
-                                                    class="h-5 w-5"
-                                                    wire:target="selectThread('{{ $threadItem->id }}')"
-                                                    wire:loading.delay.none
-                                                />
-                                            </button>
-                                        @endif
-
-                                        <button
-                                            class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
-                                            type="button"
-                                            wire:click="selectThread('{{ $threadItem->id }}')"
-                                        >
-                                            <span @class([
-                                                'flex-1 truncate',
-                                                'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
-                                                'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
-                                            ])>
-                                                {{ $threadItem->name }}
-                                            </span>
-                                        </button>
-                                    </div>
-
-                                    <div class="flex items-center gap-1">
-                                        {{ ($this->moveThreadAction)(['thread' => $threadItem->id]) }}
-                                        {{ ($this->editThreadAction)(['thread' => $threadItem->id]) }}
-                                        {{ ($this->deleteThreadAction)(['thread' => $threadItem->id]) }}
-                                    </div>
-                                </li>
-                            @endforeach
-                        </ul>
-                    @else
+                    @if ($this->customAssistants)
                         <div
-                            class="flex flex-col gap-y-1 rounded-xl border border-dashed border-gray-950/5 bg-white px-3 py-2 text-gray-500 shadow-sm dark:border-white/10 dark:bg-gray-900"
-                            x-show="dragging"
-                            x-on:drop.prevent="drop('{{ null }}')"
-                            x-on:dragenter.prevent
-                            x-on:dragover.prevent
+                            class="absolute right-0 z-10 mt-2 w-full rounded-lg bg-white p-2 shadow-lg ring-1 ring-gray-950/5 transition dark:bg-gray-900 dark:ring-white/10"
+                            x-show="isSearchingAssistants"
+                            x-on:click.outside="isSearchingAssistants = false"
+                            x-on:close-assistant-search.window="isSearchingAssistants = false"
                         >
-                            <div class="text-sm">
-                                Drag chats here to move them out of a folder
-                            </div>
+                            {{ $assistantSwitcherForm }}
                         </div>
                     @endif
+                </div>
 
-                    @if (count($this->folders))
+                @if (count($this->threadsWithoutAFolder))
+                    <ul
+                        class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
+                        id="folder-{{ null }}"
+                        x-on:drop.prevent="drop('{{ null }}')"
+                        x-on:dragenter.prevent
+                        x-on:dragover.prevent
+                    >
+                        @foreach ($this->threadsWithoutAFolder as $threadItem)
+                            <li
+                                id="chat-{{ $threadItem->id }}"
+                                wire:key="chat-{{ $threadItem->id }}"
+                                @class([
+                                    'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
+                                    'bg-gray-100 dark:bg-white/5' => $this->thread->is($threadItem),
+                                ])
+                            >
+                                <div class="flex flex-1 items-center gap-3">
+                                    @if (count($this->folders))
+                                        <button
+                                            type="button"
+                                            draggable="true"
+                                            x-on:dragstart="start('{{ $threadItem->id }}', '{{ null }}')"
+                                            x-on:dragend="end"
+                                            @class([
+                                                'flex items-center cursor-move',
+                                                'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
+                                                'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
+                                            ])
+                                        >
+                                            <x-heroicon-m-bars-2
+                                                class="h-5 w-5"
+                                                wire:target="selectThread('{{ $threadItem->id }}')"
+                                                wire:loading.remove.delay.none
+                                            />
+
+                                            <x-filament::loading-indicator
+                                                class="h-5 w-5"
+                                                wire:target="selectThread('{{ $threadItem->id }}')"
+                                                wire:loading.delay.none
+                                            />
+                                        </button>
+                                    @endif
+
+                                    <button
+                                        class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
+                                        type="button"
+                                        wire:click="selectThread('{{ $threadItem->id }}')"
+                                    >
+                                        <span @class([
+                                            'flex-1 truncate',
+                                            'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
+                                            'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
+                                        ])>
+                                            {{ $threadItem->name }}
+                                        </span>
+                                    </button>
+                                </div>
+
+                                <div class="flex items-center gap-1">
+                                    {{ ($this->moveThreadAction)(['thread' => $threadItem->id]) }}
+                                    {{ ($this->editThreadAction)(['thread' => $threadItem->id]) }}
+                                    {{ ($this->deleteThreadAction)(['thread' => $threadItem->id]) }}
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                @else
+                    <div
+                        class="flex flex-col gap-y-1 rounded-xl border border-dashed border-gray-950/5 bg-white px-3 py-2 text-gray-500 shadow-sm dark:border-white/10 dark:bg-gray-900"
+                        x-show="dragging"
+                        x-on:drop.prevent="drop('{{ null }}')"
+                        x-on:dragenter.prevent
+                        x-on:dragover.prevent
+                    >
+                        <div class="text-sm">
+                            Drag chats here to move them out of a folder
+                        </div>
+                    </div>
+                @endif
+
+                @if (count($this->folders))
+                    <div
+                        class="flex flex-col gap-y-3 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
                         @foreach ($this->folders as $folder)
                             <ul
-                                class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
+                                class="flex flex-col gap-y-1"
                                 id="folder-{{ $folder->id }}"
                                 x-on:drop.prevent="drop('{{ $folder->id }}')"
                                 x-on:dragenter.prevent
@@ -182,7 +180,7 @@
                                     />
                                     <x-filament::icon-button
                                         icon="heroicon-o-folder"
-                                        x-show="expanded('{{ $folder->id }}') === false"
+                                        x-show="! expanded('{{ $folder->id }}')"
                                         x-on:click="expand('{{ $folder->id }}')"
                                     />
 
@@ -192,7 +190,13 @@
                                             class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm"
                                             x-on:click="expand('{{ $folder->id }}')"
                                         >
-                                            <div class="flex-1 truncate">
+                                            <div
+                                                class="flex-1 truncate"
+                                                x-bind:class="{
+                                                    'text-primary-600 dark:text-primary-400': expanded(
+                                                        '{{ $folder->id }}')
+                                                }"
+                                            >
                                                 @if ($folder->threads->count())
                                                     {{ $folder->name }} ({{ $folder->threads->count() }})
                                                 @else
@@ -266,12 +270,21 @@
                                 @endforeach
                             </ul>
                         @endforeach
-                    @endif
-                </div>
+                    </div>
+                @endif
+            </div>
+        @endcapture
+
+        <div
+            class="grid h-full flex-1 grid-cols-1 grid-rows-[1fr_auto] gap-2 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-4 2xl:grid-cols-4"
+            x-data="chats"
+        >
+            <div class="col-span-1 hidden overflow-y-auto px-px pt-3 lg:block lg:pt-6">
+                {{ $sidebarContent($this->assistantSwitcherForm) }}
             </div>
 
             <div
-                class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-2 md:h-screen md:max-h-[calc(100dvh-20rem)] 2xl:col-span-3"
+                class="col-span-1 flex flex-col gap-2 overflow-hidden pt-3 lg:col-span-2 lg:pt-6 2xl:col-span-3"
                 x-data="chat({
                     csrfToken: @js(csrf_token()),
                     retryMessageUrl: @js(route('ai.threads.messages.retry', ['thread' => $this->thread])),
@@ -281,14 +294,36 @@
                 })"
                 wire:key="thread{{ $this->thread->id }}"
             >
-                <div class="flex flex-col items-center justify-between gap-3 md:flex-row">
-                    @if ($this->customAssistants)
-                        <x-filament::badge :size="ActionSize::Large">
-                            <h1 class="text-xxs uppercase leading-3">
-                                {{ $this->thread->assistant->name }}
-                            </h1>
-                        </x-filament::badge>
-                    @endif
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="lg:hidden">
+                            <x-filament::dropdown
+                                shift
+                                placement="bottom-start"
+                                width="lg"
+                                x-on:close-assistant-sidebar.window="close"
+                            >
+                                <x-slot name="trigger">
+                                    <x-filament::icon-button
+                                        label="Open menu"
+                                        icon="heroicon-s-bars-3"
+                                    />
+                                </x-slot>
+
+                                <div class="p-3">
+                                    {{ $sidebarContent($this->assistantSwitcherMobileForm) }}
+                                </div>
+                            </x-filament::dropdown>
+                        </div>
+
+                        @if ($this->customAssistants)
+                            <x-filament::badge :size="ActionSize::Large">
+                                <h1 class="text-xxs uppercase leading-3">
+                                    {{ $this->thread->assistant->name }}
+                                </h1>
+                            </x-filament::badge>
+                        @endif
+                    </div>
 
                     @if (!$this->thread->assistant->is_default)
                         <x-filament::link
@@ -304,9 +339,7 @@
                 </div>
 
                 <div
-                    class="flex max-h-[calc(100dvh-20rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
-                    x-ref="chatContainer"
-                >
+                    class="flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
                     <div
                         class="bg-danger-100 px-4 py-2 dark:bg-danger-900"
                         x-cloak
@@ -418,13 +451,9 @@
                                 maxlength="25000"
                             ></textarea>
                         </div>
-                        <div
-                            class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
-                            <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-                                <x-filament::button
-                                    class="w-full sm:w-auto"
-                                    type="submit"
-                                >
+                        <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
+                            <div class="flex w-full items-center gap-3">
+                                <x-filament::button type="submit">
                                     Send
                                 </x-filament::button>
 
@@ -439,11 +468,11 @@
                             </div>
 
                             @if (blank($this->thread->name))
-                                <div class="flex w-full justify-center pt-3 sm:w-auto sm:pl-2 sm:pt-0">
+                                <div class="flex pl-0 sm:pl-2">
                                     {{ $this->saveThreadAction }}
                                 </div>
                             @else
-                                <div class="flex w-full justify-center gap-1.5 pt-3 sm:w-auto sm:pt-0">
+                                <div class="flex gap-3">
                                     {{ ($this->cloneThreadAction)(['thread' => $this->thread->id]) }}
                                     {{ ($this->emailThreadAction)(['thread' => $this->thread->id]) }}
                                 </div>
@@ -452,66 +481,78 @@
                     </div>
                 </form>
             </div>
-        @elseif (!$this->isConsented)
-            <div x-init="$nextTick(() => $dispatch('open-modal', { id: 'consent-agreement' }))">
-                <x-filament::modal
-                    id="consent-agreement"
-                    width="5xl"
-                    alignment="left"
-                    :close-by-clicking-away="false"
-                    :close-button="false"
-                >
-                    <x-slot name="header">
-                        <h2 class="text-left text-xl font-semibold text-gray-950 dark:text-white">
-                            {{ $this->consentAgreement->title }}
-                        </h2>
-                    </x-slot>
 
-                    <div class="prose max-w-none text-left dark:prose-invert">
-                        {{ str($this->consentAgreement->description)->markdown()->sanitizeHtml()->toHtmlString() }}
-                    </div>
-
-                    <x-filament::section>
-                        <div class="prose max-w-none text-left text-[.7rem] leading-4 dark:prose-invert">
-                            {{ str($this->consentAgreement->body)->markdown()->sanitizeHtml()->toHtmlString() }}
-                        </div>
-                    </x-filament::section>
-
-                    <x-slot name="footer">
-                        <form
-                            class="flex w-full flex-col gap-6"
-                            wire:submit="confirmConsent"
-                        >
-                            <label>
-                                <x-filament::input.checkbox required />
-
-                                <span class="ml-2 text-sm font-medium">
-                                    I agree to the terms and conditions
-                                </span>
-                            </label>
-
-                            <div class="flex justify-start gap-3">
-                                <x-filament::button
-                                    wire:click="denyConsent"
-                                    outlined
-                                >
-                                    Cancel
-                                </x-filament::button>
-                                <x-filament::button type="submit">
-                                    Continue
-                                </x-filament::button>
-                            </div>
-                        </form>
-                    </x-slot>
-                </x-filament::modal>
+            <div class="col-span-full hidden md:block">
+                <x-footer />
             </div>
-        @elseif (!$this->thread)
-            <div
-                class="flex h-full w-full items-center justify-center"
-                wire:init="loadFirstThread"
+
+            <div class="col-span-full mb-2 text-center text-xs md:hidden">
+                © 2016-{{ date('Y') }} <a
+                    class="text-blue-600 underline dark:text-blue-400"
+                    href="https://canyongbs.com/"
+                >Canyon GBS LLC</a>.
+            </div>
+        </div>
+    @elseif (!$this->isConsented)
+        <div x-init="$nextTick(() => $dispatch('open-modal', { id: 'consent-agreement' }))">
+            <x-filament::modal
+                id="consent-agreement"
+                width="5xl"
+                alignment="left"
+                :close-by-clicking-away="false"
+                :close-button="false"
             >
-                <x-filament::loading-indicator class="h-12 w-12" />
-            </div>
+                <x-slot name="header">
+                    <h2 class="text-left text-xl font-semibold text-gray-950 dark:text-white">
+                        {{ $this->consentAgreement->title }}
+                    </h2>
+                </x-slot>
+
+                <div class="prose max-w-none text-left dark:prose-invert">
+                    {{ str($this->consentAgreement->description)->markdown()->sanitizeHtml()->toHtmlString() }}
+                </div>
+
+                <x-filament::section>
+                    <div class="prose max-w-none text-left text-[.7rem] leading-4 dark:prose-invert">
+                        {{ str($this->consentAgreement->body)->markdown()->sanitizeHtml()->toHtmlString() }}
+                    </div>
+                </x-filament::section>
+
+                <x-slot name="footer">
+                    <form
+                        class="flex w-full flex-col gap-6"
+                        wire:submit="confirmConsent"
+                    >
+                        <label>
+                            <x-filament::input.checkbox required />
+
+                            <span class="ml-2 text-sm font-medium">
+                                I agree to the terms and conditions
+                            </span>
+                        </label>
+
+                        <div class="flex justify-start gap-3">
+                            <x-filament::button
+                                wire:click="denyConsent"
+                                outlined
+                            >
+                                Cancel
+                            </x-filament::button>
+                            <x-filament::button type="submit">
+                                Continue
+                            </x-filament::button>
+                        </div>
+                    </form>
+                </x-slot>
+            </x-filament::modal>
+        </div>
+    @elseif (!$this->thread)
+        <div
+            class="flex h-full w-full items-center justify-center"
+            wire:init="loadFirstThread"
+        >
+            <x-filament::loading-indicator class="h-12 w-12" />
+        </div>
     @endif
 
     <script src="{{ url('js/canyon-gbs/ai/chat.js') }}"></script>
@@ -520,5 +561,11 @@
         .choices__inner .prompt-upvotes-count {
             display: none;
         }
+
+        .footer {
+            display: none
+        }
     </style>
+
+    <x-filament-actions::modals />
 </div>

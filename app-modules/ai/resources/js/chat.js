@@ -142,21 +142,13 @@ document.addEventListener('alpine:init', () => {
         },
 
         render: function () {
-            if (!this.$refs.chatContainer) {
-                return;
-            }
-
             if (!this.$refs.messageInput) {
                 return;
             }
 
-            this.$refs.chatContainer.style.maxHeight = 'calc(100dvh - 15rem)';
-
             if (this.$refs.messageInput.scrollHeight > 0) {
                 this.$refs.messageInput.style.height = '5rem';
-                this.$refs.messageInput.style.height = `min(${this.$refs.messageInput.scrollHeight}px, 35dvh)`;
-
-                this.$refs.chatContainer.style.maxHeight = `calc(100dvh - 10rem - ${this.$refs.messageInput.style.height})`;
+                this.$refs.messageInput.style.height = `min(${this.$refs.messageInput.scrollHeight}px, 25dvh)`;
             }
         },
     }));
