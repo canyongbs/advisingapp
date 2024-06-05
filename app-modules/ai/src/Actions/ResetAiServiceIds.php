@@ -34,42 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Console\Commands;
+namespace AdvisingApp\Ai\Actions;
 
-use Illuminate\Console\Command;
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Jobs\ReInitializeAiThread;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use AdvisingApp\Ai\Models\AiAssistant;
 
-class ReInitializeAiThreads extends Command
+class ResetAiServiceIds
 {
-    use TenantAware;
-
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'ai:re-initialize-threads {--tenant=*}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Re-initialise all AI threads in the system.';
-
-    /**
-     * Execute the console command.
-     */
-    public function handle(): int
+    public function __invoke(AiModel $model): void
     {
-        AiThread::query()
-            ->whereNotNull('name')
-            ->eachById(function (AiThread $thread) {
-                dispatch(new ReInitializeAiThread($thread));
-            }, count: 250);
+        AiAssistant::query()
+            ->where('model', $model)
+            ->update([
+                'assistant_id' => null,
+            ]);
 
-        return static::SUCCESS;
+        AiThread::query()
+            ->whereRelation('assistant', 'model', $model)
+            ->update([
+                'thread_id' => null,
+            ]);
     }
 }

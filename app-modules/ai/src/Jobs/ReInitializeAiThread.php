@@ -36,18 +36,19 @@
 
 namespace AdvisingApp\Ai\Jobs;
 
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Spatie\Multitenancy\Jobs\TenantAware;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 
 class ReInitializeAiThread implements ShouldQueue, TenantAware
 {
+    use Batchable;
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
@@ -61,33 +62,21 @@ class ReInitializeAiThread implements ShouldQueue, TenantAware
     ) {}
 
     /**
+     * Get the middleware the job should pass through.
+     *
+     * @return array<int, object>
+     */
+    public function middleware(): array
+    {
+        return [(new WithoutOverlapping("reinitialise-{$this->thread->assistant->model->value}"))->releaseAfter(10)];
+    }
+
+    /**
      * Execute the job.
      */
     public function handle(): void
     {
         $this->thread->assistant->model->getService()->createThread($this->thread);
         $this->thread->save();
-
-        auth()->setUser($this->thread->user);
-
-        AiMessage::withoutEvents(function () {
-            $service = $this->thread->assistant->model->getService();
-
-            if (! ($service instanceof BaseOpenAiService)) {
-                return;
-            }
-
-            $client = $service->getClient();
-
-            $client->threads()->messages()->create($this->thread->thread_id, [
-                'role' => 'user',
-                'content' => 'This is a test message, please ignore this and never mention it again.',
-            ]);
-
-            $client->threads()->runs()->create($this->thread->thread_id, [
-                'assistant_id' => $this->thread->assistant->assistant_id,
-                'instructions' => invade($service)->generateAssistantInstructions($this->thread->assistant, withDynamicContext: true),
-            ]);
-        });
     }
 }

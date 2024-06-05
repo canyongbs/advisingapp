@@ -74,6 +74,12 @@ abstract class BaseOpenAiService implements AiService
 
     public function updateAssistant(AiAssistant $assistant): void
     {
+        if (blank($assistant->assistant_id)) {
+            $this->createAssistant($assistant);
+
+            return;
+        }
+
         $this->client->assistants()->modify($assistant->assistant_id, [
             'instructions' => $this->generateAssistantInstructions($assistant),
             'name' => $assistant->name,
@@ -94,16 +100,33 @@ abstract class BaseOpenAiService implements AiService
                     'content' => $message->content,
                     'role' => $message->user_id ? 'user' : 'assistant',
                 ])
+                ->take(-32)
                 ->all();
         }
 
         $response = $this->client->threads()->create($threadParameters);
 
         $thread->thread_id = $response->id;
+
+        if (count($threadParameters['messages'] ?? [])) {
+            $this->client->threads()->messages()->create($thread->thread_id, [
+                'role' => 'user',
+                'content' => 'This is a test message, please ignore this and never mention it again.',
+            ]);
+
+            $this->client->threads()->runs()->create($thread->thread_id, [
+                'assistant_id' => $thread->assistant->assistant_id,
+                'instructions' => $this->generateAssistantInstructions($thread->assistant, withDynamicContext: true),
+            ]);
+        }
     }
 
     public function deleteThread(AiThread $thread): void
     {
+        if (blank($thread->thread_id)) {
+            return;
+        }
+
         $this->client->threads()->delete($thread->thread_id);
 
         $thread->thread_id = null;
@@ -111,6 +134,8 @@ abstract class BaseOpenAiService implements AiService
 
     public function sendMessage(AiMessage $message): AiMessage
     {
+        $this->ensureThreadExists($message->thread);
+
         $response = $this->client->threads()->messages()->create($message->thread->thread_id, [
             'role' => 'user',
             'content' => $message->content,
@@ -145,6 +170,8 @@ abstract class BaseOpenAiService implements AiService
 
     public function retryMessage(AiMessage $message): AiMessage
     {
+        $this->ensureThreadExists($message->thread);
+
         $response = $this->client->threads()->runs()->list($message->thread->thread_id, [
             'order' => 'desc',
             'limit' => 1,
@@ -198,6 +225,26 @@ abstract class BaseOpenAiService implements AiService
         $limit -= ($limit % 100); // Round down to the nearest 100.
 
         return $limit;
+    }
+
+    protected function ensureAssistantExists(AiAssistant $assistant): void
+    {
+        if (filled($assistant->assistant_id)) {
+            return;
+        }
+
+        $this->createAssistant($assistant);
+    }
+
+    protected function ensureThreadExists(AiThread $thread): void
+    {
+        if ($thread->assistant) {
+            $this->ensureAssistantExists($thread->assistant);
+        }
+
+        if (blank($thread->thread_id)) {
+            $this->createThread($thread);
+        }
     }
 
     protected function awaitThreadRunCompletion(ThreadRunResponse $threadRunResponse): void

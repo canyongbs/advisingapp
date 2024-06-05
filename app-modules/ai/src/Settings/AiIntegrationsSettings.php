@@ -34,27 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Settings;
 
-use OpenAI;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Spatie\LaravelSettings\Settings;
 
-class OpenAiGpt35Service extends BaseOpenAiService
+class AiIntegrationsSettings extends Settings
 {
-    public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->settings->open_ai_gpt_35_base_uri ?? config('integration-open-ai.gpt_35_base_uri'))
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_35_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
+    public ?string $open_ai_gpt_35_base_uri = null;
+
+    public ?string $open_ai_gpt_35_api_key = null;
+
+    public ?string $open_ai_gpt_35_model = null;
+
+    public ?string $open_ai_gpt_4_base_uri = null;
+
+    public ?string $open_ai_gpt_4_api_key = null;
+
+    public ?string $open_ai_gpt_4_model = null;
+
+    public static function group(): string
+    {
+        return 'ai';
     }
 
-    public function getModel(): string
+    public static function encrypted(): array
     {
-        return $this->settings->open_ai_gpt_35_model ?? config('integration-open-ai.gpt_35_model');
+        return [
+            'open_ai_gpt_35_base_uri',
+            'open_ai_gpt_35_api_key',
+            'open_ai_gpt_35_model',
+            'open_ai_gpt_4_base_uri',
+            'open_ai_gpt_4_api_key',
+            'open_ai_gpt_4_model',
+        ];
     }
 }

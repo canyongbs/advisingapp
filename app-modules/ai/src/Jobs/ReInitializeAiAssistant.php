@@ -34,27 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Jobs;
 
-use OpenAI;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use AdvisingApp\Ai\Models\AiAssistant;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Spatie\Multitenancy\Jobs\TenantAware;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 
-class OpenAiGpt35Service extends BaseOpenAiService
+class ReInitializeAiAssistant implements ShouldQueue, TenantAware
 {
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    /**
+     * Create a new job instance.
+     */
     public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->settings->open_ai_gpt_35_base_uri ?? config('integration-open-ai.gpt_35_base_uri'))
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_35_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
+        protected AiAssistant $assistant,
+    ) {}
+
+    /**
+     * Get the middleware the job should pass through.
+     *
+     * @return array<int, object>
+     */
+    public function middleware(): array
+    {
+        return [(new WithoutOverlapping("reinitialise-{$this->assistant->model->value}"))->releaseAfter(10)];
     }
 
-    public function getModel(): string
+    /**
+     * Execute the job.
+     */
+    public function handle(): void
     {
-        return $this->settings->open_ai_gpt_35_model ?? config('integration-open-ai.gpt_35_model');
+        $this->assistant->model->getService()->createAssistant($this->assistant);
+        $this->assistant->save();
     }
 }

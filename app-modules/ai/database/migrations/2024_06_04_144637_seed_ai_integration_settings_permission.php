@@ -34,27 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+use Illuminate\Database\Migrations\Migration;
+use Database\Migrations\Concerns\CanModifyPermissions;
 
-use OpenAI;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-class OpenAiGpt35Service extends BaseOpenAiService
-{
-    public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->settings->open_ai_gpt_35_base_uri ?? config('integration-open-ai.gpt_35_base_uri'))
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_35_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
-    }
-
-    public function getModel(): string
+    public function up(): void
     {
-        return $this->settings->open_ai_gpt_35_model ?? config('integration-open-ai.gpt_35_model');
+        $this->createPermissions(
+            [
+                'ai.view_cognitive_services_settings' => 'Integration: Cognitive Services',
+            ],
+            guardName: 'web'
+        );
     }
-}
+
+    public function down(): void
+    {
+        $this->deletePermissions(
+            [
+                'ai.view_cognitive_services_settings',
+            ],
+            guardName: 'web',
+        );
+    }
+};
