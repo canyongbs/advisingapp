@@ -276,10 +276,10 @@
         @endcapture
 
         <div
-            class="grid h-full flex-1 grid-cols-1 gap-2 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-4 2xl:grid-cols-4"
+            class="grid h-full flex-1 grid-cols-1 grid-rows-[1fr_auto] gap-2 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-4 2xl:grid-cols-4"
             x-data="chats"
         >
-            <div class="col-span-1 hidden h-full overflow-y-auto px-px pt-3 lg:block lg:pt-6">
+            <div class="col-span-1 hidden overflow-y-auto px-px pt-3 lg:block lg:pt-6">
                 {{ $sidebarContent($this->assistantSwitcherForm) }}
             </div>
 
