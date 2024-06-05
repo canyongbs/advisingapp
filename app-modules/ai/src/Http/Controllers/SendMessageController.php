@@ -41,21 +41,33 @@ use Illuminate\Http\JsonResponse;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Actions\SendMessage;
 use AdvisingApp\Ai\Http\Requests\SendMessageRequest;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 
 class SendMessageController
 {
     public function __invoke(SendMessageRequest $request, AiThread $thread): JsonResponse
     {
         try {
+            if ($thread->locked_at) {
+                throw new AiThreadLockedException();
+            }
+
             $responseContent = app(SendMessage::class)(
                 $thread,
                 $request->validated('content'),
             );
+        } catch (AiThreadLockedException $exception) {
+            report($exception);
+
+            return response()->json([
+                'isThreadLocked' => true,
+                'message' => 'The assistant is currently undergoing maintenance.',
+            ], 503);
         } catch (Throwable $exception) {
             report($exception);
 
             return response()->json([
-                'message' => 'The assistant has failed. Please retry later.',
+                'message' => 'An error happened when sending your message.',
             ], 503);
         }
 

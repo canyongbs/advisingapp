@@ -41,16 +41,28 @@ use Illuminate\Http\JsonResponse;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Actions\RetryMessage;
 use AdvisingApp\Ai\Http\Requests\RetryMessageRequest;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 
 class RetryMessageController
 {
     public function __invoke(RetryMessageRequest $request, AiThread $thread): JsonResponse
     {
         try {
+            if ($thread->locked_at) {
+                throw new AiThreadLockedException();
+            }
+
             $responseContent = app(RetryMessage::class)(
                 $thread,
                 $request->validated('content'),
             );
+        } catch (AiThreadLockedException $exception) {
+            report($exception);
+
+            return response()->json([
+                'isThreadLocked' => true,
+                'message' => 'The assistant is currently undergoing maintenance. We will inform you once you can retry sending your message.',
+            ], 503);
         } catch (Throwable $exception) {
             report($exception);
 

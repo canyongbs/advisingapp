@@ -47,6 +47,7 @@ use Livewire\Attributes\Computed;
 use Filament\Actions\StaticAction;
 use Illuminate\Support\Collection;
 use AdvisingApp\Ai\Models\AiThread;
+use Livewire\Attributes\Renderless;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Alignment;
@@ -405,5 +406,11 @@ trait CanManageThreads
             ->icon('heroicon-m-envelope')
             ->color('warning')
             ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
+    }
+
+    #[Renderless]
+    public function isThreadRetryable(): bool
+    {
+        return $this->thread?->locked_at !== null;
     }
 }
