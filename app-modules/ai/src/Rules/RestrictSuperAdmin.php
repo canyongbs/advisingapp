@@ -2,15 +2,15 @@
 
 namespace AdvisingApp\Ai\Rules;
 
-use App\Models\User;
 use Closure;
+use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 
 class RestrictSuperAdmin implements ValidationRule
 {
-    public $type;
+    public string $type;
 
-    public function __construct($type)
+    public function __construct(string $type)
     {
         $this->type = $type;
     }
@@ -24,10 +24,9 @@ class RestrictSuperAdmin implements ValidationRule
     {
         foreach ($value as $id) {
             if (User::findOrFail($id)->hasRole('authorization.super_admin')) {
-                if($this->type === 'clone') {
+                if ($this->type === 'clone') {
                     $fail('Super admin users cannot have a thread shared with them.');
-                }
-                else if($this->type === 'email') {
+                } elseif ($this->type === 'email') {
                     $fail('Super admin users cannot have a thread emailed to them.');
                 }
             }
