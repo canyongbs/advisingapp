@@ -76,6 +76,8 @@ class ReInitializeAiThread implements ShouldQueue, TenantAware
      */
     public function handle(): void
     {
+        auth()->setUser($this->thread->user);
+
         $this->thread->assistant->model->getService()->createThread($this->thread);
         $this->thread->save();
     }

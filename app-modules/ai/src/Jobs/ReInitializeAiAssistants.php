@@ -38,14 +38,14 @@ namespace AdvisingApp\Ai\Jobs;
 
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Bus;
+use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Spatie\Multitenancy\Jobs\TenantAware;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class ReInitializeAiService implements ShouldQueue, TenantAware
+class ReInitializeAiAssistants implements ShouldQueue, TenantAware
 {
     use Batchable;
     use Dispatchable;
@@ -65,10 +65,10 @@ class ReInitializeAiService implements ShouldQueue, TenantAware
      */
     public function handle(): void
     {
-        Bus::chain([
-            Bus::batch([new ReInitializeAiAssistants($this->model)]),
-            Bus::batch([new ReInitializeAiThreads($this->model)]),
-        ])
-            ->dispatch();
+        AiAssistant::query()
+            ->where('model', $this->model)
+            ->eachById(function (AiAssistant $assistant) {
+                $this->batch()->add(app(ReInitializeAiAssistant::class, ['assistant' => $assistant]));
+            }, 250);
     }
 }

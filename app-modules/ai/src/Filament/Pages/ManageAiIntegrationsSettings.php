@@ -42,7 +42,6 @@ use Filament\Actions\Action;
 use Filament\Pages\SettingsPage;
 use AdvisingApp\Ai\Enums\AiModel;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Bus;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -186,21 +185,15 @@ class ManageAiIntegrationsSettings extends SettingsPage
                 $this->save();
 
                 if ($openAiGpt35HasChanged) {
-                    Bus::batch([
-                        app(ReInitializeAiService::class, ['model' => AiModel::OpenAiGpt35->value]),
-                    ])->dispatch();
+                    dispatch(new ReInitializeAiService(AiModel::OpenAiGpt35->value));
                 }
 
                 if ($openAiGpt4HasChanged) {
-                    Bus::batch([
-                        app(ReInitializeAiService::class, ['model' => AiModel::OpenAiGpt4->value]),
-                    ])->dispatch();
+                    dispatch(new ReInitializeAiService(AiModel::OpenAiGpt4->value));
                 }
 
                 if ($openAiGpt4oHasChanged) {
-                    Bus::batch([
-                        app(ReInitializeAiService::class, ['model' => AiModel::OpenAiGpt4o->value]),
-                    ])->dispatch();
+                    dispatch(new ReInitializeAiService(AiModel::OpenAiGpt4o->value));
                 }
             });
     }

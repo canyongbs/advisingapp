@@ -95,9 +95,7 @@ class EditAiAssistant extends EditRecord
                 $this->save();
 
                 if (! $modelDeploymentIsShared) {
-                    Bus::batch([
-                        app(ReInitializeAiService::class, ['model' => $newModel->value]),
-                    ])->dispatch();
+                    dispatch(new ReInitializeAiService($newModel->value));
                 }
             });
     }

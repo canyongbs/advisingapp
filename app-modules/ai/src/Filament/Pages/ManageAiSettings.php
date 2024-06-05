@@ -43,7 +43,6 @@ use Filament\Pages\SettingsPage;
 use AdvisingApp\Ai\Enums\AiModel;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Bus;
 use Filament\Support\Enums\MaxWidth;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Forms\Components\Section;
@@ -161,9 +160,7 @@ class ManageAiSettings extends SettingsPage
                 $this->save();
 
                 if (! $modelDeploymentIsShared) {
-                    Bus::batch([
-                        app(ReInitializeAiService::class, ['model' => $newModel->value]),
-                    ])->dispatch();
+                    dispatch(new ReInitializeAiService($newModel->value));
                 }
             });
     }
