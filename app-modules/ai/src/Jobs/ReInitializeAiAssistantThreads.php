@@ -62,14 +62,14 @@ class ReInitializeAiAssistantThreads implements ShouldQueue, TenantAware
      */
     public $deleteWhenMissingModels = true;
 
+    public $maxExceptions = 3;
+
     /**
      * Create a new job instance.
      */
     public function __construct(
         protected AiAssistant $assistant,
     ) {}
-
-    public $maxExceptions = 3;
 
     /**
      * Determine the time at which the job should timeout.
