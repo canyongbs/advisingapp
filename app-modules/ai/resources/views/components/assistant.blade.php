@@ -101,7 +101,7 @@
                                     }
                                 }"
                                 x-init="listenForEvent('{{ $threadItem->id }}')"
-                                title="Last Engaged: {{$threadItem->last_engaged_at->format('F d, Y')}}"
+                                title="Last Engaged: {{$threadItem?->last_engaged_at?->format('F d, Y')}}"
                                 wire:key="chat-{{ $threadItem->id }}"
                                 @class([
                                     'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
@@ -239,7 +239,7 @@
                                             }
                                         }"
                                         x-init="listenForFolderChatEvent('{{ $threadItem->id }}')"
-                                        title="Last Engaged: {{$threadItem->last_engaged_at->format('F d, Y')}}"
+                                        title="Last Engaged: {{$threadItem?->last_engaged_at?->format('F d, Y')}}"
                                         wire:key="chat-{{ $threadItem->id }}"
                                         x-show="expanded('{{ $folder->id }}')"
                                         @class([
