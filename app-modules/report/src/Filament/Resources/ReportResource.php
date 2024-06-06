@@ -56,6 +56,10 @@ class ReportResource extends Resource
 
     protected static ?string $breadcrumb = 'Custom Reports';
 
+    protected static ?string $slug = 'custom-reports';
+
+    protected static ?string $modelLabel = 'Custom Report';
+
     public static function getPages(): array
     {
         return [
