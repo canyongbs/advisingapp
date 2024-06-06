@@ -42,7 +42,6 @@ use Filament\Actions\Action;
 use Filament\Pages\SettingsPage;
 use AdvisingApp\Ai\Enums\AiModel;
 use Livewire\Attributes\Computed;
-use Illuminate\Support\Facades\DB;
 use Filament\Support\Enums\MaxWidth;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Forms\Components\Section;
@@ -152,9 +151,11 @@ class ManageAiSettings extends SettingsPage
                 $modelDeploymentIsShared = $newModel ? $this->defaultAssistant->model->isSharedDeployment($newModel) : true;
 
                 if (! $modelDeploymentIsShared) {
-                    DB::transaction(function () use ($resetAiServiceIds) {
-                        $resetAiServiceIds($this->defaultAssistant);
-                    });
+                    $resetAiServiceIds($this->defaultAssistant);
+
+                    $state = $this->form->getRawState();
+                    $state['defaultAssistant']['assistant_id'] = null;
+                    $this->form->fill($state, false, false);
                 }
 
                 $this->save();
