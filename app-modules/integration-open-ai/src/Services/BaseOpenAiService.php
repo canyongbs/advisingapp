@@ -129,6 +129,16 @@ abstract class BaseOpenAiService implements AiService
 
     public function sendMessage(AiMessage $message): AiMessage
     {
+        $response = $this->client->threads()->runs()->list($message->thread->thread_id, [
+            'order' => 'desc',
+            'limit' => 1,
+        ])->data[0] ?? null;
+
+        // An existing run might be in progress, so we need to wait for it to complete first.
+        if ($response && (! in_array($response?->status, ['completed', 'failed', 'expired']))) {
+            $this->awaitThreadRunCompletion($response);
+        }
+
         $response = $this->client->threads()->messages()->create($message->thread->thread_id, [
             'role' => 'user',
             'content' => $message->content,
