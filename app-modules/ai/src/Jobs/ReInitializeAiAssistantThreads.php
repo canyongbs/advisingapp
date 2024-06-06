@@ -69,6 +69,8 @@ class ReInitializeAiAssistantThreads implements ShouldQueue, TenantAware
         protected AiAssistant $assistant,
     ) {}
 
+    public $maxExceptions = 3;
+
     /**
      * Determine the time at which the job should timeout.
      */

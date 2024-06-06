@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Jobs;
 
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Bus;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -55,28 +54,10 @@ class ReInitializeAiModel implements ShouldQueue, TenantAware
     use Queueable;
     use SerializesModels;
 
-    /**
-     * Create a new job instance.
-     */
     public function __construct(
         protected string $model,
     ) {}
 
-    public static function dispatchForAssistant(AiAssistant $assistant): void
-    {
-        Bus::chain([
-            app(ReInitializeAiAssistant::class, ['assistant' => $assistant]),
-            Bus::batch([
-                app(ReInitializeAiAssistantThreads::class, ['assistant' => $assistant]),
-            ])
-                ->name("Re-initialize AI assistant threads for assistant: {$assistant->id}")
-                ->allowFailures(),
-        ])->dispatch();
-    }
-
-    /**
-     * Execute the job.
-     */
     public function handle(ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant): void
     {
         AiAssistant::query()

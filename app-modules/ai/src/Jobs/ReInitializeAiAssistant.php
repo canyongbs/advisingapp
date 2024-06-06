@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Jobs;
 use Carbon\CarbonInterface;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Log;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -61,6 +62,8 @@ class ReInitializeAiAssistant implements ShouldQueue, TenantAware
      * @var bool
      */
     public $deleteWhenMissingModels = true;
+
+    public $maxExceptions = 3;
 
     /**
      * Create a new job instance.
@@ -92,6 +95,7 @@ class ReInitializeAiAssistant implements ShouldQueue, TenantAware
      */
     public function handle(): void
     {
+        Log::info('in job: ' . $this->assistant->assistant_id);
         $this->assistant->model->getService()->ensureAssistantExists($this->assistant);
     }
 }
