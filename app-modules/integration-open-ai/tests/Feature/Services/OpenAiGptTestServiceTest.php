@@ -169,6 +169,13 @@ it('can send a message', function () {
     $client = $service->getClient();
 
     $client->addResponses([
+        ThreadRunListResponse::fake([
+            'data' => [
+                [
+                    'status' => 'completed',
+                ],
+            ],
+        ]),
         ThreadMessageResponse::fake([
             'id' => $messageId = Str::random(),
         ]),
@@ -214,8 +221,8 @@ it('can send a message', function () {
         ->content->toBe($responseContent)
         ->message_id->toBe($responseId);
 
+    $client->assertSent(ThreadsRuns::class, 2);
     $client->assertSent(ThreadsMessages::class, 2);
-    $client->assertSent(ThreadsRuns::class, 1);
 });
 
 it('can retry a message', function () {
