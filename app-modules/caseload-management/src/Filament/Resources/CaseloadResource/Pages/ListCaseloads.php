@@ -71,7 +71,7 @@ class ListCaseloads extends ListRecords
                     ->label('Owner')
                     ->sortable()
                     ->hidden(function (Table $table) {
-                        return $table->getFilter('my_caseloads')->getState()['isActive'];
+                        return $table->getFilter('my_caseloads')->getState()['isActive'] ?? false;
                     }),
             ])
             ->actions([
