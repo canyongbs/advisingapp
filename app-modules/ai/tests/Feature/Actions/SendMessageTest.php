@@ -47,7 +47,7 @@ it('sends a message', function () {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);

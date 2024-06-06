@@ -44,10 +44,13 @@ use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
+use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
 
 abstract class BaseOpenAiService implements AiService
 {
+    use HasAiServiceHelpers;
+
     public const FORMATTING_INSTRUCTIONS = 'When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.';
 
     protected ClientContract $client;
@@ -75,12 +78,6 @@ abstract class BaseOpenAiService implements AiService
 
     public function updateAssistant(AiAssistant $assistant): void
     {
-        if (blank($assistant->assistant_id)) {
-            $this->createAssistant($assistant);
-
-            return;
-        }
-
         $this->client->assistants()->modify($assistant->assistant_id, [
             'instructions' => $this->generateAssistantInstructions($assistant),
             'name' => $assistant->name,
@@ -125,10 +122,6 @@ abstract class BaseOpenAiService implements AiService
 
     public function deleteThread(AiThread $thread): void
     {
-        if (blank($thread->thread_id)) {
-            return;
-        }
-
         $this->client->threads()->delete($thread->thread_id);
 
         $thread->thread_id = null;
@@ -136,8 +129,6 @@ abstract class BaseOpenAiService implements AiService
 
     public function sendMessage(AiMessage $message): AiMessage
     {
-        $this->ensureThreadExists($message->thread);
-
         $response = $this->client->threads()->messages()->create($message->thread->thread_id, [
             'role' => 'user',
             'content' => $message->content,
@@ -172,8 +163,6 @@ abstract class BaseOpenAiService implements AiService
 
     public function retryMessage(AiMessage $message): AiMessage
     {
-        $this->ensureThreadExists($message->thread);
-
         $response = $this->client->threads()->runs()->list($message->thread->thread_id, [
             'order' => 'desc',
             'limit' => 1,
@@ -228,33 +217,22 @@ abstract class BaseOpenAiService implements AiService
         $limit = 32768;
 
         $limit -= strlen(resolve(AiSettings::class)->prompt_system_context);
-        $limit -= strlen(auth()->user()->getDynamicContext());
         $limit -= strlen(static::FORMATTING_INSTRUCTIONS);
 
-        $limit -= 250; // For good measure.
+        $limit -= 600; // For good measure.
         $limit -= ($limit % 100); // Round down to the nearest 100.
 
         return $limit;
     }
 
-    protected function ensureAssistantExists(AiAssistant $assistant): void
+    public function isAssistantExisting(AiAssistant $assistant): bool
     {
-        if (filled($assistant->assistant_id)) {
-            return;
-        }
-
-        $this->createAssistant($assistant);
+        return filled($assistant->assistant_id);
     }
 
-    protected function ensureThreadExists(AiThread $thread): void
+    public function isThreadExisting(AiThread $thread): bool
     {
-        if ($thread->assistant) {
-            $this->ensureAssistantExists($thread->assistant);
-        }
-
-        if (blank($thread->thread_id)) {
-            $this->createThread($thread);
-        }
+        return filled($thread->thread_id);
     }
 
     protected function awaitThreadRunCompletion(ThreadRunResponse $threadRunResponse): void

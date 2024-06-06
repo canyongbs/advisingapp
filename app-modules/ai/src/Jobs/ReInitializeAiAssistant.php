@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Jobs;
 
+use Carbon\CarbonInterface;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -55,6 +56,13 @@ class ReInitializeAiAssistant implements ShouldQueue, TenantAware
     use SerializesModels;
 
     /**
+     * Delete the job if its models no longer exist.
+     *
+     * @var bool
+     */
+    public $deleteWhenMissingModels = true;
+
+    /**
      * Create a new job instance.
      */
     public function __construct(
@@ -72,11 +80,18 @@ class ReInitializeAiAssistant implements ShouldQueue, TenantAware
     }
 
     /**
+     * Determine the time at which the job should timeout.
+     */
+    public function retryUntil(): CarbonInterface
+    {
+        return now()->addDay();
+    }
+
+    /**
      * Execute the job.
      */
     public function handle(): void
     {
-        $this->assistant->model->getService()->createAssistant($this->assistant);
-        $this->assistant->save();
+        $this->assistant->model->getService()->ensureAssistantExists($this->assistant);
     }
 }

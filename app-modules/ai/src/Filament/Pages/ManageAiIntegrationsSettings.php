@@ -46,9 +46,9 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\GlobalSettings;
-use AdvisingApp\Ai\Actions\ResetAiServiceIds;
 use AdvisingApp\Ai\Jobs\ReInitializeAiService;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
 
 class ManageAiIntegrationsSettings extends SettingsPage
 {
@@ -161,39 +161,25 @@ class ManageAiIntegrationsSettings extends SettingsPage
                     ->action(fn () => $this->save())
                     ->cancelParentActions(),
             ])
-            ->action(function (AiIntegrationsSettings $originalSettings, ResetAiServiceIds $resetAiServiceIds) {
+            ->action(function (AiIntegrationsSettings $originalSettings, ResetAiServiceIdsForModel $resetAiServiceIds) {
                 $newSettings = $this->form->getState();
 
-                $openAiGpt35HasChanged = $originalSettings->open_ai_gpt_35_base_uri !== $newSettings['open_ai_gpt_35_base_uri'];
-                $openAiGpt4HasChanged = $originalSettings->open_ai_gpt_4_base_uri !== $newSettings['open_ai_gpt_4_base_uri'];
-                $openAiGpt4oHasChanged = $originalSettings->open_ai_gpt_4o_base_uri !== $newSettings['open_ai_gpt_4o_base_uri'];
+                $changedModels = [
+                    ...(($originalSettings->open_ai_gpt_35_base_uri !== $newSettings['open_ai_gpt_35_base_uri']) ? [AiModel::OpenAiGpt35] : []),
+                    ...(($originalSettings->open_ai_gpt_4_base_uri !== $newSettings['open_ai_gpt_4_base_uri']) ? [AiModel::OpenAiGpt4] : []),
+                    ...(($originalSettings->open_ai_gpt_4o_base_uri !== $newSettings['open_ai_gpt_4o_base_uri']) ? [AiModel::OpenAiGpt4o] : []),
+                ];
 
-                DB::transaction(function () use ($openAiGpt35HasChanged, $openAiGpt4HasChanged, $openAiGpt4oHasChanged, $resetAiServiceIds) {
-                    if ($openAiGpt35HasChanged) {
-                        $resetAiServiceIds(AiModel::OpenAiGpt35);
-                    }
-
-                    if ($openAiGpt4HasChanged) {
-                        $resetAiServiceIds(AiModel::OpenAiGpt4);
-                    }
-
-                    if ($openAiGpt4oHasChanged) {
-                        $resetAiServiceIds(AiModel::OpenAiGpt4o);
+                DB::transaction(function () use ($changedModels, $resetAiServiceIds) {
+                    foreach ($changedModels as $changedModel) {
+                        $resetAiServiceIds($changedModel);
                     }
                 });
 
                 $this->save();
 
-                if ($openAiGpt35HasChanged) {
-                    dispatch(new ReInitializeAiService(AiModel::OpenAiGpt35->value));
-                }
-
-                if ($openAiGpt4HasChanged) {
-                    dispatch(new ReInitializeAiService(AiModel::OpenAiGpt4->value));
-                }
-
-                if ($openAiGpt4oHasChanged) {
-                    dispatch(new ReInitializeAiService(AiModel::OpenAiGpt4o->value));
+                foreach ($changedModels as $changedModel) {
+                    ReInitializeAiService::dispatchForModel($changedModel);
                 }
             });
     }

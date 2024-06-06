@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiAssistant;
 
-class ResetAiServiceIds
+class ResetAiServiceIdsForModel
 {
     public function __invoke(AiModel $model): void
     {

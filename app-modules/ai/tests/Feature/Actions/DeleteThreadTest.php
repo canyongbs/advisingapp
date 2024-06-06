@@ -54,12 +54,13 @@ it('deletes a thread', function () {
     $this->mock(
         TestAiService::class,
         fn (MockInterface $mock) => $mock
+            ->shouldReceive('isThreadExisting')->once()->andReturn(true)
             ->shouldReceive('deleteThread')->once(),
     );
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
         ]), 'assistant')

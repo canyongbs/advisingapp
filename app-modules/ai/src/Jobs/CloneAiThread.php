@@ -77,7 +77,11 @@ class CloneAiThread implements ShouldQueue
             $messageReplica->save();
         }
 
-        $threadReplica->assistant->model->getService()->createThread($threadReplica);
+        $aiService = $threadReplica->assistant->model->getService();
+
+        $aiService->ensureAssistantExists($threadReplica->assistant);
+
+        $aiService->createThread($threadReplica);
         $threadReplica->save();
     }
 }

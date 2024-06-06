@@ -49,7 +49,7 @@ it('retries a message', function () {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -94,7 +94,7 @@ it('does not create a new message if the most recent one has the same content', 
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -142,7 +142,7 @@ it('does not match messages with the same content sent by other users in the sam
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -172,7 +172,7 @@ it('does not match messages with the same content belonging to other threads', f
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -207,7 +207,7 @@ it('does not match messages with different content', function () {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);

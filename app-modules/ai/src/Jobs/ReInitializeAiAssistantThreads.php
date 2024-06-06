@@ -36,16 +36,18 @@
 
 namespace AdvisingApp\Ai\Jobs;
 
+use Carbon\CarbonInterface;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Spatie\Multitenancy\Jobs\TenantAware;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class ReInitializeAiThreads implements ShouldQueue, TenantAware
+class ReInitializeAiAssistantThreads implements ShouldQueue, TenantAware
 {
     use Batchable;
     use Dispatchable;
@@ -54,20 +56,35 @@ class ReInitializeAiThreads implements ShouldQueue, TenantAware
     use SerializesModels;
 
     /**
+     * Delete the job if its models no longer exist.
+     *
+     * @var bool
+     */
+    public $deleteWhenMissingModels = true;
+
+    /**
      * Create a new job instance.
      */
     public function __construct(
-        protected string $model,
+        protected AiAssistant $assistant,
     ) {}
+
+    /**
+     * Determine the time at which the job should timeout.
+     */
+    public function retryUntil(): CarbonInterface
+    {
+        return now()->addDay();
+    }
 
     /**
      * Execute the job.
      */
     public function handle(): void
     {
-        AiThread::query()
+        $this->assistant
+            ->threads()
             ->latest()
-            ->whereRelation('assistant', 'model', $this->model)
             ->eachById(function (AiThread $thread) {
                 $this->batch()->add(app(ReInitializeAiThread::class, ['thread' => $thread]));
             }, 250);
