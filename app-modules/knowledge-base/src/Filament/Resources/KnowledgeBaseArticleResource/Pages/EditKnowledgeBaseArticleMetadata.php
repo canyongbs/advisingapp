@@ -84,6 +84,7 @@ class EditKnowledgeBaseArticleMetadata
                         ->exists((new KnowledgeBaseCategory())->getTable(), (new KnowledgeBaseCategory())->getKeyName()),
                     Select::make('division')
                         ->label('Division')
+                        ->multiple()
                         ->relationship('division', 'name')
                         ->searchable(['name', 'code'])
                         ->preload()

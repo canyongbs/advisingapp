@@ -67,16 +67,8 @@ trait EngagementInfolist
                     TextEntry::make('deliverable.channel')
                         ->label('Channel'),
                     IconEntry::make('deliverable.delivery_status')
-                        ->icon(fn (EngagementDeliveryStatus $state): string => match ($state) {
-                            EngagementDeliveryStatus::Successful => 'heroicon-o-check-circle',
-                            EngagementDeliveryStatus::Awaiting => 'heroicon-o-clock',
-                            EngagementDeliveryStatus::Failed => 'heroicon-o-x-circle',
-                        })
-                        ->color(fn (EngagementDeliveryStatus $state): string => match ($state) {
-                            EngagementDeliveryStatus::Successful => 'success',
-                            EngagementDeliveryStatus::Awaiting => 'warning',
-                            EngagementDeliveryStatus::Failed => 'danger',
-                        })
+                        ->icon(fn (EngagementDeliveryStatus $state): string => $state->getIconClass())
+                        ->color(fn (EngagementDeliveryStatus $state): string => $state->getColor())
                         ->label('Status'),
                     TextEntry::make('deliverable.delivered_at')
                         ->label('Delivered At')

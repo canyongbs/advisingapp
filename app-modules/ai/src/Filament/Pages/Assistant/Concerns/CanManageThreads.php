@@ -54,7 +54,9 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Support\Enums\ActionSize;
 use AdvisingApp\Ai\Actions\CreateThread;
 use AdvisingApp\Ai\Actions\DeleteThread;
+use App\Models\Scopes\WithoutSuperAdmin;
 use Filament\Forms\Components\TextInput;
+use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
@@ -70,6 +72,8 @@ trait CanManageThreads
     public ?AiThread $thread = null;
 
     public $assistantSwitcher = null;
+
+    public $assistantSwitcherMobile = null;
 
     #[Computed]
     public function customAssistants(): array
@@ -87,11 +91,11 @@ trait CanManageThreads
             ->all();
     }
 
-    public function assistantSwitcherForm(Form $form): Form
+    public function assistantSwitcherForm(Form $form, string $propertyName = 'assistantSwitcher'): Form
     {
         return $form
             ->schema([
-                Select::make('assistantSwitcher')
+                Select::make($propertyName)
                     ->label('Choose an assistant')
                     ->placeholder('Search for an assistant')
                     ->searchPrompt('Search')
@@ -127,15 +131,22 @@ trait CanManageThreads
                         $component->state(null);
 
                         $this->dispatch('close-assistant-search');
+                        $this->dispatch('close-assistant-sidebar');
                     })
                     ->searchable(),
             ]);
+    }
+
+    public function assistantSwitcherMobileForm(Form $form): Form
+    {
+        return $this->assistantSwitcherForm($form, 'assistantSwitcherMobile');
     }
 
     public function getCanManageThreadsForms(): array
     {
         return [
             'assistantSwitcherForm',
+            'assistantSwitcherMobileForm',
         ];
     }
 
@@ -333,12 +344,17 @@ trait CanManageThreads
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
                             AiThreadShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
-                            AiThreadShareTarget::User->value => User::whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::User->value => User::tap(new WithoutSuperAdmin())->whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
                         };
                     })
                     ->searchable()
                     ->multiple()
-                    ->required(),
+                    ->required()
+                    ->rules([fn (Get $get) => match ($get('targetType')) {
+                        AiThreadShareTarget::User->value => new RestrictSuperAdmin('clone'),
+                        AiThreadShareTarget::Team->value => null,
+                    },
+                    ]),
             ])
             ->action(function (array $arguments, array $data) {
                 $thread = auth()->user()->aiThreads()
@@ -383,12 +399,17 @@ trait CanManageThreads
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
                             AiThreadShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
-                            AiThreadShareTarget::User->value => User::orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::User->value => User::tap(new WithoutSuperAdmin())->orderBy('name')->pluck('name', 'id'),
                         };
                     })
                     ->searchable()
                     ->multiple()
-                    ->required(),
+                    ->required()
+                    ->rules([fn (Get $get) => match ($get('targetType')) {
+                        AiThreadShareTarget::User->value => new RestrictSuperAdmin('email'),
+                        AiThreadShareTarget::Team->value => null,
+                    },
+                    ]),
             ])
             ->action(function (array $arguments, array $data) {
                 $thread = auth()->user()->aiThreads()
