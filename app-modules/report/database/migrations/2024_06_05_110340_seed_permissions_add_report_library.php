@@ -1,26 +1,38 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Database\Migrations\Concerns\CanModifyPermissions;
 
 return new class extends Migration
 {
+    use CanModifyPermissions;
+
+    private array $permissions = [
+        'report-library.view-any' => 'Report Library',
+    ];
+
+    private array $guards = [
+        'web',
+        'api',
+    ];
+
     public function up(): void
     {
-        $permission_group = DB::table('permission_groups')
-            ->where('name', 'Report')->first();
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $permissions = Arr::except($this->permissions, keys: DB::table('permissions')
+                    ->where('guard_name', $guard)
+                    ->pluck('name')
+                    ->all());
 
-        if(!empty($permission_group)) {
-            DB::table('permissions')->insert(
-                [
-                    'id' => (string) Str::orderedUuid(),
-                    'group_id' => $permission_group->id,
-                    'guard_name' => 'web',
-                    'name' => 'report-library.view-any',
-                    'created_at' => now(),
-                ]
-            );
-        }
+                $this->createPermissions($permissions, $guard);
+            });
+    }
+
+    public function down(): void
+    {
+        $this->deletePermissions(array_keys($this->permissions), $this->guards);
     }
 };

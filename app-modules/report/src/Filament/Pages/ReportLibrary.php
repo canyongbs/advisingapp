@@ -46,7 +46,7 @@ class ReportLibrary extends Page
 
     protected static ?string $navigationGroup = 'Reporting';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 50;
 
     public static function canAccess(): bool
     {
