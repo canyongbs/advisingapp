@@ -32,6 +32,4 @@
 </COPYRIGHT>
 --}}
 
-<x-filament-panels::page full-height="true">
-    <x-ai::assistant />
-</x-filament-panels::page>
+<x-ai::assistant />

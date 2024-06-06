@@ -66,7 +66,11 @@ class RetryMessage
             'ip' => request()->ip(),
         ];
 
-        $response = $thread->assistant->model->getService()->retryMessage($message);
+        $aiService = $thread->assistant->model->getService();
+
+        $aiService->ensureAssistantAndThreadExists($thread);
+
+        $response = $aiService->retryMessage($message);
         $response->thread()->associate($thread);
         $response->save();
 

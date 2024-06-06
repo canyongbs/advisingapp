@@ -101,7 +101,7 @@ enum AiModel: string implements HasLabel
         $deployment = $model->getService()->getDeployment();
 
         if (blank($deployment)) {
-            return true;
+            return false;
         }
 
         return $deployment === $this->getService()->getDeployment();

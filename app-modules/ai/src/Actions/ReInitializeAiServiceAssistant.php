@@ -34,64 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Ai\Actions;
 
-use Carbon\CarbonInterface;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Bus;
 use AdvisingApp\Ai\Models\AiAssistant;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Spatie\Multitenancy\Jobs\TenantAware;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
+use AdvisingApp\Ai\Jobs\ReInitializeAiAssistant;
+use AdvisingApp\Ai\Jobs\ReInitializeAiAssistantThreads;
 
-class ReInitializeAiAssistant implements ShouldQueue, TenantAware
+class ReInitializeAiServiceAssistant
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    /**
-     * Delete the job if its models no longer exist.
-     *
-     * @var bool
-     */
-    public $deleteWhenMissingModels = true;
-
-    /**
-     * Create a new job instance.
-     */
-    public function __construct(
-        protected AiAssistant $assistant,
-    ) {}
-
-    /**
-     * Get the middleware the job should pass through.
-     *
-     * @return array<int, object>
-     */
-    public function middleware(): array
+    public function __invoke(AiAssistant $assistant): void
     {
-        return [(new WithoutOverlapping("reinitialise-{$this->assistant->model->value}"))->releaseAfter(10)];
-    }
-
-    /**
-     * Determine the time at which the job should timeout.
-     */
-    public function retryUntil(): CarbonInterface
-    {
-        return now()->addDay();
-    }
-
-    /**
-     * Execute the job.
-     */
-    public function handle(): void
-    {
-        $this->assistant->model->getService()->ensureAssistantExists($this->assistant);
+        Bus::chain([
+            app(ReInitializeAiAssistant::class, ['assistant' => $assistant]),
+            Bus::batch([
+                app(ReInitializeAiAssistantThreads::class, ['assistant' => $assistant]),
+            ])
+                ->name("Re-initialize AI assistant threads for assistant: {$assistant->id}")
+                ->allowFailures(),
+        ])->dispatch();
     }
 }

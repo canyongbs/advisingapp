@@ -45,4 +45,56 @@ enum EngagementDeliveryStatus: string
 
     case Successful = 'successful';
     case Failed = 'failed';
+
+    public function getTextColorClass(): string
+    {
+        return match ($this) {
+            EngagementDeliveryStatus::Awaiting,
+            EngagementDeliveryStatus::Dispatched => 'text-yellow-500',
+
+            EngagementDeliveryStatus::Successful => 'text-green-500',
+
+            EngagementDeliveryStatus::Failed,
+            EngagementDeliveryStatus::RateLimited,
+            EngagementDeliveryStatus::DispatchFailed => 'text-red-500',
+        };
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            EngagementDeliveryStatus::Awaiting,
+            EngagementDeliveryStatus::Dispatched => 'info',
+
+            EngagementDeliveryStatus::Successful => 'success',
+
+            EngagementDeliveryStatus::Failed,
+            EngagementDeliveryStatus::RateLimited,
+            EngagementDeliveryStatus::DispatchFailed => 'danger',
+        };
+    }
+
+    public function getIconClass(): string
+    {
+        return match ($this) {
+            EngagementDeliveryStatus::Awaiting,
+            EngagementDeliveryStatus::Dispatched => 'heroicon-s-clock',
+
+            EngagementDeliveryStatus::Successful => 'heroicon-s-check-circle',
+
+            EngagementDeliveryStatus::Failed,
+            EngagementDeliveryStatus::RateLimited,
+            EngagementDeliveryStatus::DispatchFailed => 'heroicon-s-exclamation-circle',
+        };
+    }
+
+    public function getMessage(): string
+    {
+        return match ($this) {
+            EngagementDeliveryStatus::Successful => 'Successfully delivered',
+            EngagementDeliveryStatus::Awaiting, EngagementDeliveryStatus::Dispatched => 'Awaiting delivery',
+            EngagementDeliveryStatus::Failed, EngagementDeliveryStatus::DispatchFailed => 'Failed to send',
+            EngagementDeliveryStatus::RateLimited => 'Failed to send due to rate limits',
+        };
+    }
 }

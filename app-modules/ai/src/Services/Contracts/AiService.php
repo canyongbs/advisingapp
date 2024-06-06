@@ -55,6 +55,10 @@ interface AiService
      */
     public function updateAssistant(AiAssistant $assistant): void;
 
+    public function isAssistantExisting(AiAssistant $assistant): bool;
+
+    public function ensureAssistantExists(AiAssistant $assistant): void;
+
     /**
      * This method is passed an unsaved `AiThread` model and should fill
      * the model with any additional data that associates it with
@@ -67,6 +71,10 @@ interface AiService
      * it for deletion from the AI service.
      */
     public function deleteThread(AiThread $thread): void;
+
+    public function isThreadExisting(AiThread $thread): bool;
+
+    public function ensureAssistantAndThreadExists(AiThread $thread): void;
 
     /**
      * This method is passed an unsaved `AiMessage` model and should send the

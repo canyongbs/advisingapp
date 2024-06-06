@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,66 +30,30 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
 
-namespace AdvisingApp\Ai\Jobs;
+<div {{ $attributes->class('flex w-full flex-col gap-2') }}>
+    <div class="flex w-full justify-center">
+        <img
+            class="hidden h-5 dark:block"
+            src="{{ Vite::asset('resources/images/canyon-logo-dark.png') }}"
+            alt="{{ config('app.name') }}"
+        />
+        <img
+            class="block h-5 dark:hidden"
+            src="{{ Vite::asset('resources/images/canyon-logo-light.png') }}"
+            alt="{{ config('app.name') }}"
+        />
+    </div>
 
-use Carbon\CarbonInterface;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use AdvisingApp\Ai\Models\AiAssistant;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Spatie\Multitenancy\Jobs\TenantAware;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
-
-class ReInitializeAiAssistant implements ShouldQueue, TenantAware
-{
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    /**
-     * Delete the job if its models no longer exist.
-     *
-     * @var bool
-     */
-    public $deleteWhenMissingModels = true;
-
-    /**
-     * Create a new job instance.
-     */
-    public function __construct(
-        protected AiAssistant $assistant,
-    ) {}
-
-    /**
-     * Get the middleware the job should pass through.
-     *
-     * @return array<int, object>
-     */
-    public function middleware(): array
-    {
-        return [(new WithoutOverlapping("reinitialise-{$this->assistant->model->value}"))->releaseAfter(10)];
-    }
-
-    /**
-     * Determine the time at which the job should timeout.
-     */
-    public function retryUntil(): CarbonInterface
-    {
-        return now()->addDay();
-    }
-
-    /**
-     * Execute the job.
-     */
-    public function handle(): void
-    {
-        $this->assistant->model->getService()->ensureAssistantExists($this->assistant);
-    }
-}
+    <div class="flex w-full justify-center pb-4">
+        <span class="w-11/12 text-center text-xs lg:w-3/4 xl:w-7/12">
+            © 2016-{{ date('Y') }} Canyon GBS LLC. All Rights Reserved. Canyon GBS™ and Advising App™ are trademarks
+            of Canyon GBS
+            LLC. For more information or inquiries, please visit our website at <a
+                class="text-blue-600 underline dark:text-blue-400"
+                href="https://canyongbs.com/"
+            >https://canyongbs.com/</a>.
+        </span>
+    </div>
+</div>

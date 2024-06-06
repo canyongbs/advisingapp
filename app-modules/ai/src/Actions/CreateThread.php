@@ -88,7 +88,7 @@ class CreateThread
         $assistant->description = "An AI Assistant for {$tenant->name}";
         $assistant->instructions = $settings->prompt_system_context;
         $assistant->application = $application;
-        $assistant->model = $settings->getDefaultModel();
+        $assistant->model = $application->getDefaultModel();
         $assistant->is_default = true;
 
         $assistant->model->getService()->createAssistant($assistant);

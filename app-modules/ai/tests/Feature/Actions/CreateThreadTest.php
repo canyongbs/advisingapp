@@ -60,7 +60,7 @@ it('creates a new thread', function () {
     );
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -69,7 +69,7 @@ it('creates a new thread', function () {
     $settings->default_model = AiModel::Test;
     $settings->save();
 
-    $thread = app(CreateThread::class)(AiApplication::PersonalAssistant, $assistant);
+    $thread = app(CreateThread::class)(AiApplication::Test, $assistant);
 
     expect($thread)
         ->assistant->toBe($assistant)
@@ -81,7 +81,7 @@ it('does not create a new thread if an empty existing one exists', function () {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -97,7 +97,7 @@ it('does not create a new thread if an empty existing one exists', function () {
     $settings->default_model = AiModel::Test;
     $settings->save();
 
-    $existingThread = app(CreateThread::class)(AiApplication::PersonalAssistant, $assistant);
+    $existingThread = app(CreateThread::class)(AiApplication::Test, $assistant);
 
     expect($existingThread->getKey())
         ->toBe($thread->getKey());
@@ -107,7 +107,7 @@ it('does not match existing threads belonging to other users', function () {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -123,7 +123,7 @@ it('does not match existing threads belonging to other users', function () {
     $settings->default_model = AiModel::Test;
     $settings->save();
 
-    $newThread = app(CreateThread::class)(AiApplication::PersonalAssistant, $assistant);
+    $newThread = app(CreateThread::class)(AiApplication::Test, $assistant);
 
     expect($newThread->getKey())
         ->not->toBe($thread->getKey());
@@ -133,7 +133,7 @@ it('does not match existing threads with messages', function () {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -150,7 +150,7 @@ it('does not match existing threads with messages', function () {
     $settings->default_model = AiModel::Test;
     $settings->save();
 
-    $newThread = app(CreateThread::class)(AiApplication::PersonalAssistant, $assistant);
+    $newThread = app(CreateThread::class)(AiApplication::Test, $assistant);
 
     expect($newThread->getKey())
         ->not->toBe($thread->getKey());
@@ -160,14 +160,14 @@ it('does not match existing threads belonging to other assistants', function () 
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiApplication::Test,
             'model' => AiModel::Test,
         ]), 'assistant')
         ->for(auth()->user())
@@ -179,7 +179,7 @@ it('does not match existing threads belonging to other assistants', function () 
     $settings->default_model = AiModel::Test;
     $settings->save();
 
-    $newThread = app(CreateThread::class)(AiApplication::PersonalAssistant, $assistant);
+    $newThread = app(CreateThread::class)(AiApplication::Test, $assistant);
 
     expect($newThread->getKey())
         ->not->toBe($thread->getKey());
@@ -189,7 +189,7 @@ it('does not match existing saved threads (with a name)', function () {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -205,7 +205,7 @@ it('does not match existing saved threads (with a name)', function () {
     $settings->default_model = AiModel::Test;
     $settings->save();
 
-    $newThread = app(CreateThread::class)(AiApplication::PersonalAssistant, $assistant);
+    $newThread = app(CreateThread::class)(AiApplication::Test, $assistant);
 
     expect($newThread->getKey())
         ->not->toBe($thread->getKey());
@@ -215,7 +215,7 @@ it('uses the default assistant if none is provided', function () {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -224,7 +224,7 @@ it('uses the default assistant if none is provided', function () {
     $settings->default_model = AiModel::Test;
     $settings->save();
 
-    $thread = app(CreateThread::class)(AiApplication::PersonalAssistant);
+    $thread = app(CreateThread::class)(AiApplication::Test);
 
     expect($thread)
         ->assistant->getKey()->toBe($assistant->getKey())
@@ -252,7 +252,7 @@ it('does not match a default assistant if one belongs to a different application
     $settings->default_model = AiModel::Test;
     $settings->save();
 
-    $newThread = app(CreateThread::class)(AiApplication::PersonalAssistant);
+    $newThread = app(CreateThread::class)(AiApplication::Test);
 
     expect($newThread->getKey())
         ->not->toBe($thread->getKey());
@@ -262,7 +262,7 @@ it('does not match an assistant if it is not marked as default', function () {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => false,
         'model' => AiModel::Test,
     ]);
@@ -278,7 +278,7 @@ it('does not match an assistant if it is not marked as default', function () {
     $settings->default_model = AiModel::Test;
     $settings->save();
 
-    $newThread = app(CreateThread::class)(AiApplication::PersonalAssistant);
+    $newThread = app(CreateThread::class)(AiApplication::Test);
 
     expect($newThread->getKey())
         ->not->toBe($thread->getKey());
@@ -294,20 +294,16 @@ it('creates a new assistant if no default assistant exists', function () {
             ->shouldReceive('createAssistant', 'createThread')->once(),
     );
 
-    $settings = app(AiSettings::class);
-    $settings->default_model = AiModel::Test;
-    $settings->save();
-
-    $thread = app(CreateThread::class)(AiApplication::PersonalAssistant);
+    $thread = app(CreateThread::class)(AiApplication::Test);
 
     $tenant = Tenant::current();
 
     expect($thread->assistant)
         ->name->toBe("{$tenant->name} AI Assistant")
         ->description->toBe("An AI Assistant for {$tenant->name}")
-        ->instructions->toBe($settings->prompt_system_context)
-        ->application->toBe(AiApplication::PersonalAssistant)
-        ->model->toBe($settings->getDefaultModel())
+        ->instructions->toBe(app(AiSettings::class)->prompt_system_context)
+        ->application->toBe(AiApplication::Test)
+        ->model->toBe(AiModel::Test)
         ->is_default->toBeTrue()
         ->wasRecentlyCreated->toBeTrue();
 });

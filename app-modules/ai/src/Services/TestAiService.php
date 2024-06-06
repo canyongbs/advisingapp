@@ -39,16 +39,29 @@ namespace AdvisingApp\Ai\Services;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 
 class TestAiService implements Contracts\AiService
 {
+    use HasAiServiceHelpers;
+
     public function createAssistant(AiAssistant $assistant): void {}
 
     public function updateAssistant(AiAssistant $assistant): void {}
 
+    public function isAssistantExisting(AiAssistant $assistant): bool
+    {
+        return true;
+    }
+
     public function createThread(AiThread $thread): void {}
 
     public function deleteThread(AiThread $thread): void {}
+
+    public function isThreadExisting(AiThread $thread): bool
+    {
+        return true;
+    }
 
     public function sendMessage(AiMessage $message): AiMessage
     {

@@ -39,15 +39,15 @@ namespace AdvisingApp\Ai\Jobs;
 use Carbon\CarbonInterface;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
+use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Spatie\Multitenancy\Jobs\TenantAware;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
 
-class ReInitializeAiAssistant implements ShouldQueue, TenantAware
+class ReInitializeAiAssistantThreads implements ShouldQueue, TenantAware
 {
     use Batchable;
     use Dispatchable;
@@ -70,16 +70,6 @@ class ReInitializeAiAssistant implements ShouldQueue, TenantAware
     ) {}
 
     /**
-     * Get the middleware the job should pass through.
-     *
-     * @return array<int, object>
-     */
-    public function middleware(): array
-    {
-        return [(new WithoutOverlapping("reinitialise-{$this->assistant->model->value}"))->releaseAfter(10)];
-    }
-
-    /**
      * Determine the time at which the job should timeout.
      */
     public function retryUntil(): CarbonInterface
@@ -92,6 +82,11 @@ class ReInitializeAiAssistant implements ShouldQueue, TenantAware
      */
     public function handle(): void
     {
-        $this->assistant->model->getService()->ensureAssistantExists($this->assistant);
+        $this->assistant
+            ->threads()
+            ->latest()
+            ->eachById(function (AiThread $thread) {
+                $this->batch()->add(app(ReInitializeAiThread::class, ['thread' => $thread]));
+            }, 250);
     }
 }

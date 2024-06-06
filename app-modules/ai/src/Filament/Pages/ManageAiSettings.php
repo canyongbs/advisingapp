@@ -43,17 +43,16 @@ use Filament\Pages\SettingsPage;
 use AdvisingApp\Ai\Enums\AiModel;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Bus;
 use Filament\Support\Enums\MaxWidth;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Forms\Components\Section;
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Settings\AiSettings;
 use Filament\Forms\Components\TextInput;
-use AdvisingApp\Ai\Actions\ResetAiServiceIds;
-use AdvisingApp\Ai\Jobs\ReInitializeAiService;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Clusters\ArtificialIntelligence;
+use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
+use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
 
 /**
@@ -126,7 +125,7 @@ class ManageAiSettings extends SettingsPage
             ->requiresConfirmation()
             ->modalHeading('Sync all chats to this new service?')
             ->modalDescription('If you are moving to a new account, you will need to sync all the data to the new service to minimize disruption. Advising App can do this for you, but if you just want to save the settings and do it yourself, you can choose to do so.')
-            ->modalWidth(MaxWidth::TwoExtraLarge)
+            ->modalWidth(MaxWidth::ThreeExtraLarge)
             ->modalSubmitActionLabel('Save and sync all chats')
             ->modalHidden(function () {
                 $newModelValue = $this->form->getRawState()['defaultAssistant']['model'] ?? null;
@@ -146,7 +145,7 @@ class ManageAiSettings extends SettingsPage
                     ->action(fn () => $this->save())
                     ->cancelParentActions(),
             ])
-            ->action(function (ResetAiServiceIds $resetAiServiceIds) {
+            ->action(function (ResetAiServiceIdsForAssistant $resetAiServiceIds, ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant) {
                 $newModelValue = $this->form->getRawState()['defaultAssistant']['model'] ?? null;
                 $newModel = filled($newModelValue) ? AiModel::parse($newModelValue) : null;
 
@@ -154,16 +153,14 @@ class ManageAiSettings extends SettingsPage
 
                 if (! $modelDeploymentIsShared) {
                     DB::transaction(function () use ($resetAiServiceIds) {
-                        $resetAiServiceIds($this->defaultAssistant?->model);
+                        $resetAiServiceIds($this->defaultAssistant);
                     });
                 }
 
                 $this->save();
 
                 if (! $modelDeploymentIsShared) {
-                    Bus::batch([
-                        app(ReInitializeAiService::class, ['model' => $newModel->value]),
-                    ])->dispatch();
+                    $reInitializeAiServiceAssistant($this->defaultAssistant);
                 }
             });
     }

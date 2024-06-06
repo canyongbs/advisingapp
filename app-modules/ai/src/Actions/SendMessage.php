@@ -61,7 +61,11 @@ class SendMessage
         $message->thread()->associate($thread);
         $message->user()->associate(auth()->user());
 
-        $response = $thread->assistant->model->getService()->sendMessage($message);
+        $aiService = $thread->assistant->model->getService();
+
+        $aiService->ensureAssistantAndThreadExists($thread);
+
+        $response = $aiService->sendMessage($message);
         $response->thread()->associate($thread);
         $response->save();
 

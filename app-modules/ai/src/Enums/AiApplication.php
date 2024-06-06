@@ -44,11 +44,14 @@ enum AiApplication: string implements HasLabel
 
     case ReportAssistant = 'report_assistant';
 
+    case Test = 'test';
+
     public function getLabel(): string
     {
         return match ($this) {
             self::PersonalAssistant => 'Personal Assistant',
             self::ReportAssistant => 'Report Assistant',
+            self::Test => 'Test',
         };
     }
 
@@ -68,6 +71,9 @@ enum AiApplication: string implements HasLabel
                 self::ReportAssistant => [
                     AiModel::OpenAiGpt4,
                 ],
+                self::Test => [
+                    AiModel::OpenAiGptTest,
+                ],
             },
             ...(app()->hasDebugModeEnabled() ? [AiModel::Test] : []),
         ];
@@ -78,6 +84,7 @@ enum AiApplication: string implements HasLabel
         return match ($this) {
             self::PersonalAssistant => AiModel::OpenAiGpt4o,
             self::ReportAssistant => AiModel::OpenAiGpt4,
+            self::Test => AiModel::Test,
         };
     }
 
