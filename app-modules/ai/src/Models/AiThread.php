@@ -36,9 +36,12 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\BaseModel;
+use App\Settings\DisplaySettings;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -92,5 +95,22 @@ class AiThread extends BaseModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    protected function lastEngagedAt(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $date = $this->messages()->latest()->where('user_id', '!=', null)->first();
+
+                if ($date) {
+                    $timezone = app(DisplaySettings::class)->getTimezone();
+
+                    return Carbon::parse($date->created_at)->setTimezone($timezone);
+                }
+
+                return null;
+            }
+        );
     }
 }

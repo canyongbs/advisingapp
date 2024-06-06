@@ -89,6 +89,19 @@
                         @foreach ($this->threadsWithoutAFolder as $threadItem)
                             <li
                                 id="chat-{{ $threadItem->id }}"
+                                x-data="{ 
+                                    updateTitle(time, threadItemId) {
+                                        const formattedDate = new Date(time).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                                        document.getElementById('chat-' + threadItemId).title = 'Last Engaged: ' + formattedDate;
+                                    },
+                                    listenForEvent(threadId) {
+                                        window.addEventListener(`message-sent-${threadId}`, (event) => {
+                                            this.updateTitle(event.detail.time, event.detail.threadItemId);
+                                        });
+                                    }
+                                }"
+                                x-init="listenForEvent('{{ $threadItem->id }}')"
+                                title="Last Engaged: {{$threadItem->last_engaged_at->format('F d, Y')}}"
                                 wire:key="chat-{{ $threadItem->id }}"
                                 @class([
                                     'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
@@ -214,6 +227,19 @@
                                 @foreach ($folder->threads as $threadItem)
                                     <li
                                         id="chat-{{ $threadItem->id }}"
+                                        x-data="{ 
+                                            updateTitle(time, threadItemId) {
+                                                const formattedDate = new Date(time).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                                                document.getElementById('chat-' + threadItemId).title = 'Last Engaged: ' + formattedDate;
+                                            },
+                                            listenForFolderChatEvent(threadId) {
+                                                window.addEventListener(`message-sent-${threadId}`, (event) => {
+                                                    this.updateTitle(event.detail.time, event.detail.threadItemId);
+                                                });
+                                            }
+                                        }"
+                                        x-init="listenForFolderChatEvent('{{ $threadItem->id }}')"
+                                        title="Last Engaged: {{$threadItem->last_engaged_at->format('F d, Y')}}"
                                         wire:key="chat-{{ $threadItem->id }}"
                                         x-show="expanded('{{ $folder->id }}')"
                                         @class([
@@ -291,6 +317,7 @@
                     sendMessageUrl: @js(route('ai.threads.messages.send', ['thread' => $this->thread])),
                     showThreadUrl: @js(route('ai.threads.show', ['thread' => $this->thread])),
                     userId: @js(auth()->user()->id),
+                    threadId : @js($this->thread->id)
                 })"
                 wire:key="thread{{ $this->thread->id }}"
             >
@@ -431,65 +458,56 @@
                     </div>
                 </div>
 
-                @if (!$this->thread->assistant->archived_at)
-                    <form x-on:submit.prevent="sendMessage">
-                        <div
-                            class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
-                            <div class="bg-white dark:bg-gray-800">
-                                <label
-                                    class="sr-only"
-                                    for="message_input"
-                                >Type here</label>
-                                <textarea
-                                    class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
-                                    id="message_input"
-                                    x-ref="messageInput"
-                                    x-model="message"
-                                    x-on:set-chat-message.window="message = $event.detail.content"
-                                    x-on:input="render()"
-                                    x-intersect.once="render()"
-                                    x-on:resize.window="render()"
-                                    x-bind:disabled="isSendingMessage"
-                                    placeholder="Type here..."
-                                    required
-                                    maxlength="25000"
-                                ></textarea>
-                            </div>
-                            <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
-                                <div class="flex w-full items-center gap-3">
-                                    <x-filament::button type="submit">
-                                        Send
-                                    </x-filament::button>
-
-                                    {{ $this->insertFromPromptLibraryAction }}
-
-                                    <div
-                                        class="py-2"
-                                        x-show="isSendingMessage"
-                                    >
-                                        <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
-                                    </div>
-                                </div>
-
-                                @if (blank($this->thread->name))
-                                    <div class="flex pl-0 sm:pl-2">
-                                        {{ $this->saveThreadAction }}
-                                    </div>
-                                @else
-                                    <div class="flex gap-3">
-                                        {{ ($this->cloneThreadAction)(['thread' => $this->thread->id]) }}
-                                        {{ ($this->emailThreadAction)(['thread' => $this->thread->id]) }}
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    </form>
-                @else
+                <form x-on:submit.prevent="sendMessage">
                     <div
-                        class="w-full rounded-xl border border-gray-950/5 bg-gray-50 p-4 text-sm shadow-sm dark:border-white/10 dark:bg-gray-900">
-                        This assistant has been archived by an administrator and can no longer be contacted.
+                        class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
+                        <div class="bg-white dark:bg-gray-800">
+                            <label
+                                class="sr-only"
+                                for="message_input"
+                            >Type here</label>
+                            <textarea
+                                class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                                id="message_input"
+                                x-ref="messageInput"
+                                x-model="message"
+                                x-on:set-chat-message.window="message = $event.detail.content"
+                                x-on:input="render()"
+                                x-intersect.once="render()"
+                                x-on:resize.window="render()"
+                                x-on:keydown.enter="$event.shiftKey || $event.preventDefault() || sendMessage()"
+                                x-bind:disabled="isSendingMessage"
+                                placeholder="Type here..."
+                                required
+                                maxlength="25000"
+                            ></textarea>
+                        </div>
+                        <div class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
+                            <div class="w-full flex flex-col gap-3 sm:flex-row sm:w-auto sm:items-center">
+                                <x-filament::button type="submit" class="w-full sm:w-auto">
+                                    Send
+                                </x-filament::button>
+                        
+                                {{ $this->insertFromPromptLibraryAction }}
+                        
+                                <div class="py-2 flex justify-center w-full sm:w-auto" x-show="isSendingMessage">
+                                    <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
+                                </div>
+                            </div>
+                        
+                            @if (blank($this->thread->name))
+                                <div class="flex w-full justify-center pt-3 sm:pl-2 sm:pt-0 sm:w-auto">
+                                    {{ $this->saveThreadAction }}
+                                </div>
+                            @else
+                                <div class="flex w-full justify-center gap-1.5 pt-3 sm:w-auto sm:pt-0">
+                                    {{ ($this->cloneThreadAction)(['thread' => $this->thread->id]) }}
+                                    {{ ($this->emailThreadAction)(['thread' => $this->thread->id]) }}
+                                </div>
+                            @endif
+                        </div>                        
                     </div>
-                @endif
+                </form>
             </div>
 
             <div class="col-span-full hidden md:block">
