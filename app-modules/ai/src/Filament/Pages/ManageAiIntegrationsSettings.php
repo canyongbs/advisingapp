@@ -46,7 +46,7 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\GlobalSettings;
-use AdvisingApp\Ai\Jobs\ReInitializeAiService;
+use AdvisingApp\Ai\Jobs\ReInitializeAiServiceModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
 
@@ -179,7 +179,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                 $this->save();
 
                 foreach ($changedModels as $changedModel) {
-                    ReInitializeAiService::dispatchForModel($changedModel);
+                    dispatch(app(ReInitializeAiServiceModel::class, ['model' => $changedModel->value]));
                 }
             });
     }

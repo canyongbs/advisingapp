@@ -49,10 +49,10 @@ use Filament\Forms\Components\Section;
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Settings\AiSettings;
 use Filament\Forms\Components\TextInput;
-use AdvisingApp\Ai\Jobs\ReInitializeAiService;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Clusters\ArtificialIntelligence;
 use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
+use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
 
 /**
@@ -145,7 +145,7 @@ class ManageAiSettings extends SettingsPage
                     ->action(fn () => $this->save())
                     ->cancelParentActions(),
             ])
-            ->action(function (ResetAiServiceIdsForAssistant $resetAiServiceIds) {
+            ->action(function (ResetAiServiceIdsForAssistant $resetAiServiceIds, ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant) {
                 $newModelValue = $this->form->getRawState()['defaultAssistant']['model'] ?? null;
                 $newModel = filled($newModelValue) ? AiModel::parse($newModelValue) : null;
 
@@ -160,7 +160,7 @@ class ManageAiSettings extends SettingsPage
                 $this->save();
 
                 if (! $modelDeploymentIsShared) {
-                    ReInitializeAiService::dispatchForAssistant($this->defaultAssistant);
+                    $reInitializeAiServiceAssistant($this->defaultAssistant);
                 }
             });
     }

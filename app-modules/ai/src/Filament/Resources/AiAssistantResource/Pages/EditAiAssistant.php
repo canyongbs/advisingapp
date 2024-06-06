@@ -45,8 +45,8 @@ use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\Ai\Jobs\ReInitializeAiService;
 use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
+use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
 
@@ -80,21 +80,23 @@ class EditAiAssistant extends EditRecord
                     ->action(fn () => $this->save())
                     ->cancelParentActions(),
             ])
-            ->action(function (ResetAiServiceIdsForAssistant $resetAiServiceIds) {
+            ->action(function (ResetAiServiceIdsForAssistant $resetAiServiceIds, ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant) {
                 $newModel = AiModel::parse($this->form->getState()['model']);
 
                 $modelDeploymentIsShared = $this->getRecord()->model->isSharedDeployment($newModel);
 
+                $assistant = $this->getRecord();
+
                 if (! $modelDeploymentIsShared) {
-                    DB::transaction(function () use ($resetAiServiceIds) {
-                        $resetAiServiceIds($this->getRecord());
+                    DB::transaction(function () use ($assistant, $resetAiServiceIds) {
+                        $resetAiServiceIds($assistant);
                     });
                 }
 
                 $this->save();
 
                 if (! $modelDeploymentIsShared) {
-                    ReInitializeAiService::dispatchForAssistant($this->getRecord());
+                    $reInitializeAiServiceAssistant($assistant);
                 }
             });
     }
