@@ -62,7 +62,7 @@ it('retries sending a message to a thread', function () {
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
         ]), 'assistant')
@@ -91,7 +91,7 @@ it('returns a message if the assistant fails', function () {
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
         ]), 'assistant')
@@ -112,7 +112,7 @@ it('prevents users who do not own the thread from retrying sending messages to i
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
         ]), 'assistant')

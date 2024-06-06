@@ -38,8 +38,6 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages;
 
 use Throwable;
 use Filament\Forms\Form;
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Enums\AiApplication;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
@@ -53,14 +51,6 @@ class CreateAiAssistant extends CreateRecord
     public function form(Form $form): Form
     {
         return resolve(AiAssistantForm::class)->form($form);
-    }
-
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        $data['application'] = AiApplication::PersonalAssistant;
-        $data['model'] ??= AiModel::OpenAiGpt35;
-
-        return $data;
     }
 
     protected function handleRecordCreation(array $data): Model

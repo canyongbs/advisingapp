@@ -69,7 +69,7 @@ class ListReports extends ListRecords
                     ->label('Owner')
                     ->sortable()
                     ->hidden(function (Table $table) {
-                        return $table->getFilter('my_reports')->getState()['isActive'];
+                        return $table->getFilter('my_reports')->getState()['isActive'] ?? false;
                     }),
             ])
             ->actions([

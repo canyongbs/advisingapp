@@ -38,13 +38,26 @@ namespace AdvisingApp\Ai\Filament\Pages;
 
 use App\Models\User;
 use Filament\Forms\Form;
+use Filament\Actions\Action;
 use Filament\Pages\SettingsPage;
+use AdvisingApp\Ai\Enums\AiModel;
+use Livewire\Attributes\Computed;
+use Filament\Support\Enums\MaxWidth;
+use AdvisingApp\Ai\Models\AiAssistant;
+use Filament\Forms\Components\Section;
+use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Settings\AiSettings;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Clusters\ArtificialIntelligence;
+use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
+use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
 
+/**
+ * @property-read ?AiAssistant $defaultAssistant
+
+ */
 class ManageAiSettings extends SettingsPage
 {
     protected static string $settings = AiSettings::class;
@@ -67,16 +80,26 @@ class ManageAiSettings extends SettingsPage
         return $user->can(['assistant.access_ai_settings']);
     }
 
+    #[Computed]
+    public function defaultAssistant(): ?AiAssistant
+    {
+        return AiAssistant::query()
+            ->where('application', AiApplication::PersonalAssistant)
+            ->where('is_default', true)
+            ->first();
+    }
+
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Textarea::make('prompt_system_context')
-                    ->label('Institutional Knowledge')
-                    ->required()
-                    ->string()
-                    ->rows(12)
-                    ->columnSpan('full'),
+                resolve(AiAssistantForm::class)->form(
+                    Section::make('Default assistant')
+                        ->statePath('defaultAssistant')
+                        ->columns(2)
+                        ->visible($this->defaultAssistant !== null)
+                        ->model($this->defaultAssistant),
+                ),
                 TextInput::make('max_tokens')
                     ->label('Max Tokens')
                     ->required()
@@ -92,5 +115,72 @@ class ManageAiSettings extends SettingsPage
                     ->maxValue(2.0)
                     ->columnSpan('1/2'),
             ]);
+    }
+
+    public function getSaveFormAction(): Action
+    {
+        return parent::getSaveFormAction()
+            ->submit(null)
+            ->requiresConfirmation()
+            ->modalHeading('Sync all chats to this new service?')
+            ->modalDescription('If you are moving to a new account, you will need to sync all the data to the new service to minimize disruption. Advising App can do this for you, but if you just want to save the settings and do it yourself, you can choose to do so.')
+            ->modalWidth(MaxWidth::ThreeExtraLarge)
+            ->modalSubmitActionLabel('Save and sync all chats')
+            ->modalHidden(function () {
+                $newModelValue = $this->form->getRawState()['defaultAssistant']['model'] ?? null;
+
+                if (blank($newModelValue)) {
+                    return true;
+                }
+
+                $newModel = AiModel::parse($newModelValue);
+
+                return $this->defaultAssistant->model->isSharedDeployment($newModel);
+            })
+            ->extraModalFooterActions([
+                Action::make('justSave')
+                    ->label('Just save the settings')
+                    ->color('gray')
+                    ->action(fn () => $this->save())
+                    ->cancelParentActions(),
+            ])
+            ->action(function (ResetAiServiceIdsForAssistant $resetAiServiceIds, ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant) {
+                $newModelValue = $this->form->getRawState()['defaultAssistant']['model'] ?? null;
+                $newModel = filled($newModelValue) ? AiModel::parse($newModelValue) : null;
+
+                $modelDeploymentIsShared = $newModel ? $this->defaultAssistant->model->isSharedDeployment($newModel) : true;
+
+                if (! $modelDeploymentIsShared) {
+                    $resetAiServiceIds($this->defaultAssistant);
+
+                    $state = $this->form->getRawState();
+                    $state['defaultAssistant']['assistant_id'] = null;
+                    $this->form->fill($state, false, false);
+                }
+
+                $this->save();
+
+                if (! $modelDeploymentIsShared) {
+                    $reInitializeAiServiceAssistant($this->defaultAssistant);
+                }
+            });
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $data['defaultAssistant'] = $this->defaultAssistant?->attributesToArray();
+
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (array_key_exists('defaultAssistant', $data)) {
+            $this->defaultAssistant->update($data['defaultAssistant']);
+
+            unset($data['defaultAssistant']);
+        }
+
+        return parent::mutateFormDataBeforeSave($data);
     }
 }

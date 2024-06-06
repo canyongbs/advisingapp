@@ -34,32 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Actions;
 
-use OpenAI;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Illuminate\Support\Facades\Bus;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Jobs\ReInitializeAiAssistant;
+use AdvisingApp\Ai\Jobs\ReInitializeAiAssistantThreads;
 
-class OpenAiGpt4Service extends BaseOpenAiService
+class ReInitializeAiServiceAssistant
 {
-    public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_4_api_key ?? config('integration-open-ai.gpt_4_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_4_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
-    }
-
-    public function getModel(): string
+    public function __invoke(AiAssistant $assistant): void
     {
-        return $this->settings->open_ai_gpt_4_model ?? config('integration-open-ai.gpt_4_model');
-    }
-
-    public function getDeployment(): string
-    {
-        return $this->settings->open_ai_gpt_4_base_uri ?? config('integration-open-ai.gpt_4_base_uri');
+        Bus::chain([
+            app(ReInitializeAiAssistant::class, ['assistant' => $assistant]),
+            Bus::batch([
+                app(ReInitializeAiAssistantThreads::class, ['assistant' => $assistant]),
+            ])
+                ->name("Re-initialize AI assistant threads for assistant: {$assistant->id}")
+                ->allowFailures(),
+        ])->dispatch();
     }
 }

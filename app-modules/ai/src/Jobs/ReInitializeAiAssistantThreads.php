@@ -34,32 +34,61 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Jobs;
 
-use OpenAI;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Carbon\CarbonInterface;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiAssistant;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Spatie\Multitenancy\Jobs\TenantAware;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 
-class OpenAiGpt4Service extends BaseOpenAiService
+class ReInitializeAiAssistantThreads implements ShouldQueue, TenantAware
 {
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    /**
+     * Delete the job if its models no longer exist.
+     *
+     * @var bool
+     */
+    public $deleteWhenMissingModels = true;
+
+    public $maxExceptions = 3;
+
+    /**
+     * Create a new job instance.
+     */
     public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_4_api_key ?? config('integration-open-ai.gpt_4_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_4_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
+        protected AiAssistant $assistant,
+    ) {}
+
+    /**
+     * Determine the time at which the job should timeout.
+     */
+    public function retryUntil(): CarbonInterface
+    {
+        return now()->addDay();
     }
 
-    public function getModel(): string
+    /**
+     * Execute the job.
+     */
+    public function handle(): void
     {
-        return $this->settings->open_ai_gpt_4_model ?? config('integration-open-ai.gpt_4_model');
-    }
-
-    public function getDeployment(): string
-    {
-        return $this->settings->open_ai_gpt_4_base_uri ?? config('integration-open-ai.gpt_4_base_uri');
+        $this->assistant
+            ->threads()
+            ->latest()
+            ->eachById(function (AiThread $thread) {
+                $this->batch()->add(app(ReInitializeAiThread::class, ['thread' => $thread]));
+            }, 250);
     }
 }
