@@ -47,7 +47,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
 
-class ReInitializeAiServiceModel implements ShouldQueue, TenantAware
+class ReInitializeAiModel implements ShouldQueue, TenantAware
 {
     use Batchable;
     use Dispatchable;
