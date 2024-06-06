@@ -34,13 +34,12 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
 use Database\Migrations\Concerns\CanModifyPermissions;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     use CanModifyPermissions;
 
     private array $permissions = [
