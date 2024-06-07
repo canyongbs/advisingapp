@@ -97,7 +97,7 @@ class EditProfile extends Page
         $retentionLicense = $user->hasLicense(LicenseType::RetentionCrm);
         $recruitmentLicense = $user->hasLicense(LicenseType::RecruitmentCrm);
         $crmSetting = ($retentionLicense || $recruitmentLicense) ? true : false;
-        
+
         $connectedAccounts = collect([
             Grid::make()
                 ->schema([
@@ -152,7 +152,7 @@ class EditProfile extends Page
         return $form
             ->schema([
                 Section::make('Public Profile')
-                    ->aside()                    
+                    ->aside()
                     ->visible($crmSetting)
                     ->schema([
                         Toggle::make('has_enabled_public_profile')
