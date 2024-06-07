@@ -89,19 +89,19 @@
                         @foreach ($this->threadsWithoutAFolder as $threadItem)
                             <li
                                 id="chat-{{ $threadItem->id }}"
-                                x-data="{ 
+                                title="Last Engaged: {{ $threadItem?->last_engaged_at?->format('F d, Y') }}"
+                                x-data="{
                                     updateTitle(time, threadItemId) {
-                                        const formattedDate = new Date(time).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                                        document.getElementById('chat-' + threadItemId).title = 'Last Engaged: ' + formattedDate;
-                                    },
-                                    listenForEvent(threadId) {
-                                        window.addEventListener(`message-sent-${threadId}`, (event) => {
-                                            this.updateTitle(event.detail.time, event.detail.threadItemId);
-                                        });
-                                    }
+                                            const formattedDate = new Date(time).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                                            document.getElementById('chat-' + threadItemId).title = 'Last Engaged: ' + formattedDate;
+                                        },
+                                        listenForEvent(threadId) {
+                                            window.addEventListener(`message-sent-${threadId}`, (event) => {
+                                                this.updateTitle(event.detail.time, event.detail.threadItemId);
+                                            });
+                                        }
                                 }"
                                 x-init="listenForEvent('{{ $threadItem->id }}')"
-                                title="Last Engaged: {{$threadItem?->last_engaged_at?->format('F d, Y')}}"
                                 wire:key="chat-{{ $threadItem->id }}"
                                 @class([
                                     'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
@@ -227,19 +227,19 @@
                                 @foreach ($folder->threads as $threadItem)
                                     <li
                                         id="chat-{{ $threadItem->id }}"
-                                        x-data="{ 
+                                        title="Last Engaged: {{ $threadItem?->last_engaged_at?->format('F d, Y') }}"
+                                        x-data="{
                                             updateTitle(time, threadItemId) {
-                                                const formattedDate = new Date(time).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                                                document.getElementById('chat-' + threadItemId).title = 'Last Engaged: ' + formattedDate;
-                                            },
-                                            listenForFolderChatEvent(threadId) {
-                                                window.addEventListener(`message-sent-${threadId}`, (event) => {
-                                                    this.updateTitle(event.detail.time, event.detail.threadItemId);
-                                                });
-                                            }
+                                                    const formattedDate = new Date(time).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                                                    document.getElementById('chat-' + threadItemId).title = 'Last Engaged: ' + formattedDate;
+                                                },
+                                                listenForFolderChatEvent(threadId) {
+                                                    window.addEventListener(`message-sent-${threadId}`, (event) => {
+                                                        this.updateTitle(event.detail.time, event.detail.threadItemId);
+                                                    });
+                                                }
                                         }"
                                         x-init="listenForFolderChatEvent('{{ $threadItem->id }}')"
-                                        title="Last Engaged: {{$threadItem?->last_engaged_at?->format('F d, Y')}}"
                                         wire:key="chat-{{ $threadItem->id }}"
                                         x-show="expanded('{{ $folder->id }}')"
                                         @class([
@@ -317,7 +317,7 @@
                     sendMessageUrl: @js(route('ai.threads.messages.send', ['thread' => $this->thread])),
                     showThreadUrl: @js(route('ai.threads.show', ['thread' => $this->thread])),
                     userId: @js(auth()->user()->id),
-                    threadId : @js($this->thread->id)
+                    threadId: @js($this->thread->id)
                 })"
                 wire:key="thread{{ $this->thread->id }}"
             >
@@ -482,21 +482,28 @@
                                 maxlength="25000"
                             ></textarea>
                         </div>
-                        <div class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
-                            <div class="w-full flex flex-col gap-3 sm:flex-row sm:w-auto sm:items-center">
-                                <x-filament::button type="submit" class="w-full sm:w-auto">
+                        <div
+                            class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
+                            <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+                                <x-filament::button
+                                    class="w-full sm:w-auto"
+                                    type="submit"
+                                >
                                     Send
                                 </x-filament::button>
-                        
+
                                 {{ $this->insertFromPromptLibraryAction }}
-                        
-                                <div class="py-2 flex justify-center w-full sm:w-auto" x-show="isSendingMessage">
+
+                                <div
+                                    class="flex w-full justify-center py-2 sm:w-auto"
+                                    x-show="isSendingMessage"
+                                >
                                     <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
                                 </div>
                             </div>
-                        
+
                             @if (blank($this->thread->name))
-                                <div class="flex w-full justify-center pt-3 sm:pl-2 sm:pt-0 sm:w-auto">
+                                <div class="flex w-full justify-center pt-3 sm:w-auto sm:pl-2 sm:pt-0">
                                     {{ $this->saveThreadAction }}
                                 </div>
                             @else
@@ -505,7 +512,7 @@
                                     {{ ($this->emailThreadAction)(['thread' => $this->thread->id]) }}
                                 </div>
                             @endif
-                        </div>                        
+                        </div>
                     </div>
                 </form>
             </div>

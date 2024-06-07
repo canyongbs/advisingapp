@@ -32,7 +32,7 @@
 </COPYRIGHT>
 */
 document.addEventListener('alpine:init', () => {
-    Alpine.data('chat', ({ csrfToken, retryMessageUrl, sendMessageUrl, showThreadUrl, userId, threadId}) => ({
+    Alpine.data('chat', ({ csrfToken, retryMessageUrl, sendMessageUrl, showThreadUrl, userId, threadId }) => ({
         isError: false,
         isLoading: true,
         isSendingMessage: false,
@@ -80,7 +80,7 @@ document.addEventListener('alpine:init', () => {
             this.isSendingMessage = true;
             this.error = null;
 
-            this.$dispatch(`message-sent-${threadId}`, { time: new Date().toISOString(), threadItemId : threadId });
+            this.$dispatch(`message-sent-${threadId}`, { time: new Date().toISOString(), threadItemId: threadId });
 
             this.latestMessage = this.message;
 
@@ -114,7 +114,6 @@ document.addEventListener('alpine:init', () => {
                     return;
                 }
 
-
                 this.messages.push({
                     content: response.content,
                 });
@@ -127,7 +126,7 @@ document.addEventListener('alpine:init', () => {
             this.isSendingMessage = true;
             this.error = null;
 
-            this.$dispatch(`message-sent-${threadId}`, { time: new Date().toISOString(), threadItemId : threadId });
+            this.$dispatch(`message-sent-${threadId}`, { time: new Date().toISOString(), threadItemId: threadId });
 
             this.$nextTick(async () => {
                 const retryMessageResponse = await fetch(retryMessageUrl, {
@@ -149,7 +148,6 @@ document.addEventListener('alpine:init', () => {
 
                     return;
                 }
-
 
                 this.messages.push({
                     content: response.content,
