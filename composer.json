@@ -76,6 +76,7 @@
         "laravel/ui": "^4.4",
         "lastdragon-ru/lara-asp-graphql": "^5.3",
         "league/flysystem-aws-s3-v3": "^3.24",
+        "league/html-to-markdown": "^5.1",
         "league/oauth2-client": "^2.7",
         "livewire/livewire": "^3.4",
         "maatwebsite/excel": "^3.1",
