@@ -430,6 +430,24 @@
                 <form x-on:submit.prevent="sendMessage">
                     <div
                         class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
+                        @if ($this->files)
+                            <div class="flex flex-row justify-start px-4 py-2">
+                                @foreach ($this->files as $key => $file)
+                                    <div class="mx-2 flex items-center">
+                                        <x-filament::badge>
+                                            {{ $file['name'] }}
+                                        </x-filament::badge>
+                                        <x-filament::icon-button
+                                            aria-label="Remove uploaded file {{ $file['name'] }}"
+                                            size="xs"
+                                            icon="heroicon-o-x-mark"
+                                            wire:click="removeUploadedFile({{ $key }})"
+                                        >
+                                            </x-filament::button>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
                         <div class="bg-white dark:bg-gray-800">
                             <label
                                 class="sr-only"
@@ -469,21 +487,6 @@
                                 >
                                     <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
                                 </div>
-
-                                @if ($this->files)
-                                    @foreach ($this->files as $key => $file)
-                                        <x-filament::badge>
-                                            {{ $file['name'] }}
-                                            <x-filament::icon-button
-                                                aria-label="Remove uploaded file {{ $file['name'] }}"
-                                                size="xs"
-                                                icon="heroicon-o-trash"
-                                                wire:click="removeUploadedFile({{ $key }})"
-                                            >
-                                                </x-filament::button>
-                                        </x-filament::badge>
-                                    @endforeach
-                                @endif
 
                             </div>
 

@@ -69,6 +69,7 @@ trait CanUploadFiles
                 FileUpload::make('attachment')
                     ->acceptedFileTypes(['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
                     ->storeFiles(false)
+                    ->helperText('Only .doc and .docx files are allowed. The maximum file size is 256KB.')
                     ->maxSize(256)
                     ->required(),
             ])
