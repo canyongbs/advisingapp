@@ -60,7 +60,7 @@ class SendMessageController
         } catch (AiThreadLockedException $exception) {
             return response()->json([
                 'isThreadLocked' => true,
-                'message' => 'The assistant is currently undergoing maintenance.',
+                'message' => $exception->getMessage(),
             ], 503);
         } catch (Throwable $exception) {
             report($exception);
