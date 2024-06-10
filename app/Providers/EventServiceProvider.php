@@ -36,9 +36,19 @@
 
 namespace App\Providers;
 
+use App\Listeners\SetSentryUser;
+use Illuminate\Auth\Events\Login;
+use App\Listeners\ClearSentryUser;
+use Illuminate\Auth\Events\Logout;
 use OwenIt\Auditing\Events\Auditing;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Authenticated;
 use AdvisingApp\Audit\Listeners\AuditingListener;
+use App\Multitenancy\Listeners\SetSentryTenantTag;
+use Illuminate\Console\Events\ScheduledTaskStarting;
+use App\Multitenancy\Listeners\RemoveSentryTenantTag;
+use Spatie\Multitenancy\Events\ForgotCurrentTenantEvent;
+use Spatie\Multitenancy\Events\MakingTenantCurrentEvent;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -53,9 +63,26 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        // TODO: Move this to the auditing Module somehow
         Auditing::class => [
             AuditingListener::class,
+        ],
+        MakingTenantCurrentEvent::class => [
+            SetSentryTenantTag::class,
+        ],
+        ForgotCurrentTenantEvent::class => [
+            RemoveSentryTenantTag::class,
+        ],
+        Login::class => [
+            SetSentryUser::class,
+        ],
+        Authenticated::class => [
+            SetSentryUser::class,
+        ],
+        ScheduledTaskStarting::class => [
+            ClearSentryUser::class,
+        ],
+        Logout::class => [
+            ClearSentryUser::class,
         ],
     ];
 

@@ -198,7 +198,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function getBody(): string
     {
         return app(GenerateEmailMarkdownContent::class)(
-            [$this->body],
+            $this->body,
             $this->getMergeData(),
         );
     }

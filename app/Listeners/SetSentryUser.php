@@ -34,25 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Actions;
+namespace App\Listeners;
 
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
+use Sentry\State\Scope;
+use App\Models\Authenticatable;
+use Illuminate\Auth\Events\Login;
 
-class CreateOnDemandEngagement
+use function Sentry\configureScope;
+
+use Illuminate\Auth\Events\Authenticated;
+
+class SetSentryUser
 {
-    public function __invoke(Educatable $educatable, array $data): void
+    public function handle(Login|Authenticated $event): void
     {
-        $engagement = $educatable->engagements()->create([
-            'subject' => $data['subject'] ?? null,
-            'body' => $data['body'] ?? null,
-            'scheduled' => false,
-        ]);
+        /** @var Authenticatable $user */
+        $user = $event->user;
 
-        $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
-
-        $createEngagementDeliverable($engagement, $data['delivery_method']);
-
-        $engagement->deliverable->driver()->deliver();
+        if (filled($user)) {
+            configureScope(function (Scope $scope) use ($user): void {
+                $scope->setUser([
+                    'id' => $user->getKey(),
+                ]);
+            });
+        }
     }
 }
