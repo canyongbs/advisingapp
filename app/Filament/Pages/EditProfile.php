@@ -94,9 +94,9 @@ class EditProfile extends Page
     {
         /** @var User $user */
         $user = auth()->user();
-        $retentionLicense = $user->hasLicense(LicenseType::RetentionCrm);
-        $recruitmentLicense = $user->hasLicense(LicenseType::RecruitmentCrm);
-        $crmSetting = ($retentionLicense || $recruitmentLicense) ? true : false;
+        $retentionLicense = $user->hasAnyLicense(LicenseType::RetentionCrm);
+        $recruitmentLicense = $user->hasAnyLicense(LicenseType::RecruitmentCrm);
+        $hasCrmLicense = ($retentionLicense || $recruitmentLicense) ? true : false;
 
         $connectedAccounts = collect([
             Grid::make()
@@ -153,7 +153,7 @@ class EditProfile extends Page
             ->schema([
                 Section::make('Public Profile')
                     ->aside()
-                    ->visible($crmSetting)
+                    ->visible($hasCrmLicense)
                     ->schema([
                         Toggle::make('has_enabled_public_profile')
                             ->label('Enable public profile')
@@ -201,7 +201,7 @@ class EditProfile extends Page
                             ->hint(fn (Get $get): string => $get('is_bio_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
                         Checkbox::make('is_bio_visible_on_profile')
                             ->label('Show Bio on profile')
-                            ->visible($crmSetting)
+                            ->visible($hasCrmLicense)
                             ->live()
                             ->lockedWithoutAnyLicenses(user: auth()->user(), licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]),
                         TextInput::make('phone_number')
@@ -211,7 +211,7 @@ class EditProfile extends Page
                         Checkbox::make('is_phone_number_visible_on_profile')
                             ->label('Show phone number on profile')
                             ->live()
-                            ->visible($crmSetting)
+                            ->visible($hasCrmLicense)
                             ->lockedWithoutAnyLicenses(user: auth()->user(), licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]),
                         Select::make('pronouns_id')
                             ->relationship('pronouns', 'label')
@@ -219,7 +219,7 @@ class EditProfile extends Page
                         Checkbox::make('are_pronouns_visible_on_profile')
                             ->label('Show Pronouns on profile')
                             ->live()
-                            ->visible($crmSetting)
+                            ->visible($hasCrmLicense)
                             ->lockedWithoutAnyLicenses(user: auth()->user(), licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]),
                         Placeholder::make('teams')
                             ->label(str('Team')->plural($user->teams->count()))
@@ -250,7 +250,7 @@ class EditProfile extends Page
                         Checkbox::make('is_email_visible_on_profile')
                             ->label('Show Email on profile')
                             ->live()
-                            ->visible($crmSetting)
+                            ->visible($hasCrmLicense)
                             ->lockedWithoutAnyLicenses(user: auth()->user(), licenses: [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]),
                         $this->getPasswordFormComponent()
                             ->hidden($user->is_external),
@@ -279,7 +279,7 @@ class EditProfile extends Page
                     ->visible($connectedAccounts->count()),
                 Section::make('Working Hours')
                     ->aside()
-                    ->visible($crmSetting)
+                    ->visible($hasCrmLicense)
                     ->schema([
                         Toggle::make('working_hours_are_enabled')
                             ->label('Set Working Hours')
@@ -296,7 +296,7 @@ class EditProfile extends Page
                     ]),
                 Section::make('Office Hours')
                     ->aside()
-                    ->visible($crmSetting)
+                    ->visible($hasCrmLicense)
                     ->schema([
                         Toggle::make('office_hours_are_enabled')
                             ->label('Enable Office Hours')
