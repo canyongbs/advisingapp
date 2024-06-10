@@ -55,6 +55,12 @@ abstract class BaseOpenAiService implements AiService
 
     protected ClientContract $client;
 
+    abstract public function getApiKey(): string;
+
+    abstract public function getApiVersion(): string;
+
+    abstract public function getDeployment(): string;
+
     abstract public function getModel(): string;
 
     public function getClient(): ClientContract
@@ -71,7 +77,6 @@ abstract class BaseOpenAiService implements AiService
             'metadata' => [
                 'last_updated_at' => now(),
             ],
-            // TODO We'll need to retroactively update and add this tool on existing assistants
             'tools' => [
                 [
                     'type' => 'file_search',
@@ -145,11 +150,10 @@ abstract class BaseOpenAiService implements AiService
             $this->awaitThreadRunCompletion($response);
         }
 
-        ray('files', $files);
+        $createdFiles = [];
 
         if (method_exists($this, 'createFiles') && ! empty($files)) {
-            $unpersistedFiles = $this->createFiles($files);
-            ray('unpersistedFiles', $unpersistedFiles);
+            $createdFiles = $this->createFiles($message, $files);
         }
 
         $data = [
@@ -157,14 +161,17 @@ abstract class BaseOpenAiService implements AiService
             'content' => $message->content,
         ];
 
-        if (! empty($unpersistedFiles)) {
-            // TODO Add iterable method for more than one file
-            $data['attachments'] = [[
-                'file_id' => $unpersistedFiles[0]->file_id,
-                'tools' => [[
-                    'type' => 'file_search',
-                ]],
-            ]];
+        if (! empty($createdFiles)) {
+            $data['attachments'] = collect($createdFiles)->map(function ($createdFile) {
+                return [
+                    'file_id' => $createdFile->file_id,
+                    'tools' => [
+                        [
+                            'type' => 'file_search',
+                        ],
+                    ],
+                ];
+            })->toArray();
         }
 
         ray('data', $data);
@@ -179,9 +186,11 @@ abstract class BaseOpenAiService implements AiService
         $message->message_id = $response->id;
         $message->save();
 
-        foreach ($unpersistedFiles as $file) {
-            $file->message()->associate($message);
-            $file->save();
+        if (! empty($createdFiles)) {
+            foreach ($createdFiles as $file) {
+                $file->message()->associate($message);
+                $file->save();
+            }
         }
 
         $response = $this->client->threads()->runs()->create($message->thread->thread_id, [

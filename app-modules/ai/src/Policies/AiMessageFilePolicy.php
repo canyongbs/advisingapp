@@ -2,44 +2,21 @@
 
 namespace AdvisingApp\Ai\Policies;
 
-use AdvisingApp\Ai\Models\AiMessageFile;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
+use App\Concerns\PerformsLicenseChecks;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
 class AiMessageFilePolicy
 {
-    public function viewAny(Authenticatable $authenticatable): Response
-    {
-        //
-    }
+    use PerformsLicenseChecks;
 
-    public function view(Authenticatable $authenticatable, AiMessageFile $aiMessageFile): Response
+    public function before(Authenticatable $authenticatable): ?Response
     {
-        //
-    }
+        if (! is_null($response = $this->hasLicenses($authenticatable, LicenseType::ConversationalAi))) {
+            return $response;
+        }
 
-    public function create(Authenticatable $authenticatable): Response
-    {
-        //
-    }
-
-    public function update(Authenticatable $authenticatable, AiMessageFile $aiMessageFile): Response
-    {
-        //
-    }
-
-    public function delete(Authenticatable $authenticatable, AiMessageFile $aiMessageFile): Response
-    {
-        //
-    }
-
-    public function restore(Authenticatable $authenticatable, AiMessageFile $aiMessageFile): Response
-    {
-        //
-    }
-
-    public function forceDelete(Authenticatable $authenticatable, AiMessageFile $aiMessageFile): Response
-    {
-        //
+        return null;
     }
 }

@@ -76,14 +76,11 @@ trait CanUploadFiles
                 /** @var TemporaryUploadedFile $attachment */
                 $attachment = $data['attachment'];
 
-                // TODO Use DTO
                 $this->files[] = [
-                    'file' => $attachment->temporaryUrl(),
-                    'mime_type' => $attachment->getMimeType(),
+                    'temporaryUrl' => $attachment->temporaryUrl(),
+                    'mimeType' => $attachment->getMimeType(),
                     'name' => $attachment->getClientOriginalName(),
                 ];
-
-                ray('files', $this->files);
             });
     }
 }

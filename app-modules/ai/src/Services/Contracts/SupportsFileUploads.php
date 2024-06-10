@@ -36,12 +36,14 @@
 
 namespace AdvisingApp\Ai\Services\Contracts;
 
-// TODO Implement this for any service that actually has the capability to upload files.
+use Illuminate\Support\Collection;
+use AdvisingApp\Ai\Models\AiMessage;
+
 interface SupportsFileUploads
 {
     /**
      * This method accepts an array of files to be uploaded to the client
      * returning unpersisted `AiMessageFile` models.
      */
-    public function createFiles(array $files): array;
+    public function createFiles(AiMessage $message, array $files): Collection;
 }

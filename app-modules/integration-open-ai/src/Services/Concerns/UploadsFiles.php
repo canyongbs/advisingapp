@@ -38,8 +38,8 @@ namespace AdvisingApp\IntegrationOpenAi\Services\Concerns;
 
 use CURLFile;
 use Illuminate\Support\Collection;
+use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 
 trait UploadsFiles
 {
@@ -48,32 +48,33 @@ trait UploadsFiles
         return true;
     }
 
-    public function createFiles(array $files): Collection
+    public function createFiles(AiMessage $message, array $files): Collection
     {
-        return collect($files)->map(function ($file) {
+        return collect($files)->map(function ($file) use ($message) {
             $fileRecord = new AiMessageFile();
-            $fileRecord->temporary_url = $file['file'];
+            $fileRecord->temporary_url = $file['temporaryUrl'];
             $fileRecord->name = $file['name'];
-            $fileRecord->mime_type = $file['mime_type'];
+            $fileRecord->mime_type = $file['mimeType'];
 
-            $fileRecord->file_id = $this->uploadFileToClient($fileRecord);
+            $fileRecord->file_id = $this->uploadFileToClient($message, $fileRecord);
 
             return $fileRecord;
         });
     }
 
-    protected function uploadFileToClient(AiMessageFile $file): string
+    protected function uploadFileToClient(AiMessage $message, AiMessageFile $file): string
     {
-        $fileResource = fopen($file->temporary_url, 'r');
+        $service = $message->thread->assistant->model->getService();
+        ray('service', $service);
 
-        $settings = resolve(AiIntegrationsSettings::class);
-        // TODO Get correct settings based on the service being used.
-        $api_key = $settings->open_ai_gpt_4o_api_key;
-        $api_version = config('integration-open-ai.gpt_4o_api_version');
+        $apiKey = $service->getApiKey();
+        $apiVersion = $service->getApiVersion();
 
         $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, 'https://cgbs-ai.openai.azure.com/openai/files?api-version=' . $api_version);
+        ray('service deployment', $service->getDeployment());
+
+        curl_setopt($ch, CURLOPT_URL, $service->getDeployment() . '/files?api-version=' . $apiVersion);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
 
@@ -87,7 +88,7 @@ trait UploadsFiles
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
 
         $headers = [
-            'api-key: ' . $api_key,
+            'api-key: ' . $apiKey,
             'OpenAI-Beta: assistants=v2',
             'Accept: */*',
             'Content-Type: multipart/form-data',
@@ -104,9 +105,12 @@ trait UploadsFiles
         $response = json_decode($response, true);
         ray('response', $response);
 
-        // TODO Handle file upload errors
-        if (curl_errno($ch)) {
-            echo 'Error:' . curl_error($ch);
+        if (curl_errno($ch) || ! isset($response['id'])) {
+            if (! blank(curl_error($ch))) {
+                throw new FileUploadException(curl_error($ch));
+            }
+
+            throw new FileUploadException();
         }
 
         // TODO Handle file upload status if not processed

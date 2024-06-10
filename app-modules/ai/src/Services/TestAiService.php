@@ -88,4 +88,9 @@ class TestAiService implements Contracts\AiService
     {
         return null;
     }
+
+    public function supportsFileUploads(): bool
+    {
+        return false;
+    }
 }

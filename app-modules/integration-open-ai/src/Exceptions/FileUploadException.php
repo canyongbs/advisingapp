@@ -34,34 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\IntegrationOpenAi\Services\Concerns;
 
-use OpenAI;
+use Exception;
 
-class OpenAiGptTestService extends BaseOpenAiService
+class FileUploadException extends Exception
 {
-    public function __construct()
-    {
-        $this->client = new OpenAI\Testing\ClientFake();
-    }
-
-    public function getApiKey(): string
-    {
-        return 'test';
-    }
-
-    public function getApiVersion(): string
-    {
-        return '1.0.0';
-    }
-
-    public function getModel(): string
-    {
-        return 'test';
-    }
-
-    public function getDeployment(): string
-    {
-        return 'test';
-    }
+    protected string $message = 'Something went wrong while attempting to upload the file. Please try again.';
 }
