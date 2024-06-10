@@ -174,8 +174,10 @@ class AdminPanelProvider extends PanelProvider
                 FilamentFullCalendarPlugin::make(),
             ])
             ->userMenuItems([
-                'profile' => MenuItem::make()
-                    ->url(fn () => EditProfile::getUrl()),
+                'profile' => MenuItem::make(),
+                'profile_settings' => MenuItem::make()
+                    ->label('Profile Settings')
+                    ->url(fn () => EditProfile::getUrl())
             ])
             ->renderHook(
                 'panels::scripts.before',
