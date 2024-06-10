@@ -36,8 +36,11 @@
 
 namespace App\Providers;
 
+use App\Listeners\SetSentryUser;
+use Illuminate\Auth\Events\Login;
 use OwenIt\Auditing\Events\Auditing;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Authenticated;
 use AdvisingApp\Audit\Listeners\AuditingListener;
 use App\Multitenancy\Listeners\SetSentryTenantTag;
 use App\Multitenancy\Listeners\RemoveSentryTenantTag;
@@ -65,6 +68,12 @@ class EventServiceProvider extends ServiceProvider
         ],
         ForgotCurrentTenantEvent::class => [
             RemoveSentryTenantTag::class,
+        ],
+        Login::class => [
+            SetSentryUser::class,
+        ],
+        Authenticated::class => [
+            SetSentryUser::class,
         ],
     ];
 
