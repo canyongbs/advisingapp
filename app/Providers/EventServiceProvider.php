@@ -39,6 +39,8 @@ namespace App\Providers;
 use OwenIt\Auditing\Events\Auditing;
 use Illuminate\Auth\Events\Registered;
 use AdvisingApp\Audit\Listeners\AuditingListener;
+use App\Multitenancy\Listeners\SetSentryTenantTag;
+use Spatie\Multitenancy\Events\MakingTenantCurrentEvent;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -53,9 +55,11 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        // TODO: Move this to the auditing Module somehow
         Auditing::class => [
             AuditingListener::class,
+        ],
+        MakingTenantCurrentEvent::class => [
+            SetSentryTenantTag::class,
         ],
     ];
 
