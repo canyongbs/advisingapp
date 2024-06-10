@@ -37,14 +37,17 @@
 namespace AdvisingApp\Ai\Models;
 
 use App\Models\BaseModel;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class AiMessageFile extends BaseModel
+class AiMessageFile extends BaseModel implements HasMedia
 {
     use HasFactory;
     use SoftDeletes;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'file_id',
@@ -57,5 +60,11 @@ class AiMessageFile extends BaseModel
     public function message(): BelongsTo
     {
         return $this->belongsTo(AiMessage::class, 'message_id');
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('files')
+            ->singleFile();
     }
 }

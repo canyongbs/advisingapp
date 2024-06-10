@@ -58,6 +58,8 @@ trait UploadsFiles
 
             $fileRecord->file_id = $this->uploadFileToClient($message, $fileRecord);
 
+            $fileRecord->addMediaFromUrl($fileRecord->temporary_url)->toMediaCollection('files');
+
             return $fileRecord;
         });
     }

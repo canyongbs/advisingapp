@@ -324,7 +324,7 @@ abstract class BaseOpenAiService implements AiService
     {
         $runId = $threadRunResponse->id;
 
-        $timeout = 30;
+        $timeout = 60;
 
         while ($threadRunResponse->status !== 'completed') {
             if ($timeout <= 0) {
