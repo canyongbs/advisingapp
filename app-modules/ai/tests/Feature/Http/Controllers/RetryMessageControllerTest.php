@@ -46,6 +46,7 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Actions\RetryMessage;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 
 it('retries sending a message to a thread', function () {
     asSuperAdmin();
@@ -103,7 +104,39 @@ it('returns a message if the assistant fails', function () {
     ])
         ->assertServiceUnavailable()
         ->assertJson([
-            'message' => 'The assistant has failed. Please retry later.',
+            'message' => 'An error happened when sending your message.',
+        ]);
+});
+
+it('returns a message if the thread is locked', function () {
+    asSuperAdmin();
+
+    $exception = new AiThreadLockedException();
+
+    /** @phpstan-ignore-next-line */
+    $this->mock(
+        RetryMessage::class,
+        fn (MockInterface $mock) => $mock
+            ->shouldReceive('__invoke')->once()
+            ->andThrow($exception),
+    );
+
+    $thread = AiThread::factory()
+        ->for(AiAssistant::factory()->create([
+            'application' => AiApplication::Test,
+            'is_default' => true,
+            'model' => AiModel::Test,
+        ]), 'assistant')
+        ->for(auth()->user())
+        ->create();
+
+    post(route('ai.threads.messages.retry', ['thread' => $thread]), [
+        'content' => AiMessage::factory()->make()->content,
+    ])
+        ->assertServiceUnavailable()
+        ->assertJson([
+            'isThreadLocked' => true,
+            'message' => $exception->getMessage(),
         ]);
 });
 

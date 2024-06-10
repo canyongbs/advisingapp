@@ -34,45 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Actions;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Support\Arr;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
-
-class SendMessage
-{
-    public function __invoke(AiThread $thread, string $content): string
+return new class () extends Migration {
+    public function up(): void
     {
-        if ($thread->locked_at) {
-            throw new AiThreadLockedException();
-        }
-
-        $message = new AiMessage();
-        $message->content = $content;
-        $message->request = [
-            'headers' => Arr::only(
-                request()->headers->all(),
-                ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
-            ),
-            'ip' => request()->ip(),
-        ];
-        $message->thread()->associate($thread);
-        $message->user()->associate(auth()->user());
-
-        $aiService = $thread->assistant->model->getService();
-
-        $aiService->ensureAssistantAndThreadExists($thread);
-
-        $response = $aiService->sendMessage($message);
-        $response->thread()->associate($thread);
-        $response->save();
-
-        $thread->touch();
-
-        return (string) str($response->content)
-            ->markdown()
-            ->sanitizeHtml();
+        Schema::table('ai_threads', function (Blueprint $table) {
+            $table->dateTime('locked_at')->nullable();
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('ai_threads', function (Blueprint $table) {
+            $table->dropColumn('locked_at');
+        });
+    }
+};

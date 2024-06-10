@@ -343,14 +343,18 @@
                     <div
                         class="bg-danger-100 px-4 py-2 dark:bg-danger-900"
                         x-cloak
-                        x-show="isError"
+                        x-show="error"
                     >
-                        An error happened when sending your message,
+                        <span x-text="error"></span>
+
+                        <span x-show="! isRetryable">We will inform you once you can retry sending your message.</span>
+
                         <x-filament::link
                             x-on:click="retryMessage"
+                            x-show="isRetryable"
                             tag="button"
                             color="gray"
-                        >click here to retry.
+                        >Click here to retry.
                         </x-filament::link>
                     </div>
 

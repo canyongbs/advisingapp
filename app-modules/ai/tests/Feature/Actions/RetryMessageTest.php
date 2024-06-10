@@ -44,6 +44,7 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Actions\RetryMessage;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 
 it('retries a message', function () {
     asSuperAdmin();
@@ -228,3 +229,13 @@ it('does not match messages with different content', function () {
     expect(AiMessage::count())
         ->toBe(3);
 });
+
+it('throws an exception if the thread is locked', function () {
+    asSuperAdmin();
+
+    $thread = AiThread::factory()->make([
+        'locked_at' => now(),
+    ]);
+
+    app(RetryMessage::class)($thread, 'Hello, world!');
+})->throws(AiThreadLockedException::class);

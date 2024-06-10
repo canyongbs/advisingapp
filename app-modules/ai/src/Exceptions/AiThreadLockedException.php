@@ -34,45 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Actions;
+namespace AdvisingApp\Ai\Exceptions;
 
-use Illuminate\Support\Arr;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use Exception;
 
-class SendMessage
+class AiThreadLockedException extends Exception
 {
-    public function __invoke(AiThread $thread, string $content): string
+    public function __construct()
     {
-        if ($thread->locked_at) {
-            throw new AiThreadLockedException();
-        }
-
-        $message = new AiMessage();
-        $message->content = $content;
-        $message->request = [
-            'headers' => Arr::only(
-                request()->headers->all(),
-                ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
-            ),
-            'ip' => request()->ip(),
-        ];
-        $message->thread()->associate($thread);
-        $message->user()->associate(auth()->user());
-
-        $aiService = $thread->assistant->model->getService();
-
-        $aiService->ensureAssistantAndThreadExists($thread);
-
-        $response = $aiService->sendMessage($message);
-        $response->thread()->associate($thread);
-        $response->save();
-
-        $thread->touch();
-
-        return (string) str($response->content)
-            ->markdown()
-            ->sanitizeHtml();
+        parent::__construct('The assistant is currently undergoing maintenance.');
     }
 }
