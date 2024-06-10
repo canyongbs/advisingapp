@@ -325,7 +325,7 @@
                         @endif
                     </div>
 
-                    @if ((! $this->thread->assistant->is_default) && (! $this->thread->assistant->archived_at))
+                    @if (!$this->thread->assistant->is_default && !$this->thread->assistant->archived_at)
                         <x-filament::link
                             :color="$this->thread->assistant->isUpvoted() ? 'success' : 'gray'"
                             icon="heroicon-m-chevron-up"
@@ -403,9 +403,9 @@
                                                         messageCopied: false,
                                                         copyMessage: function() {
                                                             navigator.clipboard.writeText(message.content.replace(/(<([^>]+)>)/gi, ''))
-
+                                                    
                                                             this.messageCopied = true
-
+                                                    
                                                             setTimeout(() => { this.messageCopied = false }, 2000)
                                                         }
                                                     }"
@@ -431,7 +431,7 @@
                     </div>
                 </div>
 
-                @if (! $this->thread->assistant->archived_at)
+                @if (!$this->thread->assistant->archived_at)
                     <form x-on:submit.prevent="sendMessage">
                         <div
                             class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
@@ -486,7 +486,8 @@
                         </div>
                     </form>
                 @else
-                    <div class="w-full p-4 text-sm rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-900">
+                    <div
+                        class="w-full rounded-xl border border-gray-950/5 bg-gray-50 p-4 text-sm shadow-sm dark:border-white/10 dark:bg-gray-900">
                         This assistant has been archived by an administrator and can no longer be contacted.
                     </div>
                 @endif
