@@ -64,6 +64,38 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        //nop
+        DB::table('engagements')
+            ->whereNotNull('body')
+            ->whereNot('body', 'like', '%"type":"mergeTag"%')
+            ->where('body', 'like', '%"type":"hardBreak"%')
+            ->eachById(function ($engagement) {
+                // $editor = tiptap_converter()->getEditor();
+
+                // $text = $editor
+                //     ->setContent($engagement->body)
+                //     ->descendants(function ($node) {
+                //         if ($node->type !== 'hardBreak') {
+                //             return;
+                //         }
+                //
+                //         $node->type = 'text';
+                //         $node->text = '<br><br>';
+                //     })
+                //     ->getText();
+
+                $text = str(tiptap_converter()->getEditor()->setContent($engagement->body)->getText())
+                    ->replace("\n\n\n\n\n\n", "\n")
+                    ->toString();
+
+                DB::table('engagements')
+                    ->where('id', $engagement->id)
+                    ->update([
+                        // 'body' => $editor
+                        //     ->setContent($text)
+                        //     ->getJSON(),
+                        'body' => json_encode($text),
+                        'updated_at' => now(),
+                    ]);
+            });
     }
 };
