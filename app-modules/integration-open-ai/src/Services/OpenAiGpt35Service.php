@@ -48,7 +48,7 @@ class OpenAiGpt35Service extends BaseOpenAiService
             ->withBaseUri($this->getDeployment())
             ->withHttpHeader('api-key', $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key'))
             ->withQueryParam('api-version', config('integration-open-ai.gpt_35_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
+            ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
             ->withHttpHeader('Accept', '*/*')
             ->make();
     }
