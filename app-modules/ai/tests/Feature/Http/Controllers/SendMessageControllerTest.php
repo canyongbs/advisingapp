@@ -111,12 +111,14 @@ it('returns a message if the assistant fails', function () {
 it('returns a message if the thread is locked', function () {
     asSuperAdmin();
 
+    $exception = new AiThreadLockedException();
+
     /** @phpstan-ignore-next-line */
     $this->mock(
         SendMessage::class,
         fn (MockInterface $mock) => $mock
             ->shouldReceive('__invoke')->once()
-            ->andThrow(new AiThreadLockedException()),
+            ->andThrow($exception),
     );
 
     $thread = AiThread::factory()
@@ -134,7 +136,7 @@ it('returns a message if the thread is locked', function () {
         ->assertServiceUnavailable()
         ->assertJson([
             'isThreadLocked' => true,
-            'message' => 'The assistant is currently undergoing maintenance.',
+            'message' => $exception->getMessage(),
         ]);
 });
 
