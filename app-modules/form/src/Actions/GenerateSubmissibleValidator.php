@@ -34,34 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Form\Actions;
 
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use AdvisingApp\Ai\Models\AiAssistant;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Spatie\Multitenancy\Jobs\TenantAware;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Validator;
+use AdvisingApp\Form\Models\Submissible;
+use Illuminate\Support\Facades\Validator as ValidatorFacade;
 
-class ReInitializeAiModel implements ShouldQueue, TenantAware
+class GenerateSubmissibleValidator
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
     public function __construct(
-        protected string $model,
+        protected Request $request,
+        protected GenerateSubmissibleValidation $generateValidationRules,
     ) {}
 
-    public function handle(ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant): void
+    public function __invoke(Submissible $submissible): Validator
     {
-        AiAssistant::query()
-            ->where('model', $this->model)
-            ->eachById($reInitializeAiServiceAssistant(...), 250);
+        $inputs = collect($this->request->all())
+            ->dot()
+            ->filter();
+
+        $attributes = $inputs
+            ->keys()
+            ->mapWithKeys(function (string $key) use ($submissible): array {
+                $key = str($key);
+                $id = $key->afterLast('.');
+
+                return [$key->toString() => $id->isUuid() ? $submissible->fields()->find($id->toString())?->label : $key->toString()];
+            })
+            ->all();
+
+        return ValidatorFacade::make(
+            $inputs->undot()->all(),
+            ($this->generateValidationRules)($submissible),
+            attributes: $attributes,
+        );
     }
 }

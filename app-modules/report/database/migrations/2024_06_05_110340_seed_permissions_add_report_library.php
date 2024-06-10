@@ -34,34 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
+use Database\Migrations\Concerns\CanModifyPermissions;
 
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use AdvisingApp\Ai\Models\AiAssistant;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Spatie\Multitenancy\Jobs\TenantAware;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-class ReInitializeAiModel implements ShouldQueue, TenantAware
-{
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    private array $permissions = [
+        'report-library.view-any' => 'Report Library',
+    ];
 
-    public function __construct(
-        protected string $model,
-    ) {}
+    private array $guards = [
+        'web',
+        'api',
+    ];
 
-    public function handle(ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant): void
+    public function up(): void
     {
-        AiAssistant::query()
-            ->where('model', $this->model)
-            ->eachById($reInitializeAiServiceAssistant(...), 250);
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $permissions = Arr::except($this->permissions, keys: DB::table('permissions')
+                    ->where('guard_name', $guard)
+                    ->pluck('name')
+                    ->all());
+
+                $this->createPermissions($permissions, $guard);
+            });
     }
-}
+
+    public function down(): void
+    {
+        $this->deletePermissions(array_keys($this->permissions), $this->guards);
+    }
+};

@@ -34,34 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Report\Filament\Pages;
 
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use AdvisingApp\Ai\Models\AiAssistant;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Spatie\Multitenancy\Jobs\TenantAware;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
+use Filament\Pages\Page;
 
-class ReInitializeAiModel implements ShouldQueue, TenantAware
+class ReportLibrary extends Page
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
-    public function __construct(
-        protected string $model,
-    ) {}
+    protected static string $view = 'filament.pages.coming-soon';
 
-    public function handle(ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant): void
+    protected static ?string $navigationGroup = 'Reporting';
+
+    protected static ?int $navigationSort = 50;
+
+    public static function canAccess(): bool
     {
-        AiAssistant::query()
-            ->where('model', $this->model)
-            ->eachById($reInitializeAiServiceAssistant(...), 250);
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('report-library.view-any');
     }
 }

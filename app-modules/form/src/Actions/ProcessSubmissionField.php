@@ -34,34 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Form\Actions;
 
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use AdvisingApp\Ai\Models\AiAssistant;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Spatie\Multitenancy\Jobs\TenantAware;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
+use Illuminate\Support\Str;
+use AdvisingApp\Form\Models\Submission;
+use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 
-class ReInitializeAiModel implements ShouldQueue, TenantAware
+class ProcessSubmissionField
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
     public function __construct(
-        protected string $model,
+        protected ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail
     ) {}
 
-    public function handle(ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant): void
+    public function __invoke(Submission $submission, string $fieldId, mixed $response, array $fields): void
     {
-        AiAssistant::query()
-            ->where('model', $this->model)
-            ->eachById($reInitializeAiServiceAssistant(...), 250);
+        $submission->fields()->attach($fieldId, [
+            'id' => Str::orderedUuid(),
+            'response' => $response,
+        ]);
+
+        if ($submission->author) {
+            return;
+        }
+
+        if ($fields[$fieldId] !== EducatableEmailFormFieldBlock::type()) {
+            return;
+        }
+
+        $author = ($this->resolveSubmissionAuthorFromEmail)($response);
+
+        if (! $author) {
+            return;
+        }
+
+        $submission->author()->associate($author);
     }
 }

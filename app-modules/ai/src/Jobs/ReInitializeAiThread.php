@@ -62,6 +62,8 @@ class ReInitializeAiThread implements ShouldQueue, TenantAware
      */
     public $deleteWhenMissingModels = true;
 
+    public $maxExceptions = 3;
+
     /**
      * Create a new job instance.
      */

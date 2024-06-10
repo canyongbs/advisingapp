@@ -34,34 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use AdvisingApp\Ai\Models\AiAssistant;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Spatie\Multitenancy\Jobs\TenantAware;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
-
-class ReInitializeAiModel implements ShouldQueue, TenantAware
-{
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function __construct(
-        protected string $model,
-    ) {}
-
-    public function handle(ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant): void
+return new class () extends Migration {
+    public function up(): void
     {
-        AiAssistant::query()
-            ->where('model', $this->model)
-            ->eachById($reInitializeAiServiceAssistant(...), 250);
+        Feature::purge('setup-complete');
     }
-}
+
+    public function down(): void
+    {
+        Feature::activate('setup-complete');
+    }
+};
