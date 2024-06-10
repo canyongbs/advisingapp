@@ -40,8 +40,10 @@ use Throwable;
 use Filament\Forms\Form;
 use Filament\Actions\Action;
 use AdvisingApp\Ai\Enums\AiModel;
+use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\DB;
 use Filament\Support\Enums\MaxWidth;
+use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
@@ -95,10 +97,53 @@ class EditAiAssistant extends EditRecord
 
                 $this->save();
 
-                if (! $modelDeploymentIsShared) {
+                if ((! $modelDeploymentIsShared) && (! $assistant->archived_at)) {
                     $reInitializeAiServiceAssistant($assistant);
                 }
             });
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('archive')
+                ->color('danger')
+                ->action(function () {
+                    $assistant = $this->getRecord();
+                    $assistant->archived_at = now();
+                    $assistant->save();
+
+                    Notification::make()
+                        ->title('Assistant archived')
+                        ->success()
+                        ->send();
+                })
+                ->hidden(fn (): bool => (bool) $this->getRecord()->archived_at),
+            Action::make('restore')
+                ->action(function () {
+                    $assistant = $this->getRecord();
+                    $assistant->archived_at = null;
+                    $assistant->save();
+
+                    Notification::make()
+                        ->title('Assistant restored')
+                        ->success()
+                        ->send();
+                })
+                ->hidden(function (): bool {
+                    if (! $this->getRecord()->archived_at) {
+                        return true;
+                    }
+
+                    $assistantsLimit = app(LicenseSettings::class)->data->limits->conversationalAiAssistants;
+                    $assistantsCount = AiAssistant::query()
+                        ->where('is_default', false)
+                        ->whereNull('archived_at')
+                        ->count();
+
+                    return $assistantsCount >= $assistantsLimit;
+                }),
+        ];
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model

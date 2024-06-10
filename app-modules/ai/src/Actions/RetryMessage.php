@@ -40,6 +40,7 @@ use Illuminate\Support\Arr;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 
 class RetryMessage
 {
@@ -47,6 +48,10 @@ class RetryMessage
     {
         if ($thread->locked_at) {
             throw new AiThreadLockedException();
+        }
+
+        if ($thread->assistant->archived_at) {
+            throw new AiAssistantArchivedException();
         }
 
         $message = $thread->messages()->whereBelongsTo(auth()->user())->latest()->first();

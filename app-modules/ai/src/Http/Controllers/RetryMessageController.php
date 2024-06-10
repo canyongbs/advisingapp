@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Actions\RetryMessage;
 use AdvisingApp\Ai\Http\Requests\RetryMessageRequest;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 
 class RetryMessageController
 {
@@ -52,6 +53,10 @@ class RetryMessageController
                 $thread,
                 $request->validated('content'),
             );
+        } catch (AiAssistantArchivedException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage(),
+            ], 404);
         } catch (AiThreadLockedException $exception) {
             return response()->json([
                 'isThreadLocked' => true,

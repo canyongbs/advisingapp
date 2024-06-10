@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Actions\SendMessage;
 use AdvisingApp\Ai\Http\Requests\SendMessageRequest;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 
 class SendMessageController
 {
@@ -52,6 +53,10 @@ class SendMessageController
                 $thread,
                 $request->validated('content'),
             );
+        } catch (AiAssistantArchivedException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage(),
+            ], 404);
         } catch (AiThreadLockedException $exception) {
             return response()->json([
                 'isThreadLocked' => true,

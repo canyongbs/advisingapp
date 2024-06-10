@@ -53,6 +53,7 @@ class CreateTenantRequest extends FormRequest
             'user.password' => ['required', 'string'],
             'limits' => ['required', 'array'],
             'limits.conversationalAiSeats' => ['required', 'integer', 'min:0'],
+            'limits.conversationalAiAssistants' => ['required', 'integer', 'min:0'],
             'limits.retentionCrmSeats' => ['required', 'integer', 'min:0'],
             'limits.recruitmentCrmSeats' => ['required', 'integer', 'min:0'],
             'limits.emails' => ['required', 'integer', 'min:0'],
@@ -70,5 +71,15 @@ class CreateTenantRequest extends FormRequest
             'addons.experimentalReporting' => ['required', 'boolean'],
             'addons.scheduleAndAppointments' => ['required', 'boolean'],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'limits' => [
+                ...$this->input('limits') ?? [],
+                ...['conversationalAiAssistants' => $this->input('limits.conversationalAiAssistants') ?? 0],
+            ],
+        ]);
     }
 }

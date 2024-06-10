@@ -43,6 +43,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Actions\SendMessage;
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 
 it('sends a message', function () {
     asSuperAdmin();
@@ -98,3 +99,18 @@ it('throws an exception if the thread is locked', function () {
 
     app(SendMessage::class)($thread, 'Hello, world!');
 })->throws(AiThreadLockedException::class);
+
+it('throws an exception if the assistant is archived', function () {
+    asSuperAdmin();
+
+    $thread = AiThread::factory()
+        ->for(AiAssistant::factory()->state([
+            'application' => AiApplication::Test,
+            'archived_at' => now(),
+            'model' => AiModel::Test,
+        ]), 'assistant')
+        ->for(auth()->user())
+        ->create();
+
+    app(SendMessage::class)($thread, 'Hello, world!');
+})->throws(AiAssistantArchivedException::class);
