@@ -177,7 +177,7 @@ class AdminPanelProvider extends PanelProvider
                 MenuItem::make()
                     ->label('Profile Settings')
                     ->url(fn () => EditProfile::getUrl())
-                    ->icon('heroicon-o-cog-6-tooth'),
+                    ->icon('heroicon-s-cog-6-tooth'),
             ])
             ->renderHook(
                 'panels::scripts.before',
