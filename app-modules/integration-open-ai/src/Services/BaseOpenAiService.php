@@ -189,11 +189,7 @@ abstract class BaseOpenAiService implements AiService
             })->toArray();
         }
 
-        ray('data', $data);
-
         $response = $this->client->threads()->messages()->create($message->thread->thread_id, $data);
-
-        ray('message creation response', $response);
 
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 

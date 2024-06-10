@@ -46,8 +46,6 @@ class SendMessageController
 {
     public function __invoke(SendMessageRequest $request, AiThread $thread): JsonResponse
     {
-        ray('SendMessageController()', $request->safe()->only(['content', 'files']));
-
         try {
             $responseContent = app(SendMessage::class)(
                 $thread,

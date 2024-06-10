@@ -60,9 +60,6 @@ class SendMessage
 
         $aiService->ensureAssistantAndThreadExists($thread);
 
-        ray('message', $message);
-        ray('model', $thread->assistant->model);
-
         $response = $aiService->sendMessage($message, $data['files']);
 
         $response->thread()->associate($thread);
