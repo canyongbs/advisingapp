@@ -71,6 +71,12 @@ abstract class BaseOpenAiService implements AiService
             'metadata' => [
                 'last_updated_at' => now(),
             ],
+            // TODO We'll need to retroactively update and add this tool on existing assistants
+            'tools' => [
+                [
+                    'type' => 'file_search',
+                ],
+            ],
         ]);
 
         $assistant->assistant_id = $response->id;
@@ -127,7 +133,7 @@ abstract class BaseOpenAiService implements AiService
         $thread->thread_id = null;
     }
 
-    public function sendMessage(AiMessage $message): AiMessage
+    public function sendMessage(AiMessage $message, array $files = []): AiMessage
     {
         $response = $this->client->threads()->runs()->list($message->thread->thread_id, [
             'order' => 'desc',
@@ -139,16 +145,44 @@ abstract class BaseOpenAiService implements AiService
             $this->awaitThreadRunCompletion($response);
         }
 
-        $response = $this->client->threads()->messages()->create($message->thread->thread_id, [
+        ray('files', $files);
+
+        if (method_exists($this, 'createFiles') && ! empty($files)) {
+            $unpersistedFiles = $this->createFiles($files);
+            ray('unpersistedFiles', $unpersistedFiles);
+        }
+
+        $data = [
             'role' => 'user',
             'content' => $message->content,
-        ]);
+        ];
+
+        if (! empty($unpersistedFiles)) {
+            // TODO Add iterable method for more than one file
+            $data['attachments'] = [[
+                'file_id' => $unpersistedFiles[0]->file_id,
+                'tools' => [[
+                    'type' => 'file_search',
+                ]],
+            ]];
+        }
+
+        ray('data', $data);
+
+        $response = $this->client->threads()->messages()->create($message->thread->thread_id, $data);
+
+        ray('message creation response', $response);
 
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
         $message->context = $instructions;
         $message->message_id = $response->id;
         $message->save();
+
+        foreach ($unpersistedFiles as $file) {
+            $file->message()->associate($message);
+            $file->save();
+        }
 
         $response = $this->client->threads()->runs()->create($message->thread->thread_id, [
             'assistant_id' => $message->thread->assistant->assistant_id,
@@ -243,6 +277,11 @@ abstract class BaseOpenAiService implements AiService
     public function isThreadExisting(AiThread $thread): bool
     {
         return filled($thread->thread_id);
+    }
+
+    public function supportsFileUploads(): bool
+    {
+        return false;
     }
 
     protected function awaitThreadRunCompletion(ThreadRunResponse $threadRunResponse): void

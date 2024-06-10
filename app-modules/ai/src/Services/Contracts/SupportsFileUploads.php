@@ -34,30 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Requests;
+namespace AdvisingApp\Ai\Services\Contracts;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class SendMessageRequest extends FormRequest
+// TODO Implement this for any service that actually has the capability to upload files.
+interface SupportsFileUploads
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * This method accepts an array of files to be uploaded to the client
+     * returning unpersisted `AiMessageFile` models.
      */
-    public function authorize(): bool
-    {
-        return $this->thread->user()->is(auth()->user());
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
-    {
-        return [
-            'content' => ['required', 'string', 'max:25000'],
-            'files' => ['array', 'max:1'],
-        ];
-    }
+    public function createFiles(array $files): array;
 }

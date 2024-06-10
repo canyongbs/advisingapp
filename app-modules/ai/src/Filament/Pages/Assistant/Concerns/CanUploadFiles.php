@@ -34,30 +34,56 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Requests;
+namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
-use Illuminate\Foundation\Http\FormRequest;
+use Filament\Actions\Action;
+use Livewire\Attributes\Locked;
+use Filament\Forms\Components\FileUpload;
 
-class SendMessageRequest extends FormRequest
+trait CanUploadFiles
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
+    #[Locked]
+    public array $files = [];
+
+    public function removeUploadedFile(int $key): void
     {
-        return $this->thread->user()->is(auth()->user());
+        unset($this->files[$key]);
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
+    public function clearFiles(): void
     {
-        return [
-            'content' => ['required', 'string', 'max:25000'],
-            'files' => ['array', 'max:1'],
-        ];
+        $this->reset('files');
+    }
+
+    public function uploadFilesAction(): Action
+    {
+        return Action::make('uploadFiles')
+            ->label('Upload Files')
+            ->icon('heroicon-o-paper-clip')
+            ->iconButton()
+            ->color('gray')
+            ->disabled(count($this->files) >= 1)
+            ->badge(count($this->files))
+            ->modalSubmitActionLabel('Upload')
+            ->form([
+                FileUpload::make('attachment')
+                    ->acceptedFileTypes(['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+                    ->storeFiles(false)
+                    ->maxSize(256)
+                    ->required(),
+            ])
+            ->action(function (array $data) {
+                /** @var TemporaryUploadedFile $attachment */
+                $attachment = $data['attachment'];
+
+                // TODO Use DTO
+                $this->files[] = [
+                    'file' => $attachment->temporaryUrl(),
+                    'mime_type' => $attachment->getMimeType(),
+                    'name' => $attachment->getClientOriginalName(),
+                ];
+
+                ray('files', $this->files);
+            });
     }
 }

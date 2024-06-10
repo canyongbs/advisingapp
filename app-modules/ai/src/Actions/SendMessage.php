@@ -42,10 +42,10 @@ use AdvisingApp\Ai\Models\AiMessage;
 
 class SendMessage
 {
-    public function __invoke(AiThread $thread, string $content): string
+    public function __invoke(AiThread $thread, array $data): string
     {
         $message = new AiMessage();
-        $message->content = $content;
+        $message->content = $data['content'];
         $message->request = [
             'headers' => Arr::only(
                 request()->headers->all(),
@@ -60,7 +60,11 @@ class SendMessage
 
         $aiService->ensureAssistantAndThreadExists($thread);
 
-        $response = $aiService->sendMessage($message);
+        ray('message', $message);
+        ray('model', $thread->assistant->model);
+
+        $response = $aiService->sendMessage($message, $data['files']);
+
         $response->thread()->associate($thread);
         $response->save();
 

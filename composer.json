@@ -231,7 +231,7 @@
         }
     },
     "prefer-stable": true,
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "repositories": [
         {
             "type": "path",

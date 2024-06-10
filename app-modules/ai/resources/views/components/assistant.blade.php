@@ -459,12 +459,32 @@
 
                                 {{ $this->insertFromPromptLibraryAction }}
 
+                                @if ($this->thread->assistant->model->getService()->supportsFileUploads())
+                                    {{ $this->uploadFilesAction }}
+                                @endif
+
                                 <div
                                     class="py-2"
                                     x-show="isSendingMessage"
                                 >
                                     <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
                                 </div>
+
+                                @if ($this->files)
+                                    @foreach ($this->files as $key => $file)
+                                        <x-filament::badge>
+                                            {{ $file['name'] }}
+                                            <x-filament::icon-button
+                                                aria-label="Remove uploaded file {{ $file['name'] }}"
+                                                size="xs"
+                                                icon="heroicon-o-trash"
+                                                wire:click="removeUploadedFile({{ $key }})"
+                                            >
+                                                </x-filament::button>
+                                        </x-filament::badge>
+                                    @endforeach
+                                @endif
+
                             </div>
 
                             @if (blank($this->thread->name))

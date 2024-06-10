@@ -1,27 +1,27 @@
 {
-  "name": "canyon-gbs/integration-open-ai",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0.0",
-    "openai-php/client": "^0.8.4"
-  },
-  "autoload": {
-    "psr-4": {
-      "AdvisingApp\\IntegrationOpenAi\\": "src/",
-      "AdvisingApp\\IntegrationOpenAi\\Tests\\": "tests/",
-      "AdvisingApp\\IntegrationOpenAi\\Database\\Factories\\": "database/factories/",
-      "AdvisingApp\\IntegrationOpenAi\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/integration-open-ai",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0",
+        "openai-php/client": "^v0.10.0-beta.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\IntegrationOpenAi\\": "src/",
+            "AdvisingApp\\IntegrationOpenAi\\Tests\\": "tests/",
+            "AdvisingApp\\IntegrationOpenAi\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\IntegrationOpenAi\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\IntegrationOpenAi\\Providers\\IntegrationOpenAiServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "dev",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "AdvisingApp\\IntegrationOpenAi\\Providers\\IntegrationOpenAiServiceProvider"
-      ]
-    }
-  }
 }

@@ -46,10 +46,12 @@ class SendMessageController
 {
     public function __invoke(SendMessageRequest $request, AiThread $thread): JsonResponse
     {
+        ray('SendMessageController()', $request->safe()->only(['content', 'files']));
+
         try {
             $responseContent = app(SendMessage::class)(
                 $thread,
-                $request->validated('content'),
+                $request->safe()->only(['content', 'files']),
             );
         } catch (Throwable $exception) {
             report($exception);

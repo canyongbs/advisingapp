@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3ca68b605af825d5337f65f3abcae669",
+    "content-hash": "9543699c5732c609b763a8ff2867eed4",
     "packages": [
         {
             "name": "amphp/amp",
@@ -2868,11 +2868,11 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-open-ai",
-                "reference": "84df13baf90e443b134cbfa566c4c228ba6bf3fe"
+                "reference": "67945ff583211b77912d6aece759b1201045a44d"
             },
             "require": {
                 "filament/filament": "^3.0.0",
-                "openai-php/client": "^0.8.4"
+                "openai-php/client": "^v0.10.0-beta.1"
             },
             "type": "library",
             "extra": {
@@ -10443,16 +10443,16 @@
         },
         {
             "name": "openai-php/client",
-            "version": "v0.8.5",
+            "version": "v0.10.0-beta.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/openai-php/client.git",
-                "reference": "0f755fafa4d3f8d5c8ed964d3166d078fac0605a"
+                "reference": "18c9eea2dec3d5769db1a0f22644db35da478134"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/openai-php/client/zipball/0f755fafa4d3f8d5c8ed964d3166d078fac0605a",
-                "reference": "0f755fafa4d3f8d5c8ed964d3166d078fac0605a",
+                "url": "https://api.github.com/repos/openai-php/client/zipball/18c9eea2dec3d5769db1a0f22644db35da478134",
+                "reference": "18c9eea2dec3d5769db1a0f22644db35da478134",
                 "shasum": ""
             },
             "require": {
@@ -10467,15 +10467,15 @@
             "require-dev": {
                 "guzzlehttp/guzzle": "^7.8.1",
                 "guzzlehttp/psr7": "^2.6.2",
-                "laravel/pint": "^1.15.0",
-                "mockery/mockery": "^1.6.11",
+                "laravel/pint": "^1.16.0",
+                "mockery/mockery": "^1.6.12",
                 "nunomaduro/collision": "^7.10.0",
-                "pestphp/pest": "^2.34.6",
+                "pestphp/pest": "^2.34.7",
                 "pestphp/pest-plugin-arch": "^2.7",
-                "pestphp/pest-plugin-type-coverage": "^2.8.1",
-                "phpstan/phpstan": "^1.10.66",
-                "rector/rector": "^1.0.4",
-                "symfony/var-dumper": "^6.4.4"
+                "pestphp/pest-plugin-type-coverage": "^2.8.2",
+                "phpstan/phpstan": "^1.11.2",
+                "rector/rector": "^1.1.0",
+                "symfony/var-dumper": "^6.4.7"
             },
             "type": "library",
             "autoload": {
@@ -10515,7 +10515,7 @@
             ],
             "support": {
                 "issues": "https://github.com/openai-php/client/issues",
-                "source": "https://github.com/openai-php/client/tree/v0.8.5"
+                "source": "https://github.com/openai-php/client/tree/v0.10.0-beta.1"
             },
             "funding": [
                 {
@@ -10531,7 +10531,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-04-15T19:11:23+00:00"
+            "time": "2024-05-27T19:56:02+00:00"
         },
         {
             "name": "opensearch-project/opensearch-php",
@@ -24166,7 +24166,7 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,

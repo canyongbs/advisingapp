@@ -38,9 +38,13 @@ namespace AdvisingApp\IntegrationOpenAi\Services;
 
 use OpenAI;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Ai\Services\Contracts\SupportsFileUploads;
+use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
 
-class OpenAiGpt4oService extends BaseOpenAiService
+class OpenAiGpt4oService extends BaseOpenAiService implements SupportsFileUploads
 {
+    use UploadsFiles;
+
     public function __construct(
         protected AiIntegrationsSettings $settings,
     ) {
@@ -48,7 +52,7 @@ class OpenAiGpt4oService extends BaseOpenAiService
             ->withBaseUri($this->getDeployment())
             ->withHttpHeader('api-key', $this->settings->open_ai_gpt_4o_api_key ?? config('integration-open-ai.gpt_4o_api_key'))
             ->withQueryParam('api-version', config('integration-open-ai.gpt_4o_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
+            ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
             ->withHttpHeader('Accept', '*/*')
             ->make();
     }

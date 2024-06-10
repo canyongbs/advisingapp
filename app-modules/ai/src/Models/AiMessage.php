@@ -41,6 +41,7 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\MassPrunable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use AdvisingApp\Ai\Models\Scopes\AuditableAiMessages;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
@@ -79,6 +80,11 @@ class AiMessage extends BaseModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function files(): HasMany
+    {
+        return $this->hasMany(AiMessageFile::class, 'message_id');
     }
 
     public function prunable(): Builder

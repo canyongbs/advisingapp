@@ -89,7 +89,10 @@ document.addEventListener('alpine:init', () => {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
                     },
-                    body: JSON.stringify({ content: message }),
+                    body: JSON.stringify({
+                        content: message,
+                        files: this.$wire.files,
+                    }),
                 });
 
                 const response = await sendMessageResponse.json();
@@ -106,6 +109,8 @@ document.addEventListener('alpine:init', () => {
                 });
 
                 this.isSendingMessage = false;
+
+                this.$wire.clearFiles();
             });
         },
 
