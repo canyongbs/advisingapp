@@ -92,7 +92,7 @@ interface AiService
      * The method should return a new unsaved `AiMessage` model with the content
      * from the AI service set only, the other attributes will be set later.
      */
-    public function sendMessage(AiMessage $message): AiMessage;
+    public function sendMessage(AiMessage $message, array $files): AiMessage;
 
     /**
      * This method is passed an `AiMessage` model and should recover the
@@ -110,4 +110,8 @@ interface AiService
     public function retrieveFile(AiMessageFile $file): RetrieveFileResponse;
 
     public function getDeployment(): ?string;
+
+    public function getApiKey(): string;
+
+    public function getApiVersion(): string;
 }

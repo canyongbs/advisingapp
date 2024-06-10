@@ -43,7 +43,7 @@ interface SupportsFileUploads
 {
     /**
      * This method accepts an array of files to be uploaded to the client
-     * returning unpersisted `AiMessageFile` models.
+     * for a specific message, returning a collection of unsaved `AiMessageFile` records.
      */
     public function createFiles(AiMessage $message, array $files): Collection;
 }
