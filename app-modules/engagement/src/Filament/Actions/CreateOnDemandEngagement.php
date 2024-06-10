@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Engagement\Filament\Actions;
 
-use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 
 class CreateOnDemandEngagement
 {
-    public function __invoke(Model $educatable, array $data): void
+    public function __invoke(Educatable $educatable, array $data): void
     {
         $engagement = $educatable->engagements()->create([
             'subject' => $data['subject'] ?? null,

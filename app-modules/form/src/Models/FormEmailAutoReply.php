@@ -69,7 +69,7 @@ class FormEmailAutoReply extends BaseModel
     public function getBody(Student|Prospect|null $author): string
     {
         return app(GenerateEmailMarkdownContent::class)(
-            [$this->body],
+            $this->body,
             $this->getMergeData($author),
         );
     }
