@@ -41,6 +41,7 @@ use Illuminate\Http\JsonResponse;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Actions\SendMessage;
 use AdvisingApp\Ai\Http\Requests\SendMessageRequest;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 
 class SendMessageController
 {
@@ -51,11 +52,16 @@ class SendMessageController
                 $thread,
                 $request->safe()->only(['content', 'files']),
             );
+        } catch (AiThreadLockedException $exception) {
+            return response()->json([
+                'isThreadLocked' => true,
+                'message' => $exception->getMessage(),
+            ], 503);
         } catch (Throwable $exception) {
             report($exception);
 
             return response()->json([
-                'message' => 'The assistant has failed. Please retry later.',
+                'message' => 'An error happened when sending your message.',
             ], 503);
         }
 

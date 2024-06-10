@@ -34,40 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace App\Jobs;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
+use Database\Migrations\Concerns\CanModifyPermissions;
 
-use App\Models\Tenant;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
-use App\Multitenancy\Events\NewTenantSetupComplete;
-use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-class DispatchTenantSetupCompleteEvent implements ShouldQueue, NotTenantAware
-{
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    private array $permissions = [
+        'report-library.view-any' => 'Report Library',
+    ];
 
-    public int $timeout = 1200;
+    private array $guards = [
+        'web',
+        'api',
+    ];
 
-    public function __construct(public Tenant $tenant) {}
-
-    public function middleware(): array
+    public function up(): void
     {
-        return [new SkipIfBatchCancelled()];
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $permissions = Arr::except($this->permissions, keys: DB::table('permissions')
+                    ->where('guard_name', $guard)
+                    ->pluck('name')
+                    ->all());
+
+                $this->createPermissions($permissions, $guard);
+            });
     }
 
-    public function handle(): void
+    public function down(): void
     {
-        $this->tenant->update(['setup_complete' => true]);
-        Event::dispatch(new NewTenantSetupComplete($this->tenant));
+        $this->deletePermissions(array_keys($this->permissions), $this->guards);
     }
-}
+};

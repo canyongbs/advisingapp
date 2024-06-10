@@ -34,40 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace App\Jobs;
+namespace AdvisingApp\Form\Actions;
 
-use App\Models\Tenant;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
-use App\Multitenancy\Events\NewTenantSetupComplete;
-use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
+use Illuminate\Support\Str;
+use AdvisingApp\Form\Models\Submission;
+use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 
-class DispatchTenantSetupCompleteEvent implements ShouldQueue, NotTenantAware
+class ProcessSubmissionField
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    public function __construct(
+        protected ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail
+    ) {}
 
-    public int $timeout = 1200;
-
-    public function __construct(public Tenant $tenant) {}
-
-    public function middleware(): array
+    public function __invoke(Submission $submission, string $fieldId, mixed $response, array $fields): void
     {
-        return [new SkipIfBatchCancelled()];
-    }
+        $submission->fields()->attach($fieldId, [
+            'id' => Str::orderedUuid(),
+            'response' => $response,
+        ]);
 
-    public function handle(): void
-    {
-        $this->tenant->update(['setup_complete' => true]);
-        Event::dispatch(new NewTenantSetupComplete($this->tenant));
+        if ($submission->author) {
+            return;
+        }
+
+        if ($fields[$fieldId] !== EducatableEmailFormFieldBlock::type()) {
+            return;
+        }
+
+        $author = ($this->resolveSubmissionAuthorFromEmail)($response);
+
+        if (! $author) {
+            return;
+        }
+
+        $submission->author()->associate($author);
     }
 }

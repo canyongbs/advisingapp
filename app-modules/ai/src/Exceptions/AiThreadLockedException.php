@@ -34,40 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Jobs;
+namespace AdvisingApp\Ai\Exceptions;
 
-use App\Models\Tenant;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
-use App\Multitenancy\Events\NewTenantSetupComplete;
-use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
+use Exception;
 
-class DispatchTenantSetupCompleteEvent implements ShouldQueue, NotTenantAware
+class AiThreadLockedException extends Exception
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public int $timeout = 1200;
-
-    public function __construct(public Tenant $tenant) {}
-
-    public function middleware(): array
+    public function __construct()
     {
-        return [new SkipIfBatchCancelled()];
-    }
-
-    public function handle(): void
-    {
-        $this->tenant->update(['setup_complete' => true]);
-        Event::dispatch(new NewTenantSetupComplete($this->tenant));
+        parent::__construct('The assistant is currently undergoing maintenance.');
     }
 }

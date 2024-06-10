@@ -34,40 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace App\Jobs;
+namespace AdvisingApp\Form\Actions;
 
-use App\Models\Tenant;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
-use App\Multitenancy\Events\NewTenantSetupComplete;
-use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Validator;
+use AdvisingApp\Form\Models\Submissible;
+use Illuminate\Support\Facades\Validator as ValidatorFacade;
 
-class DispatchTenantSetupCompleteEvent implements ShouldQueue, NotTenantAware
+class GenerateSubmissibleValidator
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    public function __construct(
+        protected Request $request,
+        protected GenerateSubmissibleValidation $generateValidationRules,
+    ) {}
 
-    public int $timeout = 1200;
-
-    public function __construct(public Tenant $tenant) {}
-
-    public function middleware(): array
+    public function __invoke(Submissible $submissible): Validator
     {
-        return [new SkipIfBatchCancelled()];
-    }
+        $inputs = collect($this->request->all())
+            ->dot()
+            ->filter();
 
-    public function handle(): void
-    {
-        $this->tenant->update(['setup_complete' => true]);
-        Event::dispatch(new NewTenantSetupComplete($this->tenant));
+        $attributes = $inputs
+            ->keys()
+            ->mapWithKeys(function (string $key) use ($submissible): array {
+                $key = str($key);
+                $id = $key->afterLast('.');
+
+                return [$key->toString() => $id->isUuid() ? $submissible->fields()->find($id->toString())?->label : $key->toString()];
+            })
+            ->all();
+
+        return ValidatorFacade::make(
+            $inputs->undot()->all(),
+            ($this->generateValidationRules)($submissible),
+            attributes: $attributes,
+        );
     }
 }

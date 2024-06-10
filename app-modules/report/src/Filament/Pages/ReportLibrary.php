@@ -34,40 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace App\Jobs;
+namespace AdvisingApp\Report\Filament\Pages;
 
-use App\Models\Tenant;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
-use App\Multitenancy\Events\NewTenantSetupComplete;
-use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
+use Filament\Pages\Page;
 
-class DispatchTenantSetupCompleteEvent implements ShouldQueue, NotTenantAware
+class ReportLibrary extends Page
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
-    public int $timeout = 1200;
+    protected static string $view = 'filament.pages.coming-soon';
 
-    public function __construct(public Tenant $tenant) {}
+    protected static ?string $navigationGroup = 'Reporting';
 
-    public function middleware(): array
+    protected static ?int $navigationSort = 50;
+
+    public static function canAccess(): bool
     {
-        return [new SkipIfBatchCancelled()];
-    }
+        /** @var User $user */
+        $user = auth()->user();
 
-    public function handle(): void
-    {
-        $this->tenant->update(['setup_complete' => true]);
-        Event::dispatch(new NewTenantSetupComplete($this->tenant));
+        return $user->can('report-library.view-any');
     }
 }

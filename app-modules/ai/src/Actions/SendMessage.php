@@ -39,11 +39,16 @@ namespace AdvisingApp\Ai\Actions;
 use Illuminate\Support\Arr;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 
 class SendMessage
 {
     public function __invoke(AiThread $thread, array $data): string
     {
+        if ($thread->locked_at) {
+            throw new AiThreadLockedException();
+        }
+
         $message = new AiMessage();
         $message->content = $data['content'];
         $message->request = [

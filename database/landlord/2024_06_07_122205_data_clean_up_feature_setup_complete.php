@@ -34,40 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Jobs;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\Tenant;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
-use App\Multitenancy\Events\NewTenantSetupComplete;
-use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
-
-class DispatchTenantSetupCompleteEvent implements ShouldQueue, NotTenantAware
-{
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public int $timeout = 1200;
-
-    public function __construct(public Tenant $tenant) {}
-
-    public function middleware(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [new SkipIfBatchCancelled()];
+        Feature::purge('setup-complete');
     }
 
-    public function handle(): void
+    public function down(): void
     {
-        $this->tenant->update(['setup_complete' => true]);
-        Event::dispatch(new NewTenantSetupComplete($this->tenant));
+        Feature::activate('setup-complete');
     }
-}
+};

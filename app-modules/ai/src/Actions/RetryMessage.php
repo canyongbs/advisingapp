@@ -39,11 +39,16 @@ namespace AdvisingApp\Ai\Actions;
 use Illuminate\Support\Arr;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 
 class RetryMessage
 {
     public function __invoke(AiThread $thread, string $content): string
     {
+        if ($thread->locked_at) {
+            throw new AiThreadLockedException();
+        }
+
         $message = $thread->messages()->whereBelongsTo(auth()->user())->latest()->first();
 
         if ($message?->content !== $content) {

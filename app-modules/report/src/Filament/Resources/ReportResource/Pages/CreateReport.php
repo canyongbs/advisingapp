@@ -101,7 +101,7 @@ class CreateReport extends CreateRecord implements HasTable
                 ])
                 ->columns(2)
                 ->visible(count($models) > 1),
-            Step::make('Create Report')
+            Step::make('Create Custom Report')
                 ->schema([
                     CheckboxList::make('columns')
                         ->options(fn (): array => array_reduce(
