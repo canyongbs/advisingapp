@@ -70,7 +70,8 @@ class ListAiAssistants extends ListRecords
             ])
             ->filters([
                 Filter::make('withoutArchived')
-                    ->query(fn (Builder $query) => $query->whereNull('archived_at')),
+                    ->query(fn (Builder $query) => $query->whereNull('archived_at'))
+                    ->default(),
             ])
             ->actions([
                 EditAction::make(),
