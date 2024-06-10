@@ -39,6 +39,8 @@ namespace AdvisingApp\Ai\Services\Contracts;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\DataTransferObjects\RetrieveFileResponse;
 
 interface AiService
 {
@@ -54,6 +56,11 @@ interface AiService
      * AI service with the new details.
      */
     public function updateAssistant(AiAssistant $assistant): void;
+
+    /**
+     * Override and update the existing tools set on an Assistant
+     */
+    public function updateAssistantTools(AiAssistant $assistant, array $tools): void;
 
     public function isAssistantExisting(AiAssistant $assistant): bool;
 
@@ -99,6 +106,8 @@ interface AiService
     public function retryMessage(AiMessage $message): AiMessage;
 
     public function getMaxAssistantInstructionsLength(): int;
+
+    public function retrieveFile(AiMessageFile $file): RetrieveFileResponse;
 
     public function getDeployment(): ?string;
 }

@@ -65,14 +65,11 @@ trait UploadsFiles
     protected function uploadFileToClient(AiMessage $message, AiMessageFile $file): string
     {
         $service = $message->thread->assistant->model->getService();
-        ray('service', $service);
 
         $apiKey = $service->getApiKey();
         $apiVersion = $service->getApiVersion();
 
         $ch = curl_init();
-
-        ray('service deployment', $service->getDeployment());
 
         curl_setopt($ch, CURLOPT_URL, $service->getDeployment() . '/files?api-version=' . $apiVersion);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -96,14 +93,8 @@ trait UploadsFiles
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-        // Execute the cURL session
         $response = curl_exec($ch);
-
-        ray(curl_getinfo($ch));
-        ray('response', $response);
-
         $response = json_decode($response, true);
-        ray('response', $response);
 
         if (curl_errno($ch) || ! isset($response['id'])) {
             if (! blank(curl_error($ch))) {
@@ -113,8 +104,24 @@ trait UploadsFiles
             throw new FileUploadException();
         }
 
-        // TODO Handle file upload status if not processed
-        // $fileRecord->status = $response->status;
+        if ($response['status'] === 'error') {
+            throw new FileUploadException('The uploaded file could not be processed. Please try again, or upload a different file.');
+        }
+
+        $maxTries = 5;
+        $tries = 0;
+        $status = $response['status'];
+
+        while ($status !== 'processed' && $tries < $maxTries) {
+            usleep(500000);
+            $response = $service->retrieveFile($file);
+            $status = $response->status;
+            $tries++;
+        }
+
+        if ($status !== 'processed') {
+            throw new FileUploadException('The uploaded file could not be processed. Please try again, or upload a different file.');
+        }
 
         curl_close($ch);
 

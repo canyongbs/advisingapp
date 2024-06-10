@@ -41,10 +41,12 @@ use AdvisingApp\Ai\Models\AiMessage;
 use OpenAI\Contracts\ClientContract;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
+use AdvisingApp\Ai\DataTransferObjects\RetrieveFileResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
 
 abstract class BaseOpenAiService implements AiService
@@ -304,6 +306,17 @@ abstract class BaseOpenAiService implements AiService
     public function supportsFileUploads(): bool
     {
         return false;
+    }
+
+    public function retrieveFile(AiMessageFile $file): RetrieveFileResponse
+    {
+        $response = $this->client->files()->retrieve($file->file_id);
+
+        return RetrieveFileResponse::from([
+            'id' => $response->id,
+            'name' => $response->filename,
+            'status' => $response->status,
+        ]);
     }
 
     protected function awaitThreadRunCompletion(ThreadRunResponse $threadRunResponse): void
