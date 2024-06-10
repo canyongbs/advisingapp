@@ -118,24 +118,10 @@ abstract class BaseOpenAiService implements AiService
 
         $thread->thread_id = $response->id;
 
-        $hasExistingMessages = count($existingMessages);
-
         if (count($existingMessagesOverflow)) {
             foreach ($existingMessagesOverflow as $overflowMessage) {
                 $this->client->threads()->messages()->create($thread->thread_id, $overflowMessage);
             }
-        } elseif ($hasExistingMessages) {
-            $this->client->threads()->messages()->create($thread->thread_id, [
-                'content' => 'This is a test message, please ignore this and never mention it again.',
-                'role' => 'user',
-            ]);
-        }
-
-        if ($hasExistingMessages) {
-            $this->client->threads()->runs()->create($thread->thread_id, [
-                'assistant_id' => $thread->assistant->assistant_id,
-                'instructions' => $this->generateAssistantInstructions($thread->assistant, withDynamicContext: true),
-            ]);
         }
     }
 

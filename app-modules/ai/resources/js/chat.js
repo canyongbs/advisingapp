@@ -65,7 +65,7 @@ document.addEventListener('alpine:init', () => {
                     // Wait for 10 seconds before checking if the thread is retryable again.
                     await new Promise((resolve) => setTimeout(resolve, 10000));
 
-                    this.isRetryable = !(await this.$wire.isThreadRetryable());
+                    this.isRetryable = !(await this.$wire.isThreadLocked());
                 }
             });
         },

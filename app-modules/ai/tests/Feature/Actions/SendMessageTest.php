@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Actions\SendMessage;
 use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 
 it('sends a message', function () {
     asSuperAdmin();
@@ -87,3 +88,13 @@ it('sends a message', function () {
                 ->sanitizeHtml(),
         );
 });
+
+it('throws an exception if the thread is locked', function () {
+    asSuperAdmin();
+
+    $thread = AiThread::factory()->make([
+        'locked_at' => now(),
+    ]);
+
+    app(SendMessage::class)($thread, 'Hello, world!');
+})->throws(AiThreadLockedException::class);

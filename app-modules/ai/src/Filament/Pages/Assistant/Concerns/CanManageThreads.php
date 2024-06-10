@@ -430,8 +430,12 @@ trait CanManageThreads
     }
 
     #[Renderless]
-    public function isThreadRetryable(): bool
+    public function isThreadLocked(): bool
     {
-        return $this->thread?->locked_at !== null;
+        if (! $this->thread) {
+            return false;
+        }
+
+        return $this->thread->locked_at !== null;
     }
 }

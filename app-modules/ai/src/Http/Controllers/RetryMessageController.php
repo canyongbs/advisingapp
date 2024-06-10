@@ -53,17 +53,15 @@ class RetryMessageController
                 $request->validated('content'),
             );
         } catch (AiThreadLockedException $exception) {
-            report($exception);
-
             return response()->json([
                 'isThreadLocked' => true,
-                'message' => 'The assistant is currently undergoing maintenance. We will inform you once you can retry sending your message.',
+                'message' => 'The assistant is currently undergoing maintenance.',
             ], 503);
         } catch (Throwable $exception) {
             report($exception);
 
             return response()->json([
-                'message' => 'The assistant has failed. Please retry later.',
+                'message' => 'An error happened when sending your message.',
             ], 503);
         }
 
