@@ -57,12 +57,15 @@ it('sends a message', function () {
         ->for(auth()->user())
         ->create();
 
-    $messageContent = AiMessage::factory()->make()->content;
+    $requestData = [
+        'content' => AiMessage::factory()->make()->content,
+        'files' => [],
+    ];
 
     expect(AiMessage::count())
         ->toBe(0);
 
-    $responseContent = app(SendMessage::class)($thread, $messageContent);
+    $responseContent = app(SendMessage::class)($thread, $requestData);
 
     $messages = AiMessage::all();
 
@@ -70,7 +73,7 @@ it('sends a message', function () {
         ->toBe(2);
 
     expect($messages->first())
-        ->content->toBe($messageContent)
+        ->content->toBe($requestData['content'])
         ->thread->getKey()->toBe($thread->getKey())
         ->user->getKey()->toBe(auth()->user()->getKey());
 
