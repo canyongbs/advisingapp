@@ -38,11 +38,13 @@ namespace App\Providers;
 
 use App\Listeners\SetSentryUser;
 use Illuminate\Auth\Events\Login;
+use App\Listeners\ClearSentryUser;
 use OwenIt\Auditing\Events\Auditing;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Authenticated;
 use AdvisingApp\Audit\Listeners\AuditingListener;
 use App\Multitenancy\Listeners\SetSentryTenantTag;
+use Illuminate\Console\Events\ScheduledTaskStarting;
 use App\Multitenancy\Listeners\RemoveSentryTenantTag;
 use Spatie\Multitenancy\Events\ForgotCurrentTenantEvent;
 use Spatie\Multitenancy\Events\MakingTenantCurrentEvent;
@@ -74,6 +76,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         Authenticated::class => [
             SetSentryUser::class,
+        ],
+        ScheduledTaskStarting::class => [
+            ClearSentryUser::class,
         ],
     ];
 
