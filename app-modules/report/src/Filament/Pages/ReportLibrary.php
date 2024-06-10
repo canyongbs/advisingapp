@@ -34,32 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Report\Filament\Pages;
 
-use OpenAI;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Filament\Pages\Page;
 
-class OpenAiGpt4Service extends BaseOpenAiService
+class ReportLibrary extends Page
 {
-    public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_4_api_key ?? config('integration-open-ai.gpt_4_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_4_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
-    }
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
-    public function getModel(): string
-    {
-        return $this->settings->open_ai_gpt_4_model ?? config('integration-open-ai.gpt_4_model');
-    }
+    protected static string $view = 'filament.pages.coming-soon';
 
-    public function getDeployment(): string
+    protected static ?string $navigationGroup = 'Reporting';
+
+    protected static ?int $navigationSort = 50;
+
+    public static function canAccess(): bool
     {
-        return $this->settings->open_ai_gpt_4_base_uri ?? config('integration-open-ai.gpt_4_base_uri');
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('report-library.view-any');
     }
 }

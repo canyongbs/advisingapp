@@ -34,32 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Form\Actions;
 
-use OpenAI;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Validator;
+use AdvisingApp\Form\Models\Submissible;
+use Illuminate\Support\Facades\Validator as ValidatorFacade;
 
-class OpenAiGpt4Service extends BaseOpenAiService
+class GenerateSubmissibleValidator
 {
     public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_4_api_key ?? config('integration-open-ai.gpt_4_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_4_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
-    }
+        protected Request $request,
+        protected GenerateSubmissibleValidation $generateValidationRules,
+    ) {}
 
-    public function getModel(): string
+    public function __invoke(Submissible $submissible): Validator
     {
-        return $this->settings->open_ai_gpt_4_model ?? config('integration-open-ai.gpt_4_model');
-    }
+        $inputs = collect($this->request->all())
+            ->dot()
+            ->filter();
 
-    public function getDeployment(): string
-    {
-        return $this->settings->open_ai_gpt_4_base_uri ?? config('integration-open-ai.gpt_4_base_uri');
+        $attributes = $inputs
+            ->keys()
+            ->mapWithKeys(function (string $key) use ($submissible): array {
+                $key = str($key);
+                $id = $key->afterLast('.');
+
+                return [$key->toString() => $id->isUuid() ? $submissible->fields()->find($id->toString())?->label : $key->toString()];
+            })
+            ->all();
+
+        return ValidatorFacade::make(
+            $inputs->undot()->all(),
+            ($this->generateValidationRules)($submissible),
+            attributes: $attributes,
+        );
     }
 }

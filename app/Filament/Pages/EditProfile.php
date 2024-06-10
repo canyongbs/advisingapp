@@ -83,6 +83,8 @@ class EditProfile extends Page
 
     protected static ?string $slug = 'profile';
 
+    protected static ?string $title = 'Profile Settings';
+
     protected static bool $shouldRegisterNavigation = false;
 
     public ?array $data = [];

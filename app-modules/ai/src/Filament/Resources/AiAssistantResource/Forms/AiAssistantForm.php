@@ -36,18 +36,22 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms;
 
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Forms\Form;
 use AdvisingApp\Ai\Enums\AiModel;
 use Filament\Forms\Components\Select;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Forms\Components\Section;
+use AdvisingApp\Ai\Enums\AiApplication;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class AiAssistantForm
 {
-    public function form(Form $form): Form
+    public function form(Form | Component $form): Form | Component
     {
         return $form
             ->schema([
@@ -60,11 +64,21 @@ class AiAssistantForm
                     ->columnSpanFull(),
                 TextInput::make('name')
                     ->required(),
-                Select::make('model')
-                    ->options(AiModel::class)
+                Select::make('application')
+                    ->options(AiApplication::class)
+                    ->default(AiApplication::getDefault())
+                    ->live()
+                    ->afterStateUpdated(fn (Set $set, $state) => filled($state) ? $set('model', AiApplication::parse($state)->getDefaultModel()->value) : null)
                     ->required()
-                    ->visible(app()->hasDebugModeEnabled())
+                    ->columnStart(1)
                     ->disabledOn('edit'),
+                Select::make('model')
+                    ->options(fn (Get $get): array => collect(AiApplication::parse($get('application'))->getModels())
+                        ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
+                        ->all())
+                    ->searchable()
+                    ->required()
+                    ->visible(fn (Get $get): bool => filled($get('application'))),
                 Textarea::make('description')
                     ->columnSpanFull()
                     ->required(),

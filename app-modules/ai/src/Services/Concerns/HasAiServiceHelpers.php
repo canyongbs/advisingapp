@@ -34,32 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Services\Concerns;
 
-use OpenAI;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiAssistant;
 
-class OpenAiGpt4Service extends BaseOpenAiService
+trait HasAiServiceHelpers
 {
-    public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_4_api_key ?? config('integration-open-ai.gpt_4_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_4_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
+    public function ensureAssistantExists(AiAssistant $assistant): void
+    {
+        if ($this->isAssistantExisting($assistant)) {
+            return;
+        }
+
+        $this->createAssistant($assistant);
+        $assistant->save();
     }
 
-    public function getModel(): string
+    public function ensureAssistantAndThreadExists(AiThread $thread): void
     {
-        return $this->settings->open_ai_gpt_4_model ?? config('integration-open-ai.gpt_4_model');
-    }
+        $this->ensureAssistantExists($thread->assistant);
 
-    public function getDeployment(): string
-    {
-        return $this->settings->open_ai_gpt_4_base_uri ?? config('integration-open-ai.gpt_4_base_uri');
+        if ($this->isThreadExisting($thread)) {
+            return;
+        }
+
+        $this->createThread($thread);
+        $thread->save();
     }
 }

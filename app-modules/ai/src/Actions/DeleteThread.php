@@ -42,7 +42,12 @@ class DeleteThread
 {
     public function __invoke(AiThread $thread): void
     {
-        $thread->assistant->model->getService()->deleteThread($thread);
+        $aiService = $thread->assistant->model->getService();
+
+        if ($aiService->isThreadExisting($thread)) {
+            $aiService->deleteThread($thread);
+        }
+
         $thread->delete();
     }
 }

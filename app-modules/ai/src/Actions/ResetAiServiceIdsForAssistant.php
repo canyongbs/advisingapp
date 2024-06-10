@@ -34,32 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Actions;
 
-use OpenAI;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Ai\Models\AiAssistant;
 
-class OpenAiGpt4Service extends BaseOpenAiService
+class ResetAiServiceIdsForAssistant
 {
-    public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_4_api_key ?? config('integration-open-ai.gpt_4_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_4_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
-    }
-
-    public function getModel(): string
+    public function __invoke(AiAssistant $assistant): void
     {
-        return $this->settings->open_ai_gpt_4_model ?? config('integration-open-ai.gpt_4_model');
-    }
+        $assistant->assistant_id = null;
+        $assistant->save();
 
-    public function getDeployment(): string
-    {
-        return $this->settings->open_ai_gpt_4_base_uri ?? config('integration-open-ai.gpt_4_base_uri');
+        $assistant
+            ->threads()
+            ->update([
+                'thread_id' => null,
+            ]);
     }
 }

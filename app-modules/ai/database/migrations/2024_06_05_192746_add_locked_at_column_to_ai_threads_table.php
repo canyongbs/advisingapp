@@ -34,32 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use OpenAI;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-
-class OpenAiGpt4Service extends BaseOpenAiService
-{
-    public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_4_api_key ?? config('integration-open-ai.gpt_4_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_4_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
-    }
-
-    public function getModel(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->settings->open_ai_gpt_4_model ?? config('integration-open-ai.gpt_4_model');
+        Schema::table('ai_threads', function (Blueprint $table) {
+            $table->dateTime('locked_at')->nullable();
+        });
     }
 
-    public function getDeployment(): string
+    public function down(): void
     {
-        return $this->settings->open_ai_gpt_4_base_uri ?? config('integration-open-ai.gpt_4_base_uri');
+        Schema::table('ai_threads', function (Blueprint $table) {
+            $table->dropColumn('locked_at');
+        });
     }
-}
+};

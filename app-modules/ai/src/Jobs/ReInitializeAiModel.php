@@ -34,26 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Actions;
+namespace AdvisingApp\Ai\Jobs;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Models\AiThread;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
 use AdvisingApp\Ai\Models\AiAssistant;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Spatie\Multitenancy\Jobs\TenantAware;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
 
-class ResetAiServiceIds
+class ReInitializeAiModel implements ShouldQueue, TenantAware
 {
-    public function __invoke(AiModel $model): void
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public function __construct(
+        protected string $model,
+    ) {}
+
+    public function handle(ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant): void
     {
         AiAssistant::query()
-            ->where('model', $model)
-            ->update([
-                'assistant_id' => null,
-            ]);
-
-        AiThread::query()
-            ->whereRelation('assistant', 'model', $model)
-            ->update([
-                'thread_id' => null,
-            ]);
+            ->where('model', $this->model)
+            ->eachById($reInitializeAiServiceAssistant(...), 250);
     }
 }

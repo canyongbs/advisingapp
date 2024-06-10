@@ -51,7 +51,7 @@ use AdvisingApp\Report\Filament\Resources\ReportResource;
 
 class ListReports extends ListRecords
 {
-    protected ?string $heading = 'Report Management';
+    protected ?string $heading = 'Custom Reports';
 
     protected static string $resource = ReportResource::class;
 
@@ -69,7 +69,7 @@ class ListReports extends ListRecords
                     ->label('Owner')
                     ->sortable()
                     ->hidden(function (Table $table) {
-                        return $table->getFilter('my_reports')->getState()['isActive'];
+                        return $table->getFilter('my_reports')->getState()['isActive'] ?? false;
                     }),
             ])
             ->actions([
@@ -78,7 +78,7 @@ class ListReports extends ListRecords
             ])
             ->filters([
                 Filter::make('my_reports')
-                    ->label('My Reports')
+                    ->label('My Custom Reports')
                     ->query(
                         fn ($query) => $query->where('user_id', auth()->id())
                     )

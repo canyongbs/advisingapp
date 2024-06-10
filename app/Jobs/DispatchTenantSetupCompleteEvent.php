@@ -37,7 +37,6 @@
 namespace App\Jobs;
 
 use App\Models\Tenant;
-use Laravel\Pennant\Feature;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Event;
@@ -68,10 +67,7 @@ class DispatchTenantSetupCompleteEvent implements ShouldQueue, NotTenantAware
 
     public function handle(): void
     {
-        if (Feature::active('setup-complete')) {
-            $this->tenant->update(['setup_complete' => true]);
-        }
-
+        $this->tenant->update(['setup_complete' => true]);
         Event::dispatch(new NewTenantSetupComplete($this->tenant));
     }
 }

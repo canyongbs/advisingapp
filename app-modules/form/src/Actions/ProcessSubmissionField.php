@@ -34,32 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Form\Actions;
 
-use OpenAI;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Illuminate\Support\Str;
+use AdvisingApp\Form\Models\Submission;
+use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 
-class OpenAiGpt4Service extends BaseOpenAiService
+class ProcessSubmissionField
 {
     public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_4_api_key ?? config('integration-open-ai.gpt_4_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_4_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
-    }
+        protected ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail
+    ) {}
 
-    public function getModel(): string
+    public function __invoke(Submission $submission, string $fieldId, mixed $response, array $fields): void
     {
-        return $this->settings->open_ai_gpt_4_model ?? config('integration-open-ai.gpt_4_model');
-    }
+        $submission->fields()->attach($fieldId, [
+            'id' => Str::orderedUuid(),
+            'response' => $response,
+        ]);
 
-    public function getDeployment(): string
-    {
-        return $this->settings->open_ai_gpt_4_base_uri ?? config('integration-open-ai.gpt_4_base_uri');
+        if ($submission->author) {
+            return;
+        }
+
+        if ($fields[$fieldId] !== EducatableEmailFormFieldBlock::type()) {
+            return;
+        }
+
+        $author = ($this->resolveSubmissionAuthorFromEmail)($response);
+
+        if (! $author) {
+            return;
+        }
+
+        $submission->author()->associate($author);
     }
 }
