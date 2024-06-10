@@ -40,6 +40,8 @@ use OwenIt\Auditing\Events\Auditing;
 use Illuminate\Auth\Events\Registered;
 use AdvisingApp\Audit\Listeners\AuditingListener;
 use App\Multitenancy\Listeners\SetSentryTenantTag;
+use App\Multitenancy\Listeners\RemoveSentryTenantTag;
+use Spatie\Multitenancy\Events\ForgotCurrentTenantEvent;
 use Spatie\Multitenancy\Events\MakingTenantCurrentEvent;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -60,6 +62,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         MakingTenantCurrentEvent::class => [
             SetSentryTenantTag::class,
+        ],
+        ForgotCurrentTenantEvent::class => [
+            RemoveSentryTenantTag::class,
         ],
     ];
 
