@@ -96,6 +96,19 @@ abstract class BaseOpenAiService implements AiService
         ]);
     }
 
+    public function updateAssistantTools(AiAssistant $assistant, array $tools): void
+    {
+        $tools = collect($tools)->map(function ($tool) {
+            return [
+                'type' => $tool,
+            ];
+        })->toArray();
+
+        $this->client->assistants()->modify($assistant->assistant_id, [
+            'tools' => $tools,
+        ]);
+    }
+
     public function createThread(AiThread $thread): void
     {
         $threadParameters = [];
