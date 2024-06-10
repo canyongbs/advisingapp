@@ -39,6 +39,7 @@ namespace App\Providers;
 use App\Listeners\SetSentryUser;
 use Illuminate\Auth\Events\Login;
 use App\Listeners\ClearSentryUser;
+use Illuminate\Auth\Events\Logout;
 use OwenIt\Auditing\Events\Auditing;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Authenticated;
@@ -78,6 +79,9 @@ class EventServiceProvider extends ServiceProvider
             SetSentryUser::class,
         ],
         ScheduledTaskStarting::class => [
+            ClearSentryUser::class,
+        ],
+        Logout::class => [
             ClearSentryUser::class,
         ],
     ];
