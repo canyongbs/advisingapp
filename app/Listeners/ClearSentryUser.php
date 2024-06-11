@@ -34,25 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Actions;
+namespace App\Listeners;
 
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
+use Sentry\State\Scope;
 
-class CreateOnDemandEngagement
+use function Sentry\configureScope;
+
+class ClearSentryUser
 {
-    public function __invoke(Educatable $educatable, array $data): void
+    public function handle(object $event): void
     {
-        $engagement = $educatable->engagements()->create([
-            'subject' => $data['subject'] ?? null,
-            'body' => $data['body'] ?? null,
-            'scheduled' => false,
-        ]);
-
-        $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
-
-        $createEngagementDeliverable($engagement, $data['delivery_method']);
-
-        $engagement->deliverable->driver()->deliver();
+        configureScope(function (Scope $scope): void {
+            $scope->removeUser();
+        });
     }
 }

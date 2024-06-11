@@ -39,12 +39,12 @@ namespace AdvisingApp\Engagement\Filament\Pages;
 use Carbon\Carbon;
 use App\Models\User;
 use Filament\Pages\Page;
+use Filament\Actions\Action;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Models\Authenticatable;
 use Filament\Actions\ViewAction;
 use AdvisingApp\Task\Models\Task;
-use Filament\Actions\CreateAction;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
@@ -59,7 +59,7 @@ use AdvisingApp\Engagement\Models\EngagementResponse;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\Engagement\Filament\Actions\EngagementCreateAction;
+use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Timeline\Filament\Pages\Concerns\LoadsTimelineRecords;
 
 class MessageCenter extends Page
@@ -307,11 +307,11 @@ class MessageCenter extends Page
         $this->mountAction('create');
     }
 
-    public function createAction(): CreateAction
+    public function createAction(): Action
     {
-        return EngagementCreateAction::make($this->recordModel)->after(function () {
-            $this->refreshSelectedEducatable();
-        });
+        return SendEngagementAction::make()
+            ->record($this->recordModel)
+            ->after(fn () => $this->refreshSelectedEducatable());
     }
 
     protected function getViewData(): array

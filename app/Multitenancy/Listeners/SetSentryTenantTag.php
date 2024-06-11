@@ -34,25 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Actions;
+namespace App\Multitenancy\Listeners;
 
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
+use Sentry\State\Scope;
 
-class CreateOnDemandEngagement
+use function Sentry\configureScope;
+
+use Spatie\Multitenancy\Events\MakingTenantCurrentEvent;
+
+class SetSentryTenantTag
 {
-    public function __invoke(Educatable $educatable, array $data): void
+    public function handle(MakingTenantCurrentEvent $event): void
     {
-        $engagement = $educatable->engagements()->create([
-            'subject' => $data['subject'] ?? null,
-            'body' => $data['body'] ?? null,
-            'scheduled' => false,
-        ]);
-
-        $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
-
-        $createEngagementDeliverable($engagement, $data['delivery_method']);
-
-        $engagement->deliverable->driver()->deliver();
+        configureScope(function (Scope $scope) use ($event): void {
+            $scope->setTags([
+                'tenant.id' => $event->tenant->getKey(),
+                'tenant.name' => $event->tenant->name,
+            ]);
+        });
     }
 }

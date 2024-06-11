@@ -36,62 +36,27 @@
 
 namespace AdvisingApp\Engagement\Actions;
 
+use League\HTMLToMarkdown\HtmlConverter;
+
 class GenerateEmailMarkdownContent
 {
-    public function __invoke(array $content, array $mergeData = [], string $markdown = ''): string
+    public function __invoke(string|array $content, array $mergeData = []): string
     {
-        foreach ($content as $component) {
-            $markdown .= match ($component['type']) {
-                'bulletList', 'paragraph' => PHP_EOL . PHP_EOL . $this($component['content'] ?? [], $mergeData),
-                'doc' => $this($component['content'], $mergeData),
-                'heading' => PHP_EOL . PHP_EOL . str_repeat('#', $component['attrs']['level'] ?? 1) . ' ' . $this($component['content'] ?? [], $mergeData),
-                'horizontalRule' => PHP_EOL . PHP_EOL . '---',
-                'image' => ' ' . '![' . ($component['attrs']['alt'] ?? '') . '](' . ($component['attrs']['src'] ?? '') . ')',
-                'listItem' => PHP_EOL . '- ' . $this($component['content'] ?? [], $mergeData),
-                'mergeTag' => ' ' . $this->text($mergeData[$component['attrs']['id'] ?? null] ?? '', $component),
-                'orderedList' => PHP_EOL . PHP_EOL . $this->orderedList($component, $mergeData),
-                'text' => ' ' . $this->text($component['text'] ?? '', $component),
-                'hardBreak' => '  ' . PHP_EOL,
-                default => '',
-            };
-        }
+        $converter = new HtmlConverter();
 
-        return trim($markdown);
-    }
+        $html = tiptap_converter()
+            ->getEditor()
+            ->setContent($content)
+            ->descendants(function ($node) use ($mergeData) {
+                if ($node->type !== 'mergeTag') {
+                    return;
+                }
 
-    public function orderedList(array $component, array $mergeData): string
-    {
-        $markdown = '';
+                $node->type = 'text';
+                $node->text = $mergeData[$node->attrs->id ?? null] ?? '';
+            })
+            ->getHTML();
 
-        $number = $component['attrs']['start'] ?? 1;
-
-        foreach ($component['content'] ?? [] as $item) {
-            $markdown .= PHP_EOL . $number . '. ' . $this($item['content'] ?? [], $mergeData);
-
-            $number++;
-        }
-
-        return $markdown;
-    }
-
-    public function text(string $text, array $component): string
-    {
-        $text = trim($text);
-
-        if ($text === '') {
-            return '';
-        }
-
-        foreach ($component['marks'] ?? [] as $mark) {
-            $text = match ($mark['type'] ?? null) {
-                'bold' => "**{$text}**",
-                'italic' => "*{$text}*",
-                'link' => "[{$text}](" . ($mark['attrs']['href'] ?? '') . ')',
-                'small' => "<small>{$text}</small>",
-                default => $text,
-            };
-        }
-
-        return $text;
+        return $converter->convert($html);
     }
 }

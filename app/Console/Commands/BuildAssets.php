@@ -72,13 +72,18 @@ class BuildAssets extends Command
         $script = $this->argument('script');
         $script = filled($script) ? "build:{$script}" : 'build';
 
-        $process = Process::run(
-            <<<BASH
-                #!/bin/bash
-                [ -s "/usr/local/nvm/nvm.sh" ] && \. "/usr/local/nvm/nvm.sh"
-                npm run {$script}
-            BASH
-        )->throw();
+        $process = Process::timeout(3600)
+            ->run(
+                command: <<<BASH
+                    #!/bin/bash
+                    [ -s "/usr/local/nvm/nvm.sh" ] && \. "/usr/local/nvm/nvm.sh"
+                    npm run {$script}
+                BASH,
+                output: function (string $type, string $output) {
+                    $this->line($output);
+                }
+            )
+            ->throw();
 
         $this->line($process->output());
 
