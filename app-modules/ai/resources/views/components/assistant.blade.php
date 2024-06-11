@@ -467,7 +467,6 @@
                                     x-on:input="render()"
                                     x-intersect.once="render()"
                                     x-on:resize.window="render()"
-                                    x-on:keydown.enter="$event.shiftKey || $event.preventDefault() || sendMessage()"
                                     x-bind:disabled="isSendingMessage"
                                     placeholder="Type here..."
                                     required
@@ -492,36 +491,23 @@
                                     >
                                         <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
                                     </div>
-                                    >>>>>>> main
-                                </div>
-                                <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
-                                    <div class="flex w-full items-center gap-3">
-                                        <x-filament::button type="submit">
-                                            Send
-                                        </x-filament::button>
 
-                                        {{ $this->insertFromPromptLibraryAction }}
-
-                                        <div
-                                            class="py-2"
-                                            x-show="isSendingMessage"
-                                        >
-                                            <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
-                                        </div>
+                                    <div class="flex grow justify-end">
+                                        @if (blank($this->thread->name))
+                                            <div class="flex pl-0 sm:pl-2">
+                                                {{ $this->saveThreadAction }}
+                                            </div>
+                                        @else
+                                            <div class="flex gap-3">
+                                                {{ ($this->cloneThreadAction)(['thread' => $this->thread->id]) }}
+                                                {{ ($this->emailThreadAction)(['thread' => $this->thread->id]) }}
+                                            </div>
+                                        @endif
                                     </div>
 
-                                    @if (blank($this->thread->name))
-                                        <div class="flex pl-0 sm:pl-2">
-                                            {{ $this->saveThreadAction }}
-                                        </div>
-                                    @else
-                                        <div class="flex gap-3">
-                                            {{ ($this->cloneThreadAction)(['thread' => $this->thread->id]) }}
-                                            {{ ($this->emailThreadAction)(['thread' => $this->thread->id]) }}
-                                        </div>
-                                    @endif
                                 </div>
                             </div>
+                        </div>
                     </form>
                 @else
                     <div
