@@ -6,7 +6,7 @@
     "license": "proprietary",
     "require": {
         "filament/filament": "^3.0.0",
-        "openai-php/client": "^v0.10.0-beta.1"
+        "openai-php/client": "^v0.10.1"
     },
     "autoload": {
         "psr-4": {
@@ -16,7 +16,7 @@
             "AdvisingApp\\IntegrationOpenAi\\Database\\Seeders\\": "database/seeders/"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "extra": {
         "laravel": {
             "providers": [

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "24b25d6fd8f185d7db2de91c9200fe95",
+    "content-hash": "0c21e02150328b479269dd322311bf64",
     "packages": [
         {
             "name": "amphp/amp",
@@ -2868,11 +2868,11 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-open-ai",
-                "reference": "67945ff583211b77912d6aece759b1201045a44d"
+                "reference": "48707debf9fb689584c2d7bba59c279ec236dad7"
             },
             "require": {
                 "filament/filament": "^3.0.0",
-                "openai-php/client": "^v0.10.0-beta.1"
+                "openai-php/client": "^v0.10.1"
             },
             "type": "library",
             "extra": {
@@ -24233,7 +24233,7 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
