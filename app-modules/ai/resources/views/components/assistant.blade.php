@@ -38,7 +38,9 @@
 <div class="h-[calc(100dvh-4rem)]">
     @if ($this->isConsented && $this->thread)
         @capture($sidebarContent, $assistantSwitcherForm)
-            <div class="flex select-none flex-col gap-y-2">
+            <div 
+            class="flex select-none flex-col gap-y-2"
+            >
                 <div
                     class="relative"
                     x-data="{ isSearchingAssistants: false }"
@@ -89,19 +91,16 @@
                         @foreach ($this->threadsWithoutAFolder as $threadItem)
                             <li
                                 id="chat-{{ $threadItem->id }}"
-                                title="Last Engaged: {{ $threadItem?->last_engaged_at?->format('F d, Y') }}"
+                                x-on:message-sent-{{$threadItem->id }}.window="updateTitle"
+                                x-tooltip="'Last Engaged: ' + $data.lastUpdated"
                                 x-data="{
-                                    updateTitle(time, threadItemId) {
-                                            const formattedDate = new Date(time).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                                            document.getElementById('chat-' + threadItemId).title = 'Last Engaged: ' + formattedDate;
-                                        },
-                                        listenForEvent(threadId) {
-                                            window.addEventListener(`message-sent-${threadId}`, (event) => {
-                                                this.updateTitle(event.detail.time, event.detail.threadItemId);
-                                            });
-                                        }
+                                    lastUpdated: `{{ $threadItem?->last_engaged_at?->format('F d, Y') }}`,
+                                    updateTitle() { 
+                                        const now = new Date(); this.lastUpdated = now.toLocaleDateString('en-US', { 
+                                            year: 'numeric', month: 'long', day: 'numeric' 
+                                        });  
+                                    }
                                 }"
-                                x-init="listenForEvent('{{ $threadItem->id }}')"
                                 wire:key="chat-{{ $threadItem->id }}"
                                 @class([
                                     'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
@@ -227,19 +226,16 @@
                                 @foreach ($folder->threads as $threadItem)
                                     <li
                                         id="chat-{{ $threadItem->id }}"
-                                        title="Last Engaged: {{ $threadItem?->last_engaged_at?->format('F d, Y') }}"
+                                        x-on:message-sent-{{$threadItem->id }}.window="updateTitle"
+                                        x-tooltip="'Last Engaged: ' + $data.lastUpdated"
                                         x-data="{
-                                            updateTitle(time, threadItemId) {
-                                                    const formattedDate = new Date(time).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                                                    document.getElementById('chat-' + threadItemId).title = 'Last Engaged: ' + formattedDate;
-                                                },
-                                                listenForFolderChatEvent(threadId) {
-                                                    window.addEventListener(`message-sent-${threadId}`, (event) => {
-                                                        this.updateTitle(event.detail.time, event.detail.threadItemId);
-                                                    });
-                                                }
+                                            lastUpdated: `{{ $threadItem?->last_engaged_at?->format('F d, Y') }}`,
+                                            updateTitle() { 
+                                                const now = new Date(); this.lastUpdated = now.toLocaleDateString('en-US', { 
+                                                    year: 'numeric', month: 'long', day: 'numeric' 
+                                                });  
+                                            }
                                         }"
-                                        x-init="listenForFolderChatEvent('{{ $threadItem->id }}')"
                                         wire:key="chat-{{ $threadItem->id }}"
                                         x-show="expanded('{{ $folder->id }}')"
                                         @class([
