@@ -10,8 +10,8 @@ class PermissionMigrationCreator extends MigrationCreator
     {
         return $this->files->get(
             $this->files->exists($customPath = $this->customStubPath . '/permission-migration.stub')
-                            ? $customPath
-                            : $this->stubPath() . '/migration.stub'
+                ? $customPath
+                : $this->stubPath() . '/migration.stub'
         );
     }
 }

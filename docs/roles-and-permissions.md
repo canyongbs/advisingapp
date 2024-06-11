@@ -45,7 +45,21 @@ Permission Groups are a labelling system applied to permissions to put them into
 
 Many `PermissionGroup`s currently exist, so new permissions can be created and added to them. Or when creating a permission an new `PermissionGroup` can be created. What group to assign a permission to should be decided by the developer and/or decided upon by the team and Product.
 
-// TODO: Add details on command to create data migrations and the stub.
+#### Make Migration Command
+
+This application has a command, virtually the same as the default `make:migration` command to create Permission Migrations.
+
+```bash
+php artisan make:permission-migration 
+```
+
+Example usage:
+
+```bash
+php artisan make:permission-migration seed_permissions_add_foo_permissions
+```
+
+This command works with the `--module` flag.
 
 ## Roles
 Roles are also configurable at the module level. Within configuration files in a module, you can define a Role and the Permissions that it will have.
