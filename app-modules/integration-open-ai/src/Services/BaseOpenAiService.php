@@ -264,7 +264,8 @@ abstract class BaseOpenAiService implements AiService
 
         // 60 second total request timeout, with a 10-second buffer.
         $currentTime = time();
-        $timeoutInSeconds = 60 - ($currentTime - $_SERVER['REQUEST_TIME']) - 10;
+        $requestTime = app()->runningUnitTests() ? time() : $_SERVER['REQUEST_TIME'];
+        $timeoutInSeconds = 60 - ($currentTime - $requestTime) - 10;
         $expiration = $currentTime + $timeoutInSeconds;
 
         while ($threadRunResponse->status !== 'completed') {
