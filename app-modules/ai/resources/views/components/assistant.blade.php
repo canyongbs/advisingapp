@@ -403,9 +403,9 @@
                                                         messageCopied: false,
                                                         copyMessage: function() {
                                                             navigator.clipboard.writeText(message.content.replace(/(<([^>]+)>)/gi, ''))
-                                                    
+
                                                             this.messageCopied = true
-                                                    
+
                                                             setTimeout(() => { this.messageCopied = false }, 2000)
                                                         }
                                                     }"
@@ -448,7 +448,6 @@
                                 x-on:input="render()"
                                 x-intersect.once="render()"
                                 x-on:resize.window="render()"
-                                x-on:keydown.enter="$event.shiftKey || $event.preventDefault() || sendMessage()"
                                 x-bind:disabled="isSendingMessage"
                                 placeholder="Type here..."
                                 required
