@@ -60,15 +60,15 @@ class StudentStats extends StatsOverviewWidget
                     }),
                 maxPrecision: 2,
             )),
-            Stat::make('Subscriptions', Cache::tags(['students', "user-{$user->getKey()}-student-subscriptions"])
+            Stat::make('My Subscriptions', Cache::tags(['students', "user-{$user->getKey()}-student-subscriptions"])
                 ->remember("user-{$user->getKey()}-student-subscriptions-count", now()->addHour(), function () use ($user): int {
                     return $user->studentSubscriptions()->count();
                 })),
-            Stat::make('Alerts', Cache::tags(['students', "user-{$user->getKey()}-student-alerts"])
+            Stat::make('My Alerts', Cache::tags(['students', "user-{$user->getKey()}-student-alerts"])
                 ->remember("user-{$user->getKey()}-student-alerts-count", now()->addHour(), function () use ($user): int {
                     return $user->studentAlerts()->status(AlertStatus::Active)->count();
                 })),
-            Stat::make('Caseloads', Cache::tags(["user-{$user->getKey()}-student-caseloads"])
+            Stat::make('My Caseloads', Cache::tags(["user-{$user->getKey()}-student-caseloads"])
                 ->remember("user-{$user->getKey()}-student-caseloads-count", now()->addHour(), function () use ($user): int {
                     return $user->caseloads()->model(CaseloadModel::Student)->count();
                 })),

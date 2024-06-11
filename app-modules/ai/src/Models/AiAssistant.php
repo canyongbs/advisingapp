@@ -55,6 +55,7 @@ class AiAssistant extends BaseModel implements HasMedia
     use SoftDeletes;
 
     protected $fillable = [
+        'archived_at',
         'assistant_id',
         'name',
         'application',
@@ -67,6 +68,7 @@ class AiAssistant extends BaseModel implements HasMedia
 
     protected $casts = [
         'application' => AiApplication::class,
+        'archived_at' => 'datetime',
         'is_default' => 'bool',
         'model' => AiModel::class,
     ];

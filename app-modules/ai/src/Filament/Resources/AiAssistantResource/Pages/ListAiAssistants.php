@@ -38,9 +38,12 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages;
 
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
@@ -58,6 +61,17 @@ class ListAiAssistants extends ListRecords
                 TextColumn::make('name')
                     ->searchable()
                     ->label('Name'),
+                IconColumn::make('archived_at')
+                    ->label('Archived')
+                    ->boolean()
+                    ->hidden(function (Table $table) {
+                        return $table->getFilter('withoutArchived')->getState()['isActive'] ?? false;
+                    }),
+            ])
+            ->filters([
+                Filter::make('withoutArchived')
+                    ->query(fn (Builder $query) => $query->whereNull('archived_at'))
+                    ->default(),
             ])
             ->actions([
                 EditAction::make(),

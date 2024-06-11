@@ -36,6 +36,7 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Actions\Action;
 use Filament\Pages\SettingsPage;
@@ -104,22 +105,33 @@ class ManageLicenseSettings extends SettingsPage
                             TextInput::make('data.limits.conversationalAiSeats')
                                 ->label('Artificial Intelligence Seats')
                                 ->numeric()
+                                ->minValue(0)
                                 ->required(),
+                            TextInput::make('data.limits.conversationalAiAssistants')
+                                ->label('Artificial Intelligence Assistants')
+                                ->numeric()
+                                ->minValue(0)
+                                ->required()
+                                ->disabled(fn (Get $get): bool => (bool) $get('conversationalAiSeats')),
                             TextInput::make('data.limits.retentionCrmSeats')
                                 ->label('Student Success / Retention Seats')
                                 ->numeric()
+                                ->minValue(0)
                                 ->required(),
                             TextInput::make('data.limits.recruitmentCrmSeats')
                                 ->label('Recruitment CRM Seats')
                                 ->numeric()
+                                ->minValue(0)
                                 ->required(),
                             TextInput::make('data.limits.emails')
                                 ->label('Emails')
                                 ->numeric()
+                                ->minValue(0)
                                 ->required(),
                             TextInput::make('data.limits.sms')
                                 ->label('SMS')
                                 ->numeric()
+                                ->minValue(0)
                                 ->required(),
                             TextInput::make('data.limits.resetDate')
                                 ->label('Reset Date')
