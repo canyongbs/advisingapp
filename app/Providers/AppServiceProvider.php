@@ -50,6 +50,7 @@ use Laravel\Octane\Commands\ReloadCommand;
 use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use App\Overrides\Laravel\PermissionMigrationCreator;
 use OpenSearch\Migrations\Filesystem\MigrationStorage;
 use App\Overrides\Filament\Actions\Imports\Jobs\ImportCsvOverride;
 use App\Overrides\Filament\Actions\Imports\Jobs\PrepareCsvExportOverride;
@@ -106,6 +107,10 @@ class AppServiceProvider extends ServiceProvider
             configureScope(function (Scope $scope): void {
                 $scope->removeUser();
             });
+        });
+
+        $this->app->singleton(PermissionMigrationCreator::class, function ($app) {
+            return new PermissionMigrationCreator($app['files'], $app->basePath('stubs'));
         });
     }
 }
