@@ -119,5 +119,9 @@ it('throws an exception if the assistant is archived', function () {
         ->for(auth()->user())
         ->create();
 
-    app(SendMessage::class)($thread, 'Hello, world!');
+    $data = [
+        'content' => 'Hello, world!',
+    ];
+
+    app(SendMessage::class)($thread, $data);
 })->throws(AiAssistantArchivedException::class);
