@@ -99,5 +99,9 @@ it('throws an exception if the thread is locked', function () {
         'locked_at' => now(),
     ]);
 
-    app(SendMessage::class)($thread, 'Hello, world!');
+    $data = [
+        'content' => AiMessage::factory()->make()->content,
+    ];
+
+    app(SendMessage::class)($thread, $data);
 })->throws(AiThreadLockedException::class);

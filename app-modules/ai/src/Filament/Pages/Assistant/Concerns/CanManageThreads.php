@@ -61,6 +61,7 @@ use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use AdvisingApp\Ai\DataTransferObjects\VectorStores\VectorStoresDataTransferObject;
 
@@ -308,11 +309,7 @@ trait CanManageThreads
 
         while ($vectorStoreResponseStatus !== 'completed') {
             if ($timeout <= 0) {
-                // TODO Throw exception...
-            }
-
-            if ($vectorStoreResponseStatus === 'expired') {
-                // TODO Something went wrong and we need to restart the process...
+                throw new AiThreadLockedException();
             }
 
             usleep(500000);
