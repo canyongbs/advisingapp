@@ -139,6 +139,7 @@ class CreateTenant extends Command
                 ),
                 limits: new LicenseLimitsData(
                     conversationalAiSeats: 50,
+                    conversationalAiAssistants: 0,
                     retentionCrmSeats: 25,
                     recruitmentCrmSeats: 10,
                     emails: 1000,

@@ -62,6 +62,7 @@ class ReInitializeAiModel implements ShouldQueue, TenantAware
     {
         AiAssistant::query()
             ->where('model', $this->model)
+            ->whereNull('archived_at')
             ->eachById($reInitializeAiServiceAssistant(...), 250);
     }
 }
