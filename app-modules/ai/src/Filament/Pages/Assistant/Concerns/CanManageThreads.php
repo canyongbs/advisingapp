@@ -62,6 +62,7 @@ use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use AdvisingApp\Ai\DataTransferObjects\VectorStores\VectorStoresDataTransferObject;
 
 /**
  * @property-read array $customAssistants
@@ -164,6 +165,12 @@ trait CanManageThreads
         }
 
         $this->thread = app(CreateThread::class)(static::APPLICATION, $assistant);
+
+        if (! is_null($expiredVectorStore = $this->getExpiredVectorStoresForThread($this->thread))) {
+            foreach ($expiredVectorStore as $expiredVectorStore) {
+                $this->recreateVectorStoreForThread($this->thread, $expiredVectorStore);
+            }
+        }
     }
 
     #[Computed]
@@ -183,6 +190,12 @@ trait CanManageThreads
         $this->selectThread($this->threadsWithoutAFolder->first());
 
         if ($this->thread) {
+            if (! is_null($expiredVectorStore = $this->getExpiredVectorStoresForThread($this->thread))) {
+                foreach ($expiredVectorStore as $expiredVectorStore) {
+                    $this->recreateVectorStoreForThread($this->thread, $expiredVectorStore);
+                }
+            }
+
             return;
         }
 
@@ -208,6 +221,106 @@ trait CanManageThreads
         }
 
         $this->thread = $thread;
+    }
+
+    public function getExpiredVectorStoresForThread(): ?array
+    {
+        $thread = $this->thread->assistant->model->getService()->retrieveThread($this->thread);
+
+        // Currently threads only support a single vector store
+        $expiredVectorStores = collect($thread->vectorStoreIds)
+            ->map(function ($vectorStoreId) {
+                $vectorStoreResponse = $this->thread->assistant->model->getService()->retrieveVectorStore($vectorStoreId);
+
+                if ($vectorStoreResponse->status === 'expired') {
+                    return $vectorStoreResponse;
+                }
+
+                return null;
+            })
+            ->filter()
+            ->toArray();
+
+        return ! empty($expiredVectorStores) ? $expiredVectorStores : null;
+    }
+
+    public function recreateVectorStoreForThread(AiThread $thread, array $vectorStore): void
+    {
+        $vectorStoreFileIds = [];
+
+        $this->retrieveAllVectorStoreFileIds(
+            thread: $thread,
+            vectorStoreId: $vectorStore['id'],
+            vectorStoreFileIds: $vectorStoreFileIds
+        );
+
+        // Create new vector store
+        $newVectorStore = $thread->assistant->model->getService()->createVectorStore([
+            'file_ids' => $vectorStoreFileIds,
+            'name' => 'Refreshed vector store ' . now()->timestamp . ' for thread' . $thread->id,
+        ]);
+
+        // Update the thread to use the new vector store.
+        $thread->assistant->model->getService()->modifyThread($thread, [
+            'tool_resources' => [
+                'file_search' => [
+                    'vector_store_ids' => [$newVectorStore->id],
+                ],
+            ],
+        ]);
+
+        // Ensure the new vector store has processed all of its files.
+        $this->awaitVectorStoreProcessing(
+            thread: $thread,
+            vectorStore: $newVectorStore
+        );
+    }
+
+    public function retrieveAllVectorStoreFileIds($thread, $vectorStoreId, &$vectorStoreFileIds = [], $after = null)
+    {
+        $params = [];
+
+        if ($after !== null) {
+            $params['after'] = $after;
+        }
+
+        $response = $thread->assistant->model->getService()->retrieveVectorStoreFiles($thread, $vectorStoreId, $params);
+
+        collect($response->data)->each(function ($file) use (&$vectorStoreFileIds) {
+            $vectorStoreFileIds[] = $file['id'];
+        });
+
+        if ($response->hasMore === true) {
+            $this->retrieveAllVectorStoreFileIds(
+                thread: $thread,
+                vectorStoreId: $vectorStoreId,
+                vectorStoreFileIds: $vectorStoreFileIds,
+                after: $response->lastId
+            );
+        }
+    }
+
+    public function awaitVectorStoreProcessing(AiThread $thread, VectorStoresDataTransferObject $vectorStore): void
+    {
+        $timeout = 60;
+
+        $vectorStoreResponseStatus = $vectorStore->status;
+
+        while ($vectorStoreResponseStatus !== 'completed') {
+            if ($timeout <= 0) {
+                // TODO Throw exception...
+            }
+
+            if ($vectorStoreResponseStatus === 'expired') {
+                // TODO Something went wrong and we need to restart the process...
+            }
+
+            usleep(500000);
+
+            $vectorStoreResponseStatus = $thread->assistant->model->getService()->retrieveVectorStore($vectorStore->id)->status;
+
+            $timeout -= 0.5;
+        }
     }
 
     public function saveThreadAction(): Action

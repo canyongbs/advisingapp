@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\DataTransferObjects;
+namespace AdvisingApp\Ai\DataTransferObjects\Files;
 
 use Spatie\LaravelData\Data;
 
-class RetrieveFileResponse extends Data
+class FilesDataTransferObject extends Data
 {
     public function __construct(
         public string $id,
