@@ -82,8 +82,6 @@ document.addEventListener('alpine:init', () => {
 
             this.$dispatch(`message-sent-${threadId}`);
 
-            console.log('event-dispatch');
-
             this.latestMessage = this.message;
 
             this.messages.push({
