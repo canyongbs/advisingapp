@@ -76,7 +76,7 @@ trait CanModifyPermissions
         ];
 
         DB::table('permissions')
-            ->insert(array_map(function (string $name, string $groupName) use ($groups, $guardName): array {
+            ->insertOrIgnore(array_map(function (string $name, string $groupName) use ($groups, $guardName): array {
                 return [
                     'id' => (string) Str::orderedUuid(),
                     'group_id' => $groups[$groupName],
