@@ -334,7 +334,7 @@ class MessageCenter extends Page
         if ($this->filterPeopleType === 'students' || $this->filterPeopleType === 'all') {
             $studentIds = $this->getStudentIds();
             $studentLatestActivity = $this->getLatestActivityForEducatables($studentIds);
-
+            
             $studentPopulationQuery = Student::query()
                 ->when($this->search, function ($query, $search) {
                     $query->where('full_name', 'like', "%{$search}%")
@@ -371,7 +371,7 @@ class MessageCenter extends Page
         } else {
             $educatables = $studentPopulationQuery->unionAll($prospectPopulationQuery);
         }
-
+        
         $this->loadingInbox = false;
 
         return [
