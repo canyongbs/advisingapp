@@ -40,5 +40,5 @@ use Exception;
 
 class FileUploadException extends Exception
 {
-    protected string $message = 'Something went wrong while attempting to upload the file. Please try again.';
+    protected $message = 'Something went wrong while attempting to upload the file. Please try again.';
 }

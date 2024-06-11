@@ -156,6 +156,16 @@ abstract class BaseOpenAiService implements AiService
         }
     }
 
+    public function retrieveThread(AiThread $thread): ThreadsDataTransferObject
+    {
+        $response = $this->client->threads()->retrieve($thread->thread_id);
+
+        return ThreadsDataTransferObject::from([
+            'id' => $thread->thread_id,
+            'vectorStoreIds' => $response->toolResources?->fileSearch?->vectorStoreIds ?? [],
+        ]);
+    }
+
     public function modifyThread(AiThread $thread, array $parameters): ThreadsDataTransferObject
     {
         /** @var ThreadResponse $response */
@@ -333,16 +343,6 @@ abstract class BaseOpenAiService implements AiService
             'id' => $response->id,
             'name' => $response->filename,
             'status' => $response->status,
-        ]);
-    }
-
-    public function retrieveThread(AiThread $thread): ThreadsDataTransferObject
-    {
-        $response = $this->client->threads()->retrieve($thread->thread_id);
-
-        return ThreadsDataTransferObject::from([
-            'id' => $thread->thread_id,
-            'vectorStoreIds' => $response->toolResources?->fileSearch?->vectorStoreIds ?? [],
         ]);
     }
 

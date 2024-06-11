@@ -76,6 +76,8 @@ interface AiService
      */
     public function createThread(AiThread $thread): void;
 
+    public function retrieveThread(AiThread $thread): ThreadsDataTransferObject;
+
     public function modifyThread(AiThread $thread, array $parameters): ThreadsDataTransferObject;
 
     /**
@@ -97,7 +99,7 @@ interface AiService
      * The method should return a new unsaved `AiMessage` model with the content
      * from the AI service set only, the other attributes will be set later.
      */
-    public function sendMessage(AiMessage $message, array $files): AiMessage;
+    public function sendMessage(AiMessage $message, array $files = []): AiMessage;
 
     /**
      * This method is passed an `AiMessage` model and should recover the
@@ -113,8 +115,6 @@ interface AiService
     public function getMaxAssistantInstructionsLength(): int;
 
     public function retrieveFile(AiMessageFile $file): FilesDataTransferObject;
-
-    public function retrieveThread(AiThread $thread): ThreadsDataTransferObject;
 
     public function createVectorStore(array $parameters): VectorStoresDataTransferObject;
 

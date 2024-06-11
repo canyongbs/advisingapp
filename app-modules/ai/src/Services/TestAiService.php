@@ -39,7 +39,12 @@ namespace AdvisingApp\Ai\Services;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
+use AdvisingApp\Ai\DataTransferObjects\Files\FilesDataTransferObject;
+use AdvisingApp\Ai\DataTransferObjects\Threads\ThreadsDataTransferObject;
+use AdvisingApp\Ai\DataTransferObjects\VectorStores\VectorStoresDataTransferObject;
+use AdvisingApp\Ai\DataTransferObjects\VectorStoreFiles\VectorStoreFilesDataTransferObject;
 
 class TestAiService implements Contracts\AiService
 {
@@ -49,12 +54,30 @@ class TestAiService implements Contracts\AiService
 
     public function updateAssistant(AiAssistant $assistant): void {}
 
+    public function updateAssistantTools(AiAssistant $assistant, array $tools): void {}
+
     public function isAssistantExisting(AiAssistant $assistant): bool
     {
         return true;
     }
 
     public function createThread(AiThread $thread): void {}
+
+    public function retrieveThread(AiThread $thread): ThreadsDataTransferObject
+    {
+        return ThreadsDataTransferObject::from([
+            'id' => $thread->id,
+            'vectorStoreIds' => [],
+        ]);
+    }
+
+    public function modifyThread(AiThread $thread, array $parameters): ThreadsDataTransferObject
+    {
+        return ThreadsDataTransferObject::from([
+            'id' => $thread->id,
+            'vectorStoreIds' => [],
+        ]);
+    }
 
     public function deleteThread(AiThread $thread): void {}
 
@@ -63,7 +86,50 @@ class TestAiService implements Contracts\AiService
         return true;
     }
 
-    public function sendMessage(AiMessage $message): AiMessage
+    public function createVectorStore(array $parameters): VectorStoresDataTransferObject
+    {
+        return VectorStoresDataTransferObject::from([
+            'id' => fake()->uuid(),
+            'name' => fake()->word(),
+            'fileCounts' => [],
+            'status' => 'processed',
+            'expiresAt' => null,
+        ]);
+    }
+
+    public function retrieveVectorStore(string $vectorStoreId): VectorStoresDataTransferObject
+    {
+        return VectorStoresDataTransferObject::from([
+            'id' => $vectorStoreId,
+            'name' => fake()->word(),
+            'fileCounts' => [],
+            'status' => 'processed',
+            'expiresAt' => null,
+        ]);
+    }
+
+    public function modifyVectorStore(string $vectorStoreId, array $parameters): void {}
+
+    public function retrieveVectorStoreFiles(AiThread $thread, string $vectorStoreId, array $params): VectorStoreFilesDataTransferObject
+    {
+        return VectorStoreFilesDataTransferObject::from([
+            'data' => [],
+            'firstId' => fake()->uuid(),
+            'lastId' => fake()->uuid(),
+            'hasMore' => false,
+        ]);
+    }
+
+    public function retrieveFile(AiMessageFile $file): FilesDataTransferObject
+    {
+        return FilesDataTransferObject::from([
+            'id' => $file->file_id,
+            'name' => fake()->word(),
+            'status' => 'processed',
+        ]);
+    }
+
+    public function sendMessage(AiMessage $message, array $files = []): AiMessage
     {
         $message->context = fake()->paragraph();
         $message->save();
@@ -87,6 +153,16 @@ class TestAiService implements Contracts\AiService
     public function getDeployment(): ?string
     {
         return null;
+    }
+
+    public function getApiKey(): string
+    {
+        return 'test';
+    }
+
+    public function getApiVersion(): string
+    {
+        return '1.0.0';
     }
 
     public function supportsFileUploads(): bool

@@ -166,7 +166,7 @@ trait CanManageThreads
 
         $this->thread = app(CreateThread::class)(static::APPLICATION, $assistant);
 
-        if (! is_null($expiredVectorStore = $this->getExpiredVectorStoresForThread($this->thread))) {
+        if (! is_null($expiredVectorStore = $this->getExpiredVectorStoresForThread())) {
             foreach ($expiredVectorStore as $expiredVectorStore) {
                 $this->recreateVectorStoreForThread($this->thread, $expiredVectorStore);
             }
@@ -190,7 +190,7 @@ trait CanManageThreads
         $this->selectThread($this->threadsWithoutAFolder->first());
 
         if ($this->thread) {
-            if (! is_null($expiredVectorStore = $this->getExpiredVectorStoresForThread($this->thread))) {
+            if (! is_null($expiredVectorStore = $this->getExpiredVectorStoresForThread())) {
                 foreach ($expiredVectorStore as $expiredVectorStore) {
                     $this->recreateVectorStoreForThread($this->thread, $expiredVectorStore);
                 }
