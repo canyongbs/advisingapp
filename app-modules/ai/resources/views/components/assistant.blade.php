@@ -38,9 +38,7 @@
 <div class="h-[calc(100dvh-4rem)]">
     @if ($this->isConsented && $this->thread)
         @capture($sidebarContent, $assistantSwitcherForm)
-            <div 
-            class="flex select-none flex-col gap-y-2"
-            >
+            <div class="flex select-none flex-col gap-y-2">
                 <div
                     class="relative"
                     x-data="{ isSearchingAssistants: false }"
@@ -91,14 +89,16 @@
                         @foreach ($this->threadsWithoutAFolder as $threadItem)
                             <li
                                 id="chat-{{ $threadItem->id }}"
-                                x-on:message-sent-{{$threadItem->id }}.window="updateTitle"
+                                x-on:message-sent-{{ $threadItem->id }}.window="updateTitle"
                                 x-tooltip="`Last Engaged: ${$data.lastUpdated}`"
                                 x-data="{
                                     lastUpdated: @js($threadItem?->last_engaged_at?->toFormattedDateString()),
-                                    updateTitle: function() { 
-                                        this.lastUpdated = new Date().toLocaleDateString('en-US', { 
-                                            year: 'numeric', month: 'short', day: 'numeric' 
-                                        });  
+                                    updateTitle: function() {
+                                        this.lastUpdated = new Date().toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'short',
+                                            day: 'numeric'
+                                        });
                                     }
                                 }"
                                 wire:key="chat-{{ $threadItem->id }}"
@@ -226,14 +226,16 @@
                                 @foreach ($folder->threads as $threadItem)
                                     <li
                                         id="chat-{{ $threadItem->id }}"
-                                        x-on:message-sent-{{$threadItem->id }}.window="updateTitle"
+                                        x-on:message-sent-{{ $threadItem->id }}.window="updateTitle"
                                         x-tooltip="`Last Engaged: ${$data.lastUpdated}`"
                                         x-data="{
                                             lastUpdated: @js($threadItem?->last_engaged_at?->toFormattedDateString()),
-                                            updateTitle : function() { 
-                                                this.lastUpdated = new Date().toLocaleDateString('en-US', { 
-                                                    year: 'numeric', month: 'short', day: 'numeric' 
-                                                });  
+                                            updateTitle: function() {
+                                                this.lastUpdated = new Date().toLocaleDateString('en-US', {
+                                                    year: 'numeric',
+                                                    month: 'short',
+                                                    day: 'numeric'
+                                                });
                                             }
                                         }"
                                         wire:key="chat-{{ $threadItem->id }}"
@@ -454,63 +456,63 @@
                     </div>
                 </div>
                 @if (!$this->thread->assistant->archived_at)
-                <form x-on:submit.prevent="sendMessage">
-                    <div
-                        class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
-                        <div class="bg-white dark:bg-gray-800">
-                            <label
-                                class="sr-only"
-                                for="message_input"
-                            >Type here</label>
-                            <textarea
-                                class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
-                                id="message_input"
-                                x-ref="messageInput"
-                                x-model="message"
-                                x-on:set-chat-message.window="message = $event.detail.content"
-                                x-on:input="render()"
-                                x-intersect.once="render()"
-                                x-on:resize.window="render()"
-                                x-bind:disabled="isSendingMessage"
-                                placeholder="Type here..."
-                                required
-                                maxlength="25000"
-                            >
-                            </textarea>
-                        </div>
+                    <form x-on:submit.prevent="sendMessage">
                         <div
-                            class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
-                            <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-                                <x-filament::button
-                                    class="w-full sm:w-auto"
-                                    type="submit"
+                            class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
+                            <div class="bg-white dark:bg-gray-800">
+                                <label
+                                    class="sr-only"
+                                    for="message_input"
+                                >Type here</label>
+                                <textarea
+                                    class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                                    id="message_input"
+                                    x-ref="messageInput"
+                                    x-model="message"
+                                    x-on:set-chat-message.window="message = $event.detail.content"
+                                    x-on:input="render()"
+                                    x-intersect.once="render()"
+                                    x-on:resize.window="render()"
+                                    x-bind:disabled="isSendingMessage"
+                                    placeholder="Type here..."
+                                    required
+                                    maxlength="25000"
                                 >
-                                    Send
-                                </x-filament::button>
-
-                                {{ $this->insertFromPromptLibraryAction }}
-
-                                <div
-                                    class="flex w-full justify-center py-2 sm:w-auto"
-                                    x-show="isSendingMessage"
-                                >
-                                    <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
-                                </div>
+                            </textarea>
                             </div>
+                            <div
+                                class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
+                                <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+                                    <x-filament::button
+                                        class="w-full sm:w-auto"
+                                        type="submit"
+                                    >
+                                        Send
+                                    </x-filament::button>
 
-                            @if (blank($this->thread->name))
-                                <div class="flex w-full justify-center pt-3 sm:w-auto sm:pl-2 sm:pt-0">
-                                    {{ $this->saveThreadAction }}
+                                    {{ $this->insertFromPromptLibraryAction }}
+
+                                    <div
+                                        class="flex w-full justify-center py-2 sm:w-auto"
+                                        x-show="isSendingMessage"
+                                    >
+                                        <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
+                                    </div>
                                 </div>
-                            @else
-                                <div class="flex w-full justify-center gap-1.5 pt-3 sm:w-auto sm:pt-0">
-                                    {{ ($this->cloneThreadAction)(['thread' => $this->thread->id]) }}
-                                    {{ ($this->emailThreadAction)(['thread' => $this->thread->id]) }}
-                                </div>
-                            @endif
+
+                                @if (blank($this->thread->name))
+                                    <div class="flex w-full justify-center pt-3 sm:w-auto sm:pl-2 sm:pt-0">
+                                        {{ $this->saveThreadAction }}
+                                    </div>
+                                @else
+                                    <div class="flex w-full justify-center gap-1.5 pt-3 sm:w-auto sm:pt-0">
+                                        {{ ($this->cloneThreadAction)(['thread' => $this->thread->id]) }}
+                                        {{ ($this->emailThreadAction)(['thread' => $this->thread->id]) }}
+                                    </div>
+                                @endif
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
                 @else
                     <div
                         class="w-full rounded-xl border border-gray-950/5 bg-gray-50 p-4 text-sm shadow-sm dark:border-white/10 dark:bg-gray-900">
