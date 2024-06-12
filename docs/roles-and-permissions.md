@@ -9,7 +9,7 @@ The application uses a dedicated convention in order to define and populate role
 In order to get your local environment correctly set up, you won't have to do anything beyond running the setup process defined in the documentation. Permissions are created in data migrations and roles are created by seeders when a Tenant is created.
 
 ## Permissions
-Permissions in the application are created and managed through special data Migrations called Permission Migrations. Details on Data Migrations can be found in the [Data Migrations](/docs/data-migrations.md) documentation.
+Permissions in the application are created and managed through special Data Migrations called Permission Migrations. Details on Data Migrations can be found in the [Data Migrations](/docs/data-migrations.md) documentation.
 
 ### Permission Migrations
 Permission Migrations operate much the same as regular Data Migrations but adhere to a few slightly different or additional rules:
