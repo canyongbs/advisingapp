@@ -31,7 +31,7 @@
 
 </COPYRIGHT>
 --}}
-<div class="fi-resource-relation-manager flex flex-col gap-y-6 curator-panel">
+<div class="fi-resource-relation-manager flex flex-col gap-y-6">
     <x-filament-panels::resources.tabs />
 
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::RESOURCE_RELATION_MANAGER_BEFORE, scopes: $this->getRenderHookScopes()) }}
