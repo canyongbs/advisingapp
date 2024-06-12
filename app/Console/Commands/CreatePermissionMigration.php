@@ -34,32 +34,49 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
-use Database\Migrations\Concerns\CanModifyPermissions;
+namespace App\Console\Commands;
 
-return new class () extends Migration {
-    use CanModifyPermissions;
+use Illuminate\Support\Composer;
+use Illuminate\Filesystem\Filesystem;
+use App\Overrides\Laravel\PermissionMigrationCreator;
+use InterNACHI\Modular\Console\Commands\Make\Modularize;
+use Illuminate\Database\Console\Migrations\MigrateMakeCommand;
 
-    private array $permissions = [
-        'report-library.view-any' => 'Report Library',
-    ];
+class CreatePermissionMigration extends MigrateMakeCommand
+{
+    use Modularize;
 
-    private array $guards = [
-        'web',
-        'api',
-    ];
+    protected $signature = 'make:permission-migration {name : The name of the migration}
+        {--create= : The table to be created}
+        {--table= : The table to migrate}
+        {--path= : The location where the migration file should be created}
+        {--realpath : Indicate any provided migration file paths are pre-resolved absolute paths}
+        {--fullpath : Output the full path of the migration (Deprecated)}';
 
-    public function up(): void
+    protected $description = 'Creates a permission migration file.';
+
+    public function __construct(PermissionMigrationCreator $creator, Composer $composer)
     {
-        collect($this->guards)
-            ->each(function (string $guard) {
-                $this->createPermissions($this->permissions, $guard);
-            });
+        parent::__construct($creator, $composer);
     }
 
-    public function down(): void
+    protected function getMigrationPath()
     {
-        collect($this->guards)
-            ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
+        $path = parent::getMigrationPath();
+
+        if ($module = $this->module()) {
+            $app_directory = $this->laravel->databasePath('migrations');
+            $module_directory = $module->path('database/migrations');
+
+            $path = str_replace($app_directory, $module_directory, $path);
+
+            $filesystem = $this->getLaravel()->make(Filesystem::class);
+
+            if (! $filesystem->isDirectory($module_directory)) {
+                $filesystem->makeDirectory($module_directory, 0755, true);
+            }
+        }
+
+        return $path;
     }
-};
+}

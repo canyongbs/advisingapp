@@ -85,7 +85,7 @@ class AmazonS3 extends Page implements HasForms
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->hasPermissionTo('amazon-s3.manage_s3_settings');
+        return $user->can('amazon-s3.manage_s3_settings');
     }
 
     public function mount(): void

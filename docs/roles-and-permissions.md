@@ -3,49 +3,66 @@ Roles and permissions in the application have been setup in a flexible and maint
 
 This application uses the [Spatie Laravel-permission](https://spatie.be/docs/laravel-permission/v5/introduction) package in order to facilitate the usage of roles and permissions.
 
-The application uses a dedicated convention in order to define and populate roles and permissions, leaving little in the way of thinking when it comes time to stand up the application locally or in a live environment. Roles and permissions are mainly controlled through the `authorization` module, but each additional module also has some responsibility in order to correctly configure what it may need to properly facilitate role based access control.
+The application uses a dedicated convention in order to define and populate roles and permissions, leaving little in the way of thinking when it comes time to stand up the application locally or in a live environment.
 
 ### Local Setup
-In order to get your local environment correctly set up, you won't have to do anything beyond running the `composer refresh-database` command. Under the hood, this command will call on the `DatabaseSeeder`, which calls the `SyncRolesAndPermissions` artisan command. This command will seed and sync all of the roles and permissions defined in the application.
+In order to get your local environment correctly set up, you won't have to do anything beyond running the setup process defined in the documentation. Permissions are created in data migrations and roles are created by seeders when a Tenant is created.
 
 ## Permissions
-The application defines two distinct types of permissions: those related directly to models and those that are not. In the application, these are aptly referred to as `model` permissions and `custom` permissions.
+Permissions in the application are created and managed through special Data Migrations called Permission Migrations. Details on Data Migrations can be found in the [Data Migrations](/docs/data-migrations.md) documentation.
 
-The application defines a sane set of defaults for each model in the application, but also provides extensibility. In order to ensure that any new model introduced in the application automatically has the default `model` permissions defined for it, the following needs to be done:
+### Permission Migrations
+Permission Migrations operate much the same as regular Data Migrations but adhere to a few slightly different or additional rules:
 
-1. Register the model with the `Relation::morphMap()` in your module service provider
-2. Extend the `BaseModel`, or directly use the `AdvisingApp\Authorization\Models\Concerns\DefinesPermissions.php` trait on your model.
+1. Prepend the name of the migration with `seed_permissions_` to differentiate it from schema migrations and Data Migrations.
+2. Use the helpers in the `Database\Migrations\Concerns\CanModifyPermissions` trait.
+3. Any other queries you write should be surrounded by both a database transaction and a `try`/`catch` block to catch any SQL errors such as a `UniqueConstraintViolation`.
 
-Doing the following will ensure your model gets the following permission definitions:
+### What permissions to create
 
-- 'your-model.view-any'
-- 'your-model.create'
-- 'your-model.*.view'
-- 'your-model.*.update'
-- 'your-model.*.delete'
-- 'your-model.*.restore'
-- 'your-model.*.force-delete'
+#### Models
+Typically new Models added to the application should have the following default permissions created for them:
 
-As stated earlier, the application offers flexibility to override or extend this pattern. For example, if a particular model did not abide by typical CRUD conventions, and instead just needed a permission that defined the ability to "export", we could define the following method on that model:
+- `your-model.view-any`
+- `your-model.create`
+- `your-model.*.view`
+- `your-model.*.update`
+- `your-model.*.delete`
+- `your-model.*.restore`
+- `your-model.*.force-delete`
 
+But, for Models, there may be special cases where either additional permissions should be created. Or some permissions should **not** be created. (For example, if it is expected that Model should never be updated, we would not want the `your-model.*.update` update permission)
+
+What permissions should or should not be created should be decided on prior to creation. But if details are not provided before hand, it is the developers resonsobility to ensure discussion on deciding the permissions takes place.
+
+#### Custom Permissions
+Sometimes we have a need for permissions that are not neccarily related to Models. We call these "custom permissions". For example, if we are gating access to a certain page or feature based on a custom RBAC setup.
+
+The name of this permission can be virtually anything and should be decided upon by the developer with feedback from the team and Product.
+
+#### Permission Groups
+Permission Groups are a labelling system applied to permissions to put them into a grouping for better management and organization in the UI. As such all permissions **MUST** be related to a `PermissionGroup`.
+
+Many `PermissionGroup`s currently exist, so new permissions can be created and added to them. Or when creating a permission an new `PermissionGroup` can be created. What group to assign a permission to should be decided by the developer and/or decided upon by the team and Product.
+
+#### Make Migration Command
+
+This application has a command, virtually the same as the default `make:migration` command to create Permission Migrations.
+
+```bash
+php artisan make:permission-migration 
 ```
-public function getWebPermissions(): Collection
-{
-    return collect(['*.export']);
-}
+
+Example usage:
+
+```bash
+php artisan make:permission-migration seed_permissions_add_foo_permissions
 ```
 
-This would override application defaults and just define this single permission for whatever model this method existed on. If we just wanted to extend the existing functionality, and add this permission *in addition to* all of the existing defaults, our extending method could look like this:
-
-```
-public function getWebPermissions(): Collection
-{
-    return collect(['*.export', ...$this->webPermissions()]);
-}
-```
+This command works with the `--module` flag.
 
 ## Roles
-Similar to permissions, Roles are also configurable at the module level. Within configuration files in a module, you can define a Role and the Permissions that it will have.
+Roles are also configurable at the module level. Within configuration files in a module, you can define a Role and the Permissions that it will have.
 
 Roles will inherit their name from the name of their config file, and should be structured like so:
 

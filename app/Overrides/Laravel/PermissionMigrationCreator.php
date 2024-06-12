@@ -34,32 +34,18 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
-use Database\Migrations\Concerns\CanModifyPermissions;
+namespace App\Overrides\Laravel;
 
-return new class () extends Migration {
-    use CanModifyPermissions;
+use Illuminate\Database\Migrations\MigrationCreator;
 
-    private array $permissions = [
-        'report-library.view-any' => 'Report Library',
-    ];
-
-    private array $guards = [
-        'web',
-        'api',
-    ];
-
-    public function up(): void
+class PermissionMigrationCreator extends MigrationCreator
+{
+    protected function getStub($table, $create)
     {
-        collect($this->guards)
-            ->each(function (string $guard) {
-                $this->createPermissions($this->permissions, $guard);
-            });
+        return $this->files->get(
+            $this->files->exists($customPath = $this->customStubPath . '/permission-migration.stub')
+                ? $customPath
+                : $this->stubPath() . '/migration.stub'
+        );
     }
-
-    public function down(): void
-    {
-        collect($this->guards)
-            ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
-    }
-};
+}
