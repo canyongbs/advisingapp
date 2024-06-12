@@ -54,6 +54,7 @@ enum TaskStatus: string implements HasColor, HasLabel
 
     case Completed = 'completed';
 
+    #[AllowTransitionTo(self::InProgress)]
     case Canceled = 'canceled';
 
     public function getColor(): string
