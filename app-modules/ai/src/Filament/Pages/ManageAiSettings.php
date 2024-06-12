@@ -43,11 +43,12 @@ use Filament\Pages\SettingsPage;
 use AdvisingApp\Ai\Enums\AiModel;
 use Livewire\Attributes\Computed;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Forms\Components\Select;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Forms\Components\Section;
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Settings\AiSettings;
-use Filament\Forms\Components\TextInput;
+use App\Filament\Forms\Components\Slider;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Clusters\ArtificialIntelligence;
 use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
@@ -100,20 +101,20 @@ class ManageAiSettings extends SettingsPage
                         ->visible($this->defaultAssistant !== null)
                         ->model($this->defaultAssistant),
                 ),
-                TextInput::make('max_tokens')
-                    ->label('Max Tokens')
+                Select::make('max_tokens')
+                    ->label('Response Length')
+                    ->options([
+                        150 => 'Short',
+                        350 => 'Medium',
+                        500 => 'Long',
+                    ])
+                    ->required(),
+                Slider::make('temperature')
+                    ->label('Creativity')
                     ->required()
-                    ->numeric()
-                    ->columnSpan('1/2'),
-                TextInput::make('temperature')
-                    ->label('Temperature')
-                    ->required()
-                    ->numeric()
-                    ->inputMode('decimal')
                     ->step(0.1)
-                    ->minValue(0.0)
-                    ->maxValue(2.0)
-                    ->columnSpan('1/2'),
+                    ->minValue(0)
+                    ->maxValue(1),
             ]);
     }
 
