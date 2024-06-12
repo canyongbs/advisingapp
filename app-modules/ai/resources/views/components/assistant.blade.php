@@ -90,7 +90,7 @@
                             <li
                                 id="chat-{{ $threadItem->id }}"
                                 x-on:message-sent-{{ $threadItem->id }}.window="updateTitle"
-                                x-tooltip="`Last Engaged: ${$data.lastUpdated}`"
+                                x-tooltip="`Last Engaged: ${(typeof lastUpdated === 'undefined') || lastUpdated}`"
                                 x-data="{
                                     lastUpdated: @js($threadItem?->last_engaged_at?->toFormattedDateString()),
                                     updateTitle: function() {
@@ -227,7 +227,7 @@
                                     <li
                                         id="chat-{{ $threadItem->id }}"
                                         x-on:message-sent-{{ $threadItem->id }}.window="updateTitle"
-                                        x-tooltip="`Last Engaged: ${$data.lastUpdated}`"
+                                        x-tooltip="`Last Engaged: ${(typeof lastUpdated === 'undefined') || lastUpdated}`"
                                         x-data="{
                                             lastUpdated: @js($threadItem?->last_engaged_at?->toFormattedDateString()),
                                             updateTitle: function() {
