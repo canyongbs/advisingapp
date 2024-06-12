@@ -89,6 +89,18 @@
                         @foreach ($this->threadsWithoutAFolder as $threadItem)
                             <li
                                 id="chat-{{ $threadItem->id }}"
+                                x-on:message-sent-{{ $threadItem->id }}.window="updateTitle"
+                                x-tooltip="`Last Engaged: ${(typeof lastUpdated === 'undefined') || lastUpdated}`"
+                                x-data="{
+                                    lastUpdated: @js($threadItem?->last_engaged_at?->toFormattedDateString()),
+                                    updateTitle: function() {
+                                        this.lastUpdated = new Date().toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'short',
+                                            day: 'numeric'
+                                        });
+                                    }
+                                }"
                                 wire:key="chat-{{ $threadItem->id }}"
                                 @class([
                                     'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
@@ -214,6 +226,18 @@
                                 @foreach ($folder->threads as $threadItem)
                                     <li
                                         id="chat-{{ $threadItem->id }}"
+                                        x-on:message-sent-{{ $threadItem->id }}.window="updateTitle"
+                                        x-tooltip="`Last Engaged: ${(typeof lastUpdated === 'undefined') || lastUpdated}`"
+                                        x-data="{
+                                            lastUpdated: @js($threadItem?->last_engaged_at?->toFormattedDateString()),
+                                            updateTitle: function() {
+                                                this.lastUpdated = new Date().toLocaleDateString('en-US', {
+                                                    year: 'numeric',
+                                                    month: 'short',
+                                                    day: 'numeric'
+                                                });
+                                            }
+                                        }"
                                         wire:key="chat-{{ $threadItem->id }}"
                                         x-show="expanded('{{ $folder->id }}')"
                                         @class([
@@ -291,6 +315,7 @@
                     sendMessageUrl: @js(route('ai.threads.messages.send', ['thread' => $this->thread])),
                     showThreadUrl: @js(route('ai.threads.show', ['thread' => $this->thread])),
                     userId: @js(auth()->user()->id),
+                    threadId: @js($this->thread->id)
                 })"
                 wire:key="thread{{ $this->thread->id }}"
             >
@@ -430,7 +455,6 @@
                         </template>
                     </div>
                 </div>
-
                 @if (!$this->thread->assistant->archived_at)
                     <form x-on:submit.prevent="sendMessage">
                         <div
@@ -453,18 +477,23 @@
                                     placeholder="Type here..."
                                     required
                                     maxlength="25000"
-                                ></textarea>
+                                >
+                            </textarea>
                             </div>
-                            <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
-                                <div class="flex w-full items-center gap-3">
-                                    <x-filament::button type="submit">
+                            <div
+                                class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
+                                <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+                                    <x-filament::button
+                                        class="w-full sm:w-auto"
+                                        type="submit"
+                                    >
                                         Send
                                     </x-filament::button>
 
                                     {{ $this->insertFromPromptLibraryAction }}
 
                                     <div
-                                        class="py-2"
+                                        class="flex w-full justify-center py-2 sm:w-auto"
                                         x-show="isSendingMessage"
                                     >
                                         <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
@@ -472,11 +501,11 @@
                                 </div>
 
                                 @if (blank($this->thread->name))
-                                    <div class="flex pl-0 sm:pl-2">
+                                    <div class="flex w-full justify-center pt-3 sm:w-auto sm:pl-2 sm:pt-0">
                                         {{ $this->saveThreadAction }}
                                     </div>
                                 @else
-                                    <div class="flex gap-3">
+                                    <div class="flex w-full justify-center gap-1.5 pt-3 sm:w-auto sm:pt-0">
                                         {{ ($this->cloneThreadAction)(['thread' => $this->thread->id]) }}
                                         {{ ($this->emailThreadAction)(['thread' => $this->thread->id]) }}
                                     </div>

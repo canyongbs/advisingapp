@@ -32,7 +32,7 @@
 </COPYRIGHT>
 */
 document.addEventListener('alpine:init', () => {
-    Alpine.data('chat', ({ csrfToken, retryMessageUrl, sendMessageUrl, showThreadUrl, userId }) => ({
+    Alpine.data('chat', ({ csrfToken, retryMessageUrl, sendMessageUrl, showThreadUrl, userId, threadId }) => ({
         error: null,
         isLoading: true,
         isSendingMessage: false,
@@ -80,6 +80,8 @@ document.addEventListener('alpine:init', () => {
             this.isSendingMessage = true;
             this.error = null;
 
+            this.$dispatch(`message-sent-${threadId}`);
+
             this.latestMessage = this.message;
 
             this.messages.push({
@@ -123,6 +125,8 @@ document.addEventListener('alpine:init', () => {
         retryMessage: async function () {
             this.isSendingMessage = true;
             this.error = null;
+
+            this.$dispatch(`message-sent-${threadId}`);
 
             this.$nextTick(async () => {
                 const retryMessageResponse = await fetch(retryMessageUrl, {
