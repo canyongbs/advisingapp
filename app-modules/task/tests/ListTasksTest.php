@@ -142,7 +142,6 @@ test('Task status change from pending to in progress', function () {
     ]);
 
     livewire(ListTasks::class)
-        ->mountTableAction(TaskViewAction::class, $task)
         ->callTableAction('view.mark_as_in_progress', $task);
     
     $task->refresh();
@@ -164,7 +163,6 @@ test('Task status change from pending to canceled', function () {
     ]);
 
     livewire(ListTasks::class)
-        ->mountTableAction(TaskViewAction::class, $task)
         ->callTableAction('view.mark_as_canceled', $task);
     
     $task->refresh();
@@ -186,7 +184,6 @@ test('Task status change from in progress to completed', function () {
     ]);
 
     livewire(ListTasks::class)
-        ->mountTableAction(TaskViewAction::class, $task)
         ->callTableAction('view.mark_as_completed', $task);
     
     $task->refresh();
@@ -208,7 +205,6 @@ test('Task status change from in progress to canceled', function () {
     ]);
 
     livewire(ListTasks::class)
-        // ->mountTableAction(TaskViewAction::class, $task)
         ->callTableAction('view.mark_as_canceled', $task);
     
     $task->refresh();
@@ -229,10 +225,10 @@ test('Task status change from canceled to in progress', function () {
         'status' => TaskStatus::Canceled
     ]);
 
-    $component = livewire(ListTasks::class)
-        // ->mountTableAction(TaskViewAction::class, $task)
+    livewire(ListTasks::class)
+        ->removeTableFilters()
         ->callTableAction('view.mark_as_in_progress', $task);
-    dd($component->errors());
+
     $task->refresh();
     expect($task->status)->toEqual(TaskStatus::InProgress);
 });
