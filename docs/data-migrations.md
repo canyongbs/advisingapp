@@ -29,7 +29,7 @@ When creating data migrations it is important to adhere to the following rules:
         - Used to Interact with the database.
     - `Laravel\Pennant\Feature`
         - To interact with feature flagging.
-2. As mentioned above, ensure all possible SQL errors are captured and handled. (UniqueConstraintExeception for example) Also that any database change is surrounded by a transaction to prevent corruption of the query connection.
+2. As mentioned above, ensure all possible SQL errors are captured and handled, such as `UniqueConstraintExeception`. Also ensure that any database change is surrounded by a transaction to prevent corruption of the query connection.
 2. Ensure that the migration is idempotent. This means that the migration can be run multiple times without causing any issues. Tables and columns should be checked for the existence or SQL errors are caught and properly handled, data checked if it is in the expected state before it is changed, etc.
 3. You **MUST** include a `down` method in the migration.
     - In production, Data migrations are intended to be run once and not rolled back. If you need to fix a data migration that has been run in Production already, you should create a new data migration to do so.
