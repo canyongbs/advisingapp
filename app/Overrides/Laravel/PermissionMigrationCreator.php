@@ -34,34 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Requests\Tenants;
+namespace App\Overrides\Laravel;
 
-use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Database\Migrations\MigrationCreator;
 
-class SyncTenantRequest extends FormRequest
+class PermissionMigrationCreator extends MigrationCreator
 {
-    public function rules(): array
+    protected function getStub($table, $create)
     {
-        return [
-            'limits' => ['required', 'array'],
-            'limits.conversationalAiSeats' => ['required', 'integer', 'min:0'],
-            'limits.conversationalAiAssistants' => ['required', 'integer', 'min:0'],
-            'limits.retentionCrmSeats' => ['required', 'integer', 'min:0'],
-            'limits.recruitmentCrmSeats' => ['required', 'integer', 'min:0'],
-            'limits.emails' => ['required', 'integer', 'min:0'],
-            'limits.sms' => ['required', 'integer', 'min:0'],
-            'limits.resetDate' => ['required', 'string', 'date_format:m-d'],
-            'addons' => ['required', 'array'],
-            'addons.onlineForms' => ['required', 'boolean'],
-            'addons.onlineSurveys' => ['required', 'boolean'],
-            'addons.onlineAdmissions' => ['required', 'boolean'],
-            'addons.serviceManagement' => ['required', 'boolean'],
-            'addons.knowledgeManagement' => ['required', 'boolean'],
-            'addons.eventManagement' => ['required', 'boolean'],
-            'addons.realtimeChat' => ['required', 'boolean'],
-            'addons.mobileApps' => ['required', 'boolean'],
-            'addons.experimentalReporting' => ['required', 'boolean'],
-            'addons.scheduleAndAppointments' => ['required', 'boolean'],
-        ];
+        return $this->files->get(
+            $this->files->exists($customPath = $this->customStubPath . '/permission-migration.stub')
+                ? $customPath
+                : $this->stubPath() . '/migration.stub'
+        );
     }
 }

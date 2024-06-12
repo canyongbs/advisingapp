@@ -33,6 +33,7 @@
 --}}
 @php
     use Carbon\Carbon;
+    use App\Settings\DisplaySettings;
 @endphp
 
 <div
@@ -82,8 +83,8 @@
                                         </div>
                                         <div class="w-full text-xs font-normal text-gray-700 dark:text-gray-400">
                                             Last engaged at
-
-                                            {{ Carbon::parse($educatable->latest_activity)->format('g:ia - M j, Y') }}
+                                            @php $timezone =  app(DisplaySettings::class)->getTimezone() @endphp
+                                            {{ Carbon::parse($educatable->latest_activity)->setTimezone($timezone)->format('g:ia - M j, Y') }}
                                         </div>
                                     </div>
                                 </li>

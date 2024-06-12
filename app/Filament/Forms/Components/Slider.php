@@ -34,42 +34,81 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace App\Filament\Forms\Components;
 
-use OpenAI;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Concerns\HasStep;
+use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 
-class OpenAiGpt35Service extends BaseOpenAiService
+class Slider extends Field
 {
-    public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_35_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
+    use HasExtraInputAttributes;
+    use HasStep;
+
+    protected string $view = 'filament.forms.components.slider';
+
+    /**
+     * @var scalar | Closure | null
+     */
+    protected $maxValue = null;
+
+    /**
+     * @var scalar | Closure | null
+     */
+    protected $minValue = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->rule('numeric');
     }
 
-    public function getApiKey(): string
+    /**
+     * @param  scalar | Closure | null  $value
+     */
+    public function maxValue($value): static
     {
-        return $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key');
+        $this->maxValue = $value;
+
+        $this->rule(static function (Slider $component): string {
+            $value = $component->getMaxValue();
+
+            return "max:{$value}";
+        }, static fn (Slider $component): bool => filled($component->getMaxValue()));
+
+        return $this;
     }
 
-    public function getApiVersion(): string
+    /**
+     * @param  scalar | Closure | null  $value
+     */
+    public function minValue($value): static
     {
-        return config('integration-open-ai.gpt_35_api_version');
+        $this->minValue = $value;
+
+        $this->rule(static function (Slider $component): string {
+            $value = $component->getMinValue();
+
+            return "min:{$value}";
+        }, static fn (Slider $component): bool => filled($component->getMinValue()));
+
+        return $this;
     }
 
-    public function getDeployment(): string
+    /**
+     * @return scalar | null
+     */
+    public function getMaxValue()
     {
-        return $this->settings->open_ai_gpt_35_base_uri ?? config('integration-open-ai.gpt_35_base_uri');
+        return $this->evaluate($this->maxValue);
     }
 
-    public function getModel(): string
+    /**
+     * @return scalar | null
+     */
+    public function getMinValue()
     {
-        return $this->settings->open_ai_gpt_35_model ?? config('integration-open-ai.gpt_35_model');
+        return $this->evaluate($this->minValue);
     }
 }

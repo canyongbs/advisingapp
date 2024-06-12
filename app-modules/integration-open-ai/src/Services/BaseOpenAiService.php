@@ -235,9 +235,13 @@ abstract class BaseOpenAiService implements AiService
             }
         }
 
+        $aiSettings = app(AiSettings::class);
+
         $response = $this->client->threads()->runs()->create($message->thread->thread_id, [
             'assistant_id' => $message->thread->assistant->assistant_id,
             'instructions' => $instructions,
+            'max_completion_tokens' => $aiSettings->max_tokens,
+            'temperature' => $aiSettings->temperature,
         ]);
 
         $this->awaitThreadRunCompletion($response);
@@ -285,9 +289,13 @@ abstract class BaseOpenAiService implements AiService
                 $message->save();
             }
 
+            $aiSettings = app(AiSettings::class);
+
             $response = $this->client->threads()->runs()->create($message->thread->thread_id, [
                 'assistant_id' => $message->thread->assistant->assistant_id,
                 'instructions' => $instructions,
+                'max_completion_tokens' => $aiSettings->max_tokens,
+                'temperature' => $aiSettings->temperature,
             ]);
         }
 
@@ -411,10 +419,14 @@ abstract class BaseOpenAiService implements AiService
     {
         $runId = $threadRunResponse->id;
 
-        $timeout = 60;
+        // 60 second total request timeout, with a 10-second buffer.
+        $currentTime = time();
+        $requestTime = app()->runningUnitTests() ? time() : $_SERVER['REQUEST_TIME'];
+        $timeoutInSeconds = 60 - ($currentTime - $requestTime) - 10;
+        $expiration = $currentTime + $timeoutInSeconds;
 
         while ($threadRunResponse->status !== 'completed') {
-            if ($timeout <= 0) {
+            if (time() >= $expiration) {
                 throw new MessageResponseTimeoutException();
             }
 
@@ -425,8 +437,6 @@ abstract class BaseOpenAiService implements AiService
             usleep(500000);
 
             $threadRunResponse = $this->client->threads()->runs()->retrieve($threadRunResponse->threadId, $runId);
-
-            $timeout -= 0.5;
         }
     }
 

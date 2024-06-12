@@ -72,14 +72,4 @@ class CreateTenantRequest extends FormRequest
             'addons.scheduleAndAppointments' => ['required', 'boolean'],
         ];
     }
-
-    protected function prepareForValidation(): void
-    {
-        $this->merge([
-            'limits' => [
-                ...$this->input('limits') ?? [],
-                ...['conversationalAiAssistants' => $this->input('limits.conversationalAiAssistants') ?? 0],
-            ],
-        ]);
-    }
 }
