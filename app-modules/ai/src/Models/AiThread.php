@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Models;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\BaseModel;
+use Carbon\CarbonInterface;
 use App\Settings\DisplaySettings;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -100,16 +101,19 @@ class AiThread extends BaseModel
     protected function lastEngagedAt(): Attribute
     {
         return Attribute::make(
-            get: function () {
-                $date = $this->messages()->latest()->where('user_id', '!=', null)->first();
+            get: function (): ?CarbonInterface {
+                $timezone = app(DisplaySettings::class)->getTimezone();
 
-                if ($date) {
-                    $timezone = app(DisplaySettings::class)->getTimezone();
+                $date = $this->messages()
+                    ->latest()
+                    ->whereNotNull('user_id')
+                    ->value('created_at');
 
-                    return Carbon::parse($date->created_at)->setTimezone($timezone);
+                if (! $date) {
+                    return null;
                 }
 
-                return null;
+                return Carbon::parse($date)->setTimezone($timezone);
             }
         );
     }

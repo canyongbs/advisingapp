@@ -92,12 +92,12 @@
                             <li
                                 id="chat-{{ $threadItem->id }}"
                                 x-on:message-sent-{{$threadItem->id }}.window="updateTitle"
-                                x-tooltip="'Last Engaged: ' + $data.lastUpdated"
+                                x-tooltip="`Last Engaged: ${$data.lastUpdated}`"
                                 x-data="{
-                                    lastUpdated: `{{ $threadItem?->last_engaged_at?->format('F d, Y') }}`,
-                                    updateTitle() { 
-                                        const now = new Date(); this.lastUpdated = now.toLocaleDateString('en-US', { 
-                                            year: 'numeric', month: 'long', day: 'numeric' 
+                                    lastUpdated: @js($threadItem?->last_engaged_at?->toFormattedDateString()),
+                                    updateTitle: function() { 
+                                        this.lastUpdated = new Date().toLocaleDateString('en-US', { 
+                                            year: 'numeric', month: 'short', day: 'numeric' 
                                         });  
                                     }
                                 }"
@@ -227,12 +227,12 @@
                                     <li
                                         id="chat-{{ $threadItem->id }}"
                                         x-on:message-sent-{{$threadItem->id }}.window="updateTitle"
-                                        x-tooltip="'Last Engaged: ' + $data.lastUpdated"
+                                        x-tooltip="`Last Engaged: ${$data.lastUpdated}`"
                                         x-data="{
-                                            lastUpdated: `{{ $threadItem?->last_engaged_at?->format('F d, Y') }}`,
-                                            updateTitle() { 
-                                                const now = new Date(); this.lastUpdated = now.toLocaleDateString('en-US', { 
-                                                    year: 'numeric', month: 'long', day: 'numeric' 
+                                            lastUpdated: @js($threadItem?->last_engaged_at?->toFormattedDateString()),
+                                            updateTitle : function() { 
+                                                this.lastUpdated = new Date().toLocaleDateString('en-US', { 
+                                                    year: 'numeric', month: 'short', day: 'numeric' 
                                                 });  
                                             }
                                         }"
@@ -453,7 +453,7 @@
                         </template>
                     </div>
                 </div>
-
+                @if (!$this->thread->assistant->archived_at)
                 <form x-on:submit.prevent="sendMessage">
                     <div
                         class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
@@ -471,12 +471,12 @@
                                 x-on:input="render()"
                                 x-intersect.once="render()"
                                 x-on:resize.window="render()"
-                                x-on:keydown.enter="$event.shiftKey || $event.preventDefault() || sendMessage()"
                                 x-bind:disabled="isSendingMessage"
                                 placeholder="Type here..."
                                 required
                                 maxlength="25000"
-                            ></textarea>
+                            >
+                            </textarea>
                         </div>
                         <div
                             class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
@@ -511,6 +511,12 @@
                         </div>
                     </div>
                 </form>
+                @else
+                    <div
+                        class="w-full rounded-xl border border-gray-950/5 bg-gray-50 p-4 text-sm shadow-sm dark:border-white/10 dark:bg-gray-900">
+                        This assistant has been archived by an administrator and can no longer be contacted.
+                    </div>
+                @endif
             </div>
 
             <div class="col-span-full hidden md:block">
