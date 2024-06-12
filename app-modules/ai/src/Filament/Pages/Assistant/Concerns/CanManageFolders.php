@@ -60,7 +60,7 @@ trait CanManageFolders
             ->aiThreadFolders()
             ->where('application', static::APPLICATION)
             ->with([
-                'threads' => fn (HasMany $query) => $query->latest('updated_at'),
+                'threads' => fn (HasMany $query) => $query->latest('updated_at')->withMax('messages', 'created_at'),
             ])
             ->orderBy('name')
             ->get();
