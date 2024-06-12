@@ -93,7 +93,7 @@
                                 x-tooltip="`Last Engaged: ${(typeof lastUpdated === 'undefined') || lastUpdated}`"
                                 x-data="{
                                     lastUpdated: @js($threadItem?->last_engaged_at?->toFormattedDateString()),
-                                    updateTitle: function () {
+                                    updateTitle: function() {
                                         this.lastUpdated = new Date().toLocaleDateString('en-US', {
                                             year: 'numeric',
                                             month: 'short',
@@ -116,7 +116,7 @@
                                             x-on:dragend="end"
                                             @class([
                                                 'flex items-center cursor-move',
-                                                'text-gray-700 dark:text-gray-200' => ! $this->thread->is($threadItem),
+                                                'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
                                                 'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
                                             ])
                                         >
@@ -141,7 +141,7 @@
                                     >
                                         <span @class([
                                             'flex-1 truncate',
-                                            'text-gray-700 dark:text-gray-200' => ! $this->thread->is($threadItem),
+                                            'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
                                             'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
                                         ])>
                                             {{ $threadItem->name }}
@@ -230,7 +230,7 @@
                                         x-tooltip="`Last Engaged: ${(typeof lastUpdated === 'undefined') || lastUpdated}`"
                                         x-data="{
                                             lastUpdated: @js($threadItem?->last_engaged_at?->toFormattedDateString()),
-                                            updateTitle: function () {
+                                            updateTitle: function() {
                                                 this.lastUpdated = new Date().toLocaleDateString('en-US', {
                                                     year: 'numeric',
                                                     month: 'short',
@@ -253,7 +253,7 @@
                                                 x-on:dragend="end"
                                                 @class([
                                                     'flex items-center cursor-move',
-                                                    'text-gray-700 dark:text-gray-200' => ! $this->thread->is($threadItem),
+                                                    'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
                                                     'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
                                                 ])
                                             >
@@ -277,7 +277,7 @@
                                             >
                                                 <span @class([
                                                     'flex-1 truncate',
-                                                    'text-gray-700 dark:text-gray-200' => ! $this->thread->is($threadItem),
+                                                    'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
                                                     'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
                                                 ])>
                                                     {{ $threadItem->name }}
