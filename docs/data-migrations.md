@@ -35,7 +35,7 @@ When creating data migrations it is important to adhere to the following rules:
     - In production, Data migrations are intended to be run once and not rolled back. If you need to fix a data migration that has been run in Production already, you should create a new data migration to do so.
     - The reason we add a `down` to our data migrations is to facilitate testing of these data migrations in special cases.
 4. Do **NOT** include schema changes in data migrations. Schema changes should be done in schema migrations. Data migrations should only be used to manipulate data.
-5. If you are adding permissions to the application, that technically is a data migration. But we consider it a special type. Details on how to do so can be found in the [Roles and Permisisons](/docs/roles-and-permissions.md) documentation.
+5. If you are adding permissions to the application, that is a special type of data migration which can be read about in the [Roles and Permisisons](/docs/roles-and-permissions.md) documentation.
 
 ### Running Data Migrations
 
