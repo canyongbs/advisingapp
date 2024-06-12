@@ -51,14 +51,7 @@ class SyncTenantController
     {
         $licenseData = new LicenseData(
             updatedAt: now(),
-            subscription: new LicenseSubscriptionData(
-                clientName: 'Jane Smith',
-                partnerName: 'Fake Edu Tech',
-                clientPo: 'abc123',
-                partnerPo: 'def456',
-                startDate: now(),
-                endDate: now()->addYear(),
-            ),
+            subscription: LicenseSubscriptionData::from($request->validated('subscription')),
             limits: LicenseLimitsData::from($request->validated('limits')),
             addons: LicenseAddonsData::from($request->validated('addons')),
         );
