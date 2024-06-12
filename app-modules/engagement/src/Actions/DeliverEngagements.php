@@ -68,6 +68,6 @@ class DeliverEngagements implements ShouldQueue
 
     public function middleware(): array
     {
-        return [(new WithoutOverlapping(Tenant::current()->id))->releaseAfter(30)];
+        return [(new WithoutOverlapping(Tenant::current()->id))->dontRelease()->expireAfter(180)];
     }
 }
