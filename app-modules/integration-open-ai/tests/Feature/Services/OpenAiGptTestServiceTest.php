@@ -133,6 +133,78 @@ it('can create a thread', function () {
     $client->assertSent(Threads::class, 1);
 });
 
+it('can create a thread with existing messages', function () {
+    asSuperAdmin();
+
+    /** @var BaseOpenAiService $service */
+    $service = AiModel::OpenAiGptTest->getService();
+
+    /** @var ClientFake $client */
+    $client = $service->getClient();
+
+    $client->addResponses([
+        ThreadResponse::fake([
+            'id' => $threadId = Str::random(),
+        ]),
+    ]);
+
+    $thread = AiThread::factory()
+        ->for(auth()->user())
+        ->for(AiAssistant::factory()->state([
+            'application' => AiApplication::Test,
+            'assistant_id' => Str::random(),
+            'is_default' => true,
+            'model' => AiModel::OpenAiGptTest,
+        ]), 'assistant')
+        ->has(AiMessage::factory()->count(3), 'messages')
+        ->create();
+
+    $service->createThread($thread);
+
+    expect($thread->thread_id)
+        ->toBe($threadId);
+
+    $client->assertSent(Threads::class, 1);
+});
+
+it('can create a thread with more than 32 messages', function () {
+    asSuperAdmin();
+
+    /** @var BaseOpenAiService $service */
+    $service = AiModel::OpenAiGptTest->getService();
+
+    /** @var ClientFake $client */
+    $client = $service->getClient();
+
+    $client->addResponses([
+        ThreadResponse::fake([
+            'id' => $threadId = Str::random(),
+        ]),
+        ThreadMessageResponse::fake([]),
+        ThreadMessageResponse::fake([]),
+        ThreadMessageResponse::fake([]),
+    ]);
+
+    $thread = AiThread::factory()
+        ->for(auth()->user())
+        ->for(AiAssistant::factory()->state([
+            'application' => AiApplication::Test,
+            'assistant_id' => Str::random(),
+            'is_default' => true,
+            'model' => AiModel::OpenAiGptTest,
+        ]), 'assistant')
+        ->has(AiMessage::factory()->count(35), 'messages')
+        ->create();
+
+    $service->createThread($thread);
+
+    expect($thread->thread_id)
+        ->toBe($threadId);
+
+    $client->assertSent(Threads::class, 1);
+    $client->assertSent(ThreadsMessages::class, 3);
+});
+
 it('can delete a thread', function () {
     asSuperAdmin();
 
@@ -169,6 +241,13 @@ it('can send a message', function () {
     $client = $service->getClient();
 
     $client->addResponses([
+        ThreadRunListResponse::fake([
+            'data' => [
+                [
+                    'status' => 'completed',
+                ],
+            ],
+        ]),
         ThreadMessageResponse::fake([
             'id' => $messageId = Str::random(),
         ]),
@@ -214,8 +293,8 @@ it('can send a message', function () {
         ->content->toBe($responseContent)
         ->message_id->toBe($responseId);
 
+    $client->assertSent(ThreadsRuns::class, 2);
     $client->assertSent(ThreadsMessages::class, 2);
-    $client->assertSent(ThreadsRuns::class, 1);
 });
 
 it('can retry a message', function () {

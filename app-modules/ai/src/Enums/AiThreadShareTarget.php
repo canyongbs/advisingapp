@@ -53,12 +53,12 @@ enum AiThreadShareTarget: string implements HasLabel
         return AiThreadShareTarget::User;
     }
 
-    public static function parse($value): static
+    public static function parse(string | self $value): self
     {
-        if ($value instanceof static) {
+        if ($value instanceof self) {
             return $value;
         }
 
-        return static::from($value);
+        return self::from($value);
     }
 }

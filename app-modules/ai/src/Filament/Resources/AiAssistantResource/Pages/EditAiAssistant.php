@@ -38,9 +38,17 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages;
 
 use Throwable;
 use Filament\Forms\Form;
+use Filament\Actions\Action;
+use AdvisingApp\Ai\Enums\AiModel;
+use App\Settings\LicenseSettings;
+use Illuminate\Support\Facades\DB;
+use Filament\Support\Enums\MaxWidth;
+use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
+use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
 
@@ -53,12 +61,101 @@ class EditAiAssistant extends EditRecord
         return resolve(AiAssistantForm::class)->form($form);
     }
 
+    public function getSaveFormAction(): Action
+    {
+        return parent::getSaveFormAction()
+            ->submit(null)
+            ->requiresConfirmation()
+            ->modalHeading('Sync all chats to this new service?')
+            ->modalDescription('If you are moving to a new account, you will need to sync all the data to the new service to minimize disruption. Advising App can do this for you, but if you just want to save the settings and do it yourself, you can choose to do so.')
+            ->modalWidth(MaxWidth::ThreeExtraLarge)
+            ->modalSubmitActionLabel('Save and sync all chats')
+            ->modalHidden(function () {
+                $newModel = AiModel::parse($this->form->getRawState()['model']);
+
+                return $this->getRecord()->model->isSharedDeployment($newModel);
+            })
+            ->extraModalFooterActions([
+                Action::make('justSave')
+                    ->label('Just save the settings')
+                    ->color('gray')
+                    ->action(fn () => $this->save())
+                    ->cancelParentActions(),
+            ])
+            ->action(function (ResetAiServiceIdsForAssistant $resetAiServiceIds, ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant) {
+                $newModel = AiModel::parse($this->form->getState()['model']);
+
+                $modelDeploymentIsShared = $this->getRecord()->model->isSharedDeployment($newModel);
+
+                $assistant = $this->getRecord();
+
+                if (! $modelDeploymentIsShared) {
+                    DB::transaction(function () use ($assistant, $resetAiServiceIds) {
+                        $resetAiServiceIds($assistant);
+                    });
+                }
+
+                $this->save();
+
+                if ((! $modelDeploymentIsShared) && (! $assistant->archived_at)) {
+                    $reInitializeAiServiceAssistant($assistant);
+                }
+            });
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('archive')
+                ->color('danger')
+                ->action(function () {
+                    $assistant = $this->getRecord();
+                    $assistant->archived_at = now();
+                    $assistant->save();
+
+                    Notification::make()
+                        ->title('Assistant archived')
+                        ->success()
+                        ->send();
+                })
+                ->hidden(fn (): bool => (bool) $this->getRecord()->archived_at),
+            Action::make('restore')
+                ->action(function () {
+                    $assistant = $this->getRecord();
+                    $assistant->archived_at = null;
+                    $assistant->save();
+
+                    Notification::make()
+                        ->title('Assistant restored')
+                        ->success()
+                        ->send();
+                })
+                ->hidden(function (): bool {
+                    if (! $this->getRecord()->archived_at) {
+                        return true;
+                    }
+
+                    $assistantsLimit = app(LicenseSettings::class)->data->limits->conversationalAiAssistants;
+                    $assistantsCount = AiAssistant::query()
+                        ->where('is_default', false)
+                        ->whereNull('archived_at')
+                        ->count();
+
+                    return $assistantsCount >= $assistantsLimit;
+                }),
+        ];
+    }
+
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         $record->fill($data);
 
+        $aiService = $record->model->getService();
+
         try {
-            $record->model->getService()->updateAssistant($record);
+            $aiService->isAssistantExisting($record) ?
+                $aiService->updateAssistant($record) :
+                $aiService->createAssistant($record);
         } catch (Throwable $exception) {
             report($exception);
 

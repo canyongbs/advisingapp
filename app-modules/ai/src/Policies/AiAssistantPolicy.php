@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Policies;
 
 use App\Enums\Feature;
 use App\Models\Authenticatable;
+use App\Settings\LicenseSettings;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -79,6 +80,16 @@ class AiAssistantPolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
+        $assistantsLimit = app(LicenseSettings::class)->data->limits->conversationalAiAssistants;
+        $assistantsCount = AiAssistant::query()
+            ->where('is_default', false)
+            ->whereNull('archived_at')
+            ->count();
+
+        if ($assistantsCount >= $assistantsLimit) {
+            return Response::deny('You have reached the limit of AI Assistants allowed.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'ai_assistant.create',
             denyResponse: 'You do not have permission to create AI Assistants.'

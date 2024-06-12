@@ -44,11 +44,56 @@ enum AiApplication: string implements HasLabel
 
     case ReportAssistant = 'report_assistant';
 
+    case Test = 'test';
+
     public function getLabel(): string
     {
         return match ($this) {
-            static::PersonalAssistant => 'Personal Assistant',
-            static::ReportAssistant => 'Report Assistant',
+            self::PersonalAssistant => 'Personal Assistant',
+            self::ReportAssistant => 'Report Assistant',
+            self::Test => 'Test',
         };
+    }
+
+    public static function getDefault(): self
+    {
+        return self::PersonalAssistant;
+    }
+
+    public function getModels(): array
+    {
+        return [
+            ...match ($this) {
+                self::PersonalAssistant => [
+                    AiModel::OpenAiGpt35,
+                    AiModel::OpenAiGpt4o,
+                ],
+                self::ReportAssistant => [
+                    AiModel::OpenAiGpt4,
+                ],
+                self::Test => [
+                    AiModel::OpenAiGptTest,
+                ],
+            },
+            ...(app()->hasDebugModeEnabled() ? [AiModel::Test] : []),
+        ];
+    }
+
+    public function getDefaultModel(): AiModel
+    {
+        return match ($this) {
+            self::PersonalAssistant => AiModel::OpenAiGpt4o,
+            self::ReportAssistant => AiModel::OpenAiGpt4,
+            self::Test => AiModel::Test,
+        };
+    }
+
+    public static function parse(string | self $value): self
+    {
+        if ($value instanceof self) {
+            return $value;
+        }
+
+        return self::from($value);
     }
 }

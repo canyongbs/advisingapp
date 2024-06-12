@@ -33,9 +33,10 @@
 */
 document.addEventListener('alpine:init', () => {
     Alpine.data('chat', ({ csrfToken, retryMessageUrl, sendMessageUrl, showThreadUrl, userId }) => ({
-        isError: false,
+        error: null,
         isLoading: true,
         isSendingMessage: false,
+        isRetryable: true,
         latestMessage: '',
         message: '',
         messages: [],
@@ -58,6 +59,15 @@ document.addEventListener('alpine:init', () => {
             this.users = thread.users;
 
             this.isLoading = false;
+
+            this.$watch('isRetryable', async (value) => {
+                while (!this.isRetryable) {
+                    // Wait for 10 seconds before checking if the thread is retryable again.
+                    await new Promise((resolve) => setTimeout(resolve, 10000));
+
+                    this.isRetryable = !(await this.$wire.isThreadLocked());
+                }
+            });
         },
 
         sendMessage: async function () {
@@ -68,7 +78,7 @@ document.addEventListener('alpine:init', () => {
             }
 
             this.isSendingMessage = true;
-            this.isError = false;
+            this.error = null;
 
             this.latestMessage = this.message;
 
@@ -95,7 +105,8 @@ document.addEventListener('alpine:init', () => {
                 const response = await sendMessageResponse.json();
 
                 if (!sendMessageResponse.ok) {
-                    this.isError = true;
+                    this.error = response.message;
+                    this.isRetryable = !response.isThreadLocked;
                     this.isSendingMessage = false;
 
                     return;
@@ -111,7 +122,7 @@ document.addEventListener('alpine:init', () => {
 
         retryMessage: async function () {
             this.isSendingMessage = true;
-            this.isError = false;
+            this.error = null;
 
             this.$nextTick(async () => {
                 const retryMessageResponse = await fetch(retryMessageUrl, {
@@ -127,7 +138,8 @@ document.addEventListener('alpine:init', () => {
                 const response = await retryMessageResponse.json();
 
                 if (!retryMessageResponse.ok) {
-                    this.isError = true;
+                    this.error = response.message;
+                    this.isRetryable = !response.isThreadLocked;
                     this.isSendingMessage = false;
 
                     return;

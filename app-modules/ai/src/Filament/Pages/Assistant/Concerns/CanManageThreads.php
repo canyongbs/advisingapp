@@ -47,6 +47,7 @@ use Livewire\Attributes\Computed;
 use Filament\Actions\StaticAction;
 use Illuminate\Support\Collection;
 use AdvisingApp\Ai\Models\AiThread;
+use Livewire\Attributes\Renderless;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Alignment;
@@ -80,6 +81,7 @@ trait CanManageThreads
     {
         return AiAssistant::query()
             ->where('application', static::APPLICATION)
+            ->whereNull('archived_at')
             ->where('is_default', false)
             ->orderBy('name')
             ->withCount('threads')
@@ -105,6 +107,7 @@ trait CanManageThreads
                     ->getSearchResultsUsing(function (string $search): array {
                         return AiAssistant::query()
                             ->where('application', static::APPLICATION)
+                            ->whereNull('archived_at')
                             ->where('is_default', false)
                             ->where('name', 'like', "%{$search}%")
                             ->orderBy('name')
@@ -125,6 +128,7 @@ trait CanManageThreads
                         $this->createThread(
                             AiAssistant::query()
                                 ->where('application', static::APPLICATION)
+                                ->whereNull('archived_at')
                                 ->find($state),
                         );
 
@@ -174,12 +178,13 @@ trait CanManageThreads
             ->whereNotNull('name')
             ->doesntHave('folder')
             ->latest('updated_at')
+            ->with('assistant')
             ->get();
     }
 
     public function loadFirstThread(): void
     {
-        $this->selectThread($this->threadsWithoutAFolder->first());
+        $this->selectThread($this->threadsWithoutAFolder->whereNull('assistant.archived_at')->first());
 
         if ($this->thread) {
             return;
@@ -426,5 +431,15 @@ trait CanManageThreads
             ->icon('heroicon-m-envelope')
             ->color('warning')
             ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
+    }
+
+    #[Renderless]
+    public function isThreadLocked(): bool
+    {
+        if (! $this->thread) {
+            return false;
+        }
+
+        return $this->thread->locked_at !== null;
     }
 }

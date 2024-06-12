@@ -1250,7 +1250,7 @@ it('can not clone a thread to a super admin', function () use ($setUp) {
         ->assertHasActionErrors(['targetIds' => 'Super admin users cannot have a thread shared with them.']);
 });
 
-it('Super admin users do not show up in email user search', function () use ($setUp) {
+test('super admin users do not show up in email user search', function () use ($setUp) {
     $setUp();
 
     $superAdmin = User::factory()->create();
@@ -1267,7 +1267,7 @@ it('Super admin users do not show up in email user search', function () use ($se
         });
 });
 
-it('Super admin users do not show up in clone user search', function () use ($setUp) {
+test('super admin users do not show up in clone user search', function () use ($setUp) {
     $setUp();
 
     $superAdmin = User::factory()->create();

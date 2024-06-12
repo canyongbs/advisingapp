@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Jobs;
 
+use Carbon\CarbonInterface;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use AdvisingApp\Ai\Models\AiThread;
@@ -55,6 +56,15 @@ class ReInitializeAiThread implements ShouldQueue, TenantAware
     use SerializesModels;
 
     /**
+     * Delete the job if its models no longer exist.
+     *
+     * @var bool
+     */
+    public $deleteWhenMissingModels = true;
+
+    public $maxExceptions = 3;
+
+    /**
      * Create a new job instance.
      */
     public function __construct(
@@ -72,11 +82,28 @@ class ReInitializeAiThread implements ShouldQueue, TenantAware
     }
 
     /**
+     * Determine the time at which the job should timeout.
+     */
+    public function retryUntil(): CarbonInterface
+    {
+        return now()->addDay();
+    }
+
+    /**
      * Execute the job.
      */
     public function handle(): void
     {
-        $this->thread->assistant->model->getService()->createThread($this->thread);
+        auth()->setUser($this->thread->user);
+
+        $this->thread->locked_at = now();
         $this->thread->save();
+
+        try {
+            $this->thread->assistant->model->getService()->ensureAssistantAndThreadExists($this->thread);
+        } finally {
+            $this->thread->locked_at = null;
+            $this->thread->save();
+        }
     }
 }

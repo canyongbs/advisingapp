@@ -44,12 +44,14 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Actions\RetryMessage;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 
 it('retries a message', function () {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -94,7 +96,7 @@ it('does not create a new message if the most recent one has the same content', 
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -142,7 +144,7 @@ it('does not match messages with the same content sent by other users in the sam
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -172,7 +174,7 @@ it('does not match messages with the same content belonging to other threads', f
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -207,7 +209,7 @@ it('does not match messages with different content', function () {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -228,3 +230,28 @@ it('does not match messages with different content', function () {
     expect(AiMessage::count())
         ->toBe(3);
 });
+
+it('throws an exception if the thread is locked', function () {
+    asSuperAdmin();
+
+    $thread = AiThread::factory()->make([
+        'locked_at' => now(),
+    ]);
+
+    app(RetryMessage::class)($thread, 'Hello, world!');
+})->throws(AiThreadLockedException::class);
+
+it('throws an exception if the assistant is archived', function () {
+    asSuperAdmin();
+
+    $thread = AiThread::factory()
+        ->for(AiAssistant::factory()->state([
+            'application' => AiApplication::Test,
+            'archived_at' => now(),
+            'model' => AiModel::Test,
+        ]), 'assistant')
+        ->for(auth()->user())
+        ->create();
+
+    app(RetryMessage::class)($thread, 'Hello, world!');
+})->throws(AiAssistantArchivedException::class);

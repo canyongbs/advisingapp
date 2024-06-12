@@ -34,26 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Actions;
+namespace AdvisingApp\Ai\Exceptions;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiAssistant;
+use Exception;
 
-class ResetAiServiceIds
+class AiAssistantArchivedException extends Exception
 {
-    public function __invoke(AiModel $model): void
+    public function __construct()
     {
-        AiAssistant::query()
-            ->where('model', $model)
-            ->update([
-                'assistant_id' => null,
-            ]);
-
-        AiThread::query()
-            ->whereRelation('assistant', 'model', $model)
-            ->update([
-                'thread_id' => null,
-            ]);
+        parent::__construct('This assistant has been archived and is no longer available to use.');
     }
 }

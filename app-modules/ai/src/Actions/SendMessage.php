@@ -39,11 +39,21 @@ namespace AdvisingApp\Ai\Actions;
 use Illuminate\Support\Arr;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 
 class SendMessage
 {
     public function __invoke(AiThread $thread, string $content): string
     {
+        if ($thread->locked_at) {
+            throw new AiThreadLockedException();
+        }
+
+        if ($thread->assistant->archived_at) {
+            throw new AiAssistantArchivedException();
+        }
+
         $message = new AiMessage();
         $message->content = $content;
         $message->request = [
@@ -56,7 +66,11 @@ class SendMessage
         $message->thread()->associate($thread);
         $message->user()->associate(auth()->user());
 
-        $response = $thread->assistant->model->getService()->sendMessage($message);
+        $aiService = $thread->assistant->model->getService();
+
+        $aiService->ensureAssistantAndThreadExists($thread);
+
+        $response = $aiService->sendMessage($message);
         $response->thread()->associate($thread);
         $response->save();
 

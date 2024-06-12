@@ -45,7 +45,7 @@ class OpenAiGpt35Service extends BaseOpenAiService
         protected AiIntegrationsSettings $settings,
     ) {
         $this->client = OpenAI::factory()
-            ->withBaseUri($this->settings->open_ai_gpt_35_base_uri ?? config('integration-open-ai.gpt_35_base_uri'))
+            ->withBaseUri($this->getDeployment())
             ->withHttpHeader('api-key', $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key'))
             ->withQueryParam('api-version', config('integration-open-ai.gpt_35_api_version'))
             ->withHttpHeader('OpenAI-Beta', 'assistants=v1')
@@ -56,5 +56,10 @@ class OpenAiGpt35Service extends BaseOpenAiService
     public function getModel(): string
     {
         return $this->settings->open_ai_gpt_35_model ?? config('integration-open-ai.gpt_35_model');
+    }
+
+    public function getDeployment(): string
+    {
+        return $this->settings->open_ai_gpt_35_base_uri ?? config('integration-open-ai.gpt_35_base_uri');
     }
 }
