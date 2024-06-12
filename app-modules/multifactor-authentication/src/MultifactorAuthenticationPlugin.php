@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,20 +32,27 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthentication;
-@endphp
+*/
 
-<x-filament-panels::page>
-    <x-filament-panels::form wire:submit="save">
-        {{ $this->form }}
+namespace AdvisingApp\MultifactorAuthentication;
 
-        <x-filament-panels::form.actions
-            :actions="$this->getCachedFormActions()"
-            :full-width="$this->hasFullWidthFormActions()"
-        />
-    </x-filament-panels::form>
+use Filament\Panel;
+use Filament\Contracts\Plugin;
 
-    @livewire('multifactor-authentication')
-</x-filament-panels::page>
+class MultifactorAuthenticationPlugin implements Plugin
+{
+    public function getId(): string
+    {
+        return 'multifactor-authentication';
+    }
+
+    public function register(Panel $panel): void
+    {
+        $panel->discoverResources(
+            in: __DIR__ . '/Filament/Resources',
+            for: 'AdvisingApp\\MultifactorAuthentication\\Filament\\Resources'
+        );
+    }
+
+    public function boot(Panel $panel): void {}
+}

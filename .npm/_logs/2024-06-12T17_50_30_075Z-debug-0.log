@@ -1,0 +1,17 @@
+0 verbose cli /usr/local/nvm/versions/node/v21.6.0/bin/node /usr/local/nvm/versions/node/v21.6.0/bin/npm
+1 info using npm@10.8.1
+2 info using node@v21.6.0
+3 silly config load:file:/usr/local/nvm/versions/node/v21.6.0/lib/node_modules/npm/npmrc
+4 silly config load:file:/var/www/html/.npmrc
+5 silly config load:file:/usr/local/nvm/versions/node/v21.6.0/etc/npmrc
+6 verbose title npm run build:vite
+7 verbose argv "run" "build:vite"
+8 verbose logfile logs-max:10 dir:/var/www/html/.npm/_logs/2024-06-12T17_50_30_075Z-
+9 verbose logfile /var/www/html/.npm/_logs/2024-06-12T17_50_30_075Z-debug-0.log
+10 silly logfile done cleaning log files
+11 verbose cwd /var/www/html
+12 verbose os Linux 5.15.0-1062-aws
+13 verbose node v21.6.0
+14 verbose npm  v10.8.1
+15 verbose exit 1
+16 verbose code 1
