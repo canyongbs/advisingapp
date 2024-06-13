@@ -48,7 +48,7 @@
                 <div
                     class="sticky top-0 z-[5] flex h-12 w-full items-center justify-between bg-gray-100 px-4 dark:bg-gray-700">
                     <h1 class="ml-2"> <a
-                        href="{{ $educatable->filamentResource()::getUrl('view', ['record' => $educatable->identifier()]) }}"
+                            href="{{ $educatable->filamentResource()::getUrl('view', ['record' => $educatable->identifier()]) }}"
                         >{{ $educatable->display_name }} </a></h1>
                     <x-filament::button wire:click="engage('{{ $educatable }}')">
                         Engage
