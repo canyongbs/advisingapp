@@ -59,7 +59,9 @@ it('sends a message to a thread', function () {
         SendMessage::class,
         fn (MockInterface $mock) => $mock
             ->shouldReceive('__invoke')->once()
-            ->andReturn($responseContent),
+            ->andReturn(function () use ($responseContent) {
+                echo $responseContent;
+            }),
     );
 
     $thread = AiThread::factory()
@@ -75,9 +77,7 @@ it('sends a message to a thread', function () {
         'content' => AiMessage::factory()->make()->content,
     ])
         ->assertSuccessful()
-        ->assertJson([
-            'content' => $responseContent,
-        ]);
+        ->assertStreamedContent($responseContent);
 });
 
 it('returns a message if the assistant fails', function () {
