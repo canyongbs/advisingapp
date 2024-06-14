@@ -66,7 +66,13 @@ it('retries a message', function () {
     expect(AiMessage::count())
         ->toBe(0);
 
-    $responseContent = app(RetryMessage::class)($thread, $messageContent);
+    $responseStream = app(RetryMessage::class)($thread, $messageContent);
+
+    $streamedContent = '';
+
+    foreach ($responseStream() as $responseContent) {
+        $streamedContent .= $responseContent;
+    }
 
     $messages = AiMessage::all();
 
@@ -84,12 +90,7 @@ it('retries a message', function () {
         ->thread->getKey()->toBe($thread->getKey())
         ->user->toBeNull();
 
-    expect($responseContent)
-        ->toBe(
-            (string) str($response->content)
-                ->markdown()
-                ->sanitizeHtml(),
-        );
+    expect($streamedContent)->toBe($response->content);
 });
 
 it('does not create a new message if the most recent one has the same content', function () {
@@ -114,7 +115,13 @@ it('does not create a new message if the most recent one has the same content', 
     expect(AiMessage::count())
         ->toBe(1);
 
-    $responseContent = app(RetryMessage::class)($thread, $messageContent);
+    $responseStream = app(RetryMessage::class)($thread, $messageContent);
+
+    $streamedContent = '';
+
+    foreach ($responseStream() as $responseContent) {
+        $streamedContent .= $responseContent;
+    }
 
     $messages = AiMessage::all();
 
@@ -132,12 +139,7 @@ it('does not create a new message if the most recent one has the same content', 
         ->thread->getKey()->toBe($thread->getKey())
         ->user->toBeNull();
 
-    expect($responseContent)
-        ->toBe(
-            (string) str($response->content)
-                ->markdown()
-                ->sanitizeHtml(),
-        );
+    expect($streamedContent)->toBe($response->content);
 });
 
 it('does not match messages with the same content sent by other users in the same thread', function () {
@@ -164,7 +166,7 @@ it('does not match messages with the same content sent by other users in the sam
     expect(AiMessage::count())
         ->toBe(1);
 
-    app(RetryMessage::class)($thread, $messageContent);
+    iterator_to_array(app(RetryMessage::class)($thread, $messageContent)());
 
     expect(AiMessage::count())
         ->toBe(3);
@@ -199,7 +201,7 @@ it('does not match messages with the same content belonging to other threads', f
     expect(AiMessage::count())
         ->toBe(1);
 
-    app(RetryMessage::class)($thread, $messageContent);
+    iterator_to_array(app(RetryMessage::class)($thread, $messageContent)());
 
     expect(AiMessage::count())
         ->toBe(3);
@@ -225,7 +227,7 @@ it('does not match messages with different content', function () {
     expect(AiMessage::count())
         ->toBe(1);
 
-    app(RetryMessage::class)($thread, $messageContent);
+    iterator_to_array(app(RetryMessage::class)($thread, $messageContent)());
 
     expect(AiMessage::count())
         ->toBe(3);
@@ -238,7 +240,7 @@ it('throws an exception if the thread is locked', function () {
         'locked_at' => now(),
     ]);
 
-    app(RetryMessage::class)($thread, 'Hello, world!');
+    iterator_to_array(app(RetryMessage::class)($thread, 'Hello, world!')());
 })->throws(AiThreadLockedException::class);
 
 it('throws an exception if the assistant is archived', function () {
@@ -253,5 +255,5 @@ it('throws an exception if the assistant is archived', function () {
         ->for(auth()->user())
         ->create();
 
-    app(RetryMessage::class)($thread, 'Hello, world!');
+    iterator_to_array(app(RetryMessage::class)($thread, 'Hello, world!')());
 })->throws(AiAssistantArchivedException::class);
