@@ -9,18 +9,6 @@ use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
 
 trait MultifactorAuthenticatable
 {
-    public static function bootTwoFactorAuthenticatable()
-    {
-        static::deleting(function ($model) {
-            $model->breezySessions()->get()->each->delete();
-        });
-    }
-
-    public function initializeTwoFactorAuthenticatable()
-    {
-        $this->with[] = 'breezySessions';
-    }
-
     public function hasEnabledTwoFactor(): bool
     {
         return ! is_null($this->multifactor_secret);

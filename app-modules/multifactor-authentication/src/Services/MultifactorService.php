@@ -103,6 +103,7 @@ class MultifactorService
 
     public function shouldForceTwoFactor(): bool
     {
+        // TODO: Needs to check if they are a non sso user
         return false;
         // if (filament()->getCurrentPanel()->isEmailVerificationRequired()) {
         //     return $this->forceTwoFactorAuthentication && ! filament()->auth()->user()?->hasConfirmedTwoFactor() && filament()->auth()->user()?->hasVerifiedEmail();
