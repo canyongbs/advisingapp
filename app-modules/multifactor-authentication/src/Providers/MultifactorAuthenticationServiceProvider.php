@@ -37,12 +37,10 @@
 namespace AdvisingApp\MultifactorAuthentication\Providers;
 
 use Filament\Panel;
-use Livewire\Livewire;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\MultifactorAuthentication\MultifactorAuthenticationPlugin;
-use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthentication;
 use AdvisingApp\MultifactorAuthentication\Registries\MultifactorAuthenticationRbacRegistry;
 
 class MultifactorAuthenticationServiceProvider extends ServiceProvider
@@ -57,7 +55,5 @@ class MultifactorAuthenticationServiceProvider extends ServiceProvider
         Relation::morphMap([]);
 
         AuthorizationRoleRegistry::register(MultifactorAuthenticationRbacRegistry::class);
-
-        Livewire::component('multifactor-authentication', MultifactorAuthentication::class);
     }
 }

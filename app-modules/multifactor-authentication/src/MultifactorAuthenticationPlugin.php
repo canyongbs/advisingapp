@@ -52,6 +52,11 @@ class MultifactorAuthenticationPlugin implements Plugin
             in: __DIR__ . '/Filament/Resources',
             for: 'AdvisingApp\\MultifactorAuthentication\\Filament\\Resources'
         );
+
+        $panel->discoverLivewireComponents(
+            in: __DIR__ . '/Livewire',
+            for: 'AdvisingApp\\MultifactorAuthentication\\Livewire'
+        );
     }
 
     public function boot(Panel $panel): void {}

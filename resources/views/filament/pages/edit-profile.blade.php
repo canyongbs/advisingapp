@@ -32,7 +32,7 @@
 </COPYRIGHT>
 --}}
 @php
-    use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthentication;
+    use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthenticationManagement;
 @endphp
 
 <x-filament-panels::page>
@@ -45,5 +45,5 @@
         />
     </x-filament-panels::form>
 
-    @livewire('multifactor-authentication')
+    @livewire(MultifactorAuthenticationManagement::class)
 </x-filament-panels::page>
