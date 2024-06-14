@@ -45,10 +45,13 @@ use AdvisingApp\Ai\Enums\AiModel;
 use OpenAI\Resources\ThreadsRuns;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
+use OpenAI\Responses\StreamResponse;
 use OpenAI\Resources\ThreadsMessages;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
 use OpenAI\Responses\Threads\ThreadResponse;
+use GuzzleHttp\Stream\Stream as GuzzleStream;
+use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use OpenAI\Responses\Assistants\AssistantResponse;
 use OpenAI\Responses\Threads\ThreadDeleteResponse;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
@@ -251,23 +254,7 @@ it('can send a message', function () {
         ThreadMessageResponse::fake([
             'id' => $messageId = Str::random(),
         ]),
-        ThreadRunResponse::fake([
-            'status' => 'completed',
-        ]),
-        ThreadMessageListResponse::fake([
-            'data' => [
-                [
-                    'content' => [
-                        [
-                            'text' => [
-                                'value' => $responseContent = 'Hello, how can I help you?',
-                            ],
-                        ],
-                    ],
-                    'id' => $responseId = Str::random(),
-                ],
-            ],
-        ]),
+        new StreamResponse('', new GuzzleResponse(200, [], GuzzleStream::factory())),
     ]);
 
     $message = AiMessage::factory()
@@ -284,17 +271,13 @@ it('can send a message', function () {
             ]), 'thread')
         ->make();
 
-    $response = $service->sendMessage($message);
+    $service->sendMessage($message, function () {});
 
     expect($message)
         ->message_id->toBe($messageId);
 
-    expect($response)
-        ->content->toBe($responseContent)
-        ->message_id->toBe($responseId);
-
     $client->assertSent(ThreadsRuns::class, 2);
-    $client->assertSent(ThreadsMessages::class, 2);
+    $client->assertSent(ThreadsMessages::class, 1);
 });
 
 it('can retry a message', function () {
@@ -317,23 +300,7 @@ it('can retry a message', function () {
         ThreadMessageResponse::fake([
             'id' => $messageId = Str::random(),
         ]),
-        ThreadRunResponse::fake([
-            'status' => 'completed',
-        ]),
-        ThreadMessageListResponse::fake([
-            'data' => [
-                [
-                    'content' => [
-                        [
-                            'text' => [
-                                'value' => $responseContent = 'Hello, how can I help you?',
-                            ],
-                        ],
-                    ],
-                    'id' => $responseId = Str::random(),
-                ],
-            ],
-        ]),
+        new StreamResponse('', new GuzzleResponse(200, [], GuzzleStream::factory())),
     ]);
 
     $message = AiMessage::factory()
@@ -350,17 +317,13 @@ it('can retry a message', function () {
             ]), 'thread')
         ->make();
 
-    $response = $service->retryMessage($message);
+    $service->retryMessage($message, function () {});
 
     expect($message)
         ->message_id->toBe($messageId);
 
-    expect($response)
-        ->content->toBe($responseContent)
-        ->message_id->toBe($responseId);
-
     $client->assertSent(ThreadsRuns::class, 2);
-    $client->assertSent(ThreadsMessages::class, 2);
+    $client->assertSent(ThreadsMessages::class, 1);
 });
 
 it('can await the response of a previous run instead of sending a message again when retrying', function () {
@@ -389,11 +352,11 @@ it('can await the response of a previous run instead of sending a message again 
                     'content' => [
                         [
                             'text' => [
-                                'value' => $responseContent = 'Hello, how can I help you?',
+                                'value' => 'Hello, how can I help you?',
                             ],
                         ],
                     ],
-                    'id' => $responseId = Str::random(),
+                    'id' => Str::random(),
                 ],
             ],
         ]),
@@ -415,14 +378,9 @@ it('can await the response of a previous run instead of sending a message again 
             'message_id' => Str::random(),
         ]);
 
-    $response = $service->retryMessage($message);
-
-    expect($response)
-        ->content->toBe($responseContent)
-        ->message_id->toBe($responseId);
+    $service->retryMessage($message, function () {});
 
     $client->assertSent(ThreadsRuns::class, 2);
-    $client->assertSent(ThreadsMessages::class, 1);
 });
 
 it('can create a run if one does not exist without sending the message again when retrying', function () {
@@ -447,11 +405,11 @@ it('can create a run if one does not exist without sending the message again whe
                     'content' => [
                         [
                             'text' => [
-                                'value' => $responseContent = 'Hello, how can I help you?',
+                                'value' => 'Hello, how can I help you?',
                             ],
                         ],
                     ],
-                    'id' => $responseId = Str::random(),
+                    'id' => Str::random(),
                 ],
             ],
         ]),
@@ -473,12 +431,7 @@ it('can create a run if one does not exist without sending the message again whe
             'message_id' => Str::random(),
         ]);
 
-    $response = $service->retryMessage($message);
-
-    expect($response)
-        ->content->toBe($responseContent)
-        ->message_id->toBe($responseId);
+    $service->retryMessage($message, function () {});
 
     $client->assertSent(ThreadsRuns::class, 2);
-    $client->assertSent(ThreadsMessages::class, 1);
 });

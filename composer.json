@@ -131,7 +131,15 @@
             "Database\\Factories\\": "database/factories/",
             "Database\\Migrations\\Concerns\\": "database/migrations/Concerns/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "exclude-from-classmap": [
+            "vendor/laravel/octane/src/RoadRunner/RoadRunnerClient.php",
+            "vendor/openai-php/client/src/Responses/Threads/Runs/ThreadRunResponse.php"
+        ],
+        "files": [
+            "overrides/Laravel/Octane/RoadRunner/RoadRunnerClient.php",
+            "overrides/OpenAI/Responses/Threads/Runs/ThreadRunResponse.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

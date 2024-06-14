@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Actions;
 
+use Closure;
 use Illuminate\Support\Arr;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
@@ -44,7 +45,7 @@ use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 
 class RetryMessage
 {
-    public function __invoke(AiThread $thread, string $content): string
+    public function __invoke(AiThread $thread, string $content): Closure
     {
         if ($thread->locked_at) {
             throw new AiThreadLockedException();
@@ -75,14 +76,11 @@ class RetryMessage
 
         $aiService->ensureAssistantAndThreadExists($thread);
 
-        $response = $aiService->retryMessage($message);
-        $response->thread()->associate($thread);
-        $response->save();
+        return $aiService->retryMessage($message, function (AiMessage $response) use ($thread) {
+            $response->thread()->associate($thread);
+            $response->save();
 
-        $thread->touch();
-
-        return (string) str($response->content)
-            ->markdown()
-            ->sanitizeHtml();
+            $thread->touch();
+        });
     }
 }
