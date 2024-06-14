@@ -72,7 +72,7 @@ class EngagementFailedNotification extends BaseNotification implements EmailNoti
         return FilamentNotification::make()
             ->danger()
             ->title('Engagement Delivery Failed')
-            ->body("Your engagement failed to be delivered to {$this->engagement->recipient->display_name}.")
+            ->body("Your engagement email failed to be delivered to {$this->engagement->recipient->display_name}.")
             ->getDatabaseMessage();
     }
 
