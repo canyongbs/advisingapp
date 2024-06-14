@@ -36,14 +36,80 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
+use App\Models\User;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
+use Illuminate\Support\Facades\Log;
+use Filament\Forms\Components\TextInput;
+use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Validation\ValidationException;
 use Filament\Pages\Auth\Login as FilamentLogin;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
+use Filament\Http\Responses\Auth\Contracts\LoginResponse;
+use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
+use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 
 class Login extends FilamentLogin
 {
     protected static string $view = 'authorization::login';
+
+    protected $needsMFA = false;
+
+    public function authenticate(): ?LoginResponse
+    {
+        try {
+            $this->rateLimit(5);
+        } catch (TooManyRequestsException $exception) {
+            $this->getRateLimitedNotification($exception)?->send();
+
+            return null;
+        }
+
+        $data = $this->form->getState();
+
+        Log::debug($data);
+
+        if (! Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
+            $this->throwFailureValidationException();
+        }
+
+        /** @var User $user */
+        $user = Filament::auth()->user();
+
+        if (
+            ($user instanceof FilamentUser) &&
+            (! $user->canAccessPanel(Filament::getCurrentPanel()))
+        ) {
+            Filament::auth()->logout();
+
+            $this->throwFailureValidationException();
+        }
+
+        if ($user->hasConfirmedTwoFactor()) {
+            $this->needsMFA = true;
+
+            if (empty($data['code'])) {
+                Filament::auth()->logout();
+
+                return null;
+            }
+
+            if (! app(MultifactorService::class)->verify(code: $data['code'], user: $user)) {
+                Filament::auth()->logout();
+
+                $this->needsMFA = false;
+
+                throw ValidationException::withMessages([
+                    'data.email' => __('filament-panels::pages/auth/login.messages.failed'),
+                ]);
+            }
+        }
+
+        session()->regenerate();
+
+        return app(LoginResponse::class);
+    }
 
     protected function getSsoFormActions(): array
     {
@@ -72,5 +138,32 @@ class Login extends FilamentLogin
         }
 
         return $ssoActions;
+    }
+
+    protected function getForms(): array
+    {
+        return [
+            'form' => $this->form(
+                $this->makeForm()
+                    ->schema([
+                        $this->getEmailFormComponent()
+                            ->hidden(fn (Login $livewire) => $livewire->needsMFA),
+                        $this->getPasswordFormComponent()
+                            ->hidden(fn (Login $livewire) => $livewire->needsMFA),
+                        $this->getRememberFormComponent()
+                            ->hidden(fn (Login $livewire) => $livewire->needsMFA),
+                        TextInput::make('code')
+                            ->label('Code')
+                            ->placeholder('###-###')
+                            ->mask('999-999')
+                            ->stripCharacters('-')
+                            ->numeric()
+                            ->required()
+                            ->hidden(fn (Login $livewire) => ! $livewire->needsMFA)
+                            ->dehydrated(),
+                    ])
+                    ->statePath('data'),
+            ),
+        ];
     }
 }
