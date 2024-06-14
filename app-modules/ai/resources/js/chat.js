@@ -31,6 +31,9 @@
 
 </COPYRIGHT>
 */
+import DOMPurify from 'dompurify';
+import { marked } from 'marked';
+
 document.addEventListener('alpine:init', () => {
     Alpine.data('chat', ({ csrfToken, retryMessageUrl, sendMessageUrl, showThreadUrl, userId, threadId }) => ({
         error: null,
@@ -39,6 +42,7 @@ document.addEventListener('alpine:init', () => {
         isRetryable: true,
         latestMessage: '',
         message: '',
+        rawIncomingResponse: '',
         messages: [],
         users: [],
 
@@ -70,6 +74,45 @@ document.addEventListener('alpine:init', () => {
             });
         },
 
+        handleMessageResponse: async function (response) {
+            if (!response.ok) {
+                const response = await response.json();
+
+                this.error = response.message;
+                this.isRetryable = !response.isThreadLocked;
+                this.isSendingMessage = false;
+
+                return;
+            }
+
+            this.messages.push({
+                content: '',
+            });
+            this.rawIncomingResponse = '';
+
+            const responseReader = response.body.getReader();
+            const decoder = new TextDecoder();
+
+            const readResponse = () => {
+                responseReader.read().then(({ done, value }) => {
+                    if (done) {
+                        return;
+                    }
+
+                    this.rawIncomingResponse += decoder.decode(value);
+                    this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
+                        marked.parse(this.rawIncomingResponse),
+                    );
+
+                    readResponse();
+                });
+            };
+
+            readResponse();
+
+            this.isSendingMessage = false;
+        },
+
         sendMessage: async function () {
             if (!this.message.replace(/\s/g, '').length) {
                 // The message is empty / whitespace only.
@@ -94,31 +137,17 @@ document.addEventListener('alpine:init', () => {
             this.message = '';
 
             this.$nextTick(async () => {
-                const sendMessageResponse = await fetch(sendMessageUrl, {
-                    method: 'POST',
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                    },
-                    body: JSON.stringify({ content: message }),
-                });
-
-                const response = await sendMessageResponse.json();
-
-                if (!sendMessageResponse.ok) {
-                    this.error = response.message;
-                    this.isRetryable = !response.isThreadLocked;
-                    this.isSendingMessage = false;
-
-                    return;
-                }
-
-                this.messages.push({
-                    content: response.content,
-                });
-
-                this.isSendingMessage = false;
+                await this.handleMessageResponse(
+                    await fetch(sendMessageUrl, {
+                        method: 'POST',
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                        },
+                        body: JSON.stringify({ content: message }),
+                    }),
+                );
             });
         },
 
@@ -129,31 +158,17 @@ document.addEventListener('alpine:init', () => {
             this.$dispatch(`message-sent-${threadId}`);
 
             this.$nextTick(async () => {
-                const retryMessageResponse = await fetch(retryMessageUrl, {
-                    method: 'POST',
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                    },
-                    body: JSON.stringify({ content: this.latestMessage }),
-                });
-
-                const response = await retryMessageResponse.json();
-
-                if (!retryMessageResponse.ok) {
-                    this.error = response.message;
-                    this.isRetryable = !response.isThreadLocked;
-                    this.isSendingMessage = false;
-
-                    return;
-                }
-
-                this.messages.push({
-                    content: response.content,
-                });
-
-                this.isSendingMessage = false;
+                await this.handleMessageResponse(
+                    await fetch(retryMessageUrl, {
+                        method: 'POST',
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                        },
+                        body: JSON.stringify({ content: this.latestMessage }),
+                    }),
+                );
             });
         },
 

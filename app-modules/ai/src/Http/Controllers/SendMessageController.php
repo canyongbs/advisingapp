@@ -42,16 +42,24 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Actions\SendMessage;
 use AdvisingApp\Ai\Http\Requests\SendMessageRequest;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 
 class SendMessageController
 {
-    public function __invoke(SendMessageRequest $request, AiThread $thread): JsonResponse
+    public function __invoke(SendMessageRequest $request, AiThread $thread): StreamedResponse | JsonResponse
     {
         try {
-            $responseContent = app(SendMessage::class)(
-                $thread,
-                $request->validated('content'),
+            return response()->stream(
+                app(SendMessage::class)(
+                    $thread,
+                    $request->validated('content'),
+                ),
+                headers: [
+                    'Content-Type' => 'text/html; charset=utf-8;',
+                    'Cache-Control' => 'no-cache',
+                    'X-Accel-Buffering' => 'no',
+                ],
             );
         } catch (AiAssistantArchivedException $exception) {
             return response()->json([
@@ -69,9 +77,5 @@ class SendMessageController
                 'message' => 'An error happened when sending your message.',
             ], 503);
         }
-
-        return response()->json([
-            'content' => $responseContent,
-        ]);
     }
 }
