@@ -594,8 +594,8 @@
         </div>
     @endif
 
-    <script src="{{ url('js/canyon-gbs/ai/chat.js') }}"></script>
-    <script src="{{ url('js/canyon-gbs/ai/chats.js') }}"></script>
+    <script src="{{ url('js/canyon-gbs/ai/chat.js') . '?v=' . app('current-commit') }}"></script>
+    <script src="{{ url('js/canyon-gbs/ai/chats.js') . '?v=' . app('current-commit') }}"></script>
     <style>
         .choices__inner .prompt-upvotes-count {
             display: none;
