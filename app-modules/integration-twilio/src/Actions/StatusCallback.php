@@ -69,11 +69,6 @@ class StatusCallback implements ShouldQueue
             return;
         }
 
-        // TODO We should implement some sort of process that checks to see if a deliverable has been updated to the "delivered" or "undelivered"
-        // status after a certain period of time. This is to handle an edge case where the webhook is not received for some reason, and in this
-        // situation we can simply poll Twilio for the data related to this deliverable. It can be a simple process implemented through the Kernel
-        // https://canyongbs.atlassian.net/browse/ADVAPP-112
-
         // TODO In order to potentially reduce the amount of noise from jobs, we might want to introduce a "screener" that eliminates certain jobs based on their status
         // And only run the update if it's a status that we want to run some type of update against. For instance, we will receive callbacks for
         // queued, sending, sent, etc... but we don't actually want/need to do anything during these lifecycle hooks. We only really care about
