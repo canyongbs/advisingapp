@@ -87,6 +87,20 @@ class TiptapMediaEncoder
         if (isset($content['type']) && $content['type'] === 'image') {
             $content['attrs']['src'] = $processFunction($content['attrs']['src'], $disk);
 
+            if (isset($content['marks'])) {
+                foreach ($content['marks'] as $key => $mark) {
+                    if (isset($mark['attrs']['href'])) {
+                        $content['marks'][$key]['attrs']['href'] = $processFunction($content['marks'][$key]['attrs']['href'], $disk);
+                    }
+                }
+            }
+
+            return $content;
+        }
+
+        if (isset($content['type']) && $content['type'] === 'link') {
+            $content['attrs']['href'] = $processFunction($content['attrs']['href'], $disk);
+
             return $content;
         }
 
@@ -120,7 +134,21 @@ class TiptapMediaEncoder
 
         $defaultDirectory = config('filament-tiptap-editor.directory');
 
-        if (! Storage::disk($disk)->exists($path) && Str::isUrl($content)) {
+        $root = preg_quote(config('filesystems.disks.s3.root'), '/');
+
+        $regexMatch = preg_match(
+            pattern: "/\/?{$root}\/?(.+)/",
+            subject: $path,
+            matches: $matches,
+            flags: PREG_OFFSET_CAPTURE,
+            offset: 0
+        );
+
+        if (
+            $regexMatch === 1
+            && ! Storage::disk($disk)->exists($matches[1][0])
+            && Str::isUrl($content)
+        ) {
             return $content;
         }
 
@@ -132,8 +160,19 @@ class TiptapMediaEncoder
     public static function encodeExistingMedia(string $state): string
     {
         $path = parse_url($state, PHP_URL_PATH);
-        $id = Str::of($path)->before('/');
-        $fileName = Str::of($path)->after('/');
+
+        $root = preg_quote(config('filesystems.disks.s3.root'), '/');
+
+        preg_match(
+            pattern: "/\/?{$root}\/([0-9]+)\/([^?]+)/",
+            subject: $path,
+            matches: $matches,
+            flags: PREG_OFFSET_CAPTURE,
+            offset: 0
+        );
+
+        $id = $matches[1][0];
+        $fileName = $matches[2][0];
 
         $media = Media::query()
             ->where(
