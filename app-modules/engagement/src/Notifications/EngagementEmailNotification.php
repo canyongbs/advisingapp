@@ -48,52 +48,54 @@ use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
 class EngagementEmailNotification extends BaseNotification implements EmailNotification, ShouldBeUnique
 {
-    use EmailChannelTrait;
+  use EmailChannelTrait;
 
-    public function __construct(
-        public EngagementDeliverable $deliverable
-    ) {}
+  public function __construct(
+    public EngagementDeliverable $deliverable
+  ) {
+  }
 
-    public function uniqueId(): string
-    {
-        return Tenant::current()->id . ':' . $this->deliverable->id;
+  public function uniqueId(): string
+  {
+    return Tenant::current()->id . ':' . $this->deliverable->id;
+  }
+
+  public function toEmail(object $notifiable): MailMessage
+  {
+    return MailMessage::make()
+      ->subject($this->deliverable->engagement->subject)
+      ->greeting("Hello {$this->deliverable->engagement->recipient->display_name}!")
+      ->content($this->deliverable->engagement->getBody())
+      ->salutation("Regards, {$name}");
+  }
+
+  public function failed(?Throwable $exception): void
+  {
+    $this->deliverable->markDeliveryFailed($exception->getMessage());
+
+    if (is_null($this->deliverable->engagement->engagement_batch_id)) {
+      $this->deliverable->engagement->user->notify(new EngagementFailedNotification($this->deliverable->engagement));
     }
+  }
 
-    public function toEmail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject($this->deliverable->engagement->subject)
-            ->greeting('Hello ' . $this->deliverable->engagement->recipient->display_name . '!')
-            ->content($this->deliverable->engagement->getBody());
-    }
+  protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
+  {
+    $deliverable->related()->associate($this->deliverable);
+  }
 
-    public function failed(?Throwable $exception): void
-    {
-        $this->deliverable->markDeliveryFailed($exception->getMessage());
+  protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
+  {
+    $updateData = array_filter([
+      'external_reference_id' => $deliverable->external_reference_id,
+      'external_status' => $deliverable->external_status,
+      'delivery_status' => $deliverable->delivery_status,
+      'delivered_at' => $deliverable->delivered_at,
+      'last_delivery_attempt' => $deliverable->last_delivery_attempt,
+      'delivery_response' => $deliverable->delivery_response,
+    ], function ($value) {
+      return !is_null($value);
+    });
 
-        if (is_null($this->deliverable->engagement->engagement_batch_id)) {
-            $this->deliverable->engagement->user->notify(new EngagementFailedNotification($this->deliverable->engagement));
-        }
-    }
-
-    protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
-    {
-        $deliverable->related()->associate($this->deliverable);
-    }
-
-    protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
-    {
-        $updateData = array_filter([
-            'external_reference_id' => $deliverable->external_reference_id,
-            'external_status' => $deliverable->external_status,
-            'delivery_status' => $deliverable->delivery_status,
-            'delivered_at' => $deliverable->delivered_at,
-            'last_delivery_attempt' => $deliverable->last_delivery_attempt,
-            'delivery_response' => $deliverable->delivery_response,
-        ], function ($value) {
-            return ! is_null($value);
-        });
-
-        $this->deliverable->update($updateData);
-    }
+    $this->deliverable->update($updateData);
+  }
 }

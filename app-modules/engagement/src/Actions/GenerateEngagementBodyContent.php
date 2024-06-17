@@ -36,15 +36,13 @@
 
 namespace AdvisingApp\Engagement\Actions;
 
-use League\HTMLToMarkdown\HtmlConverter;
+use Illuminate\Support\HtmlString;
 
-class GenerateEmailMarkdownContent
+class GenerateEngagementBodyContent
 {
-    public function __invoke(string|array $content, array $mergeData = []): string
+    public function __invoke(string|array $content, array $mergeData = []): HtmlString
     {
-        $converter = new HtmlConverter();
-
-        $html = tiptap_converter()
+        $content = tiptap_converter()
             ->getEditor()
             ->setContent($content)
             ->descendants(function ($node) use ($mergeData) {
@@ -57,6 +55,6 @@ class GenerateEmailMarkdownContent
             })
             ->getHTML();
 
-        return $converter->convert($html);
+        return str(htmlspecialchars_decode($content))->toHtmlString();
     }
 }
