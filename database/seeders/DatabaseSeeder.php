@@ -55,12 +55,10 @@ use AdvisingApp\Prospect\Database\Seeders\ProspectSourceSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
 use AdvisingApp\InventoryManagement\Database\Seeders\AssetSeeder;
-use AdvisingApp\Analytics\Database\Seeders\AnalyticsResourceSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestSeeder;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseArticleSeeder;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseQualitySeeder;
-use AdvisingApp\Analytics\Database\Seeders\AnalyticsResourceCategorySeeder;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseCategorySeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ChangeRequestTypeSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
@@ -120,8 +118,6 @@ class DatabaseSeeder extends Seeder
             AssetSeeder::class,
 
             MaintenanceProviderSeeder::class,
-            AnalyticsResourceCategorySeeder::class,
-            AnalyticsResourceSeeder::class,
 
             // Change Request
             ChangeRequestTypeSeeder::class,
