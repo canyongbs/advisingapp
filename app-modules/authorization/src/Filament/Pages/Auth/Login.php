@@ -39,6 +39,7 @@ namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Livewire\Attributes\Locked;
 use Filament\Forms\Components\TextInput;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Validation\ValidationException;
@@ -53,6 +54,7 @@ class Login extends FilamentLogin
 {
     protected static string $view = 'authorization::login';
 
+    #[Locked]
     protected $needsMFA = false;
 
     public function authenticate(): ?LoginResponse
