@@ -34,36 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MultifactorAuthentication;
+namespace AdvisingApp\MultifactorAuthentication\Filament\Pages;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use Filament\Forms\Form;
+use Laravel\Pennant\Feature;
+use Filament\Pages\SettingsPage;
+use Filament\Forms\Components\Toggle;
+use App\Filament\Clusters\GlobalSettings;
+use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
 
-class MultifactorAuthenticationPlugin implements Plugin
+class ManageMultifactorSettings extends SettingsPage
 {
-    public function getId(): string
+    protected static ?string $navigationIcon = 'heroicon-o-lock-closed';
+
+    protected static ?string $navigationLabel = 'Multifactor';
+
+    protected static ?int $navigationSort = 80;
+
+    protected static string $settings = MultifactorSettings::class;
+
+    protected static ?string $cluster = GlobalSettings::class;
+
+    public static function canAccess(): bool
     {
-        return 'multifactor-authentication';
+        if (! Feature::active('introduce-multifactor-authentication')) {
+            return false;
+        }
+
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('multifactor_settings.manage');
     }
 
-    public function register(Panel $panel): void
+    public function form(Form $form): Form
     {
-        $panel->discoverResources(
-            in: __DIR__ . '/Filament/Resources',
-            for: 'AdvisingApp\\MultifactorAuthentication\\Filament\\Resources'
-        );
-
-        $panel->discoverLivewireComponents(
-            in: __DIR__ . '/Livewire',
-            for: 'AdvisingApp\\MultifactorAuthentication\\Livewire'
-        );
-
-        $panel
-            ->discoverPages(
-                in: __DIR__ . '/Filament/Pages',
-                for: 'AdvisingApp\\MultifactorAuthentication\\Filament\\Pages'
-            );
+        return $form
+            ->schema([
+                Toggle::make('enabled')
+                    ->helperText('Enables and requires multifactor authentication for all non-sso users.'),
+            ]);
     }
-
-    public function boot(Panel $panel): void {}
 }

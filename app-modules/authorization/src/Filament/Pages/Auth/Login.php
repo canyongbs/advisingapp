@@ -55,7 +55,7 @@ class Login extends FilamentLogin
     protected static string $view = 'authorization::login';
 
     #[Locked]
-    protected $needsMFA = false;
+    protected bool $needsMFA = false;
 
     public function authenticate(): ?LoginResponse
     {
