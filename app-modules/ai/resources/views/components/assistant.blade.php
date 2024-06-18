@@ -521,18 +521,19 @@
                                         <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
                                     </div>
 
-                                    @if (blank($this->thread->name))
-                                        <div class="flex w-full justify-center pt-3 sm:w-auto sm:pl-2 sm:pt-0">
-                                            {{ $this->saveThreadAction }}
-                                        </div>
-                                    @else
-                                        <div class="flex w-full justify-center gap-1.5 pt-3 sm:w-auto sm:pt-0">
-                                            {{ ($this->cloneThreadAction)(['thread' => $this->thread->id]) }}
-                                            {{ ($this->emailThreadAction)(['thread' => $this->thread->id]) }}
-                                        </div>
-                                    @endif
                                 </div>
+                                @if (blank($this->thread->name))
+                                    <div class="flex w-full justify-center pt-3 sm:w-auto sm:pl-2 sm:pt-0">
+                                        {{ $this->saveThreadAction }}
+                                    </div>
+                                @else
+                                    <div class="flex w-full justify-center gap-1.5 pt-3 sm:w-auto sm:pt-0">
+                                        {{ ($this->cloneThreadAction)(['thread' => $this->thread->id]) }}
+                                        {{ ($this->emailThreadAction)(['thread' => $this->thread->id]) }}
+                                    </div>
+                                @endif
                             </div>
+                        </div>
                     </form>
                 @else
                     <div
