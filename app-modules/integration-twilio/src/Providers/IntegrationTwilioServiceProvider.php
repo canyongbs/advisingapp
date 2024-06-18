@@ -50,7 +50,7 @@ use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Engagement\Actions\FindEngagementResponseSender;
 use AdvisingApp\IntegrationTwilio\Registries\IntegrationTwilioRbacRegistry;
 use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
-use AdvisingApp\IntegrationTwilio\Jobs\CheckStatusOfNonTerminalSmsOutboundDeliverables;
+use AdvisingApp\IntegrationTwilio\Jobs\CheckStatusOfOutboundDeliverablesWithoutATerminalStatus;
 use AdvisingApp\IntegrationTwilio\Actions\Playground\FindEngagementResponseSender as PlaygroundFindEngagementResponseSender;
 
 class IntegrationTwilioServiceProvider extends ServiceProvider
@@ -83,12 +83,12 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
                     ->cursor()
                     ->each(function (Tenant $tenant) {
                         $tenant->execute(function () {
-                            dispatch(new CheckStatusOfNonTerminalSmsOutboundDeliverables());
+                            dispatch(new CheckStatusOfOutboundDeliverablesWithoutATerminalStatus());
                         });
                     });
             })
                 ->daily()
-                ->name('CheckStatusOfNonTerminalSmsOutboundDeliverables')
+                ->name('CheckStatusOfOutboundDeliverablesWithoutATerminalStatus')
                 ->onOneServer()
                 ->withoutOverlapping();
         });
