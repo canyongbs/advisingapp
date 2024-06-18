@@ -66,8 +66,7 @@ class EngagementEmailNotification extends BaseNotification implements EmailNotif
         return MailMessage::make()
             ->subject($this->deliverable->engagement->subject)
             ->greeting('Hello ' . $this->deliverable->engagement->recipient->display_name . '!')
-            ->content($this->deliverable->engagement->getBody())
-            ->salutation("Regards, {$name}");
+            ->content($this->deliverable->engagement->getBody());
     }
 
     public function failed(?Throwable $exception): void

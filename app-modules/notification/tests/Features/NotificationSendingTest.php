@@ -97,8 +97,7 @@ class TestMultipleChannelNotification extends BaseNotification implements EmailN
         return MailMessage::make()
             ->subject('Test Subject')
             ->greeting('Test Greeting')
-            ->content('This is a test email')
-            ->salutation('Test Salutation');
+            ->content('This is a test email');
     }
 
     public function toDatabase(object $notifiable): array
