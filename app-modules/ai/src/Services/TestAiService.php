@@ -130,7 +130,12 @@ class TestAiService implements Contracts\AiService
         ]);
     }
 
-    public function sendMessage(AiMessage $message, array $files = [], Closure $saveResponse): Closure
+    public function withFiles(array $files): self
+    {
+        return $this;
+    }
+
+    public function sendMessage(AiMessage $message, Closure $saveResponse): Closure
     {
         $message->context = fake()->paragraph();
         $message->save();

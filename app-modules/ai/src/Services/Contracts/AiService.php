@@ -100,7 +100,9 @@ interface AiService
      * The method should return a new unsaved `AiMessage` model with the content
      * from the AI service set only, the other attributes will be set later.
      */
-    public function sendMessage(AiMessage $message, array $files = [], Closure $saveResponse): Closure;
+    public function sendMessage(AiMessage $message, Closure $saveResponse): Closure;
+
+    public function withFiles(array $files): self;
 
     /**
      * This method is passed an `AiMessage` model and should recover the

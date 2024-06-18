@@ -64,6 +64,8 @@ abstract class BaseOpenAiService implements AiService
 
     protected ClientContract $client;
 
+    protected array $uploadedFiles = [];
+
     abstract public function getApiKey(): string;
 
     abstract public function getApiVersion(): string;
@@ -186,7 +188,7 @@ abstract class BaseOpenAiService implements AiService
         $thread->thread_id = null;
     }
 
-    public function sendMessage(AiMessage $message, array $files = [], Closure $saveResponse): Closure
+    public function sendMessage(AiMessage $message, Closure $saveResponse): Closure
     {
         $response = $this->client->threads()->runs()->list($message->thread->thread_id, [
             'order' => 'desc',
@@ -200,9 +202,11 @@ abstract class BaseOpenAiService implements AiService
 
         $createdFiles = [];
 
-        if (method_exists($this, 'createFiles') && ! empty($files)) {
-            $createdFiles = $this->createFiles($message, $files);
+        if (method_exists($this, 'createFiles') && ! empty($this->uploadedFiles)) {
+            $createdFiles = $this->createFiles($message, $this->uploadedFiles);
         }
+
+        $this->uploadedFiles = [];
 
         $data = [
             'role' => 'user',
@@ -281,6 +285,13 @@ abstract class BaseOpenAiService implements AiService
 
             $saveResponse($response);
         };
+    }
+
+    public function withFiles(array $files): self
+    {
+        $this->uploadedFiles = $files;
+
+        return $this;
     }
 
     public function retryMessage(AiMessage $message, Closure $saveResponse): Closure
