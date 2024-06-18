@@ -76,7 +76,7 @@ it('will update the status of an outbound deliverable accordingly', function (st
 
     $mockMessageContext->shouldReceive('fetch')->andReturn(
         new MessageInstance(
-            new V2010(new MessagingBase(new Client())),
+            new V2010(new MessagingBase(new Client(username: 'abc123', password: 'abc123'))),
             [
                 'sid' => 'abc123',
                 'status' => $externalStatus,
@@ -148,7 +148,7 @@ it('will update an associated engagement deliverable if necessary', function (st
 
     $mockMessageContext->shouldReceive('fetch')->andReturn(
         new MessageInstance(
-            new V2010(new MessagingBase(new Client())),
+            new V2010(new MessagingBase(new Client(username: 'abc123', password: 'abc123'))),
             [
                 'sid' => 'abc123',
                 'status' => $externalStatus,
