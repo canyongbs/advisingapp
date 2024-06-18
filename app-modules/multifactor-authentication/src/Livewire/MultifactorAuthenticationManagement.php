@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\MultifactorAuthentication\Livewire;
 
+use App\Models\User;
 use Livewire\Component;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -20,9 +21,9 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
     use InteractsWithActions;
     use InteractsWithForms;
 
-    public $user;
+    public User $user;
 
-    public $code;
+    public int $code;
 
     public bool $showRecoveryCodes = false;
 
@@ -33,7 +34,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
 
     public function mount()
     {
-        $this->user = Filament::getCurrentPanel()->auth()->user();
+        $this->user = $this->user ?? Filament::getCurrentPanel()->auth()->user();
     }
 
     public function enableAction(): Action
@@ -146,10 +147,5 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
     public function toggleRecoveryCodes()
     {
         $this->showRecoveryCodes = ! $this->showRecoveryCodes;
-    }
-
-    public function showRequiresTwoFactorAlert()
-    {
-        return app(MultifactorService::class)->shouldForceTwoFactor();
     }
 }

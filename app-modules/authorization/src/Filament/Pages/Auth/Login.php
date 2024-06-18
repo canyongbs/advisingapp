@@ -48,6 +48,7 @@ use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
+use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 
 class Login extends FilamentLogin
@@ -55,10 +56,18 @@ class Login extends FilamentLogin
     protected static string $view = 'authorization::login';
 
     #[Locked]
+    protected ?User $user = null;
+
+    #[Locked]
+    protected bool $needsMfaSetup = false;
+
+    #[Locked]
     protected bool $needsMFA = false;
 
     public function authenticate(): ?LoginResponse
     {
+        $this->user = null;
+
         try {
             $this->rateLimit(5);
         } catch (TooManyRequestsException $exception) {
@@ -69,12 +78,14 @@ class Login extends FilamentLogin
 
         $data = $this->form->getState();
 
-        if (! Filament::auth()->once($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
+        if (! Filament::auth()->once($this->getCredentialsFromFormData($data))) {
             $this->throwFailureValidationException();
         }
 
         /** @var User $user */
         $user = Filament::auth()->user();
+
+        $this->user = $user;
 
         if (
             ($user instanceof FilamentUser) &&
@@ -85,8 +96,18 @@ class Login extends FilamentLogin
             $this->throwFailureValidationException();
         }
 
-        if ($user->hasConfirmedTwoFactor()) {
+        $mfaSettings = app(MultifactorSettings::class);
+
+        if ($mfaSettings->enabled) {
             $this->needsMFA = true;
+
+            if (! $user->hasConfirmedTwoFactor() && empty($data['code'])) {
+                $user->enableTwoFactorAuthentication();
+
+                $this->needsMfaSetup = true;
+
+                return null;
+            }
 
             if (empty($data['code'])) {
                 Filament::auth()->logout();
@@ -105,6 +126,10 @@ class Login extends FilamentLogin
                     'data.email' => 'Multifactor authentication failed.',
                 ]);
             }
+
+            if (empty($user->multifactor_confirmed_at)) {
+                $user->confirmTwoFactorAuthentication();
+            }
         }
 
         Filament::auth()->login($user, $data['remember'] ?? false);
@@ -112,6 +137,11 @@ class Login extends FilamentLogin
         session()->regenerate();
 
         return app(LoginResponse::class);
+    }
+
+    public function getTwoFactorQrCode()
+    {
+        return app(MultifactorService::class)->getTwoFactorQrCodeSvg($this->user->getTwoFactorQrCodeUrl());
     }
 
     protected function getSsoFormActions(): array

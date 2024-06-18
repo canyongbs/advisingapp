@@ -45,5 +45,15 @@
         />
     </x-filament-panels::form>
 
-    @livewire(MultifactorAuthenticationManagement::class)
+    <x-filament::section aside>
+        <x-slot name="heading">
+            Two Factor Authentication
+        </x-slot>
+
+        <x-slot name="description">
+            Manage multifactor authentication for your account
+        </x-slot>
+
+        @livewire(MultifactorAuthenticationManagement::class)
+    </x-filament::section>
 </x-filament-panels::page>
