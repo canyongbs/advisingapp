@@ -207,9 +207,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function getBodyMarkdown(): string
     {
-        $content = (new HtmlConverter())->convert($this->getBody());
-
-        return htmlspecialchars_decode(stripslashes($content));
+        return stripslashes((new HtmlConverter())->convert($this->getBody()));
     }
 
     public function getMergeData(): array

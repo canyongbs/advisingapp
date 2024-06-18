@@ -55,6 +55,6 @@ class GenerateEngagementBodyContent
             })
             ->getHTML();
 
-        return str(htmlspecialchars_decode($content))->toHtmlString();
+        return str($content)->sanitizeHtml()->toHtmlString();
     }
 }
