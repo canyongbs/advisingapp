@@ -45,8 +45,8 @@ class ClientMock extends Client
 {
     public function __construct(
         $messageList = null,
-        string $username = null,
-        string $password = null,
+        string $username = 'abc123',
+        string $password = 'abc123',
         string $accountSid = null,
         string $region = null,
         HttpClient $httpClient = null,
