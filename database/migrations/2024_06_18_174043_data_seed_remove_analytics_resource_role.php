@@ -7,7 +7,13 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::table('roles')->where('name', 'analytics.analytics_management')->delete();
+        $role_details = DB::table('roles')->where('name', 'analytics.analytics_management')->first();
+
+        if (! empty($role_details)) {
+            DB::table('model_has_roles')->where('role_id', $role_details->id)->delete();
+            DB::table('role_has_permissions')->where('role_id', $role_details->id)->delete();
+            DB::table('roles')->where('name', 'analytics.analytics_management')->delete();
+        }
     }
 
     public function down(): void
