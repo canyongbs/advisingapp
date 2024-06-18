@@ -39,7 +39,6 @@ namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Illuminate\Support\Facades\Log;
 use Filament\Forms\Components\TextInput;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Validation\ValidationException;
@@ -67,8 +66,6 @@ class Login extends FilamentLogin
         }
 
         $data = $this->form->getState();
-
-        Log::debug($data);
 
         if (! Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
             $this->throwFailureValidationException();
