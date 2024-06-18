@@ -6,7 +6,6 @@ use Livewire\Component;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -42,7 +41,6 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
         return PasswordButtonAction::make('enable')
             ->label('Enable')
             ->action(function () {
-                Log::debug('hello');
                 $this->user->enableTwoFactorAuthentication();
 
                 Notification::make()
@@ -95,7 +93,25 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
                     ->success()
                     ->title('Code verified. Two factor authentication enabled.')
                     ->send();
+
+                $this->replaceMountedAction('recoveryCodes');
             });
+    }
+
+    public function recoveryCodesAction(): Action
+    {
+        return Action::make('recoveryCodes')
+            ->label('Recovery Codes')
+            ->requiresConfirmation()
+            ->modalDescription('')
+            ->modalCancelAction(false)
+            ->closeModalByClickingAway(false)
+            ->closeModalByEscaping(false)
+            ->modalCloseButton(false)
+            ->modalSubmitActionLabel('Okay')
+            ->modalContent(view('multifactor-authentication::filament.actions.recovery-codes-modal', [
+                'codes' => $this->recoveryCodes,
+            ]));
     }
 
     public function regenerateCodesAction(): Action

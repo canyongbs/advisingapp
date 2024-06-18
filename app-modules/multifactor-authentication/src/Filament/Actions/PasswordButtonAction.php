@@ -3,14 +3,12 @@
 namespace AdvisingApp\MultifactorAuthentication\Filament\Actions;
 
 use Filament\Actions\Action;
-use Illuminate\Support\Facades\Log;
 use Filament\Forms\Components\TextInput;
 
 class PasswordButtonAction extends Action
 {
     protected function setUp(): void
     {
-        Log::debug('hello');
         parent::setUp();
 
         if (! $this->isPasswordSessionValid()) {
@@ -38,6 +36,7 @@ class PasswordButtonAction extends Action
 
     protected function isPasswordSessionValid()
     {
-        return session()->has('auth.password_confirmed_at') && (time() - session('auth.password_confirmed_at', 0)) < config('auth.password_timeout');
+        return session()->has('auth.password_confirmed_at')
+            && (time() - session('auth.password_confirmed_at', 0)) < config('auth.password_timeout');
     }
 }
