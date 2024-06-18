@@ -100,8 +100,10 @@ class Login extends FilamentLogin
 
                 $this->needsMFA = false;
 
+                $this->data['code'] = null;
+
                 throw ValidationException::withMessages([
-                    'data.email' => __('filament-panels::pages/auth/login.messages.failed'),
+                    'data.email' => 'Multifactor authentication failed.',
                 ]);
             }
         }
@@ -153,14 +155,14 @@ class Login extends FilamentLogin
                         $this->getRememberFormComponent()
                             ->hidden(fn (Login $livewire) => $livewire->needsMFA),
                         TextInput::make('code')
-                            ->label('Code')
+                            ->label('Mutlifactor Authentication Code')
                             ->placeholder('###-###')
                             ->mask('999-999')
                             ->stripCharacters('-')
                             ->numeric()
-                            ->required()
+                            ->required(fn (Login $livewire) => $livewire->needsMFA)
                             ->hidden(fn (Login $livewire) => ! $livewire->needsMFA)
-                            ->dehydrated(),
+                            ->dehydratedWhenHidden(),
                     ])
                     ->statePath('data'),
             ),
