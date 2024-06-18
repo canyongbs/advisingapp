@@ -40,6 +40,7 @@ use CURLFile;
 use Illuminate\Support\Collection;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadException;
 
 trait UploadsFiles
 {

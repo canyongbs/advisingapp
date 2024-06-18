@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services\Concerns;
+namespace AdvisingApp\IntegrationOpenAi\Exceptions;
 
 use Exception;
 
