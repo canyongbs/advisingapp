@@ -67,7 +67,7 @@ class Login extends FilamentLogin
 
         $data = $this->form->getState();
 
-        if (! Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
+        if (! Filament::auth()->once($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
             $this->throwFailureValidationException();
         }
 
@@ -104,6 +104,8 @@ class Login extends FilamentLogin
                 ]);
             }
         }
+
+        Filament::auth()->login($user, $data['remember'] ?? false);
 
         session()->regenerate();
 
