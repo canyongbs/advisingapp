@@ -10,6 +10,7 @@ use Twilio\Exceptions\TwilioException;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 
 class CheckSmsOutboundDeliverableStatus implements ShouldQueue
@@ -32,7 +33,17 @@ class CheckSmsOutboundDeliverableStatus implements ShouldQueue
                 'external_status' => $messageInstance->status,
             ]);
 
-            // TODO Update related entity if necessary
+            if ($this->deliverable->related && $this->deliverable->related instanceof EngagementDeliverable) {
+                $this->deliverable->related->update([
+                    'external_status' => $messageInstance->status,
+                ]);
+
+                match ($messageInstance->status) {
+                    'delivered' => $this->deliverable->related->markDeliverySuccessful(Carbon::parse($messageInstance->dateSent)),
+                    'undelivered', 'failed' => $this->deliverable->related->markDeliveryFailed($messageInstance->errorMessage ?? 'Message could not successfully be delivered.'),
+                    default => null,
+                };
+            }
 
             match ($messageInstance->status) {
                 'delivered' => $this->deliverable->markDeliverySuccessful(Carbon::parse($messageInstance->dateSent)),
