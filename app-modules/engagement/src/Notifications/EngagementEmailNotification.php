@@ -61,8 +61,6 @@ class EngagementEmailNotification extends BaseNotification implements EmailNotif
 
     public function toEmail(object $notifiable): MailMessage
     {
-        $name = $this->deliverable->engagement->user->name ?? config('app.name');
-
         return MailMessage::make()
             ->subject($this->deliverable->engagement->subject)
             ->greeting('Hello ' . $this->deliverable->engagement->recipient->display_name . '!')
