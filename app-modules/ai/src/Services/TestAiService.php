@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Services;
 
+use Closure;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -129,20 +130,27 @@ class TestAiService implements Contracts\AiService
         ]);
     }
 
-    public function sendMessage(AiMessage $message, array $files = []): AiMessage
+    public function sendMessage(AiMessage $message, array $files = [], Closure $saveResponse): Closure
     {
         $message->context = fake()->paragraph();
         $message->save();
 
-        $response = new AiMessage();
-        $response->content = fake()->paragraph();
+        $responseContent = fake()->paragraph();
 
-        return $response;
+        return function () use ($responseContent, $saveResponse) {
+            $response = new AiMessage();
+
+            yield $responseContent;
+
+            $response->content = $responseContent;
+
+            $saveResponse($response);
+        };
     }
 
-    public function retryMessage(AiMessage $message): AiMessage
+    public function retryMessage(AiMessage $message, Closure $saveResponse): Closure
     {
-        return $this->sendMessage($message);
+        return $this->sendMessage($message, $saveResponse);
     }
 
     public function getMaxAssistantInstructionsLength(): int

@@ -4,7 +4,7 @@ services:
     build:
       target: development
       args:
-        TOTAL_QUEUE_WORKERS: '${TOTAL_QUEUE_WORKERS:-10}'
+        TOTAL_QUEUE_WORKERS: '${TOTAL_QUEUE_WORKERS:-1}'
     environment:
       SSL_MODE: "mixed"
       LANDLORD_MIGRATE: '${LANDLORD_MIGRATE:-true}'

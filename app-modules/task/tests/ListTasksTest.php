@@ -122,3 +122,104 @@ test('ListTasks is gated with proper access control', function () {
 
 // TODO: Test that mark_as_in_progress is visible to the proper users
 //test('mark_as_in_progress is only visible to those with the proper access', function () {});
+
+test('Task status change from pending to in progress', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $user->givePermissionTo('task.*.update');
+    $user->givePermissionTo('task.view-any');
+    $user->givePermissionTo('task.*.view');
+
+    actingAs($user);
+
+    $task = Task::factory()->create([
+        'status' => TaskStatus::Pending,
+    ]);
+
+    livewire(ListTasks::class)
+        ->callTableAction('view.mark_as_in_progress', $task);
+
+    $task->refresh();
+    expect($task->status)->toEqual(TaskStatus::InProgress);
+});
+
+test('Task status change from pending to canceled', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $user->givePermissionTo('task.*.update');
+    $user->givePermissionTo('task.view-any');
+    $user->givePermissionTo('task.*.view');
+
+    actingAs($user);
+
+    $task = Task::factory()->create([
+        'status' => TaskStatus::Pending,
+    ]);
+
+    livewire(ListTasks::class)
+        ->callTableAction('view.mark_as_canceled', $task);
+
+    $task->refresh();
+    expect($task->status)->toEqual(TaskStatus::Canceled);
+});
+
+test('Task status change from in progress to completed', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $user->givePermissionTo('task.*.update');
+    $user->givePermissionTo('task.view-any');
+    $user->givePermissionTo('task.*.view');
+
+    actingAs($user);
+
+    $task = Task::factory()->create([
+        'status' => TaskStatus::InProgress,
+    ]);
+
+    livewire(ListTasks::class)
+        ->callTableAction('view.mark_as_completed', $task);
+
+    $task->refresh();
+    expect($task->status)->toEqual(TaskStatus::Completed);
+});
+
+test('Task status change from in progress to canceled', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $user->givePermissionTo('task.*.update');
+    $user->givePermissionTo('task.view-any');
+    $user->givePermissionTo('task.*.view');
+
+    actingAs($user);
+
+    $task = Task::factory()->create([
+        'status' => TaskStatus::InProgress,
+    ]);
+
+    livewire(ListTasks::class)
+        ->callTableAction('view.mark_as_canceled', $task);
+
+    $task->refresh();
+    expect($task->status)->toEqual(TaskStatus::Canceled);
+});
+
+test('Task status change from canceled to in progress', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $user->givePermissionTo('task.*.update');
+    $user->givePermissionTo('task.view-any');
+    $user->givePermissionTo('task.*.view');
+
+    actingAs($user);
+
+    $task = Task::factory()->create([
+        'status' => TaskStatus::Canceled,
+    ]);
+
+    livewire(ListTasks::class)
+        ->removeTableFilters()
+        ->callTableAction('view.mark_as_in_progress', $task);
+
+    $task->refresh();
+    expect($task->status)->toEqual(TaskStatus::InProgress);
+});

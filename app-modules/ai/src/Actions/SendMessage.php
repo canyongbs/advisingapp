@@ -70,15 +70,11 @@ class SendMessage
 
         $aiService->ensureAssistantAndThreadExists($thread);
 
-        $response = $aiService->sendMessage($message, $data['files']);
+        return $aiService->sendMessage($message, $data['files'], function (AiMessage $response) use ($thread) {
+            $response->thread()->associate($thread);
+            $response->save();
 
-        $response->thread()->associate($thread);
-        $response->save();
-
-        $thread->touch();
-
-        return (string) str($response->content)
-            ->markdown()
-            ->sanitizeHtml();
+            $thread->touch();
+        });
     }
 }

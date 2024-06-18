@@ -176,6 +176,7 @@ trait CanManageThreads
     {
         return auth()->user()
             ->aiThreads()
+            ->withMax('messages', 'created_at')
             ->whereRelation('assistant', 'application', static::APPLICATION)
             ->whereNotNull('name')
             ->doesntHave('folder')

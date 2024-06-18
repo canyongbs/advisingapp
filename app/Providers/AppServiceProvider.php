@@ -45,6 +45,7 @@ use function Sentry\configureScope;
 
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Process;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Octane\Commands\ReloadCommand;
 use Filament\Actions\Imports\Jobs\ImportCsv;
@@ -111,6 +112,17 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(PermissionMigrationCreator::class, function ($app) {
             return new PermissionMigrationCreator($app['files'], $app->basePath('stubs'));
+        });
+
+        $this->app->singleton('current-commit', function ($app) {
+            $commitProcess = Process::run('git log --pretty="%h" -n1 HEAD');
+
+            if ($commitProcess->successful()) {
+                return rtrim($commitProcess->output());
+            }
+            report($commitProcess->errorOutput());
+
+            return null;
         });
     }
 }
