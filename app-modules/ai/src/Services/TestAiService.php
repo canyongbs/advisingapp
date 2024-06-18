@@ -197,7 +197,7 @@ class TestAiService implements Contracts\AiService, SupportsFileUploads
 
     public function createFiles(AiMessage $message, array $files): Collection
     {
-        return collect($files)->map(function ($file) use ($message) {
+        return collect($files)->map(function ($file) {
             $fileRecord = new AiMessageFile();
             $fileRecord->temporary_url = 'temp-url';
             $fileRecord->name = 'test';
