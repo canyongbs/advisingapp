@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 
-class CheckStatusOfNonTerminalSmsOutboundDeliverables implements ShouldQueue
+class CheckStatusOfOutboundDeliverablesWithoutATerminalStatus implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
