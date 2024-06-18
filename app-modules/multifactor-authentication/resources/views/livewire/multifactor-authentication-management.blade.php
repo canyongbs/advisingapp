@@ -1,28 +1,4 @@
-<x-filament::section aside>
-    <x-slot name="heading">
-        Two Factor Authentication
-    </x-slot>
-
-    <x-slot name="description">
-        Manage multifactor authentication for your account
-    </x-slot>
-
-    @if($this->showRequiresTwoFactorAlert())
-
-        <div style="{{ \Illuminate\Support\Arr::toCssStyles([\Filament\Support\get_color_css_variables('danger',shades: [300, 400, 500, 600])]) }}" class="p-4 rounded bg-custom-500">
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    @svg('heroicon-s-shield-exclamation', 'w-5 h-5 text-danger-600')
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm text-danger-500">
-                        You must enable Two Factor Authentication to use this application.
-                    </p>
-                </div>
-            </div>
-        </div>
-    @endif
-
+<div>
     @unless ($user->hasEnabledTwoFactor())
         <h3 class="flex items-center gap-2 text-lg font-medium">
             @svg('heroicon-o-exclamation-circle', 'w-6')
@@ -68,4 +44,4 @@
 
     @endunless
     <x-filament-actions::modals />
-</x-filament::section>
+</div>
