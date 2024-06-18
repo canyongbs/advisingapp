@@ -49,6 +49,17 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
+use Filament\Tables\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
+use AdvisingApp\Division\Models\Division;
+use Filament\Tables\Actions\ReplicateAction;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource;
 
 class ListKnowledgeBaseArticles extends ListRecords
@@ -117,6 +128,58 @@ class ListKnowledgeBaseArticles extends ListRecords
             ])
             ->actions([
                 EditAction::make(),
+                ReplicateAction::make()
+                    ->label('clone')
+                    ->form([
+                        Section::make()
+                            ->schema([
+                                TextInput::make('title')
+                                    ->label('Article Title')
+                                    ->required()
+                                    ->string(),
+                                Toggle::make('public')
+                                    ->label('Public')
+                                    ->default(false)
+                                    ->onColor('success')
+                                    ->offColor('gray'),
+                                Textarea::make('notes')
+                                    ->label('Notes')
+                                    ->string(),
+                            ]),
+                        Section::make()
+                            ->schema([
+                                Select::make('quality_id')
+                                    ->label('Quality')
+                                    ->relationship('quality', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->exists((new KnowledgeBaseQuality())->getTable(), (new KnowledgeBaseQuality())->getKeyName()),
+                                Select::make('status_id')
+                                    ->label('Status')
+                                    ->relationship('status', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->exists((new KnowledgeBaseStatus())->getTable(), (new KnowledgeBaseStatus())->getKeyName()),
+                                Select::make('category_id')
+                                    ->label('Category')
+                                    ->relationship('category', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->exists((new KnowledgeBaseCategory())->getTable(), (new KnowledgeBaseCategory())->getKeyName()),
+                                Select::make('division')
+                                    ->label('Division')
+                                    ->multiple()
+                                    ->relationship('division', 'name')
+                                    ->searchable(['name', 'code'])
+                                    ->preload()
+                                    ->exists((new Division())->getTable(), (new Division())->getKeyName()),
+                            ]),
+                    ])
+                // ->mutateRecordDataUsing(function (array $data): array {
+                //     // $data['name'] = $data['title'];
+                //     return $data;
+                // })
+                ,
             ])
             ->bulkActions([
                 BulkActionGroup::make([
@@ -130,7 +193,7 @@ class ListKnowledgeBaseArticles extends ListRecords
     {
         return [
             CreateAction::make()
-                ->disabled(fn (): bool => ! auth()->user()->can('knowledge_base_article.create'))
+                ->disabled(fn (): bool => !auth()->user()->can('knowledge_base_article.create'))
                 ->label('New Article')
                 ->createAnother(false)
                 ->successRedirectUrl(fn (Model $record): string => KnowledgeBaseArticleResource::getUrl('edit', ['record' => $record])),
