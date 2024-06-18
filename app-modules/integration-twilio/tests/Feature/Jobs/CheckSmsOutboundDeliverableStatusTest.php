@@ -65,7 +65,7 @@ it('will update the status of an outbound deliverable accordingly', function (st
 
     $originalStatus = $outboundDeliverable->delivery_status;
 
-    $clientMock = mock(ClientMock::class, ['username' => $settings->account_sid, 'password' => $settings->auth_token])
+    $clientMock = mock(ClientMock::class)
         ->shouldAllowMockingProtectedMethods();
 
     $mockMessageContext = mock(MessageContext::class);
@@ -137,7 +137,7 @@ it('will update an associated engagement deliverable if necessary', function (st
     $originalEngagementDeliverableStatus = $engagementDeliverable->delivery_status;
     $originalOutboundDeliverableStatus = $outboundDeliverable->delivery_status;
 
-    $clientMock = mock(ClientMock::class, ['username' => $settings->account_sid, 'password' => $settings->auth_token])
+    $clientMock = mock(ClientMock::class)
         ->shouldAllowMockingProtectedMethods();
 
     $mockMessageContext = mock(MessageContext::class);
