@@ -128,6 +128,8 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
                     ->success()
                     ->title('New recovery codes have been generated.')
                     ->send();
+
+                $this->replaceMountedAction('recoveryCodes');
             });
     }
 
