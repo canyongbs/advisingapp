@@ -56,7 +56,6 @@ class TestEmailSettingFromNameNotification extends BaseNotification implements E
             ->settings($this->setting)
             ->subject('Test Subject')
             ->greeting('Test Greeting')
-            ->content('This is a test email')
-            ->salutation('Test Salutation');
+            ->content('This is a test email');
     }
 }

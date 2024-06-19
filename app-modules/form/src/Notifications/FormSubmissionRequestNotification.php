@@ -60,7 +60,6 @@ class FormSubmissionRequestNotification extends BaseNotification implements Emai
             ->greeting('Hello ' . $this->submission->author->display_name . '!')
             ->line("Please complete the attached form: {$this->submission->submissible->name}")
             ->lineIf(filled($this->submission->request_note), $this->submission->request_note)
-            ->action('Complete Form', route('forms.show', ['form' => $this->submission->submissible]))
-            ->salutation("Regards, {$this->submission->requester->name}");
+            ->action('Complete Form', route('forms.show', ['form' => $this->submission->submissible]));
     }
 }
