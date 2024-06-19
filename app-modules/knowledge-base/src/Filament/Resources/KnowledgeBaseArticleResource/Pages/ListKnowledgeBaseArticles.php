@@ -38,27 +38,27 @@ namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResou
 
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TextInput;
+use AdvisingApp\Division\Models\Division;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
-use AdvisingApp\Division\Models\Division;
-use Filament\Tables\Actions\ReplicateAction;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource;
 
 class ListKnowledgeBaseArticles extends ListRecords
@@ -181,6 +181,7 @@ class ListKnowledgeBaseArticles extends ListRecords
                     })
                     ->after(function (Model $replica, Model $record): void {
                         $record->load('division');
+
                         foreach ($record->division as $divison) {
                             $replica->division()->attach($divison->id);
                         }
@@ -200,7 +201,7 @@ class ListKnowledgeBaseArticles extends ListRecords
     {
         return [
             CreateAction::make()
-                ->disabled(fn (): bool => !auth()->user()->can('knowledge_base_article.create'))
+                ->disabled(fn (): bool => ! auth()->user()->can('knowledge_base_article.create'))
                 ->label('New Article')
                 ->createAnother(false)
                 ->successRedirectUrl(fn (Model $record): string => KnowledgeBaseArticleResource::getUrl('edit', ['record' => $record])),
