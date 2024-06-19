@@ -40,5 +40,8 @@ use Exception;
 
 class FileUploadException extends Exception
 {
-    protected $message = 'Something went wrong while attempting to upload the file. Please try again.';
+    public function __construct()
+    {
+        parent::__construct('Something went wrong while attempting to upload the file. Please try again.');
+    }
 }

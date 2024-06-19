@@ -61,7 +61,7 @@ use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use AdvisingApp\Ai\Exceptions\UploadedFileCouldNotBeProcessed;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use AdvisingApp\Ai\DataTransferObjects\VectorStores\VectorStoresDataTransferObject;
 
@@ -190,8 +190,8 @@ trait CanManageThreads
         $this->selectThread($this->threadsWithoutAFolder->whereNull('assistant.archived_at')->first());
 
         if ($this->thread) {
-            if (! is_null($expiredVectorStore = $this->getExpiredVectorStoresForThread())) {
-                foreach ($expiredVectorStore as $expiredVectorStore) {
+            if (! is_null($expiredVectorStores = $this->getExpiredVectorStoresForThread())) {
+                foreach ($expiredVectorStores as $expiredVectorStore) {
                     $this->recreateVectorStoreForThread($this->thread, $expiredVectorStore);
                 }
             }
@@ -222,8 +222,8 @@ trait CanManageThreads
 
         $this->thread = $thread;
 
-        if (! is_null($expiredVectorStore = $this->getExpiredVectorStoresForThread())) {
-            foreach ($expiredVectorStore as $expiredVectorStore) {
+        if (! is_null($expiredVectorStores = $this->getExpiredVectorStoresForThread())) {
+            foreach ($expiredVectorStores as $expiredVectorStore) {
                 $this->recreateVectorStoreForThread($this->thread, $expiredVectorStore);
             }
         }
@@ -231,12 +231,18 @@ trait CanManageThreads
 
     public function getExpiredVectorStoresForThread(): ?array
     {
-        $thread = $this->thread->assistant->model->getService()->retrieveThread($this->thread);
+        $service = $this->thread->assistant->model->getService();
+
+        if (! $service->supportsFileUploads()) {
+            return null;
+        }
+
+        $thread = $service->retrieveThread($this->thread);
 
         // Currently threads only support a single vector store
         $expiredVectorStores = collect($thread->vectorStoreIds)
-            ->map(function ($vectorStoreId) {
-                $vectorStoreResponse = $this->thread->assistant->model->getService()->retrieveVectorStore($vectorStoreId);
+            ->map(function ($vectorStoreId) use ($service) {
+                $vectorStoreResponse = $service->retrieveVectorStore($vectorStoreId);
 
                 if ($vectorStoreResponse->status === 'expired') {
                     return $vectorStoreResponse;
@@ -314,7 +320,7 @@ trait CanManageThreads
 
         while ($vectorStoreResponseStatus !== 'completed') {
             if ($timeout <= 0) {
-                throw new AiThreadLockedException();
+                throw new UploadedFileCouldNotBeProcessed();
             }
 
             usleep(500000);

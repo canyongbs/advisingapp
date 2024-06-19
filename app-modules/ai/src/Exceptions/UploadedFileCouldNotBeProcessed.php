@@ -34,31 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Services\Contracts;
+namespace AdvisingApp\Ai\Exceptions;
 
-use Illuminate\Support\Collection;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\DataTransferObjects\Files\FilesDataTransferObject;
-use AdvisingApp\Ai\DataTransferObjects\VectorStores\VectorStoresDataTransferObject;
-use AdvisingApp\Ai\DataTransferObjects\VectorStoreFiles\VectorStoreFilesDataTransferObject;
+use Exception;
 
-interface SupportsFileUploads
+class UploadedFileCouldNotBeProcessed extends Exception
 {
-    /**
-     * This method accepts an array of files to be uploaded to the client
-     * for a specific message, returning a collection of unsaved `AiMessageFile` records.
-     */
-    public function createFiles(AiMessage $message, array $files): Collection;
-
-    public function retrieveFile(AiMessageFile $file): FilesDataTransferObject;
-
-    public function createVectorStore(array $parameters): VectorStoresDataTransferObject;
-
-    public function retrieveVectorStore(string $vectorStoreId): VectorStoresDataTransferObject;
-
-    public function modifyVectorStore(string $vectorStoreId, array $parameters): void;
-
-    public function retrieveVectorStoreFiles(AiThread $thread, string $vectorStoreId, array $params): VectorStoreFilesDataTransferObject;
+    public function __construct()
+    {
+        parent::__construct('The file you uploaded has not been successfully processed. Please check back shortly to see if processing was completed.');
+    }
 }

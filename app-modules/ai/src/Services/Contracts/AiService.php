@@ -40,11 +40,7 @@ use Closure;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\DataTransferObjects\Files\FilesDataTransferObject;
 use AdvisingApp\Ai\DataTransferObjects\Threads\ThreadsDataTransferObject;
-use AdvisingApp\Ai\DataTransferObjects\VectorStores\VectorStoresDataTransferObject;
-use AdvisingApp\Ai\DataTransferObjects\VectorStoreFiles\VectorStoreFilesDataTransferObject;
 
 interface AiService
 {
@@ -116,16 +112,6 @@ interface AiService
     public function retryMessage(AiMessage $message, Closure $saveResponse): Closure;
 
     public function getMaxAssistantInstructionsLength(): int;
-
-    public function retrieveFile(AiMessageFile $file): FilesDataTransferObject;
-
-    public function createVectorStore(array $parameters): VectorStoresDataTransferObject;
-
-    public function retrieveVectorStore(string $vectorStoreId): VectorStoresDataTransferObject;
-
-    public function modifyVectorStore(string $vectorStoreId, array $parameters): void;
-
-    public function retrieveVectorStoreFiles(AiThread $thread, string $vectorStoreId, array $params): VectorStoreFilesDataTransferObject;
 
     public function getDeployment(): ?string;
 
