@@ -98,19 +98,27 @@ class Login extends FilamentLogin
 
         $mfaSettings = app(MultifactorSettings::class);
 
-        if ($mfaSettings->enabled) {
-            $this->needsMFA = true;
+        // MFA Enabled, not setup
+        // MFA Enabled, setup
+        // MFA Not Enabled, not setup
+        // MFA Not Enabled, setup
 
+        if ($mfaSettings->enabled) {
             if (! $user->hasConfirmedTwoFactor() && empty($data['code'])) {
                 $user->enableTwoFactorAuthentication();
 
                 $this->needsMfaSetup = true;
+                $this->needsMFA = true;
 
                 return null;
             }
+        }
 
+        if ($user->hasEnabledTwoFactor()) {
             if (empty($data['code'])) {
                 Filament::auth()->logout();
+
+                $this->needsMFA = true;
 
                 return null;
             }
