@@ -63,7 +63,7 @@ class EngagementEmailNotification extends BaseNotification implements EmailNotif
     {
         return MailMessage::make()
             ->subject($this->deliverable->engagement->subject)
-            ->greeting('Hello ' . $this->deliverable->engagement->recipient->display_name . '!')
+            ->greeting("Hello {$this->deliverable->engagement->recipient->display_name}!")
             ->content($this->deliverable->engagement->getBody());
     }
 

@@ -39,7 +39,9 @@ namespace AdvisingApp\Engagement\Models;
 use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
+use Illuminate\Support\HtmlString;
 use Illuminate\Database\Eloquent\Model;
+use League\HTMLToMarkdown\HtmlConverter;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Timeline\Models\Timeline;
@@ -55,7 +57,7 @@ use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\Engagement\Actions\GenerateEmailMarkdownContent;
+use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
@@ -195,12 +197,17 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return $this->recipient instanceof Subscribable ? $this->recipient : null;
     }
 
-    public function getBody(): string
+    public function getBody(): HtmlString
     {
-        return app(GenerateEmailMarkdownContent::class)(
+        return app(GenerateEngagementBodyContent::class)(
             $this->body,
             $this->getMergeData(),
         );
+    }
+
+    public function getBodyMarkdown(): string
+    {
+        return stripslashes((new HtmlConverter())->convert($this->getBody()));
     }
 
     public function getMergeData(): array

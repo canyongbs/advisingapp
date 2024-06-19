@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Engagement\Models;
 
+use Carbon\Carbon;
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -82,13 +83,13 @@ class EngagementDeliverable extends BaseModel implements Auditable
         return ! is_null($this->delivered_at);
     }
 
-    public function markDeliverySuccessful(): void
+    public function markDeliverySuccessful(?Carbon $at = null): void
     {
         if (! $this->hasBeenDelivered()) {
             $this->update([
                 'delivery_status' => EngagementDeliveryStatus::Successful,
-                'delivered_at' => now(),
-                'last_delivery_attempt' => now(),
+                'delivered_at' => $at ?? now(),
+                'last_delivery_attempt' => $at ?? now(),
             ]);
         }
     }

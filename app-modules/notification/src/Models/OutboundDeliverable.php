@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Notification\Models;
 
+use Carbon\Carbon;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -110,13 +111,13 @@ class OutboundDeliverable extends BaseModel implements ProvidesATimeline
         return ! is_null($this->delivered_at);
     }
 
-    public function markDeliverySuccessful(): void
+    public function markDeliverySuccessful(?Carbon $at = null): void
     {
         if (! $this->hasBeenDelivered()) {
             $this->update([
                 'delivery_status' => NotificationDeliveryStatus::Successful,
-                'delivered_at' => now(),
-                'last_delivery_attempt' => now(),
+                'delivered_at' => $at ?? now(),
+                'last_delivery_attempt' => $at ?? now(),
             ]);
         }
     }

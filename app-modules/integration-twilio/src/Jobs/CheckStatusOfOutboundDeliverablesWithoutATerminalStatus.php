@@ -34,17 +34,40 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\CheckOlympusKey;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
-use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
+namespace AdvisingApp\IntegrationTwilio\Jobs;
 
-Route::middleware([
-    CheckOlympusKey::class,
-])->group(function () {
-    Route::post('/azure-sso/update', UpdateAzureSsoSettingsController::class)
-        ->name('azure-sso.update');
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 
-    Route::get('/health', HealthCheckJsonResultsController::class)
-        ->name('health');
-});
+class CheckStatusOfOutboundDeliverablesWithoutATerminalStatus implements ShouldQueue
+{
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public static $OLDER_THAN_HOURS = 24; // 1 day
+
+    public static $NEWER_THAN_HOURS = 168; // 7 days
+
+    public function __construct() {}
+
+    public function handle(): void
+    {
+        $terminalStatuses = ['delivered', 'undelivered', 'failed'];
+
+        OutboundDeliverable::query()
+            ->where('channel', 'sms')
+            ->whereNotIn('external_status', $terminalStatuses)
+            ->whereNotNull('last_delivery_attempt')
+            ->whereBetween('last_delivery_attempt', [now()->subHours(self::$NEWER_THAN_HOURS), now()->subHours(self::$OLDER_THAN_HOURS)])
+            ->cursor()
+            ->each(function (OutboundDeliverable $deliverable) {
+                CheckSmsOutboundDeliverableStatus::dispatch($deliverable);
+            });
+    }
+}

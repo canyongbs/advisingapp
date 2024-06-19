@@ -36,14 +36,10 @@
 
 namespace AdvisingApp\Notification\DataTransferObjects;
 
-use Twilio\Rest\Api\V2010\Account\MessageInstance;
-
 class DatabaseChannelResultData extends NotificationResultData
 {
     public function __construct(
         public bool $success,
-        // TODO Is there something we can add here?
-        // public ?MessageInstance $message = null,
         public ?string $error = null,
     ) {}
 }
