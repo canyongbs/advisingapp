@@ -66,7 +66,7 @@ return new class () extends Migration {
                 'name' => 'analytics.analytics_management',
                 'guard_name' => 'api',
                 'created_at' => now(),
-            ]
+            ],
         ];
         DB::table('roles')->insert($analytics_roles);
     }
