@@ -34,49 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Providers;
+namespace AdvisingApp\BasicNeeds\Providers;
 
 use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Prospect\ProspectPlugin;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Prospect\Models\ProspectProgram;
-use AdvisingApp\Prospect\Models\ProspectCategory;
-use AdvisingApp\Prospect\Observers\ProspectObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Prospect\Registries\ProspectRbacRegistry;
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Observers\ProspectStatusObserver;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+use AdvisingApp\BasicNeeds\BasicNeedsPlugin;
+use AdvisingApp\BasicNeeds\Models\BasicNeedCategory;
+use AdvisingApp\BasicNeeds\Models\BasicNeedProgram;
+use AdvisingApp\BasicNeeds\Registries\BasicNeedsRbacRegistry;
 
-class ProspectServiceProvider extends ServiceProvider
+class BasicNeedsServiceProvider extends ServiceProvider
 {
-    use ImplementsGraphQL;
-
-    public function register(): void
+    public function register()
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ProspectPlugin()));
+        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new BasicNeedsPlugin()));
     }
 
-    public function boot(): void
+    public function boot()
     {
         Relation::morphMap([
-            'prospect' => Prospect::class,
-            'prospect_source' => ProspectSource::class,
-            'prospect_status' => ProspectStatus::class,
+          'basic_need_category' => BasicNeedCategory::class,
+          'basic_need_program' => BasicNeedProgram::class,
         ]);
 
-        Prospect::observe(ProspectObserver::class);
-        ProspectStatus::observe(ProspectStatusObserver::class);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        $this->registerEnum(ProspectStatusColorOptions::class);
-        $this->registerEnum(SystemProspectClassification::class);
-
-        AuthorizationRoleRegistry::register(ProspectRbacRegistry::class);
+        AuthorizationRoleRegistry::register(BasicNeedsRbacRegistry::class);
     }
 }

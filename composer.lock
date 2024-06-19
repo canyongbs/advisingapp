@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8e20169b81c0f8d2afad45fc0b4e69dd",
+    "content-hash": "fc282e179b5ab4ed3907a0905ac69cb6",
     "packages": [
         {
             "name": "amphp/amp",
@@ -2871,6 +2871,41 @@
                     "AdvisingApp\\Ai\\Tests\\": "tests/",
                     "AdvisingApp\\Ai\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\Ai\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/basic-needs",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/basic-needs",
+                "reference": "84ef464c85dc6df5b012db7d816e179861e19606"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\BasicNeeds\\Providers\\BasicNeedsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\BasicNeeds\\": "src/",
+                    "AdvisingApp\\BasicNeeds\\Tests\\": "tests/",
+                    "AdvisingApp\\BasicNeeds\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\BasicNeeds\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
