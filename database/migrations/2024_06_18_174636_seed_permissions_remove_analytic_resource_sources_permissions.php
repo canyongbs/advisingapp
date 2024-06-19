@@ -34,37 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceCategoryResource\Pages;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
+use Database\Migrations\Concerns\CanModifyPermissions;
 
-use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceCategoryResource;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-class ViewAnalyticsResourceCategory extends ViewRecord
-{
-    protected static string $resource = AnalyticsResourceCategoryResource::class;
+    private array $permissions = [
+        'analytics_resource_source.view-any' => 'Analytics Resource Source',
+        'analytics_resource_source.create' => 'Analytics Resource Source',
+        'analytics_resource_source.*.view' => 'Analytics Resource Source',
+        'analytics_resource_source.*.update' => 'Analytics Resource Source',
+        'analytics_resource_source.*.delete' => 'Analytics Resource Source',
+        'analytics_resource_source.*.restore' => 'Analytics Resource Source',
+        'analytics_resource_source.*.force-delete' => 'Analytics Resource Source',
+    ];
 
-    public function infolist(Infolist $infolist): Infolist
+    private array $guards = [
+        'web',
+        'api',
+    ];
+
+    public function up(): void
     {
-        return $infolist
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('name'),
-                        TextEntry::make('classification'),
-                        TextEntry::make('description'),
-                    ])
-                    ->columns(),
-            ]);
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $this->deletePermissions(array_keys($this->permissions), $guard);
+            });
     }
 
-    protected function getHeaderActions(): array
+    public function down(): void
     {
-        return [
-            EditAction::make(),
-        ];
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $permissions = Arr::except($this->permissions, keys: DB::table('permissions')
+                    ->where('guard_name', $guard)
+                    ->pluck('name')
+                    ->all());
+
+                $this->createPermissions($permissions, $guard);
+            });
     }
-}
+};

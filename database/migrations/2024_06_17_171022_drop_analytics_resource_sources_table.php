@@ -41,13 +41,14 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('analytics_resource_categories', function (Blueprint $table) {
+        Schema::dropIfExists('analytics_resource_sources');
+    }
+
+    public function down(): void
+    {
+        Schema::table('analytics_resource_sources', function (Blueprint $table) {
             $table->uuid('id')->primary();
-
             $table->string('name')->unique();
-            $table->longText('description')->nullable();
-            $table->string('classification');
-
             $table->timestamps();
             $table->softDeletes();
         });

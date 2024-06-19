@@ -34,33 +34,47 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
+use Database\Migrations\Concerns\CanModifyPermissions;
 
-use function Pest\Laravel\actingAs;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Analytics\Models\AnalyticsResourceSource;
-use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceSourceResource;
+    private array $permissions = [
+        'analytics_resource.view-any' => 'Analytics Resource',
+        'analytics_resource.create' => 'Analytics Resource',
+        'analytics_resource.*.view' => 'Analytics Resource',
+        'analytics_resource.*.update' => 'Analytics Resource',
+        'analytics_resource.*.delete' => 'Analytics Resource',
+        'analytics_resource.*.restore' => 'Analytics Resource',
+        'analytics_resource.*.force-delete' => 'Analytics Resource',
+    ];
 
-test('ViewAnalyticsResourceCategoryTest is gated with proper access control', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
+    private array $guards = [
+        'web',
+        'api',
+    ];
 
-    $analyticsResourceSource = AnalyticsResourceSource::factory()->create();
+    public function up(): void
+    {
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $this->deletePermissions(array_keys($this->permissions), $guard);
+            });
+    }
 
-    actingAs($user)
-        ->get(
-            AnalyticsResourceSourceResource::getUrl('view', [
-                'record' => $analyticsResourceSource,
-            ])
-        )->assertForbidden();
+    public function down(): void
+    {
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $permissions = Arr::except($this->permissions, keys: DB::table('permissions')
+                    ->where('guard_name', $guard)
+                    ->pluck('name')
+                    ->all());
 
-    $user->givePermissionTo('analytics_resource_source.view-any');
-    $user->givePermissionTo('analytics_resource_source.*.view');
-
-    actingAs($user)
-        ->get(
-            AnalyticsResourceSourceResource::getUrl('view', [
-                'record' => $analyticsResourceSource,
-            ])
-        )->assertSuccessful();
-});
+                $this->createPermissions($permissions, $guard);
+            });
+    }
+};
