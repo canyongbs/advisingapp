@@ -36,6 +36,7 @@
 
 namespace App\Http\Controllers\Tenants;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
 use App\Multitenancy\Actions\CreateTenant;
 use App\Http\Requests\Tenants\CreateTenantRequest;
@@ -55,8 +56,10 @@ class CreateTenantController
 {
     public function __invoke(CreateTenantRequest $request): JsonResponse
     {
+        $name = $request->validated('name');
+
         $tenant = app(CreateTenant::class)(
-            $request->validated('name'),
+            $name,
             $request->validated('domain'),
             new TenantConfig(
                 database: new TenantDatabaseConfig(
@@ -75,7 +78,7 @@ class CreateTenantController
                     endpoint: config('filesystems.disks.s3.endpoint'),
                     usePathStyleEndpoint: config('filesystems.disks.s3.use_path_style_endpoint'),
                     throw: config('filesystems.disks.s3.throw'),
-                    root: config('filesystems.disks.s3.root'),
+                    root: Str::snake($name),
                 ),
                 s3PublicFilesystem: new TenantS3FilesystemConfig(
                     key: config('filesystems.disks.s3-public.key'),
@@ -86,7 +89,7 @@ class CreateTenantController
                     endpoint: config('filesystems.disks.s3-public.endpoint'),
                     usePathStyleEndpoint: config('filesystems.disks.s3-public.use_path_style_endpoint'),
                     throw: config('filesystems.disks.s3-public.throw'),
-                    root: config('filesystems.disks.s3-public.root'),
+                    root: Str::snake($name) . '/PUBLIC',
                 ),
                 mail: new TenantMailConfig(
                     mailers: new TenantMailersConfig(

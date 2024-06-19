@@ -37,6 +37,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Tenant;
+use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
@@ -97,7 +98,7 @@ class CreateTenant extends Command
                     endpoint: config('filesystems.disks.s3.endpoint'),
                     usePathStyleEndpoint: config('filesystems.disks.s3.use_path_style_endpoint'),
                     throw: config('filesystems.disks.s3.throw'),
-                    root: config('filesystems.disks.s3.root'),
+                    root: config('filesystems.disks.s3.root') ?? Str::snake($name),
                 ),
                 s3PublicFilesystem: new TenantS3FilesystemConfig(
                     key: config('filesystems.disks.s3-public.key'),
@@ -108,7 +109,7 @@ class CreateTenant extends Command
                     endpoint: config('filesystems.disks.s3-public.endpoint'),
                     usePathStyleEndpoint: config('filesystems.disks.s3-public.use_path_style_endpoint'),
                     throw: config('filesystems.disks.s3-public.throw'),
-                    root: config('filesystems.disks.s3-public.root'),
+                    root: config('filesystems.disks.s3-public.root') ?? Str::snake($name) . '/PUBLIC',
                 ),
                 mail: new TenantMailConfig(
                     mailers: new TenantMailersConfig(
