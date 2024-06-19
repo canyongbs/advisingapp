@@ -39,6 +39,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Relati
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use Illuminate\Support\HtmlString;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
@@ -78,8 +79,7 @@ class EngagementsRelationManager extends RelationManager
                         TextEntry::make('subject')
                             ->columnSpanFull(),
                         TextEntry::make('body')
-                            ->getStateUsing(fn (Engagement $engagement): string => $engagement->getBody())
-                            ->markdown()
+                            ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getBody())
                             ->columnSpanFull(),
                     ]),
                 Fieldset::make('deliverable')

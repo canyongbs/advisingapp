@@ -98,7 +98,7 @@
         <div class="flex flex-col">
             <p class="text-xs text-gray-400 dark:text-gray-500">Body:</p>
             <div class="prose dark:prose-invert">
-                {{ str($record->getBody())->markdown()->sanitizeHtml()->toHtmlString() }}
+                {{ $record->getBody() }}
             </div>
         </div>
     </div>

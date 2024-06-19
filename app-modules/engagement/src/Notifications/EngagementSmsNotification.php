@@ -62,7 +62,7 @@ class EngagementSmsNotification extends BaseNotification implements SmsNotificat
     public function toSms(object $notifiable): TwilioMessage
     {
         return TwilioMessage::make($notifiable)
-            ->content($this->deliverable->engagement->getBody());
+            ->content($this->deliverable->engagement->getBodyMarkdown());
     }
 
     public function failed(?Throwable $exception): void

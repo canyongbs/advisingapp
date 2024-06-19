@@ -41,7 +41,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Engagement\Actions\GenerateEmailMarkdownContent;
+use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
 
 /**
  * @mixin IdeHelperFormEmailAutoReply
@@ -68,7 +68,7 @@ class FormEmailAutoReply extends BaseModel
 
     public function getBody(Student|Prospect|null $author): string
     {
-        return app(GenerateEmailMarkdownContent::class)(
+        return app(GenerateEngagementBodyContent::class)(
             $this->body,
             $this->getMergeData($author),
         );
