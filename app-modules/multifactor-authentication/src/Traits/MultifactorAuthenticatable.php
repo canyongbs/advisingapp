@@ -56,9 +56,9 @@ trait MultifactorAuthenticatable
     public function multifactorRecoveryCodes(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => json_decode(decrypt(
+            get: fn (?string $value) => $value ? json_decode(decrypt(
                 $value
-            ), true)
+            ), true) : null
         );
     }
 
