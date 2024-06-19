@@ -13,7 +13,7 @@ return new class () extends Migration {
             foreach ($role_details as $role) {
                 DB::table('model_has_roles')->where('role_id', $role->id)->delete();
                 DB::table('role_has_permissions')->where('role_id', $role->id)->delete();
-                DB::table('roles')->where('name', $role->name)->delete();
+                DB::table('roles')->where('id', $role->id)->delete();
             }
         }
     }
