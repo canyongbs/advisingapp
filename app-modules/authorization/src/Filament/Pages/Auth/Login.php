@@ -104,8 +104,8 @@ class Login extends FilamentLogin
         // MFA Not Enabled, setup
 
         if ($mfaSettings->enabled) {
-            if (! $user->hasConfirmedTwoFactor() && empty($data['code'])) {
-                $user->enableTwoFactorAuthentication();
+            if (! $user->hasConfirmedMultifactor() && empty($data['code'])) {
+                $user->enableMultifactorAuthentication();
 
                 $this->needsMfaSetup = true;
                 $this->needsMFA = true;
@@ -114,7 +114,7 @@ class Login extends FilamentLogin
             }
         }
 
-        if ($user->hasEnabledTwoFactor()) {
+        if ($user->hasEnabledMultifactor()) {
             if (empty($data['code'])) {
                 Filament::auth()->logout();
 
@@ -136,7 +136,7 @@ class Login extends FilamentLogin
             }
 
             if (empty($user->multifactor_confirmed_at)) {
-                $user->confirmTwoFactorAuthentication();
+                $user->confirmMultifactorAuthentication();
             }
         }
 
@@ -147,9 +147,9 @@ class Login extends FilamentLogin
         return app(LoginResponse::class);
     }
 
-    public function getTwoFactorQrCode()
+    public function getMultifactorQrCode()
     {
-        return app(MultifactorService::class)->getTwoFactorQrCodeSvg($this->user->getTwoFactorQrCodeUrl());
+        return app(MultifactorService::class)->getMultifactorQrCodeSvg($this->user->getMultifactorQrCodeUrl());
     }
 
     protected function getSsoFormActions(): array

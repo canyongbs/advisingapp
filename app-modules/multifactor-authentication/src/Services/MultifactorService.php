@@ -16,12 +16,6 @@ use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 
 class MultifactorService
 {
-    protected $twoFactorAuthentication;
-
-    protected $forceTwoFactorAuthentication;
-
-    protected $twoFactorRouteAction;
-
     public function __construct(
         protected Google2FA $engine,
         protected ?Repository $cache = null
@@ -42,7 +36,7 @@ class MultifactorService
         return $this->engine->generateSecretKey();
     }
 
-    public function getTwoFactorQrCodeSvg(string $url)
+    public function getMultifactorQrCodeSvg(string $url)
     {
         $svg = (new Writer(
             new ImageRenderer(
@@ -65,7 +59,7 @@ class MultifactorService
             $user = Filament::auth()->user();
         }
 
-        $secret = decrypt($user->two_factor_secret);
+        $secret = decrypt($user->multifactor_secret);
 
         $timestamp = $this->engine->verifyKeyNewer(
             $secret,
@@ -80,16 +74,5 @@ class MultifactorService
         }
 
         return false;
-    }
-
-    public function shouldForceTwoFactor(): bool
-    {
-        // TODO: Needs to check if they are a non sso user
-        return false;
-        // if (filament()->getCurrentPanel()->isEmailVerificationRequired()) {
-        //     return $this->forceTwoFactorAuthentication && ! filament()->auth()->user()?->hasConfirmedTwoFactor() && filament()->auth()->user()?->hasVerifiedEmail();
-        // }
-
-        // return $this->forceTwoFactorAuthentication && ! filament()->auth()->user()?->hasConfirmedTwoFactor();
     }
 }

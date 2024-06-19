@@ -42,7 +42,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
         return PasswordButtonAction::make('enable')
             ->label('Enable')
             ->action(function () {
-                $this->user->enableTwoFactorAuthentication();
+                $this->user->enableMultifactorAuthentication();
 
                 Notification::make()
                     ->success()
@@ -58,7 +58,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
             ->color('primary')
             ->requiresConfirmation()
             ->action(function () {
-                $this->user->disableTwoFactorAuthentication();
+                $this->user->disableMultifactorAuthentication();
 
                 Notification::make()
                     ->warning()
@@ -88,7 +88,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
                     $action->halt();
                 }
 
-                $this->user->confirmTwoFactorAuthentication();
+                $this->user->confirmMultifactorAuthentication();
 
                 Notification::make()
                     ->success()
@@ -136,12 +136,12 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
 
     public function getRecoveryCodesProperty(): Collection
     {
-        return collect($this->user->two_factor_recovery_codes ?? []);
+        return collect($this->user->multifactor_recovery_codes ?? []);
     }
 
-    public function getTwoFactorQrCode()
+    public function getMultifactorQrCode()
     {
-        return app(MultifactorService::class)->getTwoFactorQrCodeSvg($this->user->getTwoFactorQrCodeUrl());
+        return app(MultifactorService::class)->getMultifactorQrCodeSvg($this->user->getMultifactorQrCodeUrl());
     }
 
     public function toggleRecoveryCodes()

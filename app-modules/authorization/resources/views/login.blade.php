@@ -54,9 +54,9 @@
             <p class="text-sm">To finish enabling two factor authentication, scan the following QR code using your phone's authenticator application or enter the setup key and provide the generated OTP code.</p>
             <div class="flex mt-3 space-x-4">
                 <div>
-                    {!! $this->getTwoFactorQrCode() !!}
+                    {!! $this->getMultifactorQrCode() !!}
                     <p class="pt-2 text-sm">Setup key {{
-                        decrypt($this->user->two_factor_secret) }}</p>
+                        decrypt($this->user->multifactor_secret) }}</p>
                 </div>
             </div>
         @endif

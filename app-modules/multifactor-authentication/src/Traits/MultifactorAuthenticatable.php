@@ -9,35 +9,28 @@ use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
 
 trait MultifactorAuthenticatable
 {
-    public function hasEnabledTwoFactor(): bool
+    public function hasEnabledMultifactor(): bool
     {
         return ! is_null($this->multifactor_secret);
     }
 
-    public function hasConfirmedTwoFactor(): bool
+    public function hasConfirmedMultifactor(): bool
     {
         return ! is_null($this->multifactor_secret) && ! is_null($this->multifactor_confirmed_at);
     }
 
-    public function twoFactorRecoveryCodes(): Attribute
+    public function multifactorRecoveryCodes(): Attribute
     {
         return Attribute::make(
-            get: fn () => json_decode(decrypt(
-                $this->multifactor_recovery_codes
+            get: fn (string $value) => json_decode(decrypt(
+                $value
             ), true)
         );
     }
 
-    public function twoFactorSecret(): Attribute
+    public function enableMultifactorAuthentication()
     {
-        return Attribute::make(
-            get: fn () => $this->multifactor_secret
-        );
-    }
-
-    public function enableTwoFactorAuthentication()
-    {
-        $this->disableTwoFactorAuthentication();
+        $this->disableMultifactorAuthentication();
 
         $this->forceFill([
             'multifactor_secret' => encrypt(app(MultifactorService::class)->getEngine()->generateSecretKey()),
@@ -45,7 +38,7 @@ trait MultifactorAuthenticatable
         ])->save();
     }
 
-    public function disableTwoFactorAuthentication()
+    public function disableMultifactorAuthentication()
     {
         $this->forceFill(
             [
@@ -56,10 +49,8 @@ trait MultifactorAuthenticatable
         )->save();
     }
 
-    public function confirmTwoFactorAuthentication()
+    public function confirmMultifactorAuthentication()
     {
-        // event(new LoginSuccess($this->authenticatable));
-
         $this->forceFill([
             'multifactor_confirmed_at' => now(),
         ])->save();
@@ -76,13 +67,12 @@ trait MultifactorAuthenticatable
     {
         $unusedCodes = array_filter($this->multifactor_recovery_codes ?? [], fn ($code) => $code !== $recoveryCode);
 
-        // TODO: Look into what this does
         $this->forceFill([
             'multifactor_recovery_codes' => $unusedCodes ? encrypt(json_encode($unusedCodes)) : null,
         ])->save();
     }
 
-    public function getTwoFactorQrCodeUrl()
+    public function getMultifactorQrCodeUrl()
     {
         return app(MultifactorService::class)->getQrCodeUrl(
             config('app.name'),

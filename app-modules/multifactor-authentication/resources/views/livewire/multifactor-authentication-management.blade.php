@@ -1,5 +1,5 @@
 <div>
-    @unless ($user->hasEnabledTwoFactor())
+    @unless ($user->hasEnabledMultifactor())
         <h3 class="flex items-center gap-2 text-lg font-medium">
             @svg('heroicon-o-exclamation-circle', 'w-6')
             You have not enabled two factor authentication.
@@ -11,7 +11,7 @@
         </div>
 
     @else
-        @if ($user->hasConfirmedTwoFactor())
+        @if ($user->hasConfirmedMultifactor())
             <h3 class="flex items-center gap-2 text-lg font-medium">
                 @svg('heroicon-o-shield-check', 'w-6')
                 You have enabled two factor authentication!
@@ -29,9 +29,9 @@
             <p class="text-sm">To finish enabling two factor authentication, scan the following QR code using your phone's authenticator application or enter the setup key and provide the generated OTP code.</p>
             <div class="flex mt-3 space-x-4">
                 <div>
-                    {!! $this->getTwoFactorQrCode() !!}
+                    {!! $this->getMultifactorQrCode() !!}
                     <p class="pt-2 text-sm">Setup key {{
-                        decrypt($this->user->two_factor_secret) }}</p>
+                        decrypt($this->user->multifactor_secret) }}</p>
                 </div>
             </div>
 
