@@ -43,6 +43,8 @@ use AdvisingApp\Prospect\ProspectPlugin;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Models\ProspectProgram;
+use AdvisingApp\Prospect\Models\ProspectCategory;
 use AdvisingApp\Prospect\Observers\ProspectObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
@@ -66,6 +68,8 @@ class ProspectServiceProvider extends ServiceProvider
             'prospect' => Prospect::class,
             'prospect_source' => ProspectSource::class,
             'prospect_status' => ProspectStatus::class,
+            'prospect_program' => ProspectProgram::class,
+            'prospect_category' => ProspectCategory::class,
         ]);
 
         Prospect::observe(ProspectObserver::class);
