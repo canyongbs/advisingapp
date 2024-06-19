@@ -31,12 +31,15 @@
 
 </COPYRIGHT>
 --}}
-<div class="px-4 space-y-3">
-    <p class="text-xs">These codes can be used to recover access to your account if your device is lost. Warning! These codes will only be shown once.</p>
+<div class="space-y-3 px-4">
+    <p class="text-xs">These codes can be used to recover access to your account if your device is lost. Warning! These
+        codes will only be shown once.</p>
     <div>
-    @foreach ($codes->toArray() as $code )
-        <span class="inline-flex items-center p-1 text-xs font-medium text-gray-800 dark:text-gray-400 bg-gray-100 rounded-full dark:bg-gray-900">{{ $code }}</span>
-    @endforeach
+        @foreach ($codes->toArray() as $code)
+            <span
+                class="inline-flex items-center rounded-full bg-gray-100 p-1 text-xs font-medium text-gray-800 dark:bg-gray-900 dark:text-gray-400"
+            >{{ $code }}</span>
+        @endforeach
     </div>
     <div class="inline-block text-xs">
         <div
@@ -53,8 +56,8 @@
             }"
         >
             <span
+                class="flex cursor-pointer items-center rounded-md p-1 text-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400"
                 x-on:click="copyMessage"
-                class="flex items-center cursor-pointer text-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400 p-1 rounded-md"
             >
                 <x-filament::icon
                     class="ml-auto flex h-6 w-6 cursor-pointer items-center gap-2"

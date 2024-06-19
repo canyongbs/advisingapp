@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\MultifactorAuthentication\Services;
 
-use Closure;
 use App\Models\User;
 use BaconQrCode\Writer;
 use Filament\Facades\Filament;
