@@ -98,11 +98,6 @@ class Login extends FilamentLogin
 
         $mfaSettings = app(MultifactorSettings::class);
 
-        // MFA Enabled, not setup
-        // MFA Enabled, setup
-        // MFA Not Enabled, not setup
-        // MFA Not Enabled, setup
-
         if ($mfaSettings->enabled) {
             if (! $user->hasConfirmedMultifactor() && empty($data['code'])) {
                 $user->enableMultifactorAuthentication();
