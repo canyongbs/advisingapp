@@ -59,8 +59,6 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
 
     public int $code;
 
-    public bool $showRecoveryCodes = false;
-
     public function render()
     {
         return view('multifactor-authentication::livewire.multifactor-authentication-management');
@@ -157,8 +155,6 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
             ->action(function () {
                 $this->user->reGenerateRecoveryCodes();
 
-                $this->showRecoveryCodes = true;
-
                 Notification::make()
                     ->success()
                     ->title('New recovery codes have been generated.')
@@ -176,10 +172,5 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
     public function getMultifactorQrCode()
     {
         return app(MultifactorService::class)->getMultifactorQrCodeSvg($this->user->getMultifactorQrCodeUrl());
-    }
-
-    public function toggleRecoveryCodes()
-    {
-        $this->showRecoveryCodes = ! $this->showRecoveryCodes;
     }
 }
