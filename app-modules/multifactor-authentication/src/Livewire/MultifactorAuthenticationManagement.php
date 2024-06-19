@@ -50,6 +50,9 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
 use AdvisingApp\MultifactorAuthentication\Filament\Actions\PasswordButtonAction;
 
+/**
+ * @property-read Collection $recoveryCodes
+ */
 class MultifactorAuthenticationManagement extends Component implements HasActions, HasForms
 {
     use InteractsWithActions;
