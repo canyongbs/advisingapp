@@ -61,7 +61,7 @@ class ProductHealth extends HealthCheckResults
 
     public static function getNavigationSort(): ?int
     {
-        return 20;
+        return 30;
     }
 
     public static function getNavigationBadge(): ?string
