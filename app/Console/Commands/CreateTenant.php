@@ -98,7 +98,7 @@ class CreateTenant extends Command
                     endpoint: config('filesystems.disks.s3.endpoint'),
                     usePathStyleEndpoint: config('filesystems.disks.s3.use_path_style_endpoint'),
                     throw: config('filesystems.disks.s3.throw'),
-                    root: config('filesystems.disks.s3.root') ?? Str::snake($name),
+                    root: config('filesystems.disks.s3.root') ?? Str::snake($name) . '_' . now()->timestamp,
                 ),
                 s3PublicFilesystem: new TenantS3FilesystemConfig(
                     key: config('filesystems.disks.s3-public.key'),
@@ -109,7 +109,7 @@ class CreateTenant extends Command
                     endpoint: config('filesystems.disks.s3-public.endpoint'),
                     usePathStyleEndpoint: config('filesystems.disks.s3-public.use_path_style_endpoint'),
                     throw: config('filesystems.disks.s3-public.throw'),
-                    root: config('filesystems.disks.s3-public.root') ?? Str::snake($name) . '/PUBLIC',
+                    root: config('filesystems.disks.s3-public.root') ?? Str::snake($name) . '_' . now()->timestamp . '/PUBLIC',
                 ),
                 mail: new TenantMailConfig(
                     mailers: new TenantMailersConfig(
