@@ -6,14 +6,6 @@
     @endforeach
     </div>
     <div class="inline-block text-xs">
-        {{-- <span
-            x-data="{}"
-            :x-on:click.prevent="window.navigator.clipboard.writeText(@js($codes->join(',')));$tooltip('Copied!');"
-            class="flex items-center cursor-pointer"
-        >
-            @svg('heroicon-s-clipboard-document', 'w-4 mr-2')
-            <span class="">Copy to clipboard</span>
-        </span> --}}
         <div
             class="visible mt-2 flex justify-center gap-2 self-end text-gray-400 md:gap-3"
             x-data="{

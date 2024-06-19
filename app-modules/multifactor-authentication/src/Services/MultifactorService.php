@@ -32,25 +32,6 @@ class MultifactorService
         return app(static::class);
     }
 
-    // public function enableTwoFactorAuthentication(bool $condition = true, bool $force = false, string|Closure|array|null $action = TwoFactorPage::class)
-    // {
-    //     $this->twoFactorAuthentication = $condition;
-    //     $this->forceTwoFactorAuthentication = $force;
-    //     $this->twoFactorRouteAction = $action;
-
-    //     return $this;
-    // }
-
-    // public function getForceTwoFactorAuthentication(): bool
-    // {
-    //     return $this->forceTwoFactorAuthentication;
-    // }
-
-    // public function getTwoFactorRouteAction(): string|Closure|array|null
-    // {
-    //     return $this->twoFactorRouteAction;
-    // }
-
     public function getEngine()
     {
         return $this->engine;
