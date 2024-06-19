@@ -54,6 +54,8 @@
             Manage multifactor authentication for your account
         </x-slot>
 
-        @livewire(MultifactorAuthenticationManagement::class)
+        @if(! auth()->user()->is_external)
+            @livewire(MultifactorAuthenticationManagement::class)
+        @endif
     </x-filament::section>
 </x-filament-panels::page>
