@@ -27,7 +27,7 @@ class CreateProspectProgram extends CreateRecord
                     ->unique(),
                 Textarea::make('description')
                     ->label('Description')
-                    ->maxLength(255)
+                    ->maxLength(65535)
                     ->string(),
                 Select::make('prospect_category_id')
                     ->label('Prospect Category')

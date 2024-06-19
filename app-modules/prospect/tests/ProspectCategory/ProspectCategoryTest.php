@@ -46,6 +46,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectCategoryResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectCategoryResource\Pages\EditProspectCategory;
 use AdvisingApp\Prospect\Filament\Resources\ProspectCategoryResource\Pages\CreateProspectCategory;
 use AdvisingApp\Prospect\Filament\Resources\ProspectCategoryResource\Pages\ListProspectCategories;
+use Filament\Tables\Actions\DeleteBulkAction;
 
 it('can render list page', function () {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
@@ -262,3 +263,24 @@ it('can delete prospect category', function () {
         ->callAction(DeleteAction::class);
     $this->assertSoftDeleted($prospectCategory);
 });
+
+it('can bulk delete prospect categories', function () {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+    $prospectCategories = ProspectCategory::factory()->count(10)->create();
+
+    actingAs($user)
+        ->get(
+            ProspectCategoryResource::getUrl('index')
+        )->assertForbidden();
+
+    $user->givePermissionTo('prospect_category.view-any');
+    $user->givePermissionTo('prospect_category.*.update');
+    $user->givePermissionTo('prospect_category.*.delete');
+ 
+    livewire(ListProspectCategories::class)
+        ->callTableBulkAction(DeleteBulkAction::class, $prospectCategories);
+ 
+    foreach ($prospectCategories as $prospectCategory) {
+        $this->assertSoftDeleted($prospectCategory);
+    }
+})->only();

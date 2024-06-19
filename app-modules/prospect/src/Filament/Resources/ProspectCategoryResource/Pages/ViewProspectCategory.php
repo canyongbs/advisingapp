@@ -25,7 +25,7 @@ class ViewProspectCategory extends ViewRecord
                             ->label('Description')
                             ->translateLabel(),
                     ])
-                    ->columns(),
+                    ->columns(1),
             ]);
     }
 }

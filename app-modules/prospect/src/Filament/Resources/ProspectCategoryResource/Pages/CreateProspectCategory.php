@@ -24,8 +24,8 @@ class CreateProspectCategory extends CreateRecord
                     ->unique(),
                 Textarea::make('description')
                     ->label('Description')
-                    ->maxLength(255)
+                    ->maxLength(65535)
                     ->string(),
-            ]);
+            ])->columns(1);
     }
 }

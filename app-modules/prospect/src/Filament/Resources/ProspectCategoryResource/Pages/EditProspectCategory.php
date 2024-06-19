@@ -24,9 +24,9 @@ class EditProspectCategory extends EditRecord
                     ->string(),
                 Textarea::make('description')
                     ->label('Description')
-                    ->maxLength(255)
+                    ->maxLength(65535)
                     ->string(),
-            ]);
+            ])->columns(1);
     }
 
     protected function getHeaderActions(): array
