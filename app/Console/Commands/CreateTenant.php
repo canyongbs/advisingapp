@@ -38,6 +38,7 @@ namespace App\Console\Commands;
 
 use App\Models\Tenant;
 use Illuminate\Support\Str;
+use App\Services\SqidGenerator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
@@ -72,6 +73,7 @@ class CreateTenant extends Command
         $database = str($domain)
             ->replace(['.', '-'], '_')
             ->toString();
+        $rootName = Str::snake($name) . '_' . resolve(SqidGenerator::class)->generate();
 
         DB::connection('landlord')->statement("DROP DATABASE IF EXISTS {$database}");
         DB::connection('landlord')->statement("CREATE DATABASE {$database}");
@@ -98,7 +100,7 @@ class CreateTenant extends Command
                     endpoint: config('filesystems.disks.s3.endpoint'),
                     usePathStyleEndpoint: config('filesystems.disks.s3.use_path_style_endpoint'),
                     throw: config('filesystems.disks.s3.throw'),
-                    root: config('filesystems.disks.s3.root') ?? Str::snake($name) . '_' . now()->timestamp,
+                    root: config('filesystems.disks.s3.root') ?? $rootName,
                 ),
                 s3PublicFilesystem: new TenantS3FilesystemConfig(
                     key: config('filesystems.disks.s3-public.key'),
@@ -109,7 +111,7 @@ class CreateTenant extends Command
                     endpoint: config('filesystems.disks.s3-public.endpoint'),
                     usePathStyleEndpoint: config('filesystems.disks.s3-public.use_path_style_endpoint'),
                     throw: config('filesystems.disks.s3-public.throw'),
-                    root: config('filesystems.disks.s3-public.root') ?? Str::snake($name) . '_' . now()->timestamp . '/PUBLIC',
+                    root: config('filesystems.disks.s3-public.root') ?? $rootName . '/PUBLIC',
                 ),
                 mail: new TenantMailConfig(
                     mailers: new TenantMailersConfig(
