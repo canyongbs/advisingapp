@@ -34,34 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace Tests\Unit;
+namespace AdvisingApp\IntegrationTwilio\Jobs;
 
-use Twilio\Rest\Client;
-use AllowDynamicProperties;
-use Twilio\Http\Client as HttpClient;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 
-#[AllowDynamicProperties]
-class ClientMock extends Client
+class CheckStatusOfOutboundDeliverablesWithoutATerminalStatus implements ShouldQueue
 {
-    public function __construct(
-        $messageList = null,
-        string $username = null,
-        string $password = null,
-        string $accountSid = null,
-        string $region = null,
-        HttpClient $httpClient = null,
-        array $environment = null,
-        array $userAgentExtensions = null,
-    ) {
-        parent::__construct(
-            $username,
-            $password,
-            $accountSid,
-            $region,
-            $httpClient,
-            $environment,
-            $userAgentExtensions
-        );
-        $this->messages = $messageList;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public static $OLDER_THAN_HOURS = 24; // 1 day
+
+    public static $NEWER_THAN_HOURS = 168; // 7 days
+
+    public function __construct() {}
+
+    public function handle(): void
+    {
+        $terminalStatuses = ['delivered', 'undelivered', 'failed'];
+
+        OutboundDeliverable::query()
+            ->where('channel', 'sms')
+            ->whereNotIn('external_status', $terminalStatuses)
+            ->whereNotNull('last_delivery_attempt')
+            ->whereBetween('last_delivery_attempt', [now()->subHours(self::$NEWER_THAN_HOURS), now()->subHours(self::$OLDER_THAN_HOURS)])
+            ->cursor()
+            ->each(function (OutboundDeliverable $deliverable) {
+                CheckSmsOutboundDeliverableStatus::dispatch($deliverable);
+            });
     }
 }
