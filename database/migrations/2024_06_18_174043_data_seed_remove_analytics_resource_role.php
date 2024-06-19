@@ -9,7 +9,7 @@ return new class () extends Migration {
     {
         $role_details = DB::table('roles')->where('name', 'analytics.analytics_management')->whereIn('guard_name', ['web', 'api'])->get();
 
-        if (! empty($role_details)) {
+        if (! $role_details->isEmpty()) {
             foreach ($role_details as $role) {
                 DB::table('model_has_roles')->where('role_id', $role->id)->delete();
                 DB::table('role_has_permissions')->where('role_id', $role->id)->delete();
