@@ -36,8 +36,8 @@
 
 namespace App\Http\Controllers\Tenants;
 
+use Sqids\Sqids;
 use Illuminate\Support\Str;
-use App\Services\SqidGenerator;
 use Illuminate\Http\JsonResponse;
 use App\Multitenancy\Actions\CreateTenant;
 use App\Http\Requests\Tenants\CreateTenantRequest;
@@ -58,7 +58,7 @@ class CreateTenantController
     public function __invoke(CreateTenantRequest $request): JsonResponse
     {
         $name = $request->validated('name');
-        $rootName = Str::snake($name) . '_' . resolve(SqidGenerator::class)->generate();
+        $rootName = Str::snake($name) . '_' . (new Sqids())->encode([time()]);
 
         $tenant = app(CreateTenant::class)(
             $name,

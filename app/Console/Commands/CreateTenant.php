@@ -36,9 +36,9 @@
 
 namespace App\Console\Commands;
 
+use Sqids\Sqids;
 use App\Models\Tenant;
 use Illuminate\Support\Str;
-use App\Services\SqidGenerator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
@@ -73,7 +73,7 @@ class CreateTenant extends Command
         $database = str($domain)
             ->replace(['.', '-'], '_')
             ->toString();
-        $rootName = Str::snake($name) . '_' . resolve(SqidGenerator::class)->generate();
+        $rootName = Str::snake($name) . '_' . (new Sqids())->encode([time()]);
 
         DB::connection('landlord')->statement("DROP DATABASE IF EXISTS {$database}");
         DB::connection('landlord')->statement("CREATE DATABASE {$database}");
