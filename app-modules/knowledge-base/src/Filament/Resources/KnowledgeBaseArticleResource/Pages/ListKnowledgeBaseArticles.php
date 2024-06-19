@@ -49,7 +49,6 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
-use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
@@ -129,7 +128,7 @@ class ListKnowledgeBaseArticles extends ListRecords
             ->actions([
                 EditAction::make(),
                 ReplicateAction::make()
-                    ->label('clone')
+                    ->label('Clone')
                     ->form([
                         Section::make()
                             ->schema([
@@ -175,11 +174,19 @@ class ListKnowledgeBaseArticles extends ListRecords
                                     ->exists((new Division())->getTable(), (new Division())->getKeyName()),
                             ]),
                     ])
-                // ->mutateRecordDataUsing(function (array $data): array {
-                //     // $data['name'] = $data['title'];
-                //     return $data;
-                // })
-                ,
+                    ->before(function (array $data, Model $record) {
+                        $record->title = $data['title'];
+                        $record->public = $data['public'];
+                        $record->notes = $data['notes'];
+                    })
+                    ->after(function (Model $replica, Model $record): void {
+                        $record->load('division');
+                        foreach ($record->division as $divison) {
+                            $replica->division()->attach($divison->id);
+                        }
+                    })
+                    ->excludeAttributes(['views_count', 'upvotes_count', 'my_upvotes_count'])
+                    ->successNotificationTitle('Article replicated successfully!'),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
