@@ -71,8 +71,8 @@ class ManageMultifactorSettings extends SettingsPage
     {
         return $form
             ->schema([
-                Toggle::make('enabled')
-                    ->helperText('Enables and requires multifactor authentication for all non-sso users.'),
+                Toggle::make('required')
+                    ->helperText('Enforces that multifactor authentication is required for all non-sso users.'),
             ]);
     }
 }
