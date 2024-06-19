@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 // phpcs:ignoreFile
 /**
@@ -460,6 +426,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Carbon\CarbonImmutable|null $last_chat_ping_at
+ * @property string|null $multifactor_secret
+ * @property-read string|null $multifactor_recovery_codes
+ * @property string|null $multifactor_confirmed_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiAssistantUpvote> $aiAssistantUpvotes
  * @property-read int|null $ai_assistant_upvotes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiThreadFolder> $aiThreadFolders
@@ -556,6 +525,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereJobTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLastChatPingAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLocale($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereMultifactorConfirmedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereMultifactorRecoveryCodes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereMultifactorSecret($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOfficeHours($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOfficeHoursAreEnabled($value)
@@ -596,6 +568,7 @@ namespace AdvisingApp\Ai\Models{
  * @property \AdvisingApp\Ai\Enums\AiApplication $application
  * @property bool $is_default
  * @property \AdvisingApp\Ai\Enums\AiModel $model
+ * @property \Illuminate\Support\Carbon|null $archived_at
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiThread> $threads
@@ -608,6 +581,7 @@ namespace AdvisingApp\Ai\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant query()
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereApplication($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereArchivedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereAssistantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiAssistant whereDeletedAt($value)
@@ -709,8 +683,10 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $locked_at
  * @property-read \AdvisingApp\Ai\Models\AiAssistant $assistant
  * @property-read \AdvisingApp\Ai\Models\AiThreadFolder|null $folder
+ * @property-read \Carbon\CarbonInterface|null $last_engaged_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiMessage> $messages
  * @property-read int|null $messages_count
  * @property-read \App\Models\User $user
@@ -726,6 +702,7 @@ namespace AdvisingApp\Ai\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereFolderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereLockedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereThreadId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereUpdatedAt($value)
@@ -3685,7 +3662,6 @@ namespace AdvisingApp\Prospect\Models{
  * @property string|null $postal
  * @property \Illuminate\Support\Carbon|null $birthdate
  * @property string|null $hsgrad
- * @property string|null $assigned_to_id
  * @property string|null $created_by_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -3698,7 +3674,6 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read int|null $asset_check_ins_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\AssetCheckOut> $assetCheckOuts
  * @property-read int|null $asset_check_outs_count
- * @property-read \App\Models\User|null $assignedTo
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $careTeam
@@ -3746,7 +3721,6 @@ namespace AdvisingApp\Prospect\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereAddress2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereAddress3($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereAssignedToId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereBirthdate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereCity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereCreatedAt($value)
