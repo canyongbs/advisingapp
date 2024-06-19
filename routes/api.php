@@ -37,7 +37,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckOlympusKey;
 use App\Http\Controllers\UpdateAzureSsoSettingsController;
+use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
 
-Route::middleware([CheckOlympusKey::class])
-    ->post('azure-sso/update', UpdateAzureSsoSettingsController::class)
-    ->name('azure-sso.update');
+Route::middleware([
+    CheckOlympusKey::class,
+])->group(function () {
+    Route::post('/azure-sso/update', UpdateAzureSsoSettingsController::class)
+        ->name('azure-sso.update');
+
+    Route::get('/health', HealthCheckJsonResultsController::class)
+        ->name('health');
+});
