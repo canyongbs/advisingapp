@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,32 +32,28 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthenticationManagement;
-@endphp
+*/
 
-<x-filament-panels::page>
-    <x-filament-panels::form wire:submit="save">
-        {{ $this->form }}
+namespace AdvisingApp\MultifactorAuthentication\Providers;
 
-        <x-filament-panels::form.actions
-            :actions="$this->getCachedFormActions()"
-            :full-width="$this->hasFullWidthFormActions()"
-        />
-    </x-filament-panels::form>
+use Filament\Panel;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\MultifactorAuthentication\MultifactorAuthenticationPlugin;
+use AdvisingApp\MultifactorAuthentication\Registries\MultifactorAuthenticationRbacRegistry;
 
-    <x-filament::section aside>
-        <x-slot name="heading">
-            Multifactor Authentication
-        </x-slot>
+class MultifactorAuthenticationServiceProvider extends ServiceProvider
+{
+    public function register()
+    {
+        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new MultifactorAuthenticationPlugin()));
+    }
 
-        <x-slot name="description">
-            Manage multifactor authentication for your account.
-        </x-slot>
+    public function boot()
+    {
+        Relation::morphMap([]);
 
-        @if (!auth()->user()->is_external)
-            @livewire(MultifactorAuthenticationManagement::class)
-        @endif
-    </x-filament::section>
-</x-filament-panels::page>
+        AuthorizationRoleRegistry::register(MultifactorAuthenticationRbacRegistry::class);
+    }
+}

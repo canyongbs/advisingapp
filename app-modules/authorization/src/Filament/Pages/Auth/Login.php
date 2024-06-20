@@ -36,14 +36,119 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
+use App\Models\User;
 use Filament\Actions\Action;
+use Laravel\Pennant\Feature;
+use Filament\Facades\Filament;
+use Livewire\Attributes\Locked;
+use Filament\Forms\Components\TextInput;
+use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Validation\ValidationException;
 use Filament\Pages\Auth\Login as FilamentLogin;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
+use Filament\Http\Responses\Auth\Contracts\LoginResponse;
+use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
+use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
+use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 
 class Login extends FilamentLogin
 {
     protected static string $view = 'authorization::login';
+
+    #[Locked]
+    protected ?User $user = null;
+
+    #[Locked]
+    protected bool $needsMfaSetup = false;
+
+    #[Locked]
+    protected bool $needsMFA = false;
+
+    public function authenticate(): ?LoginResponse
+    {
+        $this->user = null;
+
+        try {
+            $this->rateLimit(5);
+        } catch (TooManyRequestsException $exception) {
+            $this->getRateLimitedNotification($exception)?->send();
+
+            return null;
+        }
+
+        $data = $this->form->getState();
+
+        if (! Filament::auth()->once($this->getCredentialsFromFormData($data))) {
+            $this->throwFailureValidationException();
+        }
+
+        /** @var User $user */
+        $user = Filament::auth()->user();
+
+        $this->user = $user;
+
+        if (
+            ($user instanceof FilamentUser) &&
+            (! $user->canAccessPanel(Filament::getCurrentPanel()))
+        ) {
+            Filament::auth()->logout();
+
+            $this->throwFailureValidationException();
+        }
+
+        if (Feature::active('introduce-multifactor-authentication')) {
+            $mfaSettings = app(MultifactorSettings::class);
+
+            if ($mfaSettings->required) {
+                if (! $user->hasConfirmedMultifactor() && empty($data['code'])) {
+                    $user->enableMultifactorAuthentication();
+
+                    $this->needsMfaSetup = true;
+                    $this->needsMFA = true;
+
+                    return null;
+                }
+            }
+
+            if ($user->hasEnabledMultifactor()) {
+                if (empty($data['code'])) {
+                    Filament::auth()->logout();
+
+                    $this->needsMFA = true;
+
+                    return null;
+                }
+
+                if (! app(MultifactorService::class)->verify(code: $data['code'], user: $user)) {
+                    Filament::auth()->logout();
+
+                    $this->needsMFA = false;
+
+                    $this->data['code'] = null;
+
+                    throw ValidationException::withMessages([
+                        'data.email' => 'Multifactor authentication failed.',
+                    ]);
+                }
+
+                if (empty($user->multifactor_confirmed_at)) {
+                    $user->confirmMultifactorAuthentication();
+                }
+            }
+        }
+
+        Filament::auth()->login($user, $data['remember'] ?? false);
+
+        session()->regenerate();
+
+        return app(LoginResponse::class);
+    }
+
+    public function getMultifactorQrCode()
+    {
+        return app(MultifactorService::class)->getMultifactorQrCodeSvg($this->user->getMultifactorQrCodeUrl());
+    }
 
     protected function getSsoFormActions(): array
     {
@@ -72,5 +177,32 @@ class Login extends FilamentLogin
         }
 
         return $ssoActions;
+    }
+
+    protected function getForms(): array
+    {
+        return [
+            'form' => $this->form(
+                $this->makeForm()
+                    ->schema([
+                        $this->getEmailFormComponent()
+                            ->hidden(fn (Login $livewire) => $livewire->needsMFA),
+                        $this->getPasswordFormComponent()
+                            ->hidden(fn (Login $livewire) => $livewire->needsMFA),
+                        $this->getRememberFormComponent()
+                            ->hidden(fn (Login $livewire) => $livewire->needsMFA),
+                        TextInput::make('code')
+                            ->label('Mutlifactor Authentication Code')
+                            ->placeholder('###-###')
+                            ->mask('999-999')
+                            ->stripCharacters('-')
+                            ->numeric()
+                            ->required(fn (Login $livewire) => $livewire->needsMFA)
+                            ->hidden(fn (Login $livewire) => ! $livewire->needsMFA)
+                            ->dehydratedWhenHidden(),
+                    ])
+                    ->statePath('data'),
+            ),
+        ];
     }
 }

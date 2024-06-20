@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,32 +32,48 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthenticationManagement;
-@endphp
+*/
 
-<x-filament-panels::page>
-    <x-filament-panels::form wire:submit="save">
-        {{ $this->form }}
+namespace AdvisingApp\MultifactorAuthentication\Filament\Pages;
 
-        <x-filament-panels::form.actions
-            :actions="$this->getCachedFormActions()"
-            :full-width="$this->hasFullWidthFormActions()"
-        />
-    </x-filament-panels::form>
+use App\Models\User;
+use Filament\Forms\Form;
+use Laravel\Pennant\Feature;
+use Filament\Pages\SettingsPage;
+use Filament\Forms\Components\Toggle;
+use App\Filament\Clusters\GlobalSettings;
+use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
 
-    <x-filament::section aside>
-        <x-slot name="heading">
-            Multifactor Authentication
-        </x-slot>
+class ManageMultifactorSettings extends SettingsPage
+{
+    protected static ?string $navigationIcon = 'heroicon-o-lock-closed';
 
-        <x-slot name="description">
-            Manage multifactor authentication for your account.
-        </x-slot>
+    protected static ?string $navigationLabel = 'Multifactor';
 
-        @if (!auth()->user()->is_external)
-            @livewire(MultifactorAuthenticationManagement::class)
-        @endif
-    </x-filament::section>
-</x-filament-panels::page>
+    protected static ?int $navigationSort = 80;
+
+    protected static string $settings = MultifactorSettings::class;
+
+    protected static ?string $cluster = GlobalSettings::class;
+
+    public static function canAccess(): bool
+    {
+        if (Feature::inactive('introduce-multifactor-authentication')) {
+            return false;
+        }
+
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('multifactor_settings.manage');
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Toggle::make('required')
+                    ->helperText('Enforces that multifactor authentication is required for all non-sso users.'),
+            ]);
+    }
+}

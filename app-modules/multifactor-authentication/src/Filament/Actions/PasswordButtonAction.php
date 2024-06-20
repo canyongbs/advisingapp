@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,32 +32,45 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthenticationManagement;
-@endphp
+*/
 
-<x-filament-panels::page>
-    <x-filament-panels::form wire:submit="save">
-        {{ $this->form }}
+namespace AdvisingApp\MultifactorAuthentication\Filament\Actions;
 
-        <x-filament-panels::form.actions
-            :actions="$this->getCachedFormActions()"
-            :full-width="$this->hasFullWidthFormActions()"
-        />
-    </x-filament-panels::form>
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
 
-    <x-filament::section aside>
-        <x-slot name="heading">
-            Multifactor Authentication
-        </x-slot>
+class PasswordButtonAction extends Action
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-        <x-slot name="description">
-            Manage multifactor authentication for your account.
-        </x-slot>
+        if (! $this->isPasswordSessionValid()) {
+            $this->requiresConfirmation()
+                ->modalHeading('Confirm password')
+                ->modalDescription('Please confirm your password to complete this action.')
+                ->form([
+                    TextInput::make('current_password')
+                        ->label('Current password')
+                        ->required()
+                        ->password()
+                        ->rule('current_password'),
+                ]);
+        }
+    }
 
-        @if (!auth()->user()->is_external)
-            @livewire(MultifactorAuthenticationManagement::class)
-        @endif
-    </x-filament::section>
-</x-filament-panels::page>
+    public function call(array $data = []): mixed
+    {
+        if (! $this->isPasswordSessionValid()) {
+            session(['auth.password_confirmed_at' => time()]);
+        }
+
+        return parent::call($data);
+    }
+
+    protected function isPasswordSessionValid()
+    {
+        return session()->has('auth.password_confirmed_at')
+            && (time() - session('auth.password_confirmed_at', 0)) < config('auth.password_timeout');
+    }
+}

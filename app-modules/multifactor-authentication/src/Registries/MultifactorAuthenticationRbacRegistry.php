@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,32 +32,27 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthenticationManagement;
-@endphp
+*/
 
-<x-filament-panels::page>
-    <x-filament-panels::form wire:submit="save">
-        {{ $this->form }}
+namespace AdvisingApp\MultifactorAuthentication\Registries;
 
-        <x-filament-panels::form.actions
-            :actions="$this->getCachedFormActions()"
-            :full-width="$this->hasFullWidthFormActions()"
-        />
-    </x-filament-panels::form>
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Authorization\Registries\Contracts\RegistersRolesAndPermissions;
 
-    <x-filament::section aside>
-        <x-slot name="heading">
-            Multifactor Authentication
-        </x-slot>
+class MultifactorAuthenticationRbacRegistry implements RegistersRolesAndPermissions
+{
+    public function __invoke(): void
+    {
+        $roleRegistry = app(AuthorizationRoleRegistry::class);
 
-        <x-slot name="description">
-            Manage multifactor authentication for your account.
-        </x-slot>
+        $roleRegistry->registerApiRoles(
+            module: 'multifactor-authentication',
+            path: 'roles/api'
+        );
 
-        @if (!auth()->user()->is_external)
-            @livewire(MultifactorAuthenticationManagement::class)
-        @endif
-    </x-filament::section>
-</x-filament-panels::page>
+        $roleRegistry->registerWebRoles(
+            module: 'multifactor-authentication',
+            path: 'roles/web'
+        );
+    }
+}
