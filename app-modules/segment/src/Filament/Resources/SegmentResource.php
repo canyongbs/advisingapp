@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Segment\Filament\Resources;
 
+use Laravel\Pennant\Feature;
 use Filament\Resources\Resource;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\EditSegment;
@@ -59,6 +60,11 @@ class SegmentResource extends Resource
     protected static ?string $modelLabel = 'Population Segment';
 
     protected static ?string $pluralModelLabel = 'Population Segments';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Feature::active('segments');
+    }
 
     public static function getPages(): array
     {

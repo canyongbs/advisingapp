@@ -80,7 +80,7 @@ class ListCaseloads extends ListRecords
             ])
             ->filters([
                 Filter::make('my_caseloads')
-                    ->label('My Caseloads')
+                    ->label('My Population Segments')
                     ->query(
                         fn ($query) => $query->where('user_id', auth()->id())
                     )

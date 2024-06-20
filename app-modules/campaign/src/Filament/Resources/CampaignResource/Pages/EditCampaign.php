@@ -57,8 +57,9 @@ class EditCampaign extends EditRecord
             ->schema([
                 TextInput::make('name')
                     ->required(),
+                    // TODO Add feature flag
                 Select::make('caseload_id')
-                    ->label('Caseload')
+                    ->label('Population Segment')
                     ->translateLabel()
                     ->options($user->caseloads()->pluck('name', 'id'))
                     ->searchable()
