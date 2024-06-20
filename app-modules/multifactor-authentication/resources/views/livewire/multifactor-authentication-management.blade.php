@@ -49,7 +49,7 @@
                 @svg('heroicon-o-shield-check', 'w-6')
                 You have enabled multifactor authentication!
             </h3>
-            <p class="text-sm">Two factor authentication is now enabled. This helps make your account more secure.</p>
+            <p class="text-sm">Multifactor authentication is now enabled. This helps make your account more secure.</p>
             <div class="mt-3 flex justify-between">
                 {{ $this->regenerateCodesAction }}
                 {{ $this->disableAction()->color('danger') }}
