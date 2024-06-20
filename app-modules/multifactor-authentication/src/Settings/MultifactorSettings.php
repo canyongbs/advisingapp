@@ -40,7 +40,7 @@ use Spatie\LaravelSettings\Settings;
 
 class MultifactorSettings extends Settings
 {
-    public bool $required = false;
+    public bool $required;
 
     public static function group(): string
     {
