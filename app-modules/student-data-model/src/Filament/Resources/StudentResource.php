@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources;
 
-use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFiles;
@@ -57,10 +57,11 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Studen
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentSubscriptions;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFormSubmissions;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentApplicationSubmissions;
-use Illuminate\Support\Collection;
 
 class StudentResource extends Resource
 {
+    use HasGlobalSearchResultScoring;
+
     protected static ?string $model = Student::class;
 
     protected static ?string $navigationIcon = 'heroicon-m-users';
@@ -91,31 +92,13 @@ class StudentResource extends Resource
         ]);
     }
 
-    protected static function applyGlobalSearchAttributeConstraints(Builder $query, string $search): void
+    public static function modifyGlobalSearchQuery(Builder $query, string $search): void
     {
-        parent::applyGlobalSearchAttributeConstraints($query, $search);
-
-        $query
-            ->selectRaw("
-                CASE
-                    WHEN full_name = ? THEN 100
-                    WHEN full_name LIKE ? THEN 75
-                    WHEN email = ? THEN 75
-                    WHEN full_name LIKE ? THEN 50
-                    WHEN email LIKE ? THEN 50
-                    WHEN email LIKE ? THEN 25
-                ELSE 10
-                END AS score
-            ", [
-                $search,
-                "{$search}%",
-                $search,
-                "%{$search}%",
-                "{$search}%",
-                "%{$search}%",
-            ])
-            ->orderBy('score', 'desc')
-            ->ddRawSql();
+        static::scoreGlobalSearchResults($query, $search, [
+            'full_name' => 100,
+            'email' => 75,
+            'email_2' => 75,
+        ]);
     }
 
     public static function getGloballySearchableAttributes(): array
