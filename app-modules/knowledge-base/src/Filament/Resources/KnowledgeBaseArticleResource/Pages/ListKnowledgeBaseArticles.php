@@ -128,7 +128,7 @@ class ListKnowledgeBaseArticles extends ListRecords
             ->actions([
                 EditAction::make(),
                 ReplicateAction::make()
-                    ->label('Clone')
+                    ->label('Replicate')
                     ->form([
                         Section::make()
                             ->schema([
