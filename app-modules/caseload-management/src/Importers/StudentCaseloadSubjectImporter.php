@@ -79,7 +79,7 @@ class StudentCaseloadSubjectImporter extends Importer
 
     public static function getCompletedNotificationBody(Import $import): string
     {
-        $body = 'Your caseload import has completed and ' . number_format($import->successful_rows) . ' ' . Str::plural('student', $import->successful_rows) . ' imported.';
+        $body = 'Your population segment import has completed and ' . number_format($import->successful_rows) . ' ' . Str::plural('student', $import->successful_rows) . ' imported.';
 
         if ($failedRowsCount = $import->getFailedRowsCount()) {
             $body .= ' ' . number_format($failedRowsCount) . ' ' . Str::plural('student', $failedRowsCount) . ' failed to import.';

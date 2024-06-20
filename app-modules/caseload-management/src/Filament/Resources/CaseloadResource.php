@@ -56,9 +56,9 @@ class CaseloadResource extends Resource
 
     protected static ?string $breadcrumb = 'Population Segments';
 
-    protected static ?string $modelLabel = 'Caseload';
+    protected static ?string $modelLabel = 'Population Segment';
 
-    protected static ?string $pluralModelLabel = 'Caseloads';
+    protected static ?string $pluralModelLabel = 'Population Segments';
 
     public static function getPages(): array
     {
