@@ -144,9 +144,9 @@ class TestAiService implements Contracts\AiService, SupportsFileUploads
         $message->context = fake()->paragraph();
         $message->save();
 
-        if (! empty($this->uploadedFiles)) {
-            $files = $this->createFiles($message, $this->uploadedFiles);
-            $message->files()->saveMany($files);
+        if (! empty($files)) {
+            $createdFiles = $this->createFiles($message, $files);
+            $message->files()->saveMany($createdFiles);
         }
 
         $responseContent = fake()->paragraph();

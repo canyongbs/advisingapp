@@ -60,15 +60,12 @@ it('sends a message', function () {
         ->for(auth()->user())
         ->create();
 
-    $requestData = [
-        'content' => AiMessage::factory()->make()->content,
-        'files' => [],
-    ];
+    $content = AiMessage::factory()->make()->content;
 
     expect(AiMessage::count())
         ->toBe(0);
 
-    $responseStream = app(SendMessage::class)($thread, $requestData);
+    $responseStream = app(SendMessage::class)($thread, $content, []);
 
     $streamedContent = '';
 
@@ -82,7 +79,7 @@ it('sends a message', function () {
         ->toBe(2);
 
     expect($messages->first())
-        ->content->toBe($requestData['content'])
+        ->content->toBe($content)
         ->thread->getKey()->toBe($thread->getKey())
         ->user->getKey()->toBe(auth()->user()->getKey());
 
@@ -109,10 +106,8 @@ it('sends a message with a file', function () {
         ->for(auth()->user())
         ->create();
 
-    $requestData = [
-        'content' => AiMessage::factory()->make()->content,
-        'files' => ['some-file'],
-    ];
+    $content = AiMessage::factory()->make()->content;
+    $files = ['some-file'];
 
     expect(AiMessage::count())
         ->toBe(0);
@@ -120,7 +115,7 @@ it('sends a message with a file', function () {
     expect(AiMessageFile::count())
         ->toBe(0);
 
-    $responseStream = app(SendMessage::class)($thread, $requestData);
+    $responseStream = app(SendMessage::class)($thread, $content, $files);
 
     $streamedContent = '';
 
@@ -138,7 +133,7 @@ it('sends a message with a file', function () {
         ->toBe(1);
 
     expect($messages->first())
-        ->content->toBe($requestData['content'])
+        ->content->toBe($content)
         ->thread->getKey()->toBe($thread->getKey())
         ->user->getKey()->toBe(auth()->user()->getKey())
         ->files->first()->getKey()->toBe($messageFiles->first()->getKey());
@@ -159,11 +154,7 @@ it('throws an exception if the thread is locked', function () {
         'locked_at' => now(),
     ]);
 
-    $data = [
-        'content' => 'Hello, world!',
-    ];
-
-    iterator_to_array(app(SendMessage::class)($thread, $data)());
+    iterator_to_array(app(SendMessage::class)($thread, 'Hello, world!', [])());
 })->throws(AiThreadLockedException::class);
 
 it('throws an exception if the assistant is archived', function () {
@@ -178,11 +169,7 @@ it('throws an exception if the assistant is archived', function () {
         ->for(auth()->user())
         ->create();
 
-    $data = [
-        'content' => 'Hello, world!',
-    ];
+    app(SendMessage::class)($thread, 'Hello, world!', [])();
 
-    app(SendMessage::class)($thread, $data);
-
-    iterator_to_array(app(SendMessage::class)($thread, $data)());
+    iterator_to_array(app(SendMessage::class)($thread, 'Hello, world!', [])());
 })->throws(AiAssistantArchivedException::class);
