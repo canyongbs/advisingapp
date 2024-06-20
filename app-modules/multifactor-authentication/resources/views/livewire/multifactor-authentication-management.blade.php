@@ -59,7 +59,7 @@
                 @svg('heroicon-o-question-mark-circle', 'w-6')
                 Finish enabling multifactor authentication.
             </h3>
-            <p class="text-sm">To finish enabling two factor authentication, scan the following QR code using your phone's
+            <p class="text-sm">To finish enabling multifactor authentication, scan the following QR code using your phone's
                 authenticator application or enter the setup key and provide the generated OTP code.</p>
             <div class="mt-3 flex space-x-4">
                 <div>
