@@ -47,7 +47,7 @@
         @if ($user->hasConfirmedMultifactor())
             <h3 class="flex items-center gap-2 text-lg font-medium">
                 @svg('heroicon-o-shield-check', 'w-6')
-                You have enabled two factor authentication!
+                You have enabled multifactor authentication!
             </h3>
             <p class="text-sm">Two factor authentication is now enabled. This helps make your account more secure.</p>
             <div class="mt-3 flex justify-between">
