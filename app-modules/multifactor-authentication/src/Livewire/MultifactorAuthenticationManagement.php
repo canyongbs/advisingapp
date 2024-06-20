@@ -127,7 +127,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
 
                 Notification::make()
                     ->success()
-                    ->title('Code verified. Two factor authentication enabled.')
+                    ->title('Code verified. Multifactor authentication enabled.')
                     ->send();
 
                 $this->replaceMountedAction('recoveryCodes');
