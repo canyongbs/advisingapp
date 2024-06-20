@@ -101,7 +101,7 @@ class MultifactorService
         );
 
         if ($timestamp !== false) {
-            optional($this->cache)->put($key, $timestamp, ($this->engine->getWindow() ?: 1) * 60);
+            $this->cache?->put($key, $timestamp, ($this->engine->getWindow() ?: 1) * 60);
 
             return true;
         }
