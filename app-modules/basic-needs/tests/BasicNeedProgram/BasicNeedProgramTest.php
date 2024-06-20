@@ -331,3 +331,22 @@ it('can bulk delete basic need programs', function () {
         assertSoftDeleted($basicNeedProgram);
     }
 });
+
+it('can filter basic need program by `program category`', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+    $basicNeedPrograms = BasicNeedProgram::factory()->count(10)->create();
+    $basic_need_category_id = $basicNeedPrograms->first()->basic_need_category_id;
+
+    actingAs($user)
+        ->get(
+            BasicNeedProgramResource::getUrl('index')
+        )->assertForbidden();
+
+    $user->givePermissionTo('basic_need_program.view-any');
+ 
+    livewire(ListBasicNeedPrograms::class)
+        ->assertCanSeeTableRecords($basicNeedPrograms)
+        ->filterTable('basic_category_id', $basic_need_category_id)
+        ->assertCanSeeTableRecords($basicNeedPrograms->where('basic_need_category_id', $basic_need_category_id))
+        ->assertCanNotSeeTableRecords($basicNeedPrograms->where('basic_need_category_id', '!=', $basic_need_category_id));
+});
