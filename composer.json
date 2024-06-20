@@ -56,6 +56,7 @@
         "canyon-gbs/basic-needs": "*",
         "canyon-gbs/integration-open-ai": "*",
         "canyon-gbs/multifactor-authentication": "*",
+        "canyon-gbs/segment": "*",
         "composer/composer": "^2.7",
         "defectivecode/laravel-sqs-extended": "^1.0",
         "filament/filament": "^3.2",
