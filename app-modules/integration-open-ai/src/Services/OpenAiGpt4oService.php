@@ -39,6 +39,7 @@ namespace AdvisingApp\IntegrationOpenAi\Services;
 use OpenAI;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Support\Facades\Http;
+use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\Ai\Services\Contracts\SupportsFileUploads;
@@ -61,6 +62,22 @@ class OpenAiGpt4oService extends BaseOpenAiService implements SupportsFileUpload
             ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
             ->withHttpHeader('Accept', '*/*')
             ->make();
+    }
+
+    public function enableAssistantFileUploads(AiAssistant $assistant): void
+    {
+        $this->client->assistants()->modify($assistant->assistant_id, [
+            'tools' => [
+                ['type' => 'file_search'],
+            ],
+        ]);
+    }
+
+    public function disableAssistantFileUploads(AiAssistant $assistant): void
+    {
+        $this->client->assistants()->modify($assistant->assistant_id, [
+            'tools' => [],
+        ]);
     }
 
     public function retrieveFile(AiMessageFile $file): FilesDataTransferObject

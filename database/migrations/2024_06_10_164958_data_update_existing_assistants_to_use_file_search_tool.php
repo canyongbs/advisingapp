@@ -44,12 +44,7 @@ return new class () extends Migration {
             ->get();
 
         foreach ($assistants as $assistant) {
-            $assistant->model->getService()->updateAssistantTools(
-                assistant: $assistant,
-                tools: ['file_search']
-            );
-
-            $assistant->model->getService()->retrieveAssistant($assistant);
+            $assistant->model->getService()->enableAssistantFileUploads($assistant);
         }
     }
 
@@ -59,12 +54,7 @@ return new class () extends Migration {
             ->get();
 
         foreach ($assistants as $assistant) {
-            $assistant->model->getService()->updateAssistantTools(
-                assistant: $assistant,
-                tools: []
-            );
-
-            $assistant->model->getService()->retrieveAssistant($assistant);
+            $assistant->model->getService()->disableAssistantFileUploads($assistant);
         }
     }
 };

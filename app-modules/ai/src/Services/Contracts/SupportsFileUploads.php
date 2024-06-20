@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Services\Contracts;
 use Illuminate\Support\Collection;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\DataTransferObjects\Files\FilesDataTransferObject;
 use AdvisingApp\Ai\DataTransferObjects\VectorStores\VectorStoresDataTransferObject;
@@ -46,6 +47,10 @@ use AdvisingApp\Ai\DataTransferObjects\VectorStoreFiles\VectorStoreFilesDataTran
 
 interface SupportsFileUploads
 {
+    public function enableAssistantFileUploads(AiAssistant $assistant): void;
+
+    public function disableAssistantFileUploads(AiAssistant $assistant): void;
+
     /**
      * This method accepts an array of files to be uploaded to the client
      * for a specific message, returning a collection of unsaved `AiMessageFile` records.
