@@ -119,51 +119,48 @@ class TiptapMediaEncoder
 
     public static function encodeContent(string $content, string $disk): string
     {
-        $diskConfig = Storage::disk($disk)->getConfig();
+        $parsedFilesystemUrl = preg_quote(Storage::disk($disk)->url(''), '/');
 
-        $bucket = $diskConfig['bucket'] ?? null;
-        $bucketPath = $bucket ? "/{$bucket}/" : '';
+        $isFromFilesystem = preg_match(
+            pattern: "/{$parsedFilesystemUrl}.+/",
+            subject: $content,
+        ) === 1;
 
         $path = parse_url($content, PHP_URL_PATH);
 
-        if (! $path) {
-            $path = '';
+        if ($isFromFilesystem && ! is_null($path)) {
+            $defaultDirectory = config('filament-tiptap-editor.directory');
+
+            $root = preg_quote(config('filesystems.disks.s3.root'), '/');
+
+            $regexMatch = preg_match(
+                pattern: "/\/?{$root}\/?(.+)/",
+                subject: $path,
+                matches: $matches,
+                flags: PREG_OFFSET_CAPTURE,
+                offset: 0
+            );
+
+            if (
+                $regexMatch === 1
+                && Storage::disk($disk)->exists($matches[1][0])
+            ) {
+                $pathWithoutRoot = $matches[1][0];
+
+                return Str::contains($path, $defaultDirectory)
+                    ? "{{media|path:{$pathWithoutRoot};disk:{$disk};}}"
+                    : self::encodeExistingMedia($path);
+            }
         }
 
-        $path = Str::of($path)->replaceFirst($bucketPath, '');
-
-        $defaultDirectory = config('filament-tiptap-editor.directory');
-
-        $root = preg_quote(config('filesystems.disks.s3.root'), '/');
-
-        $regexMatch = preg_match(
-            pattern: "/\/?{$root}\/?(.+)/",
-            subject: $path,
-            matches: $matches,
-            flags: PREG_OFFSET_CAPTURE,
-            offset: 0
-        );
-
-        if (
-            $regexMatch === 1
-            && ! Storage::disk($disk)->exists($matches[1][0])
-            && Str::isUrl($content)
-        ) {
-            return $content;
-        }
-
-        return Str::contains($path, $defaultDirectory)
-            ? "{{media|path:{$path};disk:{$disk};}}"
-            : self::encodeExistingMedia($path);
+        return $content;
     }
 
-    public static function encodeExistingMedia(string $state): string
+    public static function encodeExistingMedia(string $path): string
     {
-        $path = parse_url($state, PHP_URL_PATH);
-
         $root = preg_quote(config('filesystems.disks.s3.root'), '/');
 
-        preg_match(
+        $match = preg_match(
             pattern: "/\/?{$root}\/([0-9]+)\/([^?]+)/",
             subject: $path,
             matches: $matches,
@@ -171,22 +168,24 @@ class TiptapMediaEncoder
             offset: 0
         );
 
-        $id = $matches[1][0];
-        $fileName = $matches[2][0];
+        if ($match === 1) {
+            $id = $matches[1][0] ?? null;
+            $fileName = $matches[2][0] ?? null;
 
-        $media = Media::query()
-            ->where(
-                [
-                    [DB::raw('id::VARCHAR'), '=', $id],
-                    ['file_name', '=', $fileName],
-                ]
-            )->first();
+            $media = Media::query()
+                ->where(
+                    [
+                        [DB::raw('id::VARCHAR'), '=', $id],
+                        ['file_name', '=', $fileName],
+                    ]
+                )->first();
 
-        if (! is_null($media)) {
-            $state = str_replace($path, "{{media|id:{$id};}}", $state);
+            if (! is_null($media)) {
+                $path = "{{media|id:{$id};}}";
+            }
         }
 
-        return $state;
+        return $path;
     }
 
     public static function decodeContent(string $state): string
