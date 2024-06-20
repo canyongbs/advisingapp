@@ -38,6 +38,7 @@ namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
 use App\Models\User;
 use Filament\Actions\Action;
+use Laravel\Pennant\Feature;
 use Filament\Facades\Filament;
 use Livewire\Attributes\Locked;
 use Filament\Forms\Components\TextInput;
@@ -96,42 +97,44 @@ class Login extends FilamentLogin
             $this->throwFailureValidationException();
         }
 
-        $mfaSettings = app(MultifactorSettings::class);
+        if (Feature::active('introduce-multifactor-authentication')) {
+            $mfaSettings = app(MultifactorSettings::class);
 
-        if ($mfaSettings->required) {
-            if (! $user->hasConfirmedMultifactor() && empty($data['code'])) {
-                $user->enableMultifactorAuthentication();
+            if ($mfaSettings->required) {
+                if (! $user->hasConfirmedMultifactor() && empty($data['code'])) {
+                    $user->enableMultifactorAuthentication();
 
-                $this->needsMfaSetup = true;
-                $this->needsMFA = true;
+                    $this->needsMfaSetup = true;
+                    $this->needsMFA = true;
 
-                return null;
-            }
-        }
-
-        if ($user->hasEnabledMultifactor()) {
-            if (empty($data['code'])) {
-                Filament::auth()->logout();
-
-                $this->needsMFA = true;
-
-                return null;
+                    return null;
+                }
             }
 
-            if (! app(MultifactorService::class)->verify(code: $data['code'], user: $user)) {
-                Filament::auth()->logout();
+            if ($user->hasEnabledMultifactor()) {
+                if (empty($data['code'])) {
+                    Filament::auth()->logout();
 
-                $this->needsMFA = false;
+                    $this->needsMFA = true;
 
-                $this->data['code'] = null;
+                    return null;
+                }
 
-                throw ValidationException::withMessages([
-                    'data.email' => 'Multifactor authentication failed.',
-                ]);
-            }
+                if (! app(MultifactorService::class)->verify(code: $data['code'], user: $user)) {
+                    Filament::auth()->logout();
 
-            if (empty($user->multifactor_confirmed_at)) {
-                $user->confirmMultifactorAuthentication();
+                    $this->needsMFA = false;
+
+                    $this->data['code'] = null;
+
+                    throw ValidationException::withMessages([
+                        'data.email' => 'Multifactor authentication failed.',
+                    ]);
+                }
+
+                if (empty($user->multifactor_confirmed_at)) {
+                    $user->confirmMultifactorAuthentication();
+                }
             }
         }
 
