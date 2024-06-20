@@ -85,7 +85,7 @@ class CreateCaseload extends CreateRecord implements HasTable
                         ->required(),
                     Textarea::make('description'),
                 ]),
-            Step::make('Caseload Type')
+            Step::make('Population Segment Type')
                 ->schema([
                     Select::make('model')
                         ->label('Population')
@@ -110,7 +110,7 @@ class CreateCaseload extends CreateRecord implements HasTable
                         ->required(),
                 ])
                 ->columns(2),
-            Step::make('Create Caseload')
+            Step::make('Create Population Segment')
                 ->schema([
                     View::make('filament.forms.components.table')
                         ->visible(fn (Get $get): bool => CaseloadType::tryFromCaseOrValue($get('type')) === CaseloadType::Dynamic),
