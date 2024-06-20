@@ -2,10 +2,10 @@
 
 namespace AdvisingApp\BasicNeeds\Filament\Resources;
 
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedProgramResource\Pages;
-use AdvisingApp\BasicNeeds\Models\BasicNeedProgram;
-use App\Filament\Clusters\ConstituentManagement;
 use Filament\Resources\Resource;
+use App\Filament\Clusters\ConstituentManagement;
+use AdvisingApp\BasicNeeds\Models\BasicNeedProgram;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedProgramResource\Pages;
 
 class BasicNeedProgramResource extends Resource
 {

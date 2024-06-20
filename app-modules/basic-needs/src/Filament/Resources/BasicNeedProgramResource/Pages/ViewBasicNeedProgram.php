@@ -2,12 +2,12 @@
 
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedProgramResource\Pages;
 
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedProgramResource;
 use Filament\Actions;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedProgramResource;
 
 class ViewBasicNeedProgram extends ViewRecord
 {

@@ -34,19 +34,21 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedCategoryResource;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedCategoryResource\Pages\CreateBasicNeedCategory;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedCategoryResource\Pages\EditBasicNeedCategory;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedCategoryResource\Pages\ListBasicNeedCategories;
-use AdvisingApp\BasicNeeds\Models\BasicNeedCategory;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertSoftDeleted;
 
-use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\BasicNeeds\Models\BasicNeedCategory;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedCategoryResource;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedCategoryResource\Pages\EditBasicNeedCategory;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedCategoryResource\Pages\CreateBasicNeedCategory;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedCategoryResource\Pages\ListBasicNeedCategories;
 
 it('can render list page', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -58,7 +60,8 @@ it('can render list page', function () {
 
     $user->givePermissionTo('basic_need_category.view-any');
 
-    $this->get(BasicNeedCategoryResource::getUrl('index'))->assertSuccessful();
+    actingAs($user)->get(BasicNeedCategoryResource::getUrl('index'))
+        ->assertSuccessful();
 });
 
 it('can render data in list page', function () {
@@ -85,7 +88,8 @@ it('can render create page', function () {
     $user->givePermissionTo('basic_need_category.view-any');
     $user->givePermissionTo('basic_need_category.create');
 
-    $this->get(BasicNeedCategoryResource::getUrl('create'))->assertSuccessful();
+    actingAs($user)->get(BasicNeedCategoryResource::getUrl('create'))
+        ->assertSuccessful();
 });
 
 it('can validate input on create page', function () {
@@ -125,7 +129,7 @@ it('can create basic need catgory', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(BasicNeedCategory::class, [
+    assertDatabaseHas(BasicNeedCategory::class, [
         'name' => $newData->name,
         'description' => $newData->description,
     ]);
@@ -144,7 +148,7 @@ it('can render edit page', function () {
     $user->givePermissionTo('basic_need_category.view-any');
     $user->givePermissionTo('basic_need_category.*.update');
 
-    $this->get(BasicNeedCategoryResource::getUrl('edit', [
+    actingAs($user)->get(BasicNeedCategoryResource::getUrl('edit', [
         'record' => $basicNeedCategory->getRouteKey(),
     ]))->assertSuccessful();
 });
@@ -236,7 +240,7 @@ it('can render view page', function () {
     $user->givePermissionTo('basic_need_category.view-any');
     $user->givePermissionTo('basic_need_category.*.view');
 
-    $this->get(BasicNeedCategoryResource::getUrl('view', [
+    actingAs($user)->get(BasicNeedCategoryResource::getUrl('view', [
         'record' => $basicNeedCategory->getRouteKey(),
     ]))->assertSuccessful();
 });
@@ -261,7 +265,8 @@ it('can delete basic need category', function () {
         ->assertActionExists(DeleteAction::class)
         ->assertActionEnabled(DeleteAction::class)
         ->callAction(DeleteAction::class);
-    $this->assertSoftDeleted($basicNeedCategory);
+
+    assertSoftDeleted($basicNeedCategory);
 });
 
 it('can bulk delete basic need categories', function () {
@@ -276,11 +281,11 @@ it('can bulk delete basic need categories', function () {
     $user->givePermissionTo('basic_need_category.view-any');
     $user->givePermissionTo('basic_need_category.*.update');
     $user->givePermissionTo('basic_need_category.*.delete');
- 
+
     livewire(ListBasicNeedCategories::class)
         ->callTableBulkAction(DeleteBulkAction::class, $basicNeedCategories);
- 
+
     foreach ($basicNeedCategories as $basicNeedCategory) {
-        $this->assertSoftDeleted($basicNeedCategory);
+        assertSoftDeleted($basicNeedCategory);
     }
 });

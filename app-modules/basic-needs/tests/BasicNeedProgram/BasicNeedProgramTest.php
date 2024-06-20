@@ -34,19 +34,21 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedProgramResource;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedProgramResource\Pages\CreateBasicNeedProgram;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedProgramResource\Pages\EditBasicNeedProgram;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedProgramResource\Pages\ListBasicNeedPrograms;
-use AdvisingApp\BasicNeeds\Models\BasicNeedProgram;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertSoftDeleted;
 
-use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\BasicNeeds\Models\BasicNeedProgram;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedProgramResource;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedProgramResource\Pages\EditBasicNeedProgram;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedProgramResource\Pages\ListBasicNeedPrograms;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedProgramResource\Pages\CreateBasicNeedProgram;
 
 it('can render list page', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -58,7 +60,8 @@ it('can render list page', function () {
 
     $user->givePermissionTo('basic_need_program.view-any');
 
-    $this->get(BasicNeedProgramResource::getUrl('index'))->assertSuccessful();
+    actingAs($user)->get(BasicNeedProgramResource::getUrl('index'))
+        ->assertSuccessful();
 });
 
 it('can render data in list page', function () {
@@ -85,7 +88,8 @@ it('can render create page', function () {
     $user->givePermissionTo('basic_need_program.view-any');
     $user->givePermissionTo('basic_need_program.create');
 
-    $this->get(BasicNeedProgramResource::getUrl('create'))->assertSuccessful();
+    actingAs($user)->get(BasicNeedProgramResource::getUrl('create'))
+        ->assertSuccessful();
 });
 
 it('can validate input on create page', function () {
@@ -134,7 +138,7 @@ it('can create basic need program', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(BasicNeedProgram::class, [
+    assertDatabaseHas(BasicNeedProgram::class, [
         'name' => $newBasicNeedProgram->name,
         'description' => $newBasicNeedProgram->description,
         'basic_need_category_id' => $newBasicNeedProgram->basic_need_category_id,
@@ -161,7 +165,7 @@ it('can render edit page', function () {
     $user->givePermissionTo('basic_need_program.view-any');
     $user->givePermissionTo('basic_need_program.*.update');
 
-    $this->get(BasicNeedProgramResource::getUrl('edit', [
+    actingAs($user)->get(BasicNeedProgramResource::getUrl('edit', [
         'record' => $basicNeedProgram->getRouteKey(),
     ]))->assertSuccessful();
 });
@@ -278,7 +282,7 @@ it('can render view page', function () {
     $user->givePermissionTo('basic_need_program.view-any');
     $user->givePermissionTo('basic_need_program.*.view');
 
-    $this->get(BasicNeedProgramResource::getUrl('view', [
+    actingAs($user)->get(BasicNeedProgramResource::getUrl('view', [
         'record' => $basicNeedProgram->getRouteKey(),
     ]))->assertSuccessful();
 });
@@ -303,7 +307,8 @@ it('can delete basic need program', function () {
         ->assertActionExists(DeleteAction::class)
         ->assertActionEnabled(DeleteAction::class)
         ->callAction(DeleteAction::class);
-    $this->assertSoftDeleted($basicNeedProgram);
+
+    assertSoftDeleted($basicNeedProgram);
 });
 
 it('can bulk delete basic need programs', function () {
@@ -318,11 +323,11 @@ it('can bulk delete basic need programs', function () {
     $user->givePermissionTo('basic_need_program.view-any');
     $user->givePermissionTo('basic_need_program.*.update');
     $user->givePermissionTo('basic_need_program.*.delete');
- 
+
     livewire(ListBasicNeedPrograms::class)
         ->callTableBulkAction(DeleteBulkAction::class, $basicNeedPrograms);
- 
+
     foreach ($basicNeedPrograms as $basicNeedProgram) {
-        $this->assertSoftDeleted($basicNeedProgram);
+        assertSoftDeleted($basicNeedProgram);
     }
 });

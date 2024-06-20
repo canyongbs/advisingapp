@@ -2,8 +2,8 @@
 
 namespace AdvisingApp\BasicNeeds\Database\Factories;
 
-use AdvisingApp\BasicNeeds\Models\BasicNeedCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\BasicNeeds\Models\BasicNeedCategory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Prospect\Models\Program>

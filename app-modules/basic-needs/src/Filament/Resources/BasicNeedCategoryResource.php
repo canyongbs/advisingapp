@@ -2,17 +2,10 @@
 
 namespace AdvisingApp\BasicNeeds\Filament\Resources;
 
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedCategoryResource\Pages;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedCategoryResource\RelationManagers;
-use AdvisingApp\BasicNeeds\Models\BasicNeedCategory;
-use App\Filament\Clusters\ConstituentManagement;
-use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Clusters\ConstituentManagement;
+use AdvisingApp\BasicNeeds\Models\BasicNeedCategory;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedCategoryResource\Pages;
 
 class BasicNeedCategoryResource extends Resource
 {

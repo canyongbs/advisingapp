@@ -2,11 +2,10 @@
 
 namespace AdvisingApp\BasicNeeds\Policies;
 
-use AdvisingApp\BasicNeeds\Models\BasicNeedProgram;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\BasicNeeds\Models\BasicNeedProgram;
 
 class BasicNeedProgramPolicy
 {

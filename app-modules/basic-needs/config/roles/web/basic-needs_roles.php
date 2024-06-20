@@ -35,7 +35,7 @@
 */
 
 return [
-  'model' => [
+    'model' => [
         'basic_need_category' => [
             '*',
         ],
