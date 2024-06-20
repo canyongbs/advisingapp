@@ -51,7 +51,7 @@
         </x-slot>
 
         <x-slot name="description">
-            Manage multifactor authentication for your account
+            Manage multifactor authentication for your account.
         </x-slot>
 
         @if (! auth()->user()->is_external)
