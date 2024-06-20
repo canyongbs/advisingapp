@@ -47,7 +47,7 @@
 
     <x-filament::section aside>
         <x-slot name="heading">
-            Two Factor Authentication
+            Multifactor Authentication
         </x-slot>
 
         <x-slot name="description">
