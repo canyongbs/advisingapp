@@ -74,7 +74,7 @@ class SendMessage
         return $aiService
             ->sendMessage(
                 message: $message,
-                files: $files ?? [],
+                files: $files,
                 saveResponse: function (AiMessage $response) use ($thread) {
                     $response->thread()->associate($thread);
                     $response->save();

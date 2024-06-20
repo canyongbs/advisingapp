@@ -172,7 +172,10 @@ document.addEventListener('alpine:init', () => {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': csrfToken,
                         },
-                        body: JSON.stringify({ content: this.latestMessage }),
+                        body: JSON.stringify({
+                            content: this.latestMessage,
+                            files: this.$wire.files,
+                        }),
                     }),
                 );
             });

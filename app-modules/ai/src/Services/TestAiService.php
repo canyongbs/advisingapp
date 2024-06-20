@@ -56,6 +56,10 @@ class TestAiService implements Contracts\AiService, SupportsFileUploads
 
     public array $uploadedFiles = [];
 
+    public function enableAssistantFileUploads(AiAssistant $assistant): void {}
+
+    public function disableAssistantFileUploads(AiAssistant $assistant): void {}
+
     public function createAssistant(AiAssistant $assistant): void {}
 
     public function updateAssistant(AiAssistant $assistant): void {}
@@ -158,9 +162,9 @@ class TestAiService implements Contracts\AiService, SupportsFileUploads
         };
     }
 
-    public function retryMessage(AiMessage $message, Closure $saveResponse): Closure
+    public function retryMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
     {
-        return $this->sendMessage($message, $saveResponse);
+        return $this->sendMessage($message, $files, $saveResponse);
     }
 
     public function getMaxAssistantInstructionsLength(): int

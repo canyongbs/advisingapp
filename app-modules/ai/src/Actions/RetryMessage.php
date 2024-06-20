@@ -78,7 +78,7 @@ class RetryMessage
 
         return $aiService->retryMessage(
             message: $message,
-            files: $files ?? [],
+            files: $files,
             saveResponse: function (AiMessage $response) use ($thread) {
                 $response->thread()->associate($thread);
                 $response->save();

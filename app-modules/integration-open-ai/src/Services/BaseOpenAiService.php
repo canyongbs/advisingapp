@@ -59,8 +59,6 @@ abstract class BaseOpenAiService implements AiService
 
     protected ClientContract $client;
 
-    protected array $uploadedFiles = [];
-
     abstract public function getApiKey(): string;
 
     abstract public function getApiVersion(): string;
@@ -183,7 +181,7 @@ abstract class BaseOpenAiService implements AiService
         $thread->thread_id = null;
     }
 
-    public function sendMessage(AiMessage $message, Closure $saveResponse): Closure
+    public function sendMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
     {
         $response = $this->client->threads()->runs()->list($message->thread->thread_id, [
             'order' => 'desc',
@@ -197,11 +195,9 @@ abstract class BaseOpenAiService implements AiService
 
         $createdFiles = [];
 
-        if (method_exists($this, 'createFiles') && ! empty($this->uploadedFiles)) {
-            $createdFiles = $this->createFiles($message, $this->uploadedFiles);
+        if (method_exists($this, 'createFiles') && ! empty($files)) {
+            $createdFiles = $this->createFiles($message, $files);
         }
-
-        $this->uploadedFiles = [];
 
         $data = [
             'role' => 'user',
@@ -282,14 +278,7 @@ abstract class BaseOpenAiService implements AiService
         };
     }
 
-    public function withFiles(array $files): self
-    {
-        $this->uploadedFiles = $files;
-
-        return $this;
-    }
-
-    public function retryMessage(AiMessage $message, Closure $saveResponse): Closure
+    public function retryMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
     {
         $response = $this->client->threads()->runs()->list($message->thread->thread_id, [
             'order' => 'desc',
@@ -329,10 +318,31 @@ abstract class BaseOpenAiService implements AiService
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
         if (blank($message->message_id)) {
-            $response = $this->client->threads()->messages()->create($message->thread->thread_id, [
+            $data = [
                 'role' => 'user',
                 'content' => $message->content,
-            ]);
+            ];
+
+            $createdFiles = [];
+
+            if (method_exists($this, 'createFiles') && ! empty($files)) {
+                $createdFiles = $this->createFiles($message, $files);
+            }
+
+            if (! empty($createdFiles)) {
+                $data['attachments'] = collect($createdFiles)->map(function ($createdFile) {
+                    return [
+                        'file_id' => $createdFile->file_id,
+                        'tools' => [
+                            [
+                                'type' => 'file_search',
+                            ],
+                        ],
+                    ];
+                })->toArray();
+            }
+
+            $response = $this->client->threads()->messages()->create($message->thread->thread_id, $data);
 
             $message->context = $instructions;
             $message->message_id = $response->id;
