@@ -69,7 +69,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
 
     public function mount()
     {
-        $this->user = $this->user ?? Filament::getCurrentPanel()->auth()->user();
+        $this->user ??= Filament::getCurrentPanel()->auth()->user();
     }
 
     public function enableAction(): Action
