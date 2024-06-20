@@ -97,7 +97,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
 
                 Notification::make()
                     ->warning()
-                    ->title('Two factor authentication has been disabled.')
+                    ->title('Multifactor authentication has been disabled.')
                     ->send();
             });
     }
