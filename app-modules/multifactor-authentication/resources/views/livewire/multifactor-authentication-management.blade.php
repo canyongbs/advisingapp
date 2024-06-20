@@ -37,7 +37,7 @@
             @svg('heroicon-o-exclamation-circle', 'w-6')
             You have not enabled multifactor authentication.
         </h3>
-        <p class="text-sm">When two factor authentication is enabled, you will be prompted for a secure, random token during
+        <p class="text-sm">When multifactor authentication is enabled, you will be prompted for a secure, random token during
             authentication. You may retrieve this token from your Authenticator application.</p>
 
         <div class="mt-3 flex justify-between">
