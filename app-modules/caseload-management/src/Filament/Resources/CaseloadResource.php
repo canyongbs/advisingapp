@@ -52,9 +52,9 @@ class CaseloadResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
-    protected static ?string $navigationLabel = 'Caseload Management';
+    protected static ?string $navigationLabel = 'Population Segments';
 
-    protected static ?string $breadcrumb = 'Caseload Management';
+    protected static ?string $breadcrumb = 'Population Segments';
 
     protected static ?string $modelLabel = 'Caseload';
 
