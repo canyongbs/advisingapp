@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b9e367c806f432766df18ec22d25f61d",
+    "content-hash": "78a4fe475028b37d2be2a142936581c1",
     "packages": [
         {
             "name": "amphp/amp",
@@ -2853,6 +2853,41 @@
                     "AdvisingApp\\IntegrationOpenAi\\Tests\\": "tests/",
                     "AdvisingApp\\IntegrationOpenAi\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\IntegrationOpenAi\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/segment",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/segment",
+                "reference": "7509aa917e5b2bfb732f051dd99fdd8b2230ace3"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Segment\\Providers\\SegmentServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Segment\\": "src/",
+                    "AdvisingApp\\Segment\\Tests\\": "tests/",
+                    "AdvisingApp\\Segment\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Segment\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
