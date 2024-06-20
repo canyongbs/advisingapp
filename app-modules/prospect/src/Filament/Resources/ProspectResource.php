@@ -58,7 +58,6 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectEngag
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectSubscriptions;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectFormSubmissions;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectApplicationSubmissions;
-use Illuminate\Support\Collection;
 
 class ProspectResource extends Resource
 {
