@@ -45,7 +45,7 @@ use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 
 class SendMessage
 {
-    public function __invoke(AiThread $thread, array $data): Closure
+    public function __invoke(AiThread $thread, string $content, array $files): Closure
     {
         if ($thread->locked_at) {
             throw new AiThreadLockedException();
@@ -56,7 +56,7 @@ class SendMessage
         }
 
         $message = new AiMessage();
-        $message->content = $data['content'];
+        $message->content = $content;
         $message->request = [
             'headers' => Arr::only(
                 request()->headers->all(),
@@ -72,12 +72,15 @@ class SendMessage
         $aiService->ensureAssistantAndThreadExists($thread);
 
         return $aiService
-            ->withFiles($data['files'])
-            ->sendMessage($message, function (AiMessage $response) use ($thread) {
-                $response->thread()->associate($thread);
-                $response->save();
+            ->sendMessage(
+                message: $message,
+                files: $files ?? [],
+                saveResponse: function (AiMessage $response) use ($thread) {
+                    $response->thread()->associate($thread);
+                    $response->save();
 
-                $thread->touch();
-            });
+                    $thread->touch();
+                }
+            );
     }
 }

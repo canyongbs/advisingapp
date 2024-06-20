@@ -465,14 +465,12 @@
                                         <div class="mx-2 flex items-center">
                                             <x-filament::badge>
                                                 {{ $file['name'] }}
+                                                <x-slot
+                                                    name="deleteButton"
+                                                    label="Remove uploaded file {{ $file['name'] }}"
+                                                    wire:click="removeUploadedFile({{ $key }})"
+                                                ></x-slot>
                                             </x-filament::badge>
-                                            <x-filament::icon-button
-                                                aria-label="Remove uploaded file {{ $file['name'] }}"
-                                                size="xs"
-                                                icon="heroicon-o-x-mark"
-                                                wire:click="removeUploadedFile({{ $key }})"
-                                            >
-                                                </x-filament::button>
                                         </div>
                                     @endforeach
                                 </div>

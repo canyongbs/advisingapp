@@ -53,7 +53,8 @@ class SendMessageController
             return response()->stream(
                 app(SendMessage::class)(
                     $thread,
-                    $request->safe()->only(['content', 'files']),
+                    $request->validated('content'),
+                    $request->validated('files'),
                 ),
                 headers: [
                     'Content-Type' => 'text/html; charset=utf-8;',

@@ -135,14 +135,7 @@ class TestAiService implements Contracts\AiService, SupportsFileUploads
         ]);
     }
 
-    public function withFiles(array $files): self
-    {
-        $this->uploadedFiles = $files;
-
-        return $this;
-    }
-
-    public function sendMessage(AiMessage $message, Closure $saveResponse): Closure
+    public function sendMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
     {
         $message->context = fake()->paragraph();
         $message->save();
