@@ -71,7 +71,7 @@ class ListSegments extends ListRecords
                     ->label('Owner')
                     ->sortable()
                     ->hidden(function (Table $table) {
-                        return $table->getFilter('my_caseloads')->getState()['isActive'] ?? false;
+                        return $table->getFilter('my_segments')->getState()['isActive'] ?? false;
                     }),
             ])
             ->actions([
