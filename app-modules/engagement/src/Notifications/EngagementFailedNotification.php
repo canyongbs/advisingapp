@@ -51,42 +51,41 @@ use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 
 class EngagementFailedNotification extends BaseNotification implements EmailNotification, DatabaseNotification
 {
-    use EmailChannelTrait;
-    use DatabaseChannelTrait;
+  use EmailChannelTrait;
+  use DatabaseChannelTrait;
 
-    public function __construct(
-        public Engagement $engagement
-    ) {}
+  public function __construct(
+    public Engagement $engagement
+  ) {
+  }
 
-    public function toEmail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject('The following engagement failed to be delivered.')
-            ->line("The engagement with the following contents was unable to be delivered to {$this->engagement->recipient->display_name}.")
-            ->line('Subject: ' . ($this->engagement->subject ?? 'n/a'))
-            ->line('Body: ' . $this->engagement->getBody());
-    }
+  public function toEmail(object $notifiable): MailMessage
+  {
+    return MailMessage::make()
+      ->settings($this->resolveNotificationSetting($notifiable))
+      ->subject('The following engagement failed to be delivered.')
+      ->line("The engagement with the following contents was unable to be delivered to {$this->engagement->recipient->display_name}.")
+      ->line('Subject: ' . ($this->engagement->subject ?? 'n/a'))
+      ->line('Body: ' . $this->engagement->getBody());
+  }
 
-    public function toDatabase(object $notifiable): array
-    {
-        $engagementType = '';
+  public function toDatabase(object $notifiable): array
+  {
+    $engagementType = match ($this->engagement->deliverable->channel) {
+      EngagementDeliveryMethod::Email => 'Email',
+      EngagementDeliveryMethod::Sms => 'SMS',
+      default => ''
+    };
 
-        if ($this->engagement->deliverable->channel == EngagementDeliveryMethod::Email) {
-            $engagementType = $this->engagement->deliverable->channe;
-        } elseif ($this->engagement->deliverable->channel == EngagementDeliveryMethod::Sms) {
-            $engagementType = 'SMS';
-        }
+    return FilamentNotification::make()
+      ->danger()
+      ->title('Engagement Delivery Failed')
+      ->body("Your engagement {$engagementType} failed to be delivered to {$this->engagement->recipient->display_name}.")
+      ->getDatabaseMessage();
+  }
 
-        return FilamentNotification::make()
-            ->danger()
-            ->title('Engagement Delivery Failed')
-            ->body("Your engagement { {$engagementType}} failed to be delivered to {$this->engagement->recipient->display_name}.")
-            ->getDatabaseMessage();
-    }
-
-    private function resolveNotificationSetting(NotifiableInterface $notifiable): ?NotificationSetting
-    {
-        return $notifiable instanceof User ? $this->engagement->createdBy->teams()->first()?->division?->notificationSetting?->setting : null;
-    }
+  private function resolveNotificationSetting(NotifiableInterface $notifiable): ?NotificationSetting
+  {
+    return $notifiable instanceof User ? $this->engagement->createdBy->teams()->first()?->division?->notificationSetting?->setting : null;
+  }
 }
