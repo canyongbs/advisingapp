@@ -131,3 +131,72 @@ it('allows user with permission to impersonate', function () {
     expect($second->isImpersonated())->toBeTrue();
     expect(auth()->id())->toBe($second->id);
 });
+
+it('does not display the mfa_status Action for an external User', function() {
+    $user = User::factory()->create([
+        'is_external' => true,
+    ]);
+
+    asSuperAdmin();
+
+    livewire(ViewUser::class, [
+        'record' => $user->getRouteKey(),
+    ])
+        ->assertActionHidden('mfa_status');
+});
+
+it('displays the proper mfa_status Action for an internal User without MFA enabled', function() {
+    $user = User::factory()->create([
+        'is_external' => false,
+    ]);
+
+    asSuperAdmin();
+
+    $component = livewire(ViewUser::class, [
+        'record' => $user->getRouteKey(),
+    ]);
+
+    $component
+        ->assertActionHasLabel('mfa_status', 'MFA Disabled')
+        ->assertActionHasColor('mfa_status', 'gray');
+});
+
+it('displays the proper mfa_status Action for an internal User with MFA enabled but not confirmed', function() {
+    $user = User::factory()->create([
+        'is_external' => false,
+    ]);
+
+    $user->enableMultifactorAuthentication();
+
+    asSuperAdmin();
+
+    $component = livewire(ViewUser::class, [
+        'record' => $user->getRouteKey(),
+    ]);
+
+    $component
+        ->assertActionHasLabel('mfa_status', 'MFA Enabled | Not Confirmed')
+        ->assertActionHasColor('mfa_status', 'warning');
+});
+
+it('displays the proper mfa_status Action for an internal User with MFA enabled and confirmed', function() {
+    $user = User::factory()->create([
+        'is_external' => false,
+    ]);
+
+    $user->enableMultifactorAuthentication();
+
+    $user->forceFill([
+        'multifactor_confirmed_at' => now(),
+    ])->save();
+
+    asSuperAdmin();
+
+    $component = livewire(ViewUser::class, [
+        'record' => $user->getRouteKey(),
+    ]);
+
+    $component
+        ->assertActionHasLabel('mfa_status', 'MFA Enabled')
+        ->assertActionHasColor('mfa_status', 'success');
+});
