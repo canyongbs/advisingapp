@@ -39,9 +39,9 @@ namespace AdvisingApp\BasicNeeds\Providers;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\BasicNeeds\BasicNeedsPlugin;
-use AdvisingApp\BasicNeeds\Models\BasicNeedProgram;
-use AdvisingApp\BasicNeeds\Models\BasicNeedCategory;
+use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\BasicNeeds\Registries\BasicNeedsRbacRegistry;
 
@@ -55,8 +55,8 @@ class BasicNeedsServiceProvider extends ServiceProvider
     public function boot()
     {
         Relation::morphMap([
-            'basic_need_category' => BasicNeedCategory::class,
-            'basic_need_program' => BasicNeedProgram::class,
+            'basic_needs_category' => BasicNeedsCategory::class,
+            'basic_needs_program' => BasicNeedsProgram::class,
         ]);
 
         AuthorizationRoleRegistry::register(BasicNeedsRbacRegistry::class);

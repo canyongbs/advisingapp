@@ -34,13 +34,4 @@
 </COPYRIGHT>
 */
 
-return [
-    'model' => [
-        'basic_need_category' => [
-            '*',
-        ],
-        'basic_need_program' => [
-            '*',
-        ],
-    ],
-];
+return [];

@@ -34,4 +34,15 @@
 </COPYRIGHT>
 */
 
-return [];
+namespace AdvisingApp\BasicNeeds\Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
+
+class BasicNeedsCategorySeeder extends Seeder
+{
+    public function run(): void
+    {
+        BasicNeedsCategory::factory(10)->create();
+    }
+}

@@ -90,7 +90,7 @@ trait CanModifyPermissions
     /**
      * @param array<string> $names
      */
-    public function deletePermissions(array $names, string|array $guardName): void
+    public function deletePermissions(array $names, string $guardName): void
     {
         DB::table('permissions')
             ->where('guard_name', $guardName)
