@@ -40,6 +40,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
+use App\Models\Tenant;
 
 trait MultifactorAuthenticatable
 {
@@ -109,7 +110,7 @@ trait MultifactorAuthenticatable
     public function getMultifactorQrCodeUrl()
     {
         return app(MultifactorService::class)->getQrCodeUrl(
-            config('app.name'),
+            config('app.name') . ' | ' . Tenant::current()->name,
             $this->email,
             decrypt($this->multifactor_secret)
         );
