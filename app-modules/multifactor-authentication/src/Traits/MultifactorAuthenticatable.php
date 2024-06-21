@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\MultifactorAuthentication\Traits;
 
+use App\Models\Tenant;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
-use App\Models\Tenant;
 
 trait MultifactorAuthenticatable
 {

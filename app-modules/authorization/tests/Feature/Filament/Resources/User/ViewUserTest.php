@@ -43,7 +43,6 @@ use Illuminate\View\ViewException;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
-use function PHPUnit\Framework\assertNotNull;
 
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 use App\Filament\Resources\UserResource\Pages\EditUser;
@@ -133,7 +132,7 @@ it('allows user with permission to impersonate', function () {
     expect(auth()->id())->toBe($second->id);
 });
 
-it('does not display the mfa_status Action for an external User', function() {
+it('does not display the mfa_status Action for an external User', function () {
     $user = User::factory()->create([
         'is_external' => true,
     ]);
@@ -146,7 +145,7 @@ it('does not display the mfa_status Action for an external User', function() {
         ->assertActionHidden('mfa_status');
 });
 
-it('displays the proper mfa_status Action for an internal User without MFA enabled', function() {
+it('displays the proper mfa_status Action for an internal User without MFA enabled', function () {
     $user = User::factory()->create([
         'is_external' => false,
     ]);
@@ -162,7 +161,7 @@ it('displays the proper mfa_status Action for an internal User without MFA enabl
         ->assertActionHasColor('mfa_status', 'gray');
 });
 
-it('displays the proper mfa_status Action for an internal User with MFA enabled but not confirmed', function() {
+it('displays the proper mfa_status Action for an internal User with MFA enabled but not confirmed', function () {
     $user = User::factory()->create([
         'is_external' => false,
     ]);
@@ -180,7 +179,7 @@ it('displays the proper mfa_status Action for an internal User with MFA enabled 
         ->assertActionHasColor('mfa_status', 'warning');
 });
 
-it('displays the proper mfa_status Action for an internal User with MFA enabled and confirmed', function() {
+it('displays the proper mfa_status Action for an internal User with MFA enabled and confirmed', function () {
     $user = User::factory()->create([
         'is_external' => false,
     ]);
@@ -202,7 +201,7 @@ it('displays the proper mfa_status Action for an internal User with MFA enabled 
         ->assertActionHasColor('mfa_status', 'success');
 });
 
-it('does not display the mfa_reset Action if the user is external', function() {
+it('does not display the mfa_reset Action if the user is external', function () {
     $user = User::factory()->create([
         'is_external' => true,
     ]);
@@ -215,7 +214,7 @@ it('does not display the mfa_reset Action if the user is external', function() {
         ->assertActionHidden('mfa_reset');
 });
 
-it('does not display the mfa_reset Action if the authed user does not have the proper permission', function() {
+it('does not display the mfa_reset Action if the authed user does not have the proper permission', function () {
     $user = User::factory()->create([
         'is_external' => true,
     ]);
@@ -236,7 +235,7 @@ it('does not display the mfa_reset Action if the authed user does not have the p
         ->assertActionHidden('mfa_reset');
 });
 
-it('does not display the mfa_reset Action if the user is internal but has not enabled and/or confirmed MFA', function() {
+it('does not display the mfa_reset Action if the user is internal but has not enabled and/or confirmed MFA', function () {
     $user = User::factory()->create([
         'is_external' => false,
     ]);
@@ -249,7 +248,7 @@ it('does not display the mfa_reset Action if the user is internal but has not en
         ->assertActionHidden('mfa_reset');
 });
 
-it('displays the mfa_reset Action if the user is internal, has MFA enabled and/or confirmed, and the authed user has proper permission', function(User $user) {
+it('displays the mfa_reset Action if the user is internal, has MFA enabled and/or confirmed, and the authed user has proper permission', function (User $user) {
     $actingAsUser = User::factory()->create();
     $actingAsUser->givePermissionTo('user.view-any', 'user.*.view', 'user.*.update');
     actingAs($actingAsUser);
@@ -287,7 +286,7 @@ it('displays the mfa_reset Action if the user is internal, has MFA enabled and/o
     },
 ]);
 
-it('resets the users MFA when the mfa_reset Action is triggered', function() {
+it('resets the users MFA when the mfa_reset Action is triggered', function () {
     $user = User::factory()->create([
         'is_external' => false,
     ]);
