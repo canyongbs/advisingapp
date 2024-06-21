@@ -115,6 +115,16 @@ class ViewUser extends ViewRecord
                     $record->hasEnabledMultifactor() => 'warning',
                     default => 'gray',
                 }),
+            Action::make('mfa_reset')
+                ->visible(fn (User $record) =>
+                    ! $record->is_external 
+                    && $record->hasConfirmedMultifactor() || $record->hasEnabledMultifactor()
+                    && auth()->user()->can('resetMultifactorAuthentication', $record),
+                )
+                ->label('Reset MFA')
+                ->icon('heroicon-s-lock-open')
+                ->modalDescription('Are you sure you want to reset the multifactor authentication for this user?')
+                ->action(fn (User $record) => $record->disableMultifactorAuthentication()),
             Impersonate::make()
                 ->record($user),
             EditAction::make(),
