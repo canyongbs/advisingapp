@@ -36,17 +36,19 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use Carbon\Carbon;
-use App\Models\User;
-use Filament\Forms\Form;
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Section;
-use App\Filament\Resources\UserResource;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\ViewRecord;
-use App\Filament\Forms\Components\Licenses;
 use AdvisingApp\Authorization\Models\License;
+use App\Filament\Forms\Components\Licenses;
+use App\Filament\Resources\UserResource;
+use App\Models\User;
+use Carbon\Carbon;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Resources\Pages\ViewRecord;
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 
 class ViewUser extends ViewRecord
@@ -99,6 +101,20 @@ class ViewUser extends ViewRecord
         $user = $this->getRecord();
 
         return [
+            Action::make('mfa_status')
+                ->badge()
+                ->disabled()
+                ->visible(fn (User $record) => ! $record->is_external)
+                ->label(fn (User $record) => match(true) {
+                    $record->hasConfirmedMultifactor() => 'MFA Enabled',
+                    $record->hasEnabledMultifactor() => 'MFA Enabled | Not Confirmed',
+                    default => 'MFA Disabled',
+                })
+                ->color(fn (User $record) => match(true) {
+                    $record->hasConfirmedMultifactor() => 'success',
+                    $record->hasEnabledMultifactor() => 'warning',
+                    default => 'gray',
+                }),
             Impersonate::make()
                 ->record($user),
             EditAction::make(),
