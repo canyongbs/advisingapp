@@ -43,6 +43,7 @@ use Illuminate\View\ViewException;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
+use function PHPUnit\Framework\assertNotNull;
 
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 use App\Filament\Resources\UserResource\Pages\EditUser;
@@ -199,4 +200,122 @@ it('displays the proper mfa_status Action for an internal User with MFA enabled 
     $component
         ->assertActionHasLabel('mfa_status', 'MFA Enabled')
         ->assertActionHasColor('mfa_status', 'success');
+});
+
+it('does not display the mfa_reset Action if the user is external', function() {
+    $user = User::factory()->create([
+        'is_external' => true,
+    ]);
+
+    asSuperAdmin();
+
+    livewire(ViewUser::class, [
+        'record' => $user->getRouteKey(),
+    ])
+        ->assertActionHidden('mfa_reset');
+});
+
+it('does not display the mfa_reset Action if the authed user does not have the proper permission', function() {
+    $user = User::factory()->create([
+        'is_external' => true,
+    ]);
+
+    $user->enableMultifactorAuthentication();
+
+    $user->forceFill([
+        'multifactor_confirmed_at' => now(),
+    ])->save();
+
+    $actingAsUser = User::factory()->create();
+    $actingAsUser->givePermissionTo('user.view-any', 'user.*.view');
+    actingAs($actingAsUser);
+
+    livewire(ViewUser::class, [
+        'record' => $user->getRouteKey(),
+    ])
+        ->assertActionHidden('mfa_reset');
+});
+
+it('does not display the mfa_reset Action if the user is internal but has not enabled and/or confirmed MFA', function() {
+    $user = User::factory()->create([
+        'is_external' => false,
+    ]);
+
+    asSuperAdmin();
+
+    livewire(ViewUser::class, [
+        'record' => $user->getRouteKey(),
+    ])
+        ->assertActionHidden('mfa_reset');
+});
+
+it('displays the mfa_reset Action if the user is internal, has MFA enabled and/or confirmed, and the authed user has proper permission', function(User $user) {
+    $actingAsUser = User::factory()->create();
+    $actingAsUser->givePermissionTo('user.view-any', 'user.*.view', 'user.*.update');
+    actingAs($actingAsUser);
+
+    $component = livewire(ViewUser::class, [
+        'record' => $user->getRouteKey(),
+    ]);
+
+    $component
+        ->assertActionVisible('mfa_reset');
+})->with([
+    'Has MFA Enabled' => function () {
+        return tap(
+            User::factory()->create([
+                'is_external' => false,
+            ]),
+            function (User $user) {
+                $user->enableMultifactorAuthentication();
+            }
+        );
+    },
+    'Has MFA Confirmed' => function () {
+        return tap(
+            User::factory()->create([
+                'is_external' => false,
+            ]),
+            function (User $user) {
+                $user->enableMultifactorAuthentication();
+
+                $user->forceFill([
+                    'multifactor_confirmed_at' => now(),
+                ])->save();
+            }
+        );
+    },
+]);
+
+it('resets the users MFA when the mfa_reset Action is triggered', function() {
+    $user = User::factory()->create([
+        'is_external' => false,
+    ]);
+
+    $user->enableMultifactorAuthentication();
+
+    $user->forceFill([
+        'multifactor_confirmed_at' => now(),
+    ])->save();
+
+    $user->refresh();
+
+    expect($user->multifactor_confirmed_at)->not()->toBeNull()
+        ->and($user->multifactor_secret)->not()->toBeNull()
+        ->and($user->multifactor_recovery_codes)->not()->toBeNull();
+
+    asSuperAdmin();
+
+    $component = livewire(ViewUser::class, [
+        'record' => $user->getRouteKey(),
+    ]);
+
+    $component
+        ->callAction('mfa_reset');
+
+    $user->refresh();
+
+    expect($user->multifactor_confirmed_at)->toBeNull()
+        ->and($user->multifactor_secret)->toBeNull()
+        ->and($user->multifactor_recovery_codes)->toBeNull();
 });
