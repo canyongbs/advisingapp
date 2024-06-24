@@ -234,6 +234,10 @@ class Login extends FilamentLogin
                                 ? '-'
                                 : null
                             )
+                            ->helperText(fn (Login $livewire) => $livewire->usingRecoveryCode
+                                ? 'Enter one of your recovery codes provided when you enabled multifactor authentication. Recovery codes are one-time use only. If you have used all of your recovery codes, you will need to contact your administrator to reset your multifactor authentication.'
+                                : null
+                            )
                             ->numeric(fn (Login $livewire) => ! $livewire->usingRecoveryCode)
                             ->string(fn (Login $livewire) => $livewire->usingRecoveryCode)
                             ->required(fn (Login $livewire) => $livewire->needsMFA)
