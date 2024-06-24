@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages;
 
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
+use Illuminate\Support\HtmlString;
 use App\Filament\Resources\UserResource;
 use Filament\Resources\Pages\ViewRecord;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -94,8 +95,7 @@ class ViewEngagement extends ViewRecord
                                     ->hidden(fn ($state): bool => blank($state))
                                     ->columnSpanFull(),
                                 TextEntry::make('body')
-                                    ->getStateUsing(fn (Engagement $engagement): string => $engagement->getBody())
-                                    ->markdown()
+                                    ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getBody())
                                     ->columnSpanFull(),
                             ]),
                     ])

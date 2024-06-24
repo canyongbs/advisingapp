@@ -89,7 +89,6 @@ class EditProfile extends Page
 
     public ?array $data = [];
 
-    //TODO: I feel like a lot of these could be refactored into a settings file instead of adding them directly to the user migration.
     public function form(Form $form): Form
     {
         /** @var User $user */

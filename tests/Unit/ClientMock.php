@@ -44,7 +44,7 @@ use Twilio\Http\Client as HttpClient;
 class ClientMock extends Client
 {
     public function __construct(
-        $messageList,
+        $messageList = null,
         string $username = null,
         string $password = null,
         string $accountSid = null,

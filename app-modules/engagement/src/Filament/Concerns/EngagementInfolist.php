@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Engagement\Filament\Concerns;
 
+use Illuminate\Support\HtmlString;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -56,8 +57,7 @@ trait EngagementInfolist
                         ->hidden(fn ($state): bool => blank($state))
                         ->columnSpanFull(),
                     TextEntry::make('body')
-                        ->getStateUsing(fn (Engagement $engagement): string => $engagement->getBody())
-                        ->markdown()
+                        ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getBody())
                         ->columnSpanFull(),
                 ]),
             Fieldset::make('deliverable')

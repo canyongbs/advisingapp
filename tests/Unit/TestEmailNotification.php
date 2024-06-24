@@ -50,7 +50,6 @@ class TestEmailNotification extends BaseNotification implements EmailNotificatio
         return MailMessage::make()
             ->subject('Test Subject')
             ->greeting('Test Greeting')
-            ->content('This is a test email')
-            ->salutation('Test Salutation');
+            ->content('This is a test email');
     }
 }

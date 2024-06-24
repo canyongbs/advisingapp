@@ -46,6 +46,6 @@ class EngagementSmsChannelDelivery extends QueuedEngagementDelivery
             ->deliverable
             ->engagement
             ->recipient
-            ->notify(new EngagementSmsNotification($this->deliverable));
+            ->notifyNow(new EngagementSmsNotification($this->deliverable));
     }
 }

@@ -31,6 +31,11 @@
 
 </COPYRIGHT>
 --}}
+
+@php
+    use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthenticationManagement;
+@endphp
+
 <x-filament-panels::page.simple>
     @if (filament()->hasRegistration())
         <x-slot name="subheading">
@@ -41,6 +46,21 @@
     @endif
 
     <x-filament-panels::form wire:submit="authenticate">
+        @if ($this->needsMfaSetup)
+            <h3 class="flex items-center gap-2 text-lg font-medium">
+                @svg('heroicon-o-question-mark-circle', 'w-6')
+                Multifactor authentication is required for your account.
+            </h3>
+            <p class="text-sm">To finish enabling two factor authentication, scan the following QR code using your
+                phone's authenticator application or enter the setup key and provide the generated OTP code.</p>
+            <div class="mt-3 flex space-x-4">
+                <div>
+                    {!! $this->getMultifactorQrCode() !!}
+                    <p class="pt-2 text-sm">Setup key {{ decrypt($this->user->multifactor_secret) }}</p>
+                </div>
+            </div>
+        @endif
+
         {{ $this->form }}
 
         <x-filament-panels::form.actions
