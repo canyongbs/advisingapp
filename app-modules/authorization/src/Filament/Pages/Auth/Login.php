@@ -51,19 +51,25 @@ use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
 use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
+use Illuminate\Support\Facades\Log;
 
 class Login extends FilamentLogin
 {
     protected static string $view = 'authorization::login';
 
-    #[Locked]
-    protected ?User $user = null;
+    public ?array $data;
 
     #[Locked]
-    protected bool $needsMfaSetup = false;
+    public ?User $user;
 
     #[Locked]
-    protected bool $needsMFA = false;
+    public bool $needsMfaSetup = false;
+
+    #[Locked]
+    public bool $needsMFA = false;
+
+    #[Locked]
+    public bool $usingRecoveryCode = false;
 
     public function authenticate(): ?LoginResponse
     {
@@ -78,6 +84,8 @@ class Login extends FilamentLogin
         }
 
         $data = $this->form->getState();
+
+        Log::debug(json_encode($data));
 
         if (! Filament::auth()->once($this->getCredentialsFromFormData($data))) {
             $this->throwFailureValidationException();
@@ -186,17 +194,33 @@ class Login extends FilamentLogin
                 $this->makeForm()
                     ->schema([
                         $this->getEmailFormComponent()
-                            ->hidden(fn (Login $livewire) => $livewire->needsMFA),
+                            ->hidden(fn (Login $livewire) => $livewire->needsMFA)
+                            ->dehydratedWhenHidden(),
                         $this->getPasswordFormComponent()
-                            ->hidden(fn (Login $livewire) => $livewire->needsMFA),
+                            ->hidden(fn (Login $livewire) => $livewire->needsMFA)
+                            ->dehydratedWhenHidden(),
                         $this->getRememberFormComponent()
-                            ->hidden(fn (Login $livewire) => $livewire->needsMFA),
+                            ->hidden(fn (Login $livewire) => $livewire->needsMFA)
+                            ->dehydratedWhenHidden(),
                         TextInput::make('code')
-                            ->label('Mutlifactor Authentication Code')
-                            ->placeholder('###-###')
-                            ->mask('999-999')
-                            ->stripCharacters('-')
-                            ->numeric()
+                            ->label(fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                                ? 'Multifactor Authentication Code'
+                                : 'Multifactor Recovery Code'
+                            )
+                            ->placeholder(fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                                ? '###-###'
+                                : 'abcdef-98765'
+                            )
+                            ->mask(fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                                ? '999-999'
+                                : null
+                            )
+                            ->stripCharacters(fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                                ? '-'
+                                : null
+                            )
+                            ->numeric(fn (Login $livewire) => ! $livewire->usingRecoveryCode)
+                            ->string(fn (Login $livewire) => $livewire->usingRecoveryCode)
                             ->required(fn (Login $livewire) => $livewire->needsMFA)
                             ->hidden(fn (Login $livewire) => ! $livewire->needsMFA)
                             ->dehydratedWhenHidden(),
@@ -204,5 +228,10 @@ class Login extends FilamentLogin
                     ->statePath('data'),
             ),
         ];
+    }
+
+    public function toggleUsingRecoveryCodes(): void
+    {
+        $this->usingRecoveryCode = ! $this->usingRecoveryCode;
     }
 }
