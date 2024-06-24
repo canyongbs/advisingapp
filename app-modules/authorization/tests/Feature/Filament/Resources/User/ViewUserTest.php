@@ -53,11 +53,9 @@ it('renders impersonate button for non super admin users when user is super admi
 
     $user = User::factory()->create();
 
-    $component = livewire(ViewUser::class, [
+    livewire(ViewUser::class, [
         'record' => $user->getRouteKey(),
-    ]);
-
-    $component
+    ])
         ->assertSuccessful()
         ->assertActionVisible(Impersonate::class);
 });
@@ -69,11 +67,9 @@ it('does not render impersonate button for super admin users at all', function (
     $user = User::factory()->create();
     asSuperAdmin($user);
 
-    $component = livewire(ViewUser::class, [
+    livewire(ViewUser::class, [
         'record' => $superAdmin->getRouteKey(),
-    ]);
-
-    $component
+    ])
         ->assertSuccessful()
         ->assertActionHidden(Impersonate::class);
 });
@@ -101,11 +97,9 @@ it('allows super admin user to impersonate', function () {
 
     $user = User::factory()->create();
 
-    $component = livewire(ViewUser::class, [
+    livewire(ViewUser::class, [
         'record' => $user->getRouteKey(),
-    ]);
-
-    $component
+    ])
         ->assertSuccessful()
         ->callAction(Impersonate::class);
 
@@ -120,11 +114,9 @@ it('allows user with permission to impersonate', function () {
 
     $second = User::factory()->create();
 
-    $component = livewire(ViewUser::class, [
+    livewire(ViewUser::class, [
         'record' => $second->getRouteKey(),
-    ]);
-
-    $component
+    ])
         ->assertSuccessful()
         ->callAction(Impersonate::class);
 
@@ -133,9 +125,7 @@ it('allows user with permission to impersonate', function () {
 });
 
 it('does not display the mfa_status Action for an external User', function () {
-    $user = User::factory()->create([
-        'is_external' => true,
-    ]);
+    $user = User::factory()->external()->create();
 
     asSuperAdmin();
 
@@ -152,11 +142,9 @@ it('displays the proper mfa_status Action for an internal User without MFA enabl
 
     asSuperAdmin();
 
-    $component = livewire(ViewUser::class, [
+    livewire(ViewUser::class, [
         'record' => $user->getRouteKey(),
-    ]);
-
-    $component
+    ])
         ->assertActionHasLabel('mfa_status', 'MFA Disabled')
         ->assertActionHasColor('mfa_status', 'gray');
 });
@@ -170,11 +158,9 @@ it('displays the proper mfa_status Action for an internal User with MFA enabled 
 
     asSuperAdmin();
 
-    $component = livewire(ViewUser::class, [
+    livewire(ViewUser::class, [
         'record' => $user->getRouteKey(),
-    ]);
-
-    $component
+    ])
         ->assertActionHasLabel('mfa_status', 'MFA Enabled | Not Confirmed')
         ->assertActionHasColor('mfa_status', 'warning');
 });
@@ -186,25 +172,19 @@ it('displays the proper mfa_status Action for an internal User with MFA enabled 
 
     $user->enableMultifactorAuthentication();
 
-    $user->forceFill([
-        'multifactor_confirmed_at' => now(),
-    ])->save();
+    $user->confirmMultifactorAuthentication();
 
     asSuperAdmin();
 
-    $component = livewire(ViewUser::class, [
+    livewire(ViewUser::class, [
         'record' => $user->getRouteKey(),
-    ]);
-
-    $component
+    ])
         ->assertActionHasLabel('mfa_status', 'MFA Enabled')
         ->assertActionHasColor('mfa_status', 'success');
 });
 
 it('does not display the mfa_reset Action if the user is external', function () {
-    $user = User::factory()->create([
-        'is_external' => true,
-    ]);
+    $user = User::factory()->external()->create();
 
     asSuperAdmin();
 
@@ -215,15 +195,11 @@ it('does not display the mfa_reset Action if the user is external', function () 
 });
 
 it('does not display the mfa_reset Action if the authed user does not have the proper permission', function () {
-    $user = User::factory()->create([
-        'is_external' => true,
-    ]);
+    $user = User::factory()->external()->create();
 
     $user->enableMultifactorAuthentication();
 
-    $user->forceFill([
-        'multifactor_confirmed_at' => now(),
-    ])->save();
+    $user->confirmMultifactorAuthentication();
 
     $actingAsUser = User::factory()->create();
     $actingAsUser->givePermissionTo('user.view-any', 'user.*.view');
@@ -253,11 +229,9 @@ it('displays the mfa_reset Action if the user is internal, has MFA enabled and/o
     $actingAsUser->givePermissionTo('user.view-any', 'user.*.view', 'user.*.update');
     actingAs($actingAsUser);
 
-    $component = livewire(ViewUser::class, [
+    livewire(ViewUser::class, [
         'record' => $user->getRouteKey(),
-    ]);
-
-    $component
+    ])
         ->assertActionVisible('mfa_reset');
 })->with([
     'Has MFA Enabled' => function () {
@@ -278,9 +252,7 @@ it('displays the mfa_reset Action if the user is internal, has MFA enabled and/o
             function (User $user) {
                 $user->enableMultifactorAuthentication();
 
-                $user->forceFill([
-                    'multifactor_confirmed_at' => now(),
-                ])->save();
+                $user->confirmMultifactorAuthentication();
             }
         );
     },
@@ -293,9 +265,7 @@ it('resets the users MFA when the mfa_reset Action is triggered', function () {
 
     $user->enableMultifactorAuthentication();
 
-    $user->forceFill([
-        'multifactor_confirmed_at' => now(),
-    ])->save();
+    $user->confirmMultifactorAuthentication();
 
     $user->refresh();
 
@@ -305,11 +275,9 @@ it('resets the users MFA when the mfa_reset Action is triggered', function () {
 
     asSuperAdmin();
 
-    $component = livewire(ViewUser::class, [
+    livewire(ViewUser::class, [
         'record' => $user->getRouteKey(),
-    ]);
-
-    $component
+    ])
         ->callAction('mfa_reset');
 
     $user->refresh();
