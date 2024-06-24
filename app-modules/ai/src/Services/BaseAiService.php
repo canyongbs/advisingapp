@@ -34,42 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Services;
 
-use OpenAI;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Services\Contracts\AiService;
+use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
 
-class OpenAiGpt35Service extends BaseOpenAiService
+abstract class BaseAiService implements AiService, AiServiceLifecycleHooks
 {
-    public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_35_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
-    }
+    public function afterThreadSelected(AiThread $thread): void {}
 
-    public function getApiKey(): string
-    {
-        return $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key');
-    }
-
-    public function getApiVersion(): string
-    {
-        return config('integration-open-ai.gpt_35_api_version');
-    }
-
-    public function getDeployment(): ?string
-    {
-        return $this->settings->open_ai_gpt_35_base_uri ?? config('integration-open-ai.gpt_35_base_uri');
-    }
-
-    public function getModel(): string
-    {
-        return $this->settings->open_ai_gpt_35_model ?? config('integration-open-ai.gpt_35_model');
-    }
+    public function afterLoadFirstThread(AiThread $thread): void {}
 }

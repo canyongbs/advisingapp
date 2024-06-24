@@ -44,17 +44,11 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
-use AdvisingApp\Ai\Services\Contracts\SupportsFileUploads;
-use AdvisingApp\Ai\DataTransferObjects\Files\FilesDataTransferObject;
 use AdvisingApp\Ai\DataTransferObjects\Threads\ThreadsDataTransferObject;
-use AdvisingApp\Ai\DataTransferObjects\VectorStores\VectorStoresDataTransferObject;
-use AdvisingApp\Ai\DataTransferObjects\VectorStoreFiles\VectorStoreFilesDataTransferObject;
 
-class TestAiService implements Contracts\AiService, SupportsFileUploads
+class TestAiService implements Contracts\AiService
 {
     use HasAiServiceHelpers;
-
-    public array $uploadedFiles = [];
 
     public function enableAssistantFileUploads(AiAssistant $assistant): void {}
 
@@ -63,8 +57,6 @@ class TestAiService implements Contracts\AiService, SupportsFileUploads
     public function createAssistant(AiAssistant $assistant): void {}
 
     public function updateAssistant(AiAssistant $assistant): void {}
-
-    public function updateAssistantTools(AiAssistant $assistant, array $tools): void {}
 
     public function isAssistantExisting(AiAssistant $assistant): bool
     {
@@ -94,49 +86,6 @@ class TestAiService implements Contracts\AiService, SupportsFileUploads
     public function isThreadExisting(AiThread $thread): bool
     {
         return true;
-    }
-
-    public function createVectorStore(array $parameters): VectorStoresDataTransferObject
-    {
-        return VectorStoresDataTransferObject::from([
-            'id' => fake()->uuid(),
-            'name' => fake()->word(),
-            'fileCounts' => [],
-            'status' => 'processed',
-            'expiresAt' => null,
-        ]);
-    }
-
-    public function retrieveVectorStore(string $vectorStoreId): VectorStoresDataTransferObject
-    {
-        return VectorStoresDataTransferObject::from([
-            'id' => $vectorStoreId,
-            'name' => fake()->word(),
-            'fileCounts' => [],
-            'status' => 'processed',
-            'expiresAt' => null,
-        ]);
-    }
-
-    public function modifyVectorStore(string $vectorStoreId, array $parameters): void {}
-
-    public function retrieveVectorStoreFiles(AiThread $thread, string $vectorStoreId, array $params): VectorStoreFilesDataTransferObject
-    {
-        return VectorStoreFilesDataTransferObject::from([
-            'data' => [],
-            'firstId' => fake()->uuid(),
-            'lastId' => fake()->uuid(),
-            'hasMore' => false,
-        ]);
-    }
-
-    public function retrieveFile(AiMessageFile $file): FilesDataTransferObject
-    {
-        return FilesDataTransferObject::from([
-            'id' => $file->file_id,
-            'name' => fake()->word(),
-            'status' => 'processed',
-        ]);
     }
 
     public function sendMessage(AiMessage $message, array $files, Closure $saveResponse): Closure

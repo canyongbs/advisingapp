@@ -34,36 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Services\Contracts;
+namespace AdvisingApp\IntegrationOpenAi\Exceptions;
 
-use Illuminate\Support\Collection;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\DataTransferObjects\Files\FilesDataTransferObject;
-use AdvisingApp\Ai\DataTransferObjects\VectorStores\VectorStoresDataTransferObject;
-use AdvisingApp\Ai\DataTransferObjects\VectorStoreFiles\VectorStoreFilesDataTransferObject;
+use Exception;
 
-interface SupportsFileUploads
+class FileUploadsCannotBeEnabled extends Exception
 {
-    public function enableAssistantFileUploads(AiAssistant $assistant): void;
-
-    public function disableAssistantFileUploads(AiAssistant $assistant): void;
-
-    /**
-     * This method accepts an array of files to be uploaded to the client
-     * for a specific message, returning a collection of unsaved `AiMessageFile` records.
-     */
-    public function createFiles(AiMessage $message, array $files): Collection;
-
-    public function retrieveFile(AiMessageFile $file): FilesDataTransferObject;
-
-    public function createVectorStore(array $parameters): VectorStoresDataTransferObject;
-
-    public function retrieveVectorStore(string $vectorStoreId): VectorStoresDataTransferObject;
-
-    public function modifyVectorStore(string $vectorStoreId, array $parameters): void;
-
-    public function retrieveVectorStoreFiles(AiThread $thread, string $vectorStoreId, array $params): VectorStoreFilesDataTransferObject;
+    public function __construct($message = 'File uploads cannot be enabled for this assistant.')
+    {
+        parent::__construct($message);
+    }
 }

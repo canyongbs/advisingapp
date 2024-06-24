@@ -43,15 +43,17 @@ use AdvisingApp\Ai\Models\AiMessage;
 use OpenAI\Contracts\ClientContract;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
+use AdvisingApp\Ai\Services\BaseAiService;
 use OpenAI\Responses\Threads\ThreadResponse;
-use AdvisingApp\Ai\Services\Contracts\AiService;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
+use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
 use AdvisingApp\Ai\DataTransferObjects\Threads\ThreadsDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
 
-abstract class BaseOpenAiService implements AiService
+abstract class BaseOpenAiService extends BaseAiService
 {
     use HasAiServiceHelpers;
 
@@ -62,8 +64,6 @@ abstract class BaseOpenAiService implements AiService
     abstract public function getApiKey(): string;
 
     abstract public function getApiVersion(): string;
-
-    abstract public function getDeployment(): string;
 
     abstract public function getModel(): string;
 
@@ -111,6 +111,16 @@ abstract class BaseOpenAiService implements AiService
         $this->client->assistants()->modify($assistant->assistant_id, [
             'tools' => $tools,
         ]);
+    }
+
+    public function enableAssistantFileUploads(AiAssistant $assistant): void
+    {
+        throw new FileUploadsCannotBeEnabled();
+    }
+
+    public function disableAssistantFileUploads(AiAssistant $assistant): void
+    {
+        throw new FileUploadsCannotBeDisabled();
     }
 
     public function createThread(AiThread $thread): void

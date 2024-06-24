@@ -38,15 +38,39 @@ namespace AdvisingApp\IntegrationOpenAi\Services\Concerns;
 
 use CURLFile;
 use Illuminate\Support\Collection;
+use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
+use Illuminate\Support\Facades\Http;
 use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Exceptions\UploadedFileCouldNotBeProcessed;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadException;
+use AdvisingApp\Ai\DataTransferObjects\Files\FilesDataTransferObject;
+use AdvisingApp\Ai\DataTransferObjects\VectorStores\VectorStoresDataTransferObject;
+use AdvisingApp\Ai\DataTransferObjects\VectorStoreFiles\VectorStoreFilesDataTransferObject;
 
 trait UploadsFiles
 {
     public function supportsFileUploads(): bool
     {
         return true;
+    }
+
+    public function afterThreadSelected(AiThread $thread): void
+    {
+        if (! is_null($expiredVectorStores = $this->getExpiredVectorStoresForThread($thread))) {
+            foreach ($expiredVectorStores as $expiredVectorStore) {
+                $this->recreateVectorStoreForThread($thread, $expiredVectorStore);
+            }
+        }
+    }
+
+    public function afterLoadFirstThread(AiThread $thread): void
+    {
+        if (! is_null($expiredVectorStores = $this->getExpiredVectorStoresForThread($thread))) {
+            foreach ($expiredVectorStores as $expiredVectorStore) {
+                $this->recreateVectorStoreForThread($thread, $expiredVectorStore);
+            }
+        }
     }
 
     public function createFiles(AiMessage $message, array $files): Collection
@@ -63,6 +87,173 @@ trait UploadsFiles
 
             return $fileRecord;
         });
+    }
+
+    public function retrieveFile(AiMessageFile $file): FilesDataTransferObject
+    {
+        $response = $this->client->files()->retrieve($file->file_id);
+
+        return FilesDataTransferObject::from([
+            'id' => $response->id,
+            'name' => $response->filename,
+            'status' => $response->status,
+        ]);
+    }
+
+    public function createVectorStore(array $parameters): VectorStoresDataTransferObject
+    {
+        $response = $this->client->vectorStores()->create($parameters);
+
+        return VectorStoresDataTransferObject::from([
+            'id' => $response->id,
+            'name' => $response->name,
+            'fileCounts' => get_object_vars($response->fileCounts),
+            'status' => $response->status,
+            'expiresAt' => $response->expiresAt,
+        ]);
+    }
+
+    public function retrieveVectorStore(string $vectorStoreId): VectorStoresDataTransferObject
+    {
+        $response = $this->client->vectorStores()->retrieve($vectorStoreId);
+
+        return VectorStoresDataTransferObject::from([
+            'id' => $response->id,
+            'name' => $response->name,
+            'fileCounts' => get_object_vars($response->fileCounts),
+            'status' => $response->status,
+            'expiresAt' => $response->expiresAt,
+        ]);
+    }
+
+    /**
+     * The `openai-php/client` does not current work with the `GET /vector_stores/{vectorStoreId}/files` endpoint
+     * for Azure Open AI. This is due to the expectation of a `chunking_strategy` key in the response, which Azure
+     * does not provide. An issue has been opened, but this request needs to happen without the client for now.
+     */
+    protected function retrieveVectorStoreFiles(AiThread $thread, string $vectorStoreId, array $params): VectorStoreFilesDataTransferObject
+    {
+        $service = $thread->assistant->model->getService();
+
+        $response = Http::withHeaders([
+            'api-key' => $service->getApiKey(),
+            'OpenAI-Beta' => 'assistants=v2',
+            'Content-Type' => 'application/json',
+        ])
+            ->withQueryParameters(
+                $params,
+            )
+            ->get($service->getDeployment() . '/vector_stores/' . $vectorStoreId . '/files', [
+                'api-version' => $service->getApiVersion(),
+            ]);
+
+        return VectorStoreFilesDataTransferObject::from([
+            'object' => $response->json()['object'],
+            'data' => $response->json()['data'],
+            'firstId' => $response->json()['first_id'],
+            'lastId' => $response->json()['last_id'],
+            'hasMore' => $response->json()['has_more'],
+        ]);
+    }
+
+    protected function awaitVectorStoreProcessing(AiThread $thread, VectorStoresDataTransferObject $vectorStore): void
+    {
+        $timeout = 60;
+
+        $vectorStoreResponseStatus = $vectorStore->status;
+
+        while ($vectorStoreResponseStatus !== 'completed') {
+            if ($timeout <= 0) {
+                throw new UploadedFileCouldNotBeProcessed();
+            }
+
+            usleep(500000);
+
+            $vectorStoreResponseStatus = $thread->assistant->model->getService()->retrieveVectorStore($vectorStore->id)->status;
+
+            $timeout -= 0.5;
+        }
+    }
+
+    protected function retrieveAllVectorStoreFileIds(AiThread $thread, string $vectorStoreId, array &$vectorStoreFileIds = [], $after = null)
+    {
+        $params = [];
+
+        if ($after !== null) {
+            $params['after'] = $after;
+        }
+
+        $response = $thread->assistant->model->getService()->retrieveVectorStoreFiles($thread, $vectorStoreId, $params);
+
+        collect($response->data)->each(function ($file) use (&$vectorStoreFileIds) {
+            $vectorStoreFileIds[] = $file['id'];
+        });
+
+        if ($response->hasMore === true) {
+            $this->retrieveAllVectorStoreFileIds(
+                thread: $thread,
+                vectorStoreId: $vectorStoreId,
+                vectorStoreFileIds: $vectorStoreFileIds,
+                after: $response->lastId
+            );
+        }
+    }
+
+    protected function recreateVectorStoreForThread(AiThread $thread, array $vectorStore): void
+    {
+        $vectorStoreFileIds = [];
+
+        $this->retrieveAllVectorStoreFileIds(
+            thread: $thread,
+            vectorStoreId: $vectorStore['id'],
+            vectorStoreFileIds: $vectorStoreFileIds
+        );
+
+        // Create new vector store
+        $newVectorStore = $this->createVectorStore([
+            'file_ids' => $vectorStoreFileIds,
+            'name' => 'Refreshed vector store ' . now()->timestamp . ' for thread' . $thread->id,
+        ]);
+
+        // Update the thread to use the new vector store.
+        $thread->assistant->model->getService()->modifyThread($thread, [
+            'tool_resources' => [
+                'file_search' => [
+                    'vector_store_ids' => [$newVectorStore->id],
+                ],
+            ],
+        ]);
+
+        // Ensure the new vector store has processed all of its files.
+        $this->awaitVectorStoreProcessing(
+            thread: $thread,
+            vectorStore: $newVectorStore
+        );
+    }
+
+    protected function getExpiredVectorStoresForThread(AiThread $thread): ?array
+    {
+        if (! $this->supportsFileUploads()) {
+            return null;
+        }
+
+        $thread = $this->retrieveThread($thread);
+
+        // Currently threads only support a single vector store
+        $expiredVectorStores = collect($thread->vectorStoreIds)
+            ->map(function ($vectorStoreId) {
+                $vectorStoreResponse = $this->retrieveVectorStore($vectorStoreId);
+
+                if ($vectorStoreResponse->status === 'expired') {
+                    return $vectorStoreResponse;
+                }
+
+                return null;
+            })
+            ->filter()
+            ->toArray();
+
+        return ! empty($expiredVectorStores) ? $expiredVectorStores : null;
     }
 
     protected function uploadFileToClient(AiMessage $message, AiMessageFile $file): string

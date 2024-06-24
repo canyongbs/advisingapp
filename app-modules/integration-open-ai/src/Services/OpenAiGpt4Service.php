@@ -68,7 +68,7 @@ class OpenAiGpt4Service extends BaseOpenAiService
         return $this->settings->open_ai_gpt_4_model ?? config('integration-open-ai.gpt_4_model');
     }
 
-    public function getDeployment(): string
+    public function getDeployment(): ?string
     {
         return $this->settings->open_ai_gpt_4_base_uri ?? config('integration-open-ai.gpt_4_base_uri');
     }

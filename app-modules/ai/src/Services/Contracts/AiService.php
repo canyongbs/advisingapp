@@ -57,14 +57,13 @@ interface AiService
      */
     public function updateAssistant(AiAssistant $assistant): void;
 
-    /**
-     * Override and update the existing tools set on an Assistant
-     */
-    public function updateAssistantTools(AiAssistant $assistant, array $tools): void;
-
     public function isAssistantExisting(AiAssistant $assistant): bool;
 
     public function ensureAssistantExists(AiAssistant $assistant): void;
+
+    public function enableAssistantFileUploads(AiAssistant $assistant): void;
+
+    public function disableAssistantFileUploads(AiAssistant $assistant): void;
 
     /**
      * This method is passed an unsaved `AiThread` model and should fill
@@ -111,9 +110,7 @@ interface AiService
 
     public function getMaxAssistantInstructionsLength(): int;
 
+    public function supportsFileUploads(): bool;
+
     public function getDeployment(): ?string;
-
-    public function getApiKey(): string;
-
-    public function getApiVersion(): string;
 }
