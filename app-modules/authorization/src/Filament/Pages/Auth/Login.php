@@ -85,8 +85,6 @@ class Login extends FilamentLogin
 
         $data = $this->form->getState();
 
-        Log::debug(json_encode($data));
-
         if (! Filament::auth()->once($this->getCredentialsFromFormData($data))) {
             $this->throwFailureValidationException();
         }
@@ -128,10 +126,12 @@ class Login extends FilamentLogin
                     return null;
                 }
 
-                if (! app(MultifactorService::class)->verify(code: $data['code'], user: $user)) {
+                if (! $this->isValidCode($user, $data['code'])) {
                     Filament::auth()->logout();
 
                     $this->needsMFA = false;
+                    
+                    $this->usingRecoveryCode = false;
 
                     $this->data['code'] = null;
 
@@ -142,6 +142,10 @@ class Login extends FilamentLogin
 
                 if (empty($user->multifactor_confirmed_at)) {
                     $user->confirmMultifactorAuthentication();
+                }
+
+                if ($this->usingRecoveryCode) {
+                    $user->destroyRecoveryCode($data['code']);
                 }
             }
         }
@@ -156,6 +160,17 @@ class Login extends FilamentLogin
     public function getMultifactorQrCode()
     {
         return app(MultifactorService::class)->getMultifactorQrCodeSvg($this->user->getMultifactorQrCodeUrl());
+    }
+
+    protected function isValidCode(User $user, string $code): bool
+    {
+        if ($this->usingRecoveryCode) {
+            return collect($user->multifactor_recovery_codes)->contains(function (string $recoveryCode) use ($code) {
+                return hash_equals($recoveryCode, $code);
+            });
+        }
+
+        return app(MultifactorService::class)->verify(code: $code, user: $user);
     }
 
     protected function getSsoFormActions(): array
