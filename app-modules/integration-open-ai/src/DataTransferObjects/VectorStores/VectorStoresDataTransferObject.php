@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\DataTransferObjects\VectorStores;
+namespace AdvisingApp\IntegrationOpenAi\DataTransferObjects\VectorStores;
 
 use Spatie\LaravelData\Data;
 

@@ -34,14 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\DataTransferObjects\Threads;
+namespace AdvisingApp\IntegrationOpenAi\DataTransferObjects\VectorStoreFiles;
 
 use Spatie\LaravelData\Data;
 
-class ThreadsDataTransferObject extends Data
+class VectorStoreFilesDataTransferObject extends Data
 {
     public function __construct(
-        public string $id,
-        public array $vectorStoreIds = [],
+        public array $data,
+        public string $firstId,
+        public string $lastId,
+        public bool $hasMore,
     ) {}
 }

@@ -40,7 +40,6 @@ use Closure;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\DataTransferObjects\Threads\ThreadsDataTransferObject;
 
 interface AiService
 {
@@ -71,10 +70,6 @@ interface AiService
      * the AI service, such as the `thread_id`.
      */
     public function createThread(AiThread $thread): void;
-
-    public function retrieveThread(AiThread $thread): ThreadsDataTransferObject;
-
-    public function modifyThread(AiThread $thread, array $parameters): ThreadsDataTransferObject;
 
     /**
      * This method is passed an `AiThread` model and should trigger

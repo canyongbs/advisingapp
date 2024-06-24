@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\DataTransferObjects\Files;
+namespace AdvisingApp\IntegrationOpenAi\DataTransferObjects\Files;
 
 use Spatie\LaravelData\Data;
 

@@ -44,9 +44,9 @@ use Illuminate\Support\Facades\Http;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Exceptions\UploadedFileCouldNotBeProcessed;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadException;
-use AdvisingApp\Ai\DataTransferObjects\Files\FilesDataTransferObject;
-use AdvisingApp\Ai\DataTransferObjects\VectorStores\VectorStoresDataTransferObject;
-use AdvisingApp\Ai\DataTransferObjects\VectorStoreFiles\VectorStoreFilesDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Files\FilesDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\VectorStores\VectorStoresDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\VectorStoreFiles\VectorStoreFilesDataTransferObject;
 
 trait UploadsFiles
 {

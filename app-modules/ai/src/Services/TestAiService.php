@@ -44,11 +44,15 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
-use AdvisingApp\Ai\DataTransferObjects\Threads\ThreadsDataTransferObject;
+use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
 
-class TestAiService implements Contracts\AiService
+class TestAiService implements Contracts\AiService, AiServiceLifecycleHooks
 {
     use HasAiServiceHelpers;
+
+    public function afterThreadSelected(AiThread $thread): void {}
+
+    public function afterLoadFirstThread(AiThread $thread): void {}
 
     public function enableAssistantFileUploads(AiAssistant $assistant): void {}
 
@@ -64,22 +68,6 @@ class TestAiService implements Contracts\AiService
     }
 
     public function createThread(AiThread $thread): void {}
-
-    public function retrieveThread(AiThread $thread): ThreadsDataTransferObject
-    {
-        return ThreadsDataTransferObject::from([
-            'id' => $thread->id,
-            'vectorStoreIds' => [],
-        ]);
-    }
-
-    public function modifyThread(AiThread $thread, array $parameters): ThreadsDataTransferObject
-    {
-        return ThreadsDataTransferObject::from([
-            'id' => $thread->id,
-            'vectorStoreIds' => [],
-        ]);
-    }
 
     public function deleteThread(AiThread $thread): void {}
 
