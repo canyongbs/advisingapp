@@ -40,6 +40,7 @@ use App\Models\User;
 use AdvisingApp\Ai\Models\AiThread;
 use App\Models\NotificationSetting;
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
@@ -96,6 +97,12 @@ class SendAssistantTranscriptNotification extends BaseNotification implements Em
             });
 
         return $message;
+    }
+
+    protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
+    {
+        $this->thread->emailed = $this->thread->emailed + 1;
+        $this->thread->save();
     }
 
     private function resolveNotificationSetting(User $notifiable): ?NotificationSetting

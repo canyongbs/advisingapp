@@ -67,8 +67,9 @@ class CloneAiThread implements ShouldQueue
 
     public function handle(): void
     {
-        $threadReplica = $this->thread->replicate(except: ['id', 'thread_id', 'folder_id']);
+        $threadReplica = $this->thread->replicate(except: ['id', 'thread_id', 'folder_id', 'saved_at', 'emailed', 'cloned']);
         $threadReplica->user()->associate($this->recipient);
+        $threadReplica->saved_at = now();
         $threadReplica->save();
 
         foreach ($this->thread->messages as $message) {
@@ -81,6 +82,9 @@ class CloneAiThread implements ShouldQueue
 
         $threadReplica->locked_at = now();
         $threadReplica->save();
+
+        $this->thread->cloned = $this->thread->cloned + 1;
+        $this->thread->save();
 
         try {
             $aiService->ensureAssistantAndThreadExists($threadReplica->assistant);
