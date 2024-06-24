@@ -216,7 +216,7 @@ trait CanManageThreads
 
         $this->thread = $thread;
 
-        $this->thread->assistant->model->getService()->afterThreadSelected();
+        $this->thread->assistant->model->getService()->afterThreadSelected($this->thread);
     }
 
     public function saveThreadAction(): Action
