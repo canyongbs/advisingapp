@@ -142,6 +142,13 @@ class Login extends FilamentLogin
 
                 if (empty($user->multifactor_confirmed_at)) {
                     $user->confirmMultifactorAuthentication();
+
+                    $this->mountAction('recoveryCodes', [
+                        'user' => $user,
+                        'remember' => $data['remember']
+                    ]);
+
+                    return null;
                 }
 
                 if ($this->usingRecoveryCode) {
@@ -155,6 +162,29 @@ class Login extends FilamentLogin
         session()->regenerate();
 
         return app(LoginResponse::class);
+    }
+
+    public function recoveryCodesAction(): Action
+    {
+        return Action::make('recoveryCodes')
+            ->label('Recovery Codes')
+            ->requiresConfirmation()
+            ->modalDescription('')
+            ->modalCancelAction(false)
+            ->closeModalByClickingAway(false)
+            ->closeModalByEscaping(false)
+            ->modalCloseButton(false)
+            ->modalSubmitActionLabel('Okay')
+            ->modalContent(view('multifactor-authentication::filament.actions.recovery-codes-modal', [
+                'codes' => collect($this->user->multifactor_recovery_codes),
+            ]))
+            ->action(function (array $arguments) {
+                Filament::auth()->login($arguments['user'], $arguments['remember'] ?? false);
+
+                session()->regenerate();
+
+                redirect()->route('filament.admin.pages.dashboard');
+            });
     }
 
     public function getMultifactorQrCode()
