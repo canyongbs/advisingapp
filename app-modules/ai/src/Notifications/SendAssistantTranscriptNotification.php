@@ -101,7 +101,7 @@ class SendAssistantTranscriptNotification extends BaseNotification implements Em
 
     protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
     {
-        $this->thread->emailed = $this->thread->emailed + 1;
+        $this->thread->emailed_count = $this->thread->emailed_count + 1;
         $this->thread->save();
     }
 

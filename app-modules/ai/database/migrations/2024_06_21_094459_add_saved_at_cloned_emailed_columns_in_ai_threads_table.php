@@ -9,8 +9,8 @@ return new class () extends Migration {
     {
         Schema::table('ai_threads', function (Blueprint $table) {
             $table->dateTime('saved_at')->nullable();
-            $table->integer('cloned')->default(0);
-            $table->integer('emailed')->default(0);
+            $table->integer('cloned_count')->default(0);
+            $table->integer('emailed_count')->default(0);
         });
     }
 
@@ -18,8 +18,8 @@ return new class () extends Migration {
     {
         Schema::table('ai_threads', function (Blueprint $table) {
             $table->dropColumn('saved_at');
-            $table->dropColumn('cloned');
-            $table->dropColumn('emailed');
+            $table->dropColumn('cloned_count');
+            $table->dropColumn('emailed_count');
         });
     }
 };
