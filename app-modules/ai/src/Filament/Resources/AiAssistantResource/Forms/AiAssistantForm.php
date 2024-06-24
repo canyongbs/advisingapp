@@ -63,7 +63,10 @@ class AiAssistantForm
                     ->avatar()
                     ->columnSpanFull(),
                 TextInput::make('name')
-                    ->required(),
+                    ->required()
+                    ->string()
+                    ->maxLength(255)
+                    ->columnSpanFull(),
                 Select::make('application')
                     ->options(AiApplication::class)
                     ->default(AiApplication::getDefault())
@@ -89,7 +92,6 @@ class AiAssistantForm
                             ->helperText('Instructions are used to provide context to the AI Assistant on how to respond to user queries.')
                             ->required()
                             ->maxLength(fn (?AiAssistant $record): int => ($record?->model ?? AiModel::OpenAiGpt35)->getService()->getMaxAssistantInstructionsLength()),
-                        // Textarea::make('knowledge'),
                     ]),
             ]);
     }
