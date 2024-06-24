@@ -54,10 +54,6 @@ class TestAiService implements Contracts\AiService, AiServiceLifecycleHooks
 
     public function afterLoadFirstThread(AiThread $thread): void {}
 
-    public function enableAssistantFileUploads(AiAssistant $assistant): void {}
-
-    public function disableAssistantFileUploads(AiAssistant $assistant): void {}
-
     public function createAssistant(AiAssistant $assistant): void {}
 
     public function updateAssistant(AiAssistant $assistant): void {}
@@ -112,16 +108,6 @@ class TestAiService implements Contracts\AiService, AiServiceLifecycleHooks
     public function getDeployment(): ?string
     {
         return null;
-    }
-
-    public function getApiKey(): string
-    {
-        return 'test';
-    }
-
-    public function getApiVersion(): string
-    {
-        return '1.0.0';
     }
 
     public function supportsFileUploads(): bool

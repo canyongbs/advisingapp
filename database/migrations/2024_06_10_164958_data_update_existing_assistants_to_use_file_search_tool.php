@@ -34,8 +34,10 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Database\Migrations\Migration;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
 
 return new class () extends Migration {
     public function up(): void
@@ -44,7 +46,14 @@ return new class () extends Migration {
             ->get();
 
         foreach ($assistants as $assistant) {
-            $assistant->model->getService()->enableAssistantFileUploads($assistant);
+            if ($assistant->model === AiModel::OpenAiGpt4o) {
+                /** @var AiAssistant $assistant */
+
+                /** @var OpenAiGpt4oService $service */
+                $service = $assistant->model->getService();
+
+                $service->enableAssistantFileUploads($assistant);
+            }
         }
     }
 
@@ -54,7 +63,14 @@ return new class () extends Migration {
             ->get();
 
         foreach ($assistants as $assistant) {
-            $assistant->model->getService()->disableAssistantFileUploads($assistant);
+            if ($assistant->model === AiModel::OpenAiGpt4o) {
+                /** @var AiAssistant $assistant */
+
+                /** @var OpenAiGpt4oService $service */
+                $service = $assistant->model->getService();
+
+                $service->disableAssistantFileUploads($assistant);
+            }
         }
     }
 };

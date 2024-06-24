@@ -60,10 +60,6 @@ interface AiService
 
     public function ensureAssistantExists(AiAssistant $assistant): void;
 
-    public function enableAssistantFileUploads(AiAssistant $assistant): void;
-
-    public function disableAssistantFileUploads(AiAssistant $assistant): void;
-
     /**
      * This method is passed an unsaved `AiThread` model and should fill
      * the model with any additional data that associates it with
