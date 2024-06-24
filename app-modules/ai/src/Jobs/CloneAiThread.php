@@ -83,7 +83,7 @@ class CloneAiThread implements ShouldQueue
         $threadReplica->locked_at = now();
         $threadReplica->save();
 
-        $this->thread->cloned = $this->thread->cloned + 1;
+        $this->thread->cloned_count = $this->thread->cloned_count + 1;
         $this->thread->save();
 
         try {

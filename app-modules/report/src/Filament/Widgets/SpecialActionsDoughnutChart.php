@@ -40,8 +40,8 @@ class SpecialActionsDoughnutChart extends ChartWidget
 
     protected function getData(): array
     {
-        $email_count = AiThread::sum('emailed');
-        $clone_count = AiThread::sum('cloned');
+        $email_count = AiThread::sum('emailed_count');
+        $clone_count = AiThread::sum('cloned_count');
 
         return [
             'labels' => ['Email', 'Clone'],
