@@ -40,9 +40,11 @@ use App\Models\User;
 use App\Models\BaseModel;
 use App\Models\Authenticatable;
 use Illuminate\Support\Collection;
+use AdvisingApp\Campaign\Models\Campaign;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Segment\Enums\SegmentType;
 use AdvisingApp\Segment\Enums\SegmentModel;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
@@ -52,6 +54,8 @@ use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
  */
 class Segment extends BaseModel
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'query',
         'filters',
@@ -75,6 +79,11 @@ class Segment extends BaseModel
     public function subjects(): HasMany
     {
         return $this->hasMany(SegmentSubject::class);
+    }
+
+    public function campaigns(): HasMany
+    {
+        return $this->hasMany(Campaign::class);
     }
 
     public function scopeModel(Builder $query, SegmentModel $model): void

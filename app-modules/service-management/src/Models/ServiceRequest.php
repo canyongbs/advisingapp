@@ -41,6 +41,7 @@ use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Carbon\CarbonInterface;
+use Laravel\Pennant\Feature;
 use Illuminate\Support\Facades\DB;
 use Kirschbaum\PowerJoins\PowerJoins;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -225,27 +226,35 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {
         try {
-            $action->campaign->caseload->retrieveRecords()->each(function (Educatable $educatable) use ($action) {
-                $request = ServiceRequest::create([
-                    'respondent_type' => $educatable->getMorphClass(),
-                    'respondent_id' => $educatable->getKey(),
-                    'close_details' => $action->data['close_details'],
-                    'res_details' => $action->data['res_details'],
-                    'division_id' => $action->data['division_id'],
-                    'status_id' => $action->data['status_id'],
-                    'priority_id' => $action->data['priority_id'],
-                    'created_by_id' => $action->campaign->user->id,
-                ]);
+            $campaignRelation = Feature::active('segment-as-caseload-replacement')
+                ? 'segment'
+                : 'caseload';
 
-                if ($action->data['assigned_to_id']) {
-                    $request->assignments()->create([
-                        'user_id' => $action->data['assigned_to_id'],
-                        'assigned_by_id' => $action->campaign->user->id,
-                        'assigned_at' => now(),
-                        'status' => ServiceRequestAssignmentStatus::Active,
+            $action
+                ->campaign
+                ->{$campaignRelation}
+                ->retrieveRecords()
+                ->each(function (Educatable $educatable) use ($action) {
+                    $request = ServiceRequest::create([
+                        'respondent_type' => $educatable->getMorphClass(),
+                        'respondent_id' => $educatable->getKey(),
+                        'close_details' => $action->data['close_details'],
+                        'res_details' => $action->data['res_details'],
+                        'division_id' => $action->data['division_id'],
+                        'status_id' => $action->data['status_id'],
+                        'priority_id' => $action->data['priority_id'],
+                        'created_by_id' => $action->campaign->user->id,
                     ]);
-                }
-            });
+
+                    if ($action->data['assigned_to_id']) {
+                        $request->assignments()->create([
+                            'user_id' => $action->data['assigned_to_id'],
+                            'assigned_by_id' => $action->campaign->user->id,
+                            'assigned_at' => now(),
+                            'status' => ServiceRequestAssignmentStatus::Active,
+                        ]);
+                    }
+                });
 
             return true;
         } catch (Exception $e) {

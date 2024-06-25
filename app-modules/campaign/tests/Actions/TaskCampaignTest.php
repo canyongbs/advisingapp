@@ -35,9 +35,12 @@
 */
 
 use App\Models\User;
+use Laravel\Pennant\Feature;
 use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Enums\SegmentType;
 use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -49,19 +52,27 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 it('will create the task records for educatables in the caseload', function (Collection $educatables) {
     expect(Task::count())->toBe(0);
 
-    $caseload = Caseload::factory()->create([
-        'type' => CaseloadType::Static,
-    ]);
+    Feature::active('segment-as-caseload-replacement')
+        ? $segmentOrCaseload = Segment::factory()->create([
+            'type' => SegmentType::Static,
+        ])
+        : $segmentOrCaseload = Caseload::factory()->create([
+            'type' => CaseloadType::Static,
+        ]);
 
-    $educatables->each(function (Educatable $prospect) use ($caseload) {
-        $caseload->subjects()->create([
+    $educatables->each(function (Educatable $prospect) use ($segmentOrCaseload) {
+        $segmentOrCaseload->subjects()->create([
             'subject_id' => $prospect->getKey(),
             'subject_type' => $prospect->getMorphClass(),
         ]);
     });
 
+    Feature::active('segment-as-caseload-replacement')
+        ? $foreignKey = 'segment_id'
+        : $foreignKey = 'caseload_id';
+
     $campaign = Campaign::factory()->create([
-        'caseload_id' => $caseload->id,
+        $foreignKey => $segmentOrCaseload->id,
     ]);
 
     $data = [

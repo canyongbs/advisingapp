@@ -37,6 +37,7 @@
 namespace AdvisingApp\Campaign\Database\Factories;
 
 use App\Models\User;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -50,6 +51,7 @@ class CampaignFactory extends Factory
         return [
             'user_id' => User::factory(),
             'caseload_id' => Caseload::factory(),
+            'segment_id' => Segment::factory(),
             'name' => fake()->catchPhrase(),
             'enabled' => true,
         ];
