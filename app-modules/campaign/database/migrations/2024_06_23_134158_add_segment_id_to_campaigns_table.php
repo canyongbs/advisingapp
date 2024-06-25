@@ -9,7 +9,7 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('campaigns', function (Blueprint $table) {
-            $table->foreignUuid('segment_id')->constrained('segments');
+            $table->foreignUuid('segment_id')->nullable()->constrained('segments');
             $table->dropForeign(['caseload_id']);
             $table->foreignUuid('caseload_id')->nullable()->change();
         });
