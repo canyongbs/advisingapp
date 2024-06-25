@@ -31,6 +31,10 @@
 
 </COPYRIGHT>
 --}}
+@php
+    use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthenticationManagement;
+@endphp
+
 <x-filament-panels::page>
     <x-filament-panels::form wire:submit="save">
         {{ $this->form }}
@@ -40,4 +44,18 @@
             :full-width="$this->hasFullWidthFormActions()"
         />
     </x-filament-panels::form>
+
+    <x-filament::section aside>
+        <x-slot name="heading">
+            Multifactor Authentication
+        </x-slot>
+
+        <x-slot name="description">
+            Manage multifactor authentication for your account.
+        </x-slot>
+
+        @if (!auth()->user()->is_external)
+            @livewire(MultifactorAuthenticationManagement::class)
+        @endif
+    </x-filament::section>
 </x-filament-panels::page>

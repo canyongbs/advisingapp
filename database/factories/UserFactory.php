@@ -81,6 +81,13 @@ class UserFactory extends Factory
         ]);
     }
 
+    public function internal(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_external' => false,
+        ]);
+    }
+
     /**
      * @param LicenseType | array<LicenseType> $licenseTypes
      */

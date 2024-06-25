@@ -113,4 +113,12 @@ class UserPolicy
             denyResponse: 'You do not have permission to permanently delete this user.'
         );
     }
+
+    public function resetMultifactorAuthentication(Authenticatable $authenticatable, User $model): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['user.*.update', "user.{$model->id}.update"],
+            denyResponse: 'You do not have permission to update this user, therefore you may not reset their MFA.'
+        );
+    }
 }

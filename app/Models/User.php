@@ -91,6 +91,7 @@ use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
+use AdvisingApp\MultifactorAuthentication\Traits\MultifactorAuthenticatable;
 
 /**
  * @mixin IdeHelperUser
@@ -110,6 +111,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     use Impersonate;
     use InteractsWithMedia;
     use NotifiableViaSms;
+    use MultifactorAuthenticatable;
 
     protected $hidden = [
         'remember_token',

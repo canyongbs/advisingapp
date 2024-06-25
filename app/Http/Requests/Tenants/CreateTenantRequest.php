@@ -70,6 +70,13 @@ class CreateTenantRequest extends FormRequest
             'addons.mobileApps' => ['required', 'boolean'],
             'addons.experimentalReporting' => ['required', 'boolean'],
             'addons.scheduleAndAppointments' => ['required', 'boolean'],
+            'subscription' => ['required', 'array'],
+            'subscription.clientName' => ['required', 'string'],
+            'subscription.partnerName' => ['required', 'string'],
+            'subscription.clientPo' => ['required', 'string'],
+            'subscription.partnerPo' => ['required', 'string'],
+            'subscription.startDate' => ['required', 'string'],
+            'subscription.endDate' => ['required', 'string'],
         ];
     }
 }

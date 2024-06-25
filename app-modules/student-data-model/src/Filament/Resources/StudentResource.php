@@ -39,7 +39,9 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFiles;
@@ -58,6 +60,8 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Manage
 
 class StudentResource extends Resource
 {
+    use HasGlobalSearchResultScoring;
+
     protected static ?string $model = Student::class;
 
     protected static ?string $navigationIcon = 'heroicon-m-users';
@@ -85,6 +89,15 @@ class StudentResource extends Resource
             ManageStudentApplicationSubmissions::class,
             StudentServiceManagement::class,
             ManageStudentEvents::class,
+        ]);
+    }
+
+    public static function modifyGlobalSearchQuery(Builder $query, string $search): void
+    {
+        static::scoreGlobalSearchResults($query, $search, [
+            'full_name' => 100,
+            'email' => 75,
+            'email_2' => 75,
         ]);
     }
 

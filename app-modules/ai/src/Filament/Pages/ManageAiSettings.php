@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Filament\Pages;
 
 use App\Models\User;
+use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Actions\Action;
 use Filament\Pages\SettingsPage;
@@ -48,12 +49,12 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Forms\Components\Section;
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Settings\AiSettings;
+use Filament\Forms\Components\Textarea;
 use App\Filament\Forms\Components\Slider;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Clusters\ArtificialIntelligence;
 use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
 use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
 
 /**
  * @property-read ?AiAssistant $defaultAssistant
@@ -94,13 +95,33 @@ class ManageAiSettings extends SettingsPage
     {
         return $form
             ->schema([
-                resolve(AiAssistantForm::class)->form(
-                    Section::make('Default assistant')
-                        ->statePath('defaultAssistant')
-                        ->columns(2)
-                        ->visible($this->defaultAssistant !== null)
-                        ->model($this->defaultAssistant),
-                ),
+                Section::make('Institutional Assistant')
+                    ->statePath('defaultAssistant')
+                    ->columns()
+                    ->visible($this->defaultAssistant !== null)
+                    ->model($this->defaultAssistant)
+                    ->schema([
+                        Select::make('model')
+                            ->options(fn (Get $get): array => collect(AiApplication::parse($get('application'))->getModels())
+                                ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
+                                ->all())
+                            ->searchable()
+                            ->required()
+                            ->columnSpanFull()
+                            ->visible(fn (Get $get): bool => filled($get('application'))),
+                        Textarea::make('description')
+                            ->columnSpanFull()
+                            ->required(),
+                        Section::make('Knowledge')
+                            ->description('In the configuration below, we can further tailor the behavior of the Institutional Assistant for the specific needs at your college or university.')
+                            ->schema([
+                                Textarea::make('instructions')
+                                    ->helperText('Instructions are used to provide context to the AI Assistant on how to respond to user queries.')
+                                    ->required()
+                                    ->rows(8)
+                                    ->maxLength(fn (?AiAssistant $record): int => ($record?->model ?? AiModel::OpenAiGpt35)->getService()->getMaxAssistantInstructionsLength()),
+                            ]),
+                    ]),
                 Select::make('max_tokens')
                     ->label('Response Length')
                     ->options([

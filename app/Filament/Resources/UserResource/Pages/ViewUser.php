@@ -39,6 +39,7 @@ namespace App\Filament\Resources\UserResource\Pages;
 use Carbon\Carbon;
 use App\Models\User;
 use Filament\Forms\Form;
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
@@ -99,6 +100,30 @@ class ViewUser extends ViewRecord
         $user = $this->getRecord();
 
         return [
+            Action::make('mfa_status')
+                ->badge()
+                ->disabled()
+                ->visible(fn (User $record) => ! $record->is_external)
+                ->label(fn (User $record) => match (true) {
+                    $record->hasConfirmedMultifactor() => 'MFA Enabled',
+                    $record->hasEnabledMultifactor() => 'MFA Enabled | Not Confirmed',
+                    default => 'MFA Disabled',
+                })
+                ->color(fn (User $record) => match (true) {
+                    $record->hasConfirmedMultifactor() => 'success',
+                    $record->hasEnabledMultifactor() => 'warning',
+                    default => 'gray',
+                }),
+            Action::make('mfa_reset')
+                ->visible(
+                    fn (User $record) => ! $record->is_external
+                    && $record->hasConfirmedMultifactor() || $record->hasEnabledMultifactor()
+                    && auth()->user()->can('resetMultifactorAuthentication', $record),
+                )
+                ->label('Reset MFA')
+                ->icon('heroicon-s-lock-open')
+                ->modalDescription('Are you sure you want to reset the multifactor authentication for this user?')
+                ->action(fn (User $record) => $record->disableMultifactorAuthentication()),
             Impersonate::make()
                 ->record($user),
             EditAction::make(),

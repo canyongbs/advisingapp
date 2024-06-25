@@ -426,6 +426,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Carbon\CarbonImmutable|null $last_chat_ping_at
+ * @property string|null $multifactor_secret
+ * @property-read string|null $multifactor_recovery_codes
+ * @property string|null $multifactor_confirmed_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiAssistantUpvote> $aiAssistantUpvotes
  * @property-read int|null $ai_assistant_upvotes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiThreadFolder> $aiThreadFolders
@@ -522,6 +525,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereJobTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLastChatPingAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLocale($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereMultifactorConfirmedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereMultifactorRecoveryCodes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereMultifactorSecret($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOfficeHours($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOfficeHoursAreEnabled($value)

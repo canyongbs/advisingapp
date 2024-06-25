@@ -49,6 +49,7 @@ use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Observers\PromptObserver;
 use AdvisingApp\Ai\Registries\AiRbacRegistry;
 use AdvisingApp\Ai\Observers\AiMessageObserver;
+use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 
@@ -81,6 +82,7 @@ class AiServiceProvider extends ServiceProvider
 
     protected function registerObservers(): void
     {
+        AiAssistant::observe(AiAssistantObserver::class);
         AiMessage::observe(AiMessageObserver::class);
         Prompt::observe(PromptObserver::class);
     }
