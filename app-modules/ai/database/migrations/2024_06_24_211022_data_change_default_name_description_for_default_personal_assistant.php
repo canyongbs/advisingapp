@@ -34,14 +34,13 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Enums\AiApplication;
 use Illuminate\Database\Migrations\Migration;
 
 return new class () extends Migration {
     public function up(): void
     {
         DB::table('ai_assistants')
-            ->where('application', AiApplication::PersonalAssistant)
+            ->where('application', 'personal_assistant')
             ->where('is_default', true)
             ->update([
                 'name' => 'Institutional Assistant',
