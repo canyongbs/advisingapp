@@ -69,11 +69,10 @@ return new class () extends Migration {
     {
         Schema::table('campaigns', function (Blueprint $table) {
             if (Schema::hasColumn('campaigns', 'caseload_id')) {
-                $table->dropForeign('caseload_id');
                 $table->dropColumn('caseload_id');
             }
 
-            $table->foreignUuid('segment_id')->constrained('segments')->change();
+            $table->foreignUuid('segment_id')->nullable(false)->change();
         });
 
         collect($this->guards)
