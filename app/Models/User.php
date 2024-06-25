@@ -45,6 +45,7 @@ use Spatie\MediaLibrary\HasMedia;
 use App\Support\HasAdvancedFilter;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Team\Models\TeamUser;
+use AdvisingApp\Segment\Models\Segment;
 use App\Filament\Resources\UserResource;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
@@ -220,6 +221,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function caseloads(): HasMany
     {
         return $this->hasMany(Caseload::class);
+    }
+
+    public function segments(): HasMany
+    {
+        return $this->hasMany(Segment::class);
     }
 
     public function licenses(): HasMany
