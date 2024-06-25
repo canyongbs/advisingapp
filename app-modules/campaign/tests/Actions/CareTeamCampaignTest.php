@@ -35,8 +35,11 @@
 */
 
 use App\Models\User;
+use Laravel\Pennant\Feature;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Enums\SegmentType;
 use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -47,12 +50,16 @@ use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
 it('will create the appropriate records for educatables in the caseload', function (array $priorCareTeam, Collection $educatables, bool $removePrior) {
-    $caseload = Caseload::factory()->create([
-        'type' => CaseloadType::Static,
-    ]);
+    Feature::active('segment-as-caseload-replacement')
+        ? $segmentOrCaseload = Segment::factory()->create([
+            'type' => SegmentType::Static,
+        ])
+        : $segmentOrCaseload = Caseload::factory()->create([
+            'type' => CaseloadType::Static,
+        ]);
 
-    $educatables->each(function (Educatable $educatable) use ($caseload, $priorCareTeam) {
-        $caseload->subjects()->create([
+    $educatables->each(function (Educatable $educatable) use ($segmentOrCaseload, $priorCareTeam) {
+        $segmentOrCaseload->subjects()->create([
             'subject_id' => $educatable->getKey(),
             'subject_type' => $educatable->getMorphClass(),
         ]);
@@ -60,8 +67,12 @@ it('will create the appropriate records for educatables in the caseload', functi
         $educatable->careTeam()->sync($priorCareTeam);
     });
 
+    Feature::active('segment-as-caseload-replacement')
+        ? $foreignKey = 'segment_id'
+        : $foreignKey = 'caseload_id';
+
     $campaign = Campaign::factory()->create([
-        'caseload_id' => $caseload->id,
+        $foreignKey => $segmentOrCaseload->id,
     ]);
 
     $users = User::factory()->licensed(LicenseType::cases())->count(3)->create();

@@ -36,17 +36,18 @@
 
 namespace AdvisingApp\Engagement\Models;
 
-use DOMXPath;
-use Throwable;
-use DOMDocument;
-use App\Models\User;
-use App\Models\BaseModel;
 use AdvisingApp\Campaign\Models\CampaignAction;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
-use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
+use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
+use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
+use App\Models\BaseModel;
+use App\Models\User;
+use DOMDocument;
+use DOMXPath;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Laravel\Pennant\Feature;
+use Throwable;
 
 /**
  * @mixin IdeHelperEngagementBatch
@@ -67,9 +68,13 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {
         try {
+            $campaignRelation = Feature::active('segment-as-caseload-replacement')
+                ? 'segment'
+                : 'caseload';
+
             CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
                 'user' => $action->campaign->user,
-                'records' => $action->campaign->caseload->retrieveRecords(),
+                'records' => $action->campaign->{$campaignRelation}->retrieveRecords(),
                 'deliveryMethod' => $action->data['delivery_method'],
                 'subject' => $action->data['subject'] ?? null,
                 'body' => $action->data['body'] ?? null,

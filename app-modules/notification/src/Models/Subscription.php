@@ -39,6 +39,7 @@ namespace AdvisingApp\Notification\Models;
 use Exception;
 use App\Models\User;
 use DateTimeInterface;
+use Laravel\Pennant\Feature;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Campaign\Models\CampaignAction;
@@ -87,17 +88,25 @@ class Subscription extends MorphPivot implements ExecutableFromACampaignAction
         try {
             DB::beginTransaction();
 
-            $action->campaign->caseload->retrieveRecords()->each(function (Subscribable $subscribable) use ($action) {
-                if ($action->data['remove_prior']) {
-                    $subscribable->subscriptions()->delete();
-                }
+            $campaignRelation = Feature::active('segment-as-caseload-replacement')
+                ? 'segment'
+                : 'caseload';
 
-                collect($action->data['user_ids'])
-                    ->each(
-                        fn ($userId) => resolve(SubscriptionCreate::class)
-                            ->handle(User::find($userId), $subscribable, false)
-                    );
-            });
+            $action
+                ->campaign
+                ->{$campaignRelation}
+                ->retrieveRecords()
+                ->each(function (Subscribable $subscribable) use ($action) {
+                    if ($action->data['remove_prior']) {
+                        $subscribable->subscriptions()->delete();
+                    }
+
+                    collect($action->data['user_ids'])
+                        ->each(
+                            fn ($userId) => resolve(SubscriptionCreate::class)
+                                ->handle(User::find($userId), $subscribable, false)
+                        );
+                });
 
             DB::commit();
 

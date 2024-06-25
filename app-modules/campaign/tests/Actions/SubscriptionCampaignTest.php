@@ -35,8 +35,11 @@
 */
 
 use App\Models\User;
+use Laravel\Pennant\Feature;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Enums\SegmentType;
 use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -47,12 +50,16 @@ use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 
 it('will create the subscription records for subscribables in the caseload', function (array $priorSubscriptions, Collection $subscribables, bool $removePrior) {
-    $caseload = Caseload::factory()->create([
-        'type' => CaseloadType::Static,
-    ]);
+    Feature::active('segment-as-caseload-replacement')
+        ? $segmentOrCaseload = Segment::factory()->create([
+            'type' => SegmentType::Static,
+        ])
+        : $segmentOrCaseload = Caseload::factory()->create([
+            'type' => CaseloadType::Static,
+        ]);
 
-    $subscribables->each(function (Subscribable $subscribable) use ($caseload, $priorSubscriptions) {
-        $caseload->subjects()->create([
+    $subscribables->each(function (Subscribable $subscribable) use ($segmentOrCaseload, $priorSubscriptions) {
+        $segmentOrCaseload->subjects()->create([
             'subject_id' => $subscribable->getKey(),
             'subject_type' => $subscribable->getMorphClass(),
         ]);
@@ -66,8 +73,12 @@ it('will create the subscription records for subscribables in the caseload', fun
             );
     });
 
+    Feature::active('segment-as-caseload-replacement')
+        ? $foreignKey = 'segment_id'
+        : $foreignKey = 'caseload_id';
+
     $campaign = Campaign::factory()->create([
-        'caseload_id' => $caseload->id,
+        $foreignKey => $segmentOrCaseload->id,
     ]);
 
     $users = User::factory()->count(3)->create();
