@@ -35,7 +35,6 @@
 */
 
 use App\Models\User;
-use Laravel\Pennant\Feature;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
