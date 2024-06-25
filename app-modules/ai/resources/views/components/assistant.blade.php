@@ -508,15 +508,14 @@
 
                                     {{ $this->insertFromPromptLibraryAction }}
 
-
                                     <div
                                         class="flex w-full justify-center py-2 sm:w-auto"
                                         x-show="isSendingMessage"
                                     >
                                         <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
                                     </div>
-
                                 </div>
+
                                 @if (blank($this->thread->name))
                                     <div class="flex w-full justify-center pt-3 sm:w-auto sm:pl-2 sm:pt-0">
                                         {{ $this->saveThreadAction }}
