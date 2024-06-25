@@ -44,6 +44,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\BasicNeeds\Registries\BasicNeedsRbacRegistry;
+use AdvisingApp\BasicNeeds\Observers\BasicNeedsCategoryObserver;
 
 class BasicNeedsServiceProvider extends ServiceProvider
 {
@@ -58,6 +59,8 @@ class BasicNeedsServiceProvider extends ServiceProvider
             'basic_needs_category' => BasicNeedsCategory::class,
             'basic_needs_program' => BasicNeedsProgram::class,
         ]);
+
+        BasicNeedsCategory::observe(BasicNeedsCategoryObserver::class);
 
         AuthorizationRoleRegistry::register(BasicNeedsRbacRegistry::class);
     }

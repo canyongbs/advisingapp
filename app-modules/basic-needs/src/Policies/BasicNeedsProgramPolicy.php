@@ -22,7 +22,7 @@ class BasicNeedsProgramPolicy
     {
         return $authenticatable->canOrElse(
             abilities: 'basic_needs_program.view-any',
-            denyResponse: 'You do not have permission to view basic need programs.'
+            denyResponse: 'You do not have permission to view basic needs programs.'
         );
     }
 
@@ -30,7 +30,7 @@ class BasicNeedsProgramPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['basic_needs_program.*.view', "basic_needs_program.{$basicNeedsProgram->id}.view"],
-            denyResponse: 'You do not have permission to view this basic need programs.'
+            denyResponse: 'You do not have permission to view this basic needs program.'
         );
     }
 
@@ -38,7 +38,7 @@ class BasicNeedsProgramPolicy
     {
         return $authenticatable->canOrElse(
             abilities: 'basic_needs_program.create',
-            denyResponse: 'You do not have permission to create basic need programs.'
+            denyResponse: 'You do not have permission to create basic needs programs.'
         );
     }
 
@@ -46,7 +46,7 @@ class BasicNeedsProgramPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['basic_needs_program.*.update', "basic_needs_program.{$basicNeedsProgram->id}.update"],
-            denyResponse: 'You do not have permission to update this basic need programs.'
+            denyResponse: 'You do not have permission to update this basic needs program.'
         );
     }
 
@@ -54,7 +54,7 @@ class BasicNeedsProgramPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['basic_needs_program.*.delete', "basic_needs_program.{$basicNeedsProgram->id}.delete"],
-            denyResponse: 'You do not have permission to delete this basic need programs.'
+            denyResponse: 'You do not have permission to delete this basic needs program.'
         );
     }
 
@@ -62,7 +62,7 @@ class BasicNeedsProgramPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['basic_needs_program.*.restore', "basic_needs_program.{$basicNeedsProgram->id}.restore"],
-            denyResponse: 'You do not have permission to restore this basic need programs.'
+            denyResponse: 'You do not have permission to restore this basic needs program.'
         );
     }
 
@@ -70,7 +70,7 @@ class BasicNeedsProgramPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['basic_needs_program.*.force-delete', "basic_needs_program.{$basicNeedsProgram->id}.force-delete"],
-            denyResponse: 'You do not have permission to force delete this basic need programs.'
+            denyResponse: 'You do not have permission to force delete this basic needs program.'
         );
     }
 }

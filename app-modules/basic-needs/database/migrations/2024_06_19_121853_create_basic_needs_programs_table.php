@@ -11,7 +11,7 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
             $table->string('name')->unique();
             $table->text('description')->nullable();
-            $table->foreignUuid('basic_need_category_id')->constrained('basic_needs_categories')->onDelete('cascade');
+            $table->foreignUuid('basic_needs_category_id')->constrained('basic_needs_categories')->restrictOnDelete();
             $table->string('contact_person')->nullable();
             $table->string('contact_email')->nullable();
             $table->string('contact_phone')->nullable();

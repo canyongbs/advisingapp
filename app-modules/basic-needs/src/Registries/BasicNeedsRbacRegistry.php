@@ -36,23 +36,9 @@
 
 namespace AdvisingApp\BasicNeeds\Registries;
 
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\Registries\Contracts\RegistersRolesAndPermissions;
 
 class BasicNeedsRbacRegistry implements RegistersRolesAndPermissions
 {
-    public function __invoke(): void
-    {
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'basic-needs',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'basic-needs',
-            path: 'roles/web'
-        );
-    }
+    public function __invoke(): void {}
 }

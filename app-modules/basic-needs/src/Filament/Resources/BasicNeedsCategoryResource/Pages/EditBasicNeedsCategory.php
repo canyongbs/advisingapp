@@ -7,7 +7,9 @@ use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
 
 class EditBasicNeedsCategory extends EditRecord
@@ -34,7 +36,19 @@ class EditBasicNeedsCategory extends EditRecord
     {
         return [
             ViewAction::make(),
-            DeleteAction::make(),
+            DeleteAction::make()
+                ->using(function (BasicNeedsCategory $basicNeedsCategory) {
+                    try {
+                        $basicNeedsCategory->delete();
+
+                        return $basicNeedsCategory;
+                    } catch (\Exception $e) {
+                        Notification::make()
+                            ->title($e->getMessage())
+                            ->danger()
+                            ->send();
+                    }
+                }),
         ];
     }
 }

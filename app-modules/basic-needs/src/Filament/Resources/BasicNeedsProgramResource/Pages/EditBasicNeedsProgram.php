@@ -3,7 +3,6 @@
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages;
 
 use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
 use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
@@ -30,11 +29,10 @@ class EditBasicNeedsProgram extends EditRecord
                     ->label('Description')
                     ->maxLength(65535)
                     ->string(),
-                Select::make('basic_need_category_id')
+                Select::make('basic_needs_category_id')
                     ->label('Program Category')
                     ->required()
-                    ->relationship('basicNeedsCategories', 'name')
-                    ->visible(Feature::active('basic-needs')),
+                    ->relationship('basicNeedsCategories', 'name'),
                 TextInput::make('contact_person')
                     ->label('Contact Person')
                     ->maxLength(255)

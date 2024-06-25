@@ -20,7 +20,7 @@ class BasicNeedsProgramFactory extends Factory
         return [
             'name' => fake()->name(),
             'description' => fake()->paragraph(),
-            'basic_need_category_id' => BasicNeedsCategory::factory(),
+            'basic_needs_category_id' => BasicNeedsCategory::factory(),
             'contact_person' => fake()->name(),
             'contact_email' => fake()->email(),
             'contact_phone' => fake()->numerify('+1 ### ### ####'),

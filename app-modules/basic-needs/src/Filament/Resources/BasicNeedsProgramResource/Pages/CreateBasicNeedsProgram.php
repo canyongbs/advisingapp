@@ -3,7 +3,6 @@
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages;
 
 use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -28,11 +27,10 @@ class CreateBasicNeedsProgram extends CreateRecord
                     ->label('Description')
                     ->maxLength(65535)
                     ->string(),
-                Select::make('basic_need_category_id')
+                Select::make('basic_needs_category_id')
                     ->label('Program Category')
                     ->required()
                     ->relationship('basicNeedsCategories', 'name')
-                    ->visible(Feature::active('basic-needs'))
                     ->native(false)
                     ->searchable()
                     ->preload(),

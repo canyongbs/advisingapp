@@ -17,10 +17,21 @@ class BasicNeedsProgram extends Model implements Auditable
     use SoftDeletes;
     use HasUuids;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'name',
+        'description',
+        'basic_needs_category_id',
+        'contact_person',
+        'contact_email',
+        'contact_phone',
+        'location',
+        'availability',
+        'eligibility_criteria',
+        'application_process',
+    ];
 
     public function basicNeedsCategories(): BelongsTo
     {
-        return $this->belongsTo(BasicNeedsCategory::class, 'basic_need_category_id', 'id');
+        return $this->belongsTo(BasicNeedsCategory::class, 'basic_needs_category_id', 'id');
     }
 }

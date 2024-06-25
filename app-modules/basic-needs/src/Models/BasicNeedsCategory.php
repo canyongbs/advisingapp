@@ -17,10 +17,13 @@ class BasicNeedsCategory extends Model implements Auditable
     use SoftDeletes;
     use HasUuids;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'name',
+        'description',
+    ];
 
     public function basicNeedsProgram(): HasMany
     {
-        return $this->hasMany(BasicNeedsProgram::class, 'basic_need_category_id');
+        return $this->hasMany(BasicNeedsProgram::class, 'basic_needs_category_id');
     }
 }

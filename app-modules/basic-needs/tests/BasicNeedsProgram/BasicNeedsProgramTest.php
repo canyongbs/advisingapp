@@ -106,10 +106,10 @@ it('can validate input on create page', function () {
     livewire(CreateBasicNeedsProgram::class)
         ->fillForm([
             'name' => null,
-            'basic_need_category_id' => null,
+            'basic_needs_category_id' => null,
         ])
         ->call('create')
-        ->assertHasFormErrors(['name' => 'required', 'basic_need_category_id' => 'required']);
+        ->assertHasFormErrors(['name' => 'required', 'basic_needs_category_id' => 'required']);
 });
 
 it('can create basic needs program', function () {
@@ -126,7 +126,7 @@ it('can create basic needs program', function () {
         ->fillForm([
             'name' => $newBasicNeedsProgram->name,
             'description' => $newBasicNeedsProgram->description,
-            'basic_need_category_id' => $newBasicNeedsProgram->basic_need_category_id,
+            'basic_needs_category_id' => $newBasicNeedsProgram->basic_needs_category_id,
             'contact_person' => $newBasicNeedsProgram->contact_person,
             'contact_email' => $newBasicNeedsProgram->contact_email,
             'contact_phone' => $newBasicNeedsProgram->contact_phone,
@@ -141,7 +141,7 @@ it('can create basic needs program', function () {
     assertDatabaseHas(BasicNeedsProgram::class, [
         'name' => $newBasicNeedsProgram->name,
         'description' => $newBasicNeedsProgram->description,
-        'basic_need_category_id' => $newBasicNeedsProgram->basic_need_category_id,
+        'basic_needs_category_id' => $newBasicNeedsProgram->basic_needs_category_id,
         'contact_person' => $newBasicNeedsProgram->contact_person,
         'contact_email' => $newBasicNeedsProgram->contact_email,
         'contact_phone' => $newBasicNeedsProgram->contact_phone,
@@ -189,7 +189,7 @@ it('can retrieve data', function () {
         ->assertFormSet([
             'name' => $basicNeedsProgram->name,
             'description' => $basicNeedsProgram->description,
-            'basic_need_category_id' => $basicNeedsProgram->basic_need_category_id,
+            'basic_needs_category_id' => $basicNeedsProgram->basic_needs_category_id,
             'contact_person' => $basicNeedsProgram->contact_person,
             'contact_email' => $basicNeedsProgram->contact_email,
             'contact_phone' => $basicNeedsProgram->contact_phone,
@@ -218,10 +218,10 @@ it('can validate input on edit page', function () {
     ])
         ->fillForm([
             'name' => null,
-            'basic_need_category_id' => null,
+            'basic_needs_category_id' => null,
         ])
         ->call('save')
-        ->assertHasFormErrors(['name' => 'required', 'basic_need_category_id' => 'required']);
+        ->assertHasFormErrors(['name' => 'required', 'basic_needs_category_id' => 'required']);
 });
 
 it('can save basic needs program', function () {
@@ -244,7 +244,7 @@ it('can save basic needs program', function () {
         ->fillForm([
             'name' => $newBasicNeedsProgram->name,
             'description' => $newBasicNeedsProgram->description,
-            'basic_need_category_id' => $newBasicNeedsProgram->basic_need_category_id,
+            'basic_needs_category_id' => $newBasicNeedsProgram->basic_needs_category_id,
             'contact_person' => $newBasicNeedsProgram->contact_person,
             'contact_email' => $newBasicNeedsProgram->contact_email,
             'contact_phone' => $newBasicNeedsProgram->contact_phone,
@@ -259,7 +259,7 @@ it('can save basic needs program', function () {
     expect($oldBasicNeedsProgram->refresh())
         ->name->toBe($newBasicNeedsProgram->name)
         ->description->toBe($newBasicNeedsProgram->description)
-        ->basic_need_category_id->toBe($newBasicNeedsProgram->basic_need_category_id)
+        ->basic_needs_category_id->toBe($newBasicNeedsProgram->basic_needs_category_id)
         ->contact_person->toBe($newBasicNeedsProgram->contact_person)
         ->contact_email->toBe($newBasicNeedsProgram->contact_email)
         ->contact_phone->toBe($newBasicNeedsProgram->contact_phone)
@@ -335,7 +335,7 @@ it('can bulk delete basic needs programs', function () {
 it('can filter basic needs program by `program category`', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsPrograms = BasicNeedsProgram::factory()->count(10)->create();
-    $basic_need_category_id = $basicNeedsPrograms->first()->basic_need_category_id;
+    $basic_needs_category_id = $basicNeedsPrograms->first()->basic_needs_category_id;
 
     actingAs($user)
         ->get(
@@ -346,7 +346,7 @@ it('can filter basic needs program by `program category`', function () {
 
     livewire(ListBasicNeedsPrograms::class)
         ->assertCanSeeTableRecords($basicNeedsPrograms)
-        ->filterTable('basic_category_id', $basic_need_category_id)
-        ->assertCanSeeTableRecords($basicNeedsPrograms->where('basic_need_category_id', $basic_need_category_id))
-        ->assertCanNotSeeTableRecords($basicNeedsPrograms->where('basic_need_category_id', '!=', $basic_need_category_id));
+        ->filterTable('basic_category_id', $basic_needs_category_id)
+        ->assertCanSeeTableRecords($basicNeedsPrograms->where('basic_needs_category_id', $basic_needs_category_id))
+        ->assertCanNotSeeTableRecords($basicNeedsPrograms->where('basic_needs_category_id', '!=', $basic_needs_category_id));
 });
