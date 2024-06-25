@@ -63,7 +63,7 @@ class SegmentResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Feature::active('segments');
+        return Feature::active('enable-segments');
     }
 
     public static function getPages(): array
