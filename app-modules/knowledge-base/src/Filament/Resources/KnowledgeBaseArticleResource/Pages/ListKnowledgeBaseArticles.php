@@ -60,6 +60,7 @@ use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource;
+use App\Support\MediaEncoding\TiptapMediaEncoder;
 
 class ListKnowledgeBaseArticles extends ListRecords
 {
@@ -179,12 +180,16 @@ class ListKnowledgeBaseArticles extends ListRecords
                         $record->public = $data['public'];
                         $record->notes = $data['notes'];
                     })
-                    ->after(function (Model $replica, Model $record): void {
+                    ->after(function (KnowledgeBaseArticle $replica, KnowledgeBaseArticle $record): void {
                         $record->load('division');
 
                         foreach ($record->division as $divison) {
                             $replica->division()->attach($divison->id);
                         }
+
+                        // TODO: Fix when we rename 'solution' to match the change in the column name
+                        $replica->article_details = TiptapMediaEncoder::copyMediaItemsToModel($replica->article_details, $replica, 'solution');
+                        $replica->save();
                     })
                     ->excludeAttributes(['views_count', 'upvotes_count', 'my_upvotes_count'])
                     ->successNotificationTitle('Article replicated successfully!'),
