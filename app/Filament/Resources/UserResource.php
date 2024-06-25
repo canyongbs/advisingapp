@@ -50,44 +50,44 @@ use App\Filament\Resources\UserResource\RelationManagers\PermissionsRelationMana
 
 class UserResource extends Resource
 {
-    protected static ?string $model = User::class;
+  protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+  protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $cluster = UserManagement::class;
+  protected static ?string $cluster = UserManagement::class;
 
-    protected static ?int $navigationSort = 10;
+  protected static ?int $navigationSort = 10;
 
-    protected static ?string $navigationLabel = 'Users';
+  protected static ?string $navigationLabel = 'Users';
 
-    protected static ?string $breadcrumb = 'Users';
+  protected static ?string $breadcrumb = 'Users';
 
-    protected static ?string $modelLabel = 'User';
+  protected static ?string $modelLabel = 'User';
 
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->unless(
-                auth()->user()->hasRole('authorization.super_admin'),
-                fn (Builder $query) => $query->tap(new WithoutSuperAdmin())
-            );
-    }
+  public static function getEloquentQuery(): Builder
+  {
+    return parent::getEloquentQuery()
+      ->unless(
+        auth()->user()->hasRole('authorization.super_admin'),
+        fn (Builder $query) => $query->tap(new WithoutSuperAdmin())
+      );
+  }
 
-    public static function getRelations(): array
-    {
-        return [
-            RolesRelationManager::class,
-            PermissionsRelationManager::class,
-        ];
-    }
+  public static function getRelations(): array
+  {
+    return [
+      RolesRelationManager::class,
+      PermissionsRelationManager::class,
+    ];
+  }
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListUsers::route('/'),
-            'create' => CreateUser::route('/create'),
-            'view' => ViewUser::route('/{record}'),
-            'edit' => EditUser::route('/{record}/edit'),
-        ];
-    }
+  public static function getPages(): array
+  {
+    return [
+      'index' => ListUsers::route('/'),
+      'create' => CreateUser::route('/create'),
+      'view' => ViewUser::route('/{record}'),
+      'edit' => EditUser::route('/{record}/edit'),
+    ];
+  }
 }
