@@ -39,7 +39,6 @@ namespace AdvisingApp\Notification\Models;
 use Exception;
 use App\Models\User;
 use DateTimeInterface;
-use Laravel\Pennant\Feature;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Campaign\Models\CampaignAction;
@@ -88,13 +87,9 @@ class Subscription extends MorphPivot implements ExecutableFromACampaignAction
         try {
             DB::beginTransaction();
 
-            $campaignRelation = Feature::active('enable-segments')
-                ? 'segment'
-                : 'caseload';
-
             $action
                 ->campaign
-                ->{$campaignRelation}
+                ->segment
                 ->retrieveRecords()
                 ->each(function (Subscribable $subscribable) use ($action) {
                     if ($action->data['remove_prior']) {

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Campaign\Policies;
 
-use Laravel\Pennant\Feature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use App\Concerns\PerformsLicenseChecks;
@@ -67,11 +66,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
 
     public function view(Authenticatable $authenticatable, Campaign $campaign): Response
     {
-        Feature::active('enable-segments')
-            ? $relation = $campaign->segment
-            : $relation = $campaign->caseload;
-
-        if ($authenticatable->cannot('view', $relation)) {
+        if ($authenticatable->cannot('view', $campaign->segment)) {
             return Response::deny('You do not have permission to view this campaign.');
         }
 
@@ -91,11 +86,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
 
     public function update(Authenticatable $authenticatable, Campaign $campaign): Response
     {
-        Feature::active('enable-segments')
-            ? $relation = $campaign->segment
-            : $relation = $campaign->caseload;
-
-        if ($authenticatable->cannot('view', $relation)) {
+        if ($authenticatable->cannot('view', $campaign->segment)) {
             return Response::deny('You do not have permission to update this campaign.');
         }
 
@@ -107,11 +98,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
 
     public function delete(Authenticatable $authenticatable, Campaign $campaign): Response
     {
-        Feature::active('enable-segments')
-            ? $relation = $campaign->segment
-            : $relation = $campaign->caseload;
-
-        if ($authenticatable->cannot('view', $relation)) {
+        if ($authenticatable->cannot('view', $campaign->segment)) {
             return Response::deny('You do not have permission to delete this campaign.');
         }
 
@@ -123,11 +110,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
 
     public function restore(Authenticatable $authenticatable, Campaign $campaign): Response
     {
-        Feature::active('enable-segments')
-            ? $relation = $campaign->segment
-            : $relation = $campaign->caseload;
-
-        if ($authenticatable->cannot('view', $relation)) {
+        if ($authenticatable->cannot('view', $campaign->segment)) {
             return Response::deny('You do not have permission to restore this campaign.');
         }
 
@@ -139,11 +122,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
 
     public function forceDelete(Authenticatable $authenticatable, Campaign $campaign): Response
     {
-        Feature::active('enable-segments')
-            ? $relation = $campaign->segment
-            : $relation = $campaign->caseload;
-
-        if ($authenticatable->cannot('view', $relation)) {
+        if ($authenticatable->cannot('view', $campaign->segment)) {
             return Response::deny('You do not have permission to permanently delete this campaign.');
         }
 

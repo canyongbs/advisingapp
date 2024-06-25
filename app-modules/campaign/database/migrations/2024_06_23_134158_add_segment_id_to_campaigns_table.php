@@ -1,4 +1,3 @@
-
 <?php
 
 /*
@@ -44,8 +43,6 @@ return new class () extends Migration {
     {
         Schema::table('campaigns', function (Blueprint $table) {
             $table->foreignUuid('segment_id')->nullable()->constrained('segments');
-            $table->dropForeign(['caseload_id']);
-            $table->foreignUuid('caseload_id')->nullable()->change();
         });
     }
 
@@ -54,7 +51,6 @@ return new class () extends Migration {
         Schema::table('campaigns', function (Blueprint $table) {
             $table->dropForeign(['segment_id']);
             $table->dropColumn('segment_id');
-            $table->foreignUuid('caseload_id')->constrained('caseloads')->change();
         });
     }
 };
