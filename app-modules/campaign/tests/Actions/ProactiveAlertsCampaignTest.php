@@ -34,11 +34,14 @@
 </COPYRIGHT>
 */
 
+use Laravel\Pennant\Feature;
 use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Alert\Enums\AlertStatus;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Alert\Enums\AlertSeverity;
+use AdvisingApp\Segment\Enums\SegmentType;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
@@ -53,19 +56,27 @@ it('will create the appropriate records for educatables in the caseload', functi
         'first_name' => 'TestTest',
     ]);
 
-    $caseload = Caseload::factory()->create([
-        'type' => CaseloadType::Static,
-    ]);
+    Feature::active('segment-as-caseload-replacement')
+        ? $segmentOrCaseload = Segment::factory()->create([
+            'type' => SegmentType::Static,
+        ])
+        : $segmentOrCaseload = Caseload::factory()->create([
+            'type' => CaseloadType::Static,
+        ]);
 
-    $prospects->each(function (Prospect $prospect) use ($caseload) {
-        $caseload->subjects()->create([
+    $prospects->each(function (Prospect $prospect) use ($segmentOrCaseload) {
+        $segmentOrCaseload->subjects()->create([
             'subject_id' => $prospect->getKey(),
             'subject_type' => $prospect->getMorphClass(),
         ]);
     });
 
+    Feature::active('segment-as-caseload-replacement')
+        ? $foreignKey = 'segment_id'
+        : $foreignKey = 'caseload_id';
+
     $campaign = Campaign::factory()->create([
-        'caseload_id' => $caseload->id,
+        $foreignKey => $segmentOrCaseload->id,
     ]);
 
     $action = CampaignAction::factory()
