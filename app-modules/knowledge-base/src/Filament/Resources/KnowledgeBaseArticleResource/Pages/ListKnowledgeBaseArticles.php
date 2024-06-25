@@ -55,12 +55,12 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use App\Support\MediaEncoding\TiptapMediaEncoder;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource;
-use App\Support\MediaEncoding\TiptapMediaEncoder;
 
 class ListKnowledgeBaseArticles extends ListRecords
 {
