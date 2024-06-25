@@ -63,7 +63,7 @@ class CaseloadObserver
             }])->flush();
         }
 
-        if (Feature::active('segment-as-caseload-replacement')) {
+        if (Feature::active('enable-segments')) {
             $segment = new Segment();
             $segment->name = $caseload->name;
             $segment->description = $caseload->description;

@@ -147,7 +147,7 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {
         try {
-            $campaignRelation = Feature::active('segment-as-caseload-replacement')
+            $campaignRelation = Feature::active('enable-segments')
                 ? 'segment'
                 : 'caseload';
 

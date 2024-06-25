@@ -56,7 +56,7 @@ use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
 it('will create the event records for caseload', function (Collection $educatables) {
-    Feature::active('segment-as-caseload-replacement')
+    Feature::active('enable-segments')
         ? $segmentOrCaseload = Segment::factory()->create([
             'type' => SegmentType::Static,
         ])
@@ -71,7 +71,7 @@ it('will create the event records for caseload', function (Collection $educatabl
         ]);
     });
 
-    Feature::active('segment-as-caseload-replacement')
+    Feature::active('enable-segments')
         ? $foreignKey = 'segment_id'
         : $foreignKey = 'caseload_id';
 

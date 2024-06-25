@@ -50,7 +50,7 @@ use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 
 it('will create the subscription records for subscribables in the caseload', function (array $priorSubscriptions, Collection $subscribables, bool $removePrior) {
-    Feature::active('segment-as-caseload-replacement')
+    Feature::active('enable-segments')
         ? $segmentOrCaseload = Segment::factory()->create([
             'type' => SegmentType::Static,
         ])
@@ -73,7 +73,7 @@ it('will create the subscription records for subscribables in the caseload', fun
             );
     });
 
-    Feature::active('segment-as-caseload-replacement')
+    Feature::active('enable-segments')
         ? $foreignKey = 'segment_id'
         : $foreignKey = 'caseload_id';
 

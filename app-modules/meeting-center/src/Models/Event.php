@@ -88,7 +88,7 @@ class Event extends BaseModel
 
                 $user = $action->campaign->user;
 
-                $campaignRelation = Feature::active('segment-as-caseload-replacement')
+                $campaignRelation = Feature::active('enable-segments')
                     ? 'segment'
                     : 'caseload';
 
