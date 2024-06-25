@@ -23,6 +23,7 @@ return new class () extends Migration {
                 $segment->created_at = $caseload->created_at;
                 $segment->updated_at = $caseload->updated_at;
                 $segment->deleted_at = $caseload->deleted_at;
+                $segment->save();
 
                 if ($caseload->subjects()->withTrashed()->exists()) {
                     foreach ($caseload->subjects()->withTrashed()->get() as $caseloadSubject) {
@@ -33,12 +34,14 @@ return new class () extends Migration {
                         $segmentSubject->created_at = $caseloadSubject->created_at;
                         $segmentSubject->updated_at = $caseloadSubject->updated_at;
                         $segmentSubject->deleted_at = $caseloadSubject->deleted_at;
+                        $segmentSubject->save();
                     }
                 }
 
                 if ($caseload->campaigns()->withTrashed()->exists()) {
                     foreach ($caseload->campaigns()->withTrashed()->get() as $campaign) {
                         $campaign->segment()->associate($segment);
+                        $campaign->save();
                     }
                 }
             });
