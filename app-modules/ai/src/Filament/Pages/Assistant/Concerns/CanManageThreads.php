@@ -189,8 +189,10 @@ trait CanManageThreads
         $this->selectThread($this->threadsWithoutAFolder->whereNull('assistant.archived_at')->first());
 
         if ($this->thread) {
-            if ($this->thread->assistant->model->getService() instanceof AiServiceLifecycleHooks) {
-                $this->thread->assistant->model->getService()->afterLoadFirstThread($this->thread);
+            $service = $this->thread->assistant->model->getService();
+
+            if ($service instanceof AiServiceLifecycleHooks) {
+                $service->afterLoadFirstThread($this->thread);
             }
 
             return;
@@ -219,8 +221,10 @@ trait CanManageThreads
 
         $this->thread = $thread;
 
-        if ($this->thread->assistant->model->getService() instanceof AiServiceLifecycleHooks) {
-            $this->thread->assistant->model->getService()->afterThreadSelected($this->thread);
+        $service = $this->thread->assistant->model->getService();
+
+        if ($service instanceof AiServiceLifecycleHooks) {
+            $service->afterThreadSelected($this->thread);
         }
     }
 
