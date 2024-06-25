@@ -61,11 +61,14 @@ use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Timeline\Filament\Pages\Concerns\LoadsTimelineRecords;
+use AdvisingApp\Engagement\Filament\Actions\Contracts\HasEngagementAction;
+use AdvisingApp\Engagement\Filament\Actions\Concerns\ImplementsHasEngagementAction;
 
-class MessageCenter extends Page
+class MessageCenter extends Page implements HasEngagementAction
 {
     use WithPagination;
     use LoadsTimelineRecords;
+    use ImplementsHasEngagementAction;
 
     protected static ?string $navigationIcon = 'heroicon-o-inbox';
 

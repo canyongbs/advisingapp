@@ -51,13 +51,14 @@ use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Engagement\Filament\Actions\Contracts\HasEngagementAction;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 
-class SendEngagementAction extends Action
+class SendEngagementAction
 {
-    protected function setUp(): void
+    public static function make(): Action
     {
-        $this
+        return Action::make('engage')
             ->icon('heroicon-o-chat-bubble-bottom-center-text')
             ->modalHeading('Send Engagement')
             ->modalDescription(fn (Educatable $record) => "Send an engagement to {$record->display_name}.")
@@ -154,19 +155,10 @@ class SendEngagementAction extends Action
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)
             ->closeModalByClickingAway(false)
-            // FIXME This is currently not working exactly as expected. Dan is taking a look and will report back
-            ->modalCancelAction(
-                fn ($action) => Action::make('cancel')
-                    ->requiresConfirmation()
-                    ->modalDescription(fn () => 'The message has not been sent, are you sure you wish to cancel?')
-                    ->cancelParentActions()
-                    ->close()
-                    ->color('gray'),
-            );
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'engage';
+            // ->modalCancelAction(fn (HasEngagementAction $livewire) => $livewire->cancelEngagementAction());
+        ->modalCancelAction(false)
+        ->extraModalFooterActions(fn (HasEngagementAction $livewire) => [
+            $livewire->cancelEngagementAction(),
+        ]);
     }
 }
