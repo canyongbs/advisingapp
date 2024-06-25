@@ -136,9 +136,7 @@ it('does not display the mfa_status Action for an external User', function () {
 });
 
 it('displays the proper mfa_status Action for an internal User without MFA enabled', function () {
-    $user = User::factory()->create([
-        'is_external' => false,
-    ]);
+    $user = User::factory()->internal()->create();
 
     asSuperAdmin();
 
@@ -150,9 +148,7 @@ it('displays the proper mfa_status Action for an internal User without MFA enabl
 });
 
 it('displays the proper mfa_status Action for an internal User with MFA enabled but not confirmed', function () {
-    $user = User::factory()->create([
-        'is_external' => false,
-    ]);
+    $user = User::factory()->internal()->create();
 
     $user->enableMultifactorAuthentication();
 
@@ -166,9 +162,7 @@ it('displays the proper mfa_status Action for an internal User with MFA enabled 
 });
 
 it('displays the proper mfa_status Action for an internal User with MFA enabled and confirmed', function () {
-    $user = User::factory()->create([
-        'is_external' => false,
-    ]);
+    $user = User::factory()->internal()->create();
 
     $user->enableMultifactorAuthentication();
 
@@ -212,9 +206,7 @@ it('does not display the mfa_reset Action if the authed user does not have the p
 });
 
 it('does not display the mfa_reset Action if the user is internal but has not enabled and/or confirmed MFA', function () {
-    $user = User::factory()->create([
-        'is_external' => false,
-    ]);
+    $user = User::factory()->internal()->create();
 
     asSuperAdmin();
 
@@ -236,9 +228,7 @@ it('displays the mfa_reset Action if the user is internal, has MFA enabled and/o
 })->with([
     'Has MFA Enabled' => function () {
         return tap(
-            User::factory()->create([
-                'is_external' => false,
-            ]),
+            User::factory()->internal()->create(),
             function (User $user) {
                 $user->enableMultifactorAuthentication();
             }
@@ -246,9 +236,7 @@ it('displays the mfa_reset Action if the user is internal, has MFA enabled and/o
     },
     'Has MFA Confirmed' => function () {
         return tap(
-            User::factory()->create([
-                'is_external' => false,
-            ]),
+            User::factory()->internal()->create(),
             function (User $user) {
                 $user->enableMultifactorAuthentication();
 
@@ -259,9 +247,7 @@ it('displays the mfa_reset Action if the user is internal, has MFA enabled and/o
 ]);
 
 it('resets the users MFA when the mfa_reset Action is triggered', function () {
-    $user = User::factory()->create([
-        'is_external' => false,
-    ]);
+    $user = User::factory()->internal()->create();
 
     $user->enableMultifactorAuthentication();
 
