@@ -58,7 +58,7 @@ class ListCampaigns extends ListRecords
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name'),
-                Feature::active('segment-as-caseload-replacement')
+                Feature::active('enable-segments')
                     ? TextColumn::make('segment.name')
                         ->label('Population Segment')
                     : TextColumn::make('caseload.name')

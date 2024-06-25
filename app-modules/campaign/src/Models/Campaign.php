@@ -106,7 +106,7 @@ class Campaign extends BaseModel implements Auditable
                 return;
             }
 
-            Feature::active('segment-as-caseload-replacement')
+            Feature::active('enable-segments')
                 ? $builder->whereHas('segment')
                 : $builder->whereHas('caseload');
         });

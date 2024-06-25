@@ -67,7 +67,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
 
     public function view(Authenticatable $authenticatable, Campaign $campaign): Response
     {
-        Feature::active('segment-as-caseload-replacement')
+        Feature::active('enable-segments')
             ? $relation = $campaign->segment
             : $relation = $campaign->caseload;
 
@@ -91,7 +91,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
 
     public function update(Authenticatable $authenticatable, Campaign $campaign): Response
     {
-        Feature::active('segment-as-caseload-replacement')
+        Feature::active('enable-segments')
             ? $relation = $campaign->segment
             : $relation = $campaign->caseload;
 
@@ -107,7 +107,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
 
     public function delete(Authenticatable $authenticatable, Campaign $campaign): Response
     {
-        Feature::active('segment-as-caseload-replacement')
+        Feature::active('enable-segments')
             ? $relation = $campaign->segment
             : $relation = $campaign->caseload;
 
@@ -123,7 +123,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
 
     public function restore(Authenticatable $authenticatable, Campaign $campaign): Response
     {
-        Feature::active('segment-as-caseload-replacement')
+        Feature::active('enable-segments')
             ? $relation = $campaign->segment
             : $relation = $campaign->caseload;
 
@@ -139,7 +139,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
 
     public function forceDelete(Authenticatable $authenticatable, Campaign $campaign): Response
     {
-        Feature::active('segment-as-caseload-replacement')
+        Feature::active('enable-segments')
             ? $relation = $campaign->segment
             : $relation = $campaign->caseload;
 

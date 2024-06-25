@@ -57,7 +57,7 @@ class ViewCampaign extends ViewRecord
                 Section::make()
                     ->schema([
                         TextEntry::make('name'),
-                        Feature::active('segment-as-caseload-replacement')
+                        Feature::active('enable-segments')
                             ? TextEntry::make('segment.name')
                                 ->label('Population Segment')
                             : TextEntry::make('caseload.name')
