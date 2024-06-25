@@ -56,14 +56,19 @@ class Login extends FilamentLogin
 {
     protected static string $view = 'authorization::login';
 
-    #[Locked]
-    protected ?User $user = null;
+    public ?array $data;
 
     #[Locked]
-    protected bool $needsMfaSetup = false;
+    public ?User $user;
 
     #[Locked]
-    protected bool $needsMFA = false;
+    public bool $needsMfaSetup = false;
+
+    #[Locked]
+    public bool $needsMFA = false;
+
+    #[Locked]
+    public bool $usingRecoveryCode = false;
 
     public function authenticate(): ?LoginResponse
     {
@@ -120,10 +125,12 @@ class Login extends FilamentLogin
                     return null;
                 }
 
-                if (! app(MultifactorService::class)->verify(code: $data['code'], user: $user)) {
+                if (! $this->isValidCode($user, $data['code'])) {
                     Filament::auth()->logout();
 
                     $this->needsMFA = false;
+
+                    $this->usingRecoveryCode = false;
 
                     $this->data['code'] = null;
 
@@ -134,6 +141,17 @@ class Login extends FilamentLogin
 
                 if (empty($user->multifactor_confirmed_at)) {
                     $user->confirmMultifactorAuthentication();
+
+                    $this->mountAction('recoveryCodes', [
+                        'user' => $user,
+                        'remember' => $data['remember'],
+                    ]);
+
+                    return null;
+                }
+
+                if ($this->usingRecoveryCode) {
+                    $user->destroyRecoveryCode($data['code']);
                 }
             }
         }
@@ -145,9 +163,48 @@ class Login extends FilamentLogin
         return app(LoginResponse::class);
     }
 
+    public function recoveryCodesAction(): Action
+    {
+        return Action::make('recoveryCodes')
+            ->label('Recovery Codes')
+            ->requiresConfirmation()
+            ->modalDescription('')
+            ->modalCancelAction(false)
+            ->closeModalByClickingAway(false)
+            ->closeModalByEscaping(false)
+            ->modalCloseButton(false)
+            ->modalSubmitActionLabel('Okay')
+            ->modalContent(view('multifactor-authentication::filament.actions.recovery-codes-modal', [
+                'codes' => collect($this->user->multifactor_recovery_codes),
+            ]))
+            ->action(function (array $arguments) {
+                Filament::auth()->login($arguments['user'], $arguments['remember'] ?? false);
+
+                session()->regenerate();
+
+                redirect()->route('filament.admin.pages.dashboard');
+            });
+    }
+
     public function getMultifactorQrCode()
     {
         return app(MultifactorService::class)->getMultifactorQrCodeSvg($this->user->getMultifactorQrCodeUrl());
+    }
+
+    public function toggleUsingRecoveryCodes(): void
+    {
+        $this->usingRecoveryCode = ! $this->usingRecoveryCode;
+    }
+
+    protected function isValidCode(User $user, string $code): bool
+    {
+        if ($this->usingRecoveryCode) {
+            return collect($user->multifactor_recovery_codes)->contains(function (string $recoveryCode) use ($code) {
+                return hash_equals($recoveryCode, $code);
+            });
+        }
+
+        return app(MultifactorService::class)->verify(code: $code, user: $user);
     }
 
     protected function getSsoFormActions(): array
@@ -186,17 +243,42 @@ class Login extends FilamentLogin
                 $this->makeForm()
                     ->schema([
                         $this->getEmailFormComponent()
-                            ->hidden(fn (Login $livewire) => $livewire->needsMFA),
+                            ->hidden(fn (Login $livewire) => $livewire->needsMFA)
+                            ->dehydratedWhenHidden(),
                         $this->getPasswordFormComponent()
-                            ->hidden(fn (Login $livewire) => $livewire->needsMFA),
+                            ->hidden(fn (Login $livewire) => $livewire->needsMFA)
+                            ->dehydratedWhenHidden(),
                         $this->getRememberFormComponent()
-                            ->hidden(fn (Login $livewire) => $livewire->needsMFA),
+                            ->hidden(fn (Login $livewire) => $livewire->needsMFA)
+                            ->dehydratedWhenHidden(),
                         TextInput::make('code')
-                            ->label('Mutlifactor Authentication Code')
-                            ->placeholder('###-###')
-                            ->mask('999-999')
-                            ->stripCharacters('-')
-                            ->numeric()
+                            ->label(
+                                fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                                ? 'Multifactor Authentication Code'
+                                : 'Multifactor Recovery Code'
+                            )
+                            ->placeholder(
+                                fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                                ? '###-###'
+                                : 'abcdef-98765'
+                            )
+                            ->mask(
+                                fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                                ? '999-999'
+                                : null
+                            )
+                            ->stripCharacters(
+                                fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                                ? '-'
+                                : null
+                            )
+                            ->helperText(
+                                fn (Login $livewire) => $livewire->usingRecoveryCode
+                                ? 'Enter one of your recovery codes provided when you enabled multifactor authentication. Recovery codes are one-time use only. If you have used all of your recovery codes, you will need to contact your administrator to reset your multifactor authentication.'
+                                : null
+                            )
+                            ->numeric(fn (Login $livewire) => ! $livewire->usingRecoveryCode)
+                            ->string(fn (Login $livewire) => $livewire->usingRecoveryCode)
                             ->required(fn (Login $livewire) => $livewire->needsMFA)
                             ->hidden(fn (Login $livewire) => ! $livewire->needsMFA)
                             ->dehydratedWhenHidden(),
