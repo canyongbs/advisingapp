@@ -52,7 +52,7 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 it('will create the task records for educatables in the caseload', function (Collection $educatables) {
     expect(Task::count())->toBe(0);
 
-    Feature::active('segment-as-caseload-replacement')
+    Feature::active('enable-segments')
         ? $segmentOrCaseload = Segment::factory()->create([
             'type' => SegmentType::Static,
         ])
@@ -67,7 +67,7 @@ it('will create the task records for educatables in the caseload', function (Col
         ]);
     });
 
-    Feature::active('segment-as-caseload-replacement')
+    Feature::active('enable-segments')
         ? $foreignKey = 'segment_id'
         : $foreignKey = 'caseload_id';
 

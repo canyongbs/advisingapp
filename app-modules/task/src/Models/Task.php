@@ -160,7 +160,7 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, E
         try {
             DB::beginTransaction();
 
-            $campaignRelation = Feature::active('segment-as-caseload-replacement')
+            $campaignRelation = Feature::active('enable-segments')
                 ? 'segment'
                 : 'caseload';
 

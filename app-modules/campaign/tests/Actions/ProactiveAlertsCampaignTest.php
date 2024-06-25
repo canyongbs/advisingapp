@@ -56,7 +56,7 @@ it('will create the appropriate records for educatables in the caseload', functi
         'first_name' => 'TestTest',
     ]);
 
-    Feature::active('segment-as-caseload-replacement')
+    Feature::active('enable-segments')
         ? $segmentOrCaseload = Segment::factory()->create([
             'type' => SegmentType::Static,
         ])
@@ -71,7 +71,7 @@ it('will create the appropriate records for educatables in the caseload', functi
         ]);
     });
 
-    Feature::active('segment-as-caseload-replacement')
+    Feature::active('enable-segments')
         ? $foreignKey = 'segment_id'
         : $foreignKey = 'caseload_id';
 

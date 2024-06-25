@@ -38,11 +38,13 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Filament\Forms\Get;
 use Filament\Tables\Table;
+use Laravel\Pennant\Feature;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
+use AdvisingApp\Segment\Models\Segment;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\EditAction;
@@ -55,6 +57,7 @@ use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Segment\Enums\SegmentModel;
 use Filament\Tables\Actions\BulkActionGroup;
 use Illuminate\Database\Eloquent\Collection;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -63,6 +66,7 @@ use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Imports\ProspectImporter;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
+use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
@@ -115,22 +119,30 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                     ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('my_caseloads')
-                    ->label('My Caseloads')
+                SelectFilter::make('my_segments')
+                    ->label('My Population Segments')
                     ->options(
-                        auth()->user()->caseloads()
-                            ->where('model', CaseloadModel::Prospect)
-                            ->pluck('name', 'id'),
+                        Feature::active('enable-segments')
+                            ? auth()->user()->segments()
+                                ->where('model', SegmentModel::Prospect)
+                                ->pluck('name', 'id')
+                            : auth()->user()->caseloads()
+                                ->where('model', CaseloadModel::Prospect)
+                                ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
                     ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
-                SelectFilter::make('all_caseloads')
-                    ->label('All Caseloads')
+                SelectFilter::make('all_segments')
+                    ->label('All Population Segments')
                     ->options(
-                        Caseload::all()
-                            ->where('model', CaseloadModel::Prospect)
-                            ->pluck('name', 'id'),
+                        Feature::active('enable-segments')
+                            ? Segment::all()
+                                ->where('model', SegmentModel::Prospect)
+                                ->pluck('name', 'id')
+                            : Caseload::all()
+                                ->where('model', CaseloadModel::Prospect)
+                                ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
@@ -240,8 +252,12 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
             return;
         }
 
+        $translatorClass = Feature::active('enable-segments')
+            ? TranslateSegmentFilters::class
+            : TranslateCaseloadFilters::class;
+
         $query->whereKey(
-            app(TranslateCaseloadFilters::class)
+            app($translatorClass)
                 ->handle($data['value'])
                 ->pluck($query->getModel()->getQualifiedKeyName()),
         );

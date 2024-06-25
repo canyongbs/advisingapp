@@ -37,7 +37,9 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Tables\Table;
+use Laravel\Pennant\Feature;
 use Filament\Tables\Filters\Filter;
+use AdvisingApp\Segment\Models\Segment;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -45,11 +47,13 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\TernaryFilter;
+use AdvisingApp\Segment\Enums\SegmentModel;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
+use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
@@ -85,22 +89,30 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
                     ->searchable(),
             ])
             ->filters([
-                SelectFilter::make('my_caseloads')
-                    ->label('My Caseloads')
+                SelectFilter::make('my_segments')
+                    ->label('My Population Segments')
                     ->options(
-                        auth()->user()->caseloads()
-                            ->where('model', CaseloadModel::Student)
-                            ->pluck('name', 'id'),
+                        Feature::active('enable-segments')
+                            ? auth()->user()->segments()
+                                ->where('model', SegmentModel::Student)
+                                ->pluck('name', 'id')
+                            : auth()->user()->caseloads()
+                                ->where('model', CaseloadModel::Student)
+                                ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
                     ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
-                SelectFilter::make('all_caseloads')
-                    ->label('All Caseloads')
+                SelectFilter::make('all_segments')
+                    ->label('All Population Segments')
                     ->options(
-                        Caseload::all()
-                            ->where('model', CaseloadModel::Student)
-                            ->pluck('name', 'id'),
+                        Feature::active('enable-segments')
+                            ? Segment::all()
+                                ->where('model', SegmentModel::Student)
+                                ->pluck('name', 'id')
+                            : Caseload::all()
+                                ->where('model', CaseloadModel::Student)
+                                ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
@@ -153,8 +165,12 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
             return;
         }
 
+        $translatorClass = Feature::active('enable-segments')
+            ? TranslateSegmentFilters::class
+            : TranslateCaseloadFilters::class;
+
         $query->whereKey(
-            app(TranslateCaseloadFilters::class)
+            app($translatorClass)
                 ->handle($data['value'])
                 ->pluck($query->getModel()->getQualifiedKeyName()),
         );

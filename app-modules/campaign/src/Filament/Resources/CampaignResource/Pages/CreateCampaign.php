@@ -72,7 +72,7 @@ class CreateCampaign extends CreateRecord
                     TextInput::make('name')
                         ->autocomplete(false)
                         ->required(),
-                    Feature::active('segment-as-caseload-replacement')
+                    Feature::active('enable-segments')
                         ? Select::make('segment_id')
                             ->label('Population Segment')
                             ->options($user->segments()->pluck('name', 'id'))

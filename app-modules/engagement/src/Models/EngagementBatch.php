@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\Engagement\Models;
 
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
-use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
-use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
-use App\Models\BaseModel;
-use App\Models\User;
-use DOMDocument;
 use DOMXPath;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Laravel\Pennant\Feature;
 use Throwable;
+use DOMDocument;
+use App\Models\User;
+use App\Models\BaseModel;
+use Laravel\Pennant\Feature;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
+use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
+use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
 
 /**
  * @mixin IdeHelperEngagementBatch
@@ -68,7 +68,7 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {
         try {
-            $campaignRelation = Feature::active('segment-as-caseload-replacement')
+            $campaignRelation = Feature::active('enable-segments')
                 ? 'segment'
                 : 'caseload';
 
