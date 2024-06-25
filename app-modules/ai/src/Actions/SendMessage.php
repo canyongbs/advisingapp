@@ -45,7 +45,7 @@ use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 
 class SendMessage
 {
-    public function __invoke(AiThread $thread, string $content, array $files): Closure
+    public function __invoke(AiThread $thread, string $content, array $files = []): Closure
     {
         if ($thread->locked_at) {
             throw new AiThreadLockedException();

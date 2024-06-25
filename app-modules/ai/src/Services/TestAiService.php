@@ -44,15 +44,10 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
-use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
 
-class TestAiService implements Contracts\AiService, AiServiceLifecycleHooks
+class TestAiService implements Contracts\AiService
 {
     use HasAiServiceHelpers;
-
-    public function afterThreadSelected(AiThread $thread): void {}
-
-    public function afterLoadFirstThread(AiThread $thread): void {}
 
     public function createAssistant(AiAssistant $assistant): void {}
 
@@ -115,9 +110,9 @@ class TestAiService implements Contracts\AiService, AiServiceLifecycleHooks
         return true;
     }
 
-    public function createFiles(AiMessage $message, array $files): Collection
+    protected function createFiles(AiMessage $message, array $files): Collection
     {
-        return collect($files)->map(function ($file) {
+        return collect($files)->map(function (string $file): AiMessageFile {
             $fileRecord = new AiMessageFile();
             $fileRecord->temporary_url = 'temp-url';
             $fileRecord->name = 'test';

@@ -39,9 +39,10 @@ namespace AdvisingApp\IntegrationOpenAi\Services;
 use OpenAI;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
 use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
 
-class OpenAiGpt4oService extends BaseOpenAiService
+class OpenAiGpt4oService extends BaseOpenAiService implements AiServiceLifecycleHooks
 {
     use UploadsFiles;
 

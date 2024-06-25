@@ -65,7 +65,7 @@ it('sends a message', function () {
     expect(AiMessage::count())
         ->toBe(0);
 
-    $responseStream = app(SendMessage::class)($thread, $content, []);
+    $responseStream = app(SendMessage::class)($thread, $content);
 
     $streamedContent = '';
 
@@ -154,7 +154,7 @@ it('throws an exception if the thread is locked', function () {
         'locked_at' => now(),
     ]);
 
-    iterator_to_array(app(SendMessage::class)($thread, 'Hello, world!', [])());
+    iterator_to_array(app(SendMessage::class)($thread, 'Hello, world!')());
 })->throws(AiThreadLockedException::class);
 
 it('throws an exception if the assistant is archived', function () {
@@ -169,7 +169,7 @@ it('throws an exception if the assistant is archived', function () {
         ->for(auth()->user())
         ->create();
 
-    app(SendMessage::class)($thread, 'Hello, world!', [])();
+    app(SendMessage::class)($thread, 'Hello, world!')();
 
-    iterator_to_array(app(SendMessage::class)($thread, 'Hello, world!', [])());
+    iterator_to_array(app(SendMessage::class)($thread, 'Hello, world!')());
 })->throws(AiAssistantArchivedException::class);

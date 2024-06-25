@@ -73,7 +73,7 @@ trait UploadsFiles
         }
     }
 
-    public function createFiles(AiMessage $message, array $files): Collection
+    protected function createFiles(AiMessage $message, array $files): Collection
     {
         return collect($files)->map(function ($file) use ($message) {
             $fileRecord = new AiMessageFile();
@@ -89,7 +89,73 @@ trait UploadsFiles
         });
     }
 
-    public function retrieveFile(AiMessageFile $file): FilesDataTransferObject
+    protected function uploadFileToClient(AiMessage $message, AiMessageFile $file): string
+    {
+        $service = $message->thread->assistant->model->getService();
+
+        $apiKey = $service->getApiKey();
+        $apiVersion = $service->getApiVersion();
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $service->getDeployment() . '/files?api-version=' . $apiVersion);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+
+        $cfile = new CURLFile($file->temporary_url, $file->mime_type, $file->name);
+
+        $postFields = [
+            'purpose' => 'assistants',
+            'file' => $cfile,
+        ];
+
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+
+        $headers = [
+            'api-key: ' . $apiKey,
+            'OpenAI-Beta: assistants=v2',
+            'Accept: */*',
+            'Content-Type: multipart/form-data',
+        ];
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $response = curl_exec($ch);
+        $response = json_decode($response, true);
+
+        if (curl_errno($ch) || ! isset($response['id'])) {
+            if (! blank(curl_error($ch))) {
+                throw new FileUploadException(curl_error($ch));
+            }
+
+            throw new FileUploadException();
+        }
+
+        if ($response['status'] === 'error') {
+            throw new FileUploadException('The uploaded file could not be processed. Please try again, or upload a different file.');
+        }
+
+        $maxTries = 5;
+        $tries = 0;
+        $status = $response['status'];
+
+        while ($status !== 'processed' && $tries < $maxTries) {
+            usleep(500000);
+            $response = $service->retrieveFile($file);
+            $status = $response->status;
+            $tries++;
+        }
+
+        if ($status !== 'processed') {
+            throw new FileUploadException('The uploaded file could not be processed. Please try again, or upload a different file.');
+        }
+
+        curl_close($ch);
+
+        return $response['id'];
+    }
+
+    protected function retrieveFile(AiMessageFile $file): FilesDataTransferObject
     {
         $response = $this->client->files()->retrieve($file->file_id);
 
@@ -100,7 +166,7 @@ trait UploadsFiles
         ]);
     }
 
-    public function createVectorStore(array $parameters): VectorStoresDataTransferObject
+    protected function createVectorStore(array $parameters): VectorStoresDataTransferObject
     {
         $response = $this->client->vectorStores()->create($parameters);
 
@@ -113,7 +179,7 @@ trait UploadsFiles
         ]);
     }
 
-    public function retrieveVectorStore(string $vectorStoreId): VectorStoresDataTransferObject
+    protected function retrieveVectorStore(string $vectorStoreId): VectorStoresDataTransferObject
     {
         $response = $this->client->vectorStores()->retrieve($vectorStoreId);
 
@@ -254,71 +320,5 @@ trait UploadsFiles
             ->toArray();
 
         return ! empty($expiredVectorStores) ? $expiredVectorStores : null;
-    }
-
-    protected function uploadFileToClient(AiMessage $message, AiMessageFile $file): string
-    {
-        $service = $message->thread->assistant->model->getService();
-
-        $apiKey = $service->getApiKey();
-        $apiVersion = $service->getApiVersion();
-
-        $ch = curl_init();
-
-        curl_setopt($ch, CURLOPT_URL, $service->getDeployment() . '/files?api-version=' . $apiVersion);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-
-        $cfile = new CURLFile($file->temporary_url, $file->mime_type, $file->name);
-
-        $postFields = [
-            'purpose' => 'assistants',
-            'file' => $cfile,
-        ];
-
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
-
-        $headers = [
-            'api-key: ' . $apiKey,
-            'OpenAI-Beta: assistants=v2',
-            'Accept: */*',
-            'Content-Type: multipart/form-data',
-        ];
-
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-        $response = curl_exec($ch);
-        $response = json_decode($response, true);
-
-        if (curl_errno($ch) || ! isset($response['id'])) {
-            if (! blank(curl_error($ch))) {
-                throw new FileUploadException(curl_error($ch));
-            }
-
-            throw new FileUploadException();
-        }
-
-        if ($response['status'] === 'error') {
-            throw new FileUploadException('The uploaded file could not be processed. Please try again, or upload a different file.');
-        }
-
-        $maxTries = 5;
-        $tries = 0;
-        $status = $response['status'];
-
-        while ($status !== 'processed' && $tries < $maxTries) {
-            usleep(500000);
-            $response = $service->retrieveFile($file);
-            $status = $response->status;
-            $tries++;
-        }
-
-        if ($status !== 'processed') {
-            throw new FileUploadException('The uploaded file could not be processed. Please try again, or upload a different file.');
-        }
-
-        curl_close($ch);
-
-        return $response['id'];
     }
 }

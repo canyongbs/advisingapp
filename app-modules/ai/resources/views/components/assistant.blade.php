@@ -460,18 +460,16 @@
                         <div
                             class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
                             @if ($this->files)
-                                <div class="flex flex-row justify-start px-4 py-2">
+                                <div class="flex items-center justify-start gap-3 px-4 py-2">
                                     @foreach ($this->files as $key => $file)
-                                        <div class="mx-2 flex items-center">
-                                            <x-filament::badge>
-                                                {{ $file['name'] }}
-                                                <x-slot
-                                                    name="deleteButton"
-                                                    label="Remove uploaded file {{ $file['name'] }}"
-                                                    wire:click="removeUploadedFile({{ $key }})"
-                                                ></x-slot>
-                                            </x-filament::badge>
-                                        </div>
+                                        <x-filament::badge>
+                                            {{ $file['name'] }}
+                                            <x-slot
+                                                name="deleteButton"
+                                                label="Remove uploaded file {{ $file['name'] }}"
+                                                wire:click="removeUploadedFile({{ $key }})"
+                                            ></x-slot>
+                                        </x-filament::badge>
                                     @endforeach
                                 </div>
                             @endif

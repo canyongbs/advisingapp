@@ -66,7 +66,7 @@ it('retries a message', function () {
     expect(AiMessage::count())
         ->toBe(0);
 
-    $responseStream = app(RetryMessage::class)($thread, $messageContent, []);
+    $responseStream = app(RetryMessage::class)($thread, $messageContent);
 
     $streamedContent = '';
 
@@ -115,7 +115,7 @@ it('does not create a new message if the most recent one has the same content', 
     expect(AiMessage::count())
         ->toBe(1);
 
-    $responseStream = app(RetryMessage::class)($thread, $messageContent, []);
+    $responseStream = app(RetryMessage::class)($thread, $messageContent);
 
     $streamedContent = '';
 
@@ -166,7 +166,7 @@ it('does not match messages with the same content sent by other users in the sam
     expect(AiMessage::count())
         ->toBe(1);
 
-    iterator_to_array(app(RetryMessage::class)($thread, $messageContent, [])());
+    iterator_to_array(app(RetryMessage::class)($thread, $messageContent)());
 
     expect(AiMessage::count())
         ->toBe(3);
@@ -201,7 +201,7 @@ it('does not match messages with the same content belonging to other threads', f
     expect(AiMessage::count())
         ->toBe(1);
 
-    iterator_to_array(app(RetryMessage::class)($thread, $messageContent, [])());
+    iterator_to_array(app(RetryMessage::class)($thread, $messageContent)());
 
     expect(AiMessage::count())
         ->toBe(3);
@@ -227,7 +227,7 @@ it('does not match messages with different content', function () {
     expect(AiMessage::count())
         ->toBe(1);
 
-    iterator_to_array(app(RetryMessage::class)($thread, $messageContent, [])());
+    iterator_to_array(app(RetryMessage::class)($thread, $messageContent)());
 
     expect(AiMessage::count())
         ->toBe(3);
@@ -240,7 +240,7 @@ it('throws an exception if the thread is locked', function () {
         'locked_at' => now(),
     ]);
 
-    iterator_to_array(app(RetryMessage::class)($thread, 'Hello, world!', [])());
+    iterator_to_array(app(RetryMessage::class)($thread, 'Hello, world!')());
 })->throws(AiThreadLockedException::class);
 
 it('throws an exception if the assistant is archived', function () {
@@ -255,5 +255,5 @@ it('throws an exception if the assistant is archived', function () {
         ->for(auth()->user())
         ->create();
 
-    iterator_to_array(app(RetryMessage::class)($thread, 'Hello, world!', [])());
+    iterator_to_array(app(RetryMessage::class)($thread, 'Hello, world!')());
 })->throws(AiAssistantArchivedException::class);

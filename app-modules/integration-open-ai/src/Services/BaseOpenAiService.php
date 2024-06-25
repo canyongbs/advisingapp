@@ -43,8 +43,8 @@ use AdvisingApp\Ai\Models\AiMessage;
 use OpenAI\Contracts\ClientContract;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
-use AdvisingApp\Ai\Services\BaseAiService;
 use OpenAI\Responses\Threads\ThreadResponse;
+use AdvisingApp\Ai\Services\Contracts\AiService;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
@@ -53,7 +53,7 @@ use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
 
-abstract class BaseOpenAiService extends BaseAiService
+abstract class BaseOpenAiService implements AiService
 {
     use HasAiServiceHelpers;
 

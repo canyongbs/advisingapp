@@ -43,34 +43,32 @@ return new class () extends Migration {
     public function up(): void
     {
         $assistants = AiAssistant::query()
+            ->where('model', AiModel::OpenAiGpt4o)
             ->get();
 
         foreach ($assistants as $assistant) {
-            if ($assistant->model === AiModel::OpenAiGpt4o) {
-                /** @var AiAssistant $assistant */
+            /** @var AiAssistant $assistant */
 
-                /** @var OpenAiGpt4oService $service */
-                $service = $assistant->model->getService();
+            /** @var OpenAiGpt4oService $service */
+            $service = $assistant->model->getService();
 
-                $service->enableAssistantFileUploads($assistant);
-            }
+            $service->enableAssistantFileUploads($assistant);
         }
     }
 
     public function down(): void
     {
         $assistants = AiAssistant::query()
+            ->where('model', AiModel::OpenAiGpt4o)
             ->get();
 
         foreach ($assistants as $assistant) {
-            if ($assistant->model === AiModel::OpenAiGpt4o) {
-                /** @var AiAssistant $assistant */
+            /** @var AiAssistant $assistant */
 
-                /** @var OpenAiGpt4oService $service */
-                $service = $assistant->model->getService();
+            /** @var OpenAiGpt4oService $service */
+            $service = $assistant->model->getService();
 
-                $service->disableAssistantFileUploads($assistant);
-            }
+            $service->disableAssistantFileUploads($assistant);
         }
     }
 };
