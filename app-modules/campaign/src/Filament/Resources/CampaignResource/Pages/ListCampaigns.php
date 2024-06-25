@@ -37,7 +37,6 @@
 namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use Filament\Tables\Table;
-use Laravel\Pennant\Feature;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
@@ -58,11 +57,8 @@ class ListCampaigns extends ListRecords
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name'),
-                Feature::active('enable-segments')
-                    ? TextColumn::make('segment.name')
-                        ->label('Population Segment')
-                    : TextColumn::make('caseload.name')
-                        ->label('Population Segment'),
+                TextColumn::make('segment.name')
+                    ->label('Population Segment'),
             ])
             ->actions([
                 ViewAction::make(),

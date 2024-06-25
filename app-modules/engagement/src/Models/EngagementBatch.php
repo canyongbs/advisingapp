@@ -41,7 +41,6 @@ use Throwable;
 use DOMDocument;
 use App\Models\User;
 use App\Models\BaseModel;
-use Laravel\Pennant\Feature;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
@@ -68,13 +67,9 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {
         try {
-            $campaignRelation = Feature::active('enable-segments')
-                ? 'segment'
-                : 'caseload';
-
             CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
                 'user' => $action->campaign->user,
-                'records' => $action->campaign->{$campaignRelation}->retrieveRecords(),
+                'records' => $action->campaign->segment->retrieveRecords(),
                 'deliveryMethod' => $action->data['delivery_method'],
                 'subject' => $action->data['subject'] ?? null,
                 'body' => $action->data['body'] ?? null,

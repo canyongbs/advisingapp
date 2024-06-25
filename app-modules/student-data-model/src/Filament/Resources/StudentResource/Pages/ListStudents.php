@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Tables\Table;
-use Laravel\Pennant\Feature;
 use Filament\Tables\Filters\Filter;
 use AdvisingApp\Segment\Models\Segment;
 use Filament\Tables\Actions\ViewAction;
@@ -51,14 +50,11 @@ use AdvisingApp\Segment\Enums\SegmentModel;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
-use AdvisingApp\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
 use AdvisingApp\Engagement\Filament\Actions\Concerns\ImplementsHasBulkEngagementAction;
@@ -92,31 +88,23 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
                 SelectFilter::make('my_segments')
                     ->label('My Population Segments')
                     ->options(
-                        Feature::active('enable-segments')
-                            ? auth()->user()->segments()
-                                ->where('model', SegmentModel::Student)
-                                ->pluck('name', 'id')
-                            : auth()->user()->caseloads()
-                                ->where('model', CaseloadModel::Student)
-                                ->pluck('name', 'id'),
+                        auth()->user()->segments()
+                            ->where('model', SegmentModel::Student)
+                            ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 SelectFilter::make('all_segments')
                     ->label('All Population Segments')
                     ->options(
-                        Feature::active('enable-segments')
-                            ? Segment::all()
-                                ->where('model', SegmentModel::Student)
-                                ->pluck('name', 'id')
-                            : Caseload::all()
-                                ->where('model', CaseloadModel::Student)
-                                ->pluck('name', 'id'),
+                        Segment::all()
+                            ->where('model', SegmentModel::Student)
+                            ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 Filter::make('subscribed')
                     ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
                 TernaryFilter::make('sap')
@@ -159,18 +147,14 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
             ]);
     }
 
-    protected function caseloadFilter(Builder $query, array $data): void
+    protected function segmentFilter(Builder $query, array $data): void
     {
         if (blank($data['value'])) {
             return;
         }
 
-        $translatorClass = Feature::active('enable-segments')
-            ? TranslateSegmentFilters::class
-            : TranslateCaseloadFilters::class;
-
         $query->whereKey(
-            app($translatorClass)
+            app(TranslateSegmentFilters::class)
                 ->handle($data['value'])
                 ->pluck($query->getModel()->getQualifiedKeyName()),
         );
