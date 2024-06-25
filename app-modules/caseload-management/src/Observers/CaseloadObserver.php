@@ -63,7 +63,7 @@ class CaseloadObserver
             }])->flush();
         }
 
-        if (! Feature::active('segment-as-caseload-replacement')) {
+        if (Feature::active('segment-as-caseload-replacement')) {
             $segment = new Segment();
             $segment->name = $caseload->name;
             $segment->description = $caseload->description;
@@ -74,6 +74,7 @@ class CaseloadObserver
             $segment->created_at = $caseload->created_at;
             $segment->updated_at = $caseload->updated_at;
             $segment->deleted_at = $caseload->deleted_at;
+            $segment->save();
 
             if ($caseload->subjects()->withTrashed()->exists()) {
                 foreach ($caseload->subjects()->withTrashed()->get() as $caseloadSubject) {
@@ -84,6 +85,7 @@ class CaseloadObserver
                     $segmentSubject->created_at = $caseloadSubject->created_at;
                     $segmentSubject->updated_at = $caseloadSubject->updated_at;
                     $segmentSubject->deleted_at = $caseloadSubject->deleted_at;
+                    $segmentSubject->save();
                 }
             }
         }
