@@ -40,6 +40,8 @@ use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\EditProspect;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
@@ -59,6 +61,8 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspec
 
 class ProspectResource extends Resource
 {
+    use HasGlobalSearchResultScoring;
+
     protected static ?string $model = Prospect::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
@@ -86,6 +90,15 @@ class ProspectResource extends Resource
             ManageProspectApplicationSubmissions::class,
             ProspectServiceManagement::class,
             ManageProspectEvents::class,
+        ]);
+    }
+
+    public static function modifyGlobalSearchQuery(Builder $query, string $search): void
+    {
+        static::scoreGlobalSearchResults($query, $search, [
+            'full_name' => 100,
+            'email' => 75,
+            'email_2' => 75,
         ]);
     }
 
