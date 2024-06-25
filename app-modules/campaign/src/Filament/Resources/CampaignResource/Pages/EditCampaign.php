@@ -37,7 +37,6 @@
 namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -58,17 +57,11 @@ class EditCampaign extends EditRecord
             ->schema([
                 TextInput::make('name')
                     ->required(),
-                Feature::active('enable-segments')
-                    ? Select::make('segment_id')
-                        ->label('Population Segment')
-                        ->options($user->segments()->pluck('name', 'id'))
-                        ->searchable()
-                        ->required()
-                    : Select::make('caseload_id')
-                        ->label('Population Segment')
-                        ->options($user->caseloads()->pluck('name', 'id'))
-                        ->searchable()
-                        ->required(),
+                Select::make('segment_id')
+                    ->label('Population Segment')
+                    ->options($user->segments()->pluck('name', 'id'))
+                    ->searchable()
+                    ->required(),
                 Toggle::make('enabled'),
             ]);
     }

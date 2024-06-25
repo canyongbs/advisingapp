@@ -1893,41 +1893,6 @@
             }
         },
         {
-            "name": "canyon-gbs/advising-app-caseload-management",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/caseload-management",
-                "reference": "8d0e90d94e710181086fd8087935b2f7370d0505"
-            },
-            "require": {
-                "filament/filament": "^3.0.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\CaseloadManagement\\Providers\\CaseloadManagementServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\CaseloadManagement\\": "src/",
-                    "AdvisingApp\\CaseloadManagement\\Tests\\": "tests/",
-                    "AdvisingApp\\CaseloadManagement\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\CaseloadManagement\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
             "name": "canyon-gbs/advising-app-consent",
             "version": "1.0",
             "dist": {

@@ -37,7 +37,6 @@
 namespace AdvisingApp\Alert\Filament\Resources\AlertResource\Pages;
 
 use Filament\Tables\Table;
-use Laravel\Pennant\Feature;
 use Filament\Infolists\Infolist;
 use Filament\Actions\CreateAction;
 use AdvisingApp\Alert\Models\Alert;
@@ -60,12 +59,10 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
 use App\Filament\Forms\Components\EducatableSelect;
 use AdvisingApp\Alert\Filament\Resources\AlertResource;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
-use AdvisingApp\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
 
@@ -138,27 +135,21 @@ class ListAlerts extends ListRecords
                 SelectFilter::make('my_segments')
                     ->label('My Population Segments')
                     ->options(
-                        Feature::active('enable-segments')
-                            ? auth()->user()->segments()
-                                ->pluck('name', 'id')
-                            : auth()->user()->caseloads()
-                                ->pluck('name', 'id'),
+                        auth()->user()->segments()
+                            ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 SelectFilter::make('all_segments')
                     ->label('All Population Segments')
                     ->options(
-                        Feature::active('enable-segments')
-                            ? Segment::all()
-                                ->pluck('name', 'id')
-                            : Caseload::all()
-                                ->pluck('name', 'id'),
+                        Segment::all()
+                            ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
                 SelectFilter::make('status')
@@ -211,24 +202,20 @@ class ListAlerts extends ListRecords
         ];
     }
 
-    protected function caseloadFilter(Builder $query, array $data): void
+    protected function segmentFilter(Builder $query, array $data): void
     {
         if (blank($data['value'])) {
             return;
         }
 
-        $caseload = Caseload::find($data['value']);
+        $segment = Segment::find($data['value']);
 
         /** @var Model $model */
-        $model = resolve($caseload->model->class());
-
-        $translatorClass = Feature::active('enable-segments')
-            ? TranslateSegmentFilters::class
-            : TranslateCaseloadFilters::class;
+        $model = resolve($segment->model->class());
 
         $query->whereIn(
             'concern_id',
-            app($translatorClass)
+            app(TranslateSegmentFilters::class)
                 ->handle($data['value'])
                 ->pluck($model->getQualifiedKeyName()),
         );

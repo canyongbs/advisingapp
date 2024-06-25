@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
-use Laravel\Pennant\Feature;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
@@ -57,11 +56,8 @@ class ViewCampaign extends ViewRecord
                 Section::make()
                     ->schema([
                         TextEntry::make('name'),
-                        Feature::active('enable-segments')
-                            ? TextEntry::make('segment.name')
-                                ->label('Population Segment')
-                            : TextEntry::make('caseload.name')
-                                ->label('Population Segment'),
+                        TextEntry::make('segment.name')
+                            ->label('Population Segment'),
                         IconEntry::make('enabled')
                             ->boolean(),
                         IconEntry::make('execution_status')
