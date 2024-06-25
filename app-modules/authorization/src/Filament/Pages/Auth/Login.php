@@ -51,7 +51,6 @@ use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
 use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
-use Illuminate\Support\Facades\Log;
 
 class Login extends FilamentLogin
 {
@@ -130,7 +129,7 @@ class Login extends FilamentLogin
                     Filament::auth()->logout();
 
                     $this->needsMFA = false;
-                    
+
                     $this->usingRecoveryCode = false;
 
                     $this->data['code'] = null;
@@ -145,7 +144,7 @@ class Login extends FilamentLogin
 
                     $this->mountAction('recoveryCodes', [
                         'user' => $user,
-                        'remember' => $data['remember']
+                        'remember' => $data['remember'],
                     ]);
 
                     return null;
@@ -190,6 +189,11 @@ class Login extends FilamentLogin
     public function getMultifactorQrCode()
     {
         return app(MultifactorService::class)->getMultifactorQrCodeSvg($this->user->getMultifactorQrCodeUrl());
+    }
+
+    public function toggleUsingRecoveryCodes(): void
+    {
+        $this->usingRecoveryCode = ! $this->usingRecoveryCode;
     }
 
     protected function isValidCode(User $user, string $code): bool
@@ -248,23 +252,28 @@ class Login extends FilamentLogin
                             ->hidden(fn (Login $livewire) => $livewire->needsMFA)
                             ->dehydratedWhenHidden(),
                         TextInput::make('code')
-                            ->label(fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                            ->label(
+                                fn (Login $livewire) => ! $livewire->usingRecoveryCode
                                 ? 'Multifactor Authentication Code'
                                 : 'Multifactor Recovery Code'
                             )
-                            ->placeholder(fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                            ->placeholder(
+                                fn (Login $livewire) => ! $livewire->usingRecoveryCode
                                 ? '###-###'
                                 : 'abcdef-98765'
                             )
-                            ->mask(fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                            ->mask(
+                                fn (Login $livewire) => ! $livewire->usingRecoveryCode
                                 ? '999-999'
                                 : null
                             )
-                            ->stripCharacters(fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                            ->stripCharacters(
+                                fn (Login $livewire) => ! $livewire->usingRecoveryCode
                                 ? '-'
                                 : null
                             )
-                            ->helperText(fn (Login $livewire) => $livewire->usingRecoveryCode
+                            ->helperText(
+                                fn (Login $livewire) => $livewire->usingRecoveryCode
                                 ? 'Enter one of your recovery codes provided when you enabled multifactor authentication. Recovery codes are one-time use only. If you have used all of your recovery codes, you will need to contact your administrator to reset your multifactor authentication.'
                                 : null
                             )
@@ -277,10 +286,5 @@ class Login extends FilamentLogin
                     ->statePath('data'),
             ),
         ];
-    }
-
-    public function toggleUsingRecoveryCodes(): void
-    {
-        $this->usingRecoveryCode = ! $this->usingRecoveryCode;
     }
 }
