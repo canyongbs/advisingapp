@@ -34,56 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Providers;
+namespace AdvisingApp\Ai\Observers;
 
-use Filament\Panel;
-use AdvisingApp\Ai\AiPlugin;
-use AdvisingApp\Ai\Models\Prompt;
-use AdvisingApp\Ai\Models\AiThread;
-use App\Concerns\ImplementsGraphQL;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Ai\Models\AiAssistant;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Ai\Models\AiThreadFolder;
-use AdvisingApp\Ai\Observers\PromptObserver;
-use AdvisingApp\Ai\Registries\AiRbacRegistry;
-use AdvisingApp\Ai\Observers\AiMessageObserver;
-use AdvisingApp\Ai\Observers\AiAssistantObserver;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
 
-class AiServiceProvider extends ServiceProvider
+class AiAssistantObserver
 {
-    use ImplementsGraphQL;
-
-    public function register(): void
+    public function updating(AiAssistant $assistant): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new AiPlugin()));
-    }
+        if ($assistant->application === AiApplication::PersonalAssistant && $assistant->is_default) {
+            if ($assistant->isDirty('name')) {
+                throw new DefaultAssistantLockedPropertyException('name');
+            }
 
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'ai_assistant' => AiAssistant::class,
-            'ai_thread' => AiThread::class,
-            'ai_thread_folder' => AiThreadFolder::class,
-            'ai_message' => AiMessage::class,
-            'prompt_type' => PromptType::class,
-            'prompt' => Prompt::class,
-        ]);
-
-        $this->registerObservers();
-
-        AuthorizationRoleRegistry::register(AiRbacRegistry::class);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-    }
-
-    protected function registerObservers(): void
-    {
-        AiAssistant::observe(AiAssistantObserver::class);
-        AiMessage::observe(AiMessageObserver::class);
-        Prompt::observe(PromptObserver::class);
+            if ($assistant->isDirty('application')) {
+                throw new DefaultAssistantLockedPropertyException('application');
+            }
+        }
     }
 }
