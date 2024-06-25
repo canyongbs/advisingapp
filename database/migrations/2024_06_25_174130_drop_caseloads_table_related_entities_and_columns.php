@@ -67,8 +67,13 @@ return new class () extends Migration {
 
     public function up(): void
     {
-        DB::table('campaigns', function (Blueprint $table) {
-            $table->dropColumn('caseload_id');
+        Schema::table('campaigns', function (Blueprint $table) {
+            if (Schema::hasColumn('campaigns', 'caseload_id')) {
+                $table->dropForeign('caseload_id');
+                $table->dropColumn('caseload_id');
+            }
+
+            $table->foreignUuid('segment_id')->constrained('segments')->change();
         });
 
         collect($this->guards)
@@ -80,14 +85,17 @@ return new class () extends Migration {
             ->whereIn('name', ['Caseload', 'Caseload Subject'])
             ->delete();
 
-        DB::table('caseload_subjects')->truncate();
-        DB::table('caseloads')->truncate();
+        Schema::dropIfExists('caseload_subjects');
+        Schema::dropIfExists('caseloads');
     }
 
     public function down(): void
     {
-        DB::table('campaigns', function (Blueprint $table) {
+        Schema::table('campaigns', function (Blueprint $table) {
             $table->foreignUuid('caseload_id')->nullable()->constrained('caseloads');
+
+            $table->dropForeign('segment_id');
+            $table->foreignUuid('segment_id')->nullable()->constrained('segments')->change();
         });
 
         collect($this->guards)
