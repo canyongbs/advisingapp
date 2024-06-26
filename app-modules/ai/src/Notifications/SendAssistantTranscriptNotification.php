@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Notifications;
 
 use App\Models\User;
+use Laravel\Pennant\Feature;
 use AdvisingApp\Ai\Models\AiThread;
 use App\Models\NotificationSetting;
 use AdvisingApp\Ai\Models\AiMessage;
@@ -45,6 +46,7 @@ use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use Illuminate\Support\Facades\Cache;
 
 class SendAssistantTranscriptNotification extends BaseNotification implements EmailNotification
 {
@@ -101,8 +103,13 @@ class SendAssistantTranscriptNotification extends BaseNotification implements Em
 
     protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
     {
-        $this->thread->emailed_count = $this->thread->emailed_count + 1;
-        $this->thread->save();
+        if (Feature::active('ai_utilization')) {
+            $this->thread->emailed_count = $this->thread->emailed_count + 1;
+            $this->thread->save();
+        }
+        if (Feature::active('ai_utilization') && Cache::has('special_actions_doughnut_chart')) {
+            Cache::forget('special_actions_doughnut_chart');
+        }
     }
 
     private function resolveNotificationSetting(User $notifiable): ?NotificationSetting

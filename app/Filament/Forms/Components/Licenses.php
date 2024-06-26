@@ -37,8 +37,10 @@
 namespace App\Filament\Forms\Components;
 
 use App\Models\User;
+use Laravel\Pennant\Feature;
 use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Toggle;
+use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Fieldset;
 use Filament\Notifications\Notification;
@@ -96,6 +98,10 @@ class Licenses extends Section
                         }
 
                         $notification->send();
+
+                        if ($licenseType == LicenseType::ConversationalAi && Cache::has('ai-users-count') && Feature::active('ai_utilization')) {
+                            Cache::forget('ai-users-count');
+                        }
                     })
                     ->disabled(fn (?bool $state) => ! $state && ! $licenseType->hasAvailableLicenses())
                     ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
