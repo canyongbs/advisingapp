@@ -4,6 +4,8 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
 use AdvisingApp\Ai\Models\PromptType;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class PromptsByCategoryDoughnutChart extends ChartWidget
 {
@@ -39,12 +41,15 @@ class PromptsByCategoryDoughnutChart extends ChartWidget
 
     protected function getData(): array
     {
-        $promptsByCategory = PromptType::withCount(['prompts'])->get(['id', 'title']);
+        $promptsByCategory = Cache::remember('promt_by_category_chart', now()->addMinute(15), function (): Collection {
+            $promptsByCategoryData = PromptType::withCount(['prompts'])->get(['id', 'title']);
 
-        $promptsByCategory = $promptsByCategory->map(function (PromptType $promptType) {
-            $promptType['bg_color'] = $this->getRgbString();
+            $promptsByCategoryData = $promptsByCategoryData->map(function (PromptType $promptType) {
+                $promptType['bg_color'] = $this->getRgbString();
 
-            return $promptType;
+                return $promptType;
+            });
+            return $promptsByCategoryData;
         });
 
         return [

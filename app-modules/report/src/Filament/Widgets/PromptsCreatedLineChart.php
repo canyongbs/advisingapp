@@ -5,6 +5,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use Carbon\Carbon;
 use AdvisingApp\Ai\Models\Prompt;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Cache;
 
 class PromptsCreatedLineChart extends ChartWidget
 {
@@ -36,28 +37,25 @@ class PromptsCreatedLineChart extends ChartWidget
 
     protected function getData(): array
     {
-        $totalCreatedPerMonth = Prompt::query()
-            ->toBase()
-            ->selectRaw('date_trunc(\'month\', created_at) as month')
-            ->selectRaw('count(*) as total')
-            ->where('created_at', '>', now()->subYear())
-            ->groupBy('month')
-            ->orderBy('month')
-            ->pluck('total', 'month');
+        $runningTotalPerMonth = Cache::remember('prompts_created_line_chart', now()->addMinute(15), function (): array {
+            $totalCreatedPerMonth = Prompt::query()
+                ->toBase()
+                ->selectRaw('date_trunc(\'month\', created_at) as month')
+                ->selectRaw('count(*) as total')
+                ->where('created_at', '>', now()->subYear())
+                ->groupBy('month')
+                ->orderBy('month')
+                ->pluck('total', 'month');
 
-        $runningTotal = Prompt::query()
-            ->where('created_at', '<', now()->subYear())
-            ->count();
+            $runningTotalPerMonth = [];
 
-        $runningTotalPerMonth = [];
+            foreach (range(11, 0) as $month) {
+                $month = Carbon::now()->subMonths($month);
+                $runningTotalPerMonth[$month->format('M Y')] = $totalCreatedPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
+            }
 
-        foreach (range(11, 0) as $month) {
-            $month = Carbon::now()->subMonths($month);
-
-            $runningTotal += $totalCreatedPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-
-            $runningTotalPerMonth[$month->format('M Y')] = $runningTotal;
-        }
+            return $runningTotalPerMonth;
+        });
 
         return [
             'datasets' => [

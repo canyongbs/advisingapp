@@ -38,6 +38,8 @@ namespace AdvisingApp\Ai\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Laravel\Pennant\Feature;
+use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Assistant\Models\IdeHelperPrompt;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -85,12 +87,20 @@ class Prompt extends BaseModel
     {
         $this->upvotes()->create(['user_id' => auth()->id()]);
 
+        if (Feature::active('ai_utilization') && Cache::has('prompts-liked-count')) {
+            Cache::forget('prompts-liked-count');
+        }
+
         $this->isUpvoted = true;
     }
 
     public function cancelUpvote(): void
     {
         $this->upvotes()->whereBelongsTo(auth()->user())->delete();
+
+        if (Feature::active('ai_utilization') && Cache::has('prompts-liked-count')) {
+            Cache::forget('prompts-liked-count');
+        }
 
         $this->isUpvoted = false;
     }

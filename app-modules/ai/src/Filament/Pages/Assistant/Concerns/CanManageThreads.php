@@ -41,6 +41,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Actions\Action;
+use Laravel\Pennant\Feature;
 use Livewire\Attributes\Locked;
 use AdvisingApp\Team\Models\Team;
 use Livewire\Attributes\Computed;
@@ -51,6 +52,7 @@ use Livewire\Attributes\Renderless;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Support\Enums\ActionSize;
 use AdvisingApp\Ai\Actions\CreateThread;
@@ -248,9 +250,15 @@ trait CanManageThreads
             ->modalWidth('md')
             ->action(function (array $data) {
                 $this->thread->name = $data['name'];
-                $this->thread->saved_at = now();
+
+                if (Feature::active('ai_utilization')) {
+                    $this->thread->saved_at = now();
+                }
                 $this->thread->save();
 
+                if (Feature::active('ai_utilization') && Cache::has('saved_conversations_line_chart')) {
+                    Cache::forget('saved_conversations_line_chart');
+                }
                 $folder = auth()->user()->aiThreadFolders()
                     ->where('application', static::APPLICATION)
                     ->find($data['folder']);

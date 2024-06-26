@@ -2,13 +2,14 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
+use Laravel\Pennant\Feature;
 use Filament\Pages\Dashboard;
 use App\Filament\Clusters\ReportLibrary;
 use AdvisingApp\Report\Filament\Widgets\AiStats;
-use AdvisingApp\Report\Filament\Widgets\PromptsByCategoryDoughnutChart;
 use AdvisingApp\Report\Filament\Widgets\PromptsCreatedLineChart;
 use AdvisingApp\Report\Filament\Widgets\SavedConversationsLineChart;
 use AdvisingApp\Report\Filament\Widgets\SpecialActionsDoughnutChart;
+use AdvisingApp\Report\Filament\Widgets\PromptsByCategoryDoughnutChart;
 
 class ArtificialIntelligence extends Dashboard
 {
@@ -31,7 +32,7 @@ class ArtificialIntelligence extends Dashboard
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('report-library.view-any');
+        return $user->can('report-library.view-any') && Feature::active('ai_utilization');
     }
 
     public function getWidgets(): array
@@ -41,7 +42,7 @@ class ArtificialIntelligence extends Dashboard
             SavedConversationsLineChart::class,
             SpecialActionsDoughnutChart::class,
             PromptsByCategoryDoughnutChart::class,
-            PromptsCreatedLineChart::class
+            PromptsCreatedLineChart::class,
         ];
     }
 
