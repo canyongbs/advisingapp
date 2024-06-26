@@ -12,6 +12,9 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
+use App\Exceptions\SoftDeleteContraintViolationException;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Collection;
 
 class ListBasicNeedsCategories extends ListRecords
 {
@@ -47,7 +50,19 @@ class ListBasicNeedsCategories extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->using(function (Collection $records) {
+                            try {
+                                $records->each->delete();
+                                return true;
+                            } catch (SoftDeleteContraintViolationException $e) {
+                                Notification::make()
+                                ->title($e->getMessage())
+                                ->danger()
+                                ->send();
+                                return false;
+                            }
+                        })
                 ]),
             ]);
     }

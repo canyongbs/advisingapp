@@ -11,6 +11,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
+use App\Exceptions\SoftDeleteContraintViolationException;
 
 class EditBasicNeedsCategory extends EditRecord
 {
@@ -42,7 +43,7 @@ class EditBasicNeedsCategory extends EditRecord
                         $basicNeedsCategory->delete();
 
                         return $basicNeedsCategory;
-                    } catch (\Exception $e) {
+                    } catch (SoftDeleteContraintViolationException $e) {
                         Notification::make()
                             ->title($e->getMessage())
                             ->danger()
