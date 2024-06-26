@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Actions\Action;
+use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Select;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Checkbox;
@@ -51,15 +52,15 @@ use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\Engagement\Filament\Actions\Contracts\HasEngagementAction;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 
-class SendEngagementAction
+class SendEngagementAction extends Action
 {
-    public static function make(): Action
+    public function setUp(): void
     {
-        return Action::make('engage')
-            ->icon('heroicon-o-chat-bubble-bottom-center-text')
+        parent::setUp();
+
+        $this->icon('heroicon-o-chat-bubble-bottom-center-text')
             ->modalHeading('Send Engagement')
             ->modalDescription(fn (Educatable $record) => "Send an engagement to {$record->display_name}.")
             ->form([
@@ -155,10 +156,20 @@ class SendEngagementAction
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)
             ->closeModalByClickingAway(false)
-            // ->modalCancelAction(fn (HasEngagementAction $livewire) => $livewire->cancelEngagementAction());
-        ->modalCancelAction(false)
-        ->extraModalFooterActions(fn (HasEngagementAction $livewire) => [
-            $livewire->cancelEngagementAction(),
-        ]);
+            ->closeModalByEscaping(false)
+            ->modalCancelAction(false)
+            ->extraModalFooterActions([
+                Action::make('cancel')
+                    ->color('gray')
+                    ->cancelParentActions()
+                    ->requiresConfirmation()
+                    ->action(fn () => null)
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('danger')),
+            ]);
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'engage';
     }
 }
