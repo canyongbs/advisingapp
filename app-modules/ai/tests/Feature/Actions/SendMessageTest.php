@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Actions\SendMessage;
 use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 
@@ -59,12 +60,12 @@ it('sends a message', function () {
         ->for(auth()->user())
         ->create();
 
-    $messageContent = AiMessage::factory()->make()->content;
+    $content = AiMessage::factory()->make()->content;
 
     expect(AiMessage::count())
         ->toBe(0);
 
-    $responseStream = app(SendMessage::class)($thread, $messageContent);
+    $responseStream = app(SendMessage::class)($thread, $content);
 
     $streamedContent = '';
 
@@ -78,9 +79,64 @@ it('sends a message', function () {
         ->toBe(2);
 
     expect($messages->first())
-        ->content->toBe($messageContent)
+        ->content->toBe($content)
         ->thread->getKey()->toBe($thread->getKey())
         ->user->getKey()->toBe(auth()->user()->getKey());
+
+    $response = $messages->last();
+
+    expect($response)
+        ->thread->getKey()->toBe($thread->getKey())
+        ->user->toBeNull();
+
+    expect($streamedContent)->toBe($response->content);
+});
+
+it('sends a message with a file', function () {
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for(auth()->user())
+        ->create();
+
+    $content = AiMessage::factory()->make()->content;
+    $files = ['some-file'];
+
+    expect(AiMessage::count())
+        ->toBe(0);
+
+    expect(AiMessageFile::count())
+        ->toBe(0);
+
+    $responseStream = app(SendMessage::class)($thread, $content, $files);
+
+    $streamedContent = '';
+
+    foreach ($responseStream() as $responseContent) {
+        $streamedContent .= $responseContent;
+    }
+
+    $messages = AiMessage::all();
+    $messageFiles = AiMessageFile::all();
+
+    expect($messages->count())
+        ->toBe(2);
+
+    expect($messageFiles->count())
+        ->toBe(1);
+
+    expect($messages->first())
+        ->content->toBe($content)
+        ->thread->getKey()->toBe($thread->getKey())
+        ->user->getKey()->toBe(auth()->user()->getKey())
+        ->files->first()->getKey()->toBe($messageFiles->first()->getKey());
 
     $response = $messages->last();
 
@@ -112,6 +168,8 @@ it('throws an exception if the assistant is archived', function () {
         ]), 'assistant')
         ->for(auth()->user())
         ->create();
+
+    app(SendMessage::class)($thread, 'Hello, world!')();
 
     iterator_to_array(app(SendMessage::class)($thread, 'Hello, world!')());
 })->throws(AiAssistantArchivedException::class);

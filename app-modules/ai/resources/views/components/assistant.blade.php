@@ -459,6 +459,22 @@
                     <form x-on:submit.prevent="sendMessage">
                         <div
                             class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
+                            @if ($this->thread->assistant->model->getService()->supportsFileUploads())
+                                <div class="flex items-center justify-start gap-x-4 gap-y-3 p-4">
+                                    {{ $this->uploadFilesAction }}
+
+                                    @foreach ($this->files as $key => $file)
+                                        <x-filament::badge>
+                                            {{ $file['name'] }}
+                                            <x-slot
+                                                name="deleteButton"
+                                                label="Remove uploaded file {{ $file['name'] }}"
+                                                wire:click="removeUploadedFile({{ $key }})"
+                                            ></x-slot>
+                                        </x-filament::badge>
+                                    @endforeach
+                                </div>
+                            @endif
                             <div class="bg-white dark:bg-gray-800">
                                 <label
                                     class="sr-only"
@@ -478,7 +494,7 @@
                                     required
                                     maxlength="25000"
                                 >
-                            </textarea>
+                                </textarea>
                             </div>
                             <div
                                 class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">

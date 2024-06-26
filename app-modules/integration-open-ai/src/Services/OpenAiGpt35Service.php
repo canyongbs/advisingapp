@@ -53,13 +53,23 @@ class OpenAiGpt35Service extends BaseOpenAiService
             ->make();
     }
 
+    public function getApiKey(): string
+    {
+        return $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key');
+    }
+
+    public function getApiVersion(): string
+    {
+        return config('integration-open-ai.gpt_35_api_version');
+    }
+
+    public function getDeployment(): ?string
+    {
+        return $this->settings->open_ai_gpt_35_base_uri ?? config('integration-open-ai.gpt_35_base_uri');
+    }
+
     public function getModel(): string
     {
         return $this->settings->open_ai_gpt_35_model ?? config('integration-open-ai.gpt_35_model');
-    }
-
-    public function getDeployment(): string
-    {
-        return $this->settings->open_ai_gpt_35_base_uri ?? config('integration-open-ai.gpt_35_base_uri');
     }
 }

@@ -57,6 +57,7 @@ class SendMessageRequest extends FormRequest
     {
         return [
             'content' => ['required', 'string', 'max:25000'],
+            'files' => ['array', 'max:1'],
         ];
     }
 }

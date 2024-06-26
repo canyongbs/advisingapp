@@ -271,7 +271,7 @@ it('can send a message', function () {
             ]), 'thread')
         ->make();
 
-    $service->sendMessage($message, function () {});
+    $service->sendMessage($message, [], function () {});
 
     expect($message)
         ->message_id->toBe($messageId);
@@ -317,7 +317,7 @@ it('can retry a message', function () {
             ]), 'thread')
         ->make();
 
-    $service->retryMessage($message, function () {});
+    $service->retryMessage($message, [], function () {});
 
     expect($message)
         ->message_id->toBe($messageId);
@@ -378,7 +378,7 @@ it('can await the response of a previous run instead of sending a message again 
             'message_id' => Str::random(),
         ]);
 
-    $service->retryMessage($message, function () {});
+    $service->retryMessage($message, [], function () {});
 
     $client->assertSent(ThreadsRuns::class, 2);
 });
@@ -431,7 +431,7 @@ it('can create a run if one does not exist without sending the message again whe
             'message_id' => Str::random(),
         ]);
 
-    $service->retryMessage($message, function () {});
+    $service->retryMessage($message, [], function () {});
 
     $client->assertSent(ThreadsRuns::class, 2);
 });

@@ -43,11 +43,15 @@ use AdvisingApp\Ai\Models\AiMessage;
 use OpenAI\Contracts\ClientContract;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
+use OpenAI\Responses\Threads\ThreadResponse;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
+use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
+use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
 
 abstract class BaseOpenAiService implements AiService
 {
@@ -56,6 +60,10 @@ abstract class BaseOpenAiService implements AiService
     public const FORMATTING_INSTRUCTIONS = 'When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.';
 
     protected ClientContract $client;
+
+    abstract public function getApiKey(): string;
+
+    abstract public function getApiVersion(): string;
 
     abstract public function getModel(): string;
 
@@ -73,6 +81,11 @@ abstract class BaseOpenAiService implements AiService
             'metadata' => [
                 'last_updated_at' => now(),
             ],
+            'tools' => [
+                [
+                    'type' => 'file_search',
+                ],
+            ],
         ]);
 
         $assistant->assistant_id = $response->id;
@@ -85,6 +98,29 @@ abstract class BaseOpenAiService implements AiService
             'name' => $assistant->name,
             'model' => $this->getModel(),
         ]);
+    }
+
+    public function updateAssistantTools(AiAssistant $assistant, array $tools): void
+    {
+        $tools = collect($tools)->map(function ($tool) {
+            return [
+                'type' => $tool,
+            ];
+        })->toArray();
+
+        $this->client->assistants()->modify($assistant->assistant_id, [
+            'tools' => $tools,
+        ]);
+    }
+
+    public function enableAssistantFileUploads(AiAssistant $assistant): void
+    {
+        throw new FileUploadsCannotBeEnabled();
+    }
+
+    public function disableAssistantFileUploads(AiAssistant $assistant): void
+    {
+        throw new FileUploadsCannotBeDisabled();
     }
 
     public function createThread(AiThread $thread): void
@@ -127,6 +163,27 @@ abstract class BaseOpenAiService implements AiService
         }
     }
 
+    public function retrieveThread(AiThread $thread): ThreadsDataTransferObject
+    {
+        $response = $this->client->threads()->retrieve($thread->thread_id);
+
+        return ThreadsDataTransferObject::from([
+            'id' => $thread->thread_id,
+            'vectorStoreIds' => $response->toolResources?->fileSearch?->vectorStoreIds ?? [],
+        ]);
+    }
+
+    public function modifyThread(AiThread $thread, array $parameters): ThreadsDataTransferObject
+    {
+        /** @var ThreadResponse $response */
+        $response = $this->client->threads()->modify($thread->thread_id, $parameters);
+
+        return ThreadsDataTransferObject::from([
+            'id' => $response->id,
+            'vectorStoreIds' => $response->toolResources?->fileSearch?->vectorStoreIds ?? [],
+        ]);
+    }
+
     public function deleteThread(AiThread $thread): void
     {
         $this->client->threads()->delete($thread->thread_id);
@@ -134,7 +191,7 @@ abstract class BaseOpenAiService implements AiService
         $thread->thread_id = null;
     }
 
-    public function sendMessage(AiMessage $message, Closure $saveResponse): Closure
+    public function sendMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
     {
         $response = $this->client->threads()->runs()->list($message->thread->thread_id, [
             'order' => 'desc',
@@ -146,16 +203,44 @@ abstract class BaseOpenAiService implements AiService
             $this->awaitThreadRunCompletion($response);
         }
 
-        $response = $this->client->threads()->messages()->create($message->thread->thread_id, [
+        $createdFiles = [];
+
+        if (method_exists($this, 'createFiles') && ! empty($files)) {
+            $createdFiles = $this->createFiles($message, $files);
+        }
+
+        $data = [
             'role' => 'user',
             'content' => $message->content,
-        ]);
+        ];
+
+        if (! empty($createdFiles)) {
+            $data['attachments'] = collect($createdFiles)->map(function ($createdFile) {
+                return [
+                    'file_id' => $createdFile->file_id,
+                    'tools' => [
+                        [
+                            'type' => 'file_search',
+                        ],
+                    ],
+                ];
+            })->toArray();
+        }
+
+        $response = $this->client->threads()->messages()->create($message->thread->thread_id, $data);
 
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
         $message->context = $instructions;
         $message->message_id = $response->id;
         $message->save();
+
+        if (! empty($createdFiles)) {
+            foreach ($createdFiles as $file) {
+                $file->message()->associate($message);
+                $file->save();
+            }
+        }
 
         $aiSettings = app(AiSettings::class);
 
@@ -203,7 +288,7 @@ abstract class BaseOpenAiService implements AiService
         };
     }
 
-    public function retryMessage(AiMessage $message, Closure $saveResponse): Closure
+    public function retryMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
     {
         $response = $this->client->threads()->runs()->list($message->thread->thread_id, [
             'order' => 'desc',
@@ -243,10 +328,31 @@ abstract class BaseOpenAiService implements AiService
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
         if (blank($message->message_id)) {
-            $response = $this->client->threads()->messages()->create($message->thread->thread_id, [
+            $data = [
                 'role' => 'user',
                 'content' => $message->content,
-            ]);
+            ];
+
+            $createdFiles = [];
+
+            if (method_exists($this, 'createFiles') && ! empty($files)) {
+                $createdFiles = $this->createFiles($message, $files);
+            }
+
+            if (! empty($createdFiles)) {
+                $data['attachments'] = collect($createdFiles)->map(function ($createdFile) {
+                    return [
+                        'file_id' => $createdFile->file_id,
+                        'tools' => [
+                            [
+                                'type' => 'file_search',
+                            ],
+                        ],
+                    ];
+                })->toArray();
+            }
+
+            $response = $this->client->threads()->messages()->create($message->thread->thread_id, $data);
 
             $message->context = $instructions;
             $message->message_id = $response->id;
@@ -320,6 +426,11 @@ abstract class BaseOpenAiService implements AiService
     public function isThreadExisting(AiThread $thread): bool
     {
         return filled($thread->thread_id);
+    }
+
+    public function supportsFileUploads(): bool
+    {
+        return false;
     }
 
     protected function awaitThreadRunCompletion(ThreadRunResponse $threadRunResponse): void

@@ -45,10 +45,12 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Observers\PromptObserver;
 use AdvisingApp\Ai\Registries\AiRbacRegistry;
 use AdvisingApp\Ai\Observers\AiMessageObserver;
+use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 
@@ -65,9 +67,10 @@ class AiServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'ai_assistant' => AiAssistant::class,
-            'ai_thread' => AiThread::class,
-            'ai_thread_folder' => AiThreadFolder::class,
+            'ai_message_file' => AiMessageFile::class,
             'ai_message' => AiMessage::class,
+            'ai_thread_folder' => AiThreadFolder::class,
+            'ai_thread' => AiThread::class,
             'prompt_type' => PromptType::class,
             'prompt' => Prompt::class,
         ]);
@@ -81,6 +84,7 @@ class AiServiceProvider extends ServiceProvider
 
     protected function registerObservers(): void
     {
+        AiAssistant::observe(AiAssistantObserver::class);
         AiMessage::observe(AiMessageObserver::class);
         Prompt::observe(PromptObserver::class);
     }

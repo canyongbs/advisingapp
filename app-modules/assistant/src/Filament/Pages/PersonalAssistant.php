@@ -40,6 +40,7 @@ use App\Models\User;
 use Filament\Pages\Page;
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanUploadFiles;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
@@ -51,6 +52,7 @@ class PersonalAssistant extends Page
     use CanManageFolders;
     use CanManagePromptLibrary;
     use CanManageThreads;
+    use CanUploadFiles;
 
     public const APPLICATION = AiApplication::PersonalAssistant;
 

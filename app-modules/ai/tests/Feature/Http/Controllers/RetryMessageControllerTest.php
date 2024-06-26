@@ -75,6 +75,7 @@ it('retries sending a message to a thread', function () {
 
     post(route('ai.threads.messages.retry', ['thread' => $thread]), [
         'content' => AiMessage::factory()->make()->content,
+        'files' => [],
     ])
         ->assertSuccessful()
         ->assertStreamedContent($responseContent);
@@ -102,6 +103,7 @@ it('returns a message if the assistant fails', function () {
 
     post(route('ai.threads.messages.retry', ['thread' => $thread]), [
         'content' => AiMessage::factory()->make()->content,
+        'files' => [],
     ])
         ->assertServiceUnavailable()
         ->assertJson([
@@ -133,6 +135,7 @@ it('returns a message if the thread is locked', function () {
 
     post(route('ai.threads.messages.retry', ['thread' => $thread]), [
         'content' => AiMessage::factory()->make()->content,
+        'files' => [],
     ])
         ->assertServiceUnavailable()
         ->assertJson([
@@ -165,6 +168,7 @@ it('returns a message if the assistant is archived', function () {
 
     post(route('ai.threads.messages.retry', ['thread' => $thread]), [
         'content' => AiMessage::factory()->make()->content,
+        'files' => [],
     ])
         ->assertNotFound()
         ->assertJson([
@@ -186,6 +190,7 @@ it('prevents users who do not own the thread from retrying sending messages to i
 
     post(route('ai.threads.messages.retry', ['thread' => $thread]), [
         'content' => AiMessage::factory()->make()->content,
+        'files' => [],
     ])
         ->assertForbidden();
 });
