@@ -10,8 +10,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
 use App\Exceptions\SoftDeleteContraintViolationException;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
 
 class EditBasicNeedsCategory extends EditRecord
 {

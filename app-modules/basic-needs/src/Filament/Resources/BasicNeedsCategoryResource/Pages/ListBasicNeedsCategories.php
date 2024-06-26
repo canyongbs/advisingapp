@@ -4,17 +4,17 @@ namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\P
 
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Notifications\Notification;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
-use App\Exceptions\SoftDeleteContraintViolationException;
-use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Collection;
+use App\Exceptions\SoftDeleteContraintViolationException;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
 
 class ListBasicNeedsCategories extends ListRecords
 {
@@ -50,19 +50,41 @@ class ListBasicNeedsCategories extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->using(function (Collection $records) {
-                            try {
-                                $records->each->delete();
-                                return true;
-                            } catch (SoftDeleteContraintViolationException $e) {
+                    BulkAction::make('delete')
+                        ->requiresConfirmation()
+                        ->color('danger')
+                        ->icon('heroicon-s-trash')
+                        ->label('Delete selected')
+                        ->modalHeading('Delete selected categories')
+                        ->modalIcon('heroicon-o-trash')
+                        ->action(function (Collection $records) {
+                            $successfullyDeleted = 0;
+                            $unsuccessfullyDeleted = 0;
+
+                            foreach ($records as $record) {
+                                try {
+                                    $record->delete();
+                                    $successfullyDeleted++;
+                                } catch (SoftDeleteContraintViolationException $e) {
+                                    $unsuccessfullyDeleted++;
+                                }
+                            }
+
+                            if ($successfullyDeleted > 0) {
                                 Notification::make()
-                                ->title($e->getMessage())
-                                ->danger()
-                                ->send();
-                                return false;
+                                    ->title(__(':count categories has been deleted.', ['count' => $successfullyDeleted]))
+                                    ->success()
+                                    ->send();
+                            }
+
+                            if ($unsuccessfullyDeleted > 0) {
+                                Notification::make()
+                                    ->title(__(':count categories cannot be deleted due to linked with programs.', ['count' => $unsuccessfullyDeleted]))
+                                    ->danger()
+                                    ->send();
                             }
                         })
+                        ->deselectRecordsAfterCompletion(),
                 ]),
             ]);
     }
