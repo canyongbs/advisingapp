@@ -83,6 +83,21 @@ return [
             'after_commit' => false,
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | SQS Disk Queue Configuration
+        |--------------------------------------------------------------------------
+        |
+        |
+        | always_store: Determines if all payloads should be stored on a disk regardless if they are over SQS's 256KB limit.
+        | cleanup:      Determines if the payload files should be removed from the disk once the job is processed. Leaveing the
+        |                 files behind can be useful to replay the queue jobs later for debugging reasons.
+        | disk:         The disk to save SQS payloads to.  This disk should be configured in your Laravel filesystems.php config file.
+        | prefix        The prefix (folder) to store the payloads with.  This is useful if you are sharing a disk with other SQS queues.
+        |                 Using a prefix allows for the queue:clear command to destroy the files separately from other sqs-disk backed queues
+        |                 sharing the same disk.
+        |
+        */
         'sqs' => [
             'driver' => 'sqs-disk',
             'key' => env('AWS_SQS_ACCESS_KEY_ID'),
