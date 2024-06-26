@@ -56,7 +56,7 @@ use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\Engageme
 
 class SendEngagementAction extends Action
 {
-    protected function setUp(g): void
+    protected function setUp(): void
     {
         parent::setUp();
 
