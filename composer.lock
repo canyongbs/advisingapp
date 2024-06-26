@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "386c540400071cf6f2f42d2c4b61647b",
+    "content-hash": "8e20169b81c0f8d2afad45fc0b4e69dd",
     "packages": [
         {
             "name": "amphp/amp",
@@ -3851,6 +3851,69 @@
                 "source": "https://github.com/DaveRandom/LibDNS/tree/v2.1.0"
             },
             "time": "2024-04-12T12:12:48+00:00"
+        },
+        {
+            "name": "defectivecode/laravel-sqs-extended",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DefectiveCode/laravel-sqs-extended.git",
+                "reference": "f567e52b4fb1439b0d6e426c2c0bcfb2fcfce922"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DefectiveCode/laravel-sqs-extended/zipball/f567e52b4fb1439b0d6e426c2c0bcfb2fcfce922",
+                "reference": "f567e52b4fb1439b0d6e426c2c0bcfb2fcfce922",
+                "shasum": ""
+            },
+            "require": {
+                "aws/aws-sdk-php": "^3.189.0",
+                "illuminate/container": "~9|~10|~11",
+                "illuminate/contracts": "~9|~10|~11",
+                "illuminate/filesystem": "~9|~10|~11",
+                "illuminate/queue": "~9|~10|~11",
+                "illuminate/support": "~9|~10|~11",
+                "league/flysystem": "~3",
+                "php": ">=8.2"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.8",
+                "mockery/mockery": "^1.6",
+                "nunomaduro/collision": "^7.0",
+                "orchestra/testbench": "^8.3",
+                "phpunit/phpunit": "^10.0"
+            },
+            "suggest": {
+                "laravel/vapor-core": "Allows SQS disk based storage while using Laravel Vapor."
+            },
+            "type": "laravel",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "DefectiveCode\\LaravelSqsExtended\\SqsDiskServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "DefectiveCode\\LaravelSqsExtended\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Corey McCormick",
+                    "email": "corey@defectivecode.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/DefectiveCode/laravel-sqs-extended/issues",
+                "source": "https://github.com/DefectiveCode/laravel-sqs-extended/tree/1.0.0"
+            },
+            "time": "2024-06-04T17:58:12+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
