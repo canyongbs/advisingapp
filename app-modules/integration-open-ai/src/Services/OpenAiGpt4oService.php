@@ -37,10 +37,15 @@
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
 use OpenAI;
+use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
+use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
 
-class OpenAiGpt4oService extends BaseOpenAiService
+class OpenAiGpt4oService extends BaseOpenAiService implements AiServiceLifecycleHooks
 {
+    use UploadsFiles;
+
     public function __construct(
         protected AiIntegrationsSettings $settings,
     ) {
@@ -53,12 +58,38 @@ class OpenAiGpt4oService extends BaseOpenAiService
             ->make();
     }
 
+    public function enableAssistantFileUploads(AiAssistant $assistant): void
+    {
+        $this->client->assistants()->modify($assistant->assistant_id, [
+            'tools' => [
+                ['type' => 'file_search'],
+            ],
+        ]);
+    }
+
+    public function disableAssistantFileUploads(AiAssistant $assistant): void
+    {
+        $this->client->assistants()->modify($assistant->assistant_id, [
+            'tools' => [],
+        ]);
+    }
+
+    public function getApiKey(): string
+    {
+        return $this->settings->open_ai_gpt_4o_api_key ?? config('integration-open-ai.gpt_4o_api_key');
+    }
+
+    public function getApiVersion(): string
+    {
+        return config('integration-open-ai.gpt_4o_api_version');
+    }
+
     public function getModel(): string
     {
         return $this->settings->open_ai_gpt_4o_model ?? config('integration-open-ai.gpt_4o_model');
     }
 
-    public function getDeployment(): string
+    public function getDeployment(): ?string
     {
         return $this->settings->open_ai_gpt_4o_base_uri ?? config('integration-open-ai.gpt_4o_base_uri');
     }

@@ -37,9 +37,12 @@
 namespace AdvisingApp\Ai\Services;
 
 use Closure;
+use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 
 class TestAiService implements Contracts\AiService
@@ -64,10 +67,15 @@ class TestAiService implements Contracts\AiService
         return true;
     }
 
-    public function sendMessage(AiMessage $message, Closure $saveResponse): Closure
+    public function sendMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
     {
         $message->context = fake()->paragraph();
         $message->save();
+
+        if (! empty($files)) {
+            $createdFiles = $this->createFiles($message, $files);
+            $message->files()->saveMany($createdFiles);
+        }
 
         $responseContent = fake()->paragraph();
 
@@ -82,9 +90,9 @@ class TestAiService implements Contracts\AiService
         };
     }
 
-    public function retryMessage(AiMessage $message, Closure $saveResponse): Closure
+    public function retryMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
     {
-        return $this->sendMessage($message, $saveResponse);
+        return $this->sendMessage($message, $files, $saveResponse);
     }
 
     public function getMaxAssistantInstructionsLength(): int
@@ -95,5 +103,23 @@ class TestAiService implements Contracts\AiService
     public function getDeployment(): ?string
     {
         return null;
+    }
+
+    public function supportsFileUploads(): bool
+    {
+        return true;
+    }
+
+    protected function createFiles(AiMessage $message, array $files): Collection
+    {
+        return collect($files)->map(function (string $file): AiMessageFile {
+            $fileRecord = new AiMessageFile();
+            $fileRecord->temporary_url = 'temp-url';
+            $fileRecord->name = 'test';
+            $fileRecord->mime_type = 'text/plain';
+            $fileRecord->file_id = Str::random(12);
+
+            return $fileRecord;
+        });
     }
 }

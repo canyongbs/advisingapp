@@ -34,42 +34,54 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
-use OpenAI;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Filament\Actions\Action;
+use Livewire\Attributes\Locked;
+use Filament\Forms\Components\FileUpload;
 
-class OpenAiGpt35Service extends BaseOpenAiService
+trait CanUploadFiles
 {
-    public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_35_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
+    #[Locked]
+    public array $files = [];
+
+    public function removeUploadedFile(int $key): void
+    {
+        unset($this->files[$key]);
     }
 
-    public function getApiKey(): string
+    public function clearFiles(): void
     {
-        return $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key');
+        $this->reset('files');
     }
 
-    public function getApiVersion(): string
+    public function uploadFilesAction(): Action
     {
-        return config('integration-open-ai.gpt_35_api_version');
-    }
+        return Action::make('uploadFiles')
+            ->label('Upload Files')
+            ->icon('heroicon-o-paper-clip')
+            ->iconButton()
+            ->color('gray')
+            ->disabled(count($this->files) >= 1)
+            ->badge(count($this->files))
+            ->modalSubmitActionLabel('Upload')
+            ->form([
+                FileUpload::make('attachment')
+                    ->acceptedFileTypes(['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+                    ->storeFiles(false)
+                    ->helperText('Only .doc and .docx files are allowed. The maximum file size is 256KB.')
+                    ->maxSize(256)
+                    ->required(),
+            ])
+            ->action(function (array $data) {
+                /** @var TemporaryUploadedFile $attachment */
+                $attachment = $data['attachment'];
 
-    public function getDeployment(): ?string
-    {
-        return $this->settings->open_ai_gpt_35_base_uri ?? config('integration-open-ai.gpt_35_base_uri');
-    }
-
-    public function getModel(): string
-    {
-        return $this->settings->open_ai_gpt_35_model ?? config('integration-open-ai.gpt_35_model');
+                $this->files[] = [
+                    'temporaryUrl' => $attachment->temporaryUrl(),
+                    'mimeType' => $attachment->getMimeType(),
+                    'name' => $attachment->getClientOriginalName(),
+                ];
+            });
     }
 }

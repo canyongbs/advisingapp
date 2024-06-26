@@ -54,6 +54,7 @@ class SendMessageController
                 app(SendMessage::class)(
                     $thread,
                     $request->validated('content'),
+                    $request->validated('files'),
                 ),
                 headers: [
                     'Content-Type' => 'text/html; charset=utf-8;',

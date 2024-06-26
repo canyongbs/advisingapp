@@ -58,6 +58,7 @@ class RetryMessageRequest extends FormRequest
     {
         return [
             'content' => ['required', 'string', 'max:1000'],
+            'files' => ['array', 'max:1'],
         ];
     }
 }

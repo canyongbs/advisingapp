@@ -34,42 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use OpenAI;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-
-class OpenAiGpt35Service extends BaseOpenAiService
-{
-    public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_35_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
-    }
-
-    public function getApiKey(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key');
+        Schema::create('ai_message_files', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('message_id')->constrained('ai_messages')->cascadeOnDelete();
+            $table->string('file_id')->nullable();
+            $table->string('name')->nullable();
+            $table->text('temporary_url')->nullable();
+            $table->string('mime_type')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
-    public function getApiVersion(): string
+    public function down(): void
     {
-        return config('integration-open-ai.gpt_35_api_version');
+        Schema::dropIfExists('ai_message_files');
     }
-
-    public function getDeployment(): ?string
-    {
-        return $this->settings->open_ai_gpt_35_base_uri ?? config('integration-open-ai.gpt_35_base_uri');
-    }
-
-    public function getModel(): string
-    {
-        return $this->settings->open_ai_gpt_35_model ?? config('integration-open-ai.gpt_35_model');
-    }
-}
+};

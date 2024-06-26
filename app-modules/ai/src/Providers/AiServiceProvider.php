@@ -45,6 +45,7 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Observers\PromptObserver;
 use AdvisingApp\Ai\Registries\AiRbacRegistry;
@@ -66,9 +67,10 @@ class AiServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'ai_assistant' => AiAssistant::class,
-            'ai_thread' => AiThread::class,
-            'ai_thread_folder' => AiThreadFolder::class,
+            'ai_message_file' => AiMessageFile::class,
             'ai_message' => AiMessage::class,
+            'ai_thread_folder' => AiThreadFolder::class,
+            'ai_thread' => AiThread::class,
             'prompt_type' => PromptType::class,
             'prompt' => Prompt::class,
         ]);

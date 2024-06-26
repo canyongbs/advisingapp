@@ -34,42 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Models;
 
-use OpenAI;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Models\BaseModel;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class OpenAiGpt35Service extends BaseOpenAiService
+class AiMessageFile extends BaseModel implements HasMedia
 {
-    public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_35_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
+    use SoftDeletes;
+    use InteractsWithMedia;
+
+    protected $fillable = [
+        'file_id',
+        'message_id',
+        'mime_type',
+        'name',
+        'temporary_url',
+    ];
+
+    public function message(): BelongsTo
+    {
+        return $this->belongsTo(AiMessage::class, 'message_id');
     }
 
-    public function getApiKey(): string
+    public function registerMediaCollections(): void
     {
-        return $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key');
-    }
-
-    public function getApiVersion(): string
-    {
-        return config('integration-open-ai.gpt_35_api_version');
-    }
-
-    public function getDeployment(): ?string
-    {
-        return $this->settings->open_ai_gpt_35_base_uri ?? config('integration-open-ai.gpt_35_base_uri');
-    }
-
-    public function getModel(): string
-    {
-        return $this->settings->open_ai_gpt_35_model ?? config('integration-open-ai.gpt_35_model');
+        $this->addMediaCollection('files')
+            ->singleFile();
     }
 }

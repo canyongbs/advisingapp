@@ -34,42 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Models\AiAssistant;
+use Illuminate\Database\Migrations\Migration;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
 
-use OpenAI;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-
-class OpenAiGpt35Service extends BaseOpenAiService
-{
-    public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_35_api_version'))
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
-    }
-
-    public function getApiKey(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->settings->open_ai_gpt_35_api_key ?? config('integration-open-ai.gpt_35_api_key');
+        $assistants = AiAssistant::query()
+            ->where('model', AiModel::OpenAiGpt4o)
+            ->get();
+
+        foreach ($assistants as $assistant) {
+            /** @var AiAssistant $assistant */
+
+            /** @var OpenAiGpt4oService $service */
+            $service = $assistant->model->getService();
+
+            $service->enableAssistantFileUploads($assistant);
+        }
     }
 
-    public function getApiVersion(): string
+    public function down(): void
     {
-        return config('integration-open-ai.gpt_35_api_version');
-    }
+        $assistants = AiAssistant::query()
+            ->where('model', AiModel::OpenAiGpt4o)
+            ->get();
 
-    public function getDeployment(): ?string
-    {
-        return $this->settings->open_ai_gpt_35_base_uri ?? config('integration-open-ai.gpt_35_base_uri');
-    }
+        foreach ($assistants as $assistant) {
+            /** @var AiAssistant $assistant */
 
-    public function getModel(): string
-    {
-        return $this->settings->open_ai_gpt_35_model ?? config('integration-open-ai.gpt_35_model');
+            /** @var OpenAiGpt4oService $service */
+            $service = $assistant->model->getService();
+
+            $service->disableAssistantFileUploads($assistant);
+        }
     }
-}
+};

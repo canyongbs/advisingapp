@@ -61,6 +61,7 @@ use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
+use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 /**
@@ -188,6 +189,12 @@ trait CanManageThreads
         $this->selectThread($this->threadsWithoutAFolder->whereNull('assistant.archived_at')->first());
 
         if ($this->thread) {
+            $service = $this->thread->assistant->model->getService();
+
+            if ($service instanceof AiServiceLifecycleHooks) {
+                $service->afterLoadFirstThread($this->thread);
+            }
+
             return;
         }
 
@@ -213,6 +220,12 @@ trait CanManageThreads
         }
 
         $this->thread = $thread;
+
+        $service = $this->thread->assistant->model->getService();
+
+        if ($service instanceof AiServiceLifecycleHooks) {
+            $service->afterThreadSelected($this->thread);
+        }
     }
 
     public function saveThreadAction(): Action

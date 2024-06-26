@@ -45,6 +45,16 @@ class OpenAiGptTestService extends BaseOpenAiService
         $this->client = new OpenAI\Testing\ClientFake();
     }
 
+    public function getApiKey(): string
+    {
+        return 'test';
+    }
+
+    public function getApiVersion(): string
+    {
+        return '1.0.0';
+    }
+
     public function getModel(): string
     {
         return 'test';

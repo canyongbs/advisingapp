@@ -86,7 +86,7 @@ interface AiService
      * The method should return a new unsaved `AiMessage` model with the content
      * from the AI service set only, the other attributes will be set later.
      */
-    public function sendMessage(AiMessage $message, Closure $saveResponse): Closure;
+    public function sendMessage(AiMessage $message, array $files, Closure $saveResponse): Closure;
 
     /**
      * This method is passed an `AiMessage` model and should recover the
@@ -97,9 +97,11 @@ interface AiService
      * The method should return a new unsaved `AiMessage` model with the content
      * from the AI service set only, the other attributes will be set later.
      */
-    public function retryMessage(AiMessage $message, Closure $saveResponse): Closure;
+    public function retryMessage(AiMessage $message, array $files, Closure $saveResponse): Closure;
 
     public function getMaxAssistantInstructionsLength(): int;
+
+    public function supportsFileUploads(): bool;
 
     public function getDeployment(): ?string;
 }

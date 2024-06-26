@@ -88,6 +88,7 @@ document.addEventListener('alpine:init', () => {
             this.messages.push({
                 content: '',
             });
+
             this.rawIncomingResponse = '';
 
             const responseReader = response.body.getReader();
@@ -111,6 +112,8 @@ document.addEventListener('alpine:init', () => {
             readResponse();
 
             this.isSendingMessage = false;
+
+            this.$wire.clearFiles();
         },
 
         sendMessage: async function () {
@@ -145,7 +148,10 @@ document.addEventListener('alpine:init', () => {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': csrfToken,
                         },
-                        body: JSON.stringify({ content: message }),
+                        body: JSON.stringify({
+                            content: message,
+                            files: this.$wire.files,
+                        }),
                     }),
                 );
             });
@@ -166,7 +172,10 @@ document.addEventListener('alpine:init', () => {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': csrfToken,
                         },
-                        body: JSON.stringify({ content: this.latestMessage }),
+                        body: JSON.stringify({
+                            content: this.latestMessage,
+                            files: this.$wire.files,
+                        }),
                     }),
                 );
             });
