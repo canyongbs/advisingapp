@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f965916506f704780a3c012b7cb8c6a4",
+    "content-hash": "283b8876908293c0d4ae65af2a8a6749",
     "packages": [
         {
             "name": "amphp/amp",
@@ -937,7 +937,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/filament-tiptap-editor",
-                "reference": "940767c06b570c69ecfc78e1212a36959ab2f68c"
+                "reference": "fd535382f6bd982071f287557c6eabbfefd5ae3f"
             },
             "require": {
                 "php": "^8.1",
@@ -2876,6 +2876,41 @@
             }
         },
         {
+            "name": "canyon-gbs/basic-needs",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/basic-needs",
+                "reference": "84ef464c85dc6df5b012db7d816e179861e19606"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\BasicNeeds\\Providers\\BasicNeedsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\BasicNeeds\\": "src/",
+                    "AdvisingApp\\BasicNeeds\\Tests\\": "tests/",
+                    "AdvisingApp\\BasicNeeds\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\BasicNeeds\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "canyon-gbs/integration-open-ai",
             "version": "1.0",
             "dist": {
@@ -3845,6 +3880,69 @@
                 "source": "https://github.com/DaveRandom/LibDNS/tree/v2.1.0"
             },
             "time": "2024-04-12T12:12:48+00:00"
+        },
+        {
+            "name": "defectivecode/laravel-sqs-extended",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DefectiveCode/laravel-sqs-extended.git",
+                "reference": "f567e52b4fb1439b0d6e426c2c0bcfb2fcfce922"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DefectiveCode/laravel-sqs-extended/zipball/f567e52b4fb1439b0d6e426c2c0bcfb2fcfce922",
+                "reference": "f567e52b4fb1439b0d6e426c2c0bcfb2fcfce922",
+                "shasum": ""
+            },
+            "require": {
+                "aws/aws-sdk-php": "^3.189.0",
+                "illuminate/container": "~9|~10|~11",
+                "illuminate/contracts": "~9|~10|~11",
+                "illuminate/filesystem": "~9|~10|~11",
+                "illuminate/queue": "~9|~10|~11",
+                "illuminate/support": "~9|~10|~11",
+                "league/flysystem": "~3",
+                "php": ">=8.2"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.8",
+                "mockery/mockery": "^1.6",
+                "nunomaduro/collision": "^7.0",
+                "orchestra/testbench": "^8.3",
+                "phpunit/phpunit": "^10.0"
+            },
+            "suggest": {
+                "laravel/vapor-core": "Allows SQS disk based storage while using Laravel Vapor."
+            },
+            "type": "laravel",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "DefectiveCode\\LaravelSqsExtended\\SqsDiskServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "DefectiveCode\\LaravelSqsExtended\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Corey McCormick",
+                    "email": "corey@defectivecode.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/DefectiveCode/laravel-sqs-extended/issues",
+                "source": "https://github.com/DefectiveCode/laravel-sqs-extended/tree/1.0.0"
+            },
+            "time": "2024-06-04T17:58:12+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -10857,16 +10955,16 @@
         },
         {
             "name": "owen-it/laravel-auditing",
-            "version": "v13.6.7",
+            "version": "v13.6.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/owen-it/laravel-auditing.git",
-                "reference": "22682dd5c800aab90ef261530098625e26a66709"
+                "reference": "28ecd2d5cc05c3619f99af42611877f54371af20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/owen-it/laravel-auditing/zipball/22682dd5c800aab90ef261530098625e26a66709",
-                "reference": "22682dd5c800aab90ef261530098625e26a66709",
+                "url": "https://api.github.com/repos/owen-it/laravel-auditing/zipball/28ecd2d5cc05c3619f99af42611877f54371af20",
+                "reference": "28ecd2d5cc05c3619f99af42611877f54371af20",
                 "shasum": ""
             },
             "require": {
@@ -10941,7 +11039,7 @@
                 "issues": "https://github.com/owen-it/laravel-auditing/issues",
                 "source": "https://github.com/owen-it/laravel-auditing"
             },
-            "time": "2024-05-30T13:30:57+00:00"
+            "time": "2024-06-26T20:56:28+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -23260,16 +23358,16 @@
         },
         {
             "name": "spatie/error-solutions",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/error-solutions.git",
-                "reference": "9782ba6e25cb026cc653619e01ca695d428b3f03"
+                "reference": "55ea4117e0fde89d520883734ab9b71064c48876"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/error-solutions/zipball/9782ba6e25cb026cc653619e01ca695d428b3f03",
-                "reference": "9782ba6e25cb026cc653619e01ca695d428b3f03",
+                "url": "https://api.github.com/repos/spatie/error-solutions/zipball/55ea4117e0fde89d520883734ab9b71064c48876",
+                "reference": "55ea4117e0fde89d520883734ab9b71064c48876",
                 "shasum": ""
             },
             "require": {
@@ -23322,7 +23420,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/error-solutions/issues",
-                "source": "https://github.com/spatie/error-solutions/tree/1.0.2"
+                "source": "https://github.com/spatie/error-solutions/tree/1.0.3"
             },
             "funding": [
                 {
@@ -23330,7 +23428,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-06-26T13:09:17+00:00"
+            "time": "2024-06-27T12:22:48+00:00"
         },
         {
             "name": "spatie/flare-client-php",
