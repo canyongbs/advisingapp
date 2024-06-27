@@ -12,14 +12,9 @@ const LocalFilesPlugin = ({ key, editor }) =>
                     return false;
                 }
 
-                const position = editorView.posAtCoords({
-                    left: event.clientX,
-                    top: event.clientY,
-                });
-
-                let files = Array.from(event.dataTransfer.files);
-
-                files = files.filter((file) => allowedMimeTypes.includes(file.type));
+                const files = Array.from(event.dataTransfer.files).filter((file) =>
+                    allowedMimeTypes.includes(file.type),
+                );
 
                 if (!files.length) {
                     return false;
@@ -27,6 +22,11 @@ const LocalFilesPlugin = ({ key, editor }) =>
 
                 event.preventDefault();
                 event.stopPropagation();
+
+                const position = editorView.posAtCoords({
+                    left: event.clientX,
+                    top: event.clientY,
+                });
 
                 files.forEach((file) => {
                     const fileReader = new FileReader();
@@ -53,9 +53,9 @@ const LocalFilesPlugin = ({ key, editor }) =>
                     return false;
                 }
 
-                let files = Array.from(event.clipboardData.files);
-
-                files = files.filter((file) => allowedMimeTypes.includes(file.type));
+                const files = Array.from(event.clipboardData.files).filter((file) =>
+                    allowedMimeTypes.includes(file.type),
+                );
 
                 if (!files.length) {
                     return false;

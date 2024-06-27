@@ -26917,50 +26917,44 @@ var Nx = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
             props: {
                 handleDrop(n, r) {
                     if (!r.dataTransfer?.files.length) return !1;
-                    let i = n.posAtCoords({ left: r.clientX, top: r.clientY }),
-                        o = Array.from(r.dataTransfer.files);
+                    let i = Array.from(r.dataTransfer.files).filter((s) => Nx.includes(s.type));
+                    if (!i.length) return !1;
+                    r.preventDefault(), r.stopPropagation();
+                    let o = n.posAtCoords({ left: r.clientX, top: r.clientY });
                     return (
-                        (o = o.filter((s) => Nx.includes(s.type))),
-                        o.length
-                            ? (r.preventDefault(),
-                              r.stopPropagation(),
-                              o.forEach((s) => {
-                                  let l = new FileReader();
-                                  l.readAsDataURL(s),
-                                      (l.onload = () => {
-                                          e.chain()
-                                              .insertContentAt(i?.pos ?? 0, { type: 'image', attrs: { src: l.result } })
-                                              .focus()
-                                              .run();
-                                      });
-                              }),
-                              !0)
-                            : !1
+                        i.forEach((s) => {
+                            let l = new FileReader();
+                            l.readAsDataURL(s),
+                                (l.onload = () => {
+                                    e.chain()
+                                        .insertContentAt(o?.pos ?? 0, { type: 'image', attrs: { src: l.result } })
+                                        .focus()
+                                        .run();
+                                });
+                        }),
+                        !0
                     );
                 },
                 handlePaste(n, r) {
                     if (!r.clipboardData?.files.length) return !1;
-                    let i = Array.from(r.clipboardData.files);
-                    return (
-                        (i = i.filter((o) => Nx.includes(o.type))),
-                        !i.length ||
+                    let i = Array.from(r.clipboardData.files).filter((o) => Nx.includes(o.type));
+                    return !i.length ||
                         (r.preventDefault(), r.stopPropagation(), r.clipboardData.getData('text/html').length)
-                            ? !1
-                            : (i.forEach((o) => {
-                                  let s = new FileReader();
-                                  s.readAsDataURL(o),
-                                      (s.onload = () => {
-                                          e.chain()
-                                              .insertContentAt(e.state.selection.anchor, {
-                                                  type: 'image',
-                                                  attrs: { src: s.result },
-                                              })
-                                              .focus()
-                                              .run();
-                                      });
-                              }),
-                              !0)
-                    );
+                        ? !1
+                        : (i.forEach((o) => {
+                              let s = new FileReader();
+                              s.readAsDataURL(o),
+                                  (s.onload = () => {
+                                      e.chain()
+                                          .insertContentAt(e.state.selection.anchor, {
+                                              type: 'image',
+                                              attrs: { src: s.result },
+                                          })
+                                          .focus()
+                                          .run();
+                                  });
+                          }),
+                          !0);
                 },
             },
         }),
