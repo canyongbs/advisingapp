@@ -67,15 +67,23 @@ enum AiModel: string implements HasLabel
         };
     }
 
-    public function getService(): AiService
+    /**
+     * @return class-string<AiService>
+     */
+    public function getServiceClass(): string
     {
-        $service = match ($this) {
+        return match ($this) {
             self::OpenAiGpt35 => OpenAiGpt35Service::class,
             self::OpenAiGpt4 => OpenAiGpt4Service::class,
             self::OpenAiGpt4o => OpenAiGpt4oService::class,
             self::OpenAiGptTest => OpenAiGptTestService::class,
             self::Test => TestAiService::class,
         };
+    }
+
+    public function getService(): AiService
+    {
+        $service = $this->getServiceClass();
 
         app()->scopedIf($service);
 

@@ -35,6 +35,7 @@
 */
 
 use App\Models\Tenant;
+use App\Multitenancy\Tasks\ClearBindingsTask;
 use Illuminate\Mail\SendQueuedMailable;
 use Illuminate\Queue\CallQueuedClosure;
 use App\Multitenancy\Tasks\SwitchAppUrl;
@@ -77,6 +78,7 @@ return [
      */
     'switch_tenant_tasks' => [
         // SwitchAppKey::class,
+        ClearBindingsTask::class,
         PrefixCacheTask::class,
         SwitchTenantDatabasesTask::class,
         SwitchSessionDriver::class,
