@@ -35,7 +35,6 @@
 */
 
 use App\Models\Tenant;
-use App\Multitenancy\Tasks\ClearBindingsTask;
 use Illuminate\Mail\SendQueuedMailable;
 use Illuminate\Queue\CallQueuedClosure;
 use App\Multitenancy\Tasks\SwitchAppUrl;
@@ -43,6 +42,7 @@ use Illuminate\Events\CallQueuedListener;
 use App\Multitenancy\Tasks\SwitchMailTask;
 use App\Multitenancy\Tasks\PrefixCacheTask;
 use Illuminate\Broadcasting\BroadcastEvent;
+use App\Multitenancy\Tasks\ClearBindingsTask;
 use App\Multitenancy\Tasks\SwitchSessionDriver;
 use App\Multitenancy\Tasks\SwitchS3FilesystemTask;
 use Spatie\Multitenancy\Actions\MigrateTenantAction;
