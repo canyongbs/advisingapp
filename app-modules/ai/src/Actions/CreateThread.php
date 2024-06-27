@@ -84,8 +84,14 @@ class CreateThread
         $settings = app(AiSettings::class);
 
         $assistant = new AiAssistant();
-        $assistant->name = "{$tenant->name} AI Assistant";
-        $assistant->description = "An AI Assistant for {$tenant->name}";
+
+        if ($application === AiApplication::PersonalAssistant) {
+            $assistant->name = 'Institutional Assistant';
+            $assistant->description = 'Using the most powerful models available, the primary Institutional Assistant has robust general intelligence, and is designed to serve your college or university.';
+        } else {
+            $assistant->name = "{$tenant->name} AI Assistant";
+            $assistant->description = "An AI Assistant for {$tenant->name}";
+        }
         $assistant->instructions = $settings->prompt_system_context;
         $assistant->application = $application;
         $assistant->model = $application->getDefaultModel();

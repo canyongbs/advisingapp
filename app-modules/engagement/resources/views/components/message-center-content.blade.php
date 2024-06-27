@@ -50,8 +50,8 @@
                     <h1 class="ml-2"> <a
                             href="{{ $educatable->filamentResource()::getUrl('view', ['record' => $educatable->identifier()]) }}"
                         >{{ $educatable->display_name }} </a></h1>
-                    <x-filament::button wire:click="engage('{{ $educatable }}')">
-                        Engage
+                    <x-filament::button wire:click="engage('{{ $educatable->identifier() }}')">
+                        New Email or Text
                     </x-filament::button>
                 </div>
                 <div class="p-6">

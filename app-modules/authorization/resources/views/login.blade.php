@@ -72,4 +72,18 @@
             :full-width="$this->hasFullWidthFormActions()"
         />
     </x-filament-panels::form>
+    @if ($this->needsMFA && !$this->needsMfaSetup)
+        <x-filament::link
+            class="cursor-pointer"
+            size="sm"
+            wire:click.prevent="toggleUsingRecoveryCodes()"
+            tag="button"
+        >
+            @if ($this->usingRecoveryCode)
+                Use MFA Code
+            @else
+                Use Recovery Code
+            @endif
+        </x-filament::link>
+    @endif
 </x-filament-panels::page.simple>
