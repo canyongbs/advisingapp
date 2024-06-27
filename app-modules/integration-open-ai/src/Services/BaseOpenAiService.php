@@ -251,7 +251,7 @@ abstract class BaseOpenAiService implements AiService
             'temperature' => $aiSettings->temperature,
         ];
 
-        if (! empty($createdFiles)) {
+        if ($message->query()->has('thread.messages.files')) {
             $runData['tools'] = [
                 ['type' => 'file_search'],
             ];
@@ -376,7 +376,7 @@ abstract class BaseOpenAiService implements AiService
             'temperature' => $aiSettings->temperature,
         ];
 
-        if (! empty($createdFiles)) {
+        if ($message->query()->has('thread.messages.files')) {
             $runData['tools'] = [
                 ['type' => 'file_search'],
             ];
