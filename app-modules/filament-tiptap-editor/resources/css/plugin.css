@@ -1,6 +1,6 @@
 @import './night-owl.css';
 
-[wire\:key*="filament_tiptap_source"] {
+[wire\:key*='filament_tiptap_source'] {
     .fi-fo-component-ctn {
         height: 100%;
 
@@ -50,17 +50,39 @@
 }
 
 .tiptap-prosemirror-wrapper {
-    &.prosemirror-w-sm { padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.sm')) / 2)); }
-    &.prosemirror-w-md { padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.md')) / 2)); }
-    &.prosemirror-w-lg { padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.lg')) / 2)); }
-    &.prosemirror-w-xl { padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.xl')) / 2)); }
-    &.prosemirror-w-2xl { padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.2xl')) / 2)); }
-    &.prosemirror-w-3xl { padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.3xl')) / 2)); }
-    &.prosemirror-w-4xl { padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.4xl')) / 2)); }
-    &.prosemirror-w-5xl { padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.5xl')) / 2)); }
-    &.prosemirror-w-6xl { padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.6xl')) / 2)); }
-    &.prosemirror-w-7xl { padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.7xl')) / 2)); }
-    &.prosemirror-w-none { padding: 0 theme('padding.4'); }
+    &.prosemirror-w-sm {
+        padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.sm')) / 2));
+    }
+    &.prosemirror-w-md {
+        padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.md')) / 2));
+    }
+    &.prosemirror-w-lg {
+        padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.lg')) / 2));
+    }
+    &.prosemirror-w-xl {
+        padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.xl')) / 2));
+    }
+    &.prosemirror-w-2xl {
+        padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.2xl')) / 2));
+    }
+    &.prosemirror-w-3xl {
+        padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.3xl')) / 2));
+    }
+    &.prosemirror-w-4xl {
+        padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.4xl')) / 2));
+    }
+    &.prosemirror-w-5xl {
+        padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.5xl')) / 2));
+    }
+    &.prosemirror-w-6xl {
+        padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.6xl')) / 2));
+    }
+    &.prosemirror-w-7xl {
+        padding: 0 max(theme('padding.4'), calc((100% - theme('maxWidth.7xl')) / 2));
+    }
+    &.prosemirror-w-none {
+        padding: 0 theme('padding.4');
+    }
 }
 
 .tiptap-editor .ProseMirror {
@@ -129,37 +151,37 @@
             right: -100%;
         }
 
-        &[data-color="gray_light"] {
+        &[data-color='gray_light'] {
             color: theme('colors.gray.900');
             background-color: theme('colors.gray.300');
         }
 
-        &[data-color="gray"] {
+        &[data-color='gray'] {
             color: white;
             background-color: theme('colors.gray.500');
         }
 
-        &[data-color="gray_dark"] {
+        &[data-color='gray_dark'] {
             color: white;
             background-color: theme('colors.gray.800');
         }
 
-        &[data-color="primary"] {
+        &[data-color='primary'] {
             color: theme('colors.gray.900');
             background-color: theme('colors.primary.500');
         }
 
-        &[data-color="secondary"] {
+        &[data-color='secondary'] {
             color: theme('colors.gray.900');
             background-color: theme('colors.warning.500');
         }
 
-        &[data-color="tertiary"] {
+        &[data-color='tertiary'] {
             color: white;
             background-color: theme('colors.success.500');
         }
 
-        &[data-color="accent"] {
+        &[data-color='accent'] {
             color: white;
             background-color: theme('colors.danger.500');
         }
@@ -257,18 +279,18 @@
     }
 
     blockquote {
-        border-left: 0.25rem solid theme("colors.gray.400");
+        border-left: 0.25rem solid theme('colors.gray.400');
         padding-inline-start: 0.5rem;
         margin-inline-start: 1rem;
         font-size: 1.25rem;
     }
 
     hr {
-        border-color: theme("colors.gray.400");
+        border-color: theme('colors.gray.400');
     }
 
     a {
-        color: theme("colors.blue.600");
+        color: theme('colors.blue.600');
         text-decoration: underline;
     }
 
@@ -277,32 +299,32 @@
         text-decoration: none;
         &::before {
             content: '# ';
-            color: theme("colors.gray.500");
+            color: theme('colors.gray.500');
             opacity: 50;
         }
     }
 
-    a[data-as-button="true"] {
-        background-color: theme("colors.gray.900");
+    a[data-as-button='true'] {
+        background-color: theme('colors.gray.900');
         color: white !important;
         text-decoration: none;
         display: inline-block;
         @apply rounded-md py-2 px-5;
 
-        &[data-as-button-theme="primary"] {
-            background-color: theme("colors.primary.600");
+        &[data-as-button-theme='primary'] {
+            background-color: theme('colors.primary.600');
         }
 
-        &[data-as-button-theme="secondary"] {
-            background-color: theme("colors.warning.600");
+        &[data-as-button-theme='secondary'] {
+            background-color: theme('colors.warning.600');
         }
 
-        &[data-as-button-theme="tertiary"] {
-            background-color: theme("colors.success.600");
+        &[data-as-button-theme='tertiary'] {
+            background-color: theme('colors.success.600');
         }
 
-        &[data-as-button-theme="accent"] {
-            background-color: theme("colors.danger.600");
+        &[data-as-button-theme='accent'] {
+            background-color: theme('colors.danger.600');
         }
     }
 
@@ -314,9 +336,9 @@
         border: dashed 2px transparent;
 
         &.ProseMirror-selectednode {
-            border-radius: theme("borderRadius.DEFAULT");
+            border-radius: theme('borderRadius.DEFAULT');
             outline-offset: 2px;
-            outline: theme("colors.gray.900") dashed 2px;
+            outline: theme('colors.gray.900') dashed 2px;
         }
     }
 
@@ -331,11 +353,11 @@
 
     table td,
     table th {
-        border: 1px solid theme("colors.gray.400");
+        border: 1px solid theme('colors.gray.400');
         min-width: 1em;
         padding: 3px 5px;
         vertical-align: top;
-        background-clip: padding-box
+        background-clip: padding-box;
     }
 
     table td > *,
@@ -344,8 +366,8 @@
     }
 
     table th {
-        background-color: theme("colors.gray.200");
-        color: theme("colors.gray.700");
+        background-color: theme('colors.gray.200');
+        color: theme('colors.gray.700');
         font-weight: 700;
         text-align: left;
     }
@@ -356,7 +378,7 @@
 
     table .selectedCell:after {
         background: rgba(200, 200, 255, 0.4);
-        content: "";
+        content: '';
         left: 0;
         right: 0;
         top: 0;
@@ -390,9 +412,9 @@
     }
 
     pre {
-        padding: .75rem 1rem;
-        border-radius: .25rem;
-        font-size: .875rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
 
         code {
             border-radius: 0;
@@ -401,12 +423,12 @@
     }
 
     code {
-        background-color: theme("colors.gray.300");
+        background-color: theme('colors.gray.300');
         border-radius: 0.25rem;
         padding-inline: 0.25rem;
     }
 
-     pre.hljs {
+    pre.hljs {
         direction: ltr;
         code {
             background-color: transparent;
@@ -424,9 +446,9 @@
             box-sizing: border-box;
             border-style: dashed;
             border-width: 1px;
-            border-color: theme("colors.gray.400");
+            border-color: theme('colors.gray.400');
             padding: 0.5rem;
-            border-radius: theme("borderRadius.DEFAULT");
+            border-radius: theme('borderRadius.DEFAULT');
 
             > * + * {
                 margin-block-start: 1rem;
@@ -434,19 +456,19 @@
         }
 
         &.ProseMirror-selectednode {
-            border-radius: theme("borderRadius.DEFAULT");
+            border-radius: theme('borderRadius.DEFAULT');
             outline-offset: 2px;
-            outline: theme("colors.gray.900") dashed 2px;
+            outline: theme('colors.gray.900') dashed 2px;
         }
     }
 
-    .filament-tiptap-grid[type^="asymetric"] {
+    .filament-tiptap-grid[type^='asymetric'] {
         grid-template-columns: 1fr;
         grid-template-rows: auto;
     }
 
     @media (max-width: theme('screens.sm')) {
-        .filament-tiptap-grid-builder[data-stack-at="sm"] {
+        .filament-tiptap-grid-builder[data-stack-at='sm'] {
             grid-template-columns: 1fr !important;
 
             .filament-tiptap-grid-builder__column {
@@ -456,7 +478,7 @@
     }
 
     @media (max-width: theme('screens.md')) {
-        .filament-tiptap-grid-builder[data-stack-at="md"] {
+        .filament-tiptap-grid-builder[data-stack-at='md'] {
             grid-template-columns: 1fr !important;
 
             .filament-tiptap-grid-builder__column {
@@ -466,7 +488,7 @@
     }
 
     @media (max-width: theme('screens.lg')) {
-        .filament-tiptap-grid-builder[data-stack-at="lg"] {
+        .filament-tiptap-grid-builder[data-stack-at='lg'] {
             grid-template-columns: 1fr !important;
 
             .filament-tiptap-grid-builder__column {
@@ -475,47 +497,47 @@
         }
     }
 
-    .filament-tiptap-grid[type="asymetric-right-thirds"] {
+    .filament-tiptap-grid[type='asymetric-right-thirds'] {
         @screen md {
             grid-template-columns: 1fr 2fr;
         }
     }
 
-    .filament-tiptap-grid[type="asymetric-left-thirds"] {
+    .filament-tiptap-grid[type='asymetric-left-thirds'] {
         @screen md {
             grid-template-columns: 2fr 1fr;
         }
     }
 
-    .filament-tiptap-grid[type="asymetric-right-fourths"] {
+    .filament-tiptap-grid[type='asymetric-right-fourths'] {
         @screen md {
             grid-template-columns: 1fr 3fr;
         }
     }
 
-    .filament-tiptap-grid[type="asymetric-left-fourths"] {
+    .filament-tiptap-grid[type='asymetric-left-fourths'] {
         @screen md {
             grid-template-columns: 3fr 1fr;
         }
     }
 
-    .filament-tiptap-grid[type="responsive"] {
+    .filament-tiptap-grid[type='responsive'] {
         grid-template-columns: 1fr;
         grid-template-rows: auto;
 
-        &[cols="2"] {
+        &[cols='2'] {
             @screen md {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
 
-        &[cols="3"] {
+        &[cols='3'] {
             @screen md {
                 grid-template-columns: repeat(3, 1fr);
             }
         }
 
-        &[cols="4"] {
+        &[cols='4'] {
             @screen md {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -525,27 +547,27 @@
             }
         }
 
-        &[cols="5"] {
+        &[cols='5'] {
             @screen md {
                 grid-template-columns: repeat(5, 1fr);
             }
         }
     }
 
-    .filament-tiptap-grid[type="fixed"] {
-        &[cols="2"] {
+    .filament-tiptap-grid[type='fixed'] {
+        &[cols='2'] {
             grid-template-columns: repeat(2, 1fr);
         }
 
-        &[cols="3"] {
+        &[cols='3'] {
             grid-template-columns: repeat(3, 1fr);
         }
 
-        &[cols="4"] {
+        &[cols='4'] {
             grid-template-columns: repeat(4, 1fr);
         }
 
-        &[cols="5"] {
+        &[cols='5'] {
             grid-template-columns: repeat(5, 1fr);
         }
     }
@@ -556,9 +578,9 @@
         border: dashed 1px transparent;
 
         &.ProseMirror-selectednode {
-            border-radius: theme("borderRadius.DEFAULT");
+            border-radius: theme('borderRadius.DEFAULT');
             outline-offset: 2px;
-            outline: theme("colors.gray.900") dashed 2px;
+            outline: theme('colors.gray.900') dashed 2px;
         }
 
         iframe,
@@ -567,12 +589,12 @@
         }
     }
 
-    div[data-type="details"] {
+    div[data-type='details'] {
         box-sizing: border-box;
         border-style: dashed;
         border-width: 1px;
-        border-color: theme("colors.gray.400");
-        border-radius: theme("borderRadius.DEFAULT");
+        border-color: theme('colors.gray.400');
+        border-radius: theme('borderRadius.DEFAULT');
         position: relative;
 
         button {
@@ -580,7 +602,7 @@
             z-index: 1;
             top: 0.125rem;
             right: 0.25rem;
-            color: theme("colors.gray.400");
+            color: theme('colors.gray.400');
         }
 
         summary {
@@ -588,15 +610,15 @@
             font-weight: 700;
             border-bottom-style: solid;
             border-bottom-width: 1px;
-            border-bottom-color: theme("colors.gray.200");
+            border-bottom-color: theme('colors.gray.200');
 
             &::marker {
-                content: "";
+                content: '';
                 display: none;
             }
         }
 
-        div[data-type="details-content"] {
+        div[data-type='details-content'] {
             padding: 0.5rem;
             height: auto;
 
@@ -612,15 +634,15 @@
         color: theme('colors.gray.200');
 
         blockquote {
-            border-left-color: theme("colors.gray.500");
+            border-left-color: theme('colors.gray.500');
         }
 
         hr {
-            border-color: theme("colors.gray.500");
+            border-color: theme('colors.gray.500');
         }
 
         a {
-            color: theme("colors.blue.400");
+            color: theme('colors.blue.400');
         }
 
         a[id] {
@@ -628,49 +650,49 @@
         }
 
         code {
-            background-color: theme("colors.gray.800");
+            background-color: theme('colors.gray.800');
         }
 
         table td,
         table th {
-            border-color: theme("colors.gray.600");
+            border-color: theme('colors.gray.600');
         }
 
         table th {
-            background-color: theme("colors.gray.800");
+            background-color: theme('colors.gray.800');
             color: theme('colors.gray.100');
         }
 
         .filament-tiptap-grid {
             .filament-tiptap-grid__column {
-                border-color: theme("colors.gray.500");
+                border-color: theme('colors.gray.500');
             }
 
             &.ProseMirror-selectednode {
-                outline-color: theme("colors.gray.400");
+                outline-color: theme('colors.gray.400');
             }
         }
 
         img.ProseMirror-selectednode {
-            outline-color: theme("colors.gray.400");
+            outline-color: theme('colors.gray.400');
         }
 
         [data-youtube-video],
         [data-vimeo-video],
         [data-native-video] {
             &.ProseMirror-selectednode {
-                outline-color: theme("colors.gray.400");
+                outline-color: theme('colors.gray.400');
             }
         }
 
-        div[data-type="details"] {
+        div[data-type='details'] {
             box-sizing: border-box;
-            border-color: theme("colors.gray.500");
-            border-radius: theme("borderRadius.DEFAULT");
+            border-color: theme('colors.gray.500');
+            border-radius: theme('borderRadius.DEFAULT');
             position: relative;
 
             summary {
-                border-bottom-color: theme("colors.gray.500");
+                border-bottom-color: theme('colors.gray.500');
             }
         }
     }
@@ -681,7 +703,7 @@
 }
 
 .filament-tiptap-editor-source-modal textarea {
-    font-family: theme("fontFamily.mono") monospace;
+    font-family: theme('fontFamily.mono') monospace;
 }
 
 .tiptap-editor p.is-editor-empty:first-child::before {
@@ -696,6 +718,6 @@
     @apply -mx-2 -my-1;
 }
 
-span[data-type="mergeTag"] {
+span[data-type='mergeTag'] {
     @apply bg-gray-100 dark:bg-gray-800 px-2 py-1 mx-1 rounded;
 }

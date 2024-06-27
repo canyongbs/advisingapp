@@ -1,4 +1,4 @@
-import {Extension} from '@tiptap/core'
+import { Extension } from '@tiptap/core';
 
 export const ClassExtension = Extension.create({
     name: 'classExtension',
@@ -23,18 +23,18 @@ export const ClassExtension = Extension.create({
                 attributes: {
                     class: {
                         default: null,
-                        parseHTML: element => element.getAttribute('class') ?? null,
-                        renderHTML: attributes => {
+                        parseHTML: (element) => element.getAttribute('class') ?? null,
+                        renderHTML: (attributes) => {
                             if (!attributes.class) {
                                 return null;
                             }
                             return {
-                                class: attributes.class
-                            }
+                                class: attributes.class,
+                            };
                         },
                     },
                 },
             },
-        ]
-    }
-})
+        ];
+    },
+});

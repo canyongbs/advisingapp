@@ -2,9 +2,9 @@
 
 namespace FilamentTiptapEditor\Extensions\Nodes;
 
-use FilamentTiptapEditor\TiptapEditor;
 use Tiptap\Core\Node;
 use Tiptap\Utils\HTML;
+use FilamentTiptapEditor\TiptapEditor;
 
 class TiptapBlock extends Node
 {
@@ -75,6 +75,7 @@ class TiptapBlock extends Node
         $view = '';
 
         $block = $blocks[$node->attrs->type] ?? null;
+
         if ($block) {
             $view = $block->getRendered(json_decode(json_encode($node->attrs->data), associative: true));
         }

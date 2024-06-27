@@ -17,5 +17,4 @@ return [
         'title' => 'Titolo',
         'lazy' => 'Caricamento Lazy',
     ],
-
 ];

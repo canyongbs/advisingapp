@@ -2,21 +2,21 @@
 
 namespace FilamentTiptapEditor;
 
-use FilamentTiptapEditor\Extensions\Extensions;
-use FilamentTiptapEditor\Extensions\Marks;
-use FilamentTiptapEditor\Extensions\Nodes;
 use Tiptap\Editor;
-use Tiptap\Extensions\StarterKit;
+use Tiptap\Nodes\Table;
+use Tiptap\Nodes\TableRow;
 use Tiptap\Marks\Highlight;
 use Tiptap\Marks\Subscript;
-use Tiptap\Marks\Superscript;
 use Tiptap\Marks\TextStyle;
 use Tiptap\Marks\Underline;
-use Tiptap\Nodes\CodeBlockHighlight;
-use Tiptap\Nodes\Table;
 use Tiptap\Nodes\TableCell;
+use Tiptap\Marks\Superscript;
 use Tiptap\Nodes\TableHeader;
-use Tiptap\Nodes\TableRow;
+use Tiptap\Extensions\StarterKit;
+use Tiptap\Nodes\CodeBlockHighlight;
+use FilamentTiptapEditor\Extensions\Marks;
+use FilamentTiptapEditor\Extensions\Nodes;
+use FilamentTiptapEditor\Extensions\Extensions;
 
 class TiptapConverter
 {
@@ -46,7 +46,7 @@ class TiptapConverter
     {
         $customExtensions = collect(config('filament-tiptap-editor.extensions', []))
             ->transform(function ($ext) {
-                return new $ext['parser'];
+                return new $ext['parser']();
             })->toArray();
 
         return [

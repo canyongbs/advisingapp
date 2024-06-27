@@ -2,9 +2,9 @@
 
 namespace FilamentTiptapEditor\Tests\Fixtures;
 
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Livewire\Component;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Concerns\InteractsWithForms;
 
 class Livewire extends Component implements HasForms
 {

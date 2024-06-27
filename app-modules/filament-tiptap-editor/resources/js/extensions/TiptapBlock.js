@@ -1,4 +1,4 @@
-import {mergeAttributes, Node} from "@tiptap/core"
+import { mergeAttributes, Node } from '@tiptap/core';
 
 export const TiptapBlock = Node.create({
     name: 'tiptapBlock',
@@ -14,100 +14,98 @@ export const TiptapBlock = Node.create({
         return {
             preview: {
                 default: null,
-                parseHTML: element => {
-                    return element.getAttribute('data-preview')
+                parseHTML: (element) => {
+                    return element.getAttribute('data-preview');
                 },
-                renderHTML: attributes => {
-                    if (! attributes.preview) {
-                        return null
+                renderHTML: (attributes) => {
+                    if (!attributes.preview) {
+                        return null;
                     }
 
                     return {
-                        'data-preview': attributes.preview
-                    }
-                }
+                        'data-preview': attributes.preview,
+                    };
+                },
             },
             statePath: {
                 default: null,
-                parseHTML: element => {
-                    return element.getAttribute('data-state-path')
+                parseHTML: (element) => {
+                    return element.getAttribute('data-state-path');
                 },
-                renderHTML: attributes => {
-                    if (! attributes.statePath) {
-                        return null
+                renderHTML: (attributes) => {
+                    if (!attributes.statePath) {
+                        return null;
                     }
 
                     return {
-                        'data-state-path': attributes.statePath
-                    }
-                }
+                        'data-state-path': attributes.statePath,
+                    };
+                },
             },
             type: {
                 default: null,
-                parseHTML: element => {
-                    return element.getAttribute('data-type')
+                parseHTML: (element) => {
+                    return element.getAttribute('data-type');
                 },
-                renderHTML: attributes => {
-                    if (! attributes.type) {
-                        return null
+                renderHTML: (attributes) => {
+                    if (!attributes.type) {
+                        return null;
                     }
 
                     return {
-                        'data-type': attributes.type
-                    }
-                }
+                        'data-type': attributes.type,
+                    };
+                },
             },
             label: {
                 default: null,
-                parseHTML: element => {
-                    return element.getAttribute('data-label')
+                parseHTML: (element) => {
+                    return element.getAttribute('data-label');
                 },
-                renderHTML: attributes => {
-                    if (! attributes.label) {
-                        return null
+                renderHTML: (attributes) => {
+                    if (!attributes.label) {
+                        return null;
                     }
 
                     return {
-                        'data-label': attributes.label
-                    }
-                }
+                        'data-label': attributes.label,
+                    };
+                },
             },
             data: {
                 default: null,
-                parseHTML: element => {
-                    return element.getAttribute('data-data')
+                parseHTML: (element) => {
+                    return element.getAttribute('data-data');
                 },
-                renderHTML: attributes => {
-                    if (! attributes.data) {
-                        return null
+                renderHTML: (attributes) => {
+                    if (!attributes.data) {
+                        return null;
                     }
 
                     return {
-                        'data-data': JSON.stringify(attributes.data)
-                    }
-                }
+                        'data-data': JSON.stringify(attributes.data),
+                    };
+                },
             },
-        }
+        };
     },
     parseHTML() {
         return [
             {
                 tag: 'tiptap-block',
-            }
-        ]
+            },
+        ];
     },
     renderHTML({ HTMLAttributes }) {
-        return ['tiptap-block', mergeAttributes(HTMLAttributes)]
+        return ['tiptap-block', mergeAttributes(HTMLAttributes)];
     },
     addNodeView() {
-        return ({node}) => {
-            const dom = document.createElement('div')
-            dom.contentEditable = 'false'
-            dom.classList.add('tiptap-block-wrapper')
+        return ({ node }) => {
+            const dom = document.createElement('div');
+            dom.contentEditable = 'false';
+            dom.classList.add('tiptap-block-wrapper');
 
-            let data = typeof node.attrs.data === 'object'
-                ? JSON.stringify(node.attrs.data)
-                : node.attrs.data
+            let data = typeof node.attrs.data === 'object' ? JSON.stringify(node.attrs.data) : node.attrs.data;
 
             dom.innerHTML = `
                 <div
@@ -150,65 +148,92 @@ export const TiptapBlock = Node.create({
 
             return {
                 dom,
-            }
-        }
+            };
+        };
     },
     addCommands() {
         return {
-            insertBlock: (attributes) => ({ chain, state }) => {
-                const currentChain = chain()
+            insertBlock:
+                (attributes) =>
+                ({ chain, state }) => {
+                    const currentChain = chain();
 
-                if (! [null, undefined].includes(attributes.coordinates?.pos)) {
-                    currentChain.insertContentAt({ from: attributes.coordinates.pos, to: attributes.coordinates.pos }, { type: this.name, attrs: attributes })
+                    if (![null, undefined].includes(attributes.coordinates?.pos)) {
+                        currentChain.insertContentAt(
+                            { from: attributes.coordinates.pos, to: attributes.coordinates.pos },
+                            { type: this.name, attrs: attributes },
+                        );
 
-                    return currentChain.setTextSelection(attributes.coordinates.pos)
-                }
-
-                const { selection } = state
-                const { $from, $to } = selection
-
-                const range = $from.blockRange($to)
-
-                if (!range) {
-                    if ($to.parentOffset === 0) {
-                        currentChain
-                            .insertContentAt(Math.max($to.pos - 1, 0), { type: 'paragraph' })
-                            .insertContentAt({ from: $from.pos, to: $to.pos }, { type: this.name, attrs: attributes })
-                    } else {
-                        currentChain
-                            .setNode({ type: 'paragraph' })
-                            .insertContentAt({ from: $from.pos, to: $to.pos }, { type: this.name, attrs: attributes })
+                        return currentChain.setTextSelection(attributes.coordinates.pos);
                     }
 
-                    return currentChain.setTextSelection($to.pos + 1)
-                } else {
-                    if ($to.parentOffset === 0) {
-                        currentChain.insertContentAt(Math.max($to.pos - 1, 0), { type: this.name, attrs: attributes })
+                    const { selection } = state;
+                    const { $from, $to } = selection;
+
+                    const range = $from.blockRange($to);
+
+                    if (!range) {
+                        if ($to.parentOffset === 0) {
+                            currentChain
+                                .insertContentAt(Math.max($to.pos - 1, 0), { type: 'paragraph' })
+                                .insertContentAt(
+                                    { from: $from.pos, to: $to.pos },
+                                    { type: this.name, attrs: attributes },
+                                );
+                        } else {
+                            currentChain
+                                .setNode({ type: 'paragraph' })
+                                .insertContentAt(
+                                    { from: $from.pos, to: $to.pos },
+                                    { type: this.name, attrs: attributes },
+                                );
+                        }
+
+                        return currentChain.setTextSelection($to.pos + 1);
                     } else {
-                        currentChain.insertContentAt({ from: range.start, to: range.end }, { type: this.name, attrs: attributes })
+                        if ($to.parentOffset === 0) {
+                            currentChain.insertContentAt(Math.max($to.pos - 1, 0), {
+                                type: this.name,
+                                attrs: attributes,
+                            });
+                        } else {
+                            currentChain.insertContentAt(
+                                { from: range.start, to: range.end },
+                                { type: this.name, attrs: attributes },
+                            );
+                        }
+
+                        return currentChain.setTextSelection(range.end);
+                    }
+                },
+            updateBlock:
+                (attributes) =>
+                ({ chain, state }) => {
+                    const { selection } = state;
+                    const { $from, $to } = selection;
+                    const range = $from.blockRange($to);
+                    const currentChain = chain();
+
+                    if (!range) {
+                        currentChain.insertContentAt(
+                            { from: $from.pos, to: $from.pos + 1 },
+                            { type: this.name, attrs: attributes },
+                        );
+                        return false;
                     }
 
-                    return currentChain.setTextSelection(range.end)
-                }
-            },
-            updateBlock: (attributes) => ({ chain, state }) => {
-                const { selection } = state
-                const { $from, $to } = selection
-                const range = $from.blockRange($to)
-                const currentChain = chain()
+                    currentChain.insertContentAt(
+                        { from: range.start, to: range.end },
+                        { type: this.name, attrs: attributes },
+                    );
 
-                if (!range) {
-                    currentChain.insertContentAt({ from: $from.pos, to: $from.pos + 1 }, { type: this.name, attrs: attributes })
-                    return false
-                }
-
-                currentChain.insertContentAt({ from: range.start, to: range.end }, { type: this.name, attrs: attributes })
-
-                return currentChain.focus(range.end + 1)
-            },
-            removeBlock: () => ({ commands }) => {
-                return commands.deleteSelection()
-            }
-        }
+                    return currentChain.focus(range.end + 1);
+                },
+            removeBlock:
+                () =>
+                ({ commands }) => {
+                    return commands.deleteSelection();
+                },
+        };
     },
-})
+});

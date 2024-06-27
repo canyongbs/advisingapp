@@ -2,11 +2,12 @@
 
 namespace FilamentTiptapEditor\Commands;
 
-use Filament\Support\Commands\Concerns\CanManipulateFiles;
-use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Illuminate\Console\Command;
 
 use function Laravel\Prompts\text;
+
+use Filament\Support\Commands\Concerns\CanManipulateFiles;
 
 class MakeBlockCommand extends Command
 {

@@ -10,7 +10,7 @@
             @if ($heading[$loop->index + 1] && $heading[$loop->index + 1]['level'] > $heading['level'])
                 <ul>
             @endif
-                    <a href="#{{ $heading['id'] }}">{{ $heading['text'] }}</a>
+            <a href="#{{ $heading['id'] }}">{{ $heading['text'] }}</a>
             @if ($heading[$loop->index + 1] && $heading[$loop->index + 1]['level'] > $heading['level'])
                 <ul>
             @endif

@@ -11,7 +11,9 @@
                 langs: ['html'],
             })
             .then(highlighter => {
-                document.getElementById('source_code_editor').innerHTML = highlighter.codeToHtml(raw, {lang: 'js'})
+                document.getElementById('source_code_editor').innerHTML = highlighter.codeToHtml(raw, {
+                    lang: 'js'
+                })
             })
     </script>
 </div>

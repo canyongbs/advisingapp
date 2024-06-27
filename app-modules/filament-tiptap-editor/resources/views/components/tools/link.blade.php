@@ -27,7 +27,7 @@
                 as_button: link.as_button || null,
                 button_theme: link.button_theme || null,
             };
-
+    
             $wire.dispatchFormEvent('tiptap::setLinkContent', '{{ $statePath }}', arguments);
         }
     }"

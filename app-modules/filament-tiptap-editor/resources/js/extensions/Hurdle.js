@@ -1,14 +1,14 @@
-import {Node, mergeAttributes} from "@tiptap/core";
+import { Node, mergeAttributes } from '@tiptap/core';
 
 export const Hurdle = Node.create({
-    name: "hurdle",
-    group: "block",
-    content: "block+",
+    name: 'hurdle',
+    group: 'block',
+    content: 'block+',
     addOptions() {
         return {
             colors: ['gray_light', 'gray', 'gray_dark', 'primary', 'secondary', 'tertiary', 'accent'],
             HTMLAttributes: {
-                class: "filament-tiptap-hurdle",
+                class: 'filament-tiptap-hurdle',
             },
         };
     },
@@ -16,34 +16,36 @@ export const Hurdle = Node.create({
         return {
             color: {
                 default: 'gray',
-                parseHTML: element => element.getAttribute('data-color'),
-                renderHTML: attributes => {
+                parseHTML: (element) => element.getAttribute('data-color'),
+                renderHTML: (attributes) => {
                     return {
                         'data-color': attributes.color,
-                    }
-                }
+                    };
+                },
             },
-        }
+        };
     },
     parseHTML() {
         return [
             {
-                tag: "div",
-                getAttrs: (element) => element.classList.contains("filament-tiptap-hurdle"),
+                tag: 'div',
+                getAttrs: (element) => element.classList.contains('filament-tiptap-hurdle'),
             },
         ];
     },
-    renderHTML({node, HTMLAttributes}) {
-        return ["div", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0];
+    renderHTML({ node, HTMLAttributes }) {
+        return ['div', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0];
     },
     addCommands() {
         return {
-            setHurdle: attributes => ({commands}) => {
-                if (!this.options.colors.includes(attributes.color)) {
-                    return false
-                }
-                return commands.toggleWrap(this.name, attributes);
-            },
+            setHurdle:
+                (attributes) =>
+                ({ commands }) => {
+                    if (!this.options.colors.includes(attributes.color)) {
+                        return false;
+                    }
+                    return commands.toggleWrap(this.name, attributes);
+                },
         };
     },
 });

@@ -5,7 +5,10 @@
     <div x-show="!fullScreenMode">
         <x-filament-tiptap-editor::icon icon="fullscreen-enter" />
     </div>
-    <div x-show="fullScreenMode" style="display: none;">
+    <div
+        style="display: none;"
+        x-show="fullScreenMode"
+    >
         <x-filament-tiptap-editor::icon icon="fullscreen-exit" />
     </div>
 </x-filament-tiptap-editor::button>

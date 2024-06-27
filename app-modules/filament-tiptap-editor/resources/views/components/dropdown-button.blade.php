@@ -8,17 +8,17 @@
     'customIcon' => null,
 ])
 <div
+    class="relative"
     x-data="{
         indicator: () => {{ $indicator ?? 'null' }}
     }"
-    class="relative"
     x-on:close-panel="$refs.panel.close()"
 >
     @if ($indicator)
         <div
+            class="pointer-events-none absolute right-0 top-0 font-mono text-[0.625rem] text-gray-800 dark:text-gray-300"
             x-text="{{ $indicator }}"
-            class="text-[0.625rem] absolute top-0 right-0 font-mono text-gray-800 dark:text-gray-300 pointer-events-none"
-            x-bind:class="{ 'hidden': ! indicator() }"
+            x-bind:class="{ 'hidden': !indicator() }"
         ></div>
     @endif
 
@@ -28,7 +28,7 @@
         :label="$label"
         :icon="$icon"
     >
-        @if (! $icon)
+        @if (!$icon)
             {!! $customIcon !!}
         @endif
     </x-filament-tiptap-editor::button>
@@ -43,16 +43,20 @@
         x-cloak
         @class([
             'tiptap-panel absolute z-30 bg-gray-100 dark:bg-gray-800 rounded-md shadow-md top-full',
-            'overflow-y-scroll max-h-48' => ! $active,
+            'overflow-y-scroll max-h-48' => !$active,
         ])
     >
-        <div x-ref="arrow" class="absolute z-1 bg-inherit w-2 h-2 transform rotate-45"></div>
+        <div
+            class="z-1 bg-inherit absolute h-2 w-2 rotate-45 transform"
+            x-ref="arrow"
+        ></div>
         @if ($list)
-            <ul class="relative z-2 text-sm divide-y rounded-md overflow-hidden divide-gray-300 dark:divide-gray-700 min-w-[144px] text-gray-800 dark:text-white">
+            <ul
+                class="z-2 relative min-w-[144px] divide-y divide-gray-300 overflow-hidden rounded-md text-sm text-gray-800 dark:divide-gray-700 dark:text-white">
                 {{ $slot }}
             </ul>
         @else
-            <div class="relative z-2 flex gap-1 items-center p-1">
+            <div class="z-2 relative flex items-center gap-1 p-1">
                 {{ $slot }}
             </div>
         @endif

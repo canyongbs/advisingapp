@@ -2,8 +2,8 @@
 
 namespace FilamentTiptapEditor\Tests\Database\Factories;
 
-use FilamentTiptapEditor\Tests\Models\Page;
 use FilamentTiptapEditor\TiptapFaker;
+use FilamentTiptapEditor\Tests\Models\Page;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PageFactory extends Factory

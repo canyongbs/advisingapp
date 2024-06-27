@@ -1,9 +1,9 @@
-import { mergeAttributes, Node } from '@tiptap/core'
-import { PluginKey } from '@tiptap/pm/state'
-import Suggestion from '@tiptap/suggestion'
-import tippy from "tippy.js";
+import { mergeAttributes, Node } from '@tiptap/core';
+import { PluginKey } from '@tiptap/pm/state';
+import Suggestion from '@tiptap/suggestion';
+import tippy from 'tippy.js';
 
-export const MergeTagPluginKey = new PluginKey('mergeTag')
+export const MergeTagPluginKey = new PluginKey('mergeTag');
 
 export const MergeTag = Node.create({
     name: 'mergeTag',
@@ -20,91 +20,82 @@ export const MergeTag = Node.create({
         return {
             id: {
                 default: null,
-                parseHTML: element => element.getAttribute('data-id'),
-                renderHTML: attributes => {
+                parseHTML: (element) => element.getAttribute('data-id'),
+                renderHTML: (attributes) => {
                     if (!attributes.id) {
-                        return {}
+                        return {};
                     }
 
                     return {
-                        'data-id': attributes.id
-                    }
-                }
+                        'data-id': attributes.id,
+                    };
+                },
             },
-        }
+        };
     },
 
     parseHTML() {
         return [
             {
-                tag: `span[data-type='${this.name}']`
-            }
-        ]
+                tag: `span[data-type='${this.name}']`,
+            },
+        ];
     },
 
     renderHTML({ node, HTMLAttributes }) {
-        return [
-            'span',
-            mergeAttributes(
-                { 'data-type': this.name },
-                HTMLAttributes
-            ),
-            `{{ ${node.attrs.id} }}`,
-        ]
+        return ['span', mergeAttributes({ 'data-type': this.name }, HTMLAttributes), `{{ ${node.attrs.id} }}`];
     },
 
     renderText({ node }) {
-        return `{{ ${node.attrs.id} }}`
+        return `{{ ${node.attrs.id} }}`;
     },
 
     addKeyboardShortcuts() {
         return {
             Backspace: () =>
                 this.editor.commands.command(({ tr, state }) => {
-                    let isMergeTag = false
-                    const { selection } = state
-                    const { empty, anchor } = selection
+                    let isMergeTag = false;
+                    const { selection } = state;
+                    const { empty, anchor } = selection;
 
                     if (!empty) {
-                        return false
+                        return false;
                     }
 
                     state.doc.nodesBetween(anchor - 1, anchor, (node, pos) => {
                         if (node.type.name === this.name) {
-                            isMergeTag = true
-                            tr.insertText(
-                                '{{',
-                                pos,
-                                pos + node.nodeSize
-                            )
+                            isMergeTag = true;
+                            tr.insertText('{{', pos, pos + node.nodeSize);
 
-                            return false
+                            return false;
                         }
-                    })
+                    });
 
-                    return isMergeTag
-                })
-        }
+                    return isMergeTag;
+                }),
+        };
     },
 
     addCommands() {
         return {
-            insertMergeTag: (attributes) => ({ chain, state }) => {
-                const currentChain = chain()
+            insertMergeTag:
+                (attributes) =>
+                ({ chain, state }) => {
+                    const currentChain = chain();
 
-                if (! [null, undefined].includes(attributes.coordinates?.pos)) {
-                    currentChain.insertContentAt(
-                        { from: attributes.coordinates.pos, to: attributes.coordinates.pos },
-                        [
-                            { type: this.name, attrs: { id: attributes.tag } },
-                            { type: 'text', text: ' ' },
-                        ],
-                    )
+                    if (![null, undefined].includes(attributes.coordinates?.pos)) {
+                        currentChain.insertContentAt(
+                            { from: attributes.coordinates.pos, to: attributes.coordinates.pos },
+                            [
+                                { type: this.name, attrs: { id: attributes.tag } },
+                                { type: 'text', text: ' ' },
+                            ],
+                        );
 
-                    return currentChain
-                }
-            },
-        }
+                        return currentChain;
+                    }
+                },
+        };
     },
 
     addProseMirrorPlugins() {
@@ -112,14 +103,17 @@ export const MergeTag = Node.create({
             Suggestion({
                 editor: this.editor,
                 char: '{{',
-                items: ({ query }) => this.options.mergeTags.filter(item => item.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5),
+                items: ({ query }) =>
+                    this.options.mergeTags
+                        .filter((item) => item.toLowerCase().startsWith(query.toLowerCase()))
+                        .slice(0, 5),
                 pluginKey: MergeTagPluginKey,
                 command: ({ editor, range, props }) => {
-                    const nodeAfter = editor.view.state.selection.$to.nodeAfter
-                    const overrideSpace = nodeAfter?.text?.startsWith(' ')
+                    const nodeAfter = editor.view.state.selection.$to.nodeAfter;
+                    const overrideSpace = nodeAfter?.text?.startsWith(' ');
 
                     if (overrideSpace) {
-                        range.to += 1
+                        range.to += 1;
                     }
 
                     editor
@@ -128,39 +122,39 @@ export const MergeTag = Node.create({
                         .insertContentAt(range, [
                             {
                                 type: this.name,
-                                attrs: props
+                                attrs: props,
                             },
                             {
                                 type: 'text',
-                                text: ' '
+                                text: ' ',
                             },
                         ])
-                        .run()
+                        .run();
 
-                    window.getSelection()?.collapseToEnd()
+                    window.getSelection()?.collapseToEnd();
                 },
                 allow: ({ state, range }) => {
-                    const $from = state.doc.resolve(range.from)
-                    const type = state.schema.nodes[this.name]
-                    const allow = !!$from.parent.type.contentMatch.matchType(type)
+                    const $from = state.doc.resolve(range.from);
+                    const type = state.schema.nodes[this.name];
+                    const allow = !!$from.parent.type.contentMatch.matchType(type);
 
-                    return allow
+                    return allow;
                 },
                 render: () => {
-                    let component
-                    let popup
+                    let component;
+                    let popup;
 
                     return {
                         onStart: (props) => {
                             if (!props.clientRect) {
-                                return
+                                return;
                             }
 
                             const html = `
                                 <div
                                     x-data="{
 
-                                        items: ['${props.items.join('\', \'')}'],
+                                        items: ['${props.items.join("', '")}'],
 
                                         selectedIndex: 0,
 
@@ -223,7 +217,7 @@ export const MergeTag = Node.create({
                                         ></button>
                                     </template>
                                 </div>
-                            `
+                            `;
 
                             component = document.createElement('div');
                             component.innerHTML = html;
@@ -252,7 +246,9 @@ export const MergeTag = Node.create({
 
                             popup[0].show();
 
-                            component.dispatchEvent(new CustomEvent('merge-tags-update-items', { detail: props.items }));
+                            component.dispatchEvent(
+                                new CustomEvent('merge-tags-update-items', { detail: props.items }),
+                            );
                         },
 
                         onKeyDown(props) {
@@ -262,9 +258,9 @@ export const MergeTag = Node.create({
                         onExit() {
                             popup[0].destroy();
                         },
-                    }
+                    };
                 },
-            })
-        ]
-    }
-})
+            }),
+        ];
+    },
+});

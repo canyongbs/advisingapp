@@ -2,26 +2,21 @@
 
 namespace FilamentTiptapEditor\Actions;
 
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\BaseFileUpload;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\FileUpload;
+use Illuminate\Support\Str;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\ComponentContainer;
 use FilamentTiptapEditor\TiptapEditor;
+use Filament\Forms\Components\Checkbox;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\BaseFileUpload;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class MediaAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'filament_tiptap_media';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -149,5 +144,10 @@ class MediaAction extends Action
                     ],
                 );
             });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'filament_tiptap_media';
     }
 }

@@ -4,21 +4,16 @@ namespace FilamentTiptapEditor\Actions;
 
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Group;
+use FilamentTiptapEditor\TiptapEditor;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
-use FilamentTiptapEditor\TiptapEditor;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Actions\Action;
 
 class OEmbedAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'filament_tiptap_oembed';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -123,5 +118,10 @@ class OEmbedAction extends Action
                     video: $data,
                 );
             });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'filament_tiptap_oembed';
     }
 }

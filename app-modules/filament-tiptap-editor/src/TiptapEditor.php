@@ -3,24 +3,24 @@
 namespace FilamentTiptapEditor;
 
 use Closure;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
-use Filament\Forms\Components\Concerns\HasPlaceholder;
+use Throwable;
+use JsonException;
+use Livewire\Component;
+use Illuminate\Support\Js;
+use Illuminate\Support\Str;
 use Filament\Forms\Components\Field;
-use Filament\Support\Concerns\HasExtraAlpineAttributes;
-use FilamentTiptapEditor\Actions\EditMediaAction;
-use FilamentTiptapEditor\Actions\GridBuilderAction;
+use Filament\Forms\Components\Actions\Action;
 use FilamentTiptapEditor\Actions\OEmbedAction;
 use FilamentTiptapEditor\Actions\SourceAction;
+use FilamentTiptapEditor\Actions\EditMediaAction;
 use FilamentTiptapEditor\Concerns\CanStoreOutput;
+use FilamentTiptapEditor\Actions\GridBuilderAction;
 use FilamentTiptapEditor\Concerns\HasCustomActions;
 use FilamentTiptapEditor\Concerns\InteractsWithMedia;
 use FilamentTiptapEditor\Concerns\InteractsWithMenus;
-use Illuminate\Support\Js;
-use Illuminate\Support\Str;
-use JsonException;
-use Livewire\Component;
-use Throwable;
+use Filament\Forms\Components\Concerns\HasPlaceholder;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 
 class TiptapEditor extends Field
 {
@@ -75,7 +75,6 @@ class TiptapEditor extends Field
         $this->extensions = config('filament-tiptap-editor.extensions') ?? [];
 
         $this->afterStateHydrated(function (TiptapEditor $component, string | array | null $state): void {
-
             if (! $state) {
                 return;
             }
@@ -94,7 +93,6 @@ class TiptapEditor extends Field
         });
 
         $this->dehydrateStateUsing(function (TiptapEditor $component, string | array | null $state): string | array | null {
-
             if (! $state) {
                 return null;
             }
@@ -232,9 +230,7 @@ class TiptapEditor extends Field
 
                     $content[$k]['attrs']['data'] = json_decode($data, true);
                 }
-                unset($content[$k]['attrs']['statePath']);
-                unset($content[$k]['attrs']['preview']);
-                unset($content[$k]['attrs']['label']);
+                unset($content[$k]['attrs']['statePath'], $content[$k]['attrs']['preview'], $content[$k]['attrs']['label']);
             } elseif (array_key_exists('content', $block)) {
                 $content[$k] = $this->decodeBlocksBeforeSave($block);
             }

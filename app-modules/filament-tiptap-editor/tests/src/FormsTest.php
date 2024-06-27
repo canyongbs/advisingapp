@@ -1,15 +1,15 @@
 <?php
 
-use Filament\Forms\Components\TextInput;
+use Livewire\Livewire;
 use Filament\Forms\Form;
+use Illuminate\Contracts\View\View;
+use FilamentTiptapEditor\TiptapEditor;
+use Filament\Forms\Components\TextInput;
+use FilamentTiptapEditor\Tests\Models\Page;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use FilamentTiptapEditor\Tests\Fixtures\Livewire as LivewireFixture;
-use FilamentTiptapEditor\Tests\Models\Page;
-use FilamentTiptapEditor\Tests\Resources\PageResource\Pages\CreatePage;
 use FilamentTiptapEditor\Tests\Resources\PageResource\Pages\EditPage;
-use FilamentTiptapEditor\TiptapEditor;
-use Illuminate\Contracts\View\View;
-use Livewire\Livewire;
+use FilamentTiptapEditor\Tests\Resources\PageResource\Pages\CreatePage;
 
 it('has editor field', function () {
     Livewire::test(TestComponentWithForm::class)

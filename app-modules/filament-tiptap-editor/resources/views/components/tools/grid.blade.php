@@ -12,33 +12,25 @@
     icon="grid"
 >
     @if (in_array('two-columns', $layouts))
-        <x-filament-tiptap-editor::dropdown-button-item
-            action="editor().chain().focus().insertGrid({ cols: 2 }).run()"
-        >
+        <x-filament-tiptap-editor::dropdown-button-item action="editor().chain().focus().insertGrid({ cols: 2 }).run()">
             {{ trans('filament-tiptap-editor::editor.grid.two_columns') }}
         </x-filament-tiptap-editor::dropdown-button-item>
     @endif
 
     @if (in_array('three-columns', $layouts))
-        <x-filament-tiptap-editor::dropdown-button-item
-            action="editor().chain().focus().insertGrid({ cols: 3 }).run()"
-        >
+        <x-filament-tiptap-editor::dropdown-button-item action="editor().chain().focus().insertGrid({ cols: 3 }).run()">
             {{ trans('filament-tiptap-editor::editor.grid.three_columns') }}
         </x-filament-tiptap-editor::dropdown-button-item>
     @endif
 
     @if (in_array('four-columns', $layouts))
-        <x-filament-tiptap-editor::dropdown-button-item
-            action="editor().chain().focus().insertGrid({ cols: 4 }).run()"
-        >
+        <x-filament-tiptap-editor::dropdown-button-item action="editor().chain().focus().insertGrid({ cols: 4 }).run()">
             {{ trans('filament-tiptap-editor::editor.grid.four_columns') }}
         </x-filament-tiptap-editor::dropdown-button-item>
     @endif
 
     @if (in_array('five-columns', $layouts))
-        <x-filament-tiptap-editor::dropdown-button-item
-            action="editor().chain().focus().insertGrid({ cols: 5 }).run()"
-        >
+        <x-filament-tiptap-editor::dropdown-button-item action="editor().chain().focus().insertGrid({ cols: 5 }).run()">
             {{ trans('filament-tiptap-editor::editor.grid.five_columns') }}
         </x-filament-tiptap-editor::dropdown-button-item>
     @endif
@@ -61,7 +53,8 @@
 
     @if (in_array('fixed-four-columns', $layouts))
         <x-filament-tiptap-editor::dropdown-button-item
-            action="editor().chain().focus().insertGrid({ cols: 4, type: 'fixed' }).run()">
+            action="editor().chain().focus().insertGrid({ cols: 4, type: 'fixed' }).run()"
+        >
             {{ trans('filament-tiptap-editor::editor.grid.fixed_four_columns') }}
         </x-filament-tiptap-editor::dropdown-button-item>
     @endif

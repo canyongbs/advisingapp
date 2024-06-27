@@ -3,14 +3,14 @@
 namespace FilamentTiptapEditor\Tests\Resources;
 
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
-use FilamentTiptapEditor\Enums\TiptapOutput;
-use FilamentTiptapEditor\Tests\Models\Page;
-use FilamentTiptapEditor\Tests\Resources\PageResource\Pages;
+use Filament\Resources\Resource;
 use FilamentTiptapEditor\TiptapEditor;
+use FilamentTiptapEditor\Tests\Models\Page;
+use FilamentTiptapEditor\Enums\TiptapOutput;
+use FilamentTiptapEditor\Tests\Resources\PageResource\Pages;
 
 class PageResource extends Resource
 {
@@ -39,7 +39,6 @@ class PageResource extends Resource
                 Tables\Columns\TextColumn::make('title'),
             ])
             ->filters([
-                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -57,7 +56,6 @@ class PageResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
         ];
     }
 

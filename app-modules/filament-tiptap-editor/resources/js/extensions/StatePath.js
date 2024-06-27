@@ -1,4 +1,4 @@
-import {Extension} from '@tiptap/core'
+import { Extension } from '@tiptap/core';
 
 export const StatePath = Extension.create({
     name: 'statePath',
@@ -6,17 +6,17 @@ export const StatePath = Extension.create({
     addOptions() {
         return {
             statePath: null,
-        }
+        };
     },
 
     addStorage() {
         return {
-            statePath: null
-        }
+            statePath: null,
+        };
     },
 
     onCreate() {
-        this.storage.statePath = this.options.statePath
+        this.storage.statePath = this.options.statePath;
     },
 
     addCommands() {
@@ -25,5 +25,5 @@ export const StatePath = Extension.create({
                 return this.storage.statePath;
             },
         };
-    }
-})
+    },
+});

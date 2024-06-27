@@ -4,8 +4,8 @@ namespace FilamentTiptapEditor;
 
 use Faker\Factory;
 use Faker\Generator;
-use FilamentTiptapEditor\Facades\TiptapConverter;
 use Illuminate\Support\Str;
+use FilamentTiptapEditor\Facades\TiptapConverter;
 
 class TiptapFaker
 {
@@ -51,9 +51,8 @@ class TiptapFaker
             })->implode('</p><p>') . '</p>';
 
             return $this;
-        } else {
-            $this->output .= '<p>' . collect($this->faker->paragraphs($count))->implode('</p><p>') . '</p>';
         }
+        $this->output .= '<p>' . collect($this->faker->paragraphs($count))->implode('</p><p>') . '</p>';
 
         return $this;
     }

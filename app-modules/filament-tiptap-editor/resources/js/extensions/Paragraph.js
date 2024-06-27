@@ -1,11 +1,11 @@
-import Paragraph from "@tiptap/extension-paragraph";
+import Paragraph from '@tiptap/extension-paragraph';
 
 export const CustomParagraph = Paragraph.extend({
-  addAttributes() {
-    return {
-      class: {
-        default: null,
-      },
-    };
-  },
+    addAttributes() {
+        return {
+            class: {
+                default: null,
+            },
+        };
+    },
 });

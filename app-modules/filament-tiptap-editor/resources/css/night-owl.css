@@ -56,7 +56,7 @@ SOFTWARE.
     }
 
     .hljs-number {
-        color: #F78C6C;
+        color: #f78c6c;
     }
 
     .hljs-regexp {
@@ -80,11 +80,11 @@ SOFTWARE.
     }
 
     .hljs-function {
-        color: #82AAFF;
+        color: #82aaff;
     }
 
     .hljs-title {
-        color: #DCDCAA;
+        color: #dcdcaa;
     }
 
     .hljs-params {
@@ -106,7 +106,6 @@ SOFTWARE.
     }
 
     .hljs-meta .hljs-keyword {
-
         color: #82aaff;
     }
 
@@ -144,7 +143,7 @@ SOFTWARE.
     }
 
     .hljs-code {
-        color: #80CBC4;
+        color: #80cbc4;
     }
 
     .hljs-emphasis {
@@ -206,7 +205,7 @@ SOFTWARE.
     }
 
     .hljs-deletion {
-        color: #EF535090;
+        color: #ef535090;
         font-style: italic;
     }
 }

@@ -1,43 +1,43 @@
-import { Mark, mergeAttributes } from "@tiptap/core";
+import { Mark, mergeAttributes } from '@tiptap/core';
 
 export const Small = Mark.create({
-  name: "small",
+    name: 'small',
 
-  addOptions() {
-    return {
-      HTMLAttributes: {},
-    };
-  },
+    addOptions() {
+        return {
+            HTMLAttributes: {},
+        };
+    },
 
-  parseHTML() {
-    return [
-      {
-        tag: "small",
-      },
-    ];
-  },
+    parseHTML() {
+        return [
+            {
+                tag: 'small',
+            },
+        ];
+    },
 
-  renderHTML({ HTMLAttributes }) {
-    return ["small", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0];
-  },
+    renderHTML({ HTMLAttributes }) {
+        return ['small', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0];
+    },
 
-  addCommands() {
-    return {
-      setSmall:
-        () =>
-        ({ commands }) => {
-          return commands.setMark(this.name);
-        },
-      toggleSmall:
-        () =>
-        ({ commands }) => {
-          return commands.toggleMark(this.name);
-        },
-      unsetSmall:
-        () =>
-        ({ commands }) => {
-          return commands.unsetMark(this.name);
-        },
-    };
-  },
+    addCommands() {
+        return {
+            setSmall:
+                () =>
+                ({ commands }) => {
+                    return commands.setMark(this.name);
+                },
+            toggleSmall:
+                () =>
+                ({ commands }) => {
+                    return commands.toggleMark(this.name);
+                },
+            unsetSmall:
+                () =>
+                ({ commands }) => {
+                    return commands.unsetMark(this.name);
+                },
+        };
+    },
 });

@@ -4,13 +4,13 @@ namespace FilamentTiptapEditor\Blocks;
 
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\CheckboxList;
+use Illuminate\Support\Str;
 use Filament\Forms\Components\Group;
+use FilamentTiptapEditor\TiptapBlock;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
-use FilamentTiptapEditor\TiptapBlock;
-use Illuminate\Support\Str;
+use Filament\Forms\Components\CheckboxList;
 
 class VideoBlock extends TiptapBlock
 {

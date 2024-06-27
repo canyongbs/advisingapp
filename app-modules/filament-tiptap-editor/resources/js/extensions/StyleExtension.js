@@ -1,4 +1,4 @@
-import {Extension} from '@tiptap/core'
+import { Extension } from '@tiptap/core';
 
 export const StyleExtension = Extension.create({
     name: 'styleExtension',
@@ -23,18 +23,18 @@ export const StyleExtension = Extension.create({
                 attributes: {
                     style: {
                         default: null,
-                        parseHTML: element => element.getAttribute('style') ?? null,
-                        renderHTML: attributes => {
+                        parseHTML: (element) => element.getAttribute('style') ?? null,
+                        renderHTML: (attributes) => {
                             if (!attributes.style) {
                                 return null;
                             }
                             return {
-                                style: attributes.style
-                            }
+                                style: attributes.style,
+                            };
                         },
                     },
                 },
             },
-        ]
-    }
-})
+        ];
+    },
+});

@@ -7,7 +7,7 @@
 ])
 
 @php
-    if ($active && ! (str_starts_with($active, '{') || str_starts_with($active, '['))) {
+    if ($active && !(str_starts_with($active, '{') || str_starts_with($active, '['))) {
         $active = "'{$active}'";
     }
 @endphp
@@ -16,17 +16,13 @@
     type="button"
     x-on:click="{{ $action }}"
     {{ $attributes }}
-    @if ($label)
-        x-tooltip="'{{ $label }}'"
-    @endif
+    @if ($label) x-tooltip="'{{ $label }}'" @endif
     @class([
         'tiptap-tool rounded block p-0.5 outline-none ring-1 ring-transparent hover:ring-primary-500 focus:ring-primary-500',
-        'hover:bg-gray-500/20 focus:bg-gray-500/20' => ! $secondary,
+        'hover:bg-gray-500/20 focus:bg-gray-500/20' => !$secondary,
         'hover:bg-gray-500/40 focus:bg-gray-500/40' => $secondary,
     ])
-    @if ($active)
-        x-bind:class="{ '!bg-gray-500/30': editor().isActive({{ $active }}, updatedAt) }"
-    @endif
+    @if ($active) x-bind:class="{ '!bg-gray-500/30': editor().isActive({{ $active }}, updatedAt) }" @endif
 >
     {{ $slot }}
     @if ($icon)

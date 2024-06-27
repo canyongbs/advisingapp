@@ -1,4 +1,4 @@
-import {Extension} from '@tiptap/core'
+import { Extension } from '@tiptap/core';
 
 export const IdExtension = Extension.create({
     name: 'idExtension',
@@ -6,25 +6,22 @@ export const IdExtension = Extension.create({
     addGlobalAttributes() {
         return [
             {
-                types: [
-                    'heading',
-                    'link',
-                ],
+                types: ['heading', 'link'],
                 attributes: {
                     id: {
                         default: null,
-                        parseHTML: element => element.getAttribute('id') ?? null,
-                        renderHTML: attributes => {
+                        parseHTML: (element) => element.getAttribute('id') ?? null,
+                        renderHTML: (attributes) => {
                             if (!attributes.id) {
                                 return null;
                             }
                             return {
-                                id: attributes.id
-                            }
+                                id: attributes.id,
+                            };
                         },
                     },
                 },
             },
-        ]
-    }
-})
+        ];
+    },
+});

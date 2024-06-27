@@ -124,5 +124,4 @@ return [
         'vimeo' => 'Inserisci Video Vimeo',
         'oembed' => 'Inserisci Video',
     ],
-
 ];

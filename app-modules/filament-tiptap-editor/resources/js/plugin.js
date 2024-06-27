@@ -1,34 +1,34 @@
-import {Editor, isActive} from "@tiptap/core";
-import Blockquote from "@tiptap/extension-blockquote";
-import Bold from "@tiptap/extension-bold";
-import BulletList from "@tiptap/extension-bullet-list";
-import Code from "@tiptap/extension-code";
-import Color from "@tiptap/extension-color";
-import Document from "@tiptap/extension-document";
-import Dropcursor from "@tiptap/extension-dropcursor";
-import Gapcursor from "@tiptap/extension-gapcursor";
-import HardBreak from "@tiptap/extension-hard-break";
-import Heading from "@tiptap/extension-heading";
-import History from "@tiptap/extension-history";
-import HorizontalRule from "@tiptap/extension-horizontal-rule";
-import Italic from "@tiptap/extension-italic";
-import ListItem from "@tiptap/extension-list-item";
-import OrderedList from "@tiptap/extension-ordered-list";
-import Paragraph from "@tiptap/extension-paragraph";
-import Placeholder from "@tiptap/extension-placeholder";
-import Strike from "@tiptap/extension-strike";
-import Subscript from "@tiptap/extension-subscript";
-import Superscript from "@tiptap/extension-superscript";
-import Table from "@tiptap/extension-table";
-import TableCell from "@tiptap/extension-table-cell";
-import TableHeader from "@tiptap/extension-table-header";
-import TableRow from "@tiptap/extension-table-row";
-import Text from "@tiptap/extension-text";
-import TextStyle from "@tiptap/extension-text-style";
-import Underline from "@tiptap/extension-underline";
-import Highlight from "@tiptap/extension-highlight";
-import {BubbleMenu} from "@tiptap/extension-bubble-menu";
-import {FloatingMenu} from "@tiptap/extension-floating-menu";
+import { Editor, isActive } from '@tiptap/core';
+import Blockquote from '@tiptap/extension-blockquote';
+import Bold from '@tiptap/extension-bold';
+import BulletList from '@tiptap/extension-bullet-list';
+import Code from '@tiptap/extension-code';
+import Color from '@tiptap/extension-color';
+import Document from '@tiptap/extension-document';
+import Dropcursor from '@tiptap/extension-dropcursor';
+import Gapcursor from '@tiptap/extension-gapcursor';
+import HardBreak from '@tiptap/extension-hard-break';
+import Heading from '@tiptap/extension-heading';
+import History from '@tiptap/extension-history';
+import HorizontalRule from '@tiptap/extension-horizontal-rule';
+import Italic from '@tiptap/extension-italic';
+import ListItem from '@tiptap/extension-list-item';
+import OrderedList from '@tiptap/extension-ordered-list';
+import Paragraph from '@tiptap/extension-paragraph';
+import Placeholder from '@tiptap/extension-placeholder';
+import Strike from '@tiptap/extension-strike';
+import Subscript from '@tiptap/extension-subscript';
+import Superscript from '@tiptap/extension-superscript';
+import Table from '@tiptap/extension-table';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
+import TableRow from '@tiptap/extension-table-row';
+import Text from '@tiptap/extension-text';
+import TextStyle from '@tiptap/extension-text-style';
+import Underline from '@tiptap/extension-underline';
+import Highlight from '@tiptap/extension-highlight';
+import { BubbleMenu } from '@tiptap/extension-bubble-menu';
+import { FloatingMenu } from '@tiptap/extension-floating-menu';
 import {
     CheckedList,
     Lead,
@@ -56,10 +56,10 @@ import {
     IdExtension,
     StyleExtension,
     StatePath,
-} from "./extensions";
-import { lowlight } from "lowlight/lib/common";
+} from './extensions';
+import { lowlight } from 'lowlight/lib/common';
 import { HexBase } from 'vanilla-colorful/lib/entrypoints/hex';
-import { isEqual } from "lodash";
+import { isEqual } from 'lodash';
 
 customElements.define('tiptap-hex-color-picker', HexBase);
 
@@ -69,97 +69,103 @@ let coreExtensions = {
     'bullet-list': [BulletList],
     'checked-list': [CheckedList],
     code: [Code],
-    'code-block': [CustomCodeBlockLowlight.configure({
-        lowlight,
-        HTMLAttributes: {
-            class: "hljs",
-        },
-    })],
+    'code-block': [
+        CustomCodeBlockLowlight.configure({
+            lowlight,
+            HTMLAttributes: {
+                class: 'hljs',
+            },
+        }),
+    ],
     color: [Color],
     details: [Details, DetailsSummary, DetailsContent],
     grid: [Grid, GridColumn],
     'grid-builder': [GridBuilder, GridBuilderColumn],
-    heading: [Heading.configure({levels: [1, 2, 3, 4, 5, 6]})],
+    heading: [Heading.configure({ levels: [1, 2, 3, 4, 5, 6] })],
     highlight: [Highlight],
     hr: [HorizontalRule],
     hurdle: [Hurdle],
     italic: [Italic],
     lead: [Lead],
-    link: [CustomLink.configure({
-        openOnClick: false,
-        autolink: false,
-        HTMLAttributes: {
-            rel: null,
-            hreflang: null,
-            class: null,
-        },
-    })],
-    media: [CustomImage.configure({inline: true})],
+    link: [
+        CustomLink.configure({
+            openOnClick: false,
+            autolink: false,
+            HTMLAttributes: {
+                rel: null,
+                hreflang: null,
+                class: null,
+            },
+        }),
+    ],
+    media: [CustomImage.configure({ inline: true })],
     oembed: [Youtube, Vimeo, Video],
     'ordered-list': [OrderedList],
     small: [Small],
     strike: [Strike],
     subscript: [Subscript],
     superscript: [Superscript],
-    table: [Table.configure({resizable: true}), TableHeader, TableCell, TableRow],
+    table: [Table.configure({ resizable: true }), TableHeader, TableCell, TableRow],
     underline: [Underline],
 };
 
 let customExtensions = window.TiptapEditorExtensions || {};
-let editorExtensions = {...coreExtensions, ...customExtensions};
+let editorExtensions = { ...coreExtensions, ...customExtensions };
 
 const localeSwitcher = document.getElementById('activeLocale');
 if (localeSwitcher) {
     localeSwitcher.addEventListener('change', () => {
-        const localeChange = new CustomEvent('locale-change', { bubbles: true, detail: { locale: localeSwitcher.value } });
+        const localeChange = new CustomEvent('locale-change', {
+            bubbles: true,
+            detail: { locale: localeSwitcher.value },
+        });
         localeSwitcher.dispatchEvent(localeChange);
     });
 }
 
 document.addEventListener('livewire:navigating', () => {
     window.filamentTiptapEditors = {};
-})
+});
 
-document.addEventListener("dblclick", function (e) {
+document.addEventListener('dblclick', function (e) {
     if (
-        e.target && (e.target.hasAttribute("data-youtube-video") ||
-            e.target.hasAttribute("data-vimeo-video")) ||
-        e.target.hasAttribute("data-native-video")
+        (e.target && (e.target.hasAttribute('data-youtube-video') || e.target.hasAttribute('data-vimeo-video'))) ||
+        e.target.hasAttribute('data-native-video')
     ) {
-        e.target.firstChild.style.pointerEvents = "all";
+        e.target.firstChild.style.pointerEvents = 'all';
     }
 });
 
 Livewire.on('insertFromAction', (event) => {
     setTimeout(() => {
-        const proxyEvent = new CustomEvent('insert-content', { bubble: true, detail: event})
+        const proxyEvent = new CustomEvent('insert-content', { bubble: true, detail: event });
         window.dispatchEvent(proxyEvent);
-    }, 100)
-})
+    }, 100);
+});
 
 Livewire.on('insertBlockFromAction', (event) => {
     setTimeout(() => {
-        const proxyEvent = new CustomEvent('insert-block', { bubble: true, detail: event})
+        const proxyEvent = new CustomEvent('insert-block', { bubble: true, detail: event });
         window.dispatchEvent(proxyEvent);
-    }, 100)
-})
+    }, 100);
+});
 
 Livewire.on('updateBlockFromAction', (event) => {
     setTimeout(() => {
-        const proxyEvent = new CustomEvent('update-block', { bubble: true, detail: event})
+        const proxyEvent = new CustomEvent('update-block', { bubble: true, detail: event });
         window.dispatchEvent(proxyEvent);
-    }, 100)
-})
+    }, 100);
+});
 
 export default function tiptap({
-   state,
-   statePath,
-   tools = [],
-   disabled = false,
-   locale = 'en',
-   floatingMenuTools = [],
-   placeholder = null,
-   mergeTags = [],
+    state,
+    statePath,
+    tools = [],
+    disabled = false,
+    locale = 'en',
+    floatingMenuTools = [],
+    placeholder = null,
+    mergeTags = [],
 }) {
     let editor = null;
 
@@ -181,7 +187,7 @@ export default function tiptap({
                 }
 
                 return tool.id;
-            })
+            });
 
             let extensions = [
                 Document,
@@ -199,12 +205,12 @@ export default function tiptap({
                 LocalFilesExtension,
                 StyleExtension,
                 StatePath.configure({
-                    statePath: statePath
+                    statePath: statePath,
                 }),
             ];
 
-            if (placeholder && (!disabled)) {
-                extensions.push(Placeholder.configure({placeholder}));
+            if (placeholder && !disabled) {
+                extensions.push(Placeholder.configure({ placeholder }));
             }
 
             if (tools.length) {
@@ -212,53 +218,54 @@ export default function tiptap({
                 let alignments = [];
                 let types = ['paragraph'];
 
-                extensions.push(BubbleMenu.configure({
-                    element: this.$refs.bubbleMenu,
-                    tippyOptions: {
-                        duration: [500, 0],
-                        maxWidth: 'none',
-                        placement: 'top',
-                        theme: 'tiptap-editor-bubble',
-                        interactive: true,
-                        appendTo: this.$refs.element,
-                        zIndex: 10,
-                    },
-                    shouldShow: ({state, from, to}) => {
-                        if (
-                            isActive(state, 'link') ||
-                            isActive(state, 'table')
-                        ) {
-                            return true;
-                        }
-
-                        if (from !== to) {
-                            return true;
-                        }
-
-                        if (
-                            isActive(state, 'oembed') ||
-                            isActive(state, 'vimeo') ||
-                            isActive(state, 'youtube') ||
-                            isActive(state, 'video') ||
-                            isActive(state, 'tiptapBlock')
-                        ) {
-                            return false;
-                        }
-                    },
-                }))
-
-                if (this.floatingMenuTools.length) {
-                    extensions.push(FloatingMenu.configure({
-                        element: this.$refs.floatingMenu,
+                extensions.push(
+                    BubbleMenu.configure({
+                        element: this.$refs.bubbleMenu,
                         tippyOptions: {
                             duration: [500, 0],
                             maxWidth: 'none',
+                            placement: 'top',
                             theme: 'tiptap-editor-bubble',
                             interactive: true,
                             appendTo: this.$refs.element,
                             zIndex: 10,
                         },
-                    }))
+                        shouldShow: ({ state, from, to }) => {
+                            if (isActive(state, 'link') || isActive(state, 'table')) {
+                                return true;
+                            }
+
+                            if (from !== to) {
+                                return true;
+                            }
+
+                            if (
+                                isActive(state, 'oembed') ||
+                                isActive(state, 'vimeo') ||
+                                isActive(state, 'youtube') ||
+                                isActive(state, 'video') ||
+                                isActive(state, 'tiptapBlock')
+                            ) {
+                                return false;
+                            }
+                        },
+                    }),
+                );
+
+                if (this.floatingMenuTools.length) {
+                    extensions.push(
+                        FloatingMenu.configure({
+                            element: this.$refs.floatingMenu,
+                            tippyOptions: {
+                                duration: [500, 0],
+                                maxWidth: 'none',
+                                theme: 'tiptap-editor-bubble',
+                                interactive: true,
+                                appendTo: this.$refs.element,
+                                zIndex: 10,
+                            },
+                        }),
+                    );
 
                     this.floatingMenuTools.forEach((tool) => {
                         if (!tools.includes(tool)) {
@@ -271,38 +278,43 @@ export default function tiptap({
                     if (keys.includes(tool)) {
                         editorExtensions[tool].forEach((e) => {
                             if (['ordered-list', 'bullet-list', 'checked-list'].includes(tool)) {
-                                extensions.push(e)
+                                extensions.push(e);
                                 if (!extensions.includes(ListItem)) extensions.push(ListItem);
                             } else {
-                                extensions.push(e)
+                                extensions.push(e);
                             }
-                        })
+                        });
                     } else {
                         if (['align-left', 'align-right', 'align-center', 'align-justify'].includes(tool)) {
-                            if (tool === "align-left") alignments.push('start');
-                            if (tool === "align-center") alignments.push('center');
-                            if (tool === "align-right") alignments.push('end');
-                            if (tool === "align-justify") alignments.push('justify');
-                            if (tools.includes("heading")) types.push('heading');
+                            if (tool === 'align-left') alignments.push('start');
+                            if (tool === 'align-center') alignments.push('center');
+                            if (tool === 'align-right') alignments.push('end');
+                            if (tool === 'align-justify') alignments.push('justify');
+                            if (tools.includes('heading')) types.push('heading');
                             let hasTextAlign = extensions.find((item) => item.name === 'textAlign');
-                            if (typeof hasTextAlign === "undefined") extensions.push(CustomTextAlign.configure({
-                                types,
-                                alignments
-                            }));
+                            if (typeof hasTextAlign === 'undefined')
+                                extensions.push(
+                                    CustomTextAlign.configure({
+                                        types,
+                                        alignments,
+                                    }),
+                                );
                         }
                     }
-                })
+                });
             }
 
             if (mergeTags?.length) {
-                extensions.push(MergeTag.configure({
-                    mergeTags,
-                }))
+                extensions.push(
+                    MergeTag.configure({
+                        mergeTags,
+                    }),
+                );
             }
 
             return extensions;
         },
-        init: function() {
+        init: function () {
             this.modalId = this.$el.closest('[x-ref="modalContainer"]')?.getAttribute('wire:key');
 
             let existing = this.$refs.element.querySelector('.tiptap');
@@ -313,9 +325,9 @@ export default function tiptap({
 
             this.initEditor(this.state);
 
-            let sortableEl = this.$el.parentElement.closest("[x-sortable]");
+            let sortableEl = this.$el.parentElement.closest('[x-sortable]');
             if (sortableEl) {
-                window.Sortable.utils.on(sortableEl, "start", () => {
+                window.Sortable.utils.on(sortableEl, 'start', () => {
                     let editors = document.querySelectorAll('.tiptap-wrapper');
 
                     if (editors.length === 0) return;
@@ -326,7 +338,7 @@ export default function tiptap({
                     });
                 });
 
-                window.Sortable.utils.on(sortableEl, "end", () => {
+                window.Sortable.utils.on(sortableEl, 'end', () => {
                     let editors = document.querySelectorAll('.tiptap-wrapper');
 
                     if (editors.length === 0) return;
@@ -339,9 +351,9 @@ export default function tiptap({
             }
 
             this.$watch('state', (newState, oldState) => {
-                if (typeof newState !== "undefined") {
+                if (typeof newState !== 'undefined') {
                     if (!isEqual(oldState, Alpine.raw(newState))) {
-                        this.updateEditorContent(newState)
+                        this.updateEditorContent(newState);
                     }
                 }
             });
@@ -361,20 +373,19 @@ export default function tiptap({
                 content: content,
                 editorProps: {
                     handlePaste(view, event, slice) {
-                        slice.content.descendants(node => {
+                        slice.content.descendants((node) => {
                             if (node.type.name === 'tiptapBlock') {
-                                node.attrs.statePath = _this.statePath
-                                node.attrs.data = JSON.parse(node.attrs.data)
+                                node.attrs.statePath = _this.statePath;
+                                node.attrs.data = JSON.parse(node.attrs.data);
                             }
                         });
-                    }
+                    },
                 },
-                onCreate({editor}) {
-                    if (
-                        _this.$store.previous &&
-                        editor.commands.getStatePath() === _this.$store.previous.statePath
-                    ) {
-                        editor.chain().focus()
+                onCreate({ editor }) {
+                    if (_this.$store.previous && editor.commands.getStatePath() === _this.$store.previous.statePath) {
+                        editor
+                            .chain()
+                            .focus()
                             .setContent(_this.$store.previous.editor.getJSON())
                             .setTextSelection(_this.$store.previous.editor.state.selection)
                             .run();
@@ -382,7 +393,7 @@ export default function tiptap({
                         _this.updatedAt = Date.now();
                     }
                 },
-                onUpdate({editor}) {
+                onUpdate({ editor }) {
                     _this.updatedAt = Date.now();
                     _this.state = editor.isEmpty ? null : editor.getJSON();
                 },
@@ -403,39 +414,39 @@ export default function tiptap({
             this.$nextTick(() => {
                 this.$store.previous = {
                     statePath: this.statePath,
-                    editor: editor
+                    editor: editor,
                 };
-            })
+            });
         },
         isActive(type, opts = {}) {
-            return editor.isActive(type, opts)
+            return editor.isActive(type, opts);
         },
         editor() {
             return editor;
         },
         blur() {
-            const tippy = this.$el.querySelectorAll('[data-tippy-content]')
+            const tippy = this.$el.querySelectorAll('[data-tippy-content]');
             if (tippy) {
-                tippy.forEach((item) => item.destroy())
+                tippy.forEach((item) => item.destroy());
             }
 
-            this.updatedAt = Date.now()
+            this.updatedAt = Date.now();
         },
         updateEditorContent(content) {
             if (editor.isEditable) {
-                const {from, to} = editor.state.selection;
+                const { from, to } = editor.state.selection;
                 editor.commands.setContent(content, true);
-                editor.chain().focus().setTextSelection({from, to}).run();
+                editor.chain().focus().setTextSelection({ from, to }).run();
             }
         },
         refreshEditorContent() {
             this.$nextTick(() => this.updateEditorContent(this.state));
         },
         updateLocale(event) {
-            this.locale = event.detail.locale
+            this.locale = event.detail.locale;
         },
         insertContent(event) {
-            if (event.detail.statePath !== this.statePath) return
+            if (event.detail.statePath !== this.statePath) return;
 
             switch (event.detail.type) {
                 case 'media':
@@ -492,7 +503,13 @@ export default function tiptap({
                         })
                         .run();
                 } else {
-                    editor.chain().focus().extendMarkRange('link').setLink({href: src}).insertContent(media?.link_text).run();
+                    editor
+                        .chain()
+                        .focus()
+                        .extendMarkRange('link')
+                        .setLink({ href: src })
+                        .insertContent(media?.link_text)
+                        .run();
                 }
             }
         },
@@ -510,31 +527,43 @@ export default function tiptap({
                 responsive: video.responsive ?? true,
                 'data-aspect-width': video.width,
                 'data-aspect-height': video.height,
-            }
+            };
 
             if (video.url.includes('youtube') || video.url.includes('youtu.be')) {
-                editor.chain().focus().setYoutubeVideo({
-                    ...commonOptions,
-                    controls: video.youtube_options.includes('controls'),
-                    nocookie: video.youtube_options.includes('nocookie'),
-                    start: video.start_at ?? 0,
-                }).run();
+                editor
+                    .chain()
+                    .focus()
+                    .setYoutubeVideo({
+                        ...commonOptions,
+                        controls: video.youtube_options.includes('controls'),
+                        nocookie: video.youtube_options.includes('nocookie'),
+                        start: video.start_at ?? 0,
+                    })
+                    .run();
             } else if (video.url.includes('vimeo')) {
-                editor.chain().focus().setVimeoVideo({
-                    ...commonOptions,
-                    autoplay: video.vimeo_options.includes('autoplay'),
-                    loop: video.vimeo_options.includes('loop'),
-                    title: video.vimeo_options.includes('show_title'),
-                    byline: video.vimeo_options.includes('byline'),
-                    portrait: video.vimeo_options.includes('portrait'),
-                }).run();
+                editor
+                    .chain()
+                    .focus()
+                    .setVimeoVideo({
+                        ...commonOptions,
+                        autoplay: video.vimeo_options.includes('autoplay'),
+                        loop: video.vimeo_options.includes('loop'),
+                        title: video.vimeo_options.includes('show_title'),
+                        byline: video.vimeo_options.includes('byline'),
+                        portrait: video.vimeo_options.includes('portrait'),
+                    })
+                    .run();
             } else {
-                editor.chain().focus().setVideo({
-                    ...commonOptions,
-                    autoplay: video.native_options.includes('autoplay'),
-                    loop: video.native_options.includes('loop'),
-                    controls: video.native_options.includes('controls'),
-                }).run();
+                editor
+                    .chain()
+                    .focus()
+                    .setVideo({
+                        ...commonOptions,
+                        autoplay: video.native_options.includes('autoplay'),
+                        loop: video.native_options.includes('loop'),
+                        controls: video.native_options.includes('controls'),
+                    })
+                    .run();
             }
         },
         insertLink(event) {
@@ -587,16 +616,20 @@ export default function tiptap({
                 type = 'asymmetric';
             }
 
-            editor.chain().focus().insertGridBuilder({
-                cols: grid.columns,
-                type,
-                stackAt: grid.stack_at,
-                asymmetricLeft,
-                asymmetricRight
-            }).run();
+            editor
+                .chain()
+                .focus()
+                .insertGridBuilder({
+                    cols: grid.columns,
+                    type,
+                    stackAt: grid.stack_at,
+                    asymmetricLeft,
+                    asymmetricRight,
+                })
+                .run();
         },
         insertBlock(event) {
-            if (event.detail.statePath !== this.statePath) return
+            if (event.detail.statePath !== this.statePath) return;
 
             editor.commands.insertBlock({
                 type: event.detail.type,
@@ -622,12 +655,12 @@ export default function tiptap({
             }
         },
         openBlockSettings(event) {
-            if (event.detail.statePath !== this.statePath) return
+            if (event.detail.statePath !== this.statePath) return;
 
-            this.$wire.dispatchFormEvent("tiptap::updateBlock", this.statePath, event.detail);
+            this.$wire.dispatchFormEvent('tiptap::updateBlock', this.statePath, event.detail);
         },
         updateBlock(event) {
-            if (event.detail.statePath !== this.statePath) return
+            if (event.detail.statePath !== this.statePath) return;
 
             editor.commands.updateBlock({
                 type: event.detail.type,
@@ -643,6 +676,6 @@ export default function tiptap({
         },
         deleteBlock() {
             editor.commands.removeBlock();
-        }
-    }
+        },
+    };
 }

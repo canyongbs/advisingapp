@@ -2,23 +2,18 @@
 
 namespace FilamentTiptapEditor\Actions;
 
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Actions\Action;
+use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\ComponentContainer;
 use FilamentTiptapEditor\TiptapEditor;
-use Illuminate\Support\HtmlString;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Actions\Action;
 
 class LinkAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'filament_tiptap_link';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -112,5 +107,10 @@ class LinkAction extends Action
 
                 return [];
             });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'filament_tiptap_link';
     }
 }

@@ -11,5 +11,4 @@ return [
         'asymmetric_right' => 'Span Colonna Destra',
         'dont_stack' => 'Non Stackare',
     ],
-
 ];

@@ -2,13 +2,13 @@
 
 namespace FilamentTiptapEditor;
 
-use Filament\Support\Assets\AlpineComponent;
-use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
-use FilamentTiptapEditor\Commands\MakeBlockCommand;
+use Filament\Support\Assets\Css;
 use Illuminate\Support\Facades\Vite;
 use Spatie\LaravelPackageTools\Package;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Assets\AlpineComponent;
+use FilamentTiptapEditor\Commands\MakeBlockCommand;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class FilamentTiptapEditorServiceProvider extends PackageServiceProvider
