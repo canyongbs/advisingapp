@@ -42,6 +42,7 @@ use Illuminate\Events\CallQueuedListener;
 use App\Multitenancy\Tasks\SwitchMailTask;
 use App\Multitenancy\Tasks\PrefixCacheTask;
 use Illuminate\Broadcasting\BroadcastEvent;
+use App\Multitenancy\Tasks\ClearBindingsTask;
 use App\Multitenancy\Tasks\SwitchSessionDriver;
 use App\Multitenancy\Tasks\SwitchS3FilesystemTask;
 use Spatie\Multitenancy\Actions\MigrateTenantAction;
@@ -77,6 +78,7 @@ return [
      */
     'switch_tenant_tasks' => [
         // SwitchAppKey::class,
+        ClearBindingsTask::class,
         PrefixCacheTask::class,
         SwitchTenantDatabasesTask::class,
         SwitchSessionDriver::class,
