@@ -43,6 +43,7 @@ use AdvisingApp\Ai\Models\AiMessage;
 use Illuminate\Support\Facades\Http;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Exceptions\UploadedFileCouldNotBeProcessed;
+use AdvisingApp\IntegrationOpenAi\Models\AzureOpenAiVectorStore;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadException;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Files\FilesDataTransferObject;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\VectorStores\VectorStoresDataTransferObject;
@@ -71,6 +72,19 @@ trait UploadsFiles
                 $this->recreateVectorStoreForThread($thread, $expiredVectorStore);
             }
         }
+    }
+
+    public function createVectorStore(array $parameters): VectorStoresDataTransferObject
+    {
+        $response = $this->client->vectorStores()->create($parameters);
+
+        return VectorStoresDataTransferObject::from([
+            'id' => $response->id,
+            'name' => $response->name,
+            'fileCounts' => get_object_vars($response->fileCounts),
+            'status' => $response->status,
+            'expiresAt' => $response->expiresAt,
+        ]);
     }
 
     protected function createFiles(AiMessage $message, array $files): Collection
@@ -163,19 +177,6 @@ trait UploadsFiles
             'id' => $response->id,
             'name' => $response->filename,
             'status' => $response->status,
-        ]);
-    }
-
-    protected function createVectorStore(array $parameters): VectorStoresDataTransferObject
-    {
-        $response = $this->client->vectorStores()->create($parameters);
-
-        return VectorStoresDataTransferObject::from([
-            'id' => $response->id,
-            'name' => $response->name,
-            'fileCounts' => get_object_vars($response->fileCounts),
-            'status' => $response->status,
-            'expiresAt' => $response->expiresAt,
         ]);
     }
 
@@ -289,6 +290,12 @@ trait UploadsFiles
                 ],
             ],
         ]);
+
+        $vectorStore = new AzureOpenAiVectorStore();
+        $vectorStore->vector_store_id = $newVectorStore->id;
+        $vectorStore->vector_storable_id = $thread->id;
+        $vectorStore->vector_storable_type = $thread->getMorphClass();
+        $vectorStore->save();
 
         // Ensure the new vector store has processed all of its files.
         $this->awaitVectorStoreProcessing(

@@ -91,6 +91,11 @@ abstract class BaseOpenAiService implements AiService
         $assistant->assistant_id = $response->id;
     }
 
+    public function retrieveAssistant(AiAssistant $assistant)
+    {
+        return $this->client->assistants()->retrieve($assistant->assistant_id);
+    }
+
     public function updateAssistant(AiAssistant $assistant): void
     {
         $this->client->assistants()->modify($assistant->assistant_id, [
@@ -113,7 +118,7 @@ abstract class BaseOpenAiService implements AiService
         ]);
     }
 
-    public function enableAssistantFileUploads(AiAssistant $assistant): void
+    public function enableAssistantFileUploads(AiAssistant $assistant, string $vectorStoreId): void
     {
         throw new FileUploadsCannotBeEnabled();
     }

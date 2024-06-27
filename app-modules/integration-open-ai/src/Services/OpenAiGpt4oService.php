@@ -58,11 +58,16 @@ class OpenAiGpt4oService extends BaseOpenAiService implements AiServiceLifecycle
             ->make();
     }
 
-    public function enableAssistantFileUploads(AiAssistant $assistant): void
+    public function enableAssistantFileUploads(AiAssistant $assistant, string $vectorStoreId): void
     {
         $this->client->assistants()->modify($assistant->assistant_id, [
             'tools' => [
                 ['type' => 'file_search'],
+            ],
+            'tool_resources' => [
+                'file_search' => [
+                    'vector_store_ids' => [$vectorStoreId],
+                ],
             ],
         ]);
     }
