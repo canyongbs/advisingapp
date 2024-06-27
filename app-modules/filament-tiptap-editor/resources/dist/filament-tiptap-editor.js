@@ -26940,29 +26940,26 @@ var Nx = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
                 },
                 handlePaste(n, r) {
                     if (!r.clipboardData?.files.length) return !1;
-                    let i = Array.from(r.clipboardData.files),
-                        o = r.clipboardData.getData('text/html');
+                    let i = Array.from(r.clipboardData.files);
                     return (
-                        (i = i.filter((s) => Nx.includes(s.type))),
-                        i.length
-                            ? (r.preventDefault(),
-                              r.stopPropagation(),
-                              i.forEach((s) => {
-                                  if (o) return console.log(o), !1;
-                                  let l = new FileReader();
-                                  l.readAsDataURL(s),
-                                      (l.onload = () => {
+                        (i = i.filter((o) => Nx.includes(o.type))),
+                        !i.length ||
+                        (r.preventDefault(), r.stopPropagation(), r.clipboardData.getData('text/html').length)
+                            ? !1
+                            : (i.forEach((o) => {
+                                  let s = new FileReader();
+                                  s.readAsDataURL(o),
+                                      (s.onload = () => {
                                           e.chain()
                                               .insertContentAt(e.state.selection.anchor, {
                                                   type: 'image',
-                                                  attrs: { src: l.result },
+                                                  attrs: { src: s.result },
                                               })
                                               .focus()
                                               .run();
                                       });
                               }),
-                              !o.length)
-                            : !1
+                              !0)
                     );
                 },
             },

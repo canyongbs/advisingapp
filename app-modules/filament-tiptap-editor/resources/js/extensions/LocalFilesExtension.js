@@ -55,8 +55,6 @@ const LocalFilesPlugin = ({ key, editor }) =>
 
                 let files = Array.from(event.clipboardData.files);
 
-                const htmlClipboardData = event.clipboardData.getData('text/html');
-
                 files = files.filter((file) => allowedMimeTypes.includes(file.type));
 
                 if (!files.length) {
@@ -66,15 +64,11 @@ const LocalFilesPlugin = ({ key, editor }) =>
                 event.preventDefault();
                 event.stopPropagation();
 
+                if (event.clipboardData.getData('text/html').length) {
+                    return false;
+                }
+
                 files.forEach((file) => {
-                    if (htmlClipboardData) {
-                        // if there is htmlContent, stop manual insertion & let other extensions handle insertion via inputRule
-                        // you could extract the pasted file from this url string and upload it to a server for example
-                        console.log(htmlClipboardData); // eslint-disable-line no-console
-
-                        return false;
-                    }
-
                     const fileReader = new FileReader();
 
                     fileReader.readAsDataURL(file);
@@ -92,7 +86,7 @@ const LocalFilesPlugin = ({ key, editor }) =>
                     };
                 });
 
-                return !htmlClipboardData.length;
+                return true;
             },
         },
     });
