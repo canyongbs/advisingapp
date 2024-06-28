@@ -41,7 +41,7 @@ class PromptsByCategoryDoughnutChart extends ChartWidget
 
     protected function getData(): array
     {
-        $promptsByCategory = Cache::remember('promt_by_category_chart', now()->addMinute(15), function (): Collection {
+        $promptsByCategory = Cache::remember('prompt_by_category_chart', now()->addMinute(15), function (): Collection {
             $promptsByCategoryData = PromptType::withCount(['prompts'])->get(['id', 'title']);
 
             $promptsByCategoryData = $promptsByCategoryData->map(function (PromptType $promptType) {

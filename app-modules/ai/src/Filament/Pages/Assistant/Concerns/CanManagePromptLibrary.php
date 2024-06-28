@@ -47,8 +47,6 @@ use Filament\Forms\Components\Checkbox;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Filament\Forms\Components\Actions\Action as FormComponentAction;
-use Illuminate\Support\Facades\Cache;
-use Laravel\Pennant\Feature;
 
 trait CanManagePromptLibrary
 {
@@ -152,11 +150,6 @@ trait CanManagePromptLibrary
                 $use = $prompt->uses()->make();
                 $use->user()->associate(auth()->user());
                 $use->save();
-
-                if (Feature::active('ai_utilization') && Cache::has('prompts-insertions-count')) {
-                    Cache::forget('prompts-insertions-count');
-                }
-
             });
     }
 }

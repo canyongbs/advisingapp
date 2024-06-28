@@ -92,6 +92,8 @@ use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 use AdvisingApp\MultifactorAuthentication\Traits\MultifactorAuthenticatable;
+use Illuminate\Support\Facades\Cache;
+use Laravel\Pennant\Feature;
 
 /**
  * @mixin IdeHelperUser
@@ -477,9 +479,14 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function grantLicense(LicenseType $type): bool
     {
         if ($this->hasLicense($type)) {
+            if ($type == LicenseType::ConversationalAi && Cache::has('ai-users-count') && Feature::active('ai_utilization')) {
+                Cache::forget('ai-users-count');
+            }
             return false;
         }
-
+        if ($type == LicenseType::ConversationalAi && Cache::has('ai-users-count') && Feature::active('ai_utilization')) {
+            Cache::forget('ai-users-count');
+        }
         return cache()
             ->lock('licenses', 5)
             ->get(function () use ($type) {
@@ -493,6 +500,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function revokeLicense(LicenseType $type): bool
     {
+        if ($type == LicenseType::ConversationalAi && Cache::has('ai-users-count') && Feature::active('ai_utilization')) {
+            Cache::forget('ai-users-count');
+        }
         return (bool) $this->licenses()->where('type', $type)->get()->each->delete();
     }
 

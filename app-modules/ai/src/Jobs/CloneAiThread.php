@@ -46,7 +46,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
-use Illuminate\Support\Facades\Cache;
 
 class CloneAiThread implements ShouldQueue
 {
@@ -92,10 +91,6 @@ class CloneAiThread implements ShouldQueue
         if (Feature::active('ai_utilization')) {
             $this->thread->cloned_count = $this->thread->cloned_count + 1;
             $this->thread->save();
-        }
-
-        if (Feature::active('ai_utilization') && Cache::has('special_actions_doughnut_chart')) {
-            Cache::forget('special_actions_doughnut_chart');
         }
 
         try {
