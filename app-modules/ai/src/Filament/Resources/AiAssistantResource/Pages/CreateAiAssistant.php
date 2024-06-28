@@ -43,7 +43,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\HandlesFileUploads;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns\HandlesFileUploads;
 
 class CreateAiAssistant extends CreateRecord
 {

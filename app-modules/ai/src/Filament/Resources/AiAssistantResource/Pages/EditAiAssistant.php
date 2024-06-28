@@ -51,7 +51,7 @@ use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
 use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\HandlesFileUploads;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns\HandlesFileUploads;
 
 class EditAiAssistant extends EditRecord
 {

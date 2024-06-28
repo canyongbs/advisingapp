@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms;
+namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns;
 
 use Throwable;
 use Illuminate\Support\Collection;
