@@ -38,17 +38,28 @@ namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResou
 
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TextInput;
+use AdvisingApp\Division\Models\Division;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use App\Support\MediaEncoding\TiptapMediaEncoder;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource;
 
 class ListKnowledgeBaseArticles extends ListRecords
@@ -117,6 +128,71 @@ class ListKnowledgeBaseArticles extends ListRecords
             ])
             ->actions([
                 EditAction::make(),
+                ReplicateAction::make()
+                    ->label('Replicate')
+                    ->form([
+                        Section::make()
+                            ->schema([
+                                TextInput::make('title')
+                                    ->label('Article Title')
+                                    ->required()
+                                    ->string(),
+                                Toggle::make('public')
+                                    ->label('Public')
+                                    ->default(false)
+                                    ->onColor('success')
+                                    ->offColor('gray'),
+                                Textarea::make('notes')
+                                    ->label('Notes')
+                                    ->string(),
+                            ]),
+                        Section::make()
+                            ->schema([
+                                Select::make('quality_id')
+                                    ->label('Quality')
+                                    ->relationship('quality', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->exists((new KnowledgeBaseQuality())->getTable(), (new KnowledgeBaseQuality())->getKeyName()),
+                                Select::make('status_id')
+                                    ->label('Status')
+                                    ->relationship('status', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->exists((new KnowledgeBaseStatus())->getTable(), (new KnowledgeBaseStatus())->getKeyName()),
+                                Select::make('category_id')
+                                    ->label('Category')
+                                    ->relationship('category', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->exists((new KnowledgeBaseCategory())->getTable(), (new KnowledgeBaseCategory())->getKeyName()),
+                                Select::make('division')
+                                    ->label('Division')
+                                    ->multiple()
+                                    ->relationship('division', 'name')
+                                    ->searchable(['name', 'code'])
+                                    ->preload()
+                                    ->exists((new Division())->getTable(), (new Division())->getKeyName()),
+                            ]),
+                    ])
+                    ->before(function (array $data, Model $record) {
+                        $record->title = $data['title'];
+                        $record->public = $data['public'];
+                        $record->notes = $data['notes'];
+                    })
+                    ->after(function (KnowledgeBaseArticle $replica, KnowledgeBaseArticle $record): void {
+                        $record->load('division');
+
+                        foreach ($record->division as $divison) {
+                            $replica->division()->attach($divison->id);
+                        }
+
+                        // TODO: Fix when we rename 'solution' to match the change in the column name
+                        $replica->article_details = TiptapMediaEncoder::copyMediaItemsToModel($replica->article_details, $replica, 'solution');
+                        $replica->save();
+                    })
+                    ->excludeAttributes(['views_count', 'upvotes_count', 'my_upvotes_count'])
+                    ->successNotificationTitle('Article replicated successfully!'),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

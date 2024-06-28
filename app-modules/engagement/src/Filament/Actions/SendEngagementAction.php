@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Actions\Action;
+use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Select;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Checkbox;
@@ -57,8 +58,9 @@ class SendEngagementAction extends Action
 {
     protected function setUp(): void
     {
-        $this
-            ->icon('heroicon-o-chat-bubble-bottom-center-text')
+        parent::setUp();
+
+        $this->icon('heroicon-o-chat-bubble-bottom-center-text')
             ->modalHeading('Send Engagement')
             ->modalDescription(fn (Educatable $record) => "Send an engagement to {$record->display_name}.")
             ->form([
@@ -154,15 +156,16 @@ class SendEngagementAction extends Action
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)
             ->closeModalByClickingAway(false)
-            // FIXME This is currently not working exactly as expected. Dan is taking a look and will report back
-            ->modalCancelAction(
-                fn ($action) => Action::make('cancel')
-                    ->requiresConfirmation()
-                    ->modalDescription(fn () => 'The message has not been sent, are you sure you wish to cancel?')
+            ->closeModalByEscaping(false)
+            ->modalCancelAction(false)
+            ->extraModalFooterActions([
+                Action::make('cancel')
+                    ->color('gray')
                     ->cancelParentActions()
-                    ->close()
-                    ->color('gray'),
-            );
+                    ->requiresConfirmation()
+                    ->action(fn () => null)
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('danger')),
+            ]);
     }
 
     public static function getDefaultName(): ?string

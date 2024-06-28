@@ -47,12 +47,18 @@ return new class () extends Migration {
             ->get();
 
         foreach ($assistants as $assistant) {
-            /** @var AiAssistant $assistant */
+            try {
+                /** @var AiAssistant $assistant */
 
-            /** @var OpenAiGpt4oService $service */
-            $service = $assistant->model->getService();
+                /** @var OpenAiGpt4oService $service */
+                $service = $assistant->model->getService();
 
-            $service->enableAssistantFileUploads($assistant);
+                $service->enableAssistantFileUploads($assistant);
+            } catch (Throwable $e) {
+                report($e);
+
+                continue;
+            }
         }
     }
 
@@ -63,12 +69,18 @@ return new class () extends Migration {
             ->get();
 
         foreach ($assistants as $assistant) {
-            /** @var AiAssistant $assistant */
+            try {
+                /** @var AiAssistant $assistant */
 
-            /** @var OpenAiGpt4oService $service */
-            $service = $assistant->model->getService();
+                /** @var OpenAiGpt4oService $service */
+                $service = $assistant->model->getService();
 
-            $service->disableAssistantFileUploads($assistant);
+                $service->disableAssistantFileUploads($assistant);
+            } catch (Throwable $e) {
+                report($e);
+
+                continue;
+            }
         }
     }
 };

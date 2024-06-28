@@ -269,12 +269,20 @@ abstract class BaseOpenAiService implements AiService
 
         $aiSettings = app(AiSettings::class);
 
-        $stream = $this->client->threads()->runs()->createStreamed($message->thread->thread_id, [
+        $runData = [
             'assistant_id' => $message->thread->assistant->assistant_id,
             'instructions' => $instructions,
             'max_completion_tokens' => $aiSettings->max_tokens,
             'temperature' => $aiSettings->temperature,
-        ]);
+        ];
+
+        if ($message->query()->has('thread.messages.files')) {
+            $runData['tools'] = [
+                ['type' => 'file_search'],
+            ];
+        }
+
+        $stream = $this->client->threads()->runs()->createStreamed($message->thread->thread_id, $runData);
 
         return function () use ($saveResponse, $stream): Generator {
             $response = new AiMessage();
@@ -386,12 +394,20 @@ abstract class BaseOpenAiService implements AiService
 
         $aiSettings = app(AiSettings::class);
 
-        $stream = $this->client->threads()->runs()->createStreamed($message->thread->thread_id, [
+        $runData = [
             'assistant_id' => $message->thread->assistant->assistant_id,
             'instructions' => $instructions,
             'max_completion_tokens' => $aiSettings->max_tokens,
             'temperature' => $aiSettings->temperature,
-        ]);
+        ];
+
+        if ($message->query()->has('thread.messages.files')) {
+            $runData['tools'] = [
+                ['type' => 'file_search'],
+            ];
+        }
+
+        $stream = $this->client->threads()->runs()->createStreamed($message->thread->thread_id, $runData);
 
         return function () use ($saveResponse, $stream): Generator {
             $response = new AiMessage();

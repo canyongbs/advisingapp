@@ -58,6 +58,10 @@ trait UploadsFiles
 {
     public function afterThreadSelected(AiThread $thread): void
     {
+        if (! $this->isThreadExisting($thread)) {
+            return;
+        }
+
         if (! is_null($expiredVectorStores = $this->getExpiredVectorStoresForThread($thread))) {
             foreach ($expiredVectorStores as $expiredVectorStore) {
                 $this->recreateVectorStoreForThread($thread, $expiredVectorStore);
@@ -67,11 +71,7 @@ trait UploadsFiles
 
     public function afterLoadFirstThread(AiThread $thread): void
     {
-        if (! is_null($expiredVectorStores = $this->getExpiredVectorStoresForThread($thread))) {
-            foreach ($expiredVectorStores as $expiredVectorStore) {
-                $this->recreateVectorStoreForThread($thread, $expiredVectorStore);
-            }
-        }
+        $this->afterThreadSelected($thread);
     }
 
     public function createAssistantFiles(AiAssistant $assistant, Collection $files): Collection
