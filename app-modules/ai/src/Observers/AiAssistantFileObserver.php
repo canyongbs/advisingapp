@@ -34,62 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages;
+namespace AdvisingApp\Ai\Observers;
 
-use Throwable;
-use Filament\Forms\Form;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\HandlesFileUploads;
+use AdvisingApp\Ai\Models\AiAssistantFile;
 
-class CreateAiAssistant extends CreateRecord
+class AiAssistantFileObserver
 {
-    use HandlesFileUploads;
-
-    protected static string $resource = AiAssistantResource::class;
-
-    public function form(Form $form): Form
+    public function deleted(AiAssistantFile $file): void
     {
-        return resolve(AiAssistantForm::class)->form($form);
+        $service = $file->assistant->model->getService();
+
+        $service->deleteFile($file);
     }
 
-    protected function handleRecordCreation(array $data): Model
+    // TODO This is going to be replaced by an event based architecture that we emit from the job that actually uploads the file
+    public function updated(AiAssistantFile $file): void
     {
-        $record = new ($this->getModel())($data);
-
-        $aiService = $record->model->getService();
-
-        try {
-            $aiService->createAssistant($record);
-        } catch (Throwable $exception) {
-            report($exception);
-
+        if ($file->wasChanged('file_id')) {
             Notification::make()
-                ->title('Could not create assistant')
-                ->body('We failed to connect to the AI service. Support has been notified about this problem. Please try again later.')
-                ->danger()
+                ->title('The file ' . $file->name . ' was successfully uploaded to the ' . $file->assistant->name . ' assistant')
+                ->success()
                 ->send();
-
-            $this->halt();
         }
-
-        $record->save();
-
-        if ($this->attemptingToUploadAssistantFilesWhenItsNotSupported($aiService, $data)) {
-            return $record;
-        }
-
-        if (isset($data['uploaded_files']) && ! empty($data['uploaded_files'])) {
-            $this->uploadFilesToAssistant(
-                aiService: $aiService,
-                assistant: $record,
-                uploadedFiles: $data['uploaded_files']
-            );
-        }
-
-        return $record;
     }
 }

@@ -34,54 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
+namespace AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants;
 
-use Filament\Actions\Action;
-use Livewire\Attributes\Locked;
-use Filament\Forms\Components\FileUpload;
+use Spatie\LaravelData\Data;
 
-trait CanUploadFiles
+class ToolResourcesDataTransferObject extends Data
 {
-    #[Locked]
-    public array $files = [];
-
-    public function removeUploadedFile(int $key): void
-    {
-        unset($this->files[$key]);
-    }
-
-    public function clearFiles(): void
-    {
-        $this->reset('files');
-    }
-
-    public function uploadFilesAction(): Action
-    {
-        return Action::make('uploadFiles')
-            ->label('Upload Files')
-            ->icon('heroicon-o-paper-clip')
-            ->iconButton()
-            ->color('gray')
-            ->disabled(count($this->files) >= 1)
-            ->badge(count($this->files))
-            ->modalSubmitActionLabel('Upload')
-            ->form([
-                FileUpload::make('attachment')
-                    ->acceptedFileTypes(config('ai.supported_file_types'))
-                    ->storeFiles(false)
-                    ->helperText('Only .doc and .docx files are allowed. The maximum file size is 256KB.')
-                    ->maxSize(256)
-                    ->required(),
-            ])
-            ->action(function (array $data) {
-                /** @var TemporaryUploadedFile $attachment */
-                $attachment = $data['attachment'];
-
-                $this->files[] = [
-                    'temporaryUrl' => $attachment->temporaryUrl(),
-                    'mimeType' => $attachment->getMimeType(),
-                    'name' => $attachment->getClientOriginalName(),
-                ];
-            });
-    }
+    public function __construct(
+        public ?string $codeIntepreter,
+        public FileSearchDataTransferObject $fileSearch,
+    ) {}
 }

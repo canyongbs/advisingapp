@@ -3,11 +3,13 @@
 namespace AdvisingApp\Ai\Models;
 
 use App\Models\BaseModel;
+use Spatie\MediaLibrary\HasMedia;
+use AdvisingApp\Ai\Models\Contracts\AiFile;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class AiAssistantFile extends BaseModel
+class AiAssistantFile extends BaseModel implements AiFile, HasMedia
 {
     use SoftDeletes;
     use InteractsWithMedia;
@@ -20,13 +22,14 @@ class AiAssistantFile extends BaseModel
         'temporary_url',
     ];
 
-    public function message(): BelongsTo
+    public function assistant(): BelongsTo
     {
         return $this->belongsTo(AiAssistant::class, 'assistant_id');
     }
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('files');
+        $this->addMediaCollection('file')
+            ->singleFile();
     }
 }

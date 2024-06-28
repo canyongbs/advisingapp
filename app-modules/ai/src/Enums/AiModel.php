@@ -92,6 +92,14 @@ enum AiModel: string implements HasLabel
         };
     }
 
+    public function supportsAssistantFileUploads(): bool
+    {
+        return match ($this) {
+            self::OpenAiGpt35, self::OpenAiGpt4, self::OpenAiGpt4o => true,
+            default => false,
+        };
+    }
+
     public function isSharedDeployment(AiModel $model): bool
     {
         if ($this === $model) {
