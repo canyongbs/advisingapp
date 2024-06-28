@@ -49,6 +49,7 @@ use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
+use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
@@ -59,6 +60,7 @@ use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\ToolResourcesDa
 abstract class BaseOpenAiService implements AiService
 {
     use HasAiServiceHelpers;
+    use UploadsFiles;
 
     public const FORMATTING_INSTRUCTIONS = 'When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.';
 

@@ -93,4 +93,9 @@ class OpenAiGpt4oService extends BaseOpenAiService implements AiServiceLifecycle
     {
         return $this->settings->open_ai_gpt_4o_base_uri ?? config('integration-open-ai.gpt_4o_base_uri');
     }
+
+    public function supportsMessageFileUploads(): bool
+    {
+        return true;
+    }
 }

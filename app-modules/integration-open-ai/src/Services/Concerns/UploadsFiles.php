@@ -56,11 +56,6 @@ use AdvisingApp\IntegrationOpenAi\DataTransferObjects\VectorStoreFiles\VectorSto
 
 trait UploadsFiles
 {
-    public function supportsMessageFileUploads(): bool
-    {
-        return true;
-    }
-
     public function afterThreadSelected(AiThread $thread): void
     {
         if (! is_null($expiredVectorStores = $this->getExpiredVectorStoresForThread($thread))) {
