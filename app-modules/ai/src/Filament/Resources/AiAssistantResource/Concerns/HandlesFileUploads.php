@@ -68,6 +68,7 @@ trait HandlesFileUploads
             $aiAssistantFiles = $this->createAiAssistantFiles($assistant, $uploadedFiles);
 
             match (true) {
+                // TODO Add support for OpenAiGpt4Service, OpenAiGpt35Service
                 $aiService instanceof OpenAiGpt4oService => UploadFilesToAssistant::dispatchSync($aiService, $assistant, $aiAssistantFiles),
                 default => $this->couldNotUploadFilesToAssistant($aiAssistantFiles),
             };
@@ -80,31 +81,31 @@ trait HandlesFileUploads
 
     protected function createAiAssistantFiles(AiAssistant $record, array $uploadedFiles): Collection
     {
-        $formattedFiles = collect($uploadedFiles)->map(function ($file) {
-            return [
-                'temporaryUrl' => $file->temporaryUrl(),
-                'mimeType' => $file->getMimeType(),
-                'name' => $file->getClientOriginalName(),
-            ];
-        });
+        return collect($uploadedFiles)
+            ->map(function ($file): array {
+                return [
+                    'temporaryUrl' => $file->temporaryUrl(),
+                    'mimeType' => $file->getMimeType(),
+                    'name' => $file->getClientOriginalName(),
+                ];
+            })
+            ->map(function ($file) use ($record): AiAssistantFile {
+                $fileRecord = new AiAssistantFile();
+                $fileRecord->temporary_url = $file['temporaryUrl'];
+                $fileRecord->name = $file['name'];
+                $fileRecord->mime_type = $file['mimeType'];
+                $fileRecord->assistant()->associate($record);
+                $fileRecord->save();
 
-        return $formattedFiles->map(function ($file) use ($record) {
-            $fileRecord = new AiAssistantFile();
-            $fileRecord->temporary_url = $file['temporaryUrl'];
-            $fileRecord->name = $file['name'];
-            $fileRecord->mime_type = $file['mimeType'];
-            $fileRecord->assistant()->associate($record);
-            $fileRecord->save();
-
-            return $fileRecord;
-        });
+                return $fileRecord;
+            });
     }
 
     protected function couldNotUploadFilesToAssistant(Collection $aiAssistantFiles): void
     {
         Notification::make()
-            ->title('Files failed to upload to custom assistant')
-            ->body('The files you tried to attach could not be uploaded to the custom assistant. Support has been notified about this problem. Please try again later.')
+            ->title('Files could not be uploaded to your custom assistant.')
+            ->body('It looks like you attempted to upload files to your custom assistant, but it is not currently supported on the selected model.')
             ->danger()
             ->send();
 

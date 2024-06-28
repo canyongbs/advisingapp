@@ -37,6 +37,7 @@
 namespace AdvisingApp\IntegrationOpenAi\Services\Concerns;
 
 use CURLFile;
+use Throwable;
 use Illuminate\Support\Collection;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
@@ -96,12 +97,12 @@ trait UploadsFiles
 
     public function deleteAssistantFile(AiAssistantFile $file): void
     {
-        $response = $this->client->files()->delete($file->file_id);
+        $this->client->files()->delete($file->file_id);
     }
 
     public function updateAssistantVectorStoreId(AiAssistant $assistant, $vectorStoreId): void
     {
-        $response = $this->client->assistants()->modify($assistant->assistant_id, [
+        $this->client->assistants()->modify($assistant->assistant_id, [
             'tool_resources' => [
                 'file_search' => [
                     'vector_store_ids' => [$vectorStoreId],
@@ -142,10 +143,9 @@ trait UploadsFiles
         }
     }
 
-    // TODO Return type
-    public function createVectorStoreFilesBatch(AiService $service, string $vectorStoreId, array $fileIds)
+    public function createVectorStoreFilesBatch(AiService $service, string $vectorStoreId, array $fileIds): void
     {
-        $response = $this->client->vectorStores()->batches()->create(
+        $this->client->vectorStores()->batches()->create(
             vectorStoreId: $vectorStoreId,
             parameters: [
                 'file_ids' => $fileIds,
@@ -197,7 +197,11 @@ trait UploadsFiles
 
     public function deleteFile(AiFile $file): void
     {
-        $this->client->files()->delete($file->file_id);
+        try {
+            $this->client->files()->delete($file->file_id);
+        } catch (Throwable $e) {
+            report($e);
+        }
     }
 
     protected function createFiles(AiMessage $message, array $files): Collection

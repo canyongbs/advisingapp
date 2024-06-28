@@ -43,6 +43,7 @@ use AdvisingApp\Ai\Models\AiThread;
 use App\Concerns\ImplementsGraphQL;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\PromptType;
+use Illuminate\Support\Facades\Event;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Ai\Models\AiMessageFile;
@@ -55,6 +56,8 @@ use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Ai\Observers\AiAssistantFileObserver;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
+use AdvisingApp\Ai\Listeners\HandleAssistantFilesFinishedUploading;
 
 class AiServiceProvider extends ServiceProvider
 {
@@ -80,11 +83,21 @@ class AiServiceProvider extends ServiceProvider
 
         $this->registerObservers();
 
+        $this->registerEvents();
+
         AuthorizationRoleRegistry::register(AiRbacRegistry::class);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
 
         $this->mergeConfigFrom(__DIR__ . '/../../config/ai.php', 'ai');
+    }
+
+    protected function registerEvents(): void
+    {
+        Event::listen(
+            AssistantFilesFinishedUploading::class,
+            HandleAssistantFilesFinishedUploading::class
+        );
     }
 
     protected function registerObservers(): void

@@ -458,7 +458,7 @@ abstract class BaseOpenAiService implements AiService
 
     public function supportsAssistantFileUploads(): bool
     {
-        return false;
+        return true;
     }
 
     protected function awaitThreadRunCompletion(ThreadRunResponse $threadRunResponse): void

@@ -44,7 +44,6 @@ use Filament\Forms\Components\Select;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Forms\Components\Section;
 use AdvisingApp\Ai\Enums\AiApplication;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Component;
@@ -97,59 +96,65 @@ class AiAssistantForm
                             ->helperText('Instructions are used to provide context to the AI Assistant on how to respond to user queries.')
                             ->required()
                             ->maxLength(fn (?AiAssistant $record): int => ($record?->model ?? AiModel::OpenAiGpt35)->getService()->getMaxAssistantInstructionsLength()),
-                        Fieldset::make('Additional Knowledge')
-                            ->inlineLabel('test')
-                            ->reactive()
-                            ->hidden(function (Get $get) {
-                                $model = $get('model');
+                    ]),
+                Section::make('Additional Knowledge')
+                    ->description('Add additional knowledge to your custom AI Assistant to improve its responses.')
+                    ->reactive()
+                    ->columns([
+                        'sm' => 1,
+                        'md' => 2,
+                    ])
+                    ->hidden(function (Get $get) {
+                        $model = $get('model');
 
-                                if (blank($model)) {
-                                    return true;
+                        if (blank($model)) {
+                            return true;
+                        }
+
+                        return ! AiModel::parse($model)->supportsAssistantFileUploads();
+                    })
+                    ->schema([
+                        Repeater::make('files')
+                            ->relationship()
+                            ->hiddenLabel()
+                            ->simple(
+                                TextInput::make('name')
+                                    ->disabled(),
+                            )
+                            ->addable(false)
+                            ->visible(fn (?AiAssistant $record): bool => $record?->files->isNotEmpty() ?? false)
+                            ->deleteAction(
+                                fn (Action $action) => $action->requiresConfirmation()
+                                    ->modalHeading('Are you sure you want to delete this file?')
+                                    ->modalDescription('This file will be permanently removed from the assistant, and cannot be restored.')
+                            ),
+                        FileUpload::make('uploaded_files')
+                            ->hiddenLabel()
+                            ->multiple()
+                            ->reactive()
+                            // TODO Ensure this updates on deletion of a record.
+                            ->maxFiles(fn (?AiAssistant $record): int => 3 - $record?->files->count() ?? 0)
+                            ->disabled(fn (?AiAssistant $record): int => $record?->files->count() === 3)
+                            ->acceptedFileTypes(config('ai.supported_file_types'))
+                            ->storeFiles(false)
+                            ->helperText(function (?AiAssistant $record): string {
+                                if ($record?->files->count() < 3) {
+                                    return 'You may upload a total of 3 files to your custom assistant. Files must be less than 256mb.';
                                 }
 
-                                return ! AiModel::parse($model)->supportsAssistantFileUploads();
+                                return "You've reached the maximum file upload limit of 3 for custom assistants. Please delete a file if you wish to upload another.";
                             })
-                            ->schema([
-                                Repeater::make('files')
-                                    ->relationship()
-                                    ->hiddenLabel()
-                                    ->simple(
-                                        TextInput::make('name')
-                                            ->disabled(),
-                                    )
-                                    ->addable(false)
-                                    ->visible(fn (?AiAssistant $record): bool => $record?->files->isNotEmpty() ?? false)
-                                    ->deleteAction(
-                                        fn (Action $action) => $action->requiresConfirmation(),
-                                    ),
-                                FileUpload::make('uploaded_files')
-                                    ->hiddenLabel()
-                                    ->multiple()
-                                    ->reactive()
-                                    // TODO Ensure this updates on deletion of a record.
-                                    ->maxFiles(fn (?AiAssistant $record): int => 3 - $record?->files->count() ?? 0)
-                                    ->disabled(fn (?AiAssistant $record): int => $record?->files->count() === 3)
-                                    ->acceptedFileTypes(config('ai.supported_file_types'))
-                                    ->storeFiles(false)
-                                    ->helperText(function (?AiAssistant $record): string {
-                                        if ($record?->files->count() < 3) {
-                                            return 'You may upload a total of 3 files to your custom assistant. Files must be less than 256mb.';
-                                        }
+                            ->maxSize(256)
+                            ->columnSpan(function (Get $get) {
+                                $files = $get('files');
+                                $firstFile = reset($files);
 
-                                        return "You've reached the maximum file upload limit of 3 for custom assistants. Please delete a file if you wish to upload another.";
-                                    })
-                                    ->maxSize(256)
-                                    ->columnSpan(function (Get $get) {
-                                        $files = $get('files');
-                                        $firstFile = reset($files);
+                                if (! $firstFile || blank($firstFile['name'])) {
+                                    return 'full';
+                                }
 
-                                        if (! $firstFile || blank($firstFile['name'])) {
-                                            return 'full';
-                                        }
-
-                                        return 1;
-                                    }),
-                            ]),
+                                return 1;
+                            }),
                     ]),
             ]);
     }

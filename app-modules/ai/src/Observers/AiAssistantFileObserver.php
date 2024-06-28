@@ -36,26 +36,25 @@
 
 namespace AdvisingApp\Ai\Observers;
 
-use Filament\Notifications\Notification;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 
 class AiAssistantFileObserver
 {
+    public function created(AiAssistantFile $file): void
+    {
+        /**
+         * For some reason an extra file is being created on the creation of an assistant
+         * So this is in place just to ensure that the file is deleted if it wasn't uploaded by the user
+         */
+        if (blank($file->temporary_url)) {
+            $file->forceDelete();
+        }
+    }
+
     public function deleted(AiAssistantFile $file): void
     {
         $service = $file->assistant->model->getService();
 
         $service->deleteFile($file);
-    }
-
-    // TODO This is going to be replaced by an event based architecture that we emit from the job that actually uploads the file
-    public function updated(AiAssistantFile $file): void
-    {
-        if ($file->wasChanged('file_id')) {
-            Notification::make()
-                ->title('The file ' . $file->name . ' was successfully uploaded to the ' . $file->assistant->name . ' assistant')
-                ->success()
-                ->send();
-        }
     }
 }

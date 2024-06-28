@@ -44,7 +44,8 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Ai\Services\Contracts\AiService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
+use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
 
 /**
  * This cannot be queued due to an issue with serialization and CURL
@@ -69,7 +70,7 @@ class UploadFilesToAssistant
 
     public function handle(): void
     {
-        /** @var OpenAiGpt4oService $service */
+        /** @var BaseOpenAiService $service */
         $service = $this->service;
 
         $assistantFiles = $service->createAssistantFiles(
@@ -79,7 +80,7 @@ class UploadFilesToAssistant
 
         $response = $service->retrieveAssistant($this->assistant);
 
-        $vectorStoreId = $response->toolResources->fileSearch['vectorStoreIds'][0] ?? null;
+        $vectorStoreId = $response->toolResources->fileSearch->vectorStoreIds[0] ?? null;
 
         $vectorStore = null;
 
@@ -111,6 +112,11 @@ class UploadFilesToAssistant
             vectorStore: $vectorStore,
         );
 
-        // TODO Emit event for notification that files finished uploading
+        AssistantFilesFinishedUploading::dispatch(
+            auth()->user(),
+            $this->assistant->model,
+            $this->assistant,
+            $assistantFiles
+        );
     }
 }
