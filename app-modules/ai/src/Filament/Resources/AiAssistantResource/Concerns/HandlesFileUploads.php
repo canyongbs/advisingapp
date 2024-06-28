@@ -66,9 +66,9 @@ trait HandlesFileUploads
 
     protected function uploadFilesToAssistant(AiService $aiService, AiAssistant $assistant, array $uploadedFiles): void
     {
-        try {
-            $aiAssistantFiles = $this->createAiAssistantFiles($assistant, $uploadedFiles);
+        $aiAssistantFiles = $this->createAiAssistantFiles($assistant, $uploadedFiles);
 
+        try {
             match (true) {
                 $aiService instanceof OpenAiGpt4oService => UploadFilesToAssistant::dispatchSync($aiService, $assistant, $aiAssistantFiles),
                 $aiService instanceof OpenAiGpt4Service => UploadFilesToAssistant::dispatchSync($aiService, $assistant, $aiAssistantFiles),
