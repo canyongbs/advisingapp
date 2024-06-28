@@ -36,12 +36,8 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
 use Illuminate\Support\Collection;
 use AdvisingApp\Ai\Models\AiAssistant;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
@@ -52,11 +48,7 @@ use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
  */
 class UploadFilesToAssistant
 {
-    use Batchable;
     use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
 
     public $deleteWhenMissingModels = true;
 

@@ -194,8 +194,6 @@ class EditAiAssistant extends EditRecord
      */
     protected function getRedirectUrl(): string
     {
-        $record = $this->getRecord();
-
-        return $this->getResource()::getUrl('edit', ['record' => $record]);
+        return $this->getResource()::getUrl('edit', ['record' => $this->getRecord()]);
     }
 }

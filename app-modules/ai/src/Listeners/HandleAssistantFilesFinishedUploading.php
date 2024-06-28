@@ -49,7 +49,7 @@ class HandleAssistantFilesFinishedUploading implements ShouldQueue
         $filesLanguage = $event->files->count() > 1 ? 'files were' : 'file was';
 
         Notification::make()
-            ->title($event->files->count() . ' ' . $filesLanguage . ' successfully uploaded to the ' . $event->assistant->name . ' assistant')
+            ->title($event->files->count() . ' ' . $filesLanguage . ' successfully uploaded to the ' . $event->assistant->name . ' custom assistant')
             ->success()
             ->sendToDatabase($event->user);
     }

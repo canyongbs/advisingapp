@@ -132,4 +132,9 @@ class AiAssistant extends BaseModel implements HasMedia
 
         $this->upvote();
     }
+
+    public function isDefault(): bool
+    {
+        return $this->is_default;
+    }
 }

@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
+use Laravel\Pennant\Feature;
 use AdvisingApp\Ai\Enums\AiModel;
 use Filament\Forms\Components\Select;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -104,7 +105,14 @@ class AiAssistantForm
                         'sm' => 1,
                         'md' => 2,
                     ])
-                    ->hidden(function (Get $get) {
+                    ->hidden(function (AiAssistant $record, Get $get) {
+                        if (Feature::inactive('assistant-files')) {
+                            return false;
+                        }
+
+                        if ($record->isDefault()) {
+                            return true;
+                        }
                         $model = $get('model');
 
                         if (blank($model)) {

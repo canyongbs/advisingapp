@@ -220,8 +220,6 @@ trait UploadsFiles
 
     protected function uploadFileToClient(AiService $service, AiFile $file): string
     {
-        ray('uploadFileToClient()');
-
         /** @var BaseOpenAiService $service */
         $apiKey = $service->getApiKey();
         $apiVersion = $service->getApiVersion();

@@ -42,7 +42,9 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Notifications\Notification;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Services\Contracts\AiService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadFilesToAssistant;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt35Service;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
 
 trait HandlesFileUploads
@@ -68,12 +70,13 @@ trait HandlesFileUploads
             $aiAssistantFiles = $this->createAiAssistantFiles($assistant, $uploadedFiles);
 
             match (true) {
-                // TODO Add support for OpenAiGpt4Service, OpenAiGpt35Service
                 $aiService instanceof OpenAiGpt4oService => UploadFilesToAssistant::dispatchSync($aiService, $assistant, $aiAssistantFiles),
+                $aiService instanceof OpenAiGpt4Service => UploadFilesToAssistant::dispatchSync($aiService, $assistant, $aiAssistantFiles),
+                $aiService instanceof OpenAiGpt35Service => UploadFilesToAssistant::dispatchSync($aiService, $assistant, $aiAssistantFiles),
                 default => $this->couldNotUploadFilesToAssistant($aiAssistantFiles),
             };
         } catch (Throwable $e) {
-            $this->failedToUploadFilesToAssistant();
+            $this->failedToUploadFilesToAssistant($aiAssistantFiles);
 
             report($e);
         }
@@ -82,18 +85,11 @@ trait HandlesFileUploads
     protected function createAiAssistantFiles(AiAssistant $record, array $uploadedFiles): Collection
     {
         return collect($uploadedFiles)
-            ->map(function ($file): array {
-                return [
-                    'temporaryUrl' => $file->temporaryUrl(),
-                    'mimeType' => $file->getMimeType(),
-                    'name' => $file->getClientOriginalName(),
-                ];
-            })
             ->map(function ($file) use ($record): AiAssistantFile {
                 $fileRecord = new AiAssistantFile();
-                $fileRecord->temporary_url = $file['temporaryUrl'];
-                $fileRecord->name = $file['name'];
-                $fileRecord->mime_type = $file['mimeType'];
+                $fileRecord->temporary_url = $file->temporaryUrl();
+                $fileRecord->name = $file->getClientOriginalName();
+                $fileRecord->mime_type = $file->getMimeType();
                 $fileRecord->assistant()->associate($record);
                 $fileRecord->save();
 
@@ -113,12 +109,18 @@ trait HandlesFileUploads
     }
 
     // TODO Perhaps implement some sort of background retry mechanism
-    protected function failedToUploadFilesToAssistant(): void
+    protected function failedToUploadFilesToAssistant(Collection $files): void
     {
         Notification::make()
             ->title('Files failed to upload to custom assistant')
             ->body('The files you tried to attach failed to upload to the custom assistant. Support has been notified about this problem. Please try again later.')
             ->danger()
             ->send();
+
+        $files->each(function (AiAssistantFile $file) {
+            if (blank($file->file_id)) {
+                $file->delete();
+            }
+        });
     }
 }
