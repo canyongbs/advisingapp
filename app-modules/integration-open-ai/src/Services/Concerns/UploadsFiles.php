@@ -294,8 +294,7 @@ trait UploadsFiles
         ]);
     }
 
-    // TODO Return type
-    protected function retrieveAllVectorStoreFileIds(AiThread $thread, string $vectorStoreId, array &$vectorStoreFileIds = [], $after = null)
+    protected function retrieveAllVectorStoreFileIds(AiThread $thread, string $vectorStoreId, array &$vectorStoreFileIds = [], $after = null): void
     {
         $params = [];
 

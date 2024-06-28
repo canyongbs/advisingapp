@@ -140,7 +140,6 @@ class AiAssistantForm
                             ->hiddenLabel()
                             ->multiple()
                             ->reactive()
-                            // TODO Ensure this updates on deletion of a record.
                             ->maxFiles(fn (?AiAssistant $record): int => 3 - $record?->files->count() ?? 0)
                             ->disabled(fn (?AiAssistant $record): int => $record?->files->count() === 3)
                             ->acceptedFileTypes(config('ai.supported_file_types'))

@@ -44,7 +44,7 @@ use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
 
 /**
- * This cannot be queued due to an issue with serialization and CURL
+ * This cannot be queued due to an issue with serialization and CURL: https://github.com/laravel/serializable-closure/issues/26
  */
 class UploadFilesToAssistant
 {
@@ -76,7 +76,6 @@ class UploadFilesToAssistant
 
         $vectorStore = null;
 
-        //  Create the vector store if the assistant doesn't already have one
         if (blank($vectorStoreId)) {
             $vectorStore = $service->createVectorStore([
                 'file_ids' => $assistantFiles->pluck('file_id')->toArray(),
