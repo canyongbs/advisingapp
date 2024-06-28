@@ -107,9 +107,6 @@ class SendAssistantTranscriptNotification extends BaseNotification implements Em
             $this->thread->emailed_count = $this->thread->emailed_count + 1;
             $this->thread->save();
         }
-        if (Feature::active('ai_utilization') && Cache::has('special_actions_doughnut_chart')) {
-            Cache::forget('special_actions_doughnut_chart');
-        }
     }
 
     private function resolveNotificationSetting(User $notifiable): ?NotificationSetting

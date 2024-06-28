@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\AiThread;
 use App\Concerns\ImplementsGraphQL;
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\PromptUse;
 use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Support\ServiceProvider;
@@ -50,7 +51,9 @@ use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Observers\PromptObserver;
 use AdvisingApp\Ai\Registries\AiRbacRegistry;
 use AdvisingApp\Ai\Observers\AiMessageObserver;
+use AdvisingApp\Ai\Observers\PromptUsesObserver;
 use AdvisingApp\Ai\Observers\AiAssistantObserver;
+use AdvisingApp\Ai\Observers\AithreadObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 
@@ -87,5 +90,7 @@ class AiServiceProvider extends ServiceProvider
         AiAssistant::observe(AiAssistantObserver::class);
         AiMessage::observe(AiMessageObserver::class);
         Prompt::observe(PromptObserver::class);
+        PromptUse::observe(PromptUsesObserver::class);
+        AiThread::observe(AithreadObserver::class);
     }
 }

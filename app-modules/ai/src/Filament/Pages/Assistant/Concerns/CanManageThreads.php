@@ -52,7 +52,6 @@ use Livewire\Attributes\Renderless;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Alignment;
-use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Support\Enums\ActionSize;
 use AdvisingApp\Ai\Actions\CreateThread;
@@ -256,9 +255,6 @@ trait CanManageThreads
                 }
                 $this->thread->save();
 
-                if (Feature::active('ai_utilization') && Cache::has('saved_conversations_line_chart')) {
-                    Cache::forget('saved_conversations_line_chart');
-                }
                 $folder = auth()->user()->aiThreadFolders()
                     ->where('application', static::APPLICATION)
                     ->find($data['folder']);
