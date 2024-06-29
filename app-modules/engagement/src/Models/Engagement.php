@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\Engagement\Models;
 
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
-use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
@@ -55,10 +53,12 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
@@ -238,15 +238,15 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         };
     }
 
+    public function getDeliveryMethod(): EngagementDeliveryMethod
+    {
+        return $this->deliverable->channel;
+    }
+
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
             $builder->tap(new LicensedToEducatable('recipient'));
         });
-    }
-
-    public function getDeliveryMethod(): EngagementDeliveryMethod
-    {
-        return $this->deliverable->channel;
     }
 }

@@ -46,6 +46,7 @@ use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -57,6 +58,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
@@ -294,6 +296,11 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     public static function getLicenseType(): LicenseType
     {
         return LicenseType::RecruitmentCrm;
+    }
+
+    public function timeline(): MorphOne
+    {
+        return $this->morphOne(Timeline::class, 'entity');
     }
 
     protected static function booted(): void

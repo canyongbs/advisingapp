@@ -50,7 +50,7 @@ enum EngagementDeliveryMethod: string implements HasLabel, HasIcon
     {
         return match ($this) {
             EngagementDeliveryMethod::Email => 'Email',
-            EngagementDeliveryMethod::Sms => 'SMS',
+            EngagementDeliveryMethod::Sms => 'Text',
         };
     }
 
