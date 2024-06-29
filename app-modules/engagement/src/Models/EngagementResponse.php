@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Engagement\Models;
 
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -54,7 +56,7 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 /**
  * @mixin IdeHelperEngagementResponse
  */
-class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeline
+class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeline, HasDeliveryMethod
 {
     use AuditableTrait;
     use SoftDeletes;
@@ -102,5 +104,11 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
     public function scopeSentByProspect(Builder $query): void
     {
         $query->where('sender_type', resolve(Prospect::class)->getMorphClass());
+    }
+
+    public function getDeliveryMethod(): EngagementDeliveryMethod
+    {
+        //Only sms for now
+        return EngagementDeliveryMethod::Sms;
     }
 }

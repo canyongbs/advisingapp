@@ -36,19 +36,31 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
-use Illuminate\Database\Eloquent\Model;
+use Filament\Tables\Table;
+use Filament\Infolists\Infolist;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use AdvisingApp\Timeline\Models\Timeline;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Support\Htmlable;
+use AdvisingApp\Engagement\Models\Engagement;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Engagement\Filament\Concerns\EngagementInfolist;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementResponsesRelationManager;
+use AdvisingApp\Engagement\Filament\Concerns\EngagementResponseInfolist;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Components\EngagementViewAction;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Components\EngagementResponseViewAction;
 
 class ManageStudentEngagement extends ManageRelatedRecords
 {
+    use EngagementInfolist;
+    use EngagementResponseInfolist;
+
     protected static string $resource = StudentResource::class;
 
     // TODO: Obsolete when there is no table, remove from Filament
-    protected static string $relationship = 'engagements';
+    protected static string $relationship = 'timeline';
 
     protected static ?string $navigationLabel = 'Email and Texts';
 
@@ -61,23 +73,51 @@ class ManageStudentEngagement extends ManageRelatedRecords
         return 'Manage Student Email and Texts';
     }
 
-    public static function canAccess(array $arguments = []): bool
+    public function infolist(Infolist $infolist): Infolist
     {
-        return (bool) count(static::managers($arguments['record'] ?? null));
+        return $infolist->schema(fn (Timeline $record) => match ($record->timelineable::class) {
+            Engagement::class => $this->engagementInfolist(),
+            EngagementResponse::class => $this->engagementResponseInfolist(),
+        });
     }
 
-    public function getRelationManagers(): array
+    public function table(Table $table): Table
     {
-        return static::managers($this->getRecord());
-    }
-
-    private static function managers(?Model $record = null): array
-    {
-        return collect([
-            EngagementsRelationManager::class,
-            EngagementResponsesRelationManager::class,
-        ])
-            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
-            ->toArray();
+        return $table
+            ->defaultSort('record_sortable_date', 'desc')
+            ->modifyQueryUsing(fn (Builder $query) => $query->whereHasMorph('timelineable', [
+                Engagement::class,
+                EngagementResponse::class,
+            ]))
+            ->columns([
+                TextColumn::make('direction')
+                    ->getStateUsing(fn (Timeline $record) => match ($record->timelineable::class) {
+                        Engagement::class => 'Outbound',
+                        EngagementResponse::class => 'Inbound',
+                    })
+                    ->icon(fn (string $state) => match ($state) {
+                        'Outbound' => 'heroicon-o-arrow-up-tray',
+                        'Inbound' => 'heroicon-o-arrow-down-tray',
+                    }),
+                TextColumn::make('type')
+                    ->getStateUsing(fn (Timeline $record) => $record->timelineable->getDeliveryMethod()),
+                // TextColumn::make('timelineable')
+                //     ->label('Type')
+                //     ->sortable(),
+                // TextColumn::make('timelineable_id')
+                //     ->label('ID')
+                //     ->sortable(),
+                TextColumn::make('record_sortable_date')
+                    ->label('Date')
+                    ->sortable(),
+            ])
+            ->actions([
+                ViewAction::make()
+                    ->modalHeading(fn (Timeline $record) => 'View ' . $record->timelineable->getDeliveryMethod()->getLabel()),
+                // ->modalContent(fn (Timeline $record) => $record->timelineable),
+                // ->record(fn (Timeline $record) => $record->entity),
+                // EngagementViewAction::make(),
+                // EngagementResponseViewAction::make(),
+            ]);
     }
 }

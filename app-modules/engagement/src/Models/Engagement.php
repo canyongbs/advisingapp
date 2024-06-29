@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Engagement\Models;
 
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
@@ -68,7 +70,7 @@ use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
  *
  * @mixin IdeHelperEngagement
  */
-class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline
+class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline, HasDeliveryMethod
 {
     use AuditableTrait;
     use BelongsToEducatable;
@@ -241,5 +243,10 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         static::addGlobalScope('licensed', function (Builder $builder) {
             $builder->tap(new LicensedToEducatable('recipient'));
         });
+    }
+
+    public function getDeliveryMethod(): EngagementDeliveryMethod
+    {
+        return $this->deliverable->channel;
     }
 }

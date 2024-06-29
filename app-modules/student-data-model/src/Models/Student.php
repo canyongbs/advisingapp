@@ -40,11 +40,13 @@ use App\Models\User;
 use App\Models\Authenticatable;
 use AdvisingApp\Task\Models\Task;
 use App\Models\Scopes\HasLicense;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Laravel\Sanctum\HasApiTokens;
 use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -270,6 +272,11 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     public static function getLicenseType(): LicenseType
     {
         return LicenseType::RetentionCrm;
+    }
+
+    public function timeline(): MorphOne
+    {
+        return $this->morphOne(Timeline::class, 'entity');
     }
 
     protected static function booted(): void
