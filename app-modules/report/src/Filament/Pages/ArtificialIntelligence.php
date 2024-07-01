@@ -6,6 +6,7 @@ use Laravel\Pennant\Feature;
 use Filament\Pages\Dashboard;
 use App\Filament\Clusters\ReportLibrary;
 use AdvisingApp\Report\Filament\Widgets\AiStats;
+use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\PromptsCreatedLineChart;
 use AdvisingApp\Report\Filament\Widgets\SavedConversationsLineChart;
 use AdvisingApp\Report\Filament\Widgets\SpecialActionsDoughnutChart;
@@ -38,11 +39,12 @@ class ArtificialIntelligence extends Dashboard
     public function getWidgets(): array
     {
         return [
-            AiStats::class,
-            SavedConversationsLineChart::class,
-            SpecialActionsDoughnutChart::class,
-            PromptsByCategoryDoughnutChart::class,
-            PromptsCreatedLineChart::class,
+            RefreshWidget::make(['pagePrefix' => 'artificial-intelligence']),
+            AiStats::make(['pagePrefix' => 'artificial-intelligence']),
+            SavedConversationsLineChart::make(['pagePrefix' => 'artificial-intelligence']),
+            SpecialActionsDoughnutChart::make(['pagePrefix' => 'artificial-intelligence']),
+            PromptsByCategoryDoughnutChart::make(['pagePrefix' => 'artificial-intelligence']),
+            PromptsCreatedLineChart::make(['pagePrefix' => 'artificial-intelligence']),
         ];
     }
 

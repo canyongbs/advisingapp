@@ -13,11 +13,18 @@ class PromptsCreatedLineChart extends ChartWidget
 
     protected static ?string $pollingInterval = null;
 
+    protected $pagePrefix;
+
     protected int | string | array $columnSpan = [
         'sm' => 1,
         'md' => 3,
         'lg' => 3,
     ];
+
+    public function mount($pagePrefix = ''): void
+    {
+        $this->pagePrefix = $pagePrefix;
+    }
 
     protected function getOptions(): array
     {
@@ -37,7 +44,7 @@ class PromptsCreatedLineChart extends ChartWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::remember('prompts_created_line_chart', now()->addMinute(15), function (): array {
+        $runningTotalPerMonth = Cache::tags([$this->pagePrefix])->rememberForever('prompts_created_line_chart', function (): array {
             $totalCreatedPerMonth = Prompt::query()
                 ->toBase()
                 ->selectRaw('date_trunc(\'month\', created_at) as month')

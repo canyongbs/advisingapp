@@ -11,6 +11,8 @@ class SavedConversationsLineChart extends ChartWidget
 {
     protected static ?string $heading = 'Saved Conversations';
 
+    protected $pagePrefix;
+
     protected static ?string $pollingInterval = null;
 
     protected int | string | array $columnSpan = [
@@ -18,6 +20,11 @@ class SavedConversationsLineChart extends ChartWidget
         'md' => 3,
         'lg' => 3,
     ];
+
+    public function mount($pagePrefix = ''): void
+    {
+        $this->pagePrefix = $pagePrefix;
+    }
 
     protected function getOptions(): array
     {
@@ -37,7 +44,7 @@ class SavedConversationsLineChart extends ChartWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::remember('saved_conversations_line_chart', now()->addMinute(15), function (): array {
+        $runningTotalPerMonth = Cache::tags([$this->pagePrefix])->rememberForever('saved_conversations_line_chart', function (): array {
             $totalCreatedPerMonth = AiThread::query()
                 ->toBase()
                 ->selectRaw('date_trunc(\'month\', saved_at) as month')

@@ -4,8 +4,8 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
 use AdvisingApp\Ai\Models\PromptType;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Database\Eloquent\Collection;
 
 class PromptsByCategoryDoughnutChart extends ChartWidget
 {
@@ -13,11 +13,18 @@ class PromptsByCategoryDoughnutChart extends ChartWidget
 
     protected static ?string $pollingInterval = null;
 
+    protected $pagePrefix;
+
     protected int | string | array $columnSpan = [
         'sm' => 1,
         'md' => 1,
         'lg' => 1,
     ];
+
+    public function mount($pagePrefix = ''): void
+    {
+        $this->pagePrefix = $pagePrefix;
+    }
 
     protected function getOptions(): array
     {
@@ -41,7 +48,7 @@ class PromptsByCategoryDoughnutChart extends ChartWidget
 
     protected function getData(): array
     {
-        $promptsByCategory = Cache::remember('prompt_by_category_chart', now()->addMinute(15), function (): Collection {
+        $promptsByCategory = Cache::tags([$this->pagePrefix])->rememberForever('prompt_by_category_chart', function (): Collection {
             $promptsByCategoryData = PromptType::withCount(['prompts'])->get(['id', 'title']);
 
             $promptsByCategoryData = $promptsByCategoryData->map(function (PromptType $promptType) {
@@ -49,6 +56,7 @@ class PromptsByCategoryDoughnutChart extends ChartWidget
 
                 return $promptType;
             });
+
             return $promptsByCategoryData;
         });
 
