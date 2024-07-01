@@ -36,48 +36,16 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Htmlable;
-use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\EngagementsRelationManager;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\EngagementResponsesRelationManager;
+use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords;
 
-class ManageProspectEngagement extends ManageRelatedRecords
+class ManageProspectEngagement extends ManageRelatedEngagementRecords
 {
     protected static string $resource = ProspectResource::class;
-
-    // TODO: Obsolete when there is no table, remove from Filament
-    protected static string $relationship = 'engagements';
-
-    protected static ?string $navigationLabel = 'Email and Texts';
-
-    protected static ?string $breadcrumb = 'Email and Texts';
-
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
 
     public function getTitle(): string | Htmlable
     {
         return 'Manage Prospect Email and Texts';
-    }
-
-    public static function canAccess(array $arguments = []): bool
-    {
-        return (bool) count(static::managers($arguments['record'] ?? null));
-    }
-
-    public function getRelationManagers(): array
-    {
-        return static::managers($this->getRecord());
-    }
-
-    private static function managers(?Model $record = null): array
-    {
-        return collect([
-            EngagementsRelationManager::class,
-            EngagementResponsesRelationManager::class,
-        ])
-            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
-            ->toArray();
     }
 }

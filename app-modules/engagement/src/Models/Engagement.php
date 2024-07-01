@@ -53,10 +53,12 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
@@ -68,7 +70,7 @@ use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
  *
  * @mixin IdeHelperEngagement
  */
-class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline
+class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline, HasDeliveryMethod
 {
     use AuditableTrait;
     use BelongsToEducatable;
@@ -234,6 +236,11 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
             ],
             default => [],
         };
+    }
+
+    public function getDeliveryMethod(): EngagementDeliveryMethod
+    {
+        return $this->deliverable->channel;
     }
 
     protected static function booted(): void

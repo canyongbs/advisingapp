@@ -34,18 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\Engagement\Models\Contracts;
 
-use Illuminate\Contracts\Support\Htmlable;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 
-class ManageStudentEngagement extends ManageRelatedEngagementRecords
+interface HasDeliveryMethod
 {
-    protected static string $resource = StudentResource::class;
-
-    public function getTitle(): string | Htmlable
-    {
-        return 'Manage Student Email and Texts';
-    }
+    public function getDeliveryMethod(): EngagementDeliveryMethod;
 }
