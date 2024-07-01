@@ -306,22 +306,26 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                     ->options(EngagementDeliveryMethod::class)
                     ->modifyQueryUsing(
                         fn (Builder $query, array $data) => $query
-                            ->when($data['value'] === EngagementDeliveryMethod::Email->value, fn (Builder $query) => $query
-                                ->whereHasMorph(
-                                'timelineable',
-                                [Engagement::class],
-                                fn (Builder $query, string $type) => match($type) {
-                                    Engagement::class => $query->whereRelation('deliverable', 'channel', $data['value']),
-                                }
-                                )
+                            ->when(
+                                $data['value'] === EngagementDeliveryMethod::Email->value,
+                                fn (Builder $query) => $query
+                                    ->whereHasMorph(
+                                        'timelineable',
+                                        [Engagement::class],
+                                        fn (Builder $query, string $type) => match ($type) {
+                                            Engagement::class => $query->whereRelation('deliverable', 'channel', $data['value']),
+                                        }
+                                    )
                             )
-                            ->when($data['value'] === EngagementDeliveryMethod::Sms->value, fn (Builder $query) => $query->whereHasMorph(
-                                'timelineable',
-                                [Engagement::class, EngagementResponse::class],
-                                fn (Builder $query, string $type) => match($type) {
-                                    Engagement::class => $query->whereRelation('deliverable', 'channel', $data['value']),
-                                    EngagementResponse::class => $query,
-                                }
+                            ->when(
+                                $data['value'] === EngagementDeliveryMethod::Sms->value,
+                                fn (Builder $query) => $query->whereHasMorph(
+                                    'timelineable',
+                                    [Engagement::class, EngagementResponse::class],
+                                    fn (Builder $query, string $type) => match ($type) {
+                                        Engagement::class => $query->whereRelation('deliverable', 'channel', $data['value']),
+                                        EngagementResponse::class => $query,
+                                    }
                                 )
                             )
                     ),
