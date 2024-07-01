@@ -34,40 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Observers;
+namespace AdvisingApp\Report\Filament\Widgets;
 
-use Laravel\Pennant\Feature;
-use AdvisingApp\Ai\Models\Prompt;
 use Illuminate\Support\Facades\Cache;
+use Filament\Notifications\Notification;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
-class PromptObserver
+class RefreshWidget extends BaseWidget
 {
-    public function creating(Prompt $prompt): void
+    protected $pagePrefix;
+
+    protected static string $view = 'report::filament.pages.report-refresh-widgets';
+
+    protected static bool $isLazy = false;
+
+    protected int | string | array $columnSpan = [
+        'sm' => 4,
+        'md' => 4,
+        'lg' => 4,
+    ];
+
+    public function mount($pagePrefix = '')
     {
-        $prompt->user()->associate(auth()->user());
+        $this->pagePrefix = $pagePrefix;
     }
 
-    public function saved(Prompt $prompt): void
+    public function removeWidgetCache($pagePrefix)
     {
-        if (Feature::active('ai_utilization')) {
-            Cache::forget('prompt_by_category_chart');
-            Cache::forget('prompts_created_line_chart');
-        }
-    }
+        Cache::tags($pagePrefix)->flush();
+        Cache::forget($pagePrefix . '-updated-time');
+        Cache::add($pagePrefix . '-updated-time', now(auth()->user()->timezone));
+        Notification::make()
+            ->title('Report Successfully refreshed')
+            ->success()
+            ->send();
 
-    public function updated(Prompt $prompt): void
-    {
-        if (Feature::active('ai_utilization')) {
-            Cache::forget('prompt_by_category_chart');
-            Cache::forget('prompts_created_line_chart');
-        }
-    }
-
-    public function deleted(Prompt $prompt): void
-    {
-        if (Feature::active('ai_utilization')) {
-            Cache::forget('prompt_by_category_chart');
-            Cache::forget('prompts_created_line_chart');
-        }
+        $this->js('window.location.reload()');
     }
 }

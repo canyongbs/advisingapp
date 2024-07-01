@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,42 +30,32 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<x-filament-widgets::widget>
+    <div class="flex flex-col items-center md:flex-row">
+        <div class="flex-1">
+            <p class="text-xs">
+                @php
+                    $lastRefreshTime = cache($this->pagePrefix . '-updated-time') ? cache($this->pagePrefix . '-updated-time') : now(auth()->user()->timezone);
+                @endphp
+                This report was last updated at {{ $lastRefreshTime->format('l, F j, Y') }}
+                {{ $lastRefreshTime->format('g:i A') }}.
+            </p>
+        </div>
 
-namespace AdvisingApp\Ai\Observers;
+        <div class="flex-shrink-0">
 
-use Laravel\Pennant\Feature;
-use AdvisingApp\Ai\Models\Prompt;
-use Illuminate\Support\Facades\Cache;
+            <x-filament::button
+                type="button"
+                color="gray"
+                icon="heroicon-m-arrow-path"
+                labeled-from="sm"
+                tag="button"
+                wire:click="removeWidgetCache('{{ $this->pagePrefix }}')"
+            >
+                {{ 'Refresh' }}
+            </x-filament::button>
 
-class PromptObserver
-{
-    public function creating(Prompt $prompt): void
-    {
-        $prompt->user()->associate(auth()->user());
-    }
-
-    public function saved(Prompt $prompt): void
-    {
-        if (Feature::active('ai_utilization')) {
-            Cache::forget('prompt_by_category_chart');
-            Cache::forget('prompts_created_line_chart');
-        }
-    }
-
-    public function updated(Prompt $prompt): void
-    {
-        if (Feature::active('ai_utilization')) {
-            Cache::forget('prompt_by_category_chart');
-            Cache::forget('prompts_created_line_chart');
-        }
-    }
-
-    public function deleted(Prompt $prompt): void
-    {
-        if (Feature::active('ai_utilization')) {
-            Cache::forget('prompt_by_category_chart');
-            Cache::forget('prompts_created_line_chart');
-        }
-    }
-}
+        </div>
+    </div>
+</x-filament-widgets::widget>

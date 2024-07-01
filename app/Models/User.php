@@ -39,12 +39,14 @@ namespace App\Models;
 use Filament\Panel;
 use DateTimeInterface;
 use Illuminate\Support\Arr;
+use Laravel\Pennant\Feature;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
 use Spatie\MediaLibrary\HasMedia;
 use App\Support\HasAdvancedFilter;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Team\Models\TeamUser;
+use Illuminate\Support\Facades\Cache;
 use App\Filament\Resources\UserResource;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
@@ -471,7 +473,15 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function grantLicense(LicenseType $type): bool
     {
         if ($this->hasLicense($type)) {
+            if ($type == LicenseType::ConversationalAi && Cache::has('ai-users-count') && Feature::active('ai_utilization')) {
+                Cache::forget('ai-users-count');
+            }
+
             return false;
+        }
+
+        if ($type == LicenseType::ConversationalAi && Cache::has('ai-users-count') && Feature::active('ai_utilization')) {
+            Cache::forget('ai-users-count');
         }
 
         return cache()
@@ -487,6 +497,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function revokeLicense(LicenseType $type): bool
     {
+        if ($type == LicenseType::ConversationalAi && Cache::has('ai-users-count') && Feature::active('ai_utilization')) {
+            Cache::forget('ai-users-count');
+        }
+
         return (bool) $this->licenses()->where('type', $type)->get()->each->delete();
     }
 

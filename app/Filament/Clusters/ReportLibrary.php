@@ -34,40 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Observers;
+namespace App\Filament\Clusters;
 
-use Laravel\Pennant\Feature;
-use AdvisingApp\Ai\Models\Prompt;
-use Illuminate\Support\Facades\Cache;
+use Filament\Clusters\Cluster;
 
-class PromptObserver
+class ReportLibrary extends Cluster
 {
-    public function creating(Prompt $prompt): void
-    {
-        $prompt->user()->associate(auth()->user());
-    }
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    public function saved(Prompt $prompt): void
-    {
-        if (Feature::active('ai_utilization')) {
-            Cache::forget('prompt_by_category_chart');
-            Cache::forget('prompts_created_line_chart');
-        }
-    }
+    protected static ?string $navigationGroup = 'Reporting';
 
-    public function updated(Prompt $prompt): void
-    {
-        if (Feature::active('ai_utilization')) {
-            Cache::forget('prompt_by_category_chart');
-            Cache::forget('prompts_created_line_chart');
-        }
-    }
-
-    public function deleted(Prompt $prompt): void
-    {
-        if (Feature::active('ai_utilization')) {
-            Cache::forget('prompt_by_category_chart');
-            Cache::forget('prompts_created_line_chart');
-        }
-    }
+    protected static ?int $navigationSort = 111;
 }

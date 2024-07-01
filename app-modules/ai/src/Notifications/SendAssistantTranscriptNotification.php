@@ -37,9 +37,11 @@
 namespace AdvisingApp\Ai\Notifications;
 
 use App\Models\User;
+use Laravel\Pennant\Feature;
 use AdvisingApp\Ai\Models\AiThread;
 use App\Models\NotificationSetting;
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
@@ -96,6 +98,14 @@ class SendAssistantTranscriptNotification extends BaseNotification implements Em
             });
 
         return $message;
+    }
+
+    protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
+    {
+        if (Feature::active('ai_utilization')) {
+            $this->thread->emailed_count = $this->thread->emailed_count + 1;
+            $this->thread->save();
+        }
     }
 
     private function resolveNotificationSetting(User $notifiable): ?NotificationSetting

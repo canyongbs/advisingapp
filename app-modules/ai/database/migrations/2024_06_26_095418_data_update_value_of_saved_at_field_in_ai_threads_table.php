@@ -34,40 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Observers;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
 
-use Laravel\Pennant\Feature;
-use AdvisingApp\Ai\Models\Prompt;
-use Illuminate\Support\Facades\Cache;
-
-class PromptObserver
-{
-    public function creating(Prompt $prompt): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $prompt->user()->associate(auth()->user());
+        $aiThreads = DB::table('ai_threads')->whereNotNull('name')->whereNull('saved_at')->get();
+
+        $aiThreads->each(function ($thread, $key) {
+            DB::table('ai_threads')->where('id', $thread->id)->update(['saved_at' => $thread->updated_at]);
+        });
     }
 
-    public function saved(Prompt $prompt): void
+    public function down(): void
     {
-        if (Feature::active('ai_utilization')) {
-            Cache::forget('prompt_by_category_chart');
-            Cache::forget('prompts_created_line_chart');
-        }
-    }
+        $aiThreads = DB::table('ai_threads')->whereNotNull('name')->whereNotNull('saved_at')->get();
 
-    public function updated(Prompt $prompt): void
-    {
-        if (Feature::active('ai_utilization')) {
-            Cache::forget('prompt_by_category_chart');
-            Cache::forget('prompts_created_line_chart');
-        }
+        $aiThreads->each(function ($thread, $key) {
+            DB::table('ai_threads')->where('id', $thread->id)->update(['saved_at' => null]);
+        });
     }
-
-    public function deleted(Prompt $prompt): void
-    {
-        if (Feature::active('ai_utilization')) {
-            Cache::forget('prompt_by_category_chart');
-            Cache::forget('prompts_created_line_chart');
-        }
-    }
-}
+};

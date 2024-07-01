@@ -67,6 +67,7 @@ class AiThread extends BaseModel
 
     protected $casts = [
         'locked_at' => 'datetime',
+        'saved_at' => 'datetime',
     ];
 
     public function assistant(): BelongsTo

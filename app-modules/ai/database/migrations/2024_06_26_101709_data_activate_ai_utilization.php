@@ -34,25 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Pages\Page;
-
-class ReportLibrary extends Page
-{
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
-
-    protected static string $view = 'filament.pages.coming-soon';
-
-    protected static ?string $navigationGroup = 'Reporting';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
+return new class () extends Migration {
+    public function up(): void
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can('report-library.view-any');
+        Feature::activate('ai_utilization');
     }
-}
+
+    public function down(): void
+    {
+        Feature::deactivate('ai_utilization');
+    }
+};
