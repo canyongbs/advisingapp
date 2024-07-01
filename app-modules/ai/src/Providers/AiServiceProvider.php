@@ -50,10 +50,10 @@ use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Observers\PromptObserver;
 use AdvisingApp\Ai\Registries\AiRbacRegistry;
+use AdvisingApp\Ai\Observers\AithreadObserver;
 use AdvisingApp\Ai\Observers\AiMessageObserver;
 use AdvisingApp\Ai\Observers\PromptUsesObserver;
 use AdvisingApp\Ai\Observers\AiAssistantObserver;
-use AdvisingApp\Ai\Observers\AithreadObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 

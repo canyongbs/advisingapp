@@ -46,7 +46,6 @@ use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use Illuminate\Support\Facades\Cache;
 
 class SendAssistantTranscriptNotification extends BaseNotification implements EmailNotification
 {

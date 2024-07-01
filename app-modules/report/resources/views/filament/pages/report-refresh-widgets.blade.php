@@ -34,26 +34,27 @@
 <x-filament-widgets::widget>
     <div class="flex flex-col items-center md:flex-row">
         <div class="flex-1">
-            <p class="text-xs"> 
-              @php
-              $lastRefreshTime = cache($this->pagePrefix."-updated-time")?cache($this->pagePrefix."-updated-time"):now(auth()->user()->timezone);
-              @endphp
-            This report was last updated at {{ $lastRefreshTime->format('l, F j, Y') }} {{ $lastRefreshTime->format('g:i A') }}.
+            <p class="text-xs">
+                @php
+                    $lastRefreshTime = cache($this->pagePrefix . '-updated-time') ? cache($this->pagePrefix . '-updated-time') : now(auth()->user()->timezone);
+                @endphp
+                This report was last updated at {{ $lastRefreshTime->format('l, F j, Y') }}
+                {{ $lastRefreshTime->format('g:i A') }}.
             </p>
         </div>
 
         <div class="flex-shrink-0">
 
-                <x-filament::button
-                    type="button"
-                    color="gray"
-                    icon="heroicon-m-arrow-path"
-                    labeled-from="sm"
-                    tag="button"
-                    wire:click="removeWidgetCache('{{$this->pagePrefix}}')"
-                >
-                    {{ 'Refresh'}}
-                </x-filament::button>
+            <x-filament::button
+                type="button"
+                color="gray"
+                icon="heroicon-m-arrow-path"
+                labeled-from="sm"
+                tag="button"
+                wire:click="removeWidgetCache('{{ $this->pagePrefix }}')"
+            >
+                {{ 'Refresh' }}
+            </x-filament::button>
 
         </div>
     </div>

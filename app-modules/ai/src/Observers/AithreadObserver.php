@@ -44,7 +44,7 @@ class AithreadObserver
 {
     public function saved(AiThread $aiThread): void
     {
-        if (Feature::active('ai_utilization') && !empty($aiThread->saved_at)) {
+        if (Feature::active('ai_utilization') && ! empty($aiThread->saved_at)) {
             Cache::forget('saved_conversations_line_chart');
         }
     }

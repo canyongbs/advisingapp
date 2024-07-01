@@ -62,13 +62,13 @@ class RefreshWidget extends BaseWidget
     public function removeWidgetCache($pagePrefix)
     {
         Cache::tags($pagePrefix)->flush();
-        Cache::forget($pagePrefix."-updated-time");
-        Cache::add($pagePrefix."-updated-time",now(auth()->user()->timezone));
+        Cache::forget($pagePrefix . '-updated-time');
+        Cache::add($pagePrefix . '-updated-time', now(auth()->user()->timezone));
         Notification::make()
             ->title('Report Successfully refreshed')
             ->success()
             ->send();
 
-        $this->js("window.location.reload()");
+        $this->js('window.location.reload()');
     }
 }
