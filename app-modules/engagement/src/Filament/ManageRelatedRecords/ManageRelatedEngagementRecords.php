@@ -274,7 +274,7 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                     ->createAnother(false)
                     ->record(fn (Timeline $record) => $record->timelineable)
                     ->action(function (array $data) {
-                        $engagement = Engagement::make($data);
+                        $engagement = new Engagement($data);
                         $engagement->recipient()->associate($this->getRecord());
                         $engagement->save();
 
