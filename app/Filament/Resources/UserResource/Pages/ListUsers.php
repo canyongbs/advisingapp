@@ -57,8 +57,6 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
 
 class ListUsers extends ListRecords
@@ -120,17 +118,14 @@ class ListUsers extends ListRecords
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('deleted_at')
                     ->label('Status')
-                    ->formatStateUsing(function ($state) {
-                        // Return a custom value based on the record's attributes
-                        return (! is_null($state)) ? 'Archived' : 'Active';
-                    })
-                    ->hidden(fn (Builder $query): bool => request()->get('tableFilters') ? (!request()->get('tableFilters')['trashed'] ?? true) : true),
+                    ->getStateUsing(fn (User $record): string => $record->trashed() ? 'Archived' : 'Active')
+                    ->visible(fn ($livewire) => isset($livewire->getTableFilterState('trashed')['value']) ? true : false)
             ])
             ->actions([
                 Impersonate::make(),
                 ViewAction::make(),
                 EditAction::make(),
-                RestoreAction::make(),
+                RestoreAction::make()
             ])
             ->bulkActions([
                 BulkActionGroup::make([
@@ -142,6 +137,7 @@ class ListUsers extends ListRecords
             ])
             ->filters([
                 TrashedFilter::make()
+                    ->visible((fn () => auth()->user()->can('user.*.restore')))
             ])
             ->defaultSort('name', 'asc');
     }
