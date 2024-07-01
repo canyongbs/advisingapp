@@ -398,7 +398,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function canBeImpersonated(): bool
     {
-        return !$this->hasRole('authorization.super_admin');
+        return ! $this->hasRole('authorization.super_admin');
     }
 
     public function registerMediaCollections(): void
@@ -429,7 +429,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         }
 
         foreach (Arr::wrap($type) as $type) {
-            if (!($type instanceof LicenseType)) {
+            if (! ($type instanceof LicenseType)) {
                 $type = LicenseType::from($type);
             }
 
@@ -451,7 +451,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         }
 
         foreach (Arr::wrap($type) as $type) {
-            if (!($type instanceof LicenseType)) {
+            if (! ($type instanceof LicenseType)) {
                 $type = LicenseType::from($type);
             }
 
@@ -477,7 +477,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return cache()
             ->lock('licenses', 5)
             ->get(function () use ($type) {
-                if (!$type->hasAvailableLicenses()) {
+                if (! $type->hasAvailableLicenses()) {
                     return false;
                 }
 
