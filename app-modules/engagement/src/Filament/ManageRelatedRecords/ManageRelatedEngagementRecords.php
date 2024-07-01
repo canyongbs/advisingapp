@@ -302,12 +302,29 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                         fn (Builder $query, array $data) => $query
                             ->when($data['value'], fn (Builder $query) => $query->whereHasMorph('timelineable', $data['value']))
                     ),
-                // SelectFilter::make('type')
-                //     ->options(EngagementDeliveryMethod::class)
-                //     ->modifyQueryUsing(
-                //         fn (Builder $query, array $data) => $query
-                //             ->when($data['value'], fn (Builder $query) => $query->whereHas('timelineable', fn (Builder $query) =>))
-                //     ),
+                SelectFilter::make('type')
+                    ->options(EngagementDeliveryMethod::class)
+                    ->modifyQueryUsing(
+                        fn (Builder $query, array $data) => $query
+                            ->when($data['value'] === EngagementDeliveryMethod::Email->value, fn (Builder $query) => $query
+                                ->whereHasMorph(
+                                'timelineable',
+                                [Engagement::class],
+                                fn (Builder $query, string $type) => match($type) {
+                                    Engagement::class => $query->whereRelation('deliverable', 'channel', $data['value']),
+                                }
+                                )
+                            )
+                            ->when($data['value'] === EngagementDeliveryMethod::Sms->value, fn (Builder $query) => $query->whereHasMorph(
+                                'timelineable',
+                                [Engagement::class, EngagementResponse::class],
+                                fn (Builder $query, string $type) => match($type) {
+                                    Engagement::class => $query->whereRelation('deliverable', 'channel', $data['value']),
+                                    EngagementResponse::class => $query,
+                                }
+                                )
+                            )
+                    ),
             ]);
     }
 }
