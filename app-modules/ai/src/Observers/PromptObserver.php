@@ -36,38 +36,12 @@
 
 namespace AdvisingApp\Ai\Observers;
 
-use Laravel\Pennant\Feature;
 use AdvisingApp\Ai\Models\Prompt;
-use Illuminate\Support\Facades\Cache;
 
 class PromptObserver
 {
     public function creating(Prompt $prompt): void
     {
         $prompt->user()->associate(auth()->user());
-    }
-
-    public function saved(Prompt $prompt): void
-    {
-        if (Feature::active('ai_utilization')) {
-            Cache::forget('prompt_by_category_chart');
-            Cache::forget('prompts_created_line_chart');
-        }
-    }
-
-    public function updated(Prompt $prompt): void
-    {
-        if (Feature::active('ai_utilization')) {
-            Cache::forget('prompt_by_category_chart');
-            Cache::forget('prompts_created_line_chart');
-        }
-    }
-
-    public function deleted(Prompt $prompt): void
-    {
-        if (Feature::active('ai_utilization')) {
-            Cache::forget('prompt_by_category_chart');
-            Cache::forget('prompts_created_line_chart');
-        }
     }
 }

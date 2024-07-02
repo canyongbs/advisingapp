@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use Livewire\Attributes\On;
 use Filament\Widgets\ChartWidget;
 use AdvisingApp\Ai\Models\PromptType;
 use Illuminate\Support\Facades\Cache;
@@ -26,6 +27,12 @@ class PromptsByCategoryDoughnutChart extends ChartWidget
         $this->pagePrefix = $pagePrefix;
     }
 
+    #[On('refresh-widgets')]
+    public function refreshWidget()
+    {
+        $this->dispatch('$refresh');
+    }
+
     protected function getOptions(): array
     {
         return [
@@ -48,7 +55,7 @@ class PromptsByCategoryDoughnutChart extends ChartWidget
 
     protected function getData(): array
     {
-        $promptsByCategory = Cache::tags([$this->pagePrefix])->rememberForever('prompt_by_category_chart', function (): Collection {
+        $promptsByCategory = Cache::tags([$this->pagePrefix])->remember('prompt_by_category_chart', now()->addHours(24), function (): Collection {
             $promptsByCategoryData = PromptType::withCount(['prompts'])->get(['id', 'title']);
 
             $promptsByCategoryData = $promptsByCategoryData->map(function (PromptType $promptType) {

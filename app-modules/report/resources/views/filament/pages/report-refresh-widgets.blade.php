@@ -31,14 +31,19 @@
 
 </COPYRIGHT>
 --}}
+@php
+use Illuminate\Support\Facades\Cache;
+use App\Settings\DisplaySettings;
+@endphp
 <x-filament-widgets::widget>
     <div class="flex flex-col items-center md:flex-row">
         <div class="flex-1">
             <p class="text-xs"> 
               @php
-              $lastRefreshTime = cache($this->pagePrefix."-updated-time")?cache($this->pagePrefix."-updated-time"):now(auth()->user()->timezone);
+              echo Cache::tags([$this->pagePrefix])->get('updated-time');
+              $lastRefreshTime = Cache::tags([$this->pagePrefix])->get('updated-time')?Cache::tags([$this->pagePrefix])->get('updated-time'):now();
               @endphp
-            This report was last updated at {{ $lastRefreshTime->format('l, F j, Y') }} {{ $lastRefreshTime->format('g:i A') }}.
+              This report was last updated at {{ $lastRefreshTime->setTimezone(app(DisplaySettings::class)->getTimezone())->format('l, F j, Y') }} {{ $lastRefreshTime->setTimezone(app(DisplaySettings::class)->getTimezone())->format('g:i A') }}.
             </p>
         </div>
 

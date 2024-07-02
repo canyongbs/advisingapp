@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use Livewire\Attributes\On;
 use Filament\Widgets\ChartWidget;
 use Filament\Support\Colors\Color;
 use AdvisingApp\Ai\Models\AiThread;
@@ -26,6 +27,12 @@ class SpecialActionsDoughnutChart extends ChartWidget
         $this->pagePrefix = $pagePrefix;
     }
 
+    #[On('refresh-widgets')]
+    public function refreshWidget()
+    {
+        $this->dispatch('$refresh');
+    }
+
     protected function getOptions(): array
     {
         return [
@@ -48,12 +55,12 @@ class SpecialActionsDoughnutChart extends ChartWidget
 
     protected function getData(): array
     {
-        $emailCount = Cache::tags([$this->pagePrefix])->rememberForever('emailed_count', function (): int {
+        $emailCount = Cache::tags([$this->pagePrefix])->remember('emailed_count', now()->addHours(24), function (): int {
             $emailDataCount = AiThread::sum('emailed_count');
 
             return $emailDataCount;
         });
-        $cloneCount = Cache::tags([$this->pagePrefix])->rememberForever('cloned_count', function (): int {
+        $cloneCount = Cache::tags([$this->pagePrefix])->remember('cloned_count', now()->addHours(24), function (): int {
             $cloneDataCount = AiThread::sum('cloned_count');
 
             return $cloneDataCount;

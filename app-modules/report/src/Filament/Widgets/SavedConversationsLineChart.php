@@ -3,6 +3,7 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use Carbon\Carbon;
+use Livewire\Attributes\On;
 use Filament\Widgets\ChartWidget;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Support\Facades\Cache;
@@ -26,6 +27,12 @@ class SavedConversationsLineChart extends ChartWidget
         $this->pagePrefix = $pagePrefix;
     }
 
+    #[On('refresh-widgets')]
+    public function refreshWidget()
+    {
+        $this->dispatch('$refresh');
+    }
+
     protected function getOptions(): array
     {
         return [
@@ -44,7 +51,7 @@ class SavedConversationsLineChart extends ChartWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags([$this->pagePrefix])->rememberForever('saved_conversations_line_chart', function (): array {
+        $runningTotalPerMonth = Cache::tags([$this->pagePrefix])->remember('saved_conversations_line_chart', now()->addHours(24), function (): array {
             $totalCreatedPerMonth = AiThread::query()
                 ->toBase()
                 ->selectRaw('date_trunc(\'month\', saved_at) as month')

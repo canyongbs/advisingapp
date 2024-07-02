@@ -28,23 +28,25 @@ class ArtificialIntelligence extends Dashboard
 
     protected static ?int $navigationSort = 10;
 
+    protected $pagePrefix ='report-artificial-intelligence';
+
     public static function canAccess(): bool
     {
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('report-library.view-any') && Feature::active('ai_utilization');
+        return Feature::active('ai_utilization') && $user->can('report-library.view-any');
     }
 
     public function getWidgets(): array
     {
         return [
-            RefreshWidget::make(['pagePrefix' => 'artificial-intelligence']),
-            AiStats::make(['pagePrefix' => 'artificial-intelligence']),
-            SavedConversationsLineChart::make(['pagePrefix' => 'artificial-intelligence']),
-            SpecialActionsDoughnutChart::make(['pagePrefix' => 'artificial-intelligence']),
-            PromptsByCategoryDoughnutChart::make(['pagePrefix' => 'artificial-intelligence']),
-            PromptsCreatedLineChart::make(['pagePrefix' => 'artificial-intelligence']),
+            RefreshWidget::make(['pagePrefix' => $this->pagePrefix]),
+            AiStats::make(['pagePrefix' =>  $this->pagePrefix]),
+            SavedConversationsLineChart::make(['pagePrefix' =>  $this->pagePrefix]),
+            SpecialActionsDoughnutChart::make(['pagePrefix' =>  $this->pagePrefix]),
+            PromptsByCategoryDoughnutChart::make(['pagePrefix' =>  $this->pagePrefix]),
+            PromptsCreatedLineChart::make(['pagePrefix' =>  $this->pagePrefix]),
         ];
     }
 

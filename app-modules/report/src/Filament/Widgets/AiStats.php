@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use Livewire\Attributes\On;
 use Illuminate\Support\Number;
 use AdvisingApp\Ai\Models\PromptUse;
 use Illuminate\Support\Facades\Cache;
@@ -28,26 +29,29 @@ class AiStats extends BaseWidget
         $this->pagePrefix = $pagePrefix;
     }
 
+    #[On('refresh-widgets')]
+    public function refreshWidget()
+    {
+        $this->dispatch('$refresh');
+    }
+
     protected function getStats(): array
     {
         return [
             Stat::make('AI Users', Number::abbreviate(
-                Cache::tags([$this->pagePrefix])->rememberForever('ai-users-count', function (): int {
-                    Cache::forget($this->pagePrefix . '-updated-time');
-                    Cache::add($this->pagePrefix . '-updated-time', now(auth()->user()->timezone));
-
+                Cache::tags([$this->pagePrefix])->remember('ai-users-count', now()->addHours(24), function (): int {
                     return License::where('type', LicenseType::ConversationalAi)->count();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('Prompts Liked', Number::abbreviate(
-                Cache::tags([$this->pagePrefix])->rememberForever('prompts-liked-count', function (): int {
+                Cache::tags([$this->pagePrefix])->remember('prompts-liked-count', now()->addHours(24), function (): int {
                     return PromptUpvote::count();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('Prompt Insertions', Number::abbreviate(
-                Cache::tags([$this->pagePrefix])->rememberForever('prompts-insertions-count', function (): int {
+                Cache::tags([$this->pagePrefix])->remember('prompts-insertions-count', now()->addHours(24), function (): int {
                     return PromptUse::count();
                 }),
                 maxPrecision: 2,
