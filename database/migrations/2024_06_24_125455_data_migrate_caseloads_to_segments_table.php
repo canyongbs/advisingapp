@@ -35,7 +35,6 @@
 */
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use AdvisingApp\Segment\Models\Segment;
 use Illuminate\Database\Migrations\Migration;
 use AdvisingApp\Segment\Models\SegmentSubject;
@@ -84,8 +83,14 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('segments');
-        Schema::dropIfExists('segment_subjects');
+        if (DB::table('segments')->exists()) {
+            DB::table('segments')->truncate();
+        }
+
+        if (DB::table('segment_subjects')->exists()) {
+            DB::table('segment_subjects')->truncate();
+        }
+
         DB::table('campaigns')->update(['segment_id' => null]);
     }
 };
