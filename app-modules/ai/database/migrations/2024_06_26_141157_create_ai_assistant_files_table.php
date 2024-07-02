@@ -34,39 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use OpenAI;
-
-class OpenAiGptTestService extends BaseOpenAiService
-{
-    public function __construct()
+return new class () extends Migration {
+    public function up(): void
     {
-        $this->client = new OpenAI\Testing\ClientFake();
+        Schema::create('ai_assistant_files', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('assistant_id')->constrained('ai_assistants')->cascadeOnDelete();
+            $table->string('file_id')->nullable();
+            $table->string('name')->nullable();
+            $table->text('temporary_url')->nullable();
+            $table->string('mime_type')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
-    public function supportsAssistantFileUploads(): bool
+    public function down(): void
     {
-        return false;
+        Schema::dropIfExists('ai_assistant_files');
     }
-
-    public function getApiKey(): string
-    {
-        return 'test';
-    }
-
-    public function getApiVersion(): string
-    {
-        return '1.0.0';
-    }
-
-    public function getModel(): string
-    {
-        return 'test';
-    }
-
-    public function getDeployment(): ?string
-    {
-        return null;
-    }
-}
+};

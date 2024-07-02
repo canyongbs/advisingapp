@@ -34,39 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Database\Factories;
 
-use OpenAI;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class OpenAiGptTestService extends BaseOpenAiService
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Ai\Models\AiAssistantFile>
+ */
+class AiAssistantFileFactory extends Factory
 {
-    public function __construct()
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        $this->client = new OpenAI\Testing\ClientFake();
-    }
-
-    public function supportsAssistantFileUploads(): bool
-    {
-        return false;
-    }
-
-    public function getApiKey(): string
-    {
-        return 'test';
-    }
-
-    public function getApiVersion(): string
-    {
-        return '1.0.0';
-    }
-
-    public function getModel(): string
-    {
-        return 'test';
-    }
-
-    public function getDeployment(): ?string
-    {
-        return null;
+        return [
+            'name' => fake()->word(),
+        ];
     }
 }

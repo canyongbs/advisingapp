@@ -34,39 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Listeners;
 
-use OpenAI;
+use Filament\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
 
-class OpenAiGptTestService extends BaseOpenAiService
+class HandleAssistantFilesFinishedUploading implements ShouldQueue
 {
-    public function __construct()
-    {
-        $this->client = new OpenAI\Testing\ClientFake();
-    }
+    public function __construct() {}
 
-    public function supportsAssistantFileUploads(): bool
+    public function handle(AssistantFilesFinishedUploading $event): void
     {
-        return false;
-    }
+        $filesLanguage = $event->files->count() > 1 ? 'files were' : 'file was';
 
-    public function getApiKey(): string
-    {
-        return 'test';
-    }
-
-    public function getApiVersion(): string
-    {
-        return '1.0.0';
-    }
-
-    public function getModel(): string
-    {
-        return 'test';
-    }
-
-    public function getDeployment(): ?string
-    {
-        return null;
+        Notification::make()
+            ->title($event->files->count() . ' ' . $filesLanguage . ' successfully uploaded to the ' . $event->assistant->name . ' custom assistant')
+            ->success()
+            ->sendToDatabase($event->user);
     }
 }

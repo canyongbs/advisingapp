@@ -67,7 +67,7 @@ trait CanUploadFiles
             ->modalSubmitActionLabel('Upload')
             ->form([
                 FileUpload::make('attachment')
-                    ->acceptedFileTypes(['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+                    ->acceptedFileTypes(config('ai.supported_file_types'))
                     ->storeFiles(false)
                     ->helperText('Only .doc and .docx files are allowed. The maximum file size is 256KB.')
                     ->maxSize(256)

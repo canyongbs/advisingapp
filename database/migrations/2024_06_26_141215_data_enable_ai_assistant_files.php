@@ -34,39 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use OpenAI;
-
-class OpenAiGptTestService extends BaseOpenAiService
-{
-    public function __construct()
+return new class () extends Migration {
+    public function up(): void
     {
-        $this->client = new OpenAI\Testing\ClientFake();
+        Feature::activate('assistant-files');
     }
 
-    public function supportsAssistantFileUploads(): bool
+    public function down(): void
     {
-        return false;
+        Feature::deactivate('assistant-files');
     }
-
-    public function getApiKey(): string
-    {
-        return 'test';
-    }
-
-    public function getApiVersion(): string
-    {
-        return '1.0.0';
-    }
-
-    public function getModel(): string
-    {
-        return 'test';
-    }
-
-    public function getDeployment(): ?string
-    {
-        return null;
-    }
-}
+};

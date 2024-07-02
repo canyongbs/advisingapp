@@ -49,6 +49,7 @@ class ReInitializeAiServiceAssistant
             app(ReInitializeAiAssistant::class, ['assistant' => $assistant]),
             Bus::batch([
                 app(ReInitializeAiAssistantThreads::class, ['assistant' => $assistant]),
+                // TODO We'll likely need to reinitialize files/vector stores at this point as well.
             ])
                 ->name("Re-initialize AI assistant threads for assistant: {$assistant->id}")
                 ->allowFailures(),
