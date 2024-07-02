@@ -18,11 +18,9 @@
 
 ### Are any Feature Flags Added?
 
-> Feature Flags using Laravel Pennant to gate and control changes to protect against database schema changes.
+> Specifically Feature Flags to gate and control logic/flow changes to protect against database schema changes.
 >
-> Typically only a single flag is needed per change, but if there are more please list all of them
->
-> If yes, please list the name of the Feature Flags below
+> If yes, please list the name of the added Feature Flags below and apply the `Feature Flag Added` label to the PR.
 
 _______________________________________________
 
