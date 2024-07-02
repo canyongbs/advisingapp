@@ -40,7 +40,9 @@ use App\Models\User;
 use App\Models\BaseModel;
 use App\Models\Authenticatable;
 use Illuminate\Support\Collection;
+use AdvisingApp\Campaign\Models\Campaign;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
@@ -52,6 +54,8 @@ use AdvisingApp\CaseloadManagement\Actions\TranslateCaseloadFilters;
  */
 class Caseload extends BaseModel
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'query',
         'filters',
@@ -75,6 +79,11 @@ class Caseload extends BaseModel
     public function subjects(): HasMany
     {
         return $this->hasMany(CaseloadSubject::class);
+    }
+
+    public function campaigns(): HasMany
+    {
+        return $this->hasMany(Campaign::class);
     }
 
     public function scopeModel(Builder $query, CaseloadModel $model): void

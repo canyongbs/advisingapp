@@ -986,117 +986,6 @@ namespace AdvisingApp\Alert\Models{
 	class IdeHelperAlert {}
 }
 
-namespace AdvisingApp\Analytics\Models{
-/**
- * AdvisingApp\Analytics\Models\AnalyticsResource
- *
- * @property string $id
- * @property string $name
- * @property string|null $description
- * @property string|null $url
- * @property bool $is_active
- * @property bool $is_included_in_data_portal
- * @property string|null $source_id
- * @property string $category_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Analytics\Models\AnalyticsResourceCategory $category
- * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
- * @property-read int|null $media_count
- * @property-read \AdvisingApp\Analytics\Models\AnalyticsResourceSource|null $source
- * @method static \AdvisingApp\Analytics\Database\Factories\AnalyticsResourceFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource query()
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereCategoryId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereIsActive($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereIsIncludedInDataPortal($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereSourceId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereUrl($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAnalyticsResource {}
-}
-
-namespace AdvisingApp\Analytics\Models{
-/**
- * AdvisingApp\Analytics\Models\AnalyticsResourceCategory
- *
- * @property string $id
- * @property string $name
- * @property string|null $description
- * @property \AdvisingApp\Analytics\Enums\AnalyticsResourceCategoryClassification $classification
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Analytics\Models\AnalyticsResource> $resources
- * @property-read int|null $resources_count
- * @method static \AdvisingApp\Analytics\Database\Factories\AnalyticsResourceCategoryFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory query()
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory whereClassification($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAnalyticsResourceCategory {}
-}
-
-namespace AdvisingApp\Analytics\Models{
-/**
- * AdvisingApp\Analytics\Models\AnalyticsResourceSource
- *
- * @property string $id
- * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Analytics\Models\AnalyticsResource> $resources
- * @property-read int|null $resources_count
- * @method static \AdvisingApp\Analytics\Database\Factories\AnalyticsResourceSourceFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource query()
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAnalyticsResourceSource {}
-}
-
 namespace AdvisingApp\Application\Models{
 /**
  * AdvisingApp\Application\Models\Application
@@ -3887,6 +3776,44 @@ namespace AdvisingApp\Report\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperReport {}
+}
+
+namespace AdvisingApp\Segment\Models{
+/**
+ * AdvisingApp\Segment\Models\Segment
+ *
+ * @property \AdvisingApp\Segment\Enums\SegmentModel $model
+ * @property \AdvisingApp\Segment\Enums\SegmentType $type
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Segment\Models\SegmentSubject> $subjects
+ * @property-read int|null $subjects_count
+ * @property-read \App\Models\User|null $user
+ * @method static \AdvisingApp\Segment\Database\Factories\SegmentFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Segment model(\AdvisingApp\Segment\Enums\SegmentModel $model)
+ * @method static \Illuminate\Database\Eloquent\Builder|Segment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Segment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Segment query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperSegment {}
+}
+
+namespace AdvisingApp\Segment\Models{
+/**
+ * AdvisingApp\Segment\Models\SegmentSubject
+ *
+ * @property-read \AdvisingApp\Segment\Models\Segment|null $segment
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $subject
+ * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperSegmentSubject {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{

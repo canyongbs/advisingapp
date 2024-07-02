@@ -37,7 +37,10 @@
 namespace AdvisingApp\CaseloadManagement\Observers;
 
 use App\Models\User;
+use Laravel\Pennant\Feature;
 use Illuminate\Support\Facades\Cache;
+use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\Segment\Models\SegmentSubject;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
 
@@ -58,6 +61,33 @@ class CaseloadObserver
                 CaseloadModel::Prospect => "user-{$user->getKey()}-prospect-caseloads",
                 CaseloadModel::Student => "user-{$user->getKey()}-student-caseloads",
             }])->flush();
+        }
+
+        if (Feature::active('enable-segments')) {
+            $segment = new Segment();
+            $segment->name = $caseload->name;
+            $segment->description = $caseload->description;
+            $segment->filters = $caseload->filters;
+            $segment->model = $caseload->model;
+            $segment->type = $caseload->type;
+            $segment->user_id = $caseload->user_id;
+            $segment->created_at = $caseload->created_at;
+            $segment->updated_at = $caseload->updated_at;
+            $segment->deleted_at = $caseload->deleted_at;
+            $segment->save();
+
+            if ($caseload->subjects()->withTrashed()->exists()) {
+                foreach ($caseload->subjects()->withTrashed()->get() as $caseloadSubject) {
+                    $segmentSubject = new SegmentSubject();
+                    $segmentSubject->subject_id = $caseloadSubject->subject_id;
+                    $segmentSubject->subject_type = $caseloadSubject->subject_type;
+                    $segmentSubject->segment_id = $segment->id;
+                    $segmentSubject->created_at = $caseloadSubject->created_at;
+                    $segmentSubject->updated_at = $caseloadSubject->updated_at;
+                    $segmentSubject->deleted_at = $caseloadSubject->deleted_at;
+                    $segmentSubject->save();
+                }
+            }
         }
     }
 

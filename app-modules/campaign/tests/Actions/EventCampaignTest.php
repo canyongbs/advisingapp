@@ -34,8 +34,11 @@
 </COPYRIGHT>
 */
 
+use Laravel\Pennant\Feature;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Enums\SegmentType;
 
 use function PHPUnit\Framework\assertTrue;
 
@@ -53,19 +56,27 @@ use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
 it('will create the event records for caseload', function (Collection $educatables) {
-    $caseload = Caseload::factory()->create([
-        'type' => CaseloadType::Static,
-    ]);
+    Feature::active('enable-segments')
+        ? $segmentOrCaseload = Segment::factory()->create([
+            'type' => SegmentType::Static,
+        ])
+        : $segmentOrCaseload = Caseload::factory()->create([
+            'type' => CaseloadType::Static,
+        ]);
 
-    $educatables->each(function (Educatable $prospect) use ($caseload) {
-        $caseload->subjects()->create([
+    $educatables->each(function (Educatable $prospect) use ($segmentOrCaseload) {
+        $segmentOrCaseload->subjects()->create([
             'subject_id' => $prospect->getKey(),
             'subject_type' => $prospect->getMorphClass(),
         ]);
     });
 
+    Feature::active('enable-segments')
+        ? $foreignKey = 'segment_id'
+        : $foreignKey = 'caseload_id';
+
     $campaign = Campaign::factory()->create([
-        'caseload_id' => $caseload->id,
+        $foreignKey => $segmentOrCaseload->id,
     ]);
 
     $event = Event::factory()->create();
@@ -83,7 +94,7 @@ it('will create the event records for caseload', function (Collection $educatabl
 
     $action->execute();
 
-    assertCount(3, $caseload->subjects); // Check if 3 subjects were created for the caseload
+    assertCount(3, $segmentOrCaseload->subjects); // Check if 3 subjects were created for the caseload
     assertTrue($campaign->hasBeenExecuted());
 })->with([
     'prospects' => [

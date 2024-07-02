@@ -38,6 +38,8 @@ namespace AdvisingApp\Campaign\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Laravel\Pennant\Feature;
+use AdvisingApp\Segment\Models\Segment;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -58,6 +60,7 @@ class Campaign extends BaseModel implements Auditable
         'caseload_id',
         'name',
         'enabled',
+        'segment_id',
     ];
 
     protected $casts = [
@@ -72,6 +75,11 @@ class Campaign extends BaseModel implements Auditable
     public function caseload(): BelongsTo
     {
         return $this->belongsTo(Caseload::class);
+    }
+
+    public function segment(): BelongsTo
+    {
+        return $this->belongsTo(Segment::class);
     }
 
     public function actions(): HasMany
@@ -98,7 +106,9 @@ class Campaign extends BaseModel implements Auditable
                 return;
             }
 
-            $builder->whereHas('caseload');
+            Feature::active('enable-segments')
+                ? $builder->whereHas('segment')
+                : $builder->whereHas('caseload');
         });
     }
 }

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use App\Models\User;
+use Laravel\Pennant\Feature;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -71,12 +72,17 @@ class CreateCampaign extends CreateRecord
                     TextInput::make('name')
                         ->autocomplete(false)
                         ->required(),
-                    Select::make('caseload_id')
-                        ->label('Caseload')
-                        ->translateLabel()
-                        ->options($user->caseloads()->pluck('name', 'id'))
-                        ->searchable()
-                        ->required(),
+                    Feature::active('enable-segments')
+                        ? Select::make('segment_id')
+                            ->label('Population Segment')
+                            ->options($user->segments()->pluck('name', 'id'))
+                            ->searchable()
+                            ->required()
+                        : Select::make('caseload_id')
+                            ->label('Population Segment')
+                            ->options($user->caseloads()->pluck('name', 'id'))
+                            ->searchable()
+                            ->required(),
                 ]),
             Step::make('Define Journey')
                 ->schema([

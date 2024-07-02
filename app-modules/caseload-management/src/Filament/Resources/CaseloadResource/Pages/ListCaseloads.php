@@ -50,7 +50,7 @@ use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource;
 
 class ListCaseloads extends ListRecords
 {
-    protected ?string $heading = 'Caseload Management';
+    protected ?string $heading = 'Population Segments';
 
     protected static string $resource = CaseloadResource::class;
 
@@ -80,7 +80,7 @@ class ListCaseloads extends ListRecords
             ])
             ->filters([
                 Filter::make('my_caseloads')
-                    ->label('My Caseloads')
+                    ->label('My Population Segments')
                     ->query(
                         fn ($query) => $query->where('user_id', auth()->id())
                     )

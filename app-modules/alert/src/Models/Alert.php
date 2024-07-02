@@ -38,6 +38,7 @@ namespace AdvisingApp\Alert\Models;
 
 use Exception;
 use App\Models\BaseModel;
+use Laravel\Pennant\Feature;
 use Illuminate\Support\Collection;
 use AdvisingApp\Alert\Enums\AlertStatus;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -121,16 +122,24 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {
         try {
-            $action->campaign->caseload->retrieveRecords()->each(function (Educatable $educatable) use ($action) {
-                Alert::create([
-                    'concern_type' => $educatable->getMorphClass(),
-                    'concern_id' => $educatable->getKey(),
-                    'description' => $action->data['description'],
-                    'severity' => $action->data['severity'],
-                    'status' => $action->data['status'],
-                    'suggested_intervention' => $action->data['suggested_intervention'],
-                ]);
-            });
+            $campaignRelation = Feature::active('enable-segments')
+                ? 'segment'
+                : 'caseload';
+
+            $action
+                ->campaign
+                ->{$campaignRelation}
+                ->retrieveRecords()
+                ->each(function (Educatable $educatable) use ($action) {
+                    Alert::create([
+                        'concern_type' => $educatable->getMorphClass(),
+                        'concern_id' => $educatable->getKey(),
+                        'description' => $action->data['description'],
+                        'severity' => $action->data['severity'],
+                        'status' => $action->data['status'],
+                        'suggested_intervention' => $action->data['suggested_intervention'],
+                    ]);
+                });
 
             return true;
         } catch (Exception $e) {
