@@ -77,7 +77,7 @@ class EditUser extends EditRecord
                             ->email()
                             ->required()
                             ->maxLength(255)
-                            ->unique()
+                            ->unique(ignoreRecord: true)
                             ->validationMessages([
                                 'unique' => 'An archived user with this email address already exists. Please contact an administrator to restore this user or use a different email address.',
                             ]),
