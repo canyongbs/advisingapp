@@ -38,9 +38,9 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use Illuminate\Support\Carbon;
 use App\Settings\DisplaySettings;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
 use Filament\Notifications\Notification;
-use Illuminate\Contracts\View\View;
 
 class RefreshWidget extends StatsOverviewReportWidget
 {
