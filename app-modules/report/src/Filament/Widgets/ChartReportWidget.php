@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,33 +32,31 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use Illuminate\Support\Facades\Cache;
-    use App\Settings\DisplaySettings;
-    use Carbon\Carbon;
-@endphp
-<x-filament-widgets::widget>
-    <div class="flex flex-col items-center md:flex-row">
-        <div class="flex-1">
-            <p class="text-xs">
-                This report was last updated at {{ $lastRefreshTime->format('l, F j, Y g:i A') }}.
-            </p>
-        </div>
+*/
 
-        <div class="flex-shrink-0">
+namespace AdvisingApp\Report\Filament\Widgets;
 
-            <x-filament::button
-                type="button"
-                color="gray"
-                icon="heroicon-m-arrow-path"
-                labeled-from="sm"
-                tag="button"
-                wire:click="removeWidgetCache('{{ $this->cacheTag }}')"
-            >
-                {{ 'Refresh' }}
-            </x-filament::button>
+use Filament\Widgets\ChartWidget;
+use Livewire\Attributes\On;
 
-        </div>
-    </div>
-</x-filament-widgets::widget>
+abstract class ChartReportWidget extends ChartWidget
+{
+    public string $cacheTag;
+
+    protected static ?string $pollingInterval = null;
+
+    protected static bool $isLazy = false;
+
+    public function mount($cacheTag = null): void
+    {
+        parent::mount();
+
+        $this->cacheTag = $cacheTag;
+    }
+
+    #[On('refresh-widgets')]
+    public function refreshWidget()
+    {
+        $this->dispatch('$refresh');
+    }
+}

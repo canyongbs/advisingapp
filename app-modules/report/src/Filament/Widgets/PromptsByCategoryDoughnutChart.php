@@ -36,36 +36,19 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Livewire\Attributes\On;
-use Filament\Widgets\ChartWidget;
 use AdvisingApp\Ai\Models\PromptType;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Collection;
 
-class PromptsByCategoryDoughnutChart extends ChartWidget
+class PromptsByCategoryDoughnutChart extends ChartReportWidget
 {
     protected static ?string $heading = 'Prompts by Category';
-
-    protected static ?string $pollingInterval = null;
-
-    public $pagePrefix;
 
     protected int | string | array $columnSpan = [
         'sm' => 1,
         'md' => 1,
         'lg' => 1,
     ];
-
-    public function mount($pagePrefix = ''): void
-    {
-        $this->pagePrefix = $pagePrefix;
-    }
-
-    #[On('refresh-widgets')]
-    public function refreshWidget()
-    {
-        $this->dispatch('$refresh');
-    }
 
     protected function getOptions(): array
     {
@@ -89,7 +72,7 @@ class PromptsByCategoryDoughnutChart extends ChartWidget
 
     protected function getData(): array
     {
-        $promptsByCategory = Cache::tags([$this->pagePrefix])->remember('prompt_by_category_chart', now()->addHours(24), function (): Collection {
+        $promptsByCategory = Cache::tags([$this->cacheTag])->remember('prompt_by_category_chart', now()->addHours(24), function (): Collection {
             $promptsByCategoryData = PromptType::withCount(['prompts'])->get(['id', 'title']);
 
             $promptsByCategoryData = $promptsByCategoryData->map(function (PromptType $promptType) {

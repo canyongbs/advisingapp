@@ -37,35 +37,18 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use Carbon\Carbon;
-use Livewire\Attributes\On;
 use AdvisingApp\Ai\Models\Prompt;
-use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Cache;
 
-class PromptsCreatedLineChart extends ChartWidget
+class PromptsCreatedLineChart extends ChartReportWidget
 {
     protected static ?string $heading = 'Prompts Created';
-
-    protected static ?string $pollingInterval = null;
-
-    public $pagePrefix;
 
     protected int | string | array $columnSpan = [
         'sm' => 1,
         'md' => 3,
         'lg' => 3,
     ];
-
-    public function mount($pagePrefix = ''): void
-    {
-        $this->pagePrefix = $pagePrefix;
-    }
-
-    #[On('refresh-widgets')]
-    public function refreshWidget()
-    {
-        $this->dispatch('$refresh');
-    }
 
     protected function getOptions(): array
     {
@@ -85,7 +68,7 @@ class PromptsCreatedLineChart extends ChartWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags([$this->pagePrefix])->remember('prompts_created_line_chart', now()->addHours(24), function (): array {
+        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('prompts_created_line_chart', now()->addHours(24), function (): array {
             $totalCreatedPerMonth = Prompt::query()
                 ->toBase()
                 ->selectRaw('date_trunc(\'month\', created_at) as month')

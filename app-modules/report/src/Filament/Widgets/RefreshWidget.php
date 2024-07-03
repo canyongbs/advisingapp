@@ -36,19 +36,17 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Illuminate\Support\Facades\Cache;
+use App\Settings\DisplaySettings;
 use Filament\Notifications\Notification;
-use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 
-class RefreshWidget extends BaseWidget
+class RefreshWidget extends StatsOverviewReportWidget
 {
-    public $pagePrefix;
-
-    protected $updatedTime;
+    
+    public Carbon $lastRefreshTime;
 
     protected static string $view = 'report::filament.pages.report-refresh-widgets';
-
-    protected static bool $isLazy = false;
 
     protected int | string | array $columnSpan = [
         'sm' => 4,
@@ -56,19 +54,30 @@ class RefreshWidget extends BaseWidget
         'lg' => 4,
     ];
 
-    public function mount($pagePrefix = 'test')
+    public function mount(string $cacheTag)
     {
-        $this->pagePrefix = $pagePrefix;
+        parent::mount($cacheTag);
+
+        $timezone = app(DisplaySettings::class)->getTimezone();
+
+        $this->lastRefreshTime = Carbon::parse(
+            Cache::tags([$this->cacheTag])->remember(
+                'updated-time',
+                now()->addHours(24),
+                fn () => now()
+            )
+        )->setTimezone($timezone);
     }
 
-    public function removeWidgetCache($pagePrefix)
+    public function removeWidgetCache($cacheTag)
     {
-        Cache::tags($pagePrefix)->flush();
+        Cache::tags([$cacheTag])->flush();
+
+        $this->dispatch('refresh-widgets');
+
         Notification::make()
-            ->title('Report Successfully refreshed')
+            ->title('Report successfully refreshed!')
             ->success()
             ->send();
-        Cache::tags([$pagePrefix])->put('updated-time', now());
-        $this->dispatch('refresh-widgets');
     }
 }
