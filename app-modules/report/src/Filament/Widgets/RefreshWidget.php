@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Livewire\Attributes\On;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Filament\Notifications\Notification;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;

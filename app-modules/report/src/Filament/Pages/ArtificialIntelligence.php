@@ -62,7 +62,7 @@ class ArtificialIntelligence extends Dashboard
 
     protected static ?int $navigationSort = 10;
 
-    protected $pagePrefix ='report-artificial-intelligence';
+    protected $pagePrefix = 'report-artificial-intelligence';
 
     public static function canAccess(): bool
     {
@@ -76,11 +76,11 @@ class ArtificialIntelligence extends Dashboard
     {
         return [
             RefreshWidget::make(['pagePrefix' => $this->pagePrefix]),
-            AiStats::make(['pagePrefix' =>  $this->pagePrefix]),
-            SavedConversationsLineChart::make(['pagePrefix' =>  $this->pagePrefix]),
-            SpecialActionsDoughnutChart::make(['pagePrefix' =>  $this->pagePrefix]),
-            PromptsByCategoryDoughnutChart::make(['pagePrefix' =>  $this->pagePrefix]),
-            PromptsCreatedLineChart::make(['pagePrefix' =>  $this->pagePrefix]),
+            AiStats::make(['pagePrefix' => $this->pagePrefix]),
+            SavedConversationsLineChart::make(['pagePrefix' => $this->pagePrefix]),
+            SpecialActionsDoughnutChart::make(['pagePrefix' => $this->pagePrefix]),
+            PromptsByCategoryDoughnutChart::make(['pagePrefix' => $this->pagePrefix]),
+            PromptsCreatedLineChart::make(['pagePrefix' => $this->pagePrefix]),
         ];
     }
 
