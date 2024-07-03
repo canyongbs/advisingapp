@@ -34,39 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Models;
 
-use OpenAI;
+use App\Models\BaseModel;
+use Spatie\MediaLibrary\HasMedia;
+use AdvisingApp\Ai\Models\Contracts\AiFile;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class OpenAiGptTestService extends BaseOpenAiService
+class AiAssistantFile extends BaseModel implements AiFile, HasMedia
 {
-    public function __construct()
+    use SoftDeletes;
+    use InteractsWithMedia;
+
+    protected $fillable = [
+        'file_id',
+        'message_id',
+        'mime_type',
+        'name',
+        'temporary_url',
+    ];
+
+    public function assistant(): BelongsTo
     {
-        $this->client = new OpenAI\Testing\ClientFake();
+        return $this->belongsTo(AiAssistant::class, 'assistant_id');
     }
 
-    public function supportsAssistantFileUploads(): bool
+    public function registerMediaCollections(): void
     {
-        return false;
-    }
-
-    public function getApiKey(): string
-    {
-        return 'test';
-    }
-
-    public function getApiVersion(): string
-    {
-        return '1.0.0';
-    }
-
-    public function getModel(): string
-    {
-        return 'test';
-    }
-
-    public function getDeployment(): ?string
-    {
-        return null;
+        $this->addMediaCollection('file')
+            ->singleFile();
     }
 }

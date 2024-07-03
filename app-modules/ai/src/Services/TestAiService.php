@@ -105,7 +105,12 @@ class TestAiService implements Contracts\AiService
         return null;
     }
 
-    public function supportsFileUploads(): bool
+    public function supportsMessageFileUploads(): bool
+    {
+        return true;
+    }
+
+    public function supportsAssistantFileUploads(): bool
     {
         return true;
     }

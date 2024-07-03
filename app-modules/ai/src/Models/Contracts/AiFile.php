@@ -34,39 +34,6 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Models\Contracts;
 
-use OpenAI;
-
-class OpenAiGptTestService extends BaseOpenAiService
-{
-    public function __construct()
-    {
-        $this->client = new OpenAI\Testing\ClientFake();
-    }
-
-    public function supportsAssistantFileUploads(): bool
-    {
-        return false;
-    }
-
-    public function getApiKey(): string
-    {
-        return 'test';
-    }
-
-    public function getApiVersion(): string
-    {
-        return '1.0.0';
-    }
-
-    public function getModel(): string
-    {
-        return 'test';
-    }
-
-    public function getDeployment(): ?string
-    {
-        return null;
-    }
-}
+interface AiFile {}

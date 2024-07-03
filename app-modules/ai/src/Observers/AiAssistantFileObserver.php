@@ -34,39 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Observers;
 
-use OpenAI;
+use AdvisingApp\Ai\Models\AiAssistantFile;
 
-class OpenAiGptTestService extends BaseOpenAiService
+class AiAssistantFileObserver
 {
-    public function __construct()
+    public function created(AiAssistantFile $file): void
     {
-        $this->client = new OpenAI\Testing\ClientFake();
+        /**
+         * For some reason an extra file is being created on the creation of an assistant
+         * So this is in place just to ensure that the file is deleted if it wasn't uploaded by the user
+         */
+        if (blank($file->temporary_url)) {
+            $file->forceDelete();
+        }
     }
 
-    public function supportsAssistantFileUploads(): bool
+    public function deleted(AiAssistantFile $file): void
     {
-        return false;
-    }
+        $service = $file->assistant->model->getService();
 
-    public function getApiKey(): string
-    {
-        return 'test';
-    }
-
-    public function getApiVersion(): string
-    {
-        return '1.0.0';
-    }
-
-    public function getModel(): string
-    {
-        return 'test';
-    }
-
-    public function getDeployment(): ?string
-    {
-        return null;
+        $service->deleteFile($file);
     }
 }

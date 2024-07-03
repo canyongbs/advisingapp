@@ -38,11 +38,12 @@ namespace AdvisingApp\Ai\Models;
 
 use App\Models\BaseModel;
 use Spatie\MediaLibrary\HasMedia;
+use AdvisingApp\Ai\Models\Contracts\AiFile;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class AiMessageFile extends BaseModel implements HasMedia
+class AiMessageFile extends BaseModel implements AiFile, HasMedia
 {
     use SoftDeletes;
     use InteractsWithMedia;

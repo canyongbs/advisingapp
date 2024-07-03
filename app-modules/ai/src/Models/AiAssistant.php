@@ -93,6 +93,11 @@ class AiAssistant extends BaseModel implements HasMedia
         return $this->hasMany(AiThread::class, 'assistant_id');
     }
 
+    public function files(): HasMany
+    {
+        return $this->hasMany(AiAssistantFile::class, 'assistant_id');
+    }
+
     public function upvotes(): HasMany
     {
         return $this->hasMany(AiAssistantUpvote::class, 'assistant_id');
@@ -126,5 +131,10 @@ class AiAssistant extends BaseModel implements HasMedia
         }
 
         $this->upvote();
+    }
+
+    public function isDefault(): bool
+    {
+        return $this->is_default;
     }
 }

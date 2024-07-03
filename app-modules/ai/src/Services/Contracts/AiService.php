@@ -101,7 +101,9 @@ interface AiService
 
     public function getMaxAssistantInstructionsLength(): int;
 
-    public function supportsFileUploads(): bool;
+    public function supportsMessageFileUploads(): bool;
+
+    public function supportsAssistantFileUploads(): bool;
 
     public function getDeployment(): ?string;
 }

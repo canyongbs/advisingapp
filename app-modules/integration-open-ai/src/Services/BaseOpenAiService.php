@@ -49,13 +49,18 @@ use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
+use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\AssistantsDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\FileSearchDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\ToolResourcesDataTransferObject;
 
 abstract class BaseOpenAiService implements AiService
 {
     use HasAiServiceHelpers;
+    use UploadsFiles;
 
     public const FORMATTING_INSTRUCTIONS = 'When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.';
 
@@ -97,6 +102,26 @@ abstract class BaseOpenAiService implements AiService
             'instructions' => $this->generateAssistantInstructions($assistant),
             'name' => $assistant->name,
             'model' => $this->getModel(),
+        ]);
+    }
+
+    public function retrieveAssistant(AiAssistant $assistant): AssistantsDataTransferObject
+    {
+        $response = $this->client->assistants()->retrieve($assistant->assistant_id);
+
+        return AssistantsDataTransferObject::from([
+            'id' => $response->id,
+            'name' => $response->name,
+            'description' => $response->description,
+            'model' => $response->model,
+            'instructions' => $response->instructions,
+            'tools' => $response->tools,
+            'toolResources' => ToolResourcesDataTransferObject::from([
+                'codeInterpreter' => $response->toolResources->codeInterpreter ?? null,
+                'fileSearch' => FileSearchDataTransferObject::from([
+                    'vectorStoreIds' => $response->toolResources->fileSearch->vectorStoreIds ?? [],
+                ]),
+            ]),
         ]);
     }
 
@@ -444,9 +469,14 @@ abstract class BaseOpenAiService implements AiService
         return filled($thread->thread_id);
     }
 
-    public function supportsFileUploads(): bool
+    public function supportsMessageFileUploads(): bool
     {
         return false;
+    }
+
+    public function supportsAssistantFileUploads(): bool
+    {
+        return true;
     }
 
     protected function awaitThreadRunCompletion(ThreadRunResponse $threadRunResponse): void

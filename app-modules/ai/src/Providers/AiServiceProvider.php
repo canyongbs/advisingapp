@@ -43,16 +43,21 @@ use AdvisingApp\Ai\Models\AiThread;
 use App\Concerns\ImplementsGraphQL;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\PromptType;
+use Illuminate\Support\Facades\Event;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThreadFolder;
+use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Observers\PromptObserver;
 use AdvisingApp\Ai\Registries\AiRbacRegistry;
 use AdvisingApp\Ai\Observers\AiMessageObserver;
 use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Ai\Observers\AiAssistantFileObserver;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
+use AdvisingApp\Ai\Listeners\HandleAssistantFilesFinishedUploading;
 
 class AiServiceProvider extends ServiceProvider
 {
@@ -66,6 +71,7 @@ class AiServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([
+            'ai_assistant_file' => AiAssistantFile::class,
             'ai_assistant' => AiAssistant::class,
             'ai_message_file' => AiMessageFile::class,
             'ai_message' => AiMessage::class,
@@ -77,14 +83,27 @@ class AiServiceProvider extends ServiceProvider
 
         $this->registerObservers();
 
+        $this->registerEvents();
+
         AuthorizationRoleRegistry::register(AiRbacRegistry::class);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
+
+        $this->mergeConfigFrom(__DIR__ . '/../../config/ai.php', 'ai');
+    }
+
+    protected function registerEvents(): void
+    {
+        Event::listen(
+            AssistantFilesFinishedUploading::class,
+            HandleAssistantFilesFinishedUploading::class
+        );
     }
 
     protected function registerObservers(): void
     {
         AiAssistant::observe(AiAssistantObserver::class);
+        AiAssistantFile::observe(AiAssistantFileObserver::class);
         AiMessage::observe(AiMessageObserver::class);
         Prompt::observe(PromptObserver::class);
     }

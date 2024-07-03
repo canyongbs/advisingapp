@@ -34,39 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants;
 
-use OpenAI;
+use Spatie\LaravelData\Data;
 
-class OpenAiGptTestService extends BaseOpenAiService
+class AssistantsDataTransferObject extends Data
 {
-    public function __construct()
-    {
-        $this->client = new OpenAI\Testing\ClientFake();
-    }
-
-    public function supportsAssistantFileUploads(): bool
-    {
-        return false;
-    }
-
-    public function getApiKey(): string
-    {
-        return 'test';
-    }
-
-    public function getApiVersion(): string
-    {
-        return '1.0.0';
-    }
-
-    public function getModel(): string
-    {
-        return 'test';
-    }
-
-    public function getDeployment(): ?string
-    {
-        return null;
-    }
+    public function __construct(
+        public string $id,
+        public string $name,
+        public ?string $description,
+        public string $model,
+        public string $instructions,
+        public array $tools,
+        public ToolResourcesDataTransferObject $toolResources,
+    ) {}
 }

@@ -34,39 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Events;
 
-use OpenAI;
+use App\Models\User;
+use AdvisingApp\Ai\Enums\AiModel;
+use Illuminate\Support\Collection;
+use AdvisingApp\Ai\Models\AiAssistant;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Broadcasting\InteractsWithSockets;
 
-class OpenAiGptTestService extends BaseOpenAiService
+class AssistantFilesFinishedUploading
 {
-    public function __construct()
-    {
-        $this->client = new OpenAI\Testing\ClientFake();
-    }
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
-    public function supportsAssistantFileUploads(): bool
-    {
-        return false;
-    }
-
-    public function getApiKey(): string
-    {
-        return 'test';
-    }
-
-    public function getApiVersion(): string
-    {
-        return '1.0.0';
-    }
-
-    public function getModel(): string
-    {
-        return 'test';
-    }
-
-    public function getDeployment(): ?string
-    {
-        return null;
-    }
+    public function __construct(
+        public User $user,
+        public AiModel $model,
+        public AiAssistant $assistant,
+        public Collection $files,
+    ) {}
 }
