@@ -40,6 +40,7 @@ use Illuminate\Support\Carbon;
 use App\Settings\DisplaySettings;
 use Illuminate\Support\Facades\Cache;
 use Filament\Notifications\Notification;
+use Illuminate\Contracts\View\View;
 
 class RefreshWidget extends StatsOverviewReportWidget
 {
@@ -53,10 +54,8 @@ class RefreshWidget extends StatsOverviewReportWidget
         'lg' => 4,
     ];
 
-    public function mount(string $cacheTag)
+    public function render(): View
     {
-        parent::mount($cacheTag);
-
         $timezone = app(DisplaySettings::class)->getTimezone();
 
         $this->lastRefreshTime = Carbon::parse(
@@ -66,6 +65,8 @@ class RefreshWidget extends StatsOverviewReportWidget
                 fn () => now()
             )
         )->setTimezone($timezone);
+
+        return parent::render();
     }
 
     public function removeWidgetCache($cacheTag)
