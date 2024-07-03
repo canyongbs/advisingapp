@@ -49,6 +49,8 @@ class EditBasicNeedsProgram extends EditRecord
 {
     protected static string $resource = BasicNeedsProgramResource::class;
 
+    protected static ?string $navigationLabel = 'Edit';
+
     public function form(Form $form): Form
     {
         return $form

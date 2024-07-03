@@ -39,6 +39,9 @@ use Filament\Actions\DeleteAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+
+use Filament\Tables\Actions\AttachAction;
+
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertSoftDeleted;
 
@@ -46,6 +49,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ManageStudents;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\EditBasicNeedsProgram;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ListBasicNeedsPrograms;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\CreateBasicNeedsProgram;
@@ -349,4 +353,40 @@ it('can filter basic needs program by `program category`', function () {
         ->filterTable('basic_category_id', $basic_needs_category_id)
         ->assertCanSeeTableRecords($basicNeedsPrograms->where('basic_needs_category_id', $basic_needs_category_id))
         ->assertCanNotSeeTableRecords($basicNeedsPrograms->where('basic_needs_category_id', '!=', $basic_needs_category_id));
+});
+
+it('can render manage student page for basic needs program', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    actingAs($user)
+        ->get(BasicNeedsProgramResource::getUrl('students', [
+            'record' => BasicNeedsProgram::factory()->create(),
+        ]))->assertForbidden();
+
+    $user->givePermissionTo('basic_needs_program.view-any');
+    $user->givePermissionTo('student.view-any');
+
+    actingAs($user)
+        ->get(BasicNeedsProgramResource::getUrl('students', [
+            'record' => BasicNeedsProgram::factory()->create(),
+        ]))->assertSuccessful();
+});
+
+it('can attach a student to basic needs program', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+    $basicNeedsProgram = BasicNeedsProgram::factory()->create();
+    $student = Student::factory()->create();
+
+    $user->givePermissionTo('basic_needs_program.view-any');
+    $user->givePermissionTo('student.view-any');
+
+    actingAs($user);
+
+    livewire(ManageStudents::class, [
+        'record' => $basicNeedsProgram->getRouteKey(),
+    ])
+        ->callTableAction(
+            AttachAction::class,
+            data: ['recordId' => $student->getKey()]
+        )->assertSuccessful();
 });
