@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Filament\Widgets\ChartWidget;
 use Livewire\Attributes\On;
+use Filament\Widgets\ChartWidget;
 
 abstract class ChartReportWidget extends ChartWidget
 {

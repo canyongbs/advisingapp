@@ -36,14 +36,13 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use App\Settings\DisplaySettings;
-use Filament\Notifications\Notification;
 use Illuminate\Support\Carbon;
+use App\Settings\DisplaySettings;
 use Illuminate\Support\Facades\Cache;
+use Filament\Notifications\Notification;
 
 class RefreshWidget extends StatsOverviewReportWidget
 {
-    
     public Carbon $lastRefreshTime;
 
     protected static string $view = 'report::filament.pages.report-refresh-widgets';
