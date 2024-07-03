@@ -47,111 +47,111 @@ use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
 
 it('show trashed filter only if user has user restore permission', function () {
-  $user = User::factory()->create();
+    $user = User::factory()->create();
 
-  $user->givePermissionTo('user.view-any', 'user.*.view', 'user.*.restore');
-  actingAs($user);
+    $user->givePermissionTo('user.view-any', 'user.*.view', 'user.*.restore');
+    actingAs($user);
 
-  livewire(ListUsers::class)
-    ->assertTableFilterExists(TrashedFilter::class);
+    livewire(ListUsers::class)
+        ->assertTableFilterExists(TrashedFilter::class);
 });
 
 it('do not show soft deleted users when filter is not selected', function () {
-  asSuperAdmin();
-  $users = User::factory()->count(3)->create();
+    asSuperAdmin();
+    $users = User::factory()->count(3)->create();
 
-  // Soft-delete one of the users
-  $softDeletedUser = $users->first();
-  $softDeletedUser->delete();
-  $nonDeletedUserRecords = User::get();
-  $softDeletedUserRecords = User::onlyTrashed()->get();
+    // Soft-delete one of the users
+    $softDeletedUser = $users->first();
+    $softDeletedUser->delete();
+    $nonDeletedUserRecords = User::get();
+    $softDeletedUserRecords = User::onlyTrashed()->get();
 
-  livewire(ListUsers::class)
-    ->removeTableFilters()
-    ->assertCanSeeTableRecords($nonDeletedUserRecords)
-    ->assertCanNotSeeTableRecords($softDeletedUserRecords);
+    livewire(ListUsers::class)
+        ->removeTableFilters()
+        ->assertCanSeeTableRecords($nonDeletedUserRecords)
+        ->assertCanNotSeeTableRecords($softDeletedUserRecords);
 });
 
 it('can see soft deleted, non soft deleted records and status column only if the filter is on', function () {
-  asSuperAdmin();
-  $users = User::factory()->count(3)->create();
+    asSuperAdmin();
+    $users = User::factory()->count(3)->create();
 
-  // Soft-delete one of the users
-  $softDeletedUser = $users->first();
-  $softDeletedUser->delete();
+    // Soft-delete one of the users
+    $softDeletedUser = $users->first();
+    $softDeletedUser->delete();
 
-  livewire(ListUsers::class)
-    ->filterTable(TrashedFilter::class)
-    ->assertTableColumnExists('deleted_at')
-    ->assertCanSeeTableRecords($users);
+    livewire(ListUsers::class)
+        ->filterTable(TrashedFilter::class)
+        ->assertTableColumnExists('deleted_at')
+        ->assertCanSeeTableRecords($users);
 });
 
 it('Show restore action only if user has permission to restore user', function () {
-  $user = User::factory()->create();
+    $user = User::factory()->create();
 
-  $user->givePermissionTo('user.view-any', 'user.*.view', 'user.*.restore');
-  actingAs($user);
+    $user->givePermissionTo('user.view-any', 'user.*.view', 'user.*.restore');
+    actingAs($user);
 
-  $users = User::factory()->count(3)->create();
+    $users = User::factory()->count(3)->create();
 
-  // Soft-delete one of the users
-  $softDeletedUser = $users->first();
-  $softDeletedUser->delete();
-  $softDeletedUserRecords = User::onlyTrashed()->get();
+    // Soft-delete one of the users
+    $softDeletedUser = $users->first();
+    $softDeletedUser->delete();
+    $softDeletedUserRecords = User::onlyTrashed()->get();
 
-  livewire(ListUsers::class)
-    ->filterTable(TrashedFilter::class, 0)
-    ->assertCanSeeTableRecords($softDeletedUserRecords)
-    ->assertTableActionExists(RestoreAction::class);
+    livewire(ListUsers::class)
+        ->filterTable(TrashedFilter::class, 0)
+        ->assertCanSeeTableRecords($softDeletedUserRecords)
+        ->assertTableActionExists(RestoreAction::class);
 });
 
 it('check if restore feature works as expected', function () {
-  asSuperAdmin();
-  $user = User::factory()->create();
+    asSuperAdmin();
+    $user = User::factory()->create();
 
-  // Soft-delete the user
-  $user->delete();
-  $softDeletedUserRecord = User::onlyTrashed()->get();
-  $trashedUserRecord = User::onlyTrashed()->first();
+    // Soft-delete the user
+    $user->delete();
+    $softDeletedUserRecord = User::onlyTrashed()->get();
+    $trashedUserRecord = User::onlyTrashed()->first();
 
-  livewire(ListUsers::class)
-    ->filterTable(TrashedFilter::class, 0)
-    ->assertCanSeeTableRecords($softDeletedUserRecord)
-    ->callTableAction(RestoreAction::class, $trashedUserRecord);
+    livewire(ListUsers::class)
+        ->filterTable(TrashedFilter::class, 0)
+        ->assertCanSeeTableRecords($softDeletedUserRecord)
+        ->callTableAction(RestoreAction::class, $trashedUserRecord);
 
-  expect($user->refresh())->deleted_at->toBe(null);
+    expect($user->refresh())->deleted_at->toBe(null);
 });
 
 it('check if email unique validations works properly while creating new user', function () {
-  asSuperAdmin();
-  $user = User::factory()->create();
+    asSuperAdmin();
+    $user = User::factory()->create();
 
-  // Soft-delete the user
-  $user->delete();
+    // Soft-delete the user
+    $user->delete();
 
-  livewire(CreateUser::class)
-    ->fillForm([
-      'name' => 'Tester',
-      'email' => $user->email,
-    ])
-    ->call('create')
-    ->assertHasFormErrors(['email' => 'unique']);
+    livewire(CreateUser::class)
+        ->fillForm([
+            'name' => 'Tester',
+            'email' => $user->email,
+        ])
+        ->call('create')
+        ->assertHasFormErrors(['email' => 'unique']);
 });
 
 it('check if email unique validations works properly while editing user', function () {
-  asSuperAdmin();
-  $first = User::factory()->create();
-  $second = User::factory()->create();
+    asSuperAdmin();
+    $first = User::factory()->create();
+    $second = User::factory()->create();
 
-  // Soft-delete the user
-  $first->delete();
+    // Soft-delete the user
+    $first->delete();
 
-  livewire(EditUser::class, [
-    'record' => $second->getRouteKey(),
-  ])
-    ->fillForm([
-      'email' => $first->email,
+    livewire(EditUser::class, [
+        'record' => $second->getRouteKey(),
     ])
-    ->call('save')
-    ->assertHasFormErrors(['email' => 'unique']);
+        ->fillForm([
+            'email' => $first->email,
+        ])
+        ->call('save')
+        ->assertHasFormErrors(['email' => 'unique']);
 });
