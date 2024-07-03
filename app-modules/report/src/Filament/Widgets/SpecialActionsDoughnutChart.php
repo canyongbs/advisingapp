@@ -73,14 +73,10 @@ class SpecialActionsDoughnutChart extends ChartReportWidget
     protected function getData(): array
     {
         $emailCount = Cache::tags([$this->cacheTag])->remember('emailed_count', now()->addHours(24), function (): int {
-            $emailDataCount = AiThread::sum('emailed_count');
-
-            return $emailDataCount;
+            return AiThread::sum('emailed_count');
         });
         $cloneCount = Cache::tags([$this->cacheTag])->remember('cloned_count', now()->addHours(24), function (): int {
-            $cloneDataCount = AiThread::sum('cloned_count');
-
-            return $cloneDataCount;
+            return AiThread::sum('cloned_count');
         });
 
         return [
