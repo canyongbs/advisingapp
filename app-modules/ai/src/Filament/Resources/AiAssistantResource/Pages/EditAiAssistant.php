@@ -106,6 +106,17 @@ class EditAiAssistant extends EditRecord
             });
     }
 
+    public static function canAccess(array $parameters = []): bool
+    {
+        $assistant = $parameters['record'];
+
+        if ($assistant->is_default == true) {
+            return false;
+        }
+
+        return parent::canAccess();
+    }
+
     protected function getHeaderActions(): array
     {
         return [

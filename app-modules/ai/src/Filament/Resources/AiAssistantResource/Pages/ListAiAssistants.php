@@ -77,7 +77,8 @@ class ListAiAssistants extends ListRecords
                 EditAction::make(),
             ])
             ->emptyStateHeading('No AI Assistants')
-            ->emptyStateDescription('Add a new custom AI Assistant by clicking the "Create AI Assistant" button above.');
+            ->emptyStateDescription('Add a new custom AI Assistant by clicking the "Create AI Assistant" button above.')
+            ->modifyQueryUsing(fn (Builder $query) => $query->whereisDefault(false));
     }
 
     protected function getHeaderActions(): array
