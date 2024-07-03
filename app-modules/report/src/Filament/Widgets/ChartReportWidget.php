@@ -34,34 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report;
+namespace AdvisingApp\Report\Filament\Widgets;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use Livewire\Attributes\On;
+use Filament\Widgets\ChartWidget;
 
-class ReportPlugin implements Plugin
+abstract class ChartReportWidget extends ChartWidget
 {
-    public function getId(): string
+    public string $cacheTag;
+
+    protected static ?string $pollingInterval = null;
+
+    protected static bool $isLazy = false;
+
+    public function mount($cacheTag = null): void
     {
-        return 'report';
+        parent::mount();
+
+        $this->cacheTag = $cacheTag;
     }
 
-    public function register(Panel $panel): void
+    #[On('refresh-widgets')]
+    public function refreshWidget()
     {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Report\\Filament\\Resources'
-            )
-            ->discoverPages(
-                in: __DIR__ . '/Filament/Pages',
-                for: 'AdvisingApp\\Report\\Filament\\Pages'
-            )
-            ->discoverWidgets(
-                in: __DIR__ . '/Filament/Widgets',
-                for: 'AdvisingApp\\Report\\Filament\\Widgets'
-            );
+        $this->dispatch('$refresh');
     }
-
-    public function boot(Panel $panel): void {}
 }

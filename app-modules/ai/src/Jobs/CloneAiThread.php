@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Jobs;
 
 use App\Models\User;
+use Laravel\Pennant\Feature;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use AdvisingApp\Ai\Models\AiThread;
@@ -67,7 +68,12 @@ class CloneAiThread implements ShouldQueue
 
     public function handle(): void
     {
-        $threadReplica = $this->thread->replicate(except: ['id', 'thread_id', 'folder_id']);
+        if (Feature::active('ai_utilization')) {
+            $threadReplica = $this->thread->replicate(except: ['id', 'thread_id', 'folder_id', 'saved_at', 'emailed_count', 'cloned_count']);
+            $threadReplica->saved_at = now();
+        } else {
+            $threadReplica = $this->thread->replicate(except: ['id', 'thread_id', 'folder_id']);
+        }
         $threadReplica->user()->associate($this->recipient);
         $threadReplica->save();
 
@@ -81,6 +87,11 @@ class CloneAiThread implements ShouldQueue
 
         $threadReplica->locked_at = now();
         $threadReplica->save();
+
+        if (Feature::active('ai_utilization')) {
+            $this->thread->cloned_count = $this->thread->cloned_count + 1;
+            $this->thread->save();
+        }
 
         try {
             $aiService->ensureAssistantAndThreadExists($threadReplica->assistant);

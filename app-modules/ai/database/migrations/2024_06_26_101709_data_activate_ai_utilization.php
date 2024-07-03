@@ -34,34 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
-
-class ReportPlugin implements Plugin
-{
-    public function getId(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'report';
+        Feature::activate('ai_utilization');
     }
 
-    public function register(Panel $panel): void
+    public function down(): void
     {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Report\\Filament\\Resources'
-            )
-            ->discoverPages(
-                in: __DIR__ . '/Filament/Pages',
-                for: 'AdvisingApp\\Report\\Filament\\Pages'
-            )
-            ->discoverWidgets(
-                in: __DIR__ . '/Filament/Widgets',
-                for: 'AdvisingApp\\Report\\Filament\\Widgets'
-            );
+        Feature::deactivate('ai_utilization');
     }
-
-    public function boot(Panel $panel): void {}
-}
+};

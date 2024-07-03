@@ -34,34 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
-
-class ReportPlugin implements Plugin
-{
-    public function getId(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'report';
+        $aiThreads = DB::table('ai_threads')->whereNotNull('name')->whereNull('saved_at')->get();
+
+        $aiThreads->each(function ($thread, $key) {
+            DB::table('ai_threads')->where('id', $thread->id)->update(['saved_at' => $thread->updated_at]);
+        });
     }
 
-    public function register(Panel $panel): void
+    public function down(): void
     {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Report\\Filament\\Resources'
-            )
-            ->discoverPages(
-                in: __DIR__ . '/Filament/Pages',
-                for: 'AdvisingApp\\Report\\Filament\\Pages'
-            )
-            ->discoverWidgets(
-                in: __DIR__ . '/Filament/Widgets',
-                for: 'AdvisingApp\\Report\\Filament\\Widgets'
-            );
-    }
+        $aiThreads = DB::table('ai_threads')->whereNotNull('name')->whereNotNull('saved_at')->get();
 
-    public function boot(Panel $panel): void {}
-}
+        $aiThreads->each(function ($thread, $key) {
+            DB::table('ai_threads')->where('id', $thread->id)->update(['saved_at' => null]);
+        });
+    }
+};

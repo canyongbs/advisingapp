@@ -34,34 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
-
-class ReportPlugin implements Plugin
-{
-    public function getId(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'report';
+        Schema::table('ai_threads', function (Blueprint $table) {
+            $table->dateTime('saved_at')->nullable();
+            $table->integer('cloned_count')->default(0);
+            $table->integer('emailed_count')->default(0);
+        });
     }
 
-    public function register(Panel $panel): void
+    public function down(): void
     {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Report\\Filament\\Resources'
-            )
-            ->discoverPages(
-                in: __DIR__ . '/Filament/Pages',
-                for: 'AdvisingApp\\Report\\Filament\\Pages'
-            )
-            ->discoverWidgets(
-                in: __DIR__ . '/Filament/Widgets',
-                for: 'AdvisingApp\\Report\\Filament\\Widgets'
-            );
+        Schema::table('ai_threads', function (Blueprint $table) {
+            $table->dropColumn('saved_at');
+            $table->dropColumn('cloned_count');
+            $table->dropColumn('emailed_count');
+        });
     }
-
-    public function boot(Panel $panel): void {}
-}
+};

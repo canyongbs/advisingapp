@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,27 +30,33 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use Illuminate\Support\Facades\Cache;
+    use App\Settings\DisplaySettings;
+    use Carbon\Carbon;
+@endphp
+<x-filament-widgets::widget>
+    <div class="flex flex-col items-center md:flex-row">
+        <div class="flex-1">
+            <p class="text-xs">
+                This report was last updated at {{ $lastRefreshTime->format('l, F j, Y g:i A') }}.
+            </p>
+        </div>
 
-namespace AdvisingApp\Report\Filament\Pages;
+        <div class="flex-shrink-0">
 
-use Filament\Pages\Page;
+            <x-filament::button
+                type="button"
+                color="gray"
+                icon="heroicon-m-arrow-path"
+                labeled-from="sm"
+                tag="button"
+                wire:click="removeWidgetCache('{{ $this->cacheTag }}')"
+            >
+                {{ 'Refresh' }}
+            </x-filament::button>
 
-class ReportLibrary extends Page
-{
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
-
-    protected static string $view = 'filament.pages.coming-soon';
-
-    protected static ?string $navigationGroup = 'Reporting';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can('report-library.view-any');
-    }
-}
+        </div>
+    </div>
+</x-filament-widgets::widget>

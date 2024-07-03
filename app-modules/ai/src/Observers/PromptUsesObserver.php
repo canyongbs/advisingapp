@@ -34,34 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report;
+namespace AdvisingApp\Ai\Observers;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use Laravel\Pennant\Feature;
+use AdvisingApp\Ai\Models\PromptUse;
+use Illuminate\Support\Facades\Cache;
 
-class ReportPlugin implements Plugin
+class PromptUsesObserver
 {
-    public function getId(): string
+    public function saved(PromptUse $promptUse): void
     {
-        return 'report';
+        if (Feature::active('ai_utilization')) {
+            Cache::forget('prompts-insertions-count');
+        }
     }
-
-    public function register(Panel $panel): void
-    {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Report\\Filament\\Resources'
-            )
-            ->discoverPages(
-                in: __DIR__ . '/Filament/Pages',
-                for: 'AdvisingApp\\Report\\Filament\\Pages'
-            )
-            ->discoverWidgets(
-                in: __DIR__ . '/Filament/Widgets',
-                for: 'AdvisingApp\\Report\\Filament\\Widgets'
-            );
-    }
-
-    public function boot(Panel $panel): void {}
 }

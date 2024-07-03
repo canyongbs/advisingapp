@@ -34,34 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report;
+namespace AdvisingApp\Report\Filament\Widgets;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use Illuminate\Support\Number;
+use AdvisingApp\Ai\Models\PromptUse;
+use Illuminate\Support\Facades\Cache;
+use AdvisingApp\Ai\Models\PromptUpvote;
+use AdvisingApp\Authorization\Models\License;
+use Filament\Widgets\StatsOverviewWidget\Stat;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
-class ReportPlugin implements Plugin
+class AiStats extends StatsOverviewReportWidget
 {
-    public function getId(): string
-    {
-        return 'report';
-    }
+    protected int | string | array $columnSpan = [
+        'sm' => 2,
+        'md' => 4,
+        'lg' => 4,
+    ];
 
-    public function register(Panel $panel): void
+    protected function getStats(): array
     {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Report\\Filament\\Resources'
-            )
-            ->discoverPages(
-                in: __DIR__ . '/Filament/Pages',
-                for: 'AdvisingApp\\Report\\Filament\\Pages'
-            )
-            ->discoverWidgets(
-                in: __DIR__ . '/Filament/Widgets',
-                for: 'AdvisingApp\\Report\\Filament\\Widgets'
-            );
+        return [
+            Stat::make('AI Users', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('ai-users-count', now()->addHours(24), function (): int {
+                    return License::where('type', LicenseType::ConversationalAi)->count();
+                }),
+                maxPrecision: 2,
+            )),
+            Stat::make('Prompts Liked', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('prompts-liked-count', now()->addHours(24), function (): int {
+                    return PromptUpvote::count();
+                }),
+                maxPrecision: 2,
+            )),
+            Stat::make('Prompt Insertions', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('prompts-insertions-count', now()->addHours(24), function (): int {
+                    return PromptUse::count();
+                }),
+                maxPrecision: 2,
+            )),
+        ];
     }
-
-    public function boot(Panel $panel): void {}
 }

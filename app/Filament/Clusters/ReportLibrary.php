@@ -34,34 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report;
+namespace App\Filament\Clusters;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use Filament\Clusters\Cluster;
 
-class ReportPlugin implements Plugin
+class ReportLibrary extends Cluster
 {
-    public function getId(): string
-    {
-        return 'report';
-    }
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    public function register(Panel $panel): void
-    {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Report\\Filament\\Resources'
-            )
-            ->discoverPages(
-                in: __DIR__ . '/Filament/Pages',
-                for: 'AdvisingApp\\Report\\Filament\\Pages'
-            )
-            ->discoverWidgets(
-                in: __DIR__ . '/Filament/Widgets',
-                for: 'AdvisingApp\\Report\\Filament\\Widgets'
-            );
-    }
+    protected static ?string $navigationGroup = 'Reporting';
 
-    public function boot(Panel $panel): void {}
+    protected static ?int $navigationSort = 111;
 }

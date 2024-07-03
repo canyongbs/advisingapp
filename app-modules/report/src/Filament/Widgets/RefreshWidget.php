@@ -34,34 +34,50 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report;
+namespace AdvisingApp\Report\Filament\Widgets;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use Illuminate\Support\Carbon;
+use App\Settings\DisplaySettings;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Cache;
+use Filament\Notifications\Notification;
 
-class ReportPlugin implements Plugin
+class RefreshWidget extends StatsOverviewReportWidget
 {
-    public function getId(): string
+    public Carbon $lastRefreshTime;
+
+    protected static string $view = 'report::filament.pages.report-refresh-widgets';
+
+    protected int | string | array $columnSpan = [
+        'sm' => 4,
+        'md' => 4,
+        'lg' => 4,
+    ];
+
+    public function render(): View
     {
-        return 'report';
+        $timezone = app(DisplaySettings::class)->getTimezone();
+
+        $this->lastRefreshTime = Carbon::parse(
+            Cache::tags([$this->cacheTag])->remember(
+                'updated-time',
+                now()->addHours(24),
+                fn () => now()
+            )
+        )->setTimezone($timezone);
+
+        return parent::render();
     }
 
-    public function register(Panel $panel): void
+    public function removeWidgetCache($cacheTag)
     {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Report\\Filament\\Resources'
-            )
-            ->discoverPages(
-                in: __DIR__ . '/Filament/Pages',
-                for: 'AdvisingApp\\Report\\Filament\\Pages'
-            )
-            ->discoverWidgets(
-                in: __DIR__ . '/Filament/Widgets',
-                for: 'AdvisingApp\\Report\\Filament\\Widgets'
-            );
-    }
+        Cache::tags([$cacheTag])->flush();
 
-    public function boot(Panel $panel): void {}
+        $this->dispatch('refresh-widgets');
+
+        Notification::make()
+            ->title('Report successfully refreshed!')
+            ->success()
+            ->send();
+    }
 }
