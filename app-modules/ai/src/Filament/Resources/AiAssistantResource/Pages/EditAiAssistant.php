@@ -106,11 +106,12 @@ class EditAiAssistant extends EditRecord
             });
     }
 
+    /** @var AiAssistant $assistant */
     public static function canAccess(array $parameters = []): bool
     {
         $assistant = $parameters['record'];
 
-        if ($assistant->is_default == true) {
+        if ($assistant->is_default) {
             return false;
         }
 
