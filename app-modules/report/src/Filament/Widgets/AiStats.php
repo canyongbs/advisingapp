@@ -14,7 +14,7 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
 class AiStats extends BaseWidget
 {
-    protected $pagePrefix;
+    public $pagePrefix;
 
     protected static ?string $pollingInterval = null;
 

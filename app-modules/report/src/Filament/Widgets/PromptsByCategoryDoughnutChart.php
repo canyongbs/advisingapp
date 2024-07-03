@@ -14,7 +14,7 @@ class PromptsByCategoryDoughnutChart extends ChartWidget
 
     protected static ?string $pollingInterval = null;
 
-    protected $pagePrefix;
+    public $pagePrefix;
 
     protected int | string | array $columnSpan = [
         'sm' => 1,

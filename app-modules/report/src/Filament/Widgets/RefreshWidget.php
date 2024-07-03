@@ -2,14 +2,15 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use Livewire\Attributes\On;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Filament\Notifications\Notification;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Livewire\Attributes\On;
 
 class RefreshWidget extends BaseWidget
 {
-    protected $pagePrefix;
+    public $pagePrefix;
 
     protected $updatedTime;
 
@@ -23,25 +24,19 @@ class RefreshWidget extends BaseWidget
         'lg' => 4,
     ];
 
-    public function mount($pagePrefix = '')
+    public function mount($pagePrefix = 'test')
     {
         $this->pagePrefix = $pagePrefix;
     }
-    #[On('refresh-widgets')]
-    public function refreshWidget()
-    {
-        Cache::tags([$this->pagePrefix])->add('updated-time', now());
-        $this->dispatch('$refresh');
 
-    }
     public function removeWidgetCache($pagePrefix)
     {
         Cache::tags($pagePrefix)->flush();
         Notification::make()
-            ->title('Report Successfully refreshed' . now())
+            ->title('Report Successfully refreshed')
             ->success()
             ->send();
-
+        Cache::tags([$pagePrefix])->put('updated-time', now());
         $this->dispatch('refresh-widgets');
     }
 }

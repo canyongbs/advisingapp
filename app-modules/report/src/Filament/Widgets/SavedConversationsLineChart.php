@@ -12,7 +12,7 @@ class SavedConversationsLineChart extends ChartWidget
 {
     protected static ?string $heading = 'Saved Conversations';
 
-    protected $pagePrefix;
+    public $pagePrefix;
 
     protected static ?string $pollingInterval = null;
 
