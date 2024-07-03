@@ -8,8 +8,8 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::create('basic_needs_program_student', function (Blueprint $table) {
-            $table->foreignUuid('basic_needs_program_id')->constrained('basic_needs_programs')->restrictOnDelete();
-            $table->string('student_sisid')->constrained('students', 'sisid')->restrictOnDelete();
+            $table->foreignUuid('basic_needs_program_id')->constrained('basic_needs_programs')->cascadeOnDelete();
+            $table->string('student_id')->constrained('students', 'sisid')->cascadeOnDelete();
             $table->timestamps();
         });
     }

@@ -8,9 +8,9 @@ use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 
-abstract class StudentsRelationManager extends ManageRelatedRecords
+class StudentsRelationManager extends RelationManager
 {
     protected static string $relationship = 'students';
 

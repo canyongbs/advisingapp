@@ -7,10 +7,10 @@ use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
-use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Tables\Columns\OpenSearch\TextColumn;
+use Filament\Resources\RelationManagers\RelationManager;
 
-abstract class BasicNeedsProgramsRelationManager extends ManageRelatedRecords
+class BasicNeedsProgramsRelationManager extends RelationManager
 {
     protected static string $relationship = 'basicNeedsPrograms';
 

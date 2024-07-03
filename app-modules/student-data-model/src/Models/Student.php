@@ -283,7 +283,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function basicNeedsPrograms(): BelongsToMany
     {
-        return $this->belongsToMany(BasicNeedsProgram::class, 'basic_needs_program_student')->withTimestamps();
+        return $this->belongsToMany(BasicNeedsProgram::class, 'basic_needs_program_student', 'student_id', 'basic_needs_program_id')->withTimestamps();
     }
 
     protected static function booted(): void

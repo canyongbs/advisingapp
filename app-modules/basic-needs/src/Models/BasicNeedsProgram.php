@@ -73,6 +73,6 @@ class BasicNeedsProgram extends Model implements Auditable
 
     public function students(): BelongsToMany
     {
-        return $this->belongsToMany(Student::class, 'basic_needs_program_student')->withTimestamps();
+        return $this->belongsToMany(Student::class, 'basic_needs_program_student', 'basic_needs_program_id', 'student_id')->withTimestamps();
     }
 }
