@@ -48,10 +48,13 @@ use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\RestoreAction;
+use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Tables\Actions\BulkActionGroup;
 use AdvisingApp\Authorization\Models\License;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\RestoreBulkAction;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
@@ -113,18 +116,28 @@ class ListUsers extends ListRecords
                     ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('deleted_at')
+                    ->label('Status')
+                    ->getStateUsing(fn (User $record): string => $record->trashed() ? 'Archived' : 'Active')
+                    ->visible(fn ($livewire) => isset($livewire->getTableFilterState('trashed')['value']) ? true : false),
             ])
             ->actions([
                 Impersonate::make(),
                 ViewAction::make(),
                 EditAction::make(),
+                RestoreAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                     AssignLicensesBulkAction::make()
                         ->visible(fn () => auth()->user()->can('create', License::class)),
                 ]),
+            ])
+            ->filters([
+                TrashedFilter::make()
+                    ->visible((fn () => auth()->user()->can('user.*.restore'))),
             ])
             ->defaultSort('name', 'asc');
     }
