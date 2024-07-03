@@ -10,6 +10,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManagePrograms;
+use AdvisingApp\StudentDataModel\Filament\Resources\BasicNeedsProgramResource\RelationManagers\BasicNeedsProgramsRelationManager;
 
 it('can render manage basic needs program for student', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -38,8 +39,9 @@ it('can attach a basic needs program to a student', function () {
 
     actingAs($user);
 
-    livewire(ManagePrograms::class, [
-        'record' => $student->getRouteKey(),
+    livewire(BasicNeedsProgramsRelationManager::class, [
+        'ownerRecord' => $student,
+        'pageClass' => ManagePrograms::class,
     ])
         ->callTableAction(
             AttachAction::class,

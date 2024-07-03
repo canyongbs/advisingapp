@@ -53,6 +53,7 @@ use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\Ma
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\EditBasicNeedsProgram;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ListBasicNeedsPrograms;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\CreateBasicNeedsProgram;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\StudentsRelationManager;
 
 it('can render list page', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -382,8 +383,9 @@ it('can attach a student to basic needs program', function () {
 
     actingAs($user);
 
-    livewire(ManageStudents::class, [
-        'record' => $basicNeedsProgram->getRouteKey(),
+    livewire(StudentsRelationManager::class, [
+        'ownerRecord' => $basicNeedsProgram,
+        'pageClass' => ManageStudents::class,
     ])
         ->callTableAction(
             AttachAction::class,
