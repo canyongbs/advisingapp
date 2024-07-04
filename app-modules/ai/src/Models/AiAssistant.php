@@ -135,6 +135,6 @@ class AiAssistant extends BaseModel implements HasMedia
 
     public function isDefault(): bool
     {
-        return $this->is_default;
+        return $this->is_default ?? false;
     }
 }
