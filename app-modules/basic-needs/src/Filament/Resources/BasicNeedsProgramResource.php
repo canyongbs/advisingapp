@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\BasicNeeds\Filament\Resources;
 
-use Laravel\Pennant\Feature;
 use Filament\Resources\Resource;
 use App\Filament\Clusters\ConstituentManagement;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
@@ -63,11 +62,7 @@ class BasicNeedsProgramResource extends Resource
 
     public static function canAccess(): bool
     {
-        if (Feature::active('basic-needs')) {
-            return parent::canAccess();
-        }
-
-        return false;
+        return parent::canAccess();
     }
 
     public static function getPages(): array
