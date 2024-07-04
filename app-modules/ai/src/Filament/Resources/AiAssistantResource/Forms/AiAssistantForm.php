@@ -105,7 +105,11 @@ class AiAssistantForm
                         'sm' => 1,
                         'md' => 2,
                     ])
-                    ->hidden(function (AiAssistant $record, Get $get) {
+                    ->hidden(function (?AiAssistant $record, Get $get) {
+                        if (is_null($record)) {
+                            return true;
+                        }
+
                         if (Feature::inactive('assistant-files')) {
                             return false;
                         }
