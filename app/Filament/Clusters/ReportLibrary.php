@@ -44,5 +44,5 @@ class ReportLibrary extends Cluster
 
     protected static ?string $navigationGroup = 'Reporting';
 
-    protected static ?int $navigationSort = 111;
+    protected static ?int $navigationSort = 10;
 }
