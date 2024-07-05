@@ -55,11 +55,14 @@ RUN apt-get update \
 
 FROM base AS development
 
-# Fix permission issues in development by setting the "www-data"
+# Fix permission issues in development by setting the "webuser"
 # user to the same user and group that is running docker.
-#ARG USER_ID
-#ARG GROUP_ID
-#RUN docker-php-serversideup-set-id www-data ${USER_ID} ${GROUP_ID}
+COPY ./docker/set-id /set-id
+
+ARG USER_ID
+ARG GROUP_ID
+RUN set-id webuser ${USER_ID} ${GROUP_ID} ; \
+    rm /set-id
 
 ARG MULTIPLE_DEVELOPMENT_QUEUES=false
 
@@ -77,10 +80,7 @@ RUN if [[ -z "$MULTIPLE_DEVELOPMENT_QUEUES" ]] ; then \
 RUN rm /generate-queues.sh
 
 RUN chown -R "$PUID":"$PGID" /var/www/html \
-    && if [[ -d /var/www/html/storage/logs ]] ; then \
-    chgrp "$PGID" /var/www/html/storage/logs \
-    && chmod g+s /var/www/html/storage/logs \
-    ; fi
+    && chmod g+s -R /var/www/html
 
 FROM base AS deploy
 
