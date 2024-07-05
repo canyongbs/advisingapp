@@ -35,12 +35,20 @@
 */
 
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
+
+use AdvisingApp\Ai\Enums\AiModel;
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Ai\Filament\Pages\ManageAiSettings;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 
 it('renders successfully', function () {
     asSuperAdmin();
@@ -67,4 +75,52 @@ it('loads if you have the correct access to ai settings', function () {
 
     Livewire::test(ManageAiSettings::class)
         ->assertStatus(200);
+});
+
+it('cannot access the page if assistant is default', function () {
+    $aiSettings = app(LicenseSettings::class);
+
+    $aiSettings->data->addons->customAiAssistants = true;
+
+    $aiSettings->save();
+
+    $aiAssistant = AiAssistant::factory([
+        'assistant_id' => fake()->uuid(),
+        'application' => AiApplication::PersonalAssistant,
+        'model' => AiModel::OpenAiGpt4o,
+        'is_default' => true,
+        'description' => fake()->paragraph(),
+        'instructions' => 'No Instructions.',
+    ])->create();
+
+    asSuperAdmin()
+        ->get(
+            AiAssistantResource::getUrl('edit', [
+                'record' => $aiAssistant,
+            ]),
+        )->assertForbidden();
+});
+
+it('can access the page if assistant is not default', function () {
+    $aiSettings = app(LicenseSettings::class);
+
+    $aiSettings->data->addons->customAiAssistants = true;
+
+    $aiSettings->save();
+
+    $aiAssistant = AiAssistant::factory([
+        'assistant_id' => fake()->uuid(),
+        'application' => AiApplication::PersonalAssistant,
+        'model' => AiModel::OpenAiGpt4o,
+        'is_default' => false,
+        'description' => fake()->paragraph(),
+        'instructions' => 'No Instructions.',
+    ])->create();
+
+    asSuperAdmin()
+        ->get(
+            AiAssistantResource::getUrl('edit', [
+                'record' => $aiAssistant,
+            ]),
+        )->assertSuccessful();
 });
