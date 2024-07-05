@@ -6,6 +6,7 @@
 /storage/*.key
 /vendor
 .npm
+.composer
 .env
 .env.backup
 .env.production
