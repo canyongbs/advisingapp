@@ -21,6 +21,23 @@ class ManageParticipants extends ManageRelatedRecords
         return 'Participants';
     }
 
+    public function getBreadcrumbs(): array
+    {
+        $resource = static::getResource();
+
+        $breadcrumbs = [
+            $resource::getUrl() => $resource::getBreadcrumb(),
+            $resource::getUrl('view', ['record' => $this->getOwnerRecord()]) => $this->getOwnerRecord()->name,
+            ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
+        ];
+
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
+        }
+
+        return $breadcrumbs;
+    }
+
     public static function canAccess(array $parameters = []): bool
     {
         if (Feature::active('manage-program-participants')) {
