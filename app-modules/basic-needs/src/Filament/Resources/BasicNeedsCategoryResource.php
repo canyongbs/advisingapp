@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\BasicNeeds\Filament\Resources;
 
-use Laravel\Pennant\Feature;
 use Filament\Resources\Resource;
 use App\Filament\Clusters\ConstituentManagement;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
@@ -60,15 +59,6 @@ class BasicNeedsCategoryResource extends Resource
     protected static ?string $cluster = ConstituentManagement::class;
 
     protected static ?string $navigationGroup = 'Basic Needs';
-
-    public static function canAccess(): bool
-    {
-        if (Feature::active('basic-needs')) {
-            return parent::canAccess();
-        }
-
-        return false;
-    }
 
     public static function getPages(): array
     {
