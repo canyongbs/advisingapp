@@ -237,6 +237,7 @@
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true,
+        "cache-dir": ".composer/cache",
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true

@@ -36,6 +36,7 @@
 
 use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
+use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
 
 $rules = [
     '@PSR12' => true,
@@ -183,4 +184,5 @@ return (new Config())
     ->setCacheFile(__DIR__ . '/.php-cs-fixer.cache')
     ->setRiskyAllowed(false)
     ->setRules($rules)
+    ->setParallelConfig(ParallelConfigFactory::detect())
     ->setFinder($finder);
