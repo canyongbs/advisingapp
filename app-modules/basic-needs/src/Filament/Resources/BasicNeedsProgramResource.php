@@ -60,11 +60,6 @@ class BasicNeedsProgramResource extends Resource
 
     protected static ?string $navigationGroup = 'Basic Needs';
 
-    public static function canAccess(): bool
-    {
-        return parent::canAccess();
-    }
-
     public static function getPages(): array
     {
         return [
