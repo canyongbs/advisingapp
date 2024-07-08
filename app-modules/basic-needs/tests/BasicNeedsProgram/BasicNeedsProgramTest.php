@@ -40,6 +40,7 @@ use Filament\Actions\DeleteAction;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Tables\Actions\AttachAction;
 
 use function Pest\Laravel\assertDatabaseHas;
@@ -49,11 +50,12 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ManageStudents;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ManageParticipants;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\EditBasicNeedsProgram;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ListBasicNeedsPrograms;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\CreateBasicNeedsProgram;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\StudentsRelationManager;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProspectsRelationManager;
 
 it('can render list page', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -356,24 +358,25 @@ it('can filter basic needs program by `program category`', function () {
         ->assertCanNotSeeTableRecords($basicNeedsPrograms->where('basic_needs_category_id', '!=', $basic_needs_category_id));
 });
 
-it('can render manage student page for basic needs program', function () {
-    $user = User::factory()->licensed(Student::getLicenseType())->create();
+it('can render manage participants page for student or prospect', function () {
+    $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
     actingAs($user)
-        ->get(BasicNeedsProgramResource::getUrl('students', [
+        ->get(BasicNeedsProgramResource::getUrl('participants', [
             'record' => BasicNeedsProgram::factory()->create(),
         ]))->assertForbidden();
 
     $user->givePermissionTo('basic_needs_program.view-any');
     $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('prospect.view-any');
 
     actingAs($user)
-        ->get(BasicNeedsProgramResource::getUrl('students', [
+        ->get(BasicNeedsProgramResource::getUrl('participants', [
             'record' => BasicNeedsProgram::factory()->create(),
         ]))->assertSuccessful();
 });
 
-it('can attach a student to basic needs program', function () {
+it('can attach a basic needs program to a student', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsProgram = BasicNeedsProgram::factory()->create();
     $student = Student::factory()->create();
@@ -385,10 +388,30 @@ it('can attach a student to basic needs program', function () {
 
     livewire(StudentsRelationManager::class, [
         'ownerRecord' => $basicNeedsProgram,
-        'pageClass' => ManageStudents::class,
+        'pageClass' => ManageParticipants::class,
     ])
         ->callTableAction(
             AttachAction::class,
             data: ['recordId' => $student->getKey()]
+        )->assertSuccessful();
+});
+
+it('can attach a basic needs program to a prospect', function () {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+    $basicNeedsProgram = BasicNeedsProgram::factory()->create();
+    $prospect = Prospect::factory()->create();
+
+    $user->givePermissionTo('basic_needs_program.view-any');
+    $user->givePermissionTo('prospect.view-any');
+
+    actingAs($user);
+
+    livewire(ProspectsRelationManager::class, [
+        'ownerRecord' => $basicNeedsProgram,
+        'pageClass' => ManageParticipants::class,
+    ])
+        ->callTableAction(
+            AttachAction::class,
+            data: ['recordId' => $prospect->getKey()]
         )->assertSuccessful();
 });

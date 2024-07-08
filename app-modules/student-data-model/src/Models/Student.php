@@ -66,7 +66,6 @@ use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Engagement\Models\EngagementFileEntities;
 use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -281,9 +280,15 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return $this->morphOne(Timeline::class, 'entity');
     }
 
-    public function basicNeedsPrograms(): BelongsToMany
+    public function basicNeedsPrograms(): MorphToMany
     {
-        return $this->belongsToMany(BasicNeedsProgram::class, 'basic_needs_program_student', 'student_id', 'basic_needs_program_id')->withTimestamps();
+        return $this->morphToMany(
+            related: BasicNeedsProgram::class,
+            name: 'program_participants',
+            table: 'program_participants',
+            foreignPivotKey: 'program_participants_id',
+            relatedPivotKey: 'basic_needs_program_id'
+        )->withTimestamps();
     }
 
     protected static function booted(): void

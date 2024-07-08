@@ -38,12 +38,13 @@ namespace AdvisingApp\BasicNeeds\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 class BasicNeedsProgram extends Model implements Auditable
@@ -71,8 +72,25 @@ class BasicNeedsProgram extends Model implements Auditable
         return $this->belongsTo(BasicNeedsCategory::class, 'basic_needs_category_id', 'id');
     }
 
-    public function students(): BelongsToMany
+    public function students(): MorphToMany
     {
-        return $this->belongsToMany(Student::class, 'basic_needs_program_student', 'basic_needs_program_id', 'student_id')->withTimestamps();
+        return $this->morphedByMany(
+            related: Student::class,
+            name: 'program_participants',
+            table: 'program_participants',
+            foreignPivotKey: 'basic_needs_program_id',
+            relatedPivotKey: 'program_participants_id'
+        )->withTimestamps();
+    }
+
+    public function prospects(): MorphToMany
+    {
+        return $this->morphedByMany(
+            related: Prospect::class,
+            name: 'program_participants',
+            table: 'program_participants',
+            foreignPivotKey: 'basic_needs_program_id',
+            relatedPivotKey: 'program_participants_id'
+        )->withTimestamps();
     }
 }

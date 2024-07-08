@@ -44,12 +44,12 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManagePrograms;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFiles;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentTasks;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentEvents;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentCareTeam;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentPrograms;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentEngagement;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInformation;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\StudentServiceManagement;
@@ -90,7 +90,7 @@ class StudentResource extends Resource
             ManageStudentApplicationSubmissions::class,
             StudentServiceManagement::class,
             ManageStudentEvents::class,
-            ManagePrograms::class,
+            ManageStudentPrograms::class,
         ]);
     }
 
@@ -137,7 +137,7 @@ class StudentResource extends Resource
             'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
             'service-management' => StudentServiceManagement::route('/{record}/service-management'),
             'events' => ManageStudentEvents::route('/{record}/events'),
-            'programs' => ManagePrograms::route('/{record}/programs'),
+            'programs' => ManageStudentPrograms::route('/{record}/programs'),
         ];
     }
 }

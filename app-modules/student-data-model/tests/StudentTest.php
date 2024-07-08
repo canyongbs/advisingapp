@@ -9,8 +9,8 @@ use Filament\Tables\Actions\AttachAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManagePrograms;
-use AdvisingApp\StudentDataModel\Filament\Resources\BasicNeedsProgramResource\RelationManagers\BasicNeedsProgramsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentPrograms;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProgramRelationManager;
 
 it('can render manage basic needs program for student', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -39,9 +39,9 @@ it('can attach a basic needs program to a student', function () {
 
     actingAs($user);
 
-    livewire(BasicNeedsProgramsRelationManager::class, [
+    livewire(ProgramRelationManager::class, [
         'ownerRecord' => $student,
-        'pageClass' => ManagePrograms::class,
+        'pageClass' => ManageStudentPrograms::class,
     ])
         ->callTableAction(
             AttachAction::class,

@@ -3,16 +3,17 @@
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers;
 
 use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
+use App\Filament\Tables\Columns\OpenSearch\TextColumn;
 use Filament\Resources\RelationManagers\RelationManager;
 
-class StudentsRelationManager extends RelationManager
+class ProspectsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'students';
+    protected static string $relationship = 'prospects';
 
     public function table(Table $table): Table
     {
@@ -33,6 +34,7 @@ class StudentsRelationManager extends RelationManager
             ])
             ->headerActions([
                 AttachAction::make(),
+                // ->recordSelectOptionsQuery(fn (Builder $query) => $query->join('program_participants', 'basic_needs_programs.id', '=', 'program_participants.basic_needs_program_id')),
             ])
             ->actions([
                 DetachAction::make(),

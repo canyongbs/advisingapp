@@ -40,7 +40,7 @@ use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use App\Filament\Clusters\ConstituentManagement;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ManageStudents;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ManageParticipants;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\EditBasicNeedsProgram;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ViewBasicNeedsProgram;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ListBasicNeedsPrograms;
@@ -69,7 +69,7 @@ class BasicNeedsProgramResource extends Resource
             'create' => CreateBasicNeedsProgram::route('/create'),
             'view' => ViewBasicNeedsProgram::route('/{record}'),
             'edit' => EditBasicNeedsProgram::route('/{record}/edit'),
-            'students' => ManageStudents::route('{record}/students'),
+            'participants' => ManageParticipants::route('/{record}/participants'),
         ];
     }
 
@@ -78,7 +78,7 @@ class BasicNeedsProgramResource extends Resource
         return $page->generateNavigationItems([
             ViewBasicNeedsProgram::class,
             EditBasicNeedsProgram::class,
-            ManageStudents::class,
+            ManageParticipants::class,
         ]);
     }
 }
