@@ -5,6 +5,7 @@ namespace AdvisingApp\Prospect\Filament\Pages;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportLineChart;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use App\Filament\Clusters\ReportLibrary;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
 
@@ -12,11 +13,13 @@ class ProspectReport extends Dashboard
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Recruitment CRM';
+    protected static ?string $navigationGroup = 'Prospects';
 
     protected static string $routePath = 'prospect-report';
 
     protected static ?string $title = 'Prospects (Overview)';
+
+    protected static ?string $cluster = ReportLibrary::class;
 
     // protected static string $view = 'advising-prospect.filament.pages.prospect-report';
 
