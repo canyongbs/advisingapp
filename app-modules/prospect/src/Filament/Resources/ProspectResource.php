@@ -69,7 +69,7 @@ class ProspectResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $cluster = ClustersProspect::class;
 
