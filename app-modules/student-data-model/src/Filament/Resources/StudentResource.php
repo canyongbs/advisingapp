@@ -41,6 +41,7 @@ use Filament\Resources\Pages\Page;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Clusters\Student as ClustersStudent;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
@@ -67,9 +68,9 @@ class StudentResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-m-users';
 
-    protected static ?string $navigationGroup = 'Retention CRM';
+    protected static ?int $navigationSort = 10;
 
-    protected static ?int $navigationSort = 20;
+    protected static ?string $cluster = ClustersStudent::class;
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
