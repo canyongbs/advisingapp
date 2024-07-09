@@ -49,7 +49,7 @@ class DisplaySettings extends Settings
 
     public function getTimezone(): string
     {
-        if (filled($userTimezone = auth()->user()->timezone)) {
+        if (filled($userTimezone = auth()->user()?->timezone)) {
             return $userTimezone;
         }
 

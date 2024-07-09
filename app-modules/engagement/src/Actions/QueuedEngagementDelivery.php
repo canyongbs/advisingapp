@@ -61,7 +61,7 @@ abstract class QueuedEngagementDelivery implements EngagementChannel, ShouldQueu
 
     public function uniqueId(): string
     {
-        return Tenant::current()->id . ':' . $this->deliverable->id;
+        return Tenant::current()->getKey() . ':' . $this->deliverable->getKey();
     }
 
     public function handle(): void
