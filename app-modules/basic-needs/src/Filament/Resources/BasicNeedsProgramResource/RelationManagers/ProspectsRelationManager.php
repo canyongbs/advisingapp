@@ -30,12 +30,6 @@ class ProspectsRelationManager extends RelationManager
                     ->label('Mobile')
                     ->searchable(),
             ])
-            ->filters([
-            ])
-            ->headerActions([
-                AttachAction::make(),
-                // ->recordSelectOptionsQuery(fn (Builder $query) => $query->join('program_participants', 'basic_needs_programs.id', '=', 'program_participants.basic_needs_program_id')),
-            ])
             ->actions([
                 DetachAction::make(),
             ])

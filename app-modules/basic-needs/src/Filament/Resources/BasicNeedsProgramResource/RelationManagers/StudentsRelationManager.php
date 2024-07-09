@@ -4,7 +4,6 @@ namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Re
 
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
@@ -28,11 +27,6 @@ class StudentsRelationManager extends RelationManager
                 TextColumn::make('mobile')
                     ->label('Mobile')
                     ->searchable(),
-            ])
-            ->filters([
-            ])
-            ->headerActions([
-                AttachAction::make(),
             ])
             ->actions([
                 DetachAction::make(),
