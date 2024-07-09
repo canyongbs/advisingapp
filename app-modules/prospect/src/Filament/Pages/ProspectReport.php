@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Pages;
 
+use AdvisingApp\Report\Filament\Widgets\ProspectReportLineChart;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use Filament\Pages\Dashboard;
@@ -26,6 +27,7 @@ class ProspectReport extends Dashboard
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
             ProspectReportStats::make(['cacheTag' => $this->cacheTag]),
+            ProspectReportLineChart::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 
