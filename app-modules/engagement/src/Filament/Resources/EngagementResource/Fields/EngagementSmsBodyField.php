@@ -71,8 +71,10 @@ class EngagementSmsBodyField
             ->output(TiptapOutput::Json)
             ->required()
             ->hintAction(fn (TiptapEditor $component) => Action::make('loadSmsTemplate')
+                ->label('Load SMS template')
                 ->form([
                     Select::make('smsTemplate')
+                        ->label('SMS template')
                         ->searchable()
                         ->options(function (Get $get): array {
                             return SmsTemplate::query()

@@ -279,6 +279,11 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return $this->morphOne(Timeline::class, 'entity');
     }
 
+    public static function getLabel(): string
+    {
+        return 'student';
+    }
+
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {

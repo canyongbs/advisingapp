@@ -40,6 +40,7 @@ use Closure;
 use Generator;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
+use Illuminate\Support\Facades\Http;
 use OpenAI\Contracts\ClientContract;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
@@ -75,6 +76,24 @@ abstract class BaseOpenAiService implements AiService
     public function getClient(): ClientContract
     {
         return $this->client;
+    }
+
+    public function complete(string $prompt, string $content): string
+    {
+        $aiSettings = app(AiSettings::class);
+
+        $response = Http::asJson()
+            ->withHeader('api-key', $this->getApiKey())
+            ->post("{$this->getDeployment()}/deployments/{$this->getModel()}/chat/completions?api-version={$this->getApiVersion()}", [
+                'messages' => [
+                    ['role' => 'system', 'content' => $prompt],
+                    ['role' => 'user', 'content' => $content],
+                ],
+                'temperature' => $aiSettings->temperature,
+            ])
+            ->json();
+
+        return $response['choices'][0]['message']['content'] ?? '';
     }
 
     public function createAssistant(AiAssistant $assistant): void

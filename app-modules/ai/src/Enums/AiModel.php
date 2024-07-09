@@ -81,6 +81,20 @@ enum AiModel: string implements HasLabel
         };
     }
 
+    public static function getDefaultModels(): array
+    {
+        $models = self::cases();
+
+        if (app()->hasDebugModeEnabled()) {
+            return $models;
+        }
+
+        return array_filter(
+            $models,
+            fn (AiModel $model): bool => $model !== self::Test,
+        );
+    }
+
     public function getService(): AiService
     {
         $service = $this->getServiceClass();

@@ -303,6 +303,11 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return $this->morphOne(Timeline::class, 'entity');
     }
 
+    public static function getLabel(): string
+    {
+        return 'prospect';
+    }
+
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
