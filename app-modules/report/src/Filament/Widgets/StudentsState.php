@@ -69,7 +69,7 @@ class StudentsState extends StatsOverviewReportWidget
             )),
             Stat::make('Total Segments', Number::abbreviate(
                 Cache::tags([$this->cacheTag])->remember('prompts-insertions-count', now()->addHours(24), function (): int {
-                    return Segment::where('concern_type', (new Student())->getMorphClass())->count();
+                    return Segment::where('model', (new Student())->getMorphClass())->count();
                 }),
                 maxPrecision: 2,
             )),

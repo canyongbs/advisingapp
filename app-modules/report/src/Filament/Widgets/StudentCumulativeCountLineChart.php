@@ -37,8 +37,9 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use Carbon\Carbon;
-use AdvisingApp\Ai\Models\Prompt;
+use Laravel\Pennant\Feature;
 use Illuminate\Support\Facades\Cache;
+use AdvisingApp\StudentDataModel\Models\Student;
 
 class StudentCumulativeCountLineChart extends ChartReportWidget
 {
@@ -68,34 +69,38 @@ class StudentCumulativeCountLineChart extends ChartReportWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('student-cumulative-count-line-chart', now()->addHours(24), function (): array {
-            $totalCreatedPerMonth = Prompt::query()
-                ->toBase()
-                ->selectRaw('date_trunc(\'month\', created_at) as month')
-                ->selectRaw('count(*) as total')
-                ->where('created_at', '>', now()->subYear())
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('total', 'month');
+        if (Feature::active('student_timestamp_fields')) {
+            $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('student-cumulative-count-line-chart', now()->addHours(24), function (): array {
+                $totalCreatedPerMonth = Student::query()
+                    ->toBase()
+                    ->selectRaw('date_trunc(\'month\', created_at_source) as month')
+                    ->selectRaw('count(*) as total')
+                    ->where('created_at_source', '>', now()->subYear())
+                    ->groupBy('month')
+                    ->orderBy('month')
+                    ->pluck('total', 'month');
 
-            $runningTotalPerMonth = [];
+                $runningTotalPerMonth = [];
 
-            foreach (range(11, 0) as $month) {
-                $month = Carbon::now()->subMonths($month);
-                $runningTotalPerMonth[$month->format('M Y')] = $totalCreatedPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-            }
+                foreach (range(11, 0) as $month) {
+                    $month = Carbon::now()->subMonths($month);
+                    $runningTotalPerMonth[$month->format('M Y')] = $totalCreatedPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
+                }
 
-            return $runningTotalPerMonth;
-        });
+                return $runningTotalPerMonth;
+            });
 
-        return [
-            'datasets' => [
-                [
-                    'data' => array_values($runningTotalPerMonth),
+            return [
+                'datasets' => [
+                    [
+                        'data' => array_values($runningTotalPerMonth),
+                    ],
                 ],
-            ],
-            'labels' => array_keys($runningTotalPerMonth),
-        ];
+                'labels' => array_keys($runningTotalPerMonth),
+            ];
+        }
+
+        return [];
     }
 
     protected function getType(): string

@@ -36,14 +36,12 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
+use AdvisingApp\Report\Filament\Widgets\MostRecentStudentsTable;
 use Filament\Pages\Dashboard;
 use App\Filament\Clusters\ReportLibrary;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\StudentsState;
-use AdvisingApp\Report\Filament\Widgets\PromptsCreatedLineChart;
-use AdvisingApp\Report\Filament\Widgets\SavedConversationsLineChart;
-use AdvisingApp\Report\Filament\Widgets\SpecialActionsDoughnutChart;
-use AdvisingApp\Report\Filament\Widgets\PromptsByCategoryDoughnutChart;
+use AdvisingApp\Report\Filament\Widgets\StudentCumulativeCountLineChart;
 
 class Students extends Dashboard
 {
@@ -76,10 +74,8 @@ class Students extends Dashboard
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
             StudentsState::make(['cacheTag' => $this->cacheTag]),
-            SavedConversationsLineChart::make(['cacheTag' => $this->cacheTag]),
-            SpecialActionsDoughnutChart::make(['cacheTag' => $this->cacheTag]),
-            PromptsByCategoryDoughnutChart::make(['cacheTag' => $this->cacheTag]),
-            PromptsCreatedLineChart::make(['cacheTag' => $this->cacheTag]),
+            StudentCumulativeCountLineChart::make(['cacheTag' => $this->cacheTag]),
+            MostRecentStudentsTable::class
         ];
     }
 
