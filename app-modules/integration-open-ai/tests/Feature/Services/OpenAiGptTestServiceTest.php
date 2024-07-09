@@ -456,7 +456,7 @@ it('can complete a prompt', function () {
     ]);
 
     $aiSettings = app(AiSettings::class);
-    $aiSettings->temperature = $temperature = rand(0, 10) / 10;
+    $aiSettings->temperature = $temperature = random_int(1, 10) / 10;
     $aiSettings->save();
 
     expect($service->complete($prompt = Str::random(), $content = Str::random()))
