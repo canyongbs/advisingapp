@@ -36,11 +36,13 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Livewire\Attributes\On;
 use Filament\Widgets\ChartWidget;
+use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
 
 abstract class ChartReportWidget extends ChartWidget
 {
+    #[Locked]
     public string $cacheTag;
 
     protected static ?string $pollingInterval = null;

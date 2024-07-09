@@ -38,9 +38,11 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use Livewire\Attributes\On;
 use Filament\Widgets\StatsOverviewWidget;
+use Livewire\Attributes\Locked;
 
 abstract class StatsOverviewReportWidget extends StatsOverviewWidget
 {
+    #[Locked]
     public string $cacheTag;
 
     protected static ?string $pollingInterval = null;
