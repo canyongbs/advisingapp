@@ -79,7 +79,7 @@ class EditUser extends EditRecord
                             ->maxLength(255)
                             ->unique(ignoreRecord: true)
                             ->validationMessages([
-                                'unique' => 'An archived user with this email address already exists. Please contact an administrator to restore this user or use a different email address.',
+                                'unique' => "A user with this email address already exists. Please use a different email address or contact your administrator if you need to modify this user's account.",
                             ]),
                         TextInput::make('job_title')
                             ->string()
