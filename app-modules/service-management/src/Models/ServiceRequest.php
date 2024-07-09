@@ -41,7 +41,6 @@ use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Carbon\CarbonInterface;
-use Laravel\Pennant\Feature;
 use Illuminate\Support\Facades\DB;
 use Kirschbaum\PowerJoins\PowerJoins;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -226,13 +225,9 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {
         try {
-            $campaignRelation = Feature::active('enable-segments')
-                ? 'segment'
-                : 'caseload';
-
             $action
                 ->campaign
-                ->{$campaignRelation}
+                ->segment
                 ->retrieveRecords()
                 ->each(function (Educatable $educatable) use ($action) {
                     $request = ServiceRequest::create([

@@ -34,32 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseloadManagement\Models;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-/**
- * @mixin IdeHelperCaseloadSubject
- */
-class CaseloadSubject extends BaseModel
-{
-    use SoftDeletes;
-
-    protected $fillable = [
-        'subject_id',
-        'subject_type',
-    ];
-
-    public function caseload(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(Caseload::class);
+        Feature::purge('enable-segments');
     }
 
-    public function subject(): MorphTo
+    public function down(): void
     {
-        return $this->morphTo();
+        Feature::activate('enable-segments');
     }
-}
+};

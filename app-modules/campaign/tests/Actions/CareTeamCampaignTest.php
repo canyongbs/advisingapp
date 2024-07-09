@@ -35,7 +35,6 @@
 */
 
 use App\Models\User;
-use Laravel\Pennant\Feature;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -45,21 +44,15 @@ use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
-it('will create the appropriate records for educatables in the caseload', function (array $priorCareTeam, Collection $educatables, bool $removePrior) {
-    Feature::active('enable-segments')
-        ? $segmentOrCaseload = Segment::factory()->create([
-            'type' => SegmentType::Static,
-        ])
-        : $segmentOrCaseload = Caseload::factory()->create([
-            'type' => CaseloadType::Static,
-        ]);
+it('will create the appropriate records for educatables in the segment', function (array $priorCareTeam, Collection $educatables, bool $removePrior) {
+    $segment = Segment::factory()->create([
+        'type' => SegmentType::Static,
+    ]);
 
-    $educatables->each(function (Educatable $educatable) use ($segmentOrCaseload, $priorCareTeam) {
-        $segmentOrCaseload->subjects()->create([
+    $educatables->each(function (Educatable $educatable) use ($segment, $priorCareTeam) {
+        $segment->subjects()->create([
             'subject_id' => $educatable->getKey(),
             'subject_type' => $educatable->getMorphClass(),
         ]);
@@ -67,12 +60,8 @@ it('will create the appropriate records for educatables in the caseload', functi
         $educatable->careTeam()->sync($priorCareTeam);
     });
 
-    Feature::active('enable-segments')
-        ? $foreignKey = 'segment_id'
-        : $foreignKey = 'caseload_id';
-
     $campaign = Campaign::factory()->create([
-        $foreignKey => $segmentOrCaseload->id,
+        'segment_id' => $segment->id,
     ]);
 
     $users = User::factory()->licensed(LicenseType::cases())->count(3)->create();

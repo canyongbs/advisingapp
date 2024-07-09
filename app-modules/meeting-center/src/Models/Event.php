@@ -38,7 +38,6 @@ namespace AdvisingApp\MeetingCenter\Models;
 
 use Exception;
 use App\Models\BaseModel;
-use Laravel\Pennant\Feature;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -88,13 +87,9 @@ class Event extends BaseModel
 
                 $user = $action->campaign->user;
 
-                $campaignRelation = Feature::active('enable-segments')
-                    ? 'segment'
-                    : 'caseload';
-
                 $emails = $action
                     ->campaign
-                    ->{$campaignRelation}
+                    ->segment
                     ->retrieveRecords()
                     ->whereNotNull('email')
                     ->whereNotIn('email', $event->attendees()->pluck('email')->toArray())

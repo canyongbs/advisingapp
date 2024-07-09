@@ -66,7 +66,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use AdvisingApp\Notification\Models\Subscription;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
 use AdvisingApp\Consent\Models\Concerns\CanConsent;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -216,11 +215,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->withTimestamps()
             ->as('participant')
             ->using(TwilioConversationUser::class);
-    }
-
-    public function caseloads(): HasMany
-    {
-        return $this->hasMany(Caseload::class);
     }
 
     public function segments(): HasMany

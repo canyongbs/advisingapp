@@ -34,39 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseloadManagement\Providers;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
+use Database\Migrations\Concerns\CanModifyPermissions;
 
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\CaseloadManagement\Models\CaseloadSubject;
-use AdvisingApp\CaseloadManagement\CaseloadManagementPlugin;
-use AdvisingApp\CaseloadManagement\Observers\CaseloadObserver;
-use AdvisingApp\CaseloadManagement\Registries\CaseloadManagementRbacRegistry;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-class CaseloadManagementServiceProvider extends ServiceProvider
-{
-    public function register()
+    private array $permissions = [
+        'caseload.view-any' => 'Caseload',
+        'caseload.create' => 'Caseload',
+        'caseload.*.view' => 'Caseload',
+        'caseload.*.update' => 'Caseload',
+        'caseload.*.delete' => 'Caseload',
+        'caseload.*.restore' => 'Caseload',
+        'caseload.*.force-delete' => 'Caseload',
+        'caseload_subject.view-any' => 'Caseload Subject',
+        'caseload_subject.create' => 'Caseload Subject',
+        'caseload_subject.*.view' => 'Caseload Subject',
+        'caseload_subject.*.update' => 'Caseload Subject',
+        'caseload_subject.*.delete' => 'Caseload Subject',
+        'caseload_subject.*.restore' => 'Caseload Subject',
+        'caseload_subject.*.force-delete' => 'Caseload Subject',
+    ];
+
+    private array $guards = [
+        'web',
+        'api',
+    ];
+
+    public function up(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new CaseloadManagementPlugin()));
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $this->deletePermissions(array_keys($this->permissions), $guard);
+            });
+
+        DB::table('permission_groups')
+            ->whereIn('name', ['Caseload', 'Caseload Subject'])
+            ->delete();
     }
 
-    public function boot()
+    public function down(): void
     {
-        Relation::morphMap([
-            'caseload' => Caseload::class,
-            'caseload_subject' => CaseloadSubject::class,
-        ]);
-
-        $this->registerObservers();
-
-        AuthorizationRoleRegistry::register(CaseloadManagementRbacRegistry::class);
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $this->createPermissions($this->permissions, $guard);
+            });
     }
-
-    protected function registerObservers(): void
-    {
-        Caseload::observe(CaseloadObserver::class);
-    }
-}
+};

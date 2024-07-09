@@ -38,7 +38,6 @@ namespace AdvisingApp\CareTeam\Models;
 
 use Exception;
 use App\Models\User;
-use Laravel\Pennant\Feature;
 use Illuminate\Support\Facades\DB;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -77,13 +76,9 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction
         try {
             DB::beginTransaction();
 
-            $campaignRelation = Feature::active('enable-segments')
-                ? 'segment'
-                : 'caseload';
-
             $action
                 ->campaign
-                ->{$campaignRelation}
+                ->segment
                 ->retrieveRecords()
                 ->each(function (Educatable $educatable) use ($action) {
                     $educatable->careTeam()->sync(ids: $action->data['user_ids'], detaching: $action->data['remove_prior']);
