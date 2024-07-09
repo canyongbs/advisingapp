@@ -37,8 +37,8 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use Livewire\Attributes\On;
-use Filament\Widgets\StatsOverviewWidget;
 use Livewire\Attributes\Locked;
+use Filament\Widgets\StatsOverviewWidget;
 
 abstract class StatsOverviewReportWidget extends StatsOverviewWidget
 {
