@@ -33,7 +33,6 @@ class StudentEngagementStats extends StatsOverviewReportWidget
                         return $q->whereHasMorph('recipient', Student::class);
                     })
                         ->where('channel', 'email')
-                        ->where('delivery_status', 'successful')
                         ->count();
                 }),
                 maxPrecision: 2,
@@ -44,7 +43,6 @@ class StudentEngagementStats extends StatsOverviewReportWidget
                         return $q->whereHasMorph('recipient', Student::class);
                     })
                         ->where('channel', 'sms')
-                        ->where('delivery_status', 'successful')
                         ->count();
                 }),
                 maxPrecision: 2,

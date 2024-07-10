@@ -25,6 +25,14 @@ class StudentEngagementReport extends Dashboard
 
     protected static ?int $navigationSort = 30;
 
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('report-library.view-any');
+    }
+
     public function getColumns(): int | string | array
     {
         return [
