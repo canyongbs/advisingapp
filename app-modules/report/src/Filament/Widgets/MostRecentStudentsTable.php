@@ -36,19 +36,33 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Filament\Tables\Table;
-use Laravel\Pennant\Feature;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Widgets\TableWidget as BaseWidget;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Filament\Widgets\TableWidget as BaseWidget;
+use Laravel\Pennant\Feature;
+use Livewire\Attributes\On;
 
 class MostRecentStudentsTable extends BaseWidget
 {
+    public string $cacheTag;
+
     protected static ?string $heading = 'Most Recent Students Added';
 
     protected static bool $isLazy = false;
 
     protected static ?string $pollingInterval = null;
+
+    public function mount(string $cacheTag)
+    {
+        $this->cacheTag = $cacheTag;
+    }
+
+    #[On('refresh-widgets')]
+    public function refreshWidget()
+    {
+        $this->dispatch('$refresh');
+    }
 
     protected int | string | array $columnSpan = [
         'sm' => 1,

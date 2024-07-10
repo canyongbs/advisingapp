@@ -39,12 +39,13 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use Illuminate\Support\Number;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Segment\Enums\SegmentModel;
 use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Segment\Models\Segment;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use AdvisingApp\StudentDataModel\Models\Student;
 
-class StudentsState extends StatsOverviewReportWidget
+class StudentsStats extends StatsOverviewReportWidget
 {
     protected int | string | array $columnSpan = [
         'sm' => 2,
@@ -62,19 +63,19 @@ class StudentsState extends StatsOverviewReportWidget
                 maxPrecision: 2,
             )),
             Stat::make('Total Alerts', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('total-alerts-count', now()->addHours(24), function (): int {
+                Cache::tags([$this->cacheTag])->remember('total-student-alerts-count', now()->addHours(24), function (): int {
                     return Alert::where('concern_type', (new Student())->getMorphClass())->count();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('Total Segments', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('prompts-insertions-count', now()->addHours(24), function (): int {
-                    return Segment::where('model', (new Student())->getMorphClass())->count();
+                Cache::tags([$this->cacheTag])->remember('total-student-segments-count', now()->addHours(24), function (): int {
+                    return Segment::where('model', SegmentModel::Student)->count();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('Total Tasks', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('total-tasks-count', now()->addHours(24), function (): int {
+                Cache::tags([$this->cacheTag])->remember('total-student-tasks-count', now()->addHours(24), function (): int {
                     return Task::where('concern_type', (new Student())->getMorphClass())->count();
                 }),
                 maxPrecision: 2,

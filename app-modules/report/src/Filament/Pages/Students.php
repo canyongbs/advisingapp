@@ -39,7 +39,7 @@ namespace AdvisingApp\Report\Filament\Pages;
 use Filament\Pages\Dashboard;
 use App\Filament\Clusters\ReportLibrary;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\Report\Filament\Widgets\StudentsState;
+use AdvisingApp\Report\Filament\Widgets\StudentsStats;
 use AdvisingApp\Report\Filament\Widgets\MostRecentStudentsTable;
 use AdvisingApp\Report\Filament\Widgets\StudentCumulativeCountLineChart;
 
@@ -51,9 +51,9 @@ class Students extends Dashboard
 
     protected static ?string $navigationGroup = 'Students';
 
-    protected static ?string $navigationLabel = 'Students(Overview)';
+    protected static ?string $navigationLabel = 'Students (Overview)';
 
-    protected static ?string $title = 'Students(Overview)';
+    protected static ?string $title = 'Students (Overview)';
 
     protected static string $routePath = 'students';
 
@@ -73,9 +73,9 @@ class Students extends Dashboard
     {
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            StudentsState::make(['cacheTag' => $this->cacheTag]),
+            StudentsStats::make(['cacheTag' => $this->cacheTag]),
             StudentCumulativeCountLineChart::make(['cacheTag' => $this->cacheTag]),
-            MostRecentStudentsTable::class,
+            MostRecentStudentsTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 
