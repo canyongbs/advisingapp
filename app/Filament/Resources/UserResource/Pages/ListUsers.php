@@ -136,7 +136,7 @@ class ListUsers extends ListRecords
                     AssignLicensesBulkAction::make()
                         ->visible(fn () => auth()->user()->can('create', License::class)),
                     AssignRolesBulkAction::make()
-                        ->visible(fn () => auth()->user()->can('create', Role::class)),
+                        ->visible(fn () => auth()->user()->can('update', User::class)),
                 ]),
             ])
             ->filters([
