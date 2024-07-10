@@ -42,6 +42,7 @@ class ProspectEngagementLineChart extends ChartReportWidget
                 ->where('channel', 'email')
                 ->selectRaw('date_trunc(\'month\', created_at) as month')
                 ->selectRaw('count(*) as total')
+                ->where('created_at', '>', now()->subYear())
                 ->groupBy('month')
                 ->orderBy('month')
                 ->pluck('total', 'month');
@@ -54,6 +55,7 @@ class ProspectEngagementLineChart extends ChartReportWidget
                 ->where('channel', 'sms')
                 ->selectRaw('date_trunc(\'month\', created_at) as month')
                 ->selectRaw('count(*) as total')
+                ->where('created_at', '>', now()->subYear())
                 ->groupBy('month')
                 ->orderBy('month')
                 ->pluck('total', 'month');
