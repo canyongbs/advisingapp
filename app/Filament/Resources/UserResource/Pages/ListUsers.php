@@ -56,8 +56,10 @@ use AdvisingApp\Authorization\Models\License;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\Role;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
+use App\Filament\Resources\UserResource\Actions\AssignRolesBulkAction;
 
 class ListUsers extends ListRecords
 {
@@ -133,6 +135,8 @@ class ListUsers extends ListRecords
                     RestoreBulkAction::make(),
                     AssignLicensesBulkAction::make()
                         ->visible(fn () => auth()->user()->can('create', License::class)),
+                    AssignRolesBulkAction::make()
+                        ->visible(fn () => auth()->user()->can('create', Role::class)),
                 ]),
             ])
             ->filters([
