@@ -34,18 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Observers;
-
 use Laravel\Pennant\Feature;
-use AdvisingApp\Ai\Models\PromptUse;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Database\Migrations\Migration;
 
-class PromptUsesObserver
-{
-    public function saved(PromptUse $promptUse): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (Feature::active('ai_utilization')) {
-            Cache::forget('prompts-insertions-count');
-        }
+        Feature::purge('ai_utilization');
     }
-}
+
+    public function down(): void
+    {
+        Feature::activate('ai_utilization');
+    }
+};

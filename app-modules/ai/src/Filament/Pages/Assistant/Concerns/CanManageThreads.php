@@ -41,7 +41,6 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Actions\Action;
-use Laravel\Pennant\Feature;
 use Livewire\Attributes\Locked;
 use AdvisingApp\Team\Models\Team;
 use Livewire\Attributes\Computed;
@@ -250,9 +249,8 @@ trait CanManageThreads
             ->action(function (array $data) {
                 $this->thread->name = $data['name'];
 
-                if (Feature::active('ai_utilization')) {
-                    $this->thread->saved_at = now();
-                }
+                $this->thread->saved_at = now();
+
                 $this->thread->save();
 
                 $folder = auth()->user()->aiThreadFolders()
