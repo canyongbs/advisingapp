@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use AdvisingApp\Report\Filament\Widgets\MostRecentStudentsTable;
 use Filament\Pages\Dashboard;
 use App\Filament\Clusters\ReportLibrary;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\StudentsState;
+use AdvisingApp\Report\Filament\Widgets\MostRecentStudentsTable;
 use AdvisingApp\Report\Filament\Widgets\StudentCumulativeCountLineChart;
 
 class Students extends Dashboard
@@ -75,7 +75,7 @@ class Students extends Dashboard
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
             StudentsState::make(['cacheTag' => $this->cacheTag]),
             StudentCumulativeCountLineChart::make(['cacheTag' => $this->cacheTag]),
-            MostRecentStudentsTable::class
+            MostRecentStudentsTable::class,
         ];
     }
 
