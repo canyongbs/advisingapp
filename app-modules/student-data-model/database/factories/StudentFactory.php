@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Database\Factories;
 
+use Carbon\Carbon;
+use Laravel\Pennant\Feature;
 use Faker\Provider\en_US\Address;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -47,7 +49,13 @@ class StudentFactory extends Factory
 {
     public function definition(): array
     {
-        return [
+        if (Feature::active('student_timestamp_fields')) {
+            $startDate = Carbon::now()->subYear();
+            $endDate = Carbon::yesterday();
+            $sourceDate = $this->faker->dateTimeBetween($startDate, $endDate);
+        }
+
+        $attributes = [
             'sisid' => $this->faker->unique()->numerify('########'),
             'otherid' => $this->faker->numerify('##########'),
             'first' => $this->faker->firstName(),
@@ -79,5 +87,14 @@ class StudentFactory extends Factory
             'f_e_term' => $this->faker->numerify('####'),
             'mr_e_term' => $this->faker->numerify('####'),
         ];
+
+        if (Feature::active('student_timestamp_fields')) {
+            $attributes['created_at'] = now();
+            $attributes['updated_at'] = now();
+            $attributes['created_at_source'] = $sourceDate;
+            $attributes['updated_at_source'] = $sourceDate;
+        }
+
+        return $attributes;
     }
 }

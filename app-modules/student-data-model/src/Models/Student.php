@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Models;
 
 use App\Models\User;
+use Laravel\Pennant\Feature;
 use App\Models\Authenticatable;
 use AdvisingApp\Task\Models\Task;
 use App\Models\Scopes\HasLicense;
@@ -112,7 +113,15 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         'sisid' => 'string',
     ];
 
-    public $timestamps = false;
+    public $timestamp;
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        // Set the $timestamps property based on the feature flag
+        $this->timestamps = Feature::active('student_timestamp_fields');
+    }
 
     public function identifier(): string
     {
