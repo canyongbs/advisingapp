@@ -51,7 +51,7 @@ class Students extends Dashboard
 
     protected static ?string $navigationGroup = 'Students';
 
-    protected static ?string $navigationLabel = 'Students';
+    protected static ?string $navigationLabel = 'Students(Overview)';
 
     protected static ?string $title = 'Students(Overview)';
 
