@@ -36,6 +36,7 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use Closure;
 use Carbon\Carbon;
 use App\Models\User;
 use Filament\Forms\Form;
@@ -53,7 +54,6 @@ use App\Notifications\SetPasswordNotification;
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
-use Closure;
 
 class EditUser extends EditRecord
 {
@@ -87,11 +87,13 @@ class EditUser extends EditRecord
                                         if ($userId && $user->id === $userId) {
                                             return true; // Allow the current user to keep their email
                                         }
+
                                         if ($user->trashed()) {
                                             $fail('An archived user with this email address already exists. Please contact an administrator to restore this user or use a different email address.');
                                         } else {
                                             $fail("A user with this email address already exists. Please use a different email address or contact your administrator if you need to modify this user's account.");
                                         }
+
                                         return false;
                                     }
 
