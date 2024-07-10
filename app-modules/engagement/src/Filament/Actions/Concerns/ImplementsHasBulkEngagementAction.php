@@ -61,13 +61,14 @@ trait ImplementsHasBulkEngagementAction
                 $this->engageActionData = [];
                 $this->engageActionRecords = [];
             })
-            ->modalDescription(fn () => 'The message has not been sent, are you sure you wish to return to the list view?')
+            ->modalHeading('Are you sure you wish to cancel?')
+            ->modalDescription('If you cancel, the message will not be sent.')
             ->closeModalByClickingAway(false)
             ->modalCloseButton(false)
             ->modalCancelAction(false)
             ->extraModalFooterActions([
                 Action::make('restoreBulkEngagementAction')
-                    ->label('Cancel')
+                    ->label('Continue Drafting')
                     ->action(function () {
                         $this->mountTableBulkAction('engage');
 
