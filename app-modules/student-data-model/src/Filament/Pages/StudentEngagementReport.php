@@ -21,7 +21,7 @@ class StudentEngagementReport extends Dashboard
 
     protected static ?string $navigationGroup = 'Students';
 
-    protected $cacheTag = 'prospect-enagement-cache';
+    protected $cacheTag = 'report-student-engagement';
 
     protected static ?int $navigationSort = 30;
 

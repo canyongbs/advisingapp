@@ -37,14 +37,14 @@ class MostEngagedStudentsTable extends BaseWidget
             ->query(
                 Student::select('sisid', 'full_name', 'email')
                     ->withCount('engagements')
+                    ->orderBy('engagements_count', 'desc')
+                    ->limit(10)
             )
-            ->defaultSort('engagements_count', 'desc')
+            ->paginated(false)
             ->columns([
                 TextColumn::make('full_name')
-                    ->label('Name')
-                    ->searchable(),
-                TextColumn::make('email')
-                    ->searchable(),
+                    ->label('Name'),
+                TextColumn::make('email'),
                 TextColumn::make('engagements_count')
                     ->label('Engagements'),
             ]);
