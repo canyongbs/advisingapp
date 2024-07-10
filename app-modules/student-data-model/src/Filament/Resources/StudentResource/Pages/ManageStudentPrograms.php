@@ -32,7 +32,7 @@ class ManageStudentPrograms extends ManageRelatedRecords
     public static function canAccess(array $parameters = []): bool
     {
         if (Feature::active('manage-program-participants')) {
-            return true;
+            return parent::canAccess($parameters);
         }
 
         return false;

@@ -12,6 +12,8 @@ return new class () extends Migration {
             $table->string('program_participants_type');
             $table->string('program_participants_id');
             $table->timestamps();
+
+            $table->index(['program_participants_type', 'program_participants_id']);
         });
     }
 
