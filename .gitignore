@@ -43,3 +43,4 @@ frankenphp-worker.php
 /rr
 _temp_graphql_parse_ide_helper_models.php
 /.bash_history
+.config/psysh/*

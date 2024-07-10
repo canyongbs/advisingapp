@@ -21,7 +21,7 @@ class ProspectEnagagementReport extends Dashboard
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected $cacheTag = 'prospect-enagement-cache';
+    protected $cacheTag = 'report-prospect-engagement';
 
     protected static ?int $navigationSort = 20;
 

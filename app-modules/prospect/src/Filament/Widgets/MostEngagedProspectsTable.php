@@ -2,15 +2,11 @@
 
 namespace AdvisingApp\Prospect\Filament\Widgets;
 
-use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Widgets\TableWidget as BaseWidget;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\On;
+use Filament\Tables\Columns\TextColumn;
+use AdvisingApp\Prospect\Models\Prospect;
+use Filament\Widgets\TableWidget as BaseWidget;
 
 class MostEngagedProspectsTable extends BaseWidget
 {
@@ -39,28 +35,27 @@ class MostEngagedProspectsTable extends BaseWidget
     {
         return $table
             ->query(
-                Prospect::select('id', 'full_name', 'email', 'status_id', 'created_by_id','created_at')
-                            ->with(['status', 'createdBy:id,name'])
-                            ->withCount('engagements')
+                Prospect::select('id', 'full_name', 'email', 'status_id', 'created_by_id', 'created_at')
+                        ->with(['status', 'createdBy:id,name'])
+                        ->withCount('engagements')
+                        ->orderBy('engagements_count', 'desc')
+                        ->limit(10)
             )
-            ->defaultSort('engagements_count','desc')
+            ->paginated(false)
             ->columns([
                 TextColumn::make('full_name')
-                            ->label('Name')
-                            ->searchable(),
+                    ->label('Name'),
                 TextColumn::make('email')
-                            ->searchable(),
+                    ->searchable(),
                 TextColumn::make('status.name')
-                            ->badge()
-                            ->translateLabel()
-                            ->color(fn (Prospect $record) => $record->status->color->value),
+                    ->badge()
+                    ->color(fn (Prospect $record) => $record->status->color->value),
                 TextColumn::make('engagements_count')
-                            ->label('Engagements'),
+                    ->label('Engagements'),
                 TextColumn::make('createdBy.name')
-                            ->label('Created By')
-                            ->searchable(),
+                    ->label('Created By'),
                 TextColumn::make('created_at')
-                            ->label('Created Date'),
+                    ->label('Created Date'),
             ]);
     }
 }
