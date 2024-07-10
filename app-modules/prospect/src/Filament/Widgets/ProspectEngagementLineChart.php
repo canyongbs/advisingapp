@@ -7,16 +7,13 @@ use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Report\Filament\Widgets\ChartReportWidget;
+use Illuminate\Support\Facades\Log;
 
 class ProspectEngagementLineChart extends ChartReportWidget
 {
     protected static ?string $heading = 'Prospects (Engagement)';
 
-    protected int | string | array $columnSpan = [
-        'sm' => 1,
-        'md' => 3,
-        'lg' => 3,
-    ];
+    protected int | string | array $columnSpan = 'full';
 
     protected function getOptions(): array
     {
@@ -63,24 +60,34 @@ class ProspectEngagementLineChart extends ChartReportWidget
                 ->orderBy('month')
                 ->pluck('total', 'month');
 
-            $runningTotalPerMonth = [];
+            $data = [];
 
             foreach (range(11, 0) as $month) {
                 $month = Carbon::now()->subMonths($month);
-                $runningTotalPerMonth[$month->format('M Y')] = $totalEmailEnagagementsPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
+                $data['emailEngagement'][$month->format('M Y')] = $totalEmailEnagagementsPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
+
+                $data['textEnagagment'][$month->format('M Y')] = $totalTextEnagagementsPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
             }
 
-            return $runningTotalPerMonth;
+            return $data;
         });
 
         return [
             'datasets' => [
                 [
                     'label' => 'Email',
-                    'data' => array_values($runningTotalPerMonth),
+                    'data' => array_values($runningTotalPerMonth['emailEngagement']),
+                    'borderColor' => '#2C8BCA',
+                    'pointBackgroundColor' => '#2C8BCA'
+                ],
+                [
+                    'label' => 'SMS',
+                    'data' => array_values($runningTotalPerMonth['textEnagagment']),
+                    'borderColor' => '#FDCC46',
+                    'pointBackgroundColor' => '#FDCC46',
                 ],
             ],
-            'labels' => array_keys($runningTotalPerMonth),
+            'labels' => array_keys($runningTotalPerMonth['emailEngagement']),
         ];
     }
 
