@@ -4,20 +4,22 @@ namespace AdvisingApp\Prospect\Filament\Pages;
 
 use AdvisingApp\Prospect\Filament\Widgets\MostEngagedProspectsTable;
 use Filament\Pages\Dashboard;
-use App\Filament\Clusters\Prospect;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectEngagementState;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectEngagementLineChart;
+use App\Filament\Clusters\ReportLibrary;
 
 class ProspectEnagagementReport extends Dashboard
 {
-    protected static ?string $cluster = Prospect::class;
+    protected static ?string $cluster = ReportLibrary::class;
+
+    protected static ?string $navigationGroup = 'Prospects';
 
     protected static ?string $title = 'Prospect Engagement';
 
     protected static string $routePath = 'prospect-enagement-report';
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected $cacheTag = 'prospect-enagement-cache';
 

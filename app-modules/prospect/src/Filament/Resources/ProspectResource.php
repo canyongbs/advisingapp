@@ -71,7 +71,7 @@ class ProspectResource extends Resource
 
     protected static ?int $navigationSort = 10;
 
-    protected static ?string $cluster = ClustersProspect::class;
+    protected static ?string $navigationGroup = 'Recruitment CRM';
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
