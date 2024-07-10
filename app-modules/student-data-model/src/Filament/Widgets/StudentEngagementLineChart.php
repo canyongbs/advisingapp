@@ -4,6 +4,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Widgets;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Report\Filament\Widgets\ChartReportWidget;
 
@@ -11,11 +12,7 @@ class StudentEngagementLineChart extends ChartReportWidget
 {
     protected static ?string $heading = 'Students (Engagement)';
 
-    protected int | string | array $columnSpan = [
-        'sm' => 1,
-        'md' => 3,
-        'lg' => 3,
-    ];
+    protected int | string | array $columnSpan = 'full';
 
     protected function getOptions(): array
     {
@@ -35,9 +32,14 @@ class StudentEngagementLineChart extends ChartReportWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('saved_conversations_line_chart', now()->addHours(24), function (): array {
-            $totalCreatedPerMonth = EngagementDeliverable::query()
+        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('student_engagements_line_chart', now()->addHours(24), function (): array {
+            $totalEmailEngagementsPerMonth = EngagementDeliverable::query()
+                ->whereHas('engagement', function ($q) {
+                    return $q->whereHasMorph('recipient', Student::class);
+                })
                 ->toBase()
+                ->where('channel', 'email')
+                ->where('delivery_status', 'successful')
                 ->selectRaw('date_trunc(\'month\', delivered_at) as month')
                 ->selectRaw('count(*) as total')
                 ->where('delivered_at', '>', now()->subYear())
@@ -45,23 +47,47 @@ class StudentEngagementLineChart extends ChartReportWidget
                 ->orderBy('month')
                 ->pluck('total', 'month');
 
-            $runningTotalPerMonth = [];
+            $totalTextEnagagementsPerMonth = EngagementDeliverable::query()
+                ->whereHas('engagement', function ($q) {
+                    return $q->whereHasMorph('recipient', Student::class);
+                })
+                ->toBase()
+                ->where('channel', 'sms')
+                ->where('delivery_status', 'successful')
+                ->selectRaw('date_trunc(\'month\', delivered_at) as month')
+                ->selectRaw('count(*) as total')
+                ->where('delivered_at', '>', now()->subYear())
+                ->groupBy('month')
+                ->orderBy('month')
+                ->pluck('total', 'month');
+
+            $data = [];
 
             foreach (range(11, 0) as $month) {
                 $month = Carbon::now()->subMonths($month);
-                $runningTotalPerMonth[$month->format('M Y')] = $totalCreatedPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
+                $data['emailEngagement'][$month->format('M Y')] = $totalEmailEngagementsPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
+                $data['textEnagagment'][$month->format('M Y')] = $totalTextEnagagementsPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
             }
 
-            return $runningTotalPerMonth;
+            return $data;
         });
 
         return [
             'datasets' => [
                 [
-                    'data' => array_values($runningTotalPerMonth),
+                    'label' => 'Email',
+                    'data' => array_values($runningTotalPerMonth['emailEngagement']),
+                    'borderColor' => '#2C8BCA',
+                    'pointBackgroundColor' => '#2C8BCA',
+                ],
+                [
+                    'label' => 'SMS',
+                    'data' => array_values($runningTotalPerMonth['textEnagagment']),
+                    'borderColor' => '#FDCC46',
+                    'pointBackgroundColor' => '#FDCC46',
                 ],
             ],
-            'labels' => array_keys($runningTotalPerMonth),
+            'labels' => array_keys($runningTotalPerMonth['emailEngagement']),
         ];
     }
 

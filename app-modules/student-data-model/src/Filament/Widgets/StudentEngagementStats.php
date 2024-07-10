@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Widgets;
 
+use App\Models\User;
 use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Cache;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -50,7 +51,9 @@ class StudentEngagementStats extends StatsOverviewReportWidget
             )),
             Stat::make('Count of Staff Sending Enagements', Number::abbreviate(
                 Cache::tags([$this->cacheTag])->remember('total-staff-sending-count', now()->addHours(24), function (): int {
-                    return 0;
+                    return User::whereHas('engagements', function ($q) {
+                        return $q->whereHasMorph('recipient', Student::class);
+                    })->count();
                 }),
                 maxPrecision: 2,
             )),

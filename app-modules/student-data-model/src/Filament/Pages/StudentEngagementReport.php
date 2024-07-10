@@ -5,6 +5,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Pages;
 use Filament\Pages\Dashboard;
 use App\Filament\Clusters\Student;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use AdvisingApp\StudentDataModel\Filament\Widgets\MostEngagedStudentsTable;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentEngagementStats;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentEngagementLineChart;
 
@@ -37,6 +38,7 @@ class StudentEngagementReport extends Dashboard
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
             StudentEngagementStats::make(['cacheTag' => $this->cacheTag]),
             StudentEngagementLineChart::make(['cacheTag' => $this->cacheTag]),
+            MostEngagedStudentsTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 }
