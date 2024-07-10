@@ -49,6 +49,11 @@ class TestAiService implements Contracts\AiService
 {
     use HasAiServiceHelpers;
 
+    public function complete(string $prompt, string $content): string
+    {
+        return fake()->paragraph();
+    }
+
     public function createAssistant(AiAssistant $assistant): void {}
 
     public function updateAssistant(AiAssistant $assistant): void {}

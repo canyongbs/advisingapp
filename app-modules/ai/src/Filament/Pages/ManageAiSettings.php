@@ -138,6 +138,13 @@ class ManageAiSettings extends SettingsPage
                     ->step(0.1)
                     ->minValue(0)
                     ->maxValue(1),
+                Select::make('default_model')
+                    ->options(collect(AiModel::getDefaultModels())
+                        ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
+                        ->all())
+                    ->searchable()
+                    ->helperText('Used for general purposes like generating content when an assistant is not being used.')
+                    ->required(),
             ]);
     }
 
@@ -223,6 +230,10 @@ class ManageAiSettings extends SettingsPage
             $this->defaultAssistant->save();
 
             unset($data['defaultAssistant']);
+        }
+
+        if (is_string($data['default_model'])) {
+            $data['default_model'] = AiModel::parse($data['default_model']);
         }
 
         return parent::mutateFormDataBeforeSave($data);

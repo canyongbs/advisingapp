@@ -291,6 +291,11 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         )->withTimestamps();
     }
 
+    public static function getLabel(): string
+    {
+        return 'student';
+    }
+
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
