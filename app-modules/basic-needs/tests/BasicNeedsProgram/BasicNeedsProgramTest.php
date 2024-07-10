@@ -39,6 +39,9 @@ use Filament\Actions\DeleteAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+
+use AdvisingApp\Prospect\Models\Prospect;
+
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertSoftDeleted;
 
@@ -349,4 +352,22 @@ it('can filter basic needs program by `program category`', function () {
         ->filterTable('basic_category_id', $basic_needs_category_id)
         ->assertCanSeeTableRecords($basicNeedsPrograms->where('basic_needs_category_id', $basic_needs_category_id))
         ->assertCanNotSeeTableRecords($basicNeedsPrograms->where('basic_needs_category_id', '!=', $basic_needs_category_id));
+});
+
+it('can render manage participants page for student or prospect', function () {
+    $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
+
+    actingAs($user)
+        ->get(BasicNeedsProgramResource::getUrl('participants', [
+            'record' => BasicNeedsProgram::factory()->create(),
+        ]))->assertForbidden();
+
+    $user->givePermissionTo('basic_needs_program.view-any');
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('prospect.view-any');
+
+    actingAs($user)
+        ->get(BasicNeedsProgramResource::getUrl('participants', [
+            'record' => BasicNeedsProgram::factory()->create(),
+        ]))->assertSuccessful();
 });

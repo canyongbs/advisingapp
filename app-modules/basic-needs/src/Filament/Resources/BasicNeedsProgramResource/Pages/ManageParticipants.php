@@ -36,53 +36,56 @@
 
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages;
 
-use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
+use Laravel\Pennant\Feature;
+use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\StudentsRelationManager;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProspectsRelationManager;
 
-class ViewBasicNeedsProgram extends ViewRecord
+class ManageParticipants extends ManageRelatedRecords
 {
     protected static string $resource = BasicNeedsProgramResource::class;
 
-    protected static ?string $navigationLabel = 'View';
+    protected static string $relationship = 'students';
 
-    public function infolist(Infolist $infolist): Infolist
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    public static function getNavigationLabel(): string
     {
-        return $infolist
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('name')
-                            ->label('Program Name'),
-                        TextEntry::make('description'),
-                        TextEntry::make('basicNeedsCategories.name')
-                            ->label('Program Category'),
-                        TextEntry::make('contact_person')
-                            ->label('Contact Person'),
-                        TextEntry::make('contact_email')
-                            ->label('Email Address'),
-                        TextEntry::make('contact_phone')
-                            ->label('Contact Phone'),
-                        TextEntry::make('location')
-                            ->label('Location'),
-                        TextEntry::make('availability')
-                            ->label('Availability'),
-                        TextEntry::make('eligibility_criteria')
-                            ->label('Eligibility Criteria'),
-                        TextEntry::make('application_process')
-                            ->label('Application Process'),
-                    ])
-                    ->columns(),
-            ]);
+        return 'Participants';
     }
 
-    protected function getHeaderActions(): array
+    public function getBreadcrumbs(): array
+    {
+        $resource = static::getResource();
+
+        $breadcrumbs = [
+            $resource::getUrl() => $resource::getBreadcrumb(),
+            $resource::getUrl('view', ['record' => $this->getOwnerRecord()]) => $this->getOwnerRecord()->name,
+            ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
+        ];
+
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
+        }
+
+        return $breadcrumbs;
+    }
+
+    public static function canAccess(array $parameters = []): bool
+    {
+        if (Feature::active('manage-program-participants')) {
+            return parent::canAccess($parameters);
+        }
+
+        return false;
+    }
+
+    public function getRelationManagers(): array
     {
         return [
-            EditAction::make(),
+            StudentsRelationManager::class,
+            ProspectsRelationManager::class,
         ];
     }
 }
