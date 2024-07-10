@@ -62,7 +62,7 @@ trait ImplementsHasBulkEngagementAction
                 $this->engageActionRecords = [];
             })
             ->modalHeading('Are you sure you wish to cancel?')
-            ->modalDescription(fn () => 'If you cancel, the message will not be sent.')
+            ->modalDescription('If you cancel, the message will not be sent.')
             ->closeModalByClickingAway(false)
             ->modalCloseButton(false)
             ->modalCancelAction(false)
