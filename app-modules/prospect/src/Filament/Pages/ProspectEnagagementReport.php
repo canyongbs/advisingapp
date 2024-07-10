@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Pages;
 
+use AdvisingApp\Prospect\Filament\Widgets\MostEngagedProspectsTable;
 use Filament\Pages\Dashboard;
 use App\Filament\Clusters\Prospect;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
@@ -37,6 +38,7 @@ class ProspectEnagagementReport extends Dashboard
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
             ProspectEngagementState::make(['cacheTag' => $this->cacheTag]),
             ProspectEngagementLineChart::make(['cacheTag' => $this->cacheTag]),
+            MostEngagedProspectsTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 }

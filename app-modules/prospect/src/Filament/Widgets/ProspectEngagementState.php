@@ -21,7 +21,6 @@ class ProspectEngagementState extends StatsOverviewReportWidget
 
     protected function getStats(): array
     {
-        
 
         return [
             Stat::make('Total Prospects', Number::abbreviate(
@@ -53,9 +52,11 @@ class ProspectEngagementState extends StatsOverviewReportWidget
                 maxPrecision: 2,
             )),
             Stat::make('Staff Sending Enagements', Number::abbreviate(
-                User::whereHas('engagements',function($q){
-                    return $q->whereHasMorph('recipient', Prospect::class);
-                })->count(),
+                Cache::tags([$this->cacheTag])->remember('staff-sending-engagement-count', now()->addHours(24), function (): int {
+                    return User::whereHas('engagements',function($q){
+                        return $q->whereHasMorph('recipient', Prospect::class);
+                    })->count();
+                }),
                 maxPrecision: 2,
             )),
         ];
