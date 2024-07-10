@@ -45,8 +45,10 @@ use Filament\Infolists\Infolist;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\HtmlString;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Facades\Vite;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Forms\Components\Actions;
 use FilamentTiptapEditor\TiptapEditor;
 use AdvisingApp\Ai\Settings\AiSettings;
@@ -236,7 +238,11 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                             ->label('Draft with AI Assistant')
                             ->link()
                             ->icon('heroicon-m-pencil')
-                            ->modalDescription('Hi ' . auth()->user()->name . ", I am happy to help you draft this message to {$this->getRecordTitle()}. Please describe what you would like the proposed message to say:")
+                            ->modalContent(fn () => view('engagement::filament.manage-related-records.manage-related-engagement-records.draft-with-ai-modal-content', [
+                                'recordTitle' => $this->getRecordTitle(),
+                                'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
+                                    ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
+                            ]))
                             ->modalWidth(MaxWidth::ExtraLarge)
                             ->modalSubmitActionLabel('Draft')
                             ->form([
