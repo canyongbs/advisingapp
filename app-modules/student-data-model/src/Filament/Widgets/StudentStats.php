@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Filament\Widgets;
 
 use App\Models\User;
-use Laravel\Pennant\Feature;
 use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Alert\Enums\AlertStatus;
@@ -45,7 +44,6 @@ use Filament\Widgets\StatsOverviewWidget;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
 
 class StudentStats extends StatsOverviewWidget
 {
@@ -72,10 +70,7 @@ class StudentStats extends StatsOverviewWidget
                 })),
             Stat::make('My Population Segments', Cache::tags(["user-{$user->getKey()}-student-segments"])
                 ->remember("user-{$user->getKey()}-student-segments-count", now()->addHour(), function () use ($user): int {
-                    return
-                        Feature::active('enable-segments')
-                            ? $user->segments()->model(SegmentModel::Student)->count()
-                            : $user->caseloads()->model(CaseloadModel::Student)->count();
+                    return $user->segments()->model(SegmentModel::Student)->count();
                 })),
         ];
     }

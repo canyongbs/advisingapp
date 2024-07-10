@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -42,15 +43,57 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('campaigns', function (Blueprint $table) {
-            $table->foreignUuid('segment_id')->nullable()->constrained('segments');
+            if (Schema::hasColumn('campaigns', 'caseload_id')) {
+                $table->dropColumn('caseload_id');
+            }
+
+            $table->foreignUuid('segment_id')->nullable(false)->change();
         });
+
+        DB::table('permission_groups')
+            ->whereIn('name', ['Caseload', 'Caseload Subject'])
+            ->delete();
+
+        Schema::dropIfExists('caseload_subjects');
+        Schema::dropIfExists('caseloads');
     }
 
     public function down(): void
     {
         Schema::table('campaigns', function (Blueprint $table) {
-            $table->dropForeign(['segment_id']);
-            $table->dropColumn('segment_id');
+            $table->foreignUuid('caseload_id')->nullable()->constrained('caseloads');
+
+            $table->dropForeign('segment_id');
+            $table->foreignUuid('segment_id')->nullable()->constrained('segments')->change();
+        });
+
+        Schema::create('caseloads', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->json('filters')->nullable();
+            $table->string('model');
+            $table->string('type');
+
+            $table->foreignUuid('user_id')->constrained('users');
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('caseload_subjects', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+
+            $table->string('subject_id');
+            $table->string('subject_type');
+
+            $table->foreignUuid('caseload_id')->constrained('caseloads')->cascadeOnDelete();
+
+            $table->index(['subject_type', 'subject_id']);
+
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

@@ -41,18 +41,18 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use AdvisingApp\Campaign\Models\CampaignAction;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 
-class ExecuteCampaignActions implements ShouldQueue, ShouldBeUnique
+class ExecuteCampaignActions implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
 
-    public function uniqueId(): string
+    public function middleware(): array
     {
-        return Tenant::current()->id;
+        return [(new WithoutOverlapping(Tenant::current()->id))->dontRelease()->expireAfter(180)];
     }
 
     public function handle(): void

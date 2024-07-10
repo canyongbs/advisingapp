@@ -58,6 +58,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -301,6 +302,17 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     public function timeline(): MorphOne
     {
         return $this->morphOne(Timeline::class, 'entity');
+    }
+
+    public function basicNeedsPrograms(): MorphToMany
+    {
+        return $this->morphToMany(
+            related: BasicNeedsProgram::class,
+            name: 'program_participants',
+            table: 'program_participants',
+            foreignPivotKey: 'program_participants_id',
+            relatedPivotKey: 'basic_needs_program_id'
+        )->withTimestamps();
     }
 
     public static function getLabel(): string

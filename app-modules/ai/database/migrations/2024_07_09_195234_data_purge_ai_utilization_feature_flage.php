@@ -34,29 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Actions;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\Tenant;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use AdvisingApp\Campaign\Models\CampaignAction;
-
-class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
-{
-    use Dispatchable;
-
-    public function __construct(
-        public CampaignAction $action
-    ) {}
-
-    public function uniqueId(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return Tenant::current()->getKey() . ':' . $this->action->getKey();
+        Feature::purge('ai_utilization');
     }
 
-    public function handle(): void
+    public function down(): void
     {
-        $this->action->execute();
+        Feature::activate('ai_utilization');
     }
-}
+};

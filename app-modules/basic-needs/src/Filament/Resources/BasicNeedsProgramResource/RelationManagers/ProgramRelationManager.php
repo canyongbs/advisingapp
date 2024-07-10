@@ -34,29 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Actions;
+namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers;
 
-use App\Models\Tenant;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use AdvisingApp\Campaign\Models\CampaignAction;
+use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Actions\AttachAction;
+use Filament\Tables\Actions\DetachAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DetachBulkAction;
+use Filament\Resources\RelationManagers\RelationManager;
 
-class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
+class ProgramRelationManager extends RelationManager
 {
-    use Dispatchable;
+    protected static string $relationship = 'basicNeedsPrograms';
 
-    public function __construct(
-        public CampaignAction $action
-    ) {}
+    protected static ?string $title = 'Programs';
 
-    public function uniqueId(): string
+    public function table(Table $table): Table
     {
-        return Tenant::current()->getKey() . ':' . $this->action->getKey();
-    }
-
-    public function handle(): void
-    {
-        $this->action->execute();
+        return $table
+            ->recordTitleAttribute('name')
+            ->columns([
+                TextColumn::make('name')
+                    ->label('Name')
+                    ->searchable(),
+                TextColumn::make('contact_person')
+                    ->label('Contact Person')
+                    ->searchable(),
+                TextColumn::make('contact_email')
+                    ->label('Email')
+                    ->searchable(),
+                TextColumn::make('contact_phone')
+                    ->label('Phone')
+                    ->searchable(),
+            ])
+            ->headerActions([
+                AttachAction::make(),
+            ])
+            ->actions([
+                DetachAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DetachBulkAction::make(),
+                ]),
+            ])
+            ->emptyStateHeading('No Programs Found.');
     }
 }

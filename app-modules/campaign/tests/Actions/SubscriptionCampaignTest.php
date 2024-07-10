@@ -35,7 +35,6 @@
 */
 
 use App\Models\User;
-use Laravel\Pennant\Feature;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -44,22 +43,16 @@ use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 
-it('will create the subscription records for subscribables in the caseload', function (array $priorSubscriptions, Collection $subscribables, bool $removePrior) {
-    Feature::active('enable-segments')
-        ? $segmentOrCaseload = Segment::factory()->create([
-            'type' => SegmentType::Static,
-        ])
-        : $segmentOrCaseload = Caseload::factory()->create([
-            'type' => CaseloadType::Static,
-        ]);
+it('will create the subscription records for subscribables in the segment', function (array $priorSubscriptions, Collection $subscribables, bool $removePrior) {
+    $segment = Segment::factory()->create([
+        'type' => SegmentType::Static,
+    ]);
 
-    $subscribables->each(function (Subscribable $subscribable) use ($segmentOrCaseload, $priorSubscriptions) {
-        $segmentOrCaseload->subjects()->create([
+    $subscribables->each(function (Subscribable $subscribable) use ($segment, $priorSubscriptions) {
+        $segment->subjects()->create([
             'subject_id' => $subscribable->getKey(),
             'subject_type' => $subscribable->getMorphClass(),
         ]);
@@ -73,12 +66,8 @@ it('will create the subscription records for subscribables in the caseload', fun
             );
     });
 
-    Feature::active('enable-segments')
-        ? $foreignKey = 'segment_id'
-        : $foreignKey = 'caseload_id';
-
     $campaign = Campaign::factory()->create([
-        $foreignKey => $segmentOrCaseload->id,
+        'segment_id' => $segment->id,
     ]);
 
     $users = User::factory()->count(3)->create();

@@ -34,71 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Models;
+namespace AdvisingApp\BasicNeeds\Models;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use AdvisingApp\Segment\Models\Segment;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-/**
- * @mixin IdeHelperCampaign
- */
-class Campaign extends BaseModel implements Auditable
+class ProgramParticipant extends Model
 {
-    use AuditableTrait;
-    use SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
-        'name',
-        'enabled',
-        'segment_id',
+        'program_participants_type',
+        'program_participants_id',
     ];
 
-    protected $casts = [
-        'enabled' => 'boolean',
-    ];
-
-    public function user(): BelongsTo
+    public function program_participants(): MorphTo
     {
-        return $this->belongsTo(User::class);
+        return $this->morphTo();
     }
 
-    public function segment(): BelongsTo
+    public function basicNeedsPrograms(): BelongsTo
     {
-        return $this->belongsTo(Segment::class);
-    }
-
-    public function actions(): HasMany
-    {
-        return $this->hasMany(CampaignAction::class);
-    }
-
-    public function scopeHasNotBeenExecuted(Builder $query): void
-    {
-        $query->whereDoesntHave('actions', function (Builder $query) {
-            $query->whereNotNull('successfully_executed_at');
-        });
-    }
-
-    public function hasBeenExecuted(): bool
-    {
-        return $this->actions->contains(fn (CampaignAction $action) => $action->hasBeenExecuted());
-    }
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope('licensed', function (Builder $builder) {
-            if (! auth()->check()) {
-                return;
-            }
-
-            $builder->whereHas('segment');
-        });
+        return $this->belongsTo(BasicNeedsProgram::class, 'basic_needs_program_id', 'id');
     }
 }

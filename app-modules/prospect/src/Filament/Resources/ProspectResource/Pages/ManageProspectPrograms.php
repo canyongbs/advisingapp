@@ -34,71 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Models;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use AdvisingApp\Segment\Models\Segment;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Laravel\Pennant\Feature;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProgramRelationManager;
 
-/**
- * @mixin IdeHelperCampaign
- */
-class Campaign extends BaseModel implements Auditable
+class ManageProspectPrograms extends ManageRelatedRecords
 {
-    use AuditableTrait;
-    use SoftDeletes;
+    protected static string $resource = ProspectResource::class;
 
-    protected $fillable = [
-        'name',
-        'enabled',
-        'segment_id',
-    ];
+    protected static string $relationship = 'basicNeedsPrograms';
 
-    protected $casts = [
-        'enabled' => 'boolean',
-    ];
+    protected static ?string $navigationIcon = 'heroicon-o-square-3-stack-3d';
 
-    public function user(): BelongsTo
+    protected static ?string $breadcrumb = 'Programs';
+
+    protected static ?string $title = 'Programs';
+
+    public static function getNavigationLabel(): string
     {
-        return $this->belongsTo(User::class);
+        return 'Programs';
     }
 
-    public function segment(): BelongsTo
+    public function getRelationManagers(): array
     {
-        return $this->belongsTo(Segment::class);
+        return [ProgramRelationManager::class];
     }
 
-    public function actions(): HasMany
+    public static function canAccess(array $parameters = []): bool
     {
-        return $this->hasMany(CampaignAction::class);
-    }
+        if (Feature::active('manage-program-participants')) {
+            return parent::canAccess($parameters);
+        }
 
-    public function scopeHasNotBeenExecuted(Builder $query): void
-    {
-        $query->whereDoesntHave('actions', function (Builder $query) {
-            $query->whereNotNull('successfully_executed_at');
-        });
-    }
-
-    public function hasBeenExecuted(): bool
-    {
-        return $this->actions->contains(fn (CampaignAction $action) => $action->hasBeenExecuted());
-    }
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope('licensed', function (Builder $builder) {
-            if (! auth()->check()) {
-                return;
-            }
-
-            $builder->whereHas('segment');
-        });
+        return false;
     }
 }

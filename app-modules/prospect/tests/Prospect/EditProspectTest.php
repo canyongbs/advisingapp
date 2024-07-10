@@ -40,8 +40,13 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use Filament\Tables\Actions\AttachAction;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Tests\Prospect\RequestFactories\EditProspectRequestFactory;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectPrograms;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProgramRelationManager;
 
 // TODO: Write EditProspect page tests
 //test('A successful action on the EditProspect page', function () {});
@@ -105,4 +110,42 @@ test('EditProspect is gated with proper access control', function () {
         ->and($prospect->fresh()->birthdate->toDateString())->toEqual($request->get('birthdate'))
         ->and($prospect->fresh()->hsgrad)->toEqual($request->get('hsgrad'))
         ->and($prospect->fresh()->created_by_id)->toEqual($request->get('created_by_id'));
+});
+
+it('can render manage basic needs program for prospect', function () {
+    $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
+
+    actingAs($user)
+        ->get(ProspectResource::getUrl('programs', [
+            'record' => Prospect::factory()->create(),
+        ]))->assertForbidden();
+
+    $user->givePermissionTo('prospect.*.update');
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('basic_needs_program.view-any');
+
+    actingAs($user)
+        ->get(ProspectResource::getUrl('programs', [
+            'record' => Prospect::factory()->create(),
+        ]))->assertSuccessful();
+});
+
+it('can attach a basic needs program to a prospect', function () {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+    $basicNeedsProgram = BasicNeedsProgram::factory()->create();
+    $prospect = Prospect::factory()->create();
+
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('student.view-any');
+
+    actingAs($user);
+
+    livewire(ProgramRelationManager::class, [
+        'ownerRecord' => $prospect,
+        'pageClass' => ManageProspectPrograms::class,
+    ])
+        ->callTableAction(
+            AttachAction::class,
+            data: ['recordId' => $basicNeedsProgram->getKey()]
+        )->assertSuccessful();
 });

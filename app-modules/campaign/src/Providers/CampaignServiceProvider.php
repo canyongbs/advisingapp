@@ -76,7 +76,7 @@ class CampaignServiceProvider extends ServiceProvider
                     });
             })
                 ->everyMinute()
-                ->name('ExecuteCampaignActions')
+                ->name('ExecuteCampaignActionsSchedule')
                 ->onOneServer()
                 ->withoutOverlapping();
         });

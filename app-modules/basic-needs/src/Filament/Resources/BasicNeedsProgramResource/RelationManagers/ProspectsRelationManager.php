@@ -34,29 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Actions;
+namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers;
 
-use App\Models\Tenant;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use AdvisingApp\Campaign\Models\CampaignAction;
+use Filament\Tables\Table;
+use Filament\Tables\Actions\DetachAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DetachBulkAction;
+use App\Filament\Tables\Columns\OpenSearch\TextColumn;
+use Filament\Resources\RelationManagers\RelationManager;
 
-class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
+class ProspectsRelationManager extends RelationManager
 {
-    use Dispatchable;
+    protected static string $relationship = 'prospects';
 
-    public function __construct(
-        public CampaignAction $action
-    ) {}
-
-    public function uniqueId(): string
+    public function table(Table $table): Table
     {
-        return Tenant::current()->getKey() . ':' . $this->action->getKey();
-    }
-
-    public function handle(): void
-    {
-        $this->action->execute();
+        return $table
+            ->recordTitleAttribute('full_name')
+            ->columns([
+                TextColumn::make('full_name')
+                    ->label('Name')
+                    ->searchable(),
+                TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable(),
+                TextColumn::make('mobile')
+                    ->label('Mobile')
+                    ->searchable(),
+            ])
+            ->actions([
+                DetachAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DetachBulkAction::make(),
+                ]),
+            ]);
     }
 }

@@ -39,7 +39,6 @@ namespace AdvisingApp\Task\Models;
 use Exception;
 use App\Models\User;
 use App\Models\BaseModel;
-use Laravel\Pennant\Feature;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use AdvisingApp\Task\Enums\TaskStatus;
@@ -160,13 +159,9 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, E
         try {
             DB::beginTransaction();
 
-            $campaignRelation = Feature::active('enable-segments')
-                ? 'segment'
-                : 'caseload';
-
             $action
                 ->campaign
-                ->{$campaignRelation}
+                ->segment
                 ->retrieveRecords()
                 ->each(function (Educatable $educatable) use ($action) {
                     $task = new Task([

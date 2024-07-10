@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use Laravel\Pennant\Feature;
 use Filament\Pages\Dashboard;
 use App\Filament\Clusters\ReportLibrary;
 use AdvisingApp\Report\Filament\Widgets\AiStats;
@@ -69,7 +68,7 @@ class ArtificialIntelligence extends Dashboard
         /** @var User $user */
         $user = auth()->user();
 
-        return Feature::active('ai_utilization') && $user->can('report-library.view-any');
+        return $user->can('report-library.view-any');
     }
 
     public function getWidgets(): array

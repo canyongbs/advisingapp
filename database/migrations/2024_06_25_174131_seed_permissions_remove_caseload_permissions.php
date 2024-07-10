@@ -34,71 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Models;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
+use Database\Migrations\Concerns\CanModifyPermissions;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use AdvisingApp\Segment\Models\Segment;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-/**
- * @mixin IdeHelperCampaign
- */
-class Campaign extends BaseModel implements Auditable
-{
-    use AuditableTrait;
-    use SoftDeletes;
-
-    protected $fillable = [
-        'name',
-        'enabled',
-        'segment_id',
+    private array $permissions = [
+        'caseload.view-any' => 'Caseload',
+        'caseload.create' => 'Caseload',
+        'caseload.*.view' => 'Caseload',
+        'caseload.*.update' => 'Caseload',
+        'caseload.*.delete' => 'Caseload',
+        'caseload.*.restore' => 'Caseload',
+        'caseload.*.force-delete' => 'Caseload',
+        'caseload_subject.view-any' => 'Caseload Subject',
+        'caseload_subject.create' => 'Caseload Subject',
+        'caseload_subject.*.view' => 'Caseload Subject',
+        'caseload_subject.*.update' => 'Caseload Subject',
+        'caseload_subject.*.delete' => 'Caseload Subject',
+        'caseload_subject.*.restore' => 'Caseload Subject',
+        'caseload_subject.*.force-delete' => 'Caseload Subject',
     ];
 
-    protected $casts = [
-        'enabled' => 'boolean',
+    private array $guards = [
+        'web',
+        'api',
     ];
 
-    public function user(): BelongsTo
+    public function up(): void
     {
-        return $this->belongsTo(User::class);
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $this->deletePermissions(array_keys($this->permissions), $guard);
+            });
+
+        DB::table('permission_groups')
+            ->whereIn('name', ['Caseload', 'Caseload Subject'])
+            ->delete();
     }
 
-    public function segment(): BelongsTo
+    public function down(): void
     {
-        return $this->belongsTo(Segment::class);
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $this->createPermissions($this->permissions, $guard);
+            });
     }
-
-    public function actions(): HasMany
-    {
-        return $this->hasMany(CampaignAction::class);
-    }
-
-    public function scopeHasNotBeenExecuted(Builder $query): void
-    {
-        $query->whereDoesntHave('actions', function (Builder $query) {
-            $query->whereNotNull('successfully_executed_at');
-        });
-    }
-
-    public function hasBeenExecuted(): bool
-    {
-        return $this->actions->contains(fn (CampaignAction $action) => $action->hasBeenExecuted());
-    }
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope('licensed', function (Builder $builder) {
-            if (! auth()->check()) {
-                return;
-            }
-
-            $builder->whereHas('segment');
-        });
-    }
-}
+};
