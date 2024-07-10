@@ -41,7 +41,6 @@ use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Report\Filament\Widgets\ChartReportWidget;
-use Illuminate\Support\Facades\Log;
 
 class ProspectEngagementLineChart extends ChartReportWidget
 {
@@ -112,7 +111,7 @@ class ProspectEngagementLineChart extends ChartReportWidget
                     'label' => 'Email',
                     'data' => array_values($runningTotalPerMonth['emailEngagement']),
                     'borderColor' => '#2C8BCA',
-                    'pointBackgroundColor' => '#2C8BCA'
+                    'pointBackgroundColor' => '#2C8BCA',
                 ],
                 [
                     'label' => 'SMS',
