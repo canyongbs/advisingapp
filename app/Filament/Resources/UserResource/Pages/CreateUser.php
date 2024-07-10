@@ -78,10 +78,6 @@ class CreateUser extends CreateRecord
                                     $user = User::withTrashed()->where('email', $value)->first();
 
                                     if ($user) {
-                                        if ($this->currentUserId && $user->id === $this->currentUserId) {
-                                            return true; // Allow the current user to keep their email
-                                        }
-
                                         if ($user->trashed()) {
                                             $fail('An archived user with this email address already exists. Please contact an administrator to restore this user or use a different email address.');
                                         } else {
