@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Widgets\TableWidget as BaseWidget;
-use Laravel\Pennant\Feature;
 use Livewire\Attributes\On;
+use Laravel\Pennant\Feature;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Widgets\TableWidget as BaseWidget;
+use AdvisingApp\StudentDataModel\Models\Student;
 
 class MostRecentStudentsTable extends BaseWidget
 {
@@ -53,6 +53,12 @@ class MostRecentStudentsTable extends BaseWidget
 
     protected static ?string $pollingInterval = null;
 
+    protected int | string | array $columnSpan = [
+        'sm' => 1,
+        'md' => 4,
+        'lg' => 4,
+    ];
+
     public function mount(string $cacheTag)
     {
         $this->cacheTag = $cacheTag;
@@ -63,12 +69,6 @@ class MostRecentStudentsTable extends BaseWidget
     {
         $this->dispatch('$refresh');
     }
-
-    protected int | string | array $columnSpan = [
-        'sm' => 1,
-        'md' => 4,
-        'lg' => 4,
-    ];
 
     public function table(Table $table): Table
     {

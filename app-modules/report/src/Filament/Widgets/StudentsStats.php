@@ -39,9 +39,9 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use Illuminate\Support\Number;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Segment\Enums\SegmentModel;
 use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\Segment\Enums\SegmentModel;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use AdvisingApp\StudentDataModel\Models\Student;
 
