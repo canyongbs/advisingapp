@@ -2,12 +2,12 @@
 
 namespace AdvisingApp\Prospect\Filament\Pages;
 
-use AdvisingApp\Prospect\Filament\Widgets\MostEngagedProspectsTable;
 use Filament\Pages\Dashboard;
+use App\Filament\Clusters\ReportLibrary;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectEngagementState;
+use AdvisingApp\Prospect\Filament\Widgets\MostEngagedProspectsTable;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectEngagementLineChart;
-use App\Filament\Clusters\ReportLibrary;
 
 class ProspectEnagagementReport extends Dashboard
 {
@@ -24,6 +24,14 @@ class ProspectEnagagementReport extends Dashboard
     protected $cacheTag = 'prospect-enagement-cache';
 
     protected static ?int $navigationSort = 20;
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('report-library.view-any');
+    }
 
     public function getColumns(): int | string | array
     {
