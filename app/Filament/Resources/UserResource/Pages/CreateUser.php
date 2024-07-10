@@ -48,6 +48,7 @@ use Filament\Resources\Pages\CreateRecord;
 use App\Notifications\SetPasswordNotification;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
+use Closure;
 
 class CreateUser extends CreateRecord
 {
@@ -72,9 +73,24 @@ class CreateUser extends CreateRecord
                             ->email()
                             ->required()
                             ->maxLength(255)
-                            ->unique()
-                            ->validationMessages([
-                                'unique' => "A user with this email address already exists. Please use a different email address or contact your administrator if you need to modify this user's account.",
+                            ->rules([
+                                fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                                    $user = User::withTrashed()->where('email', $value)->first();
+
+                                    if ($user) {
+                                        if ($this->currentUserId && $user->id === $this->currentUserId) {
+                                            return true; // Allow the current user to keep their email
+                                        }
+                                        if ($user->trashed()) {
+                                            $fail('An archived user with this email address already exists. Please contact an administrator to restore this user or use a different email address.');
+                                        } else {
+                                            $fail("A user with this email address already exists. Please use a different email address or contact your administrator if you need to modify this user's account.");
+                                        }
+                                        return false;
+                                    }
+
+                                    return true;
+                                },
                             ]),
                         TextInput::make('job_title')
                             ->string()
