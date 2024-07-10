@@ -2,14 +2,13 @@
 
 namespace AdvisingApp\Prospect\Filament\Widgets;
 
-use AdvisingApp\Engagement\Models\Engagement;
+use App\Models\User;
 use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Report\Filament\Widgets\StatsOverviewReportWidget;
-use App\Models\User;
 
 class ProspectEngagementState extends StatsOverviewReportWidget
 {
@@ -21,7 +20,6 @@ class ProspectEngagementState extends StatsOverviewReportWidget
 
     protected function getStats(): array
     {
-
         return [
             Stat::make('Total Prospects', Number::abbreviate(
                 Cache::tags([$this->cacheTag])->remember('total-prospects-count', now()->addHours(24), function (): int {
@@ -35,7 +33,6 @@ class ProspectEngagementState extends StatsOverviewReportWidget
                         return $q->whereHasMorph('recipient', Prospect::class);
                     })
                         ->where('channel', 'email')
-                        ->where('delivery_status', 'successful')
                         ->count();
                 }),
                 maxPrecision: 2,
@@ -46,14 +43,13 @@ class ProspectEngagementState extends StatsOverviewReportWidget
                         return $q->whereHasMorph('recipient', Prospect::class);
                     })
                         ->where('channel', 'sms')
-                        ->where('delivery_status', 'successful')
                         ->count();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('Staff Sending Enagements', Number::abbreviate(
                 Cache::tags([$this->cacheTag])->remember('staff-sending-engagement-count', now()->addHours(24), function (): int {
-                    return User::whereHas('engagements',function($q){
+                    return User::whereHas('engagements', function ($q) {
                         return $q->whereHasMorph('recipient', Prospect::class);
                     })->count();
                 }),
