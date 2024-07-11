@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
+use AdvisingApp\Report\Filament\Widgets\MostRecentTasksTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\TaskCumulativeCountLineChart;
 use AdvisingApp\Report\Filament\Widgets\TaskStats;
@@ -40,6 +41,7 @@ class TaskManagement extends Dashboard
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
             TaskStats::make(['cacheTag' => $this->cacheTag]),
             TaskCumulativeCountLineChart::make(['cacheTag' => $this->cacheTag]),
+            MostRecentTasksTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 
