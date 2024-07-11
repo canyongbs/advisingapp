@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Widgets;
+namespace AdvisingApp\Prospect\Filament\Widgets;
 
 use App\Models\User;
 use Illuminate\Support\Number;

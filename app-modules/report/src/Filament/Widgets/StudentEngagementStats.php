@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Widgets;
+namespace AdvisingApp\Report\Filament\Widgets;
 
 use App\Models\User;
 use Illuminate\Support\Number;

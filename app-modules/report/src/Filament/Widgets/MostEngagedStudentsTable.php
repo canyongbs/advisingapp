@@ -36,18 +36,51 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Task\Filament\Widgets\TasksWidget;
+use Filament\Tables\Table;
+use Livewire\Attributes\On;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Widgets\TableWidget as BaseWidget;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-class ProspectTasks extends TasksWidget
+class MostEngagedStudentsTable extends BaseWidget
 {
-    public function title(): string
+    public string $cacheTag;
+
+    protected static ?string $pollingInterval = null;
+
+    protected static bool $isLazy = false;
+
+    protected static ?string $heading = 'Most Actively Engaged Students';
+
+    protected int | string | array $columnSpan = 'full';
+
+    public function mount(string $cacheTag)
     {
-        return 'My Tasks for Prospects';
+        $this->cacheTag = $cacheTag;
     }
 
-    public function concern(): string
+    #[On('refresh-widgets')]
+    public function refreshWidget()
     {
-        return Prospect::class;
+        $this->dispatch('$refresh');
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(
+                Student::select('sisid', 'full_name', 'email')
+                    ->withCount('engagements')
+                    ->orderBy('engagements_count', 'desc')
+                    ->limit(10)
+            )
+            ->paginated(false)
+            ->columns([
+                TextColumn::make('full_name')
+                    ->label('Name'),
+                TextColumn::make('email'),
+                TextColumn::make('engagements_count')
+                    ->label('Engagements'),
+            ]);
     }
 }
