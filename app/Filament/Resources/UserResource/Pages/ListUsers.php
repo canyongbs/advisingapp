@@ -85,7 +85,6 @@ class ListUsers extends ListRecords
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name'),
-                TextColumn::make('teams.name'),
                 TextColumn::make('email')
                     ->label('Email address')
                     ->toggleable(),

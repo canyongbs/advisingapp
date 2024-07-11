@@ -41,9 +41,6 @@ use function Tests\asSuperAdmin;
 use AdvisingApp\Team\Models\Team;
 
 use function Pest\Laravel\actingAs;
-
-use Illuminate\Support\Facades\Log;
-
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertTrue;
 use function PHPUnit\Framework\assertFalse;
@@ -235,44 +232,35 @@ it('allows a user with permission to assign licenses in bulk', function () {
     });
 });
 
-it('can filters users by multiple teams', function () {
+it('can filter users by multiple teams', function () {
     asSuperAdmin();
 
-    $team1 = Team::factory()->create();
+    $adminTeam = Team::factory()->create();
 
-    $admins = User::factory()
-        ->count(4)
-        ->hasAttached($team1, [], 'teams')
+    $adminTeamGroup = User::factory()
+        ->count(3)
+        ->hasAttached($adminTeam, [], 'teams')
         ->create();
 
-    $team2 = Team::factory()->create();
+    $modTeam = Team::factory()->create();
 
-    $mods = User::factory()
-        ->count(4)
-        ->hasAttached($team2, [], 'teams')
+    $modsTeamGroup = User::factory()
+        ->count(3)
+        ->hasAttached($modTeam, [], 'teams')
         ->create();
 
-    $team3 = Team::factory()->create();
+    $supportTeam = Team::factory()->create();
 
-    $support = User::factory()
-        ->count(4)
-        ->hasAttached($team3, [], 'teams')
+    $supportTeamGroup = User::factory()
+        ->count(3)
+        ->hasAttached($supportTeam, [], 'teams')
         ->create();
-
-    Log::debug('New Logs');
-
-    foreach ($admins as $a) {
-        Log::debug($a->team);
-    }
-    Log::debug('-------------------');
-    Log::debug($team1->id);
-    Log::debug('--------------------------');
 
     livewire(ListUsers::class)
-        ->assertCanSeeTableRecords($admins)
-        ->filterTable('teams', [$team1->id, $team2->id])
+        ->assertCanSeeTableRecords($adminTeamGroup->merge($modsTeamGroup)->merge($supportTeamGroup))
+        ->filterTable('teams', [$adminTeam->id, $modTeam->id])
         ->assertCanSeeTableRecords(
-            $admins
-        );
-    // ->assertCanNotSeeTableRecords($support);
-})->only();
+            $adminTeamGroup
+        )
+        ->assertCanNotSeeTableRecords($supportTeamGroup);
+});
