@@ -34,30 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Pages;
+namespace AdvisingApp\Report\Filament\Pages;
 
 use Filament\Pages\Dashboard;
 use App\Filament\Clusters\ReportLibrary;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\StudentDataModel\Filament\Widgets\StudentEngagementStats;
-use AdvisingApp\StudentDataModel\Filament\Widgets\MostEngagedStudentsTable;
-use AdvisingApp\StudentDataModel\Filament\Widgets\StudentEngagementLineChart;
+use AdvisingApp\Prospect\Filament\Widgets\ProspectEngagementState;
+use AdvisingApp\Prospect\Filament\Widgets\MostEngagedProspectsTable;
+use AdvisingApp\Prospect\Filament\Widgets\ProspectEngagementLineChart;
 
-class StudentEngagementReport extends Dashboard
+class ProspectEnagagementReport extends Dashboard
 {
-    protected static ?string $title = 'Student Engagement';
-
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string $routePath = 'student-engagement-report';
+    protected static ?string $navigationGroup = 'Prospects';
+
+    protected static ?string $title = 'Prospect Engagement';
+
+    protected static string $routePath = 'prospect-enagement-report';
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Students';
+    protected $cacheTag = 'report-prospect-engagement';
 
-    protected $cacheTag = 'report-student-engagement';
-
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 20;
 
     public static function canAccess(): bool
     {
@@ -80,9 +80,9 @@ class StudentEngagementReport extends Dashboard
     {
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            StudentEngagementStats::make(['cacheTag' => $this->cacheTag]),
-            StudentEngagementLineChart::make(['cacheTag' => $this->cacheTag]),
-            MostEngagedStudentsTable::make(['cacheTag' => $this->cacheTag]),
+            ProspectEngagementState::make(['cacheTag' => $this->cacheTag]),
+            ProspectEngagementLineChart::make(['cacheTag' => $this->cacheTag]),
+            MostEngagedProspectsTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 }
