@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Widgets;
+namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Task\Filament\Widgets\TasksWidget;
