@@ -42,7 +42,6 @@ use Illuminate\Support\Facades\Cache;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Report\Filament\Widgets\StatsOverviewReportWidget;
 
 class StudentEngagementStats extends StatsOverviewReportWidget
 {

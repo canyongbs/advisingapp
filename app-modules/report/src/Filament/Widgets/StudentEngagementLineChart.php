@@ -40,7 +40,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Report\Filament\Widgets\ChartReportWidget;
 
 class StudentEngagementLineChart extends ChartReportWidget
 {

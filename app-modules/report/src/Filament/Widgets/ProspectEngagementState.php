@@ -42,7 +42,6 @@ use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Report\Filament\Widgets\StatsOverviewReportWidget;
 
 class ProspectEngagementState extends StatsOverviewReportWidget
 {

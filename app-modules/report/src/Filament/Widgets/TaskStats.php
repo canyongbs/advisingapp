@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Illuminate\Support\Number;
-use Illuminate\Support\Facades\Cache;
-use Filament\Widgets\StatsOverviewWidget\Stat;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Task\Enums\TaskStatus;
-use AdvisingApp\Task\Models\Task;
 use App\Models\User;
+use Illuminate\Support\Number;
+use AdvisingApp\Task\Models\Task;
+use Illuminate\Support\Facades\Cache;
+use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Widgets\StatsOverviewWidget\Stat;
+use AdvisingApp\StudentDataModel\Models\Student;
 
 class TaskStats extends StatsOverviewReportWidget
 {
