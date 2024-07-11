@@ -50,6 +50,8 @@ class PromptsCreatedLineChart extends ChartReportWidget
         'lg' => 3,
     ];
 
+    protected static ?string $maxHeight = '250px';
+
     protected function getOptions(): array
     {
         return [

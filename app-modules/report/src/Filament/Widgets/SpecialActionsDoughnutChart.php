@@ -46,9 +46,9 @@ class SpecialActionsDoughnutChart extends ChartReportWidget
 
     protected int | string | array $columnSpan = [
         'sm' => 1,
-        'md' => 1,
-        'lg' => 1,
     ];
+    
+    protected static ?string $maxHeight = '250px';
 
     protected function getOptions(): array
     {

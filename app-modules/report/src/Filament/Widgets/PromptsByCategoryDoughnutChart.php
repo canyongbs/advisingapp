@@ -46,9 +46,9 @@ class PromptsByCategoryDoughnutChart extends ChartReportWidget
 
     protected int | string | array $columnSpan = [
         'sm' => 1,
-        'md' => 1,
-        'lg' => 1,
     ];
+
+    protected static ?string $maxHeight = '250px';
 
     protected function getOptions(): array
     {
@@ -106,4 +106,13 @@ class PromptsByCategoryDoughnutChart extends ChartReportWidget
     {
         return 'doughnut';
     }
+
+    // public function render()
+    // {
+    //     return view('widgets.prompts-by-category-doughnut-chart', [
+    //         'hasData' => $this->hasData,
+    //         'chartData' => $this->getData(),
+    //         'chartOptions' => $this->getOptions(),
+    //     ]);
+    // }
 }
