@@ -34,31 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProgramRelationManager;
-
-class ManageStudentPrograms extends ManageRelatedRecords
-{
-    protected static string $resource = StudentResource::class;
-
-    protected static string $relationship = 'basicNeedsPrograms';
-
-    protected static ?string $navigationIcon = 'heroicon-o-square-3-stack-3d';
-
-    protected static ?string $breadcrumb = 'Programs';
-
-    protected static ?string $title = 'Programs';
-
-    public static function getNavigationLabel(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'Programs';
+        Feature::purge('manage-program-participants');
     }
 
-    public function getRelationManagers(): array
+    public function down(): void
     {
-        return [ProgramRelationManager::class];
+        Feature::activate('manage-program-participants');
     }
-}
+};
