@@ -36,21 +36,21 @@
 
 namespace AdvisingApp\Task\Filament\Widgets;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
-use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Tables\Table;
+use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Task\Enums\TaskStatus;
 use Filament\Tables\Columns\TextColumn;
+use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Widgets\TableWidget as BaseWidget;
-use AdvisingApp\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
-use AdvisingApp\Task\Models\Task;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Widgets\TableWidget as BaseWidget;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 
 abstract class TasksWidget extends BaseWidget
 {
