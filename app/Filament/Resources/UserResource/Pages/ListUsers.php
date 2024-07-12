@@ -48,6 +48,7 @@ use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Contracts\Support\Htmlable;
@@ -144,6 +145,12 @@ class ListUsers extends ListRecords
             ->filters([
                 TrashedFilter::make()
                     ->visible((fn () => auth()->user()->can('user.*.restore'))),
+                SelectFilter::make('teams')
+                    ->label('Team')
+                    ->relationship('teams', 'name')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
             ])
             ->defaultSort('name', 'asc');
     }
