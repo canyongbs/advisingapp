@@ -146,6 +146,7 @@ class ListUsers extends ListRecords
                     ->label('Team')
                     ->relationship('teams', 'name')
                     ->multiple()
+                    ->searchable()
                     ->preload(),
             ])
             ->defaultSort('name', 'asc');
