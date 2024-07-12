@@ -21,16 +21,16 @@ extensions:
   graphqlScalarExamples: true
 
 info:
-  title: Advising App API Reference
-  description: Documentation for the Advising App API
-  termsOfService: https://www.example.com/terms
+  title: Advising App™ by Canyon GBS™ API Documentation
+  description: This documentation contains reference information for using our GraphQL API capabilities to programmatically interface with your instance of Advising App™.
+  termsOfService: https://canyongbs.com/legal-terms/terms-of-use/
   contact:
-    name: API Support
-    url: http://www.example.com/support
-    email: support@example.com
+    name: Support Team
+    url: https://advising.app/support/
+    email: support@canyongbs.com
   license:
     name: Elastic License 2.0
-    url: https://www.elastic.co/licensing/elastic-license
+    url: https://github.com/canyongbs/advisingapp/blob/main/LICENSE
   x-introItems:
     - title: Authorization
       description: Add additional details for authentication. Supports `markdown`, more sections can be added.
@@ -44,8 +44,8 @@ info:
 
 
 servers:
-  - url: https://college.advising.app/graphql
-    description: This server. Replace with your own server URL.
+  - url: https://yoursubdomain.advising.app/graphql
+    description: Every customer of Advising App™ will have their own unique subdomain. Update the URL above with your subdomain unique to your college or university to identify your API endpoint.
     production: true
     headers:
       - name: Authorization
