@@ -94,6 +94,11 @@ class AiAssistant extends BaseModel implements HasMedia
         $this->addMediaConversion('avatar-height-250px')
             ->performOnCollections('avatar')
             ->height(250);
+
+        $this->addMediaConversion('thumbnail')
+            ->performOnCollections('avatar')
+            ->width(32)
+            ->height(32);
     }
 
     public function threads(): HasMany
