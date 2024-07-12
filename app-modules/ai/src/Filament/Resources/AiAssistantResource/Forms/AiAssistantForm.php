@@ -52,6 +52,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Illuminate\Validation\Rule;
 
 class AiAssistantForm
 {
@@ -75,17 +76,33 @@ class AiAssistantForm
                     ->options(AiApplication::class)
                     ->default(AiApplication::getDefault())
                     ->live()
-                    ->afterStateUpdated(fn (Set $set, $state) => filled($state) ? $set('model', AiApplication::parse($state)->getDefaultModel()->value) : null)
+                    ->afterStateUpdated(fn (Set $set, $state) => filled(AiApplication::parse($state)) ? $set('model', AiApplication::parse($state)->getDefaultModel()->value) : null)
                     ->required()
+                    ->enum(AiApplication::class)
                     ->columnStart(1)
                     ->disabledOn('edit'),
                 Select::make('model')
                     ->reactive()
-                    ->options(fn (Get $get): array => collect(AiApplication::parse($get('application'))->getModels())
-                        ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
-                        ->all())
+                    ->options(fn (Get $get): array => 
+                        filled(AiApplication::parse($get('application')))
+                            ? collect(AiApplication::parse($get('application'))
+                                ->getModels())
+                                ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
+                                ->all() 
+                            : []
+                        )
                     ->searchable()
                     ->required()
+                    ->rules(fn (Get $get): array => filled(AiApplication::parse($get('application')))
+                        ? [
+                            Rule::enum(AiModel::class)
+                                ->only(
+                                    AiApplication::parse($get('application'))
+                                        ->getModels()
+                                    )
+                            ]
+                        : []
+                    )
                     ->visible(fn (Get $get): bool => filled($get('application'))),
                 Textarea::make('description')
                     ->columnSpanFull()
@@ -95,8 +112,9 @@ class AiAssistantForm
                     ->schema([
                         Textarea::make('instructions')
                             ->helperText('Instructions are used to provide context to the AI Assistant on how to respond to user queries.')
+                            ->reactive()
                             ->required()
-                            ->maxLength(fn (?AiAssistant $record): int => ($record?->model ?? AiModel::OpenAiGpt35)->getService()->getMaxAssistantInstructionsLength()),
+                            ->maxLength(fn (Get $get): int => (AiModel::parse($get('model')) ?? AiModel::OpenAiGpt35)->getService()->getMaxAssistantInstructionsLength()),
                     ]),
                 Section::make('Additional Knowledge')
                     ->description('Add additional knowledge to your custom AI Assistant to improve its responses.')

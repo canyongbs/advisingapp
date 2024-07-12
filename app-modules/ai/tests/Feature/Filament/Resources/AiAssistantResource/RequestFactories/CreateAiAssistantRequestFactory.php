@@ -54,4 +54,13 @@ class CreateAiAssistantRequestFactory extends RequestFactory
             'instructions' => fake()->sentence(),
         ];
     }
+
+    public function withOverMaxInstructions(): static
+    {
+        return $this->state(['instructions' => function ($properties) {
+            $model = AiModel::parse($properties['model']) ?? AiModel::OpenAiGpt35;
+
+            return str()->random($model->getService()->getMaxAssistantInstructionsLength() + 1);
+        }]);
+    }
 }
