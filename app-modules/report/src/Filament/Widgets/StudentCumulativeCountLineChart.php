@@ -96,8 +96,6 @@ class StudentCumulativeCountLineChart extends ChartReportWidget
             ],
             'labels' => array_keys($runningTotalPerMonth),
         ];
-
-        return [];
     }
 
     protected function getType(): string
