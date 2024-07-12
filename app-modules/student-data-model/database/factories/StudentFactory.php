@@ -49,11 +49,10 @@ class StudentFactory extends Factory
 {
     public function definition(): array
     {
-        if (Feature::active('student_timestamp_fields')) {
-            $startDate = Carbon::now()->subYear();
-            $endDate = Carbon::yesterday();
-            $sourceDate = $this->faker->dateTimeBetween($startDate, $endDate);
-        }
+        $startDate = Carbon::now()->subYear();
+        $endDate = Carbon::yesterday();
+        $sourceDate = $this->faker->dateTimeBetween($startDate, $endDate);
+        
 
         $attributes = [
             'sisid' => $this->faker->unique()->numerify('########'),
@@ -88,12 +87,11 @@ class StudentFactory extends Factory
             'mr_e_term' => $this->faker->numerify('####'),
         ];
 
-        if (Feature::active('student_timestamp_fields')) {
-            $attributes['created_at'] = now();
-            $attributes['updated_at'] = now();
-            $attributes['created_at_source'] = $sourceDate;
-            $attributes['updated_at_source'] = $sourceDate;
-        }
+        $attributes['created_at'] = now();
+        $attributes['updated_at'] = now();
+        $attributes['created_at_source'] = $sourceDate;
+        $attributes['updated_at_source'] = $sourceDate;
+
 
         return $attributes;
     }

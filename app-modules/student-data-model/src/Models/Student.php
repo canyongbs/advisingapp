@@ -118,9 +118,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-
-        // Set the $timestamps property based on the feature flag
-        $this->timestamps = Feature::active('student_timestamp_fields');
+        $this->timestamps = true;
     }
 
     public function identifier(): string
