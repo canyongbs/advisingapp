@@ -59,10 +59,10 @@ enum AiModel: string implements HasLabel
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::OpenAiGpt35 => 'OpenAI GPT-3.5',
-            self::OpenAiGpt4 => 'OpenAI GPT-4',
-            self::OpenAiGpt4o => 'OpenAI GPT-4o',
-            self::OpenAiGptTest => 'OpenAI GPT Test',
+            self::OpenAiGpt35 => 'Canyon GPT-3.5',
+            self::OpenAiGpt4 => 'Canyon GPT-4',
+            self::OpenAiGpt4o => 'Canyon GPT-4o',
+            self::OpenAiGptTest => 'Canyon GPT Test',
             self::Test => 'Test',
         };
     }
@@ -86,12 +86,15 @@ enum AiModel: string implements HasLabel
         $models = self::cases();
 
         if (app()->hasDebugModeEnabled()) {
-            return $models;
+            return array_filter(
+                $models,
+                fn (AiModel $model): bool => $model !== self::OpenAiGptTest,
+            );
         }
 
         return array_filter(
             $models,
-            fn (AiModel $model): bool => $model !== self::Test,
+            fn (AiModel $model): bool => ! in_array($model, [self::Test, self::OpenAiGptTest]),
         );
     }
 
