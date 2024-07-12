@@ -86,9 +86,9 @@ class ArtificialIntelligence extends Dashboard
     public function getColumns(): int | string | array
     {
         return [
-            'sm' => 2,
-            'md' => 4,
-            'lg' => 4,
+            'sm' => 12,
+            'md' => 12,
+            'lg' => 12,
         ];
     }
 }

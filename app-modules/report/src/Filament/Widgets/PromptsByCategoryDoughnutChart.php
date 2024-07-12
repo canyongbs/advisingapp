@@ -37,18 +37,36 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Ai\Models\PromptType;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Collection;
 
 class PromptsByCategoryDoughnutChart extends ChartReportWidget
 {
-    protected static ?string $heading = 'Prompts by Category';
+    protected static ?string $heading = 'Prompts';
 
     protected int | string | array $columnSpan = [
-        'sm' => 1,
+        'sm' => 12,
+        'md' => 4,
+        'lg' => 4,
     ];
 
-    protected static ?string $maxHeight = '250px';
+    protected static ?string $maxHeight = '240px';
+
+    public function render(): View
+    {
+        if(!$this->getChartData()->count()){
+            return view('livewire.nowidgetdata');
+        }
+
+        $data = $this->getChartData()->pluck('prompts_count')->filter();
+
+        if(!count($data)){
+            return view('livewire.nowidgetdata');
+        }
+        
+        return view(static::$view, $this->getViewData());
+    }
 
     protected function getOptions(): array
     {
@@ -72,17 +90,7 @@ class PromptsByCategoryDoughnutChart extends ChartReportWidget
 
     protected function getData(): array
     {
-        $promptsByCategory = Cache::tags([$this->cacheTag])->remember('prompt_by_category_chart', now()->addHours(24), function (): Collection {
-            $promptsByCategoryData = PromptType::withCount(['prompts'])->get(['id', 'title']);
-
-            $promptsByCategoryData = $promptsByCategoryData->map(function (PromptType $promptType) {
-                $promptType['bg_color'] = $this->getRgbString();
-
-                return $promptType;
-            });
-
-            return $promptsByCategoryData;
-        });
+        $promptsByCategory = $this->getChartData();
 
         return [
             'labels' => $promptsByCategory->pluck('title'),
@@ -97,6 +105,20 @@ class PromptsByCategoryDoughnutChart extends ChartReportWidget
         ];
     }
 
+    protected function getChartData(){
+        return Cache::tags([$this->cacheTag])->remember('prompt_by_category_chart', now()->addHours(24), function (): Collection {
+            $promptsByCategoryData = PromptType::withCount(['prompts'])->get(['id', 'title']);
+
+            $promptsByCategoryData = $promptsByCategoryData->map(function (PromptType $promptType) {
+                $promptType['bg_color'] = $this->getRgbString();
+
+                return $promptType;
+            });
+
+            return $promptsByCategoryData;
+        });
+    }
+
     protected function getRgbString(): string
     {
         return 'rgb(' . rand(0, 255) . ',' . rand(0, 255) . ',' . rand(0, 255) . ')';
@@ -106,13 +128,4 @@ class PromptsByCategoryDoughnutChart extends ChartReportWidget
     {
         return 'doughnut';
     }
-
-    // public function render()
-    // {
-    //     return view('widgets.prompts-by-category-doughnut-chart', [
-    //         'hasData' => $this->hasData,
-    //         'chartData' => $this->getData(),
-    //         'chartOptions' => $this->getOptions(),
-    //     ]);
-    // }
 }

@@ -38,17 +38,30 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use Filament\Support\Colors\Color;
 use AdvisingApp\Ai\Models\AiThread;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class SpecialActionsDoughnutChart extends ChartReportWidget
 {
     protected static ?string $heading = 'Special Actions';
 
     protected int | string | array $columnSpan = [
-        'sm' => 1,
+        'sm' => 12,
+        'md' => 4,
+        'lg' => 4,
     ];
-    
-    protected static ?string $maxHeight = '250px';
+
+    protected static ?string $maxHeight = '240px';
+
+    public function render(): View
+    {
+        if($this->getChartData()->getData()->emailCount == 0 && $this->getChartData()->getData()->cloneCount == 0){
+            return view('livewire.nowidgetdata');
+        }
+        
+        return view(static::$view, $this->getViewData());
+    }
 
     protected function getOptions(): array
     {
@@ -72,12 +85,8 @@ class SpecialActionsDoughnutChart extends ChartReportWidget
 
     protected function getData(): array
     {
-        $emailCount = Cache::tags([$this->cacheTag])->remember('emailed_count', now()->addHours(24), function (): int {
-            return AiThread::sum('emailed_count');
-        });
-        $cloneCount = Cache::tags([$this->cacheTag])->remember('cloned_count', now()->addHours(24), function (): int {
-            return AiThread::sum('cloned_count');
-        });
+        $emailCount = $this->getChartData()->getData()->emailCount;
+        $cloneCount = $this->getChartData()->getData()->cloneCount;
 
         return [
             'labels' => ['Email', 'Clone'],
@@ -90,6 +99,22 @@ class SpecialActionsDoughnutChart extends ChartReportWidget
                 ],
             ],
         ];
+    }
+
+    protected function getChartData()
+    {
+        $emailCount = Cache::tags([$this->cacheTag])->remember('emailed_count', now()->addHours(24), function (): int {
+            return AiThread::sum('emailed_count');
+        });
+
+        $cloneCount = Cache::tags([$this->cacheTag])->remember('cloned_count', now()->addHours(24), function (): int {
+            return AiThread::sum('cloned_count');
+        });
+
+        return response()->json([
+            'emailCount' => $emailCount,
+            'cloneCount' => $cloneCount,
+        ]);
     }
 
     protected function getRgbString($color): string

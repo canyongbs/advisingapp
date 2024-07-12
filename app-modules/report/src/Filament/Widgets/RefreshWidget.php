@@ -48,11 +48,7 @@ class RefreshWidget extends StatsOverviewReportWidget
 
     protected static string $view = 'report::filament.pages.report-refresh-widgets';
 
-    protected int | string | array $columnSpan = [
-        'sm' => 4,
-        'md' => 4,
-        'lg' => 4,
-    ];
+    protected int | string | array $columnSpan = 'full';
 
     public function render(): View
     {

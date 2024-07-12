@@ -45,9 +45,9 @@ class PromptsCreatedLineChart extends ChartReportWidget
     protected static ?string $heading = 'Prompts Created';
 
     protected int | string | array $columnSpan = [
-        'sm' => 1,
-        'md' => 3,
-        'lg' => 3,
+        'sm' => 12,
+        'md' => 8,
+        'lg' => 8,
     ];
 
     protected static ?string $maxHeight = '250px';
