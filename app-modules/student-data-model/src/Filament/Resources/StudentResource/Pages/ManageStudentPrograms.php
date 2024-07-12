@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
-use Laravel\Pennant\Feature;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProgramRelationManager;
@@ -61,14 +60,5 @@ class ManageStudentPrograms extends ManageRelatedRecords
     public function getRelationManagers(): array
     {
         return [ProgramRelationManager::class];
-    }
-
-    public static function canAccess(array $parameters = []): bool
-    {
-        if (Feature::active('manage-program-participants')) {
-            return parent::canAccess($parameters);
-        }
-
-        return false;
     }
 }
