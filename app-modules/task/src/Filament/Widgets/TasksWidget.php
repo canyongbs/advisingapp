@@ -36,6 +36,11 @@
 
 namespace AdvisingApp\Task\Filament\Widgets;
 
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Tables\Table;
 use AdvisingApp\Task\Enums\TaskStatus;
@@ -44,6 +49,8 @@ use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Widgets\TableWidget as BaseWidget;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
+use AdvisingApp\Task\Models\Task;
+use Illuminate\Database\Eloquent\Builder;
 
 abstract class TasksWidget extends BaseWidget
 {
@@ -74,6 +81,15 @@ abstract class TasksWidget extends BaseWidget
                 TextColumn::make('due')
                     ->label('Due Date')
                     ->sortable(),
+                TextColumn::make('concern.display_name')
+                    ->label('Related To')
+                    ->getStateUsing(fn (Task $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
+                    ->searchable(query: fn (Builder $query, $search) => $query->tap(new EducatableSearch(relationship: 'concern', search: $search)))
+                    ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
+                        Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
+                        Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
+                        default => null,
+                    }),
             ])
             ->filters([
                 SelectFilter::make('status')
