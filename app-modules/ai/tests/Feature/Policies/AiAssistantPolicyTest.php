@@ -34,12 +34,13 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
-use App\Settings\LicenseSettings;
 
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
 test('viewAny', function () {
     $user = User::factory()->create();
@@ -109,7 +110,7 @@ test('create', function () {
 
     $settings->data->limits->conversationalAiAssistants = 1;
 
-    $settings->save(); 
+    $settings->save();
 
     expect($user->can('create', AiAssistant::class))->toBeTrue();
 });
