@@ -36,10 +36,12 @@
 
 use App\Models\User;
 
-use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
 use App\Settings\LicenseSettings;
+
+use function Pest\Laravel\actingAs;
+
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Authorization\Enums\LicenseType;
 
