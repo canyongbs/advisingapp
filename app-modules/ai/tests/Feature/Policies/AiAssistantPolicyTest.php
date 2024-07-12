@@ -36,6 +36,7 @@
 
 use App\Models\User;
 
+use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
 use App\Settings\LicenseSettings;
@@ -44,7 +45,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 
 test('viewAny', function () {
     $user = User::factory()->create();
-    $this->actingAs($user);
+    actingAs($user);
 
     expect($user->can('viewAny', AiAssistant::class))->toBeFalse();
 
@@ -69,7 +70,7 @@ test('viewAny', function () {
 
 test('view', function () {
     $user = User::factory()->create();
-    $this->actingAs($user);
+    actingAs($user);
 
     $aiAssistant = AiAssistant::factory()->create();
 
@@ -94,7 +95,7 @@ test('create', function () {
     $settings->save();
 
     $user = User::factory()->create();
-    $this->actingAs($user);
+    actingAs($user);
 
     expect($user->can('create', AiAssistant::class))->toBeFalse();
 
@@ -117,7 +118,7 @@ test('create', function () {
 
 test('update', function () {
     $user = User::factory()->create();
-    $this->actingAs($user);
+    actingAs($user);
 
     $aiAssistant = AiAssistant::factory()->create();
 
