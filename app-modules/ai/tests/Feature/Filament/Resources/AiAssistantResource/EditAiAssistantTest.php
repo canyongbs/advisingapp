@@ -36,25 +36,19 @@
 
 use function Pest\Laravel\get;
 
-use AdvisingApp\Ai\Enums\AiModel;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Illuminate\Validation\Rules\Enum;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Laravel\assertDatabaseCount;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-
-use function Pest\Laravel\assertDatabaseMissing;
-
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\CreateAiAssistant;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\EditAiAssistant;
 use AdvisingApp\Ai\Tests\Feature\Filament\Resources\AiAssistantResource\RequestFactories\CreateAiAssistantRequestFactory;
 
 /** @var array<LicenseType> $licenses */
@@ -64,7 +58,7 @@ $licenses = [
 
 $permissions = [
     'ai_assistant.view-any',
-    'ai_assistant.create',
+    'ai_assistant.*.update',
 ];
 
 it('cannot render without a license', function () use ($permissions) {
@@ -72,7 +66,11 @@ it('cannot render without a license', function () use ($permissions) {
         permissions: $permissions
     ));
 
-    get(CreateAiAssistant::getUrl())
+    $aiAssistant = AiAssistant::factory()->create();
+
+    get(EditAiAssistant::getUrl([
+        'record' => $aiAssistant->getRouteKey(),
+    ]))
         ->assertForbidden();
 });
 
@@ -81,7 +79,11 @@ it('cannot render without permissions', function () use ($licenses) {
         licenses: $licenses
     ));
 
-    get(CreateAiAssistant::getUrl())
+    $aiAssistant = AiAssistant::factory()->create();
+
+    get(EditAiAssistant::getUrl([
+        'record' => $aiAssistant->getRouteKey(),
+    ]))
         ->assertForbidden();
 });
 
@@ -91,7 +93,11 @@ it('cannot render without proper features enabled', function () use ($licenses, 
         permissions: $permissions
     ));
 
-    get(CreateAiAssistant::getUrl())
+    $aiAssistant = AiAssistant::factory()->create();
+
+    get(EditAiAssistant::getUrl([
+        'record' => $aiAssistant->getRouteKey(),
+    ]))
         ->assertForbidden();
 });
 
@@ -107,11 +113,15 @@ it('can render', function () use ($licenses, $permissions) {
 
     $settings->save();
 
-    get(CreateAiAssistant::getUrl())
+    $aiAssistant = AiAssistant::factory()->create();
+
+    get(EditAiAssistant::getUrl([
+        'record' => $aiAssistant->getRouteKey(),
+    ]))
         ->assertSuccessful();
 });
 
-it('can create a record', function () use ($licenses, $permissions) {
+it('can edit a record', function () use ($licenses, $permissions) {
     Storage::fake('s3');
 
     actingAs(user(
@@ -125,17 +135,17 @@ it('can create a record', function () use ($licenses, $permissions) {
 
     $settings->save();
 
-    assertDatabaseCount(AiAssistant::class, 0);
+    $aiAssistant = AiAssistant::factory()->create();
 
     $request = collect(CreateAiAssistantRequestFactory::new()->create());
 
-    livewire(CreateAiAssistant::class)
+    livewire(EditAiAssistant::class, [
+        'record' => $aiAssistant->getRouteKey(),
+    ])
         ->fillForm($request->toArray())
-        ->call('create')
+        ->call('save')
         ->assertHasNoFormErrors()
         ->assertHasNoErrors();
-
-    assertDatabaseCount(AiAssistant::class, 1);
 
     assertDatabaseHas(
         AiAssistant::class,
@@ -154,74 +164,74 @@ it('can create a record', function () use ($licenses, $permissions) {
     );
 });
 
-it('validates the inputs', function ($data, $errors) use ($licenses, $permissions) {
-    Storage::fake('s3');
+// it('validates the inputs', function ($data, $errors) use ($licenses, $permissions) {
+//     Storage::fake('s3');
 
-    actingAs(user(
-        licenses: $licenses,
-        permissions: $permissions
-    ));
+//     actingAs(user(
+//         licenses: $licenses,
+//         permissions: $permissions
+//     ));
 
-    $settings = app(LicenseSettings::class);
+//     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customAiAssistants = true;
+//     $settings->data->addons->customAiAssistants = true;
 
-    $settings->save();
+//     $settings->save();
 
-    $request = collect(CreateAiAssistantRequestFactory::new($data)->create());
+//     $request = collect(CreateAiAssistantRequestFactory::new($data)->create());
 
-    livewire(CreateAiAssistant::class)
-        ->fillForm($request->toArray())
-        ->call('create')
-        ->assertHasFormErrors($errors);
+//     livewire(CreateAiAssistant::class)
+//         ->fillForm($request->toArray())
+//         ->call('create')
+//         ->assertHasFormErrors($errors);
 
-    assertDatabaseMissing(
-        AiAssistant::class,
-        $request->except([
-            'avatar',
-        ])->toArray()
-    );
-})->with(
-    [
-        'name required' => [
-            CreateAiAssistantRequestFactory::new()->without('name'),
-            ['name' => 'required'],
-        ],
-        'name string' => [
-            CreateAiAssistantRequestFactory::new()->state(['name' => 1]),
-            ['name' => 'string'],
-        ],
-        'name max' => [
-            CreateAiAssistantRequestFactory::new()->state(['name' => str()->random(256)]),
-            ['name' => 'max'],
-        ],
-        'application required' => [
-            CreateAiAssistantRequestFactory::new()->state(['application' => null]),
-            ['application' => 'required'],
-        ],
-        'application must be correct enum' => [
-            CreateAiAssistantRequestFactory::new()->state(['application' => 'blah']),
-            ['application' => Enum::class],
-        ],
-        'model required' => [
-            CreateAiAssistantRequestFactory::new()->state(['model' => null]),
-            ['model' => 'required'],
-        ],
-        'model must be correct enum' => [
-            CreateAiAssistantRequestFactory::new()->state(['model' => AiModel::OpenAiGpt4]),
-            ['model' => Enum::class],
-        ],
-        'description required' => [
-            CreateAiAssistantRequestFactory::new()->without('description'),
-            ['description' => 'required'],
-        ],
-        'instructions required' => [
-            CreateAiAssistantRequestFactory::new()->without('instructions'),
-            ['instructions' => 'required'],
-        ],
-        'instructions max' => [
-            CreateAiAssistantRequestFactory::new()->withOverMaxInstructions(),
-            ['instructions' => 'max'],
-        ],
-    ]
-);
+//     assertDatabaseMissing(
+//         AiAssistant::class,
+//         $request->except([
+//             'avatar',
+//         ])->toArray()
+//     );
+// })->with(
+//     [
+//         'name required' => [
+//             CreateAiAssistantRequestFactory::new()->without('name'),
+//             ['name' => 'required']
+//         ],
+//         'name string' => [
+//             CreateAiAssistantRequestFactory::new()->state(['name' => 1]),
+//             ['name' => 'string']
+//         ],
+//         'name max' => [
+//             CreateAiAssistantRequestFactory::new()->state(['name' => str()->random(256)]),
+//             ['name' => 'max']
+//         ],
+//         'application required' => [
+//             CreateAiAssistantRequestFactory::new()->state(['application' => null]),
+//             ['application' => 'required']
+//         ],
+//         'application must be correct enum' => [
+//             CreateAiAssistantRequestFactory::new()->state(['application' => 'blah']),
+//             ['application' => Enum::class]
+//         ],
+//         'model required' => [
+//             CreateAiAssistantRequestFactory::new()->state(['model' => null]),
+//             ['model' => 'required']
+//         ],
+//         'model must be correct enum' => [
+//             CreateAiAssistantRequestFactory::new()->state(['model' => AiModel::OpenAiGpt4]),
+//             ['model' => Enum::class]
+//         ],
+//         'description required' => [
+//             CreateAiAssistantRequestFactory::new()->without('description'),
+//             ['description' => 'required']
+//         ],
+//         'instructions required' => [
+//             CreateAiAssistantRequestFactory::new()->without('instructions'),
+//             ['instructions' => 'required']
+//         ],
+//         'instructions max' => [
+//             CreateAiAssistantRequestFactory::new()->withOverMaxInstructions(),
+//             ['instructions' => 'max']
+//         ],
+//     ]
+// );

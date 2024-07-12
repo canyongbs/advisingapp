@@ -40,6 +40,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Laravel\Pennant\Feature;
+use Illuminate\Validation\Rule;
 use AdvisingApp\Ai\Enums\AiModel;
 use Filament\Forms\Components\Select;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -52,7 +53,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Illuminate\Validation\Rule;
 
 class AiAssistantForm
 {
@@ -83,24 +83,25 @@ class AiAssistantForm
                     ->disabledOn('edit'),
                 Select::make('model')
                     ->reactive()
-                    ->options(fn (Get $get): array => 
-                        filled(AiApplication::parse($get('application')))
+                    ->options(
+                        fn (Get $get): array => filled(AiApplication::parse($get('application')))
                             ? collect(AiApplication::parse($get('application'))
                                 ->getModels())
                                 ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
-                                ->all() 
+                                ->all()
                             : []
-                        )
+                    )
                     ->searchable()
                     ->required()
-                    ->rules(fn (Get $get): array => filled(AiApplication::parse($get('application')))
+                    ->rules(
+                        fn (Get $get): array => filled(AiApplication::parse($get('application')))
                         ? [
                             Rule::enum(AiModel::class)
                                 ->only(
                                     AiApplication::parse($get('application'))
                                         ->getModels()
-                                    )
-                            ]
+                                ),
+                        ]
                         : []
                     )
                     ->visible(fn (Get $get): bool => filled($get('application'))),
