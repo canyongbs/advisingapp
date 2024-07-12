@@ -181,7 +181,6 @@ it('validates the inputs', function ($data, $errors) use ($licenses, $permission
     );
 })->with(
     [
-        // TODO: avatar
         'name required' => [
             CreateAiAssistantRequestFactory::new()->without('name'),
             ['name' => 'required']
