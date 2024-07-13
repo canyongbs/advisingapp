@@ -55,11 +55,9 @@ class PromptsByCategoryDoughnutChart extends ChartReportWidget
 
     public function render(): View
     {
-        if(!$this->getChartData()->count()){
-            return view('livewire.noWidgetData');
-        }
+        $data = $this->getData()['datasets'][0]['data'];
 
-        $data = $this->getChartData()->pluck('prompts_count')->filter();
+        $data = $data->filter();
 
         if(!count($data)){
             return view('livewire.noWidgetData');
@@ -90,33 +88,27 @@ class PromptsByCategoryDoughnutChart extends ChartReportWidget
 
     protected function getData(): array
     {
-        $promptsByCategory = $this->getChartData();
+        $promptsByCategory = Cache::tags([$this->cacheTag])->remember('prompt_by_category_chart', now()->addHours(24), function (): Collection {
+            $promptsByCategoryData = PromptType::withCount(['prompts'])->get(['id', 'title']);
+
+            $promptsByCategoryData = $promptsByCategoryData->map(function (PromptType $promptType) {
+                $promptType['bg_color'] = $this->getRgbString();
+                return $promptType;
+            });
+
+            return $promptsByCategoryData;
+        });
 
         return [
             'labels' => $promptsByCategory->pluck('title'),
             'datasets' => [
                 [
-                    'label' => 'My First Dataset',
                     'data' => $promptsByCategory->pluck('prompts_count'),
                     'backgroundColor' => $promptsByCategory->pluck('bg_color'),
                     'hoverOffset' => 4,
                 ],
             ],
         ];
-    }
-
-    protected function getChartData(){
-        return Cache::tags([$this->cacheTag])->remember('prompt_by_category_chart', now()->addHours(24), function (): Collection {
-            $promptsByCategoryData = PromptType::withCount(['prompts'])->get(['id', 'title']);
-
-            $promptsByCategoryData = $promptsByCategoryData->map(function (PromptType $promptType) {
-                $promptType['bg_color'] = $this->getRgbString();
-
-                return $promptType;
-            });
-
-            return $promptsByCategoryData;
-        });
     }
 
     protected function getRgbString(): string
