@@ -43,7 +43,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class PromptsByCategoryDoughnutChart extends ChartReportWidget
 {
-    protected static ?string $heading = 'Prompts';
+    protected static ?string $heading = 'Prompts (By Category)';
 
     protected int | string | array $columnSpan = [
         'sm' => 12,
@@ -56,13 +56,13 @@ class PromptsByCategoryDoughnutChart extends ChartReportWidget
     public function render(): View
     {
         if(!$this->getChartData()->count()){
-            return view('livewire.nowidgetdata');
+            return view('livewire.noWidgetData');
         }
 
         $data = $this->getChartData()->pluck('prompts_count')->filter();
 
         if(!count($data)){
-            return view('livewire.nowidgetdata');
+            return view('livewire.noWidgetData');
         }
         
         return view(static::$view, $this->getViewData());
