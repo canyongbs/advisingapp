@@ -41,7 +41,6 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use Filament\Tables\Filters\BaseFilter;
-use App\Rules\EmailNotInUseOrSoftDeleted;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Filters\TrashedFilter;
 
