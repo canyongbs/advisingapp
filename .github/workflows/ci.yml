@@ -98,7 +98,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .php-cs-fixer.cache
-          key: ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-${{ github.sha }}
+          key: ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-${{ github.run_id }}
           restore-keys: |
             ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-
 
