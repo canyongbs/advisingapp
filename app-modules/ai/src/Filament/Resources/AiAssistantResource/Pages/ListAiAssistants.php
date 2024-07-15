@@ -57,7 +57,8 @@ class ListAiAssistants extends ListRecords
             ->columns([
                 SpatieMediaLibraryImageColumn::make('avatar')
                     ->collection('avatar')
-                    ->visibility('private'),
+                    ->visibility('private')
+                    ->circular(),
                 TextColumn::make('name')
                     ->searchable()
                     ->label('Name'),

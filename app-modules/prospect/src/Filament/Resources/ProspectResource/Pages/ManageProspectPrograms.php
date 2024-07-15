@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use Laravel\Pennant\Feature;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProgramRelationManager;
@@ -61,14 +60,5 @@ class ManageProspectPrograms extends ManageRelatedRecords
     public function getRelationManagers(): array
     {
         return [ProgramRelationManager::class];
-    }
-
-    public static function canAccess(array $parameters = []): bool
-    {
-        if (Feature::active('manage-program-participants')) {
-            return parent::canAccess($parameters);
-        }
-
-        return false;
     }
 }

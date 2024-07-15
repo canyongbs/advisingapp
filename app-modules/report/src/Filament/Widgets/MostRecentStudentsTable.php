@@ -38,7 +38,6 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use Filament\Tables\Table;
 use Livewire\Attributes\On;
-use Laravel\Pennant\Feature;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Widgets\TableWidget as BaseWidget;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -75,18 +74,14 @@ class MostRecentStudentsTable extends BaseWidget
         return $table
             ->query(
                 function () {
-                    if (Feature::active('student_timestamp_fields')) {
-                        $key = (new Student())->getKeyName();
+                    $key = (new Student())->getKeyName();
 
-                        return Student::whereIn($key, function ($query) use ($key) {
-                            $query->select($key)
-                                ->from((new Student())->getTable())
-                                ->orderBy('created_at_source', 'desc')
-                                ->take(100);
-                        })->orderBy('created_at_source', 'desc');
-                    } else {
-                        return Student::query()->whereRaw('1 = 0');
-                    }
+                    return Student::whereIn($key, function ($query) use ($key) {
+                        $query->select($key)
+                            ->from((new Student())->getTable())
+                            ->orderBy('created_at_source', 'desc')
+                            ->take(100);
+                    })->orderBy('created_at_source', 'desc');
                 }
             )
             ->columns([

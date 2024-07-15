@@ -37,6 +37,9 @@
 use App\Models\User;
 
 use function Tests\asSuperAdmin;
+
+use AdvisingApp\Team\Models\Team;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertTrue;
@@ -227,4 +230,37 @@ it('allows a user with permission to assign licenses in bulk', function () {
         $record->refresh();
         $licenseTypes->each(fn (LicenseType $licenseType) => assertTrue($record->hasLicense($licenseType)));
     });
+});
+
+it('can filter users by multiple teams', function () {
+    asSuperAdmin();
+
+    $adminTeam = Team::factory()->create();
+
+    $adminTeamGroup = User::factory()
+        ->count(3)
+        ->hasAttached($adminTeam, [], 'teams')
+        ->create();
+
+    $modTeam = Team::factory()->create();
+
+    $modsTeamGroup = User::factory()
+        ->count(3)
+        ->hasAttached($modTeam, [], 'teams')
+        ->create();
+
+    $supportTeam = Team::factory()->create();
+
+    $supportTeamGroup = User::factory()
+        ->count(3)
+        ->hasAttached($supportTeam, [], 'teams')
+        ->create();
+
+    livewire(ListUsers::class)
+        ->assertCanSeeTableRecords($adminTeamGroup->merge($modsTeamGroup)->merge($supportTeamGroup))
+        ->filterTable('teams', [$adminTeam->id, $modTeam->id])
+        ->assertCanSeeTableRecords(
+            $adminTeamGroup
+        )
+        ->assertCanNotSeeTableRecords($supportTeamGroup);
 });
