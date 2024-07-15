@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Widgets;
+namespace AdvisingApp\Report\Filament\Widgets;
 
 use Filament\Tables\Table;
 use Livewire\Attributes\On;
