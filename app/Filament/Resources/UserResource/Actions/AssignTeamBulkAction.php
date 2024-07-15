@@ -60,7 +60,8 @@ class AssignTeamBulkAction extends BulkAction
             ->form([
                 Select::make('team')
                     ->label('Team')
-                    ->options(Team::pluck('name', 'id')),
+                    ->options(Team::pluck('name', 'id'))
+                    ->searchable(),
             ])
             ->action(function (array $data, Collection $records) {
                 $records->each(function (User $record) use ($data) {
