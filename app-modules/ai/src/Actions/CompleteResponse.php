@@ -37,7 +37,6 @@
 namespace AdvisingApp\Ai\Actions;
 
 use Closure;
-use Illuminate\Support\Arr;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;

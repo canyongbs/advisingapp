@@ -35,240 +35,246 @@ import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 
 document.addEventListener('alpine:init', () => {
-    Alpine.data('chat', ({ csrfToken, retryMessageUrl, sendMessageUrl, completeResponseUrl, showThreadUrl, userId, threadId }) => ({
-        error: null,
-        isIncomplete: false,
-        isLoading: true,
-        isSendingMessage: false,
-        isRetryable: true,
-        latestMessage: '',
-        message: '',
-        rawIncomingResponse: '',
-        messages: [],
-        users: [],
+    Alpine.data(
+        'chat',
+        ({ csrfToken, retryMessageUrl, sendMessageUrl, completeResponseUrl, showThreadUrl, userId, threadId }) => ({
+            error: null,
+            isIncomplete: false,
+            isLoading: true,
+            isSendingMessage: false,
+            isRetryable: true,
+            latestMessage: '',
+            message: '',
+            rawIncomingResponse: '',
+            messages: [],
+            users: [],
 
-        init: async function () {
-            this.render();
+            init: async function () {
+                this.render();
 
-            setInterval(this.render.bind(this), 500);
+                setInterval(this.render.bind(this), 500);
 
-            const showThreadResponse = await fetch(showThreadUrl, {
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'text/event-stream',
-                },
-            });
-
-            const thread = await showThreadResponse.json();
-            this.messages = thread.messages;
-            this.users = thread.users;
-
-            this.isLoading = false;
-
-            this.$watch('isRetryable', async (value) => {
-                while (!this.isRetryable) {
-                    // Wait for 10 seconds before checking if the thread is retryable again.
-                    await new Promise((resolve) => setTimeout(resolve, 10000));
-
-                    this.isRetryable = !(await this.$wire.isThreadLocked());
-                }
-            });
-        },
-
-        handleMessageResponse: async function ({ response, isCompletingPreviousResponse }) {
-            if (!response.ok) {
-                const response = await response.json();
-
-                this.error = response.message;
-                this.isRetryable = !response.isThreadLocked;
-                this.isSendingMessage = false;
-
-                return;
-            }
-
-            if (! isCompletingPreviousResponse) {
-                this.messages.push({
-                    content: '',
+                const showThreadResponse = await fetch(showThreadUrl, {
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'text/event-stream',
+                    },
                 });
 
-                this.rawIncomingResponse = '';
-            } else {
-                if (this.rawIncomingResponse.endsWith('...')) {
-                    this.rawIncomingResponse = this.rawIncomingResponse.slice(0, -3);
-                }
+                const thread = await showThreadResponse.json();
+                this.messages = thread.messages;
+                this.users = thread.users;
 
-                this.rawIncomingResponse += ' ';
-            }
+                this.isLoading = false;
 
-            const responseReader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+                this.$watch('isRetryable', async (value) => {
+                    while (!this.isRetryable) {
+                        // Wait for 10 seconds before checking if the thread is retryable again.
+                        await new Promise((resolve) => setTimeout(resolve, 10000));
 
-            const readResponse = async () => {
-                const { done, value } = await responseReader.read();
+                        this.isRetryable = !(await this.$wire.isThreadLocked());
+                    }
+                });
+            },
 
-                if (done) {
+            handleMessageResponse: async function ({ response, isCompletingPreviousResponse }) {
+                if (!response.ok) {
+                    const response = await response.json();
+
+                    this.error = response.message;
+                    this.isRetryable = !response.isThreadLocked;
+                    this.isSendingMessage = false;
+
                     return;
                 }
 
-                this.parseEvents(value).forEach(event => {
-                    if (event.type === 'content') {
-                        this.rawIncomingResponse += new TextDecoder().decode(
-                            Uint8Array.from(atob(event.content), (m) => m.codePointAt(0)),
-                        );
+                if (!isCompletingPreviousResponse) {
+                    this.messages.push({
+                        content: '',
+                    });
 
-                        this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
-                            marked.parse(this.rawIncomingResponse),
-                        );
-
-                        if (event.incomplete) {
-                            this.isIncomplete = true;
-                        }
-                    } else if (['timeout', 'failed'].includes(event.type)) {
-                        this.error = event.message;
-                        this.isRetryable = true;
+                    this.rawIncomingResponse = '';
+                } else {
+                    if (this.rawIncomingResponse.endsWith('...')) {
+                        this.rawIncomingResponse = this.rawIncomingResponse.slice(0, -3);
                     }
-                })
+
+                    this.rawIncomingResponse += ' ';
+                }
+
+                const responseReader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+
+                const readResponse = async () => {
+                    const { done, value } = await responseReader.read();
+
+                    if (done) {
+                        return;
+                    }
+
+                    this.parseEvents(value).forEach((event) => {
+                        if (event.type === 'content') {
+                            this.rawIncomingResponse += new TextDecoder().decode(
+                                Uint8Array.from(atob(event.content), (m) => m.codePointAt(0)),
+                            );
+
+                            this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
+                                marked.parse(this.rawIncomingResponse),
+                            );
+
+                            if (event.incomplete) {
+                                this.isIncomplete = true;
+                            }
+                        } else if (['timeout', 'failed'].includes(event.type)) {
+                            this.error = event.message;
+                            this.isRetryable = true;
+                        }
+                    });
+
+                    await readResponse();
+                };
 
                 await readResponse();
-            };
 
-            await readResponse();
+                this.isSendingMessage = false;
 
-            this.isSendingMessage = false;
+                this.$wire.clearFiles();
+            },
 
-            this.$wire.clearFiles();
-        },
+            sendMessage: async function () {
+                if (!this.message.replace(/\s/g, '').length) {
+                    // The message is empty / whitespace only.
 
-        sendMessage: async function () {
-            if (!this.message.replace(/\s/g, '').length) {
-                // The message is empty / whitespace only.
+                    return;
+                }
 
-                return;
-            }
+                this.isSendingMessage = true;
+                this.isIncomplete = false;
+                this.error = null;
 
-            this.isSendingMessage = true;
-            this.isIncomplete = false;
-            this.error = null;
+                this.$dispatch(`message-sent-${threadId}`);
 
-            this.$dispatch(`message-sent-${threadId}`);
+                this.latestMessage = this.message;
 
-            this.latestMessage = this.message;
-
-            this.messages.push({
-                content: this.message.replace(/(?:\r\n|\r|\n)/g, '<br />'),
-                user_id: userId,
-            });
-
-            const message = this.message;
-
-            this.message = '';
-
-            this.$nextTick(async () => {
-                await this.handleMessageResponse({
-                    response: await fetch(sendMessageUrl, {
-                        method: "POST",
-                        headers: {
-                            Accept: "application/json",
-                            "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": csrfToken
-                        },
-                        body: JSON.stringify({
-                            content: message,
-                            files: this.$wire.files
-                        })
-                    })
+                this.messages.push({
+                    content: this.message.replace(/(?:\r\n|\r|\n)/g, '<br />'),
+                    user_id: userId,
                 });
-            });
-        },
 
-        retryMessage: async function () {
-            this.isSendingMessage = true;
-            this.isIncomplete = false;
-            this.error = null;
+                const message = this.message;
 
-            this.$dispatch(`message-sent-${threadId}`);
+                this.message = '';
 
-            this.$nextTick(async () => {
-                await this.handleMessageResponse({
-                    response: await fetch(retryMessageUrl, {
-                        method: "POST",
-                        headers: {
-                            Accept: "application/json",
-                            "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": csrfToken
-                        },
-                        body: JSON.stringify({
-                            content: this.latestMessage,
-                            files: this.$wire.files
-                        })
-                    })
+                this.$nextTick(async () => {
+                    await this.handleMessageResponse({
+                        response: await fetch(sendMessageUrl, {
+                            method: 'POST',
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: JSON.stringify({
+                                content: message,
+                                files: this.$wire.files,
+                            }),
+                        }),
+                    });
                 });
-            });
-        },
+            },
 
-        completeResponse: async function () {
-            this.isSendingMessage = true;
-            this.isIncomplete = false;
-            this.error = null;
+            retryMessage: async function () {
+                this.isSendingMessage = true;
+                this.isIncomplete = false;
+                this.error = null;
 
-            this.$dispatch(`message-sent-${threadId}`);
+                this.$dispatch(`message-sent-${threadId}`);
 
-            this.$nextTick(async () => {
-                await this.handleMessageResponse({
-                    response: await fetch(completeResponseUrl, {
-                        method: "POST",
-                        headers: {
-                            Accept: "application/json",
-                            "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": csrfToken
-                        },
-                        body: JSON.stringify({
-                            files: this.$wire.files
-                        })
-                    }),
-                    isCompletingPreviousResponse: true
+                this.$nextTick(async () => {
+                    await this.handleMessageResponse({
+                        response: await fetch(retryMessageUrl, {
+                            method: 'POST',
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: JSON.stringify({
+                                content: this.latestMessage,
+                                files: this.$wire.files,
+                            }),
+                        }),
+                    });
                 });
-            });
-        },
+            },
 
-        render: function () {
-            if (!this.$refs.messageInput) {
-                return;
-            }
+            completeResponse: async function () {
+                this.isSendingMessage = true;
+                this.isIncomplete = false;
+                this.error = null;
 
-            if (this.$refs.messageInput.scrollHeight > 0) {
-                this.$refs.messageInput.style.height = '5rem';
-                this.$refs.messageInput.style.height = `min(${this.$refs.messageInput.scrollHeight}px, 25dvh)`;
-            }
-        },
+                this.$dispatch(`message-sent-${threadId}`);
 
-        parseEvents: function (encodedEvents) {
-            encodedEvents = encodedEvents.split("\n").map(l => l.trim()).join('');
+                this.$nextTick(async () => {
+                    await this.handleMessageResponse({
+                        response: await fetch(completeResponseUrl, {
+                            method: 'POST',
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: JSON.stringify({
+                                files: this.$wire.files,
+                            }),
+                        }),
+                        isCompletingPreviousResponse: true,
+                    });
+                });
+            },
 
-            let jsonObjectIndex = encodedEvents.indexOf('{');
+            render: function () {
+                if (!this.$refs.messageInput) {
+                    return;
+                }
 
-            let openJsonObjects = 0;
+                if (this.$refs.messageInput.scrollHeight > 0) {
+                    this.$refs.messageInput.style.height = '5rem';
+                    this.$refs.messageInput.style.height = `min(${this.$refs.messageInput.scrollHeight}px, 25dvh)`;
+                }
+            },
 
-            const events = [];
+            parseEvents: function (encodedEvents) {
+                encodedEvents = encodedEvents
+                    .split('\n')
+                    .map((l) => l.trim())
+                    .join('');
 
-            for (let i = jsonObjectIndex; i < encodedEvents.length; i++) {
-                if ((encodedEvents[i] === '{') && ((i < 2) || (encodedEvents.slice(i - 2, i) !== "\\\""))) {
-                    openJsonObjects++
+                let jsonObjectIndex = encodedEvents.indexOf('{');
 
-                    if (openJsonObjects === 1) {
-                        jsonObjectIndex = i
-                    }
-                } else if ((encodedEvents[i] === '}') && ((i < 2) || (encodedEvents.slice(i - 2, i) !== "\\\""))) {
-                    openJsonObjects--;
+                let openJsonObjects = 0;
 
-                    if (openJsonObjects === 0) {
-                        events.push(JSON.parse(encodedEvents.substring(jsonObjectIndex, i + 1)));
+                const events = [];
 
-                        jsonObjectIndex = i + 1
+                for (let i = jsonObjectIndex; i < encodedEvents.length; i++) {
+                    if (encodedEvents[i] === '{' && (i < 2 || encodedEvents.slice(i - 2, i) !== '\\"')) {
+                        openJsonObjects++;
+
+                        if (openJsonObjects === 1) {
+                            jsonObjectIndex = i;
+                        }
+                    } else if (encodedEvents[i] === '}' && (i < 2 || encodedEvents.slice(i - 2, i) !== '\\"')) {
+                        openJsonObjects--;
+
+                        if (openJsonObjects === 0) {
+                            events.push(JSON.parse(encodedEvents.substring(jsonObjectIndex, i + 1)));
+
+                            jsonObjectIndex = i + 1;
+                        }
                     }
                 }
-            }
 
-            return events
-        },
-    }));
+                return events;
+            },
+        }),
+    );
 });

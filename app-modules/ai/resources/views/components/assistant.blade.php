@@ -435,11 +435,11 @@
                                                     class="visible mt-2 flex justify-center gap-2 self-end text-gray-400 md:gap-3 lg:absolute lg:right-0 lg:top-0 lg:mt-0 lg:translate-x-full lg:gap-1 lg:self-center lg:pl-2"
                                                     x-data="{
                                                         messageCopied: false,
-                                                        copyMessage: function () {
+                                                        copyMessage: function() {
                                                             navigator.clipboard.writeText(message.content.replace(/(<([^>]+)>)/gi, ''))
-
+                                                    
                                                             this.messageCopied = true
-
+                                                    
                                                             setTimeout(() => { this.messageCopied = false }, 2000)
                                                         }
                                                     }"
@@ -490,7 +490,7 @@
                                     for="message_input"
                                 >Type here</label>
                                 <textarea
-                                    class="w-full resize-none min-h-20 border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                                    class="min-h-20 w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
                                     id="message_input"
                                     x-ref="messageInput"
                                     x-model="message"
