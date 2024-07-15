@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Database\Factories;
 
 use Carbon\Carbon;
-use Laravel\Pennant\Feature;
 use Faker\Provider\en_US\Address;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -52,7 +51,6 @@ class StudentFactory extends Factory
         $startDate = Carbon::now()->subYear();
         $endDate = Carbon::yesterday();
         $sourceDate = $this->faker->dateTimeBetween($startDate, $endDate);
-        
 
         $attributes = [
             'sisid' => $this->faker->unique()->numerify('########'),
@@ -91,7 +89,6 @@ class StudentFactory extends Factory
         $attributes['updated_at'] = now();
         $attributes['created_at_source'] = $sourceDate;
         $attributes['updated_at_source'] = $sourceDate;
-
 
         return $attributes;
     }
