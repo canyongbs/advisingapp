@@ -112,8 +112,6 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         'sisid' => 'string',
     ];
 
-    public $timestamp;
-
     public function identifier(): string
     {
         return $this->sisid;
