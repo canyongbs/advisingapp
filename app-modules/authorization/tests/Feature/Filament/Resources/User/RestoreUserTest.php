@@ -49,6 +49,7 @@ use function PHPUnit\Framework\assertNotInstanceOf;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
+use App\Rules\EmailNotInUseOrSoftDeleted;
 
 it('show trashed filter only if user has user restore permission', function () {
     $user = User::factory()->create();
@@ -152,7 +153,7 @@ it('check if email unique validations works properly while creating new user', f
             'email' => $user->email,
         ])
         ->call('create')
-        ->assertHasFormErrors(['email' => 'unique']);
+        ->assertHasFormErrors(['email' => new EmailNotInUseOrSoftDeleted()]);
 });
 
 it('check if email unique validations works properly while editing user', function () {

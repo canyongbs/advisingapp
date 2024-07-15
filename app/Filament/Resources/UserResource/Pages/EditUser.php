@@ -54,6 +54,7 @@ use App\Notifications\SetPasswordNotification;
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
+use App\Rules\EmailNotInUseOrSoftDeleted;
 
 class EditUser extends EditRecord
 {
@@ -79,26 +80,7 @@ class EditUser extends EditRecord
                             ->required()
                             ->maxLength(255)
                             ->rules([
-                                fn (): Closure => function ($livewire, $value, Closure $fail) {
-                                    $user = User::withTrashed()->where('email', $value)->first();
-                                    $userId = $this->record->id ?? null;
-
-                                    if ($user) {
-                                        if ($userId && $user->id === $userId) {
-                                            return true; // Allow the current user to keep their email
-                                        }
-
-                                        if ($user->trashed()) {
-                                            $fail('An archived user with this email address already exists. Please contact an administrator to restore this user or use a different email address.');
-                                        } else {
-                                            $fail("A user with this email address already exists. Please use a different email address or contact your administrator if you need to modify this user's account.");
-                                        }
-
-                                        return false;
-                                    }
-
-                                    return true;
-                                },
+                                new EmailNotInUseOrSoftDeleted($this->record->id),
                             ]),
                         TextInput::make('job_title')
                             ->string()
