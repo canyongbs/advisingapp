@@ -41,6 +41,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use Filament\Tables\Filters\BaseFilter;
+use App\Rules\EmailNotInUseOrSoftDeleted;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Filters\TrashedFilter;
 
@@ -49,7 +50,6 @@ use function PHPUnit\Framework\assertNotInstanceOf;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
-use App\Rules\EmailNotInUseOrSoftDeleted;
 
 it('show trashed filter only if user has user restore permission', function () {
     $user = User::factory()->create();

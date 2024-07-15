@@ -36,7 +36,6 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use Closure;
 use Carbon\Carbon;
 use App\Models\User;
 use Filament\Forms\Form;
@@ -48,13 +47,13 @@ use App\Filament\Resources\UserResource;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use App\Rules\EmailNotInUseOrSoftDeleted;
 use App\Filament\Forms\Components\Licenses;
 use AdvisingApp\Authorization\Models\License;
 use App\Notifications\SetPasswordNotification;
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
-use App\Rules\EmailNotInUseOrSoftDeleted;
 
 class EditUser extends EditRecord
 {

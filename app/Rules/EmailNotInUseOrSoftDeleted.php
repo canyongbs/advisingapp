@@ -36,13 +36,14 @@
 
 namespace App\Rules;
 
-use App\Models\User;
 use Closure;
+use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 
 class EmailNotInUseOrSoftDeleted implements ValidationRule
 {
     protected $message;
+
     protected $currentUserId;
 
     public function __construct($currentUserId = null)

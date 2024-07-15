@@ -36,7 +36,6 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use Closure;
 use Carbon\Carbon;
 use App\Models\User;
 use Filament\Forms\Form;
@@ -45,11 +44,11 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use App\Filament\Resources\UserResource;
 use Filament\Forms\Components\TextInput;
+use App\Rules\EmailNotInUseOrSoftDeleted;
 use Filament\Resources\Pages\CreateRecord;
 use App\Notifications\SetPasswordNotification;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
-use App\Rules\EmailNotInUseOrSoftDeleted;
 
 class CreateUser extends CreateRecord
 {
@@ -75,7 +74,7 @@ class CreateUser extends CreateRecord
                             ->required()
                             ->maxLength(255)
                             ->rules([
-                                new EmailNotInUseOrSoftDeleted()
+                                new EmailNotInUseOrSoftDeleted(),
                             ]),
                         TextInput::make('job_title')
                             ->string()
