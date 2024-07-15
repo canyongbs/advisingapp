@@ -82,7 +82,7 @@ abstract class BaseOpenAiService implements AiService
     {
         $aiSettings = app(AiSettings::class);
 
-        $response = Http::asJson()
+        $completionResponse = Http::asJson()
             ->withHeader('api-key', $this->getApiKey())
             ->post("{$this->getDeployment()}/deployments/{$this->getModel()}/chat/completions?api-version={$this->getApiVersion()}", [
                 'messages' => [
@@ -93,12 +93,12 @@ abstract class BaseOpenAiService implements AiService
             ])
             ->json();
 
-        return $response['choices'][0]['message']['content'] ?? '';
+        return $completionResponse['choices'][0]['message']['content'] ?? '';
     }
 
     public function createAssistant(AiAssistant $assistant): void
     {
-        $response = $this->client->assistants()->create([
+        $newAssistantResponse = $this->client->assistants()->create([
             'name' => $assistant->name,
             'instructions' => $this->generateAssistantInstructions($assistant),
             'model' => $this->getModel(),
@@ -112,7 +112,7 @@ abstract class BaseOpenAiService implements AiService
             ],
         ]);
 
-        $assistant->assistant_id = $response->id;
+        $assistant->assistant_id = $newAssistantResponse->id;
     }
 
     public function updateAssistant(AiAssistant $assistant): void
@@ -126,19 +126,19 @@ abstract class BaseOpenAiService implements AiService
 
     public function retrieveAssistant(AiAssistant $assistant): AssistantsDataTransferObject
     {
-        $response = $this->client->assistants()->retrieve($assistant->assistant_id);
+        $assistantResponse = $this->client->assistants()->retrieve($assistant->assistant_id);
 
         return AssistantsDataTransferObject::from([
-            'id' => $response->id,
-            'name' => $response->name,
-            'description' => $response->description,
-            'model' => $response->model,
-            'instructions' => $response->instructions,
-            'tools' => $response->tools,
+            'id' => $assistantResponse->id,
+            'name' => $assistantResponse->name,
+            'description' => $assistantResponse->description,
+            'model' => $assistantResponse->model,
+            'instructions' => $assistantResponse->instructions,
+            'tools' => $assistantResponse->tools,
             'toolResources' => ToolResourcesDataTransferObject::from([
-                'codeInterpreter' => $response->toolResources->codeInterpreter ?? null,
+                'codeInterpreter' => $assistantResponse->toolResources->codeInterpreter ?? null,
                 'fileSearch' => FileSearchDataTransferObject::from([
-                    'vectorStoreIds' => $response->toolResources->fileSearch->vectorStoreIds ?? [],
+                    'vectorStoreIds' => $assistantResponse->toolResources->fileSearch->vectorStoreIds ?? [],
                 ]),
             ]),
         ]);
@@ -194,11 +194,11 @@ abstract class BaseOpenAiService implements AiService
                 ->all();
         }
 
-        $response = $this->client->threads()->create([
+        $newThreadResponse = $this->client->threads()->create([
             'messages' => $existingMessages,
         ]);
 
-        $thread->thread_id = $response->id;
+        $thread->thread_id = $newThreadResponse->id;
 
         if (count($existingMessagesOverflow)) {
             foreach ($existingMessagesOverflow as $overflowMessage) {
@@ -209,22 +209,22 @@ abstract class BaseOpenAiService implements AiService
 
     public function retrieveThread(AiThread $thread): ThreadsDataTransferObject
     {
-        $response = $this->client->threads()->retrieve($thread->thread_id);
+        $threadResponse = $this->client->threads()->retrieve($thread->thread_id);
 
         return ThreadsDataTransferObject::from([
             'id' => $thread->thread_id,
-            'vectorStoreIds' => $response->toolResources?->fileSearch?->vectorStoreIds ?? [],
+            'vectorStoreIds' => $threadResponse->toolResources?->fileSearch?->vectorStoreIds ?? [],
         ]);
     }
 
     public function modifyThread(AiThread $thread, array $parameters): ThreadsDataTransferObject
     {
-        /** @var ThreadResponse $response */
-        $response = $this->client->threads()->modify($thread->thread_id, $parameters);
+        /** @var ThreadResponse $updatedThreadResponse */
+        $updatedThreadResponse = $this->client->threads()->modify($thread->thread_id, $parameters);
 
         return ThreadsDataTransferObject::from([
-            'id' => $response->id,
-            'vectorStoreIds' => $response->toolResources?->fileSearch?->vectorStoreIds ?? [],
+            'id' => $updatedThreadResponse->id,
+            'vectorStoreIds' => $updatedThreadResponse->toolResources?->fileSearch?->vectorStoreIds ?? [],
         ]);
     }
 
@@ -271,12 +271,12 @@ abstract class BaseOpenAiService implements AiService
             })->toArray();
         }
 
-        $response = $this->client->threads()->messages()->create($message->thread->thread_id, $data);
+        $newMessageResponse = $this->client->threads()->messages()->create($message->thread->thread_id, $data);
 
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
         $message->context = $instructions;
-        $message->message_id = $response->id;
+        $message->message_id = $newMessageResponse->id;
         $message->save();
 
         if (! empty($createdFiles)) {
@@ -473,20 +473,18 @@ abstract class BaseOpenAiService implements AiService
         ) {
             $this->awaitThreadRunCompletion($latestRun);
 
-            $response = $this->client->threads()->messages()->list($message->thread->thread_id, [
+            $latestMessageResponse = $this->client->threads()->messages()->list($message->thread->thread_id, [
                 'order' => 'desc',
                 'limit' => 1,
-            ]);
-            $responseContent = $response->data[0]->content[0]->text->value;
-            $responseId = $response->data[0]->id;
+            ])->data[0];
 
-            return function () use ($responseContent, $responseId, $saveResponse): Generator {
+            return function () use ($latestMessageResponse, $saveResponse): Generator {
                 $response = new AiMessage();
 
-                yield $responseContent;
+                yield $latestMessageResponse->content[0]->text->value;
 
-                $response->content = $responseContent;
-                $response->message_id = $responseId;
+                $response->content = $latestMessageResponse->content[0]->text->value;
+                $response->message_id = $latestMessageResponse->id;
 
                 $saveResponse($response);
             };
@@ -519,10 +517,10 @@ abstract class BaseOpenAiService implements AiService
                 })->toArray();
             }
 
-            $response = $this->client->threads()->messages()->create($message->thread->thread_id, $data);
+            $newMessageResponse = $this->client->threads()->messages()->create($message->thread->thread_id, $data);
 
             $message->context = $instructions;
-            $message->message_id = $response->id;
+            $message->message_id = $newMessageResponse->id;
             $message->save();
         }
 
