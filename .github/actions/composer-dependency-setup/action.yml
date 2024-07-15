@@ -8,7 +8,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: vendor
-        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
 
     - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
       name: Install Dependencies
