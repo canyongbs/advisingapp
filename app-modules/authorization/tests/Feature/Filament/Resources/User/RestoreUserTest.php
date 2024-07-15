@@ -140,7 +140,7 @@ it('check if restore feature works as expected', function () {
     expect($user->refresh())->deleted_at->toBe(null);
 });
 
-it('check if email unique validations works properly while creating new user', function () {
+it('check if email EmailNotInUseOrSoftDeleted validations works properly while creating new user with email that is deleted', function () {
     asSuperAdmin();
     $user = User::factory()->create();
 
@@ -153,10 +153,23 @@ it('check if email unique validations works properly while creating new user', f
             'email' => $user->email,
         ])
         ->call('create')
-        ->assertHasFormErrors(['email' => new EmailNotInUseOrSoftDeleted()]);
+        ->assertHasFormErrors(['email' => 'An archived user with this email address already exists. Please contact an administrator to restore this user or use a different email address.']);
 });
 
-it('check if email unique validations works properly while editing user', function () {
+it('check if email EmailNotInUseOrSoftDeleted validations works properly while creating user with email that is already in use', function () {
+    asSuperAdmin();
+    $first = User::factory()->create();
+
+    livewire(CreateUser::class)
+        ->fillForm([
+            'name' => 'Tester',
+            'email' => $first->email,
+        ])
+        ->call('create')
+        ->assertHasFormErrors(['email' => "A user with this email address already exists. Please use a different email address or contact your administrator if you need to modify this user's account."]);
+});
+
+it('check if email EmailNotInUseOrSoftDeleted validations works properly while editing user with email that is deleted', function () {
     asSuperAdmin();
     $first = User::factory()->create();
     $second = User::factory()->create();
@@ -171,5 +184,20 @@ it('check if email unique validations works properly while editing user', functi
             'email' => $first->email,
         ])
         ->call('save')
-        ->assertHasFormErrors(['email' => 'unique']);
+        ->assertHasFormErrors(['email' => 'An archived user with this email address already exists. Please contact an administrator to restore this user or use a different email address.']);
+});
+
+it('check if email EmailNotInUseOrSoftDeleted validations works properly while editing user with email that is already in use', function () {
+    asSuperAdmin();
+    $first = User::factory()->create();
+    $second = User::factory()->create();
+
+    livewire(EditUser::class, [
+        'record' => $second->getRouteKey(),
+    ])
+        ->fillForm([
+            'email' => $first->email,
+        ])
+        ->call('save')
+        ->assertHasFormErrors(['email' => "A user with this email address already exists. Please use a different email address or contact your administrator if you need to modify this user's account."]);
 });
