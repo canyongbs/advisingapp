@@ -48,7 +48,7 @@ class ProspectReportTableChart extends BaseWidget
 
     protected int | string | array $columnSpan = 'full';
 
-    protected static ?string $heading = 'Most Actively Engaged Prospects';
+    protected static ?string $heading = 'Most Recent Prospects Added';
 
     protected static ?string $pollingInterval = null;
 
