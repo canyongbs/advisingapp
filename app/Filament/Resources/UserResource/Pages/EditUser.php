@@ -47,6 +47,7 @@ use App\Filament\Resources\UserResource;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use App\Rules\EmailNotInUseOrSoftDeleted;
 use App\Filament\Forms\Components\Licenses;
 use AdvisingApp\Authorization\Models\License;
 use App\Notifications\SetPasswordNotification;
@@ -77,9 +78,8 @@ class EditUser extends EditRecord
                             ->email()
                             ->required()
                             ->maxLength(255)
-                            ->unique(ignoreRecord: true)
-                            ->validationMessages([
-                                'unique' => 'An archived user with this email address already exists. Please contact an administrator to restore this user or use a different email address.',
+                            ->rules([
+                                new EmailNotInUseOrSoftDeleted($this->record->id),
                             ]),
                         TextInput::make('job_title')
                             ->string()
