@@ -85,19 +85,8 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Setup Dependencies
+        uses: ./.github/actions/composer-dependency-setup
 
       - uses: actions/setup-node@v4
         with:
@@ -191,20 +180,8 @@ jobs:
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-        shell: bash
+      - name: Setup Dependencies
+        uses: ./.github/actions/composer-dependency-setup
 
       - uses: actions/setup-node@v4
         with:
@@ -232,52 +209,11 @@ jobs:
   lint:
     runs-on: ubuntu-22.04
 
-    container: ubuntu:22.04
-
-    env:
-      DB_PORT: 5432
-      DB_HOST: postgres
-      DB_USERNAME: root
-      DB_PASSWORD: root
-      DB_DATABASE: testing_landlord
-      SCOUT_PREFIX: test_
-
     timeout-minutes: 15
 
     needs: [build-deps,enforce-copyright,fix-code-style]
 
-    services:
-      postgres:
-        # Docker Hub image
-        image: postgres:15
-        # Provide the password for postgres
-        env:
-          PGPASSWORD: ${{ env.DB_PASSWORD }}
-          POSTGRES_DB: ${{ env.DB_DATABASE }}
-          POSTGRES_USER: ${{ env.DB_USERNAME }}
-          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
-        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
-      - name: Install packages
-        run: apt-get update ; apt-get install -y git zip unzip postgresql-client
-
-      - name: Create tenant database
-        run: psql -h postgres -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
-        env:
-          PGPASSWORD: root
-
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
@@ -287,32 +223,8 @@ jobs:
         with:
           ref: ${{ github.ref }}
 
-      - name: Copy .env
-        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
-
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-        shell: bash
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
-      - run: npm install
-
-      - name: Build Assets
-        run: npm run build
+      - name: Setup Dependencies
+        uses: ./.github/actions/composer-dependency-setup
 
       - name: Linting
         run: composer lint
