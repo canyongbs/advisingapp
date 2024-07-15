@@ -58,6 +58,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
+use App\Filament\Resources\UserResource\Actions\AssignTeamBulkAction;
 use App\Filament\Resources\UserResource\Actions\AssignRolesBulkAction;
 use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
 
@@ -139,6 +140,8 @@ class ListUsers extends ListRecords
                     AssignLicensesBulkAction::make()
                         ->visible(fn () => auth()->user()->can('create', License::class)),
                     AssignRolesBulkAction::make()
+                        ->visible(fn () => auth()->user()->can('user.*.update', User::class)),
+                    AssignTeamBulkAction::make()
                         ->visible(fn () => auth()->user()->can('user.*.update', User::class)),
                 ]),
             ])
