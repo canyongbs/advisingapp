@@ -211,7 +211,7 @@ jobs:
 
     env:
       DB_PORT: 5432
-      DB_HOST: postgres
+      DB_HOST: 127.0.0.1
       DB_USERNAME: root
       DB_PASSWORD: root
       DB_DATABASE: testing_landlord
@@ -251,7 +251,7 @@ jobs:
     #     run: apt-get update ; apt-get install -y git zip unzip postgresql-client
 
       - name: Create tenant database
-        run: psql -h postgres -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
+        run: psql -h 127.0.0.1 -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
         env:
           PGPASSWORD: root
 
