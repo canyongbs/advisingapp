@@ -2,12 +2,12 @@
 
 namespace AdvisingApp\Prospect\Filament\Pages;
 
+use AdvisingApp\Report\Filament\Widgets\ProspectReportTableChart;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportLineChart;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Filament\Clusters\ReportLibrary;
 use Filament\Pages\Dashboard;
-use Filament\Pages\Page;
 
 class ProspectReport extends Dashboard
 {
@@ -31,6 +31,7 @@ class ProspectReport extends Dashboard
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
             ProspectReportStats::make(['cacheTag' => $this->cacheTag]),
             ProspectReportLineChart::make(['cacheTag' => $this->cacheTag]),
+            ProspectReportTableChart::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 

@@ -37,18 +37,13 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use Illuminate\Support\Number;
-use AdvisingApp\Ai\Models\PromptUse;
 use Illuminate\Support\Facades\Cache;
-use AdvisingApp\Ai\Models\PromptUpvote;
 use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Authorization\Models\License;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Segment\Models\Segment;
 
 class ProspectReportStats extends StatsOverviewReportWidget
 {
@@ -73,14 +68,9 @@ class ProspectReportStats extends StatsOverviewReportWidget
                 }),
                 maxPrecision: 2,
             )),
-            Stat::make('Total Segment', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('prompts-insertions-count', now()->addHours(24), function (): int {
-                    return Segment::query()->model(SegmentModel::Prospect)->count();
-                    // return EngagementDeliverable::whereHas('engagement', function ($q) {
-                    //     return $q->whereHasMorph('recipient', Prospect::class);
-                    // })
-                    //     ->where('delivery_status', 'successful')
-                    //     ->count();
+            Stat::make('Total Segments', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('alert-count', now()->addHours(24), function (): int {
+                    return Segment::query()->whereModel(SegmentModel::Prospect)->count();
                 }),
                 maxPrecision: 2,
             )),
