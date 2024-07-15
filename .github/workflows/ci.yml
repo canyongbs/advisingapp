@@ -209,8 +209,6 @@ jobs:
   lint:
     runs-on: ubuntu-22.04
 
-    container: ubuntu:22.04
-
     env:
       DB_PORT: 5432
       DB_HOST: postgres
@@ -227,6 +225,8 @@ jobs:
       postgres:
         # Docker Hub image
         image: postgres:15
+        ports:
+          - 5432:5432
         # Provide the password for postgres
         env:
           PGPASSWORD: ${{ env.DB_PASSWORD }}
