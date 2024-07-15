@@ -36,10 +36,10 @@
 
 namespace App\Filament\Resources\UserResource\Actions;
 
+use Exception;
 use App\Models\User;
 use AdvisingApp\Team\Models\Team;
 use Filament\Support\Enums\MaxWidth;
-use AdvisingApp\Team\Models\TeamUser;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Notifications\Notification;
@@ -53,7 +53,9 @@ class AssignTeamBulkAction extends BulkAction
 
         $this->icon('heroicon-o-user-group')
             ->modalWidth(MaxWidth::Small)
-            ->modalDescription('This bulk action will overwrite any prior team assignments for the selected user(s).')
+            ->modalDescription(
+                fn (Collection $records): string => (count($records) > 1) ? 'This bulk action will overwrite any prior team assignments for the selected user(s).' : 'This bulk action will overwrite any prior team assignments for the selected user'
+            )
             ->fillForm(fn (Collection $records): array => [
                 'records' => $records,
             ])
@@ -64,16 +66,32 @@ class AssignTeamBulkAction extends BulkAction
                     ->searchable(),
             ])
             ->action(function (array $data, Collection $records) {
-                $records->each(function (User $record) use ($data) {
-                    if (! empty($data['team'])) {
-                       $record->assignTeam($data['team']);
+                $success = 0;
+                $fail = 0;
+                $records->each(function (User $record) use ($data, &$success, &$fail) {
+                    try {
+                        if (! empty($data['team'])) {
+                            $record->assignTeam($data['team']);
+                            $success = $success + 1;
+                        }
+                    } catch (Exception $e) {
+                        report($e);
+                        $fail = $fail + 1;
                     }
                 });
 
-                Notification::make()
-                    ->title('Assigned Team')
-                    ->success()
-                    ->send();
+                if ($fail > 0) {
+                    Notification::make()
+                        ->title('Assigned Team')
+                        ->body('Fail to added to the team: ' . $fail)
+                        ->success()
+                        ->send();
+                } else {
+                    Notification::make()
+                        ->title('Assigned Team')
+                        ->success()
+                        ->send();
+                }
             });
     }
 
