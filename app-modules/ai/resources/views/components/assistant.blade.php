@@ -313,6 +313,7 @@
                     csrfToken: @js(csrf_token()),
                     retryMessageUrl: @js(route('ai.threads.messages.retry', ['thread' => $this->thread])),
                     sendMessageUrl: @js(route('ai.threads.messages.send', ['thread' => $this->thread])),
+                    completeResponseUrl: @js(route('ai.threads.messages.complete-response', ['thread' => $this->thread])),
                     showThreadUrl: @js(route('ai.threads.show', ['thread' => $this->thread])),
                     userId: @js(auth()->user()->id),
                     threadId: @js($this->thread->id)
@@ -396,7 +397,7 @@
                         class="divide-y dark:divide-gray-800"
                         x-cloak
                     >
-                        <template x-for="message in messages">
+                        <template x-for="(message, messageIndex) in messages">
                             <div class="group w-full bg-white dark:bg-gray-900">
                                 <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
                                     <div
@@ -419,6 +420,14 @@
                                                         class="prose dark:prose-invert"
                                                         x-html="message.content"
                                                     ></div>
+
+                                                    <x-filament::link
+                                                        tag="button"
+                                                        x-on:click="completeResponse"
+                                                        x-show="isIncomplete && (messageIndex === (messages.length - 1))"
+                                                    >
+                                                        Continue generating
+                                                    </x-filament::link>
                                                 </div>
                                             </div>
                                             <div class="flex justify-between empty:hidden lg:block">
@@ -426,11 +435,11 @@
                                                     class="visible mt-2 flex justify-center gap-2 self-end text-gray-400 md:gap-3 lg:absolute lg:right-0 lg:top-0 lg:mt-0 lg:translate-x-full lg:gap-1 lg:self-center lg:pl-2"
                                                     x-data="{
                                                         messageCopied: false,
-                                                        copyMessage: function() {
+                                                        copyMessage: function () {
                                                             navigator.clipboard.writeText(message.content.replace(/(<([^>]+)>)/gi, ''))
-                                                    
+
                                                             this.messageCopied = true
-                                                    
+
                                                             setTimeout(() => { this.messageCopied = false }, 2000)
                                                         }
                                                     }"
@@ -481,7 +490,7 @@
                                     for="message_input"
                                 >Type here</label>
                                 <textarea
-                                    class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                                    class="w-full resize-none min-h-20 border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
                                     id="message_input"
                                     x-ref="messageInput"
                                     x-model="message"

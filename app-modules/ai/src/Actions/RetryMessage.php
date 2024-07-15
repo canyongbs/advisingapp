@@ -84,7 +84,7 @@ class RetryMessage
                 $response->save();
 
                 $thread->touch();
-            }
+            },
         );
     }
 }

@@ -38,6 +38,7 @@ use Illuminate\Support\Facades\Route;
 use AdvisingApp\Ai\Http\Controllers\ShowThreadController;
 use AdvisingApp\Ai\Http\Controllers\SendMessageController;
 use AdvisingApp\Ai\Http\Controllers\RetryMessageController;
+use AdvisingApp\Ai\Http\Controllers\CompleteResponseController;
 
 Route::middleware(['web', 'auth'])
     ->name('ai.')
@@ -50,4 +51,7 @@ Route::middleware(['web', 'auth'])
 
         Route::post('ai/threads/{thread}/messages/retry', RetryMessageController::class)
             ->name('threads.messages.retry');
+
+        Route::post('ai/threads/{thread}/messages/complete-response', CompleteResponseController::class)
+            ->name('threads.messages.complete-response');
     });

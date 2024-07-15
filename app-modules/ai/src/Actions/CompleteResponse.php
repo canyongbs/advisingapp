@@ -43,9 +43,9 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 
-class SendMessage
+class CompleteResponse
 {
-    public function __invoke(AiThread $thread, string $content, array $files = []): Closure
+    public function __invoke(AiThread $thread, array $files = []): Closure
     {
         if ($thread->locked_at) {
             throw new AiThreadLockedException();
@@ -55,31 +55,29 @@ class SendMessage
             throw new AiAssistantArchivedException();
         }
 
-        $message = new AiMessage();
-        $message->content = $content;
-        $message->request = [
-            'headers' => Arr::only(
-                request()->headers->all(),
-                ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
-            ),
-            'ip' => request()->ip(),
-        ];
-        $message->thread()->associate($thread);
-        $message->user()->associate(auth()->user());
+        $response = $thread->messages()
+            ->whereNull('user_id')
+            ->latest()
+            ->first();
+
+        if (! $response) {
+            ray($thread, $thread->messages->count());
+        }
+
+        if (str($response->content)->endsWith('...')) {
+            $response->content = (string) str($response->content)->beforeLast('...')->append(' ');
+        }
 
         $aiService = $thread->assistant->model->getService();
 
         $aiService->ensureAssistantAndThreadExists($thread);
 
         return $aiService
-            ->sendMessage(
-                message: $message,
+            ->completeResponse(
+                response: $response,
                 files: $files,
                 saveResponse: function (AiMessage $response) use ($thread) {
-                    $response->thread()->associate($thread);
                     $response->save();
-
-                    ray($response);
 
                     $thread->touch();
                 },

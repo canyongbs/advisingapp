@@ -35,8 +35,9 @@ import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 
 document.addEventListener('alpine:init', () => {
-    Alpine.data('chat', ({ csrfToken, retryMessageUrl, sendMessageUrl, showThreadUrl, userId, threadId }) => ({
+    Alpine.data('chat', ({ csrfToken, retryMessageUrl, sendMessageUrl, completeResponseUrl, showThreadUrl, userId, threadId }) => ({
         error: null,
+        isIncomplete: false,
         isLoading: true,
         isSendingMessage: false,
         isRetryable: true,
@@ -54,7 +55,7 @@ document.addEventListener('alpine:init', () => {
             const showThreadResponse = await fetch(showThreadUrl, {
                 headers: {
                     Accept: 'application/json',
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'text/event-stream',
                 },
             });
 
@@ -74,7 +75,7 @@ document.addEventListener('alpine:init', () => {
             });
         },
 
-        handleMessageResponse: async function (response) {
+        handleMessageResponse: async function ({ response, isCompletingPreviousResponse }) {
             if (!response.ok) {
                 const response = await response.json();
 
@@ -85,31 +86,52 @@ document.addEventListener('alpine:init', () => {
                 return;
             }
 
-            this.messages.push({
-                content: '',
-            });
-
-            this.rawIncomingResponse = '';
-
-            const responseReader = response.body.getReader();
-            const decoder = new TextDecoder();
-
-            const readResponse = () => {
-                responseReader.read().then(({ done, value }) => {
-                    if (done) {
-                        return;
-                    }
-
-                    this.rawIncomingResponse += decoder.decode(value);
-                    this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
-                        marked.parse(this.rawIncomingResponse),
-                    );
-
-                    readResponse();
+            if (! isCompletingPreviousResponse) {
+                this.messages.push({
+                    content: '',
                 });
+
+                this.rawIncomingResponse = '';
+            } else {
+                if (this.rawIncomingResponse.endsWith('...')) {
+                    this.rawIncomingResponse = this.rawIncomingResponse.slice(0, -3);
+                }
+
+                this.rawIncomingResponse += ' ';
+            }
+
+            const responseReader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+
+            const readResponse = async () => {
+                const { done, value } = await responseReader.read();
+
+                if (done) {
+                    return;
+                }
+
+                this.parseEvents(value).forEach(event => {
+                    if (event.type === 'content') {
+                        this.rawIncomingResponse += new TextDecoder().decode(
+                            Uint8Array.from(atob(event.content), (m) => m.codePointAt(0)),
+                        );
+
+                        this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
+                            marked.parse(this.rawIncomingResponse),
+                        );
+
+                        if (event.incomplete) {
+                            this.isIncomplete = true;
+                        }
+                    } else if (['timeout', 'failed'].includes(event.type)) {
+                        this.error = event.message;
+                        this.isRetryable = true;
+                    }
+                })
+
+                await readResponse();
             };
 
-            readResponse();
+            await readResponse();
 
             this.isSendingMessage = false;
 
@@ -124,6 +146,7 @@ document.addEventListener('alpine:init', () => {
             }
 
             this.isSendingMessage = true;
+            this.isIncomplete = false;
             this.error = null;
 
             this.$dispatch(`message-sent-${threadId}`);
@@ -140,44 +163,70 @@ document.addEventListener('alpine:init', () => {
             this.message = '';
 
             this.$nextTick(async () => {
-                await this.handleMessageResponse(
-                    await fetch(sendMessageUrl, {
-                        method: 'POST',
+                await this.handleMessageResponse({
+                    response: await fetch(sendMessageUrl, {
+                        method: "POST",
                         headers: {
-                            Accept: 'application/json',
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken,
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": csrfToken
                         },
                         body: JSON.stringify({
                             content: message,
-                            files: this.$wire.files,
-                        }),
-                    }),
-                );
+                            files: this.$wire.files
+                        })
+                    })
+                });
             });
         },
 
         retryMessage: async function () {
             this.isSendingMessage = true;
+            this.isIncomplete = false;
             this.error = null;
 
             this.$dispatch(`message-sent-${threadId}`);
 
             this.$nextTick(async () => {
-                await this.handleMessageResponse(
-                    await fetch(retryMessageUrl, {
-                        method: 'POST',
+                await this.handleMessageResponse({
+                    response: await fetch(retryMessageUrl, {
+                        method: "POST",
                         headers: {
-                            Accept: 'application/json',
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken,
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": csrfToken
                         },
                         body: JSON.stringify({
                             content: this.latestMessage,
-                            files: this.$wire.files,
-                        }),
+                            files: this.$wire.files
+                        })
+                    })
+                });
+            });
+        },
+
+        completeResponse: async function () {
+            this.isSendingMessage = true;
+            this.isIncomplete = false;
+            this.error = null;
+
+            this.$dispatch(`message-sent-${threadId}`);
+
+            this.$nextTick(async () => {
+                await this.handleMessageResponse({
+                    response: await fetch(completeResponseUrl, {
+                        method: "POST",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": csrfToken
+                        },
+                        body: JSON.stringify({
+                            files: this.$wire.files
+                        })
                     }),
-                );
+                    isCompletingPreviousResponse: true
+                });
             });
         },
 
@@ -190,6 +239,36 @@ document.addEventListener('alpine:init', () => {
                 this.$refs.messageInput.style.height = '5rem';
                 this.$refs.messageInput.style.height = `min(${this.$refs.messageInput.scrollHeight}px, 25dvh)`;
             }
+        },
+
+        parseEvents: function (encodedEvents) {
+            encodedEvents = encodedEvents.split("\n").map(l => l.trim()).join('');
+
+            let jsonObjectIndex = encodedEvents.indexOf('{');
+
+            let openJsonObjects = 0;
+
+            const events = [];
+
+            for (let i = jsonObjectIndex; i < encodedEvents.length; i++) {
+                if ((encodedEvents[i] === '{') && ((i < 2) || (encodedEvents.slice(i - 2, i) !== "\\\""))) {
+                    openJsonObjects++
+
+                    if (openJsonObjects === 1) {
+                        jsonObjectIndex = i
+                    }
+                } else if ((encodedEvents[i] === '}') && ((i < 2) || (encodedEvents.slice(i - 2, i) !== "\\\""))) {
+                    openJsonObjects--;
+
+                    if (openJsonObjects === 0) {
+                        events.push(JSON.parse(encodedEvents.substring(jsonObjectIndex, i + 1)));
+
+                        jsonObjectIndex = i + 1
+                    }
+                }
+            }
+
+            return events
         },
     }));
 });

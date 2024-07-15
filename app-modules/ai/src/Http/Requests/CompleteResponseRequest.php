@@ -34,55 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Actions;
+namespace AdvisingApp\Ai\Http\Requests;
 
-use Closure;
-use Illuminate\Support\Arr;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
-use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
+use Illuminate\Foundation\Http\FormRequest;
 
-class SendMessage
+class CompleteResponseRequest extends FormRequest
 {
-    public function __invoke(AiThread $thread, string $content, array $files = []): Closure
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
     {
-        if ($thread->locked_at) {
-            throw new AiThreadLockedException();
-        }
+        return $this->thread->user()->is(auth()->user());
+    }
 
-        if ($thread->assistant->archived_at) {
-            throw new AiAssistantArchivedException();
-        }
-
-        $message = new AiMessage();
-        $message->content = $content;
-        $message->request = [
-            'headers' => Arr::only(
-                request()->headers->all(),
-                ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
-            ),
-            'ip' => request()->ip(),
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'files' => ['array', 'max:1'],
         ];
-        $message->thread()->associate($thread);
-        $message->user()->associate(auth()->user());
-
-        $aiService = $thread->assistant->model->getService();
-
-        $aiService->ensureAssistantAndThreadExists($thread);
-
-        return $aiService
-            ->sendMessage(
-                message: $message,
-                files: $files,
-                saveResponse: function (AiMessage $response) use ($thread) {
-                    $response->thread()->associate($thread);
-                    $response->save();
-
-                    ray($response);
-
-                    $thread->touch();
-                },
-            );
     }
 }

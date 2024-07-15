@@ -62,6 +62,10 @@ trait UploadsFiles
             return;
         }
 
+        if (! $thread->messages()->exists()) {
+            return;
+        }
+
         if (! is_null($expiredVectorStores = $this->getExpiredVectorStoresForThread($thread))) {
             foreach ($expiredVectorStores as $expiredVectorStore) {
                 $this->recreateVectorStoreForThread($thread, $expiredVectorStore);
