@@ -55,8 +55,6 @@ class ProspectReport extends Dashboard
 
     protected static ?string $cluster = ReportLibrary::class;
 
-    // protected static string $view = 'advising-prospect.filament.pages.prospect-report';
-
     protected $cacheTag = 'prospect-report-cache';
 
     public function getWidgets(): array
