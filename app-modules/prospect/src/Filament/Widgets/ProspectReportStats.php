@@ -37,13 +37,13 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use Illuminate\Support\Number;
-use Illuminate\Support\Facades\Cache;
+use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Alert\Models\Alert;
-use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Cache;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Segment\Models\Segment;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class ProspectReportStats extends StatsOverviewReportWidget
 {

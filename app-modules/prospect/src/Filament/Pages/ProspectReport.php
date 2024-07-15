@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Prospect\Filament\Pages;
 
-use AdvisingApp\Report\Filament\Widgets\ProspectReportTableChart;
-use AdvisingApp\Report\Filament\Widgets\ProspectReportLineChart;
-use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use App\Filament\Clusters\ReportLibrary;
 use Filament\Pages\Dashboard;
+use App\Filament\Clusters\ReportLibrary;
+use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
+use AdvisingApp\Report\Filament\Widgets\ProspectReportLineChart;
+use AdvisingApp\Report\Filament\Widgets\ProspectReportTableChart;
 
 class ProspectReport extends Dashboard
 {
