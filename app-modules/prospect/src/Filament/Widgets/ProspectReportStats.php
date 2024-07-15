@@ -42,9 +42,9 @@ use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Filament\Widgets\StatsOverviewReportWidget;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use AdvisingApp\Report\Filament\Widgets\StatsOverviewReportWidget;
 
 class ProspectReportStats extends StatsOverviewReportWidget
 {

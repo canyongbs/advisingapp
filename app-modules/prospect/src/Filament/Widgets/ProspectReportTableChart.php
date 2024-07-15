@@ -44,73 +44,72 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class ProspectReportTableChart extends BaseWidget
 {
-  public string $cacheTag;
+    public string $cacheTag;
 
-  protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 'full';
 
-  protected static ?string $heading = 'Most Recent Prospects Added';
+    protected static ?string $heading = 'Most Recent Prospects Added';
 
-  protected static ?string $pollingInterval = null;
+    protected static ?string $pollingInterval = null;
 
-  protected static bool $isLazy = false;
+    protected static bool $isLazy = false;
 
-  public function mount(string $cacheTag)
-  {
-    $this->cacheTag = $cacheTag;
-  }
+    public function mount(string $cacheTag)
+    {
+        $this->cacheTag = $cacheTag;
+    }
 
-  #[On('refresh-widgets')]
-  public function refreshWidget()
-  {
-    $this->dispatch('$refresh');
-  }
+    #[On('refresh-widgets')]
+    public function refreshWidget()
+    {
+        $this->dispatch('$refresh');
+    }
 
-  public function table(Table $table): Table
-  {
-    return $table
-      // ->query(
-      //   // Prospect::select('id', 'full_name', 'email', 'status_id', 'created_by_id', 'created_at')
-      //   //   ->with(['status', 'createdBy:id,name'])
-      //   //   ->orderBy('created_at', 'desc')
-      //   //   ->take(100)
+    public function table(Table $table): Table
+    {
+        return $table
+          // ->query(
+          //   // Prospect::select('id', 'full_name', 'email', 'status_id', 'created_by_id', 'created_at')
+          //   //   ->with(['status', 'createdBy:id,name'])
+          //   //   ->orderBy('created_at', 'desc')
+          //   //   ->take(100)
 
-      //   // Prospect::whereIn('id', function ($query) {
-      //   //   $query->select('id')
-      //   //     ->from(with(new Prospect())->getTable())
-      //   //     ->orderBy('created_at', 'desc')
-      //   //     ->take(100);
-      //   // })
-      // )
+          //   // Prospect::whereIn('id', function ($query) {
+          //   //   $query->select('id')
+          //   //     ->from(with(new Prospect())->getTable())
+          //   //     ->orderBy('created_at', 'desc')
+          //   //     ->take(100);
+          //   // })
+          // )
+            ->query(
+                function () {
+                    $key = (new Prospect())->getKeyName();
 
-      ->query(
-        function () {
-          $key = (new Prospect())->getKeyName();
-
-          return Prospect::whereIn($key, function ($query) use ($key) {
-            $query->select($key)
-              ->from((new Prospect())->getTable())
-              ->orderBy('created_at', 'desc')
-              ->take(100);
-          })->orderBy('created_at', 'desc');
-        }
-      )
-      ->defaultSort('created_at', 'desc')
-      ->columns([
-        TextColumn::make('full_name')
-          ->label('Name')
-          ->searchable(),
-        TextColumn::make('email')
-          ->searchable(),
-        TextColumn::make('status.name')
-          ->badge()
-          ->translateLabel()
-          ->color(fn (Prospect $record) => $record->status->color->value),
-        TextColumn::make('createdBy.name')
-          ->label('Created By')
-          ->searchable(),
-        TextColumn::make('created_at')
-          ->label('Created Date'),
-      ])
-      ->paginated([10]);
-  }
+                    return Prospect::whereIn($key, function ($query) use ($key) {
+                        $query->select($key)
+                            ->from((new Prospect())->getTable())
+                            ->orderBy('created_at', 'desc')
+                            ->take(100);
+                    })->orderBy('created_at', 'desc');
+                }
+            )
+            ->defaultSort('created_at', 'desc')
+            ->columns([
+                TextColumn::make('full_name')
+                    ->label('Name')
+                    ->searchable(),
+                TextColumn::make('email')
+                    ->searchable(),
+                TextColumn::make('status.name')
+                    ->badge()
+                    ->translateLabel()
+                    ->color(fn (Prospect $record) => $record->status->color->value),
+                TextColumn::make('createdBy.name')
+                    ->label('Created By')
+                    ->searchable(),
+                TextColumn::make('created_at')
+                    ->label('Created Date'),
+            ])
+            ->paginated([10]);
+    }
 }
