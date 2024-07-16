@@ -77,7 +77,7 @@ trait UploadsFiles
 
     public function createAssistantFiles(AiAssistant $assistant, Collection $files): Collection
     {
-        return $files->each(function (AiAssistantFile $fileRecord) use ($assistant) {
+        return $files->each(function (AiAssistantFile $fileRecord) {
             $fileRecord->file_id = $this->uploadFileToClient($fileRecord);
 
             $fileRecord->addMediaFromUrl($fileRecord->temporary_url)->toMediaCollection('file');

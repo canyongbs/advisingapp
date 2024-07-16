@@ -251,7 +251,7 @@ abstract class BaseOpenAiService implements AiService
             $this->awaitThreadRunCompletion($latestRun);
         }
 
-        $newMessageResponse = $this->createMessage($message->thread->thread_id, $message->content, $files);
+        [$newMessageResponse, $createdFiles] = $this->createMessage($message->thread->thread_id, $message->content, $files);
 
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
@@ -281,7 +281,7 @@ abstract class BaseOpenAiService implements AiService
             $this->awaitThreadRunCompletion($latestRun);
         }
 
-        $this->createMessage(
+        [$newMessageResponse, $createdFiles] = $this->createMessage(
             $response->thread->thread_id,
             'Continue generating the response, do not mention that I told you as I will paste it directly after the last message.',
             $files,
@@ -378,7 +378,7 @@ abstract class BaseOpenAiService implements AiService
         return true;
     }
 
-    protected function createMessage(string $threadId, string $content, array $files): ThreadMessageResponse
+    protected function createMessage(string $threadId, string $content, array $files): array
     {
         $data = [
             'role' => 'user',
@@ -405,7 +405,7 @@ abstract class BaseOpenAiService implements AiService
             );
         }
 
-        return $this->client->threads()->messages()->create($threadId, $data);
+        return [$this->client->threads()->messages()->create($threadId, $data), $createdFiles];
     }
 
     protected function awaitThreadRunCompletion(ThreadRunResponse $threadRunResponse): void
