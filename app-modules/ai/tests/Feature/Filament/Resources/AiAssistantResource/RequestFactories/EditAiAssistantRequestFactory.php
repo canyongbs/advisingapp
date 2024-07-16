@@ -34,28 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Database\Factories;
+namespace AdvisingApp\Ai\Tests\Feature\Filament\Resources\AiAssistantResource\RequestFactories;
 
 use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Enums\AiApplication;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Http\UploadedFile;
+use Worksome\RequestFactories\RequestFactory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Ai\Models\AiAssistant>
- */
-class AiAssistantFactory extends Factory
+class CreateAiAssistantRequestFactory extends RequestFactory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
+            'avatar' => UploadedFile::fake()->image(fake()->word . '.png'),
             'name' => fake()->word(),
-            'application' => AiApplication::PersonalAssistant,
-            'model' => fake()->randomElement(AiModel::cases()),
+            'model' => AiModel::Test,
+            'description' => fake()->sentence(),
+            'instructions' => fake()->sentence(),
         ];
+    }
+
+    public function withOverMaxInstructions(): static
+    {
+        return $this->state(['instructions' => function ($properties) {
+            $model = AiModel::parse($properties['model']) ?? AiModel::OpenAiGpt35;
+
+            return str()->random($model->getService()->getMaxAssistantInstructionsLength() + 1);
+        }]);
     }
 }

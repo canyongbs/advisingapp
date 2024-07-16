@@ -140,12 +140,12 @@ enum AiModel: string implements HasLabel
         return $deployment === $this->getService()->getDeployment();
     }
 
-    public static function parse(string | self $value): self
+    public static function parse(string | self | null $value): ?self
     {
         if ($value instanceof self) {
             return $value;
         }
 
-        return self::from($value);
+        return self::tryFrom($value);
     }
 }

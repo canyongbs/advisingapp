@@ -85,19 +85,8 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Setup Dependencies
+        uses: ./.github/actions/composer-dependency-setup
 
       - uses: actions/setup-node@v4
         with:
@@ -109,7 +98,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .php-cs-fixer.cache
-          key: ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-${{ github.sha }}
+          key: ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-${{ github.run_id }}
           restore-keys: |
             ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-
 
@@ -132,16 +121,14 @@ jobs:
   test:
     runs-on: ubuntu-22.04
 
-    container: ubuntu:22.04
-
     env:
       DB_PORT: 5432
-      DB_HOST: postgres
+      DB_HOST: 127.0.0.1
       DB_USERNAME: root
       DB_PASSWORD: root
       DB_DATABASE: testing_landlord
       SCOUT_PREFIX: test_
-      REDIS_HOST: redis
+      REDIS_HOST: 127.0.0.1
 
     timeout-minutes: 15
 
@@ -151,6 +138,8 @@ jobs:
       postgres:
         # Docker Hub image
         image: postgres:15
+        ports:
+          - 5432:5432
         # Provide the password for postgres
         env:
           PGPASSWORD: ${{ env.DB_PASSWORD }}
@@ -171,11 +160,11 @@ jobs:
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - name: Install packages
-        run: apt-get update ; apt-get install -y git zip unzip postgresql-client
+    #   - name: Install packages
+    #     run: apt-get update ; apt-get install -y git zip unzip postgresql-client
 
       - name: Create tenant database
-        run: psql -h postgres -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
+        run: psql -h 127.0.0.1 -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
         env:
            PGPASSWORD: root
 
@@ -191,20 +180,8 @@ jobs:
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-        shell: bash
+      - name: Setup Dependencies
+        uses: ./.github/actions/composer-dependency-setup
 
       - uses: actions/setup-node@v4
         with:
@@ -232,11 +209,9 @@ jobs:
   lint:
     runs-on: ubuntu-22.04
 
-    container: ubuntu:22.04
-
     env:
       DB_PORT: 5432
-      DB_HOST: postgres
+      DB_HOST: 127.0.0.1
       DB_USERNAME: root
       DB_PASSWORD: root
       DB_DATABASE: testing_landlord
@@ -250,6 +225,8 @@ jobs:
       postgres:
         # Docker Hub image
         image: postgres:15
+        ports:
+          - 5432:5432
         # Provide the password for postgres
         env:
           PGPASSWORD: ${{ env.DB_PASSWORD }}
@@ -270,11 +247,11 @@ jobs:
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - name: Install packages
-        run: apt-get update ; apt-get install -y git zip unzip postgresql-client
+    #   - name: Install packages
+    #     run: apt-get update ; apt-get install -y git zip unzip postgresql-client
 
       - name: Create tenant database
-        run: psql -h postgres -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
+        run: psql -h 127.0.0.1 -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
         env:
           PGPASSWORD: root
 
@@ -290,29 +267,8 @@ jobs:
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-        shell: bash
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
-      - run: npm install
-
-      - name: Build Assets
-        run: npm run build
+      - name: Setup Dependencies
+        uses: ./.github/actions/composer-dependency-setup
 
       - name: Linting
         run: composer lint
