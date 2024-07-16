@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,48 +30,20 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use Filament\Support\Facades\FilamentView;
 
-namespace AdvisingApp\Report\Filament\Widgets;
-
-use Illuminate\Support\Carbon;
-use App\Settings\DisplaySettings;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Cache;
-use Filament\Notifications\Notification;
-
-class RefreshWidget extends StatsOverviewReportWidget
-{
-    public Carbon $lastRefreshTime;
-
-    protected static string $view = 'report::filament.pages.report-refresh-widgets';
-
-    protected int | string | array $columnSpan = 'full';
-
-    public function render(): View
-    {
-        $timezone = app(DisplaySettings::class)->getTimezone();
-
-        $this->lastRefreshTime = Carbon::parse(
-            Cache::tags([$this->cacheTag])->remember(
-                'updated-time',
-                now()->addHours(24),
-                fn () => now()
-            )
-        )->setTimezone($timezone);
-
-        return parent::render();
-    }
-
-    public function removeWidgetCache($cacheTag)
-    {
-        Cache::tags([$cacheTag])->flush();
-
-        $this->dispatch('refresh-widgets');
-
-        Notification::make()
-            ->title('Report successfully refreshed!')
-            ->success()
-            ->send();
-    }
-}
+    $color = $this->getColor();
+    $heading = $this->getHeading();
+@endphp
+<x-filament-widgets::widget class="fi-wi-chart">
+    <x-filament::section
+        class="relative h-full pt-20"
+        :heading="$heading"
+    >
+        <div class="inset-0 flex items-center justify-center lg:absolute">
+            Insufficient Data
+        </div>
+    </x-filament::section>
+</x-filament-widgets::widget>

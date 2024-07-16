@@ -46,11 +46,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 
 class AiStats extends StatsOverviewReportWidget
 {
-    protected int | string | array $columnSpan = [
-        'sm' => 2,
-        'md' => 4,
-        'lg' => 4,
-    ];
+    protected int | string | array $columnSpan = 'full';
 
     protected function getStats(): array
     {

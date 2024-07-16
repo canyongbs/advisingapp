@@ -36,19 +36,35 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use Illuminate\Contracts\View\View;
 use AdvisingApp\Ai\Models\PromptType;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Collection;
 
 class PromptsByCategoryDoughnutChart extends ChartReportWidget
 {
-    protected static ?string $heading = 'Prompts by Category';
+    protected static ?string $heading = 'Prompts (By Category)';
 
     protected int | string | array $columnSpan = [
-        'sm' => 1,
-        'md' => 1,
-        'lg' => 1,
+        'sm' => 12,
+        'md' => 4,
+        'lg' => 4,
     ];
+
+    protected static ?string $maxHeight = '240px';
+
+    public function render(): View
+    {
+        $data = $this->getData()['datasets'][0]['data'];
+
+        $data = $data->filter();
+
+        if (! count($data)) {
+            return view('livewire.noWidgetData');
+        }
+
+        return view(static::$view, $this->getViewData());
+    }
 
     protected function getOptions(): array
     {
@@ -88,7 +104,6 @@ class PromptsByCategoryDoughnutChart extends ChartReportWidget
             'labels' => $promptsByCategory->pluck('title'),
             'datasets' => [
                 [
-                    'label' => 'My First Dataset',
                     'data' => $promptsByCategory->pluck('prompts_count'),
                     'backgroundColor' => $promptsByCategory->pluck('bg_color'),
                     'hoverOffset' => 4,

@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use Filament\Support\Colors\Color;
 use AdvisingApp\Ai\Models\AiThread;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
 
 class SpecialActionsDoughnutChart extends ChartReportWidget
@@ -45,10 +46,23 @@ class SpecialActionsDoughnutChart extends ChartReportWidget
     protected static ?string $heading = 'Special Actions';
 
     protected int | string | array $columnSpan = [
-        'sm' => 1,
-        'md' => 1,
-        'lg' => 1,
+        'sm' => 12,
+        'md' => 4,
+        'lg' => 4,
     ];
+
+    protected static ?string $maxHeight = '240px';
+
+    public function render(): View
+    {
+        [$emailCount, $cloneCount] = $this->getData()['datasets'][0]['data'];
+
+        if ($emailCount == 0 && $cloneCount == 0) {
+            return view('livewire.noWidgetData');
+        }
+
+        return view(static::$view, $this->getViewData());
+    }
 
     protected function getOptions(): array
     {
@@ -75,6 +89,7 @@ class SpecialActionsDoughnutChart extends ChartReportWidget
         $emailCount = Cache::tags([$this->cacheTag])->remember('emailed_count', now()->addHours(24), function (): int {
             return AiThread::sum('emailed_count');
         });
+
         $cloneCount = Cache::tags([$this->cacheTag])->remember('cloned_count', now()->addHours(24), function (): int {
             return AiThread::sum('cloned_count');
         });
