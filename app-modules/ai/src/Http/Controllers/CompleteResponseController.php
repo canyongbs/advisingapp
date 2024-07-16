@@ -74,7 +74,7 @@ class CompleteResponseController
             report($exception);
 
             return response()->json([
-                'message' => 'An error happened when completing your message.',
+                'message' => 'An error happened when completing the last assistant response.',
             ], 503);
         }
     }

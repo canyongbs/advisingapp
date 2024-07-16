@@ -112,7 +112,7 @@ class TestAiService implements Contracts\AiService
         return function () use ($response, $responseContent, $saveResponse) {
             yield $responseContent;
 
-            $response->content = $responseContent;
+            $response->content .= $responseContent;
 
             $saveResponse($response);
         };

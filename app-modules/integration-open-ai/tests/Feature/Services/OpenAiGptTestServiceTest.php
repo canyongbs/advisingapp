@@ -283,6 +283,47 @@ it('can send a message', function () {
     $client->assertSent(ThreadsMessages::class, 1);
 });
 
+it('can complete a message response', function () {
+    asSuperAdmin();
+
+    /** @var BaseOpenAiService $service */
+    $service = AiModel::OpenAiGptTest->getService();
+
+    /** @var ClientFake $client */
+    $client = $service->getClient();
+
+    $client->addResponses([
+        ThreadRunListResponse::fake([
+            'data' => [
+                [
+                    'status' => 'completed',
+                ],
+            ],
+        ]),
+        ThreadMessageResponse::fake([]),
+        new StreamResponse('', new GuzzleResponse(200, [], GuzzleStream::factory())),
+    ]);
+
+    $message = AiMessage::factory()
+        ->for(AiThread::factory()
+            ->for(AiAssistant::factory()->state([
+                'application' => AiApplication::PersonalAssistant,
+                'assistant_id' => Str::random(),
+                'is_default' => true,
+                'model' => AiModel::OpenAiGptTest,
+            ]), 'assistant')
+            ->for(auth()->user())
+            ->state([
+                'thread_id' => Str::random(),
+            ]), 'thread')
+        ->make();
+
+    $service->completeResponse($message, [], function () {});
+
+    $client->assertSent(ThreadsRuns::class, 2);
+    $client->assertSent(ThreadsMessages::class, 1);
+});
+
 it('can retry a message', function () {
     asSuperAdmin();
 
