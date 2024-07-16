@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Pages;
+namespace AdvisingApp\Report\Filament\Pages;
 
 use Filament\Pages\Dashboard;
 use App\Filament\Clusters\ReportLibrary;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\StudentDataModel\Filament\Widgets\StudentEngagementStats;
-use AdvisingApp\StudentDataModel\Filament\Widgets\MostEngagedStudentsTable;
-use AdvisingApp\StudentDataModel\Filament\Widgets\StudentEngagementLineChart;
+use AdvisingApp\Report\Filament\Widgets\StudentEngagementStats;
+use AdvisingApp\Report\Filament\Widgets\MostEngagedStudentsTable;
+use AdvisingApp\Report\Filament\Widgets\StudentEngagementLineChart;
 
 class StudentEngagementReport extends Dashboard
 {

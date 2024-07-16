@@ -34,30 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Pages;
+namespace AdvisingApp\Report\Filament\Pages;
 
-use Filament\Pages\Dashboard;
+use App\Filament\Pages\Dashboard;
 use App\Filament\Clusters\ReportLibrary;
+use AdvisingApp\Report\Filament\Widgets\TaskStats;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\Prospect\Filament\Widgets\ProspectEngagementState;
-use AdvisingApp\Prospect\Filament\Widgets\MostEngagedProspectsTable;
-use AdvisingApp\Prospect\Filament\Widgets\ProspectEngagementLineChart;
+use AdvisingApp\Report\Filament\Widgets\MostRecentTasksTable;
+use AdvisingApp\Report\Filament\Widgets\TaskCumulativeCountLineChart;
 
-class ProspectEnagagementReport extends Dashboard
+class TaskManagement extends Dashboard
 {
-    protected static ?string $cluster = ReportLibrary::class;
-
-    protected static ?string $navigationGroup = 'Prospects';
-
-    protected static ?string $title = 'Prospect Engagement';
-
-    protected static string $routePath = 'prospect-enagement-report';
-
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected $cacheTag = 'report-prospect-engagement';
+    protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?int $navigationSort = 20;
+    protected static ?string $navigationGroup = 'Engagement Features';
+
+    protected static ?string $navigationLabel = 'Tasks (Overview)';
+
+    protected static ?string $title = 'Tasks (Overview)';
+
+    protected static string $routePath = 'tasks';
+
+    protected static ?int $navigationSort = 10;
+
+    protected $cacheTag = 'report-tasks';
 
     public static function canAccess(): bool
     {
@@ -67,22 +69,22 @@ class ProspectEnagagementReport extends Dashboard
         return $user->can('report-library.view-any');
     }
 
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            TaskStats::make(['cacheTag' => $this->cacheTag]),
+            TaskCumulativeCountLineChart::make(['cacheTag' => $this->cacheTag]),
+            MostRecentTasksTable::make(['cacheTag' => $this->cacheTag]),
+        ];
+    }
+
     public function getColumns(): int | string | array
     {
         return [
             'sm' => 2,
             'md' => 4,
             'lg' => 4,
-        ];
-    }
-
-    public function getWidgets(): array
-    {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            ProspectEngagementState::make(['cacheTag' => $this->cacheTag]),
-            ProspectEngagementLineChart::make(['cacheTag' => $this->cacheTag]),
-            MostEngagedProspectsTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 }

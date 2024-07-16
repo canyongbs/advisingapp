@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Widgets;
+namespace AdvisingApp\Report\Filament\Widgets;
 
 use Carbon\Carbon;
+use AdvisingApp\Task\Models\Task;
 use Illuminate\Support\Facades\Cache;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Report\Filament\Widgets\ChartReportWidget;
 
-class StudentEngagementLineChart extends ChartReportWidget
+class TaskCumulativeCountLineChart extends ChartReportWidget
 {
-    protected static ?string $heading = 'Students (Engagement)';
+    protected static ?string $heading = 'Tasks (Engagement)';
 
     protected int | string | array $columnSpan = 'full';
 
@@ -66,13 +66,10 @@ class StudentEngagementLineChart extends ChartReportWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('student_engagements_line_chart', now()->addHours(24), function (): array {
-            $totalEmailEngagementsPerMonth = EngagementDeliverable::query()
-                ->whereHas('engagement', function ($q) {
-                    return $q->whereHasMorph('recipient', Student::class);
-                })
+        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('task_cumulative_count_line_chart', now()->addHours(24), function (): array {
+            $totalStudentTasksPerMonth = Task::query()
+                ->whereHasMorph('concern', Student::class)
                 ->toBase()
-                ->where('channel', 'email')
                 ->selectRaw('date_trunc(\'month\', created_at) as month')
                 ->selectRaw('count(*) as total')
                 ->where('created_at', '>', now()->subYear())
@@ -80,12 +77,19 @@ class StudentEngagementLineChart extends ChartReportWidget
                 ->orderBy('month')
                 ->pluck('total', 'month');
 
-            $totalTextEnagagementsPerMonth = EngagementDeliverable::query()
-                ->whereHas('engagement', function ($q) {
-                    return $q->whereHasMorph('recipient', Student::class);
-                })
+            $totalProspectTasksPerMonth = Task::query()
+                ->whereHasMorph('concern', Prospect::class)
                 ->toBase()
-                ->where('channel', 'sms')
+                ->selectRaw('date_trunc(\'month\', created_at) as month')
+                ->selectRaw('count(*) as total')
+                ->where('created_at', '>', now()->subYear())
+                ->groupBy('month')
+                ->orderBy('month')
+                ->pluck('total', 'month');
+
+            $totalUnrelatedTasksPerMonth = Task::query()
+                ->whereNull('concern_id')
+                ->whereNull('concern_type')
                 ->selectRaw('date_trunc(\'month\', created_at) as month')
                 ->selectRaw('count(*) as total')
                 ->where('created_at', '>', now()->subYear())
@@ -97,8 +101,9 @@ class StudentEngagementLineChart extends ChartReportWidget
 
             foreach (range(11, 0) as $month) {
                 $month = Carbon::now()->subMonths($month);
-                $data['emailEngagement'][$month->format('M Y')] = $totalEmailEngagementsPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-                $data['textEnagagment'][$month->format('M Y')] = $totalTextEnagagementsPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
+                $data['studentTasks'][$month->format('M Y')] = $totalStudentTasksPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
+                $data['prospectTasks'][$month->format('M Y')] = $totalProspectTasksPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
+                $data['unrelatedTasks'][$month->format('M Y')] = $totalUnrelatedTasksPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
             }
 
             return $data;
@@ -107,19 +112,25 @@ class StudentEngagementLineChart extends ChartReportWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Email',
-                    'data' => array_values($runningTotalPerMonth['emailEngagement']),
+                    'label' => 'Student Tasks',
+                    'data' => array_values($runningTotalPerMonth['studentTasks']),
                     'borderColor' => '#2C8BCA',
                     'pointBackgroundColor' => '#2C8BCA',
                 ],
                 [
-                    'label' => 'SMS',
-                    'data' => array_values($runningTotalPerMonth['textEnagagment']),
+                    'label' => 'Prospect Tasks',
+                    'data' => array_values($runningTotalPerMonth['prospectTasks']),
                     'borderColor' => '#FDCC46',
                     'pointBackgroundColor' => '#FDCC46',
                 ],
+                [
+                    'label' => 'Unrelated Tasks',
+                    'data' => array_values($runningTotalPerMonth['unrelatedTasks']),
+                    'borderColor' => '#FFA500',
+                    'pointBackgroundColor' => '#FFA500',
+                ],
             ],
-            'labels' => array_keys($runningTotalPerMonth['emailEngagement']),
+            'labels' => array_keys($runningTotalPerMonth['studentTasks']),
         ];
     }
 

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Widgets;
+namespace AdvisingApp\Report\Filament\Widgets;
 
 use App\Models\User;
 use Illuminate\Support\Number;
@@ -42,7 +42,6 @@ use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Report\Filament\Widgets\StatsOverviewReportWidget;
 
 class ProspectEngagementState extends StatsOverviewReportWidget
 {

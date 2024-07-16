@@ -34,25 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Widgets;
+namespace AdvisingApp\Report\Filament\Widgets;
 
 use Filament\Tables\Table;
 use Livewire\Attributes\On;
+use AdvisingApp\Task\Models\Task;
 use Filament\Tables\Columns\TextColumn;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Widgets\TableWidget as BaseWidget;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
-class MostEngagedStudentsTable extends BaseWidget
+class MostRecentTasksTable extends BaseWidget
 {
     public string $cacheTag;
 
-    protected static ?string $pollingInterval = null;
+    protected static ?string $heading = 'Most Recent Tasks Added';
 
     protected static bool $isLazy = false;
 
-    protected static ?string $heading = 'Most Actively Engaged Students';
+    protected static ?string $pollingInterval = null;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = [
+        'sm' => 1,
+        'md' => 4,
+        'lg' => 4,
+    ];
 
     public function mount(string $cacheTag)
     {
@@ -69,18 +77,32 @@ class MostEngagedStudentsTable extends BaseWidget
     {
         return $table
             ->query(
-                Student::select('sisid', 'full_name', 'email')
-                    ->withCount('engagements')
-                    ->orderBy('engagements_count', 'desc')
+                Task::query()
+                    ->with(['concern'])
+                    ->orderBy('created_at', 'desc')
                     ->limit(10)
             )
-            ->paginated(false)
             ->columns([
-                TextColumn::make('full_name')
-                    ->label('Name'),
-                TextColumn::make('email'),
-                TextColumn::make('engagements_count')
-                    ->label('Engagements'),
-            ]);
+                TextColumn::make('title'),
+                TextColumn::make('status'),
+                TextColumn::make('association')
+                    ->label('Association')
+                    ->getStateUsing(fn (Task $record): ?string => ! is_null($record->concern) ? match ($record->concern::class) {
+                        Student::class => 'Student',
+                        Prospect::class => 'Prospect',
+                    } : 'Unrelated'),
+                TextColumn::make('concern.display_name')
+                    ->label('Related To')
+                    ->getStateUsing(fn (Task $record): ?string => $record->concern?->{$record->concern::displayNameKey()} ?? 'N/A')
+                    ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
+                        Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
+                        Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
+                        default => null,
+                    }),
+                TextColumn::make('created_at')
+                    ->label('Created')
+                    ->dateTime(),
+            ])
+            ->paginated([10]);
     }
 }

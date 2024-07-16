@@ -34,25 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Widgets;
+namespace AdvisingApp\Report\Filament\Widgets;
 
 use Filament\Tables\Table;
 use Livewire\Attributes\On;
 use Filament\Tables\Columns\TextColumn;
-use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Widgets\TableWidget as BaseWidget;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-class MostEngagedProspectsTable extends BaseWidget
+class MostEngagedStudentsTable extends BaseWidget
 {
     public string $cacheTag;
-
-    protected int | string | array $columnSpan = 'full';
-
-    protected static ?string $heading = 'Most Actively Engaged Prospects';
 
     protected static ?string $pollingInterval = null;
 
     protected static bool $isLazy = false;
+
+    protected static ?string $heading = 'Most Actively Engaged Students';
+
+    protected int | string | array $columnSpan = 'full';
 
     public function mount(string $cacheTag)
     {
@@ -69,8 +69,7 @@ class MostEngagedProspectsTable extends BaseWidget
     {
         return $table
             ->query(
-                Prospect::select('id', 'full_name', 'email', 'status_id', 'created_by_id', 'created_at')
-                    ->with(['status', 'createdBy:id,name'])
+                Student::select('sisid', 'full_name', 'email')
                     ->withCount('engagements')
                     ->orderBy('engagements_count', 'desc')
                     ->limit(10)
@@ -80,15 +79,8 @@ class MostEngagedProspectsTable extends BaseWidget
                 TextColumn::make('full_name')
                     ->label('Name'),
                 TextColumn::make('email'),
-                TextColumn::make('status.name')
-                    ->badge()
-                    ->color(fn (Prospect $record) => $record->status->color->value),
                 TextColumn::make('engagements_count')
                     ->label('Engagements'),
-                TextColumn::make('createdBy.name')
-                    ->label('Created By'),
-                TextColumn::make('created_at')
-                    ->label('Created Date'),
             ]);
     }
 }

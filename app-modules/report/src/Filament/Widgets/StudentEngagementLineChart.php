@@ -34,17 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Widgets;
+namespace AdvisingApp\Report\Filament\Widgets;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
-use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Report\Filament\Widgets\ChartReportWidget;
 
-class ProspectEngagementLineChart extends ChartReportWidget
+class StudentEngagementLineChart extends ChartReportWidget
 {
-    protected static ?string $heading = 'Prospects (Engagement)';
+    protected static ?string $heading = 'Students (Engagement)';
 
     protected int | string | array $columnSpan = 'full';
 
@@ -66,10 +65,10 @@ class ProspectEngagementLineChart extends ChartReportWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('prospect_engagements_line_chart', now()->addHours(24), function (): array {
-            $totalEmailEnagagementsPerMonth = EngagementDeliverable::query()
+        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('student_engagements_line_chart', now()->addHours(24), function (): array {
+            $totalEmailEngagementsPerMonth = EngagementDeliverable::query()
                 ->whereHas('engagement', function ($q) {
-                    return $q->whereHasMorph('recipient', Prospect::class);
+                    return $q->whereHasMorph('recipient', Student::class);
                 })
                 ->toBase()
                 ->where('channel', 'email')
@@ -82,7 +81,7 @@ class ProspectEngagementLineChart extends ChartReportWidget
 
             $totalTextEnagagementsPerMonth = EngagementDeliverable::query()
                 ->whereHas('engagement', function ($q) {
-                    return $q->whereHasMorph('recipient', Prospect::class);
+                    return $q->whereHasMorph('recipient', Student::class);
                 })
                 ->toBase()
                 ->where('channel', 'sms')
@@ -97,8 +96,7 @@ class ProspectEngagementLineChart extends ChartReportWidget
 
             foreach (range(11, 0) as $month) {
                 $month = Carbon::now()->subMonths($month);
-                $data['emailEngagement'][$month->format('M Y')] = $totalEmailEnagagementsPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-
+                $data['emailEngagement'][$month->format('M Y')] = $totalEmailEngagementsPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
                 $data['textEnagagment'][$month->format('M Y')] = $totalTextEnagagementsPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
             }
 
