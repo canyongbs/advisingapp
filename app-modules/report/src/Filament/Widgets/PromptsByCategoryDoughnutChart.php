@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Ai\Models\PromptType;
 use Illuminate\Contracts\View\View;
+use AdvisingApp\Ai\Models\PromptType;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -59,10 +59,10 @@ class PromptsByCategoryDoughnutChart extends ChartReportWidget
 
         $data = $data->filter();
 
-        if(!count($data)){
+        if (! count($data)) {
             return view('livewire.noWidgetData');
         }
-        
+
         return view(static::$view, $this->getViewData());
     }
 
@@ -93,6 +93,7 @@ class PromptsByCategoryDoughnutChart extends ChartReportWidget
 
             $promptsByCategoryData = $promptsByCategoryData->map(function (PromptType $promptType) {
                 $promptType['bg_color'] = $this->getRgbString();
+
                 return $promptType;
             });
 

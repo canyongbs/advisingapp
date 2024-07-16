@@ -55,7 +55,7 @@ class SpecialActionsDoughnutChart extends ChartReportWidget
 
     public function render(): View
     {
-        list($emailCount,$cloneCount) =  $this->getData()['datasets'][0]['data'];
+        [$emailCount, $cloneCount] = $this->getData()['datasets'][0]['data'];
 
         if ($emailCount == 0 && $cloneCount == 0) {
             return view('livewire.noWidgetData');
@@ -86,14 +86,14 @@ class SpecialActionsDoughnutChart extends ChartReportWidget
 
     protected function getData(): array
     {
-        $emailCount =   Cache::tags([$this->cacheTag])->remember('emailed_count', now()->addHours(24), function (): int {
-                            return AiThread::sum('emailed_count');
-                        });
+        $emailCount = Cache::tags([$this->cacheTag])->remember('emailed_count', now()->addHours(24), function (): int {
+            return AiThread::sum('emailed_count');
+        });
 
         $cloneCount = Cache::tags([$this->cacheTag])->remember('cloned_count', now()->addHours(24), function (): int {
-                        return AiThread::sum('cloned_count');
-                      });
-    
+            return AiThread::sum('cloned_count');
+        });
+
         return [
             'labels' => ['Email', 'Clone'],
             'datasets' => [

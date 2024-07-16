@@ -38,13 +38,12 @@
     $heading = $this->getHeading();
 @endphp
 <x-filament-widgets::widget class="fi-wi-chart">
-    <x-filament::section class="h-full relative pt-20" :heading="$heading">
-        <div class="lg:absolute inset-0 flex items-center justify-center">
+    <x-filament::section
+        class="relative h-full pt-20"
+        :heading="$heading"
+    >
+        <div class="inset-0 flex items-center justify-center lg:absolute">
             Insufficient Data
         </div>
     </x-filament::section>
 </x-filament-widgets::widget>
-
-
-
-
