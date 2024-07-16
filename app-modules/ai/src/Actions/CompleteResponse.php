@@ -45,7 +45,7 @@ use AdvisingApp\Ai\Exceptions\AiResponseToCompleteDoesNotExistException;
 
 class CompleteResponse
 {
-    public function __invoke(AiThread $thread, array $files = []): Closure
+    public function __invoke(AiThread $thread): Closure
     {
         if ($thread->locked_at) {
             throw new AiThreadLockedException();
@@ -77,7 +77,11 @@ class CompleteResponse
         return $aiService
             ->completeResponse(
                 response: $response,
-                files: $files,
+                files: $thread->messages()
+                    ->whereNotNull('user_id')
+                    ->latest()
+                    ->first()
+                    ?->files?->all() ?? [],
                 saveResponse: function (AiMessage $response) use ($thread) {
                     $response->save();
 

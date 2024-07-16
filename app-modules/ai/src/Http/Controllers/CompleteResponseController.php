@@ -54,7 +54,6 @@ class CompleteResponseController
             return response()->stream(
                 app(CompleteResponse::class)(
                     $thread,
-                    $request->validated('files'),
                 ),
                 headers: [
                     'Content-Type' => 'text/html; charset=utf-8;',

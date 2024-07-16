@@ -199,7 +199,11 @@ trait UploadsFiles
     protected function createFiles(array $files): array
     {
         return array_map(
-            function (array $file): AiMessageFile {
+            function (array | AiMessageFile $file): AiMessageFile {
+                if ($file instanceof AiMessageFile) {
+                    return $file;
+                }
+
                 $fileRecord = new AiMessageFile();
                 $fileRecord->temporary_url = $file['temporaryUrl'];
                 $fileRecord->name = $file['name'];

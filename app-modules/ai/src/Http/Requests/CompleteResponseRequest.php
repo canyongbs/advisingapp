@@ -47,16 +47,4 @@ class CompleteResponseRequest extends FormRequest
     {
         return $this->thread->user()->is(auth()->user());
     }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
-    {
-        return [
-            'files' => ['array', 'max:1'],
-        ];
-    }
 }

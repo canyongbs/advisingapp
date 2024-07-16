@@ -137,7 +137,7 @@ document.addEventListener('alpine:init', () => {
 
                 this.isSendingMessage = false;
 
-                if (!this.isIncomplete) {
+                if (!isCompletingPreviousResponse) {
                     this.$wire.clearFiles();
                 }
             },
@@ -228,9 +228,6 @@ document.addEventListener('alpine:init', () => {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': csrfToken,
                             },
-                            body: JSON.stringify({
-                                files: this.$wire.files,
-                            }),
                         }),
                         isCompletingPreviousResponse: true,
                     });

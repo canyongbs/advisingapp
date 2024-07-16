@@ -51,7 +51,6 @@ use AdvisingApp\Ai\Services\Contracts\AiService;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
-use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
 use AdvisingApp\Ai\Exceptions\AiStreamEndedUnexpectedlyException;
 use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
@@ -281,18 +280,11 @@ abstract class BaseOpenAiService implements AiService
             $this->awaitThreadRunCompletion($latestRun);
         }
 
-        [$newMessageResponse, $createdFiles] = $this->createMessage(
+        $this->createMessage(
             $response->thread->thread_id,
             'Continue generating the response, do not mention that I told you as I will paste it directly after the last message.',
             $files,
         );
-
-        if (! empty($createdFiles)) {
-            foreach ($createdFiles as $file) {
-                $file->message()->associate($response);
-                $file->save();
-            }
-        }
 
         return $this->streamRun($response, $this->generateAssistantInstructions($response->thread->assistant, withDynamicContext: true), $saveResponse);
     }
@@ -335,7 +327,7 @@ abstract class BaseOpenAiService implements AiService
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
         if (blank($message->message_id)) {
-            $newMessageResponse = $this->createMessage($message->thread->thread_id, $message->content, $files);
+            [$newMessageResponse] = $this->createMessage($message->thread->thread_id, $message->content, $files);
 
             $message->context = $instructions;
             $message->message_id = $newMessageResponse->id;
