@@ -40,6 +40,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Illuminate\Support\Collection;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Actions;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Checkbox;
 use Filament\Tables\Actions\BulkAction;
@@ -90,7 +91,7 @@ class BulkEngagementAction
                             ->visibility('public')
                             ->directory('editor-images/engagements')
                             ->label('Body')
-                            ->mergeTags([
+                            ->mergeTags($mergeTags = [
                                 'student first name',
                                 'student last name',
                                 'student full name',
@@ -153,6 +154,10 @@ class BulkEngagementAction
                             ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
                         EngagementSmsBodyField::make(context: 'create'),
+                        Actions::make([
+                            DraftWithAiAction::make()
+                                ->mergeTags($mergeTags),
+                        ]),
                     ]),
             ])
             ->action(function (Collection $records, array $data) {
