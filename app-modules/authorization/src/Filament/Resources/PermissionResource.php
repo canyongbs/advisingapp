@@ -102,7 +102,8 @@ class PermissionResource extends Resource
             ])
             ->actions([
                 ViewAction::make(),
-            ]);
+            ])
+            ->defaultSort('group.name', 'asc');
     }
 
     public static function getRelations(): array
