@@ -34,24 +34,14 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use AdvisingApp\Ai\Http\Controllers\ShowThreadController;
-use AdvisingApp\Ai\Http\Controllers\SendMessageController;
-use AdvisingApp\Ai\Http\Controllers\RetryMessageController;
-use AdvisingApp\Ai\Http\Controllers\CompleteResponseController;
+namespace AdvisingApp\Ai\Exceptions;
 
-Route::middleware(['web', 'auth'])
-    ->name('ai.')
-    ->group(function () {
-        Route::get('ai/threads/{thread}', ShowThreadController::class)
-            ->name('threads.show');
+use Exception;
 
-        Route::post('ai/threads/{thread}/messages', SendMessageController::class)
-            ->name('threads.messages.send');
-
-        Route::post('ai/threads/{thread}/messages/retry', RetryMessageController::class)
-            ->name('threads.messages.retry');
-
-        Route::post('ai/threads/{thread}/messages/complete-response', CompleteResponseController::class)
-            ->name('threads.messages.complete-response');
-    });
+class AiResponseToCompleteDoesNotExistException extends Exception
+{
+    public function __construct()
+    {
+        parent::__construct('The AI response to finish completing does not exist.');
+    }
+}

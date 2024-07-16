@@ -34,24 +34,17 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use AdvisingApp\Ai\Http\Controllers\ShowThreadController;
-use AdvisingApp\Ai\Http\Controllers\SendMessageController;
-use AdvisingApp\Ai\Http\Controllers\RetryMessageController;
-use AdvisingApp\Ai\Http\Controllers\CompleteResponseController;
+namespace AdvisingApp\Ai\Http\Requests;
 
-Route::middleware(['web', 'auth'])
-    ->name('ai.')
-    ->group(function () {
-        Route::get('ai/threads/{thread}', ShowThreadController::class)
-            ->name('threads.show');
+use Illuminate\Foundation\Http\FormRequest;
 
-        Route::post('ai/threads/{thread}/messages', SendMessageController::class)
-            ->name('threads.messages.send');
-
-        Route::post('ai/threads/{thread}/messages/retry', RetryMessageController::class)
-            ->name('threads.messages.retry');
-
-        Route::post('ai/threads/{thread}/messages/complete-response', CompleteResponseController::class)
-            ->name('threads.messages.complete-response');
-    });
+class CompleteResponseRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return $this->thread->user()->is(auth()->user());
+    }
+}

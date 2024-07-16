@@ -104,6 +104,8 @@ interface AiService
      */
     public function retryMessage(AiMessage $message, array $files, Closure $saveResponse): Closure;
 
+    public function completeResponse(AiMessage $response, array $files, Closure $saveResponse): Closure;
+
     public function getMaxAssistantInstructionsLength(): int;
 
     public function supportsMessageFileUploads(): bool;

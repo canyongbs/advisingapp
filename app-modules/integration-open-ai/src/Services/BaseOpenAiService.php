@@ -38,18 +38,21 @@ namespace AdvisingApp\IntegrationOpenAi\Services;
 
 use Closure;
 use Generator;
+use Throwable;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use Illuminate\Support\Facades\Http;
 use OpenAI\Contracts\ClientContract;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use OpenAI\Responses\Threads\ThreadResponse;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
+use AdvisingApp\Ai\Exceptions\AiStreamEndedUnexpectedlyException;
 use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
@@ -82,7 +85,7 @@ abstract class BaseOpenAiService implements AiService
     {
         $aiSettings = app(AiSettings::class);
 
-        $response = Http::asJson()
+        $completionResponse = Http::asJson()
             ->withHeader('api-key', $this->getApiKey())
             ->post("{$this->getDeployment()}/deployments/{$this->getModel()}/chat/completions?api-version={$this->getApiVersion()}", [
                 'messages' => [
@@ -93,12 +96,12 @@ abstract class BaseOpenAiService implements AiService
             ])
             ->json();
 
-        return $response['choices'][0]['message']['content'] ?? '';
+        return $completionResponse['choices'][0]['message']['content'] ?? '';
     }
 
     public function createAssistant(AiAssistant $assistant): void
     {
-        $response = $this->client->assistants()->create([
+        $newAssistantResponse = $this->client->assistants()->create([
             'name' => $assistant->name,
             'instructions' => $this->generateAssistantInstructions($assistant),
             'model' => $this->getModel(),
@@ -112,7 +115,7 @@ abstract class BaseOpenAiService implements AiService
             ],
         ]);
 
-        $assistant->assistant_id = $response->id;
+        $assistant->assistant_id = $newAssistantResponse->id;
     }
 
     public function updateAssistant(AiAssistant $assistant): void
@@ -126,19 +129,19 @@ abstract class BaseOpenAiService implements AiService
 
     public function retrieveAssistant(AiAssistant $assistant): AssistantsDataTransferObject
     {
-        $response = $this->client->assistants()->retrieve($assistant->assistant_id);
+        $assistantResponse = $this->client->assistants()->retrieve($assistant->assistant_id);
 
         return AssistantsDataTransferObject::from([
-            'id' => $response->id,
-            'name' => $response->name,
-            'description' => $response->description,
-            'model' => $response->model,
-            'instructions' => $response->instructions,
-            'tools' => $response->tools,
+            'id' => $assistantResponse->id,
+            'name' => $assistantResponse->name,
+            'description' => $assistantResponse->description,
+            'model' => $assistantResponse->model,
+            'instructions' => $assistantResponse->instructions,
+            'tools' => $assistantResponse->tools,
             'toolResources' => ToolResourcesDataTransferObject::from([
-                'codeInterpreter' => $response->toolResources->codeInterpreter ?? null,
+                'codeInterpreter' => $assistantResponse->toolResources->codeInterpreter ?? null,
                 'fileSearch' => FileSearchDataTransferObject::from([
-                    'vectorStoreIds' => $response->toolResources->fileSearch->vectorStoreIds ?? [],
+                    'vectorStoreIds' => $assistantResponse->toolResources->fileSearch->vectorStoreIds ?? [],
                 ]),
             ]),
         ]);
@@ -194,11 +197,11 @@ abstract class BaseOpenAiService implements AiService
                 ->all();
         }
 
-        $response = $this->client->threads()->create([
+        $newThreadResponse = $this->client->threads()->create([
             'messages' => $existingMessages,
         ]);
 
-        $thread->thread_id = $response->id;
+        $thread->thread_id = $newThreadResponse->id;
 
         if (count($existingMessagesOverflow)) {
             foreach ($existingMessagesOverflow as $overflowMessage) {
@@ -209,22 +212,22 @@ abstract class BaseOpenAiService implements AiService
 
     public function retrieveThread(AiThread $thread): ThreadsDataTransferObject
     {
-        $response = $this->client->threads()->retrieve($thread->thread_id);
+        $threadResponse = $this->client->threads()->retrieve($thread->thread_id);
 
         return ThreadsDataTransferObject::from([
             'id' => $thread->thread_id,
-            'vectorStoreIds' => $response->toolResources?->fileSearch?->vectorStoreIds ?? [],
+            'vectorStoreIds' => $threadResponse->toolResources?->fileSearch?->vectorStoreIds ?? [],
         ]);
     }
 
     public function modifyThread(AiThread $thread, array $parameters): ThreadsDataTransferObject
     {
-        /** @var ThreadResponse $response */
-        $response = $this->client->threads()->modify($thread->thread_id, $parameters);
+        /** @var ThreadResponse $updatedThreadResponse */
+        $updatedThreadResponse = $this->client->threads()->modify($thread->thread_id, $parameters);
 
         return ThreadsDataTransferObject::from([
-            'id' => $response->id,
-            'vectorStoreIds' => $response->toolResources?->fileSearch?->vectorStoreIds ?? [],
+            'id' => $updatedThreadResponse->id,
+            'vectorStoreIds' => $updatedThreadResponse->toolResources?->fileSearch?->vectorStoreIds ?? [],
         ]);
     }
 
@@ -237,46 +240,22 @@ abstract class BaseOpenAiService implements AiService
 
     public function sendMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
     {
-        $response = $this->client->threads()->runs()->list($message->thread->thread_id, [
+        $latestRun = $this->client->threads()->runs()->list($message->thread->thread_id, [
             'order' => 'desc',
             'limit' => 1,
         ])->data[0] ?? null;
 
         // An existing run might be in progress, so we need to wait for it to complete first.
-        if ($response && (! in_array($response?->status, ['completed', 'failed', 'expired', 'cancelled', 'incomplete']))) {
-            $this->awaitThreadRunCompletion($response);
+        if ($latestRun && (! in_array($latestRun?->status, ['completed', 'failed', 'expired', 'cancelled', 'incomplete']))) {
+            $this->awaitThreadRunCompletion($latestRun);
         }
 
-        $createdFiles = [];
-
-        if (method_exists($this, 'createFiles') && ! empty($files)) {
-            $createdFiles = $this->createFiles($message, $files);
-        }
-
-        $data = [
-            'role' => 'user',
-            'content' => $message->content,
-        ];
-
-        if (! empty($createdFiles)) {
-            $data['attachments'] = collect($createdFiles)->map(function ($createdFile) {
-                return [
-                    'file_id' => $createdFile->file_id,
-                    'tools' => [
-                        [
-                            'type' => 'file_search',
-                        ],
-                    ],
-                ];
-            })->toArray();
-        }
-
-        $response = $this->client->threads()->messages()->create($message->thread->thread_id, $data);
+        [$newMessageResponse, $createdFiles] = $this->createMessage($message->thread->thread_id, $message->content, $files);
 
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
         $message->context = $instructions;
-        $message->message_id = $response->id;
+        $message->message_id = $newMessageResponse->id;
         $message->save();
 
         if (! empty($createdFiles)) {
@@ -286,92 +265,60 @@ abstract class BaseOpenAiService implements AiService
             }
         }
 
-        $aiSettings = app(AiSettings::class);
-
-        $runData = [
-            'assistant_id' => $message->thread->assistant->assistant_id,
-            'instructions' => $instructions,
-            'max_completion_tokens' => $aiSettings->max_tokens,
-            'temperature' => $aiSettings->temperature,
-        ];
-
-        if ($message->query()->has('thread.messages.files')) {
-            $runData['tools'] = [
-                ['type' => 'file_search'],
-            ];
-        }
-
-        $stream = $this->client->threads()->runs()->createStreamed($message->thread->thread_id, $runData);
-
-        return function () use ($saveResponse, $stream): Generator {
-            $response = new AiMessage();
-
-            foreach ($stream as $streamResponse) {
-                if ($streamResponse->event === 'thread.message.delta') {
-                    foreach ($streamResponse->response->delta->content as $content) {
-                        yield $content->text->value;
-                        $response->content .= $content->text->value;
-                    }
-
-                    $response->message_id = $streamResponse->response->id;
-                } elseif ($streamResponse->event === 'thread.message.incomplete') {
-                    yield '...';
-                    $response->content .= '...';
-                } elseif ($streamResponse->event === 'thread.message.completed') {
-                    $response->content = $streamResponse->response->content[0]?->text->value;
-                    $response->message_id = $streamResponse->response->id;
-                } elseif (in_array($streamResponse->event, [
-                    'thread.run.expired',
-                    'thread.run.step.expired',
-                ])) {
-                    throw new MessageResponseTimeoutException();
-                } elseif (in_array($streamResponse->event, [
-                    'thread.run.failed',
-                    'thread.run.cancelling',
-                    'thread.run.cancelled',
-                    'thread.run.step.failed',
-                    'thread.run.step.cancelled',
-                ])) {
-                    throw new MessageResponseException('Thread run not successful: [' . json_encode($streamResponse->response->toArray()) . '].');
-                }
-            }
-
-            $saveResponse($response);
-        };
+        return $this->streamRun($message, $instructions, $saveResponse);
     }
 
-    public function retryMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
+    public function completeResponse(AiMessage $response, array $files, Closure $saveResponse): Closure
     {
-        $response = $this->client->threads()->runs()->list($message->thread->thread_id, [
+        $latestRun = $this->client->threads()->runs()->list($response->thread->thread_id, [
             'order' => 'desc',
             'limit' => 1,
         ])->data[0] ?? null;
 
-        if (in_array($response?->status, ['failed', 'expired', 'cancelled', 'incomplete'])) {
-            report(new MessageResponseException('Thread run was not successful: [' . json_encode($response->toArray()) . '].'));
+        // An existing run might be in progress, so we need to wait for it to complete first.
+        if ($latestRun && (! in_array($latestRun?->status, ['completed', 'failed', 'expired', 'cancelled', 'incomplete']))) {
+            $this->awaitThreadRunCompletion($latestRun);
+        }
+
+        $this->createMessage(
+            $response->thread->thread_id,
+            'Continue generating the response, do not mention that I told you as I will paste it directly after the last message.',
+            $files,
+        );
+
+        return $this->streamRun($response, $this->generateAssistantInstructions($response->thread->assistant, withDynamicContext: true), $saveResponse);
+    }
+
+    public function retryMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
+    {
+        $latestRun = $this->client->threads()->runs()->list($message->thread->thread_id, [
+            'order' => 'desc',
+            'limit' => 1,
+        ])->data[0] ?? null;
+
+        if (in_array($latestRun?->status, ['failed', 'expired', 'cancelled', 'incomplete'])) {
+            report(new MessageResponseException('Thread run was not successful: [' . json_encode($latestRun->toArray()) . '].'));
         }
 
         if (
-            $response &&
-            (! in_array($response?->status, ['completed', 'failed', 'expired', 'cancelled', 'incomplete'])) &&
+            $latestRun &&
+            (! in_array($latestRun?->status, ['completed', 'failed', 'expired', 'cancelled', 'incomplete'])) &&
             filled($message->message_id)
         ) {
-            $this->awaitThreadRunCompletion($response);
+            $this->awaitThreadRunCompletion($latestRun);
 
-            $response = $this->client->threads()->messages()->list($message->thread->thread_id, [
+            $latestMessageResponse = $this->client->threads()->messages()->list($message->thread->thread_id, [
                 'order' => 'desc',
                 'limit' => 1,
-            ]);
-            $responseContent = $response->data[0]->content[0]->text->value;
-            $responseId = $response->data[0]->id;
+            ])->data[0];
 
-            return function () use ($responseContent, $responseId, $saveResponse): Generator {
+            return function () use ($latestMessageResponse, $saveResponse): Generator {
                 $response = new AiMessage();
 
-                yield $responseContent;
+                yield $latestMessageResponse->content[0]->text->value;
 
-                $response->content = $responseContent;
-                $response->message_id = $responseId;
+                $response->content = $latestMessageResponse->content[0]->text->value;
+                $response->message_id = $latestMessageResponse->id;
 
                 $saveResponse($response);
             };
@@ -380,89 +327,14 @@ abstract class BaseOpenAiService implements AiService
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
         if (blank($message->message_id)) {
-            $data = [
-                'role' => 'user',
-                'content' => $message->content,
-            ];
-
-            $createdFiles = [];
-
-            if (method_exists($this, 'createFiles') && ! empty($files)) {
-                $createdFiles = $this->createFiles($message, $files);
-            }
-
-            if (! empty($createdFiles)) {
-                $data['attachments'] = collect($createdFiles)->map(function ($createdFile) {
-                    return [
-                        'file_id' => $createdFile->file_id,
-                        'tools' => [
-                            [
-                                'type' => 'file_search',
-                            ],
-                        ],
-                    ];
-                })->toArray();
-            }
-
-            $response = $this->client->threads()->messages()->create($message->thread->thread_id, $data);
+            [$newMessageResponse] = $this->createMessage($message->thread->thread_id, $message->content, $files);
 
             $message->context = $instructions;
-            $message->message_id = $response->id;
+            $message->message_id = $newMessageResponse->id;
             $message->save();
         }
 
-        $aiSettings = app(AiSettings::class);
-
-        $runData = [
-            'assistant_id' => $message->thread->assistant->assistant_id,
-            'instructions' => $instructions,
-            'max_completion_tokens' => $aiSettings->max_tokens,
-            'temperature' => $aiSettings->temperature,
-        ];
-
-        if ($message->query()->has('thread.messages.files')) {
-            $runData['tools'] = [
-                ['type' => 'file_search'],
-            ];
-        }
-
-        $stream = $this->client->threads()->runs()->createStreamed($message->thread->thread_id, $runData);
-
-        return function () use ($saveResponse, $stream): Generator {
-            $response = new AiMessage();
-
-            foreach ($stream as $streamResponse) {
-                if ($streamResponse->event === 'thread.message.delta') {
-                    foreach ($streamResponse->response->delta->content as $content) {
-                        yield $content->text->value;
-                        $response->content .= $content->text->value;
-                    }
-
-                    $response->message_id = $streamResponse->response->id;
-                } elseif ($streamResponse->event === 'thread.message.incomplete') {
-                    yield '...';
-                    $response->content .= '...';
-                } elseif ($streamResponse->event === 'thread.message.completed') {
-                    $response->content = $streamResponse->response->content[0]?->text->value;
-                    $response->message_id = $streamResponse->response->id;
-                } elseif (in_array($streamResponse->event, [
-                    'thread.run.expired',
-                    'thread.run.step.expired',
-                ])) {
-                    throw new MessageResponseTimeoutException();
-                } elseif (in_array($streamResponse->event, [
-                    'thread.run.failed',
-                    'thread.run.cancelling',
-                    'thread.run.cancelled',
-                    'thread.run.step.failed',
-                    'thread.run.step.cancelled',
-                ])) {
-                    throw new MessageResponseException('Thread run not successful: [' . json_encode($streamResponse->response->toArray()) . '].');
-                }
-            }
-
-            $saveResponse($response);
-        };
+        return $this->streamRun($message, $instructions, $saveResponse);
     }
 
     public function getMaxAssistantInstructionsLength(): int
@@ -496,6 +368,36 @@ abstract class BaseOpenAiService implements AiService
     public function supportsAssistantFileUploads(): bool
     {
         return true;
+    }
+
+    protected function createMessage(string $threadId, string $content, array $files): array
+    {
+        $data = [
+            'role' => 'user',
+            'content' => $content,
+        ];
+
+        $createdFiles = [];
+
+        if (method_exists($this, 'createFiles') && ! empty($files)) {
+            $createdFiles = $this->createFiles($files);
+        }
+
+        if (! empty($createdFiles)) {
+            $data['attachments'] = array_map(
+                fn (AiMessageFile $createdFile): array => [
+                    'file_id' => $createdFile->file_id,
+                    'tools' => [
+                        [
+                            'type' => 'file_search',
+                        ],
+                    ],
+                ],
+                $createdFiles,
+            );
+        }
+
+        return [$this->client->threads()->messages()->create($threadId, $data), $createdFiles];
     }
 
     protected function awaitThreadRunCompletion(ThreadRunResponse $threadRunResponse): void
@@ -545,5 +447,121 @@ abstract class BaseOpenAiService implements AiService
         $dynamicContext = rtrim(auth()->user()->getDynamicContext(), '. ');
 
         return "{$dynamicContext}.\n\n{$assistantInstructions}.\n\n{$formattingInstructions}";
+    }
+
+    protected function streamRun(AiMessage $message, string $instructions, Closure $saveResponse): Closure
+    {
+        $aiSettings = app(AiSettings::class);
+
+        $runData = [
+            'assistant_id' => $message->thread->assistant->assistant_id,
+            'instructions' => $instructions,
+            'max_completion_tokens' => $aiSettings->max_tokens,
+            'temperature' => $aiSettings->temperature,
+        ];
+
+        if ($message->thread->messages()->whereHas('files')->exists()) {
+            $runData['tools'] = [
+                ['type' => 'file_search'],
+            ];
+        }
+
+        $stream = $this->client->threads()->runs()->createStreamed($message->thread->thread_id, $runData);
+
+        return function () use ($message, $saveResponse, $stream): Generator {
+            try {
+                // If the message was sent by the user, save the response to a new record.
+                // If the message was sent by the assistant, and we are completing the response, save it to the existing record.
+                $response = filled($message->user_id) ? (new AiMessage()) : $message;
+
+                foreach ($stream as $streamResponse) {
+                    if (in_array($streamResponse->event, [
+                        'thread.run.expired',
+                        'thread.run.step.expired',
+                    ])) {
+                        yield json_encode(['type' => 'timeout', 'message' => 'The AI took too long to respond to your message.']);
+
+                        report(new MessageResponseTimeoutException());
+
+                        return;
+                    }
+
+                    if (in_array($streamResponse->event, [
+                        'thread.run.failed',
+                        'thread.run.cancelling',
+                        'thread.run.cancelled',
+                        'thread.run.step.failed',
+                        'thread.run.step.cancelled',
+                    ])) {
+                        yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
+
+                        report(new MessageResponseException('Thread run not successful: [' . json_encode($streamResponse->response->toArray()) . '].'));
+
+                        return;
+                    }
+
+                    if ($streamResponse->event === 'thread.message.incomplete') {
+                        yield json_encode(['type' => 'content', 'content' => base64_encode('...'), 'incomplete' => true]);
+                        $response->content .= '...';
+
+                        continue;
+                    }
+
+                    if (
+                        (
+                            (($streamResponse->event === 'thread.run.step.completed') && ($streamResponse->response->type === 'message_creation')) ||
+                            ($streamResponse->event === 'thread.run.completed')
+                        ) &&
+                        blank($response->content)
+                    ) {
+                        yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
+
+                        report(new MessageResponseException('Thread run did not generate a reply: [' . json_encode($streamResponse->response->toArray()) . '].'));
+
+                        return;
+                    }
+
+                    if ($streamResponse->event === 'thread.message.delta') {
+                        foreach ($streamResponse->response->delta->content as $content) {
+                            yield json_encode(['type' => 'content', 'content' => base64_encode($content->text->value)]);
+                            $response->content .= $content->text->value;
+                        }
+
+                        $response->message_id = $streamResponse->response->id;
+
+                        continue;
+                    }
+
+                    if (
+                        ($streamResponse->event === 'thread.message.completed') &&
+                        filled($response->content)
+                    ) {
+                        $saveResponse($response);
+
+                        return;
+                    }
+
+                    if (
+                        (
+                            (($streamResponse->event === 'thread.run.step.completed') && ($streamResponse->response->type === 'message_creation')) ||
+                            ($streamResponse->event === 'thread.run.completed')
+                        ) &&
+                        filled($response->content)
+                    ) {
+                        $saveResponse($response);
+
+                        return;
+                    }
+                }
+
+                yield json_encode(['type' => 'timeout', 'message' => 'The AI took too long to respond to your message.']);
+
+                report(new AiStreamEndedUnexpectedlyException());
+            } catch (Throwable $exception) {
+                yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
+
+                report($exception);
+            }
+        };
     }
 }
