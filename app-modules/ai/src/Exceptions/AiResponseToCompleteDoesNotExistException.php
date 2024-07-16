@@ -34,55 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Actions;
+namespace AdvisingApp\Ai\Exceptions;
 
-use Closure;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
-use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
-use AdvisingApp\Ai\Exceptions\AiResponseToCompleteDoesNotExistException;
+use Exception;
 
-class CompleteResponse
+class AiResponseToCompleteDoesNotExistException extends Exception
 {
-    public function __invoke(AiThread $thread, array $files = []): Closure
+    public function __construct()
     {
-        if ($thread->locked_at) {
-            throw new AiThreadLockedException();
-        }
-
-        if ($thread->assistant->archived_at) {
-            throw new AiAssistantArchivedException();
-        }
-
-        $response = $thread->messages()
-            ->whereNull('user_id')
-            ->latest()
-            ->first();
-
-        if (! $response) {
-            throw new AiResponseToCompleteDoesNotExistException();
-        }
-
-        if (str($response->content)->endsWith('...')) {
-            $response->content = (string) str($response->content)
-                ->beforeLast('...')
-                ->append(' ');
-        }
-
-        $aiService = $thread->assistant->model->getService();
-
-        $aiService->ensureAssistantAndThreadExists($thread);
-
-        return $aiService
-            ->completeResponse(
-                response: $response,
-                files: $files,
-                saveResponse: function (AiMessage $response) use ($thread) {
-                    $response->save();
-
-                    $thread->touch();
-                },
-            );
+        parent::__construct('The AI response to finish completing does not exist.');
     }
 }

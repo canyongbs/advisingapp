@@ -40,14 +40,11 @@ use CURLFile;
 use Throwable;
 use Illuminate\Support\Collection;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
 use Illuminate\Support\Facades\Http;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
-use AdvisingApp\Ai\Services\Contracts\AiService;
-use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
 use AdvisingApp\Ai\Exceptions\UploadedFileCouldNotBeProcessed;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadException;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Files\FilesDataTransferObject;
@@ -81,10 +78,7 @@ trait UploadsFiles
     public function createAssistantFiles(AiAssistant $assistant, Collection $files): Collection
     {
         return $files->each(function (AiAssistantFile $fileRecord) use ($assistant) {
-            $fileRecord->file_id = $this->uploadFileToClient(
-                service: $assistant->model->getService(),
-                file: $fileRecord
-            );
+            $fileRecord->file_id = $this->uploadFileToClient($fileRecord);
 
             $fileRecord->addMediaFromUrl($fileRecord->temporary_url)->toMediaCollection('file');
 
@@ -123,7 +117,7 @@ trait UploadsFiles
         ]);
     }
 
-    public function awaitVectorStoreProcessing(AiService $service, VectorStoresDataTransferObject $vectorStore): void
+    public function awaitVectorStoreProcessing(VectorStoresDataTransferObject $vectorStore): void
     {
         $timeout = 60;
 
@@ -136,13 +130,13 @@ trait UploadsFiles
 
             usleep(500000);
 
-            $vectorStoreResponseStatus = $service->retrieveVectorStore($vectorStore->id)->status;
+            $vectorStoreResponseStatus = $this->retrieveVectorStore($vectorStore->id)->status;
 
             $timeout -= 0.5;
         }
     }
 
-    public function createVectorStoreFilesBatch(AiService $service, string $vectorStoreId, array $fileIds): void
+    public function createVectorStoreFilesBatch(string $vectorStoreId, array $fileIds): void
     {
         $this->client->vectorStores()->batches()->create(
             vectorStoreId: $vectorStoreId,
@@ -170,19 +164,18 @@ trait UploadsFiles
      * for Azure Open AI. This is due to the expectation of a `chunking_strategy` key in the response, which Azure
      * does not provide. An issue has been opened, but this request needs to happen without the client for now.
      */
-    public function retrieveVectorStoreFiles(AiService $service, string $vectorStoreId, array $params = []): VectorStoreFilesDataTransferObject
+    public function retrieveVectorStoreFiles(string $vectorStoreId, array $params = []): VectorStoreFilesDataTransferObject
     {
-        /** @var BaseOpenAiService $service */
         $response = Http::withHeaders([
-            'api-key' => $service->getApiKey(),
+            'api-key' => $this->getApiKey(),
             'OpenAI-Beta' => 'assistants=v2',
             'Content-Type' => 'application/json',
         ])
             ->withQueryParameters(
                 $params,
             )
-            ->get($service->getDeployment() . '/vector_stores/' . $vectorStoreId . '/files', [
-                'api-version' => $service->getApiVersion(),
+            ->get($this->getDeployment() . '/vector_stores/' . $vectorStoreId . '/files', [
+                'api-version' => $this->getApiVersion(),
             ]);
 
         return VectorStoreFilesDataTransferObject::from([
@@ -203,34 +196,33 @@ trait UploadsFiles
         }
     }
 
-    protected function createFiles(AiMessage $message, array $files): Collection
+    protected function createFiles(array $files): array
     {
-        return collect($files)->map(function ($file) use ($message) {
-            $fileRecord = new AiMessageFile();
-            $fileRecord->temporary_url = $file['temporaryUrl'];
-            $fileRecord->name = $file['name'];
-            $fileRecord->mime_type = $file['mimeType'];
+        return array_map(
+            function (array $file): AiMessageFile {
+                $fileRecord = new AiMessageFile();
+                $fileRecord->temporary_url = $file['temporaryUrl'];
+                $fileRecord->name = $file['name'];
+                $fileRecord->mime_type = $file['mimeType'];
 
-            $fileRecord->file_id = $this->uploadFileToClient(
-                service: $message->thread->assistant->model->getService(),
-                file: $fileRecord
-            );
+                $fileRecord->file_id = $this->uploadFileToClient($fileRecord);
 
-            $fileRecord->addMediaFromUrl($fileRecord->temporary_url)->toMediaCollection('files');
+                $fileRecord->addMediaFromUrl($fileRecord->temporary_url)->toMediaCollection('files');
 
-            return $fileRecord;
-        });
+                return $fileRecord;
+            },
+            $files,
+        );
     }
 
-    protected function uploadFileToClient(AiService $service, AiFile $file): string
+    protected function uploadFileToClient(AiFile $file): string
     {
-        /** @var BaseOpenAiService $service */
-        $apiKey = $service->getApiKey();
-        $apiVersion = $service->getApiVersion();
+        $apiKey = $this->getApiKey();
+        $apiVersion = $this->getApiVersion();
 
         $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, $service->getDeployment() . '/files?api-version=' . $apiVersion);
+        curl_setopt($ch, CURLOPT_URL, $this->getDeployment() . '/files?api-version=' . $apiVersion);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
 
@@ -273,7 +265,7 @@ trait UploadsFiles
 
         while ($status !== 'processed' && $tries < $maxTries) {
             usleep(500000);
-            $response = $service->retrieveFile($file);
+            $response = $this->retrieveFile($file);
             $status = $response->status;
             $tries++;
         }
@@ -306,8 +298,7 @@ trait UploadsFiles
             $params['after'] = $after;
         }
 
-        $service = $thread->assistant->model->getService();
-        $response = $service->retrieveVectorStoreFiles($service, $vectorStoreId, $params);
+        $response = $this->retrieveVectorStoreFiles($vectorStoreId, $params);
 
         collect($response->data)->each(function ($file) use (&$vectorStoreFileIds) {
             $vectorStoreFileIds[] = $file['id'];
@@ -340,7 +331,7 @@ trait UploadsFiles
         ]);
 
         // Update the thread to use the new vector store.
-        $thread->assistant->model->getService()->modifyThread($thread, [
+        $this->modifyThread($thread, [
             'tool_resources' => [
                 'file_search' => [
                     'vector_store_ids' => [$newVectorStore->id],
@@ -349,10 +340,7 @@ trait UploadsFiles
         ]);
 
         // Ensure the new vector store has processed all of its files.
-        $this->awaitVectorStoreProcessing(
-            service: $thread->assistant->model->getService(),
-            vectorStore: $newVectorStore
-        );
+        $this->awaitVectorStoreProcessing($newVectorStore);
     }
 
     protected function getExpiredVectorStoresForThread(AiThread $thread): ?array

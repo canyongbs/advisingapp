@@ -100,6 +100,24 @@ class TestAiService implements Contracts\AiService
         return $this->sendMessage($message, $files, $saveResponse);
     }
 
+    public function completeResponse(AiMessage $response, array $files, Closure $saveResponse): Closure
+    {
+        if (! empty($files)) {
+            $createdFiles = $this->createFiles($response, $files);
+            $response->files()->saveMany($createdFiles);
+        }
+
+        $responseContent = fake()->paragraph();
+
+        return function () use ($response, $responseContent, $saveResponse) {
+            yield $responseContent;
+
+            $response->content = $responseContent;
+
+            $saveResponse($response);
+        };
+    }
+
     public function getMaxAssistantInstructionsLength(): int
     {
         return 30000;

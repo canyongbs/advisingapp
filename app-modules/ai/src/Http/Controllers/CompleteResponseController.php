@@ -44,6 +44,7 @@ use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use AdvisingApp\Ai\Http\Requests\CompleteResponseRequest;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
+use AdvisingApp\Ai\Exceptions\AiResponseToCompleteDoesNotExistException;
 
 class CompleteResponseController
 {
@@ -61,7 +62,7 @@ class CompleteResponseController
                     'X-Accel-Buffering' => 'no',
                 ],
             );
-        } catch (AiAssistantArchivedException $exception) {
+        } catch (AiAssistantArchivedException | AiResponseToCompleteDoesNotExistException $exception) {
             return response()->json([
                 'message' => $exception->getMessage(),
             ], 404);

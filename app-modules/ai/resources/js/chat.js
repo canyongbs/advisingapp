@@ -137,7 +137,9 @@ document.addEventListener('alpine:init', () => {
 
                 this.isSendingMessage = false;
 
-                this.$wire.clearFiles();
+                if (!this.isIncomplete) {
+                    this.$wire.clearFiles();
+                }
             },
 
             sendMessage: async function () {
@@ -183,6 +185,8 @@ document.addEventListener('alpine:init', () => {
             },
 
             retryMessage: async function () {
+                const isOriginallyIncomplete = this.isIncomplete;
+
                 this.isSendingMessage = true;
                 this.isIncomplete = false;
                 this.error = null;
@@ -203,6 +207,7 @@ document.addEventListener('alpine:init', () => {
                                 files: this.$wire.files,
                             }),
                         }),
+                        isCompletingPreviousResponse: isOriginallyIncomplete,
                     });
                 });
             },

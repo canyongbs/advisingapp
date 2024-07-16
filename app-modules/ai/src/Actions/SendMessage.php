@@ -79,8 +79,6 @@ class SendMessage
                     $response->thread()->associate($thread);
                     $response->save();
 
-                    ray($response);
-
                     $thread->touch();
                 },
             );
