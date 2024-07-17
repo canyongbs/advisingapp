@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Models;
 use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Ai\Events\AiMessageDeleted;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -71,6 +72,10 @@ class AiMessage extends BaseModel
     ];
 
     protected $table = 'ai_messages';
+
+    protected $dispatchesEvents = [
+        'deleted' => AiMessageDeleted::class,
+    ];
 
     public function thread(): BelongsTo
     {

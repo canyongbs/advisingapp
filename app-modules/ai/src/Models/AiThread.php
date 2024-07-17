@@ -41,6 +41,8 @@ use App\Models\User;
 use App\Models\BaseModel;
 use Carbon\CarbonInterface;
 use App\Settings\DisplaySettings;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -55,6 +57,7 @@ class AiThread extends BaseModel
 {
     use CanAddAssistantLicenseGlobalScope;
     use SoftDeletes;
+    use Prunable;
 
     protected $fillable = [
         'thread_id',
@@ -97,6 +100,18 @@ class AiThread extends BaseModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function prunable(): Builder
+    {
+        return static::query()
+            ->whereDoesntHave('messages')
+            ->where(
+                fn (Builder $query) => $query
+                    ->whereNull('name')
+                    ->orWhereNotNull('deleted_at')
+            );
+        // TODO: Time constraint of retention period
     }
 
     protected function lastEngagedAt(): Attribute
