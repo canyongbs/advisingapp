@@ -37,10 +37,12 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use Carbon\CarbonImmutable;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftCampaignEngagementBlockWithAi;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 
 class EngagementBatchSmsBlock extends CampaignActionBlock
@@ -62,6 +64,16 @@ class EngagementBatchSmsBlock extends CampaignActionBlock
                 ->hidden()
                 ->disabled(),
             EngagementSmsBodyField::make(context: 'create'),
+            Actions::make([
+                DraftCampaignEngagementBlockWithAi::make()
+                    ->deliveryMethod(EngagementDeliveryMethod::Sms)
+                    ->mergeTags([
+                        'student first name',
+                        'student last name',
+                        'student full name',
+                        'student email',
+                    ]),
+            ]),
             DateTimePicker::make('execute_at')
                 ->label('When should the journey step be executed?')
                 ->columnSpanFull()

@@ -38,12 +38,15 @@ namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Actions;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use FilamentTiptapEditor\Enums\TiptapOutput;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource;
+use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 
 class CreateEmailTemplate extends CreateRecord
 {
@@ -64,7 +67,7 @@ class CreateEmailTemplate extends CreateRecord
                     ->disk('s3-public')
                     ->visibility('public')
                     ->directory('editor-images/email-templates')
-                    ->mergeTags([
+                    ->mergeTags($mergeTags = [
                         'student first name',
                         'student last name',
                         'student full name',
@@ -75,6 +78,11 @@ class CreateEmailTemplate extends CreateRecord
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->required(),
+                Actions::make([
+                    DraftTemplateWithAiAction::make()
+                        ->deliveryMethod(EngagementDeliveryMethod::Email)
+                        ->mergeTags($mergeTags),
+                ]),
             ]);
     }
 
