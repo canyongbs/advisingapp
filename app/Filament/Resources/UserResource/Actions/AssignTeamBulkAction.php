@@ -54,7 +54,7 @@ class AssignTeamBulkAction extends BulkAction
         $this->icon('heroicon-o-user-group')
             ->modalWidth(MaxWidth::Small)
             ->modalDescription(
-                fn (Collection $records): string => (count($records) > 1) ? 'This bulk action will overwrite any prior team assignments for the selected user(s).' : 'This bulk action will overwrite any prior team assignments for the selected user'
+                fn (Collection $records): string => 'This bulk action will overwrite any prior team assignments for the selected ' . ((count($records) > 1) ? 'users' : 'user') . '.'
             )
             ->fillForm(fn (Collection $records): array => [
                 'records' => $records,
@@ -63,32 +63,32 @@ class AssignTeamBulkAction extends BulkAction
                 Select::make('team')
                     ->label('Team')
                     ->options(Team::pluck('name', 'id'))
-                    ->searchable(),
+                    ->searchable()
+                    ->required(),
             ])
             ->action(function (array $data, Collection $records) {
                 $success = 0;
                 $fail = 0;
                 $records->each(function (User $record) use ($data, &$success, &$fail) {
                     try {
-                        if (! empty($data['team'])) {
-                            $record->assignTeam($data['team']);
-                            $success = $success + 1;
-                        }
+                        $record->assignTeam($data['team']);
+                        $success++;
                     } catch (Exception $e) {
                         report($e);
-                        $fail = $fail + 1;
+                        $fail++;
                     }
                 });
 
                 if ($fail > 0) {
                     Notification::make()
                         ->title('Assigned Team')
-                        ->body('Fail to added to the team: ' . $fail)
+                        ->body($fail . ' ' . ((count($records) > 1) ? 'users were' : 'user was') . ' fail to added to the team.')
                         ->success()
                         ->send();
                 } else {
                     Notification::make()
                         ->title('Assigned Team')
+                        ->body($success . ' ' . ((count($records) > 1) ? 'users were' : 'user was') . ' successfully added to the team.')
                         ->success()
                         ->send();
                 }
