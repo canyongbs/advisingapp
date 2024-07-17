@@ -59,6 +59,7 @@ use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
+use App\Models\User;
 
 /**
  * @property-read Student|Prospect $concern
@@ -79,6 +80,7 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
         'severity',
         'status',
         'suggested_intervention',
+        'user_id'
     ];
 
     protected $casts = [
@@ -149,5 +151,10 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
         static::addGlobalScope('licensed', function (Builder $builder) {
             $builder->tap(new LicensedToEducatable('concern'));
         });
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

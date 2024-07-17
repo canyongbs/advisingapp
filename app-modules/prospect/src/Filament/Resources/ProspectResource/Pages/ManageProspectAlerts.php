@@ -101,6 +101,8 @@ class ManageProspectAlerts extends ManageRelatedRecords
                 TextEntry::make('severity'),
                 TextEntry::make('suggested_intervention'),
                 TextEntry::make('status'),
+                TextEntry::make('user.name')->label('Created By'),
+                TextEntry::make('created_at')->label('Created Date'),
             ]);
     }
 
@@ -151,7 +153,12 @@ class ManageProspectAlerts extends ManageRelatedRecords
                     ->options(AlertStatus::class),
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->mutateFormDataUsing(function (array $data): array {
+                        $data['user_id'] = auth()->id();
+
+                        return $data;
+                    }),
             ])
             ->actions([
                 ViewAction::make(),
