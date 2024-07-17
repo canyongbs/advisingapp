@@ -4,9 +4,10 @@
     "type": "module",
     "scripts": {
         "api-docs:generate": "export NODE_OPTIONS=--max_old_space_size=4096 && spectaql spectaql.yml",
-        "build": "npm run build:vite && npm run build:js-compile && npm run build:widgets && npm run build:portals",
+        "build": "npm run build:vite && npm run build:js-compile && npm run build:widgets && npm run build:portals && npm run build:filament-tiptap-editor",
         "build:application": "(cd widgets/application && vite build)",
         "build:event-registration": "(cd widgets/event-registration && vite build)",
+        "build:filament-tiptap-editor": "(cd app-modules/filament-tiptap-editor && npm run build)",
         "build:form": "(cd widgets/form && vite build)",
         "build:js-compile": "node ./bin/build.js",
         "build:knowledge-management": "(cd portals/knowledge-management && vite build)",
