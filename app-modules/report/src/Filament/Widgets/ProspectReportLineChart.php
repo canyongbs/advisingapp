@@ -68,7 +68,7 @@ class ProspectReportLineChart extends ChartReportWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('saved_conversations_line_chart', now()->addHours(24), function (): array {
+        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('total-prospects_line_chart', now()->addHours(24), function (): array {
             $totalCreatedPerMonth = Prospect::query()
                 ->toBase()
                 ->selectRaw('date_trunc(\'month\', created_at) as month')

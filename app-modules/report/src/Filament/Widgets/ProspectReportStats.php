@@ -63,19 +63,19 @@ class ProspectReportStats extends StatsOverviewReportWidget
                 maxPrecision: 2,
             )),
             Stat::make('Total Alerts', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('alert-count', now()->addHours(24), function (): int {
+                Cache::tags([$this->cacheTag])->remember('prospect-alerts-count', now()->addHours(24), function (): int {
                     return Alert::whereHasMorph('concern', Prospect::class)->count();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('Total Segments', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('alert-count', now()->addHours(24), function (): int {
-                    return Segment::query()->whereModel(SegmentModel::Prospect)->count();
+                Cache::tags([$this->cacheTag])->remember('pospect-segments-count', now()->addHours(24), function (): int {
+                    return Segment::query()->where('model', SegmentModel::Prospect)->count();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('Total Tasks', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('alert-count', now()->addHours(24), function (): int {
+                Cache::tags([$this->cacheTag])->remember('prospect-tasks-count', now()->addHours(24), function (): int {
                     return Task::whereHasMorph('concern', Prospect::class)->count();
                 }),
                 maxPrecision: 2,
