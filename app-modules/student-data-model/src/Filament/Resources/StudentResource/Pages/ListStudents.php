@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Tables\Table;
 use Filament\Tables\Filters\Filter;
+use AdvisingApp\Segment\Models\Segment;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -45,16 +46,15 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\TernaryFilter;
+use AdvisingApp\Segment\Enums\SegmentModel;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
+use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
-use AdvisingApp\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
 use AdvisingApp\Engagement\Filament\Actions\Concerns\ImplementsHasBulkEngagementAction;
@@ -85,26 +85,26 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
                     ->searchable(),
             ])
             ->filters([
-                SelectFilter::make('my_caseloads')
-                    ->label('My Caseloads')
+                SelectFilter::make('my_segments')
+                    ->label('My Population Segments')
                     ->options(
-                        auth()->user()->caseloads()
-                            ->where('model', CaseloadModel::Student)
+                        auth()->user()->segments()
+                            ->where('model', SegmentModel::Student)
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
-                SelectFilter::make('all_caseloads')
-                    ->label('All Caseloads')
+                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
+                SelectFilter::make('all_segments')
+                    ->label('All Population Segments')
                     ->options(
-                        Caseload::all()
-                            ->where('model', CaseloadModel::Student)
+                        Segment::all()
+                            ->where('model', SegmentModel::Student)
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 Filter::make('subscribed')
                     ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
                 TernaryFilter::make('sap')
@@ -147,14 +147,14 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
             ]);
     }
 
-    protected function caseloadFilter(Builder $query, array $data): void
+    protected function segmentFilter(Builder $query, array $data): void
     {
         if (blank($data['value'])) {
             return;
         }
 
         $query->whereKey(
-            app(TranslateCaseloadFilters::class)
+            app(TranslateSegmentFilters::class)
                 ->handle($data['value'])
                 ->pluck($query->getModel()->getQualifiedKeyName()),
         );

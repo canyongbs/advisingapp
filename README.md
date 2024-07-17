@@ -44,7 +44,7 @@ Our student service CRM is designed to support the management of prospective and
 * Record Mangement
 * Email and SMS
 * Service Management
-* Caseload Management
+* Population Segmentation
 * Task Management
 * Interaction Tracking
 * Files and Documents

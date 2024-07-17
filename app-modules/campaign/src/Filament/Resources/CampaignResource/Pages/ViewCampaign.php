@@ -56,9 +56,8 @@ class ViewCampaign extends ViewRecord
                 Section::make()
                     ->schema([
                         TextEntry::make('name'),
-                        // TODO Make link to caseload
-                        TextEntry::make('caseload.name')
-                            ->label('Caseload'),
+                        TextEntry::make('segment.name')
+                            ->label('Population Segment'),
                         IconEntry::make('enabled')
                             ->boolean(),
                         IconEntry::make('execution_status')

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
+use Throwable;
 use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
@@ -50,6 +51,7 @@ use Filament\Forms\Components\Section;
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Settings\AiSettings;
 use Filament\Forms\Components\Textarea;
+use Filament\Notifications\Notification;
 use App\Filament\Forms\Components\Slider;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Clusters\ArtificialIntelligence;
@@ -136,6 +138,13 @@ class ManageAiSettings extends SettingsPage
                     ->step(0.1)
                     ->minValue(0)
                     ->maxValue(1),
+                Select::make('default_model')
+                    ->options(collect(AiModel::getDefaultModels())
+                        ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
+                        ->all())
+                    ->searchable()
+                    ->helperText('Used for general purposes like generating content when an assistant is not being used.')
+                    ->required(),
             ]);
     }
 
@@ -198,9 +207,33 @@ class ManageAiSettings extends SettingsPage
     protected function mutateFormDataBeforeSave(array $data): array
     {
         if (array_key_exists('defaultAssistant', $data)) {
-            $this->defaultAssistant->update($data['defaultAssistant']);
+            $this->defaultAssistant->fill($data['defaultAssistant']);
+
+            $aiService = $this->defaultAssistant->model->getService();
+
+            try {
+                $aiService->isAssistantExisting($this->defaultAssistant) ?
+                    $aiService->updateAssistant($this->defaultAssistant) :
+                    $aiService->createAssistant($this->defaultAssistant);
+            } catch (Throwable $exception) {
+                report($exception);
+
+                Notification::make()
+                    ->title('Could not save assistant')
+                    ->body('We failed to connect to the AI service. Support has been notified about this problem. Please try again later.')
+                    ->danger()
+                    ->send();
+
+                $this->halt();
+            }
+
+            $this->defaultAssistant->save();
 
             unset($data['defaultAssistant']);
+        }
+
+        if (is_string($data['default_model'])) {
+            $data['default_model'] = AiModel::parse($data['default_model']);
         }
 
         return parent::mutateFormDataBeforeSave($data);

@@ -42,8 +42,8 @@ use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Alert\Enums\AlertStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Widgets\StatsOverviewWidget;
+use AdvisingApp\Segment\Enums\SegmentModel;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
 
 class ProspectStats extends StatsOverviewWidget
 {
@@ -68,9 +68,9 @@ class ProspectStats extends StatsOverviewWidget
                 ->remember("user-{$user->getKey()}-prospect-alerts-count", now()->addHour(), function () use ($user): int {
                     return $user->prospectAlerts()->status(AlertStatus::Active)->count();
                 })),
-            Stat::make('My Caseloads', Cache::tags(["user-{$user->getKey()}-prospect-caseloads"])
-                ->remember("user-{$user->getKey()}-prospect-caseloads-count", now()->addHour(), function () use ($user): int {
-                    return $user->caseloads()->model(CaseloadModel::Prospect)->count();
+            Stat::make('My Population Segments', Cache::tags(["user-{$user->getKey()}-prospect-segments"])
+                ->remember("user-{$user->getKey()}-prospect-segments-count", now()->addHour(), function () use ($user): int {
+                    return $user->segments()->model(SegmentModel::Prospect)->count();
                 })),
         ];
     }

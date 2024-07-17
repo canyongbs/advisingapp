@@ -56,6 +56,10 @@ class ReportPlugin implements Plugin
             ->discoverPages(
                 in: __DIR__ . '/Filament/Pages',
                 for: 'AdvisingApp\\Report\\Filament\\Pages'
+            )
+            ->discoverWidgets(
+                in: __DIR__ . '/Filament/Widgets',
+                for: 'AdvisingApp\\Report\\Filament\\Widgets'
             );
     }
 

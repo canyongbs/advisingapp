@@ -38,10 +38,10 @@ namespace AdvisingApp\Campaign\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use AdvisingApp\Segment\Models\Segment;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -55,9 +55,9 @@ class Campaign extends BaseModel implements Auditable
     use SoftDeletes;
 
     protected $fillable = [
-        'caseload_id',
         'name',
         'enabled',
+        'segment_id',
     ];
 
     protected $casts = [
@@ -69,9 +69,9 @@ class Campaign extends BaseModel implements Auditable
         return $this->belongsTo(User::class);
     }
 
-    public function caseload(): BelongsTo
+    public function segment(): BelongsTo
     {
-        return $this->belongsTo(Caseload::class);
+        return $this->belongsTo(Segment::class);
     }
 
     public function actions(): HasMany
@@ -98,7 +98,7 @@ class Campaign extends BaseModel implements Auditable
                 return;
             }
 
-            $builder->whereHas('caseload');
+            $builder->whereHas('segment');
         });
     }
 }

@@ -248,6 +248,9 @@ trait CanManageThreads
             ->modalWidth('md')
             ->action(function (array $data) {
                 $this->thread->name = $data['name'];
+
+                $this->thread->saved_at = now();
+
                 $this->thread->save();
 
                 $folder = auth()->user()->aiThreadFolders()

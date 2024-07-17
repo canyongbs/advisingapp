@@ -89,7 +89,7 @@ class Event extends BaseModel
 
                 $emails = $action
                     ->campaign
-                    ->caseload
+                    ->segment
                     ->retrieveRecords()
                     ->whereNotNull('email')
                     ->whereNotIn('email', $event->attendees()->pluck('email')->toArray())

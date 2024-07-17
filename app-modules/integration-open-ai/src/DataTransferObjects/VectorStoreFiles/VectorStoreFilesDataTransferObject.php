@@ -42,8 +42,8 @@ class VectorStoreFilesDataTransferObject extends Data
 {
     public function __construct(
         public array $data,
-        public string $firstId,
-        public string $lastId,
+        public ?string $firstId,
+        public ?string $lastId,
         public bool $hasMore,
     ) {}
 }

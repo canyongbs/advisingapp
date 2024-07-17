@@ -47,14 +47,16 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
+use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Timeline\Timelines\EngagementResponseTimeline;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * @mixin IdeHelperEngagementResponse
  */
-class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeline
+class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeline, HasDeliveryMethod
 {
     use AuditableTrait;
     use SoftDeletes;
@@ -102,5 +104,11 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
     public function scopeSentByProspect(Builder $query): void
     {
         $query->where('sender_type', resolve(Prospect::class)->getMorphClass());
+    }
+
+    public function getDeliveryMethod(): EngagementDeliveryMethod
+    {
+        //Only sms for now
+        return EngagementDeliveryMethod::Sms;
     }
 }

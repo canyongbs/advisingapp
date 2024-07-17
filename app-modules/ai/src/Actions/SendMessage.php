@@ -80,7 +80,7 @@ class SendMessage
                     $response->save();
 
                     $thread->touch();
-                }
+                },
             );
     }
 }

@@ -51,6 +51,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspec
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEvents;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectCareTeam;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectPrograms;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEngagement;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectServiceManagement;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectInteractions;
@@ -67,9 +68,9 @@ class ProspectResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup = 'Recruitment CRM';
-
     protected static ?int $navigationSort = 20;
+
+    protected static ?string $navigationGroup = 'Recruitment CRM';
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
@@ -90,6 +91,7 @@ class ProspectResource extends Resource
             ManageProspectApplicationSubmissions::class,
             ProspectServiceManagement::class,
             ManageProspectEvents::class,
+            ManageProspectPrograms::class,
         ]);
     }
 
@@ -141,6 +143,7 @@ class ProspectResource extends Resource
             'care-team' => ManageProspectCareTeam::route('/{record}/care-team'),
             'service-management' => ProspectServiceManagement::route('/{record}/service-management'),
             'events' => ManageProspectEvents::route('/{record}/events'),
+            'programs' => ManageProspectPrograms::route('/{record}/programs'),
         ];
     }
 }

@@ -49,6 +49,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Manage
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentEvents;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentCareTeam;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentPrograms;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentEngagement;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInformation;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\StudentServiceManagement;
@@ -66,9 +67,9 @@ class StudentResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-m-users';
 
-    protected static ?string $navigationGroup = 'Retention CRM';
-
     protected static ?int $navigationSort = 20;
+
+    protected static ?string $navigationGroup = 'Retention CRM';
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
@@ -89,6 +90,7 @@ class StudentResource extends Resource
             ManageStudentApplicationSubmissions::class,
             StudentServiceManagement::class,
             ManageStudentEvents::class,
+            ManageStudentPrograms::class,
         ]);
     }
 
@@ -135,6 +137,7 @@ class StudentResource extends Resource
             'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
             'service-management' => StudentServiceManagement::route('/{record}/service-management'),
             'events' => ManageStudentEvents::route('/{record}/events'),
+            'programs' => ManageStudentPrograms::route('/{record}/programs'),
         ];
     }
 }

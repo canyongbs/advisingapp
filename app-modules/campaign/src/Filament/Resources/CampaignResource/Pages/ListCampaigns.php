@@ -57,7 +57,8 @@ class ListCampaigns extends ListRecords
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name'),
-                TextColumn::make('caseload.name'),
+                TextColumn::make('segment.name')
+                    ->label('Population Segment'),
             ])
             ->actions([
                 ViewAction::make(),

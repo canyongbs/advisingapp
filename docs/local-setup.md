@@ -1,8 +1,8 @@
 # Local Setup
 
 ### Requirements
-* [Docker](https://docs.docker.com/get-docker/)
-* [Docker Compose](https://docs.docker.com/compose/install/) (It is most likely that the way you installed Docker already came with Docker Compose, so on most systems you probably need not install this)
+* [Docker](https://docs.docker.com/get-docker/) version `26.0.0` or higher
+* [Docker Compose](https://docs.docker.com/compose/install/) version `2.25.0` or higher (It is most likely that the way you installed Docker already came with Docker Compose, so on most systems you probably need not install this)
 * [NVM (Node Version Manager)](https://github.com/nvm-sh/nvm) (Optional, but recommended)
 * Spin CLI
   * [Spin MacOS](https://serversideup.net/open-source/spin/docs/installation/install-macos#install-docker-desktop)
@@ -77,7 +77,7 @@ spin up -d
 Once the containers are started you can now start a shell into the main PHP container by running the following command:
 
 ```bash
-spin exec -it advisingapp.local bash
+spin exec -it -u webuser advisingapp.local bash
 ```
 
 All following commands will and should be run from within the PHP container.

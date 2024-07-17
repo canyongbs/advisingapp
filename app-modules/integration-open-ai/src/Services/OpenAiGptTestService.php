@@ -45,6 +45,11 @@ class OpenAiGptTestService extends BaseOpenAiService
         $this->client = new OpenAI\Testing\ClientFake();
     }
 
+    public function supportsAssistantFileUploads(): bool
+    {
+        return false;
+    }
+
     public function getApiKey(): string
     {
         return 'test';

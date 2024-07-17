@@ -313,6 +313,7 @@
                     csrfToken: @js(csrf_token()),
                     retryMessageUrl: @js(route('ai.threads.messages.retry', ['thread' => $this->thread])),
                     sendMessageUrl: @js(route('ai.threads.messages.send', ['thread' => $this->thread])),
+                    completeResponseUrl: @js(route('ai.threads.messages.complete-response', ['thread' => $this->thread])),
                     showThreadUrl: @js(route('ai.threads.show', ['thread' => $this->thread])),
                     userId: @js(auth()->user()->id),
                     threadId: @js($this->thread->id)
@@ -396,7 +397,7 @@
                         class="divide-y dark:divide-gray-800"
                         x-cloak
                     >
-                        <template x-for="message in messages">
+                        <template x-for="(message, messageIndex) in messages">
                             <div class="group w-full bg-white dark:bg-gray-900">
                                 <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
                                     <div
@@ -405,7 +406,7 @@
                                             <img
                                                 class="h-8 w-8 rounded-full object-cover object-center"
                                                 x-bind:src="message.user_id ? (users[message.user_id]?.avatar_url ??
-                                                    @js(filament()->getUserAvatarUrl(auth()->user()))) : @js($this->thread->assistant->getFirstTemporaryUrl(now()->addHour(), 'avatar') ?: \Illuminate\Support\Facades\Vite::asset('resources/images/canyon-ai-headshot.jpg'))"
+                                                    @js(filament()->getUserAvatarUrl(auth()->user()))) : @js($this->thread->assistant->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'thumbnail') ?: \Illuminate\Support\Facades\Vite::asset('resources/images/canyon-ai-headshot.jpg'))"
                                                 x-bind:alt="message.user_id ? (users[message.user_id]?.name ?? @js(auth()->user()->name . ' avatar')) :
                                                     @js($this->thread->assistant->name . ' avatar')"
                                             />
@@ -419,6 +420,14 @@
                                                         class="prose dark:prose-invert"
                                                         x-html="message.content"
                                                     ></div>
+
+                                                    <x-filament::link
+                                                        tag="button"
+                                                        x-on:click="completeResponse"
+                                                        x-show="isIncomplete && (messageIndex === (messages.length - 1))"
+                                                    >
+                                                        Continue generating
+                                                    </x-filament::link>
                                                 </div>
                                             </div>
                                             <div class="flex justify-between empty:hidden lg:block">
@@ -459,7 +468,7 @@
                     <form x-on:submit.prevent="sendMessage">
                         <div
                             class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
-                            @if ($this->thread->assistant->model->getService()->supportsFileUploads())
+                            @if ($this->thread->assistant->model->getService()->supportsMessageFileUploads())
                                 <div class="flex items-center justify-start gap-x-4 gap-y-3 p-4">
                                     {{ $this->uploadFilesAction }}
 
@@ -481,7 +490,7 @@
                                     for="message_input"
                                 >Type here</label>
                                 <textarea
-                                    class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                                    class="min-h-20 w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
                                     id="message_input"
                                     x-ref="messageInput"
                                     x-model="message"

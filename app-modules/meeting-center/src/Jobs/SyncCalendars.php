@@ -43,9 +43,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\MeetingCenter\Models\Calendar;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 
-class SyncCalendars implements ShouldQueue, ShouldBeUnique
+class SyncCalendars implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -57,16 +57,16 @@ class SyncCalendars implements ShouldQueue, ShouldBeUnique
         $this->onQueue(config('meeting-center.queue'));
     }
 
-    public function uniqueId(): string
-    {
-        return Tenant::current()->id;
-    }
-
     public function handle(): void
     {
         Calendar::cursor()
             ->each(
                 fn (Calendar $calendar) => dispatch(new SyncCalendar($calendar))
             );
+    }
+
+    public function middleware(): array
+    {
+        return [(new WithoutOverlapping(Tenant::current()->id))->dontRelease()->expireAfter(180)];
     }
 }

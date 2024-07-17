@@ -37,10 +37,11 @@
 namespace AdvisingApp\Engagement\Enums;
 
 use App\Enums\Integration;
+use Filament\Support\Contracts\HasIcon;
 use App\Exceptions\IntegrationException;
 use Filament\Support\Contracts\HasLabel;
 
-enum EngagementDeliveryMethod: string implements HasLabel
+enum EngagementDeliveryMethod: string implements HasLabel, HasIcon
 {
     case Email = 'email';
     case Sms = 'sms';
@@ -49,7 +50,15 @@ enum EngagementDeliveryMethod: string implements HasLabel
     {
         return match ($this) {
             EngagementDeliveryMethod::Email => 'Email',
-            EngagementDeliveryMethod::Sms => 'SMS',
+            EngagementDeliveryMethod::Sms => 'Text',
+        };
+    }
+
+    public function getIcon(): ?string
+    {
+        return match ($this) {
+            EngagementDeliveryMethod::Email => 'heroicon-o-envelope',
+            EngagementDeliveryMethod::Sms => 'heroicon-o-chat-bubble-bottom-center-text',
         };
     }
 

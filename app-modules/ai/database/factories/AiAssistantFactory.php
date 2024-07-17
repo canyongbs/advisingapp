@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Enums\AiApplication;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -52,6 +54,8 @@ class AiAssistantFactory extends Factory
     {
         return [
             'name' => fake()->word(),
+            'application' => AiApplication::PersonalAssistant,
+            'model' => fake()->randomElement(AiModel::cases()),
         ];
     }
 }

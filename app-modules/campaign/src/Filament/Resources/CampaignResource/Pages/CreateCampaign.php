@@ -71,10 +71,9 @@ class CreateCampaign extends CreateRecord
                     TextInput::make('name')
                         ->autocomplete(false)
                         ->required(),
-                    Select::make('caseload_id')
-                        ->label('Caseload')
-                        ->translateLabel()
-                        ->options($user->caseloads()->pluck('name', 'id'))
+                    Select::make('segment_id')
+                        ->label('Population Segment')
+                        ->options($user->segments()->pluck('name', 'id'))
                         ->searchable()
                         ->required(),
                 ]),

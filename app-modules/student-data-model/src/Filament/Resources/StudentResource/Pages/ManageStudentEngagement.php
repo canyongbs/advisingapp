@@ -36,48 +36,16 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Htmlable;
-use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementResponsesRelationManager;
+use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords;
 
-class ManageStudentEngagement extends ManageRelatedRecords
+class ManageStudentEngagement extends ManageRelatedEngagementRecords
 {
     protected static string $resource = StudentResource::class;
-
-    // TODO: Obsolete when there is no table, remove from Filament
-    protected static string $relationship = 'engagements';
-
-    protected static ?string $navigationLabel = 'Email and Texts';
-
-    protected static ?string $breadcrumb = 'Email and Texts';
-
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
 
     public function getTitle(): string | Htmlable
     {
         return 'Manage Student Email and Texts';
-    }
-
-    public static function canAccess(array $arguments = []): bool
-    {
-        return (bool) count(static::managers($arguments['record'] ?? null));
-    }
-
-    public function getRelationManagers(): array
-    {
-        return static::managers($this->getRecord());
-    }
-
-    private static function managers(?Model $record = null): array
-    {
-        return collect([
-            EngagementsRelationManager::class,
-            EngagementResponsesRelationManager::class,
-        ])
-            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
-            ->toArray();
     }
 }

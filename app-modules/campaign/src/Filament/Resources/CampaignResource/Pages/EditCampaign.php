@@ -57,10 +57,9 @@ class EditCampaign extends EditRecord
             ->schema([
                 TextInput::make('name')
                     ->required(),
-                Select::make('caseload_id')
-                    ->label('Caseload')
-                    ->translateLabel()
-                    ->options($user->caseloads()->pluck('name', 'id'))
+                Select::make('segment_id')
+                    ->label('Population Segment')
+                    ->options($user->segments()->pluck('name', 'id'))
                     ->searchable()
                     ->required(),
                 Toggle::make('enabled'),

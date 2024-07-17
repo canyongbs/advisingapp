@@ -44,11 +44,14 @@ use OpenAI\Resources\Assistants;
 use AdvisingApp\Ai\Enums\AiModel;
 use OpenAI\Resources\ThreadsRuns;
 use AdvisingApp\Ai\Models\AiThread;
+use Illuminate\Http\Client\Request;
 use AdvisingApp\Ai\Models\AiMessage;
+use Illuminate\Support\Facades\Http;
 use OpenAI\Responses\StreamResponse;
 use OpenAI\Resources\ThreadsMessages;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Settings\AiSettings;
 use OpenAI\Responses\Threads\ThreadResponse;
 use GuzzleHttp\Stream\Stream as GuzzleStream;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
@@ -280,6 +283,47 @@ it('can send a message', function () {
     $client->assertSent(ThreadsMessages::class, 1);
 });
 
+it('can complete a message response', function () {
+    asSuperAdmin();
+
+    /** @var BaseOpenAiService $service */
+    $service = AiModel::OpenAiGptTest->getService();
+
+    /** @var ClientFake $client */
+    $client = $service->getClient();
+
+    $client->addResponses([
+        ThreadRunListResponse::fake([
+            'data' => [
+                [
+                    'status' => 'completed',
+                ],
+            ],
+        ]),
+        ThreadMessageResponse::fake([]),
+        new StreamResponse('', new GuzzleResponse(200, [], GuzzleStream::factory())),
+    ]);
+
+    $message = AiMessage::factory()
+        ->for(AiThread::factory()
+            ->for(AiAssistant::factory()->state([
+                'application' => AiApplication::PersonalAssistant,
+                'assistant_id' => Str::random(),
+                'is_default' => true,
+                'model' => AiModel::OpenAiGptTest,
+            ]), 'assistant')
+            ->for(auth()->user())
+            ->state([
+                'thread_id' => Str::random(),
+            ]), 'thread')
+        ->make();
+
+    $service->completeResponse($message, [], function () {});
+
+    $client->assertSent(ThreadsRuns::class, 2);
+    $client->assertSent(ThreadsMessages::class, 1);
+});
+
 it('can retry a message', function () {
     asSuperAdmin();
 
@@ -434,4 +478,46 @@ it('can create a run if one does not exist without sending the message again whe
     $service->retryMessage($message, [], function () {});
 
     $client->assertSent(ThreadsRuns::class, 2);
+});
+
+it('can complete a prompt', function () {
+    asSuperAdmin();
+
+    /** @var BaseOpenAiService $service */
+    $service = AiModel::OpenAiGptTest->getService();
+
+    Http::fake([
+        '*' => Http::response([
+            'choices' => [[
+                'message' => [
+                    'content' => $response = Str::random(),
+                ],
+            ]],
+        ]),
+    ]);
+
+    $aiSettings = app(AiSettings::class);
+    $aiSettings->temperature = $temperature = random_int(1, 10) / 10;
+    $aiSettings->save();
+
+    expect($service->complete($prompt = Str::random(), $content = Str::random()))
+        ->toBe($response);
+
+    Http::assertSent(function (Request $request) use ($content, $prompt, $temperature): bool {
+        expect($request->hasHeader('api-key'))
+            ->toBeTrue();
+
+        if ($request['temperature'] !== $temperature) {
+            return false;
+        }
+
+        if ($request['messages'] !== [
+            ['role' => 'system', 'content' => $prompt],
+            ['role' => 'user', 'content' => $content],
+        ]) {
+            return false;
+        }
+
+        return true;
+    });
 });

@@ -43,6 +43,7 @@ use AdvisingApp\Ai\Enums\AiApplication;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
 
@@ -88,9 +89,26 @@ class AiAssistant extends BaseModel implements HasMedia
             });
     }
 
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('avatar-height-250px')
+            ->performOnCollections('avatar')
+            ->height(250);
+
+        $this->addMediaConversion('thumbnail')
+            ->performOnCollections('avatar')
+            ->width(32)
+            ->height(32);
+    }
+
     public function threads(): HasMany
     {
         return $this->hasMany(AiThread::class, 'assistant_id');
+    }
+
+    public function files(): HasMany
+    {
+        return $this->hasMany(AiAssistantFile::class, 'assistant_id');
     }
 
     public function upvotes(): HasMany
@@ -126,5 +144,10 @@ class AiAssistant extends BaseModel implements HasMedia
         }
 
         $this->upvote();
+    }
+
+    public function isDefault(): bool
+    {
+        return $this->is_default ?? false;
     }
 }

@@ -35,24 +35,24 @@
 */
 
 use App\Models\User;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Enums\SegmentType;
 use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 
-it('will create the subscription records for subscribables in the caseload', function (array $priorSubscriptions, Collection $subscribables, bool $removePrior) {
-    $caseload = Caseload::factory()->create([
-        'type' => CaseloadType::Static,
+it('will create the subscription records for subscribables in the segment', function (array $priorSubscriptions, Collection $subscribables, bool $removePrior) {
+    $segment = Segment::factory()->create([
+        'type' => SegmentType::Static,
     ]);
 
-    $subscribables->each(function (Subscribable $subscribable) use ($caseload, $priorSubscriptions) {
-        $caseload->subjects()->create([
+    $subscribables->each(function (Subscribable $subscribable) use ($segment, $priorSubscriptions) {
+        $segment->subjects()->create([
             'subject_id' => $subscribable->getKey(),
             'subject_type' => $subscribable->getMorphClass(),
         ]);
@@ -67,7 +67,7 @@ it('will create the subscription records for subscribables in the caseload', fun
     });
 
     $campaign = Campaign::factory()->create([
-        'caseload_id' => $caseload->id,
+        'segment_id' => $segment->id,
     ]);
 
     $users = User::factory()->count(3)->create();

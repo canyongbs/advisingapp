@@ -47,6 +47,7 @@ use App\Filament\Resources\UserResource;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use App\Rules\EmailNotInUseOrSoftDeleted;
 use App\Filament\Forms\Components\Licenses;
 use AdvisingApp\Authorization\Models\License;
 use App\Notifications\SetPasswordNotification;
@@ -76,7 +77,10 @@ class EditUser extends EditRecord
                             ->label('Email address')
                             ->email()
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->rules([
+                                new EmailNotInUseOrSoftDeleted($this->record->id),
+                            ]),
                         TextInput::make('job_title')
                             ->string()
                             ->maxLength(255),

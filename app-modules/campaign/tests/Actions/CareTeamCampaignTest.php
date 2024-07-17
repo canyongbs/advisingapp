@@ -35,24 +35,24 @@
 */
 
 use App\Models\User;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Enums\SegmentType;
 use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
-it('will create the appropriate records for educatables in the caseload', function (array $priorCareTeam, Collection $educatables, bool $removePrior) {
-    $caseload = Caseload::factory()->create([
-        'type' => CaseloadType::Static,
+it('will create the appropriate records for educatables in the segment', function (array $priorCareTeam, Collection $educatables, bool $removePrior) {
+    $segment = Segment::factory()->create([
+        'type' => SegmentType::Static,
     ]);
 
-    $educatables->each(function (Educatable $educatable) use ($caseload, $priorCareTeam) {
-        $caseload->subjects()->create([
+    $educatables->each(function (Educatable $educatable) use ($segment, $priorCareTeam) {
+        $segment->subjects()->create([
             'subject_id' => $educatable->getKey(),
             'subject_type' => $educatable->getMorphClass(),
         ]);
@@ -61,7 +61,7 @@ it('will create the appropriate records for educatables in the caseload', functi
     });
 
     $campaign = Campaign::factory()->create([
-        'caseload_id' => $caseload->id,
+        'segment_id' => $segment->id,
     ]);
 
     $users = User::factory()->licensed(LicenseType::cases())->count(3)->create();

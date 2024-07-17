@@ -161,7 +161,7 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, E
 
             $action
                 ->campaign
-                ->caseload
+                ->segment
                 ->retrieveRecords()
                 ->each(function (Educatable $educatable) use ($action) {
                     $task = new Task([

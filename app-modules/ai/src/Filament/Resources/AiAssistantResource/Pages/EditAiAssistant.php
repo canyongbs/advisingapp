@@ -51,9 +51,12 @@ use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
 use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns\HandlesFileUploads;
 
 class EditAiAssistant extends EditRecord
 {
+    use HandlesFileUploads;
+
     protected static string $resource = AiAssistantResource::class;
 
     public function form(Form $form): Form
@@ -101,6 +104,18 @@ class EditAiAssistant extends EditRecord
                     $reInitializeAiServiceAssistant($assistant);
                 }
             });
+    }
+
+    /** @var AiAssistant $assistant */
+    public static function canAccess(array $parameters = []): bool
+    {
+        $assistant = $parameters['record'];
+
+        if ($assistant->is_default) {
+            return false;
+        }
+
+        return parent::canAccess();
     }
 
     protected function getHeaderActions(): array
@@ -170,6 +185,27 @@ class EditAiAssistant extends EditRecord
 
         $record->save();
 
+        if ($this->attemptingToUploadAssistantFilesWhenItsNotSupported($aiService, $data)) {
+            return $record;
+        }
+
+        if (isset($data['uploaded_files']) && ! empty($data['uploaded_files'])) {
+            $this->uploadFilesToAssistant(
+                aiService: $aiService,
+                assistant: $record,
+                uploadedFiles: $data['uploaded_files']
+            );
+        }
+
         return $record;
+    }
+
+    /**
+     * This redirect was implemented in order to overcome an issue where deleted files
+     * are still present in the repeater until the page is refreshed.
+     */
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('edit', ['record' => $this->getRecord()]);
     }
 }

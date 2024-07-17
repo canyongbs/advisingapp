@@ -36,10 +36,11 @@
 
 namespace AdvisingApp\BasicNeeds\Filament\Resources;
 
-use Laravel\Pennant\Feature;
 use Filament\Resources\Resource;
+use Filament\Resources\Pages\Page;
 use App\Filament\Clusters\ConstituentManagement;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ManageParticipants;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\EditBasicNeedsProgram;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ViewBasicNeedsProgram;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ListBasicNeedsPrograms;
@@ -61,15 +62,6 @@ class BasicNeedsProgramResource extends Resource
 
     protected static ?string $navigationGroup = 'Basic Needs';
 
-    public static function canAccess(): bool
-    {
-        if (Feature::active('basic-needs')) {
-            return parent::canAccess();
-        }
-
-        return false;
-    }
-
     public static function getPages(): array
     {
         return [
@@ -77,6 +69,16 @@ class BasicNeedsProgramResource extends Resource
             'create' => CreateBasicNeedsProgram::route('/create'),
             'view' => ViewBasicNeedsProgram::route('/{record}'),
             'edit' => EditBasicNeedsProgram::route('/{record}/edit'),
+            'participants' => ManageParticipants::route('/{record}/participants'),
         ];
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            ViewBasicNeedsProgram::class,
+            EditBasicNeedsProgram::class,
+            ManageParticipants::class,
+        ]);
     }
 }

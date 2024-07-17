@@ -60,7 +60,7 @@ class SyncCalendar implements ShouldQueue, ShouldBeUnique
 
     public function uniqueId(): string
     {
-        return Tenant::current()->id . ':' . $this->calendar->id;
+        return Tenant::current()->getKey() . ':' . $this->calendar->getKey();
     }
 
     public function handle(): void

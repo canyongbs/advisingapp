@@ -45,6 +45,7 @@ use Spatie\MediaLibrary\HasMedia;
 use App\Support\HasAdvancedFilter;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Team\Models\TeamUser;
+use AdvisingApp\Segment\Models\Segment;
 use App\Filament\Resources\UserResource;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
@@ -65,7 +66,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use AdvisingApp\Notification\Models\Subscription;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
 use AdvisingApp\Consent\Models\Concerns\CanConsent;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -217,9 +217,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->using(TwilioConversationUser::class);
     }
 
-    public function caseloads(): HasMany
+    public function segments(): HasMany
     {
-        return $this->hasMany(Caseload::class);
+        return $this->hasMany(Segment::class);
     }
 
     public function licenses(): HasMany
@@ -376,8 +376,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this
             ->belongsToMany(Team::class, 'team_user', 'user_id', 'team_id')
             ->using(TeamUser::class)
-            //TODO: remove this if we support multiple teams
-            ->limit(1)
             ->withTimestamps();
     }
 

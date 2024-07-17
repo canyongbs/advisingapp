@@ -35,37 +35,37 @@
 */
 
 use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Alert\Enums\AlertStatus;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Alert\Enums\AlertSeverity;
+use AdvisingApp\Segment\Enums\SegmentType;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
 
-it('will create the appropriate records for educatables in the caseload', function () {
+it('will create the appropriate records for educatables in the segment', function () {
     // Given we have no proactive alerts
     expect(Alert::count())->toBe(0);
 
-    // But we have a caseload, a campaign, and an action that defines we should create an alert at a certain point in time
+    // But we have a segment, a campaign, and an action that defines we should create an alert at a certain point in time
     $prospects = Prospect::factory()->count(3)->create([
         'first_name' => 'TestTest',
     ]);
 
-    $caseload = Caseload::factory()->create([
-        'type' => CaseloadType::Static,
+    $segment = Segment::factory()->create([
+        'type' => SegmentType::Static,
     ]);
 
-    $prospects->each(function (Prospect $prospect) use ($caseload) {
-        $caseload->subjects()->create([
+    $prospects->each(function (Prospect $prospect) use ($segment) {
+        $segment->subjects()->create([
             'subject_id' => $prospect->getKey(),
             'subject_type' => $prospect->getMorphClass(),
         ]);
     });
 
     $campaign = Campaign::factory()->create([
-        'caseload_id' => $caseload->id,
+        'segment_id' => $segment->id,
     ]);
 
     $action = CampaignAction::factory()

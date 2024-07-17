@@ -146,22 +146,26 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {
         try {
-            $action->campaign->caseload->retrieveRecords()->each(function (Educatable $educatable) use ($action) {
-                $interactionData = [
-                    'user_id' => $action->campaign->user_id,
-                    'interactable_type' => $educatable->getMorphClass(),
-                    'interactable_id' => $educatable->getKey(),
-                    'interaction_type_id' => $action->data['interaction_type_id'],
-                    'interaction_initiative_id' => $action->data['interaction_initiative_id'],
-                    'interaction_relation_id' => $action->data['interaction_relation_id'],
-                    'interaction_driver_id' => $action->data['interaction_driver_id'],
-                    'interaction_status_id' => $action->data['interaction_status_id'],
-                    'interaction_outcome_id' => $action->data['interaction_outcome_id'],
-                    'division_id' => $action->data['division_id'],
-                ];
+            $action
+                ->campaign
+                ->segment
+                ->retrieveRecords()
+                ->each(function (Educatable $educatable) use ($action) {
+                    $interactionData = [
+                        'user_id' => $action->campaign->user_id,
+                        'interactable_type' => $educatable->getMorphClass(),
+                        'interactable_id' => $educatable->getKey(),
+                        'interaction_type_id' => $action->data['interaction_type_id'],
+                        'interaction_initiative_id' => $action->data['interaction_initiative_id'],
+                        'interaction_relation_id' => $action->data['interaction_relation_id'],
+                        'interaction_driver_id' => $action->data['interaction_driver_id'],
+                        'interaction_status_id' => $action->data['interaction_status_id'],
+                        'interaction_outcome_id' => $action->data['interaction_outcome_id'],
+                        'division_id' => $action->data['division_id'],
+                    ];
 
-                Interaction::create($interactionData);
-            });
+                    Interaction::create($interactionData);
+                });
 
             return true;
         } catch (Exception $e) {

@@ -47,6 +47,8 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  */
 interface Educatable extends Identifiable
 {
+    public static function getLabel(): string;
+
     public static function displayNameKey(): string;
 
     public static function displayEmailKey(): string;

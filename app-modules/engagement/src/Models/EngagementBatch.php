@@ -69,7 +69,7 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
         try {
             CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
                 'user' => $action->campaign->user,
-                'records' => $action->campaign->caseload->retrieveRecords(),
+                'records' => $action->campaign->segment->retrieveRecords(),
                 'deliveryMethod' => $action->data['delivery_method'],
                 'subject' => $action->data['subject'] ?? null,
                 'body' => $action->data['body'] ?? null,

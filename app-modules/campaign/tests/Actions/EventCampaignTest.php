@@ -34,8 +34,10 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Enums\SegmentType;
 
 use function PHPUnit\Framework\assertTrue;
 
@@ -48,24 +50,22 @@ use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
 use Illuminate\Support\Facades\Event as FakeEvent;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
-it('will create the event records for caseload', function (Collection $educatables) {
-    $caseload = Caseload::factory()->create([
-        'type' => CaseloadType::Static,
+it('will create the event records for segment', function (Collection $educatables) {
+    $segment = Segment::factory()->create([
+        'type' => SegmentType::Static,
     ]);
 
-    $educatables->each(function (Educatable $prospect) use ($caseload) {
-        $caseload->subjects()->create([
+    $educatables->each(function (Educatable $prospect) use ($segment) {
+        $segment->subjects()->create([
             'subject_id' => $prospect->getKey(),
             'subject_type' => $prospect->getMorphClass(),
         ]);
     });
 
     $campaign = Campaign::factory()->create([
-        'caseload_id' => $caseload->id,
+        'segment_id' => $segment->id,
     ]);
 
     $event = Event::factory()->create();
@@ -83,7 +83,7 @@ it('will create the event records for caseload', function (Collection $educatabl
 
     $action->execute();
 
-    assertCount(3, $caseload->subjects); // Check if 3 subjects were created for the caseload
+    assertCount(3, $segment->subjects); // Check if 3 subjects were created for the segment
     assertTrue($campaign->hasBeenExecuted());
 })->with([
     'prospects' => [

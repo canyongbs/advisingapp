@@ -87,17 +87,21 @@ class Subscription extends MorphPivot implements ExecutableFromACampaignAction
         try {
             DB::beginTransaction();
 
-            $action->campaign->caseload->retrieveRecords()->each(function (Subscribable $subscribable) use ($action) {
-                if ($action->data['remove_prior']) {
-                    $subscribable->subscriptions()->delete();
-                }
+            $action
+                ->campaign
+                ->segment
+                ->retrieveRecords()
+                ->each(function (Subscribable $subscribable) use ($action) {
+                    if ($action->data['remove_prior']) {
+                        $subscribable->subscriptions()->delete();
+                    }
 
-                collect($action->data['user_ids'])
-                    ->each(
-                        fn ($userId) => resolve(SubscriptionCreate::class)
-                            ->handle(User::find($userId), $subscribable, false)
-                    );
-            });
+                    collect($action->data['user_ids'])
+                        ->each(
+                            fn ($userId) => resolve(SubscriptionCreate::class)
+                                ->handle(User::find($userId), $subscribable, false)
+                        );
+                });
 
             DB::commit();
 

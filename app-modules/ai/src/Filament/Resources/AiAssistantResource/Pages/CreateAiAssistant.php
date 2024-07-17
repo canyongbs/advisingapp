@@ -43,9 +43,12 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns\HandlesFileUploads;
 
 class CreateAiAssistant extends CreateRecord
 {
+    use HandlesFileUploads;
+
     protected static string $resource = AiAssistantResource::class;
 
     public function form(Form $form): Form
@@ -57,8 +60,10 @@ class CreateAiAssistant extends CreateRecord
     {
         $record = new ($this->getModel())($data);
 
+        $aiService = $record->model->getService();
+
         try {
-            $record->model->getService()->createAssistant($record);
+            $aiService->createAssistant($record);
         } catch (Throwable $exception) {
             report($exception);
 
@@ -72,6 +77,18 @@ class CreateAiAssistant extends CreateRecord
         }
 
         $record->save();
+
+        if ($this->attemptingToUploadAssistantFilesWhenItsNotSupported($aiService, $data)) {
+            return $record;
+        }
+
+        if (isset($data['uploaded_files']) && ! empty($data['uploaded_files'])) {
+            $this->uploadFilesToAssistant(
+                aiService: $aiService,
+                assistant: $record,
+                uploadedFiles: $data['uploaded_files']
+            );
+        }
 
         return $record;
     }

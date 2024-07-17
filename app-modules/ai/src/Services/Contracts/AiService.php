@@ -44,6 +44,11 @@ use AdvisingApp\Ai\Models\AiAssistant;
 interface AiService
 {
     /**
+     * This method is passed a prompt and should return a completion for it.
+     */
+    public function complete(string $prompt, string $content): string;
+
+    /**
      * This method is passed an unsaved `AiAssistant` model and should return
      * the model with any additional data that associates it with
      * the AI service, such as the `assistant_id`.
@@ -99,9 +104,13 @@ interface AiService
      */
     public function retryMessage(AiMessage $message, array $files, Closure $saveResponse): Closure;
 
+    public function completeResponse(AiMessage $response, array $files, Closure $saveResponse): Closure;
+
     public function getMaxAssistantInstructionsLength(): int;
 
-    public function supportsFileUploads(): bool;
+    public function supportsMessageFileUploads(): bool;
+
+    public function supportsAssistantFileUploads(): bool;
 
     public function getDeployment(): ?string;
 }

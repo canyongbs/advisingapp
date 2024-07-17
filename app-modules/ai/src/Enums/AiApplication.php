@@ -88,12 +88,12 @@ enum AiApplication: string implements HasLabel
         };
     }
 
-    public static function parse(string | self $value): self
+    public static function parse(string | self | null $value): ?self
     {
         if ($value instanceof self) {
             return $value;
         }
 
-        return self::from($value);
+        return self::tryFrom($value);
     }
 }

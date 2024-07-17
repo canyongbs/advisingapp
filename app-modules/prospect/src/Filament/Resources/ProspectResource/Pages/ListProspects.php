@@ -43,6 +43,7 @@ use Filament\Actions\ImportAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
+use AdvisingApp\Segment\Models\Segment;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\EditAction;
@@ -55,20 +56,19 @@ use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Segment\Enums\SegmentModel;
 use Filament\Tables\Actions\BulkActionGroup;
 use Illuminate\Database\Eloquent\Collection;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Imports\ProspectImporter;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
+use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
-use AdvisingApp\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use AdvisingApp\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
 use AdvisingApp\Engagement\Filament\Actions\Concerns\ImplementsHasBulkEngagementAction;
 
@@ -115,26 +115,26 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                     ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('my_caseloads')
-                    ->label('My Caseloads')
+                SelectFilter::make('my_segments')
+                    ->label('My Population Segments')
                     ->options(
-                        auth()->user()->caseloads()
-                            ->where('model', CaseloadModel::Prospect)
+                        auth()->user()->segments()
+                            ->where('model', SegmentModel::Prospect)
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
-                SelectFilter::make('all_caseloads')
-                    ->label('All Caseloads')
+                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
+                SelectFilter::make('all_segments')
+                    ->label('All Population Segments')
                     ->options(
-                        Caseload::all()
-                            ->where('model', CaseloadModel::Prospect)
+                        Segment::all()
+                            ->where('model', SegmentModel::Prospect)
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 SelectFilter::make('status_id')
                     ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
                     ->multiple()
@@ -234,14 +234,14 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
             ]);
     }
 
-    protected function caseloadFilter(Builder $query, array $data): void
+    protected function segmentFilter(Builder $query, array $data): void
     {
         if (blank($data['value'])) {
             return;
         }
 
         $query->whereKey(
-            app(TranslateCaseloadFilters::class)
+            app(TranslateSegmentFilters::class)
                 ->handle($data['value'])
                 ->pluck($query->getModel()->getQualifiedKeyName()),
         );

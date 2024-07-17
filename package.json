@@ -27,7 +27,7 @@
         "flowbite": "^2.3.0",
         "laravel-vite-plugin": "^1.0.1",
         "resolve-url-loader": "^5.0.0",
-        "spectaql": "^2.3.1",
+        "spectaql": "^3.0.0",
         "tailwindcss": "^3.3.3",
         "tippy.js": "^6.3.7",
         "vite": "^5.1.7"

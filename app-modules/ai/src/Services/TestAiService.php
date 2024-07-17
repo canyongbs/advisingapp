@@ -49,6 +49,11 @@ class TestAiService implements Contracts\AiService
 {
     use HasAiServiceHelpers;
 
+    public function complete(string $prompt, string $content): string
+    {
+        return fake()->paragraph();
+    }
+
     public function createAssistant(AiAssistant $assistant): void {}
 
     public function updateAssistant(AiAssistant $assistant): void {}
@@ -95,6 +100,24 @@ class TestAiService implements Contracts\AiService
         return $this->sendMessage($message, $files, $saveResponse);
     }
 
+    public function completeResponse(AiMessage $response, array $files, Closure $saveResponse): Closure
+    {
+        if (! empty($files)) {
+            $createdFiles = $this->createFiles($response, $files);
+            $response->files()->saveMany($createdFiles);
+        }
+
+        $responseContent = fake()->paragraph();
+
+        return function () use ($response, $responseContent, $saveResponse) {
+            yield $responseContent;
+
+            $response->content .= $responseContent;
+
+            $saveResponse($response);
+        };
+    }
+
     public function getMaxAssistantInstructionsLength(): int
     {
         return 30000;
@@ -105,7 +128,12 @@ class TestAiService implements Contracts\AiService
         return null;
     }
 
-    public function supportsFileUploads(): bool
+    public function supportsMessageFileUploads(): bool
+    {
+        return true;
+    }
+
+    public function supportsAssistantFileUploads(): bool
     {
         return true;
     }

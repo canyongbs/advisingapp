@@ -43,6 +43,7 @@ use AdvisingApp\Alert\Models\Alert;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
+use AdvisingApp\Segment\Models\Segment;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -58,11 +59,10 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
 use App\Filament\Forms\Components\EducatableSelect;
 use AdvisingApp\Alert\Filament\Resources\AlertResource;
+use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
-use AdvisingApp\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
 
@@ -132,24 +132,24 @@ class ListAlerts extends ListRecords
                             callback: fn (Builder $query) => $query->whereRelation('careTeam', 'user_id', auth()->id())
                         )
                     ),
-                SelectFilter::make('my_caseloads')
-                    ->label('My Caseloads')
+                SelectFilter::make('my_segments')
+                    ->label('My Population Segments')
                     ->options(
-                        auth()->user()->caseloads()
+                        auth()->user()->segments()
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
-                SelectFilter::make('all_caseloads')
-                    ->label('All Caseloads')
+                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
+                SelectFilter::make('all_segments')
+                    ->label('All Population Segments')
                     ->options(
-                        Caseload::all()
+                        Segment::all()
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
                 SelectFilter::make('status')
@@ -202,20 +202,20 @@ class ListAlerts extends ListRecords
         ];
     }
 
-    protected function caseloadFilter(Builder $query, array $data): void
+    protected function segmentFilter(Builder $query, array $data): void
     {
         if (blank($data['value'])) {
             return;
         }
 
-        $caseload = Caseload::find($data['value']);
+        $segment = Segment::find($data['value']);
 
         /** @var Model $model */
-        $model = resolve($caseload->model->class());
+        $model = resolve($segment->model->class());
 
         $query->whereIn(
             'concern_id',
-            app(TranslateCaseloadFilters::class)
+            app(TranslateSegmentFilters::class)
                 ->handle($data['value'])
                 ->pluck($model->getQualifiedKeyName()),
         );

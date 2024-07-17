@@ -36,32 +36,32 @@
 
 use App\Models\User;
 use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Enums\SegmentType;
 use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
-it('will create the task records for educatables in the caseload', function (Collection $educatables) {
+it('will create the task records for educatables in the segment', function (Collection $educatables) {
     expect(Task::count())->toBe(0);
 
-    $caseload = Caseload::factory()->create([
-        'type' => CaseloadType::Static,
+    $segment = Segment::factory()->create([
+        'type' => SegmentType::Static,
     ]);
 
-    $educatables->each(function (Educatable $prospect) use ($caseload) {
-        $caseload->subjects()->create([
+    $educatables->each(function (Educatable $prospect) use ($segment) {
+        $segment->subjects()->create([
             'subject_id' => $prospect->getKey(),
             'subject_type' => $prospect->getMorphClass(),
         ]);
     });
 
     $campaign = Campaign::factory()->create([
-        'caseload_id' => $caseload->id,
+        'segment_id' => $segment->id,
     ]);
 
     $data = [

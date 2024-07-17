@@ -52,7 +52,7 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
 
     public function uniqueId(): string
     {
-        return Tenant::current()->id . ':' . $this->action->id;
+        return Tenant::current()->getKey() . ':' . $this->action->getKey();
     }
 
     public function handle(): void

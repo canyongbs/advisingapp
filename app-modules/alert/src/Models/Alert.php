@@ -121,16 +121,20 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {
         try {
-            $action->campaign->caseload->retrieveRecords()->each(function (Educatable $educatable) use ($action) {
-                Alert::create([
-                    'concern_type' => $educatable->getMorphClass(),
-                    'concern_id' => $educatable->getKey(),
-                    'description' => $action->data['description'],
-                    'severity' => $action->data['severity'],
-                    'status' => $action->data['status'],
-                    'suggested_intervention' => $action->data['suggested_intervention'],
-                ]);
-            });
+            $action
+                ->campaign
+                ->segment
+                ->retrieveRecords()
+                ->each(function (Educatable $educatable) use ($action) {
+                    Alert::create([
+                        'concern_type' => $educatable->getMorphClass(),
+                        'concern_id' => $educatable->getKey(),
+                        'description' => $action->data['description'],
+                        'severity' => $action->data['severity'],
+                        'status' => $action->data['status'],
+                        'suggested_intervention' => $action->data['suggested_intervention'],
+                    ]);
+                });
 
             return true;
         } catch (Exception $e) {
