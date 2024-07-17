@@ -43,6 +43,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperAiAssistantFile
+ */
 class AiAssistantFile extends BaseModel implements AiFile, HasMedia
 {
     use SoftDeletes;

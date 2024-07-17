@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 // phpcs:ignoreFile
 /**
@@ -476,8 +442,6 @@ namespace App\Models{
  * @property-read \AdvisingApp\MeetingCenter\Models\Calendar|null $calendar
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CareTeam\Models\CareTeam> $careTeams
  * @property-read int|null $care_teams_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseloadManagement\Models\Caseload> $caseloads
- * @property-read int|null $caseloads_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequestResponse> $changeRequestResponses
  * @property-read int|null $change_request_responses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequestType> $changeRequestTypes
@@ -510,6 +474,8 @@ namespace App\Models{
  * @property-read int|null $prospect_subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Role> $roles
  * @property-read int|null $roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Segment\Models\Segment> $segments
+ * @property-read int|null $segments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment> $serviceRequestAssignments
  * @property-read int|null $service_request_assignments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Student> $studentCareTeams
@@ -603,6 +569,8 @@ namespace AdvisingApp\Ai\Models{
  * @property bool $is_default
  * @property \AdvisingApp\Ai\Enums\AiModel $model
  * @property \Illuminate\Support\Carbon|null $archived_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiAssistantFile> $files
+ * @property-read int|null $files_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiThread> $threads
@@ -633,6 +601,44 @@ namespace AdvisingApp\Ai\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperAiAssistant {}
+}
+
+namespace AdvisingApp\Ai\Models{
+/**
+ * AdvisingApp\Ai\Models\AiAssistantFile
+ *
+ * @property string $id
+ * @property string $assistant_id
+ * @property string|null $file_id
+ * @property string|null $name
+ * @property string|null $temporary_url
+ * @property string|null $mime_type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Ai\Models\AiAssistant $assistant
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @method static \AdvisingApp\Ai\Database\Factories\AiAssistantFileFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantFile newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantFile newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantFile onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantFile query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantFile whereAssistantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantFile whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantFile whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantFile whereFileId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantFile whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantFile whereMimeType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantFile whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantFile whereTemporaryUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantFile whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantFile withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiAssistantFile withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperAiAssistantFile {}
 }
 
 namespace AdvisingApp\Ai\Models{
@@ -679,6 +685,8 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiMessageFile> $files
+ * @property-read int|null $files_count
  * @property-read \AdvisingApp\Ai\Models\AiThread $thread
  * @property-read \App\Models\User|null $user
  * @method static \AdvisingApp\Ai\Database\Factories\AiMessageFactory factory($count = null, $state = [])
@@ -706,6 +714,44 @@ namespace AdvisingApp\Ai\Models{
 
 namespace AdvisingApp\Ai\Models{
 /**
+ * AdvisingApp\Ai\Models\AiMessageFile
+ *
+ * @property string $id
+ * @property string $message_id
+ * @property string|null $file_id
+ * @property string|null $name
+ * @property string|null $temporary_url
+ * @property string|null $mime_type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @property-read \AdvisingApp\Ai\Models\AiMessage $message
+ * @method static \AdvisingApp\Ai\Database\Factories\AiMessageFileFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessageFile newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessageFile newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessageFile onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessageFile query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessageFile whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessageFile whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessageFile whereFileId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessageFile whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessageFile whereMessageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessageFile whereMimeType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessageFile whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessageFile whereTemporaryUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessageFile whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessageFile withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AiMessageFile withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperAiMessageFile {}
+}
+
+namespace AdvisingApp\Ai\Models{
+/**
  * AdvisingApp\Ai\Models\AiThread
  *
  * @property string $id
@@ -718,6 +764,9 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $locked_at
+ * @property \Illuminate\Support\Carbon|null $saved_at
+ * @property int $cloned_count
+ * @property int $emailed_count
  * @property-read \AdvisingApp\Ai\Models\AiAssistant $assistant
  * @property-read \AdvisingApp\Ai\Models\AiThreadFolder|null $folder
  * @property-read \Carbon\CarbonInterface|null $last_engaged_at
@@ -732,12 +781,15 @@ namespace AdvisingApp\Ai\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread query()
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereAssistantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereClonedCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereEmailedCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereFolderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereLockedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereSavedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereThreadId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AiThread whereUserId($value)
@@ -1387,23 +1439,133 @@ namespace AdvisingApp\Authorization\Models{
 	class IdeHelperRole {}
 }
 
+namespace AdvisingApp\BasicNeeds\Models{
+/**
+ * AdvisingApp\BasicNeeds\Models\BasicNeedsCategory
+ *
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\BasicNeeds\Models\BasicNeedsProgram> $basicNeedsProgram
+ * @property-read int|null $basic_needs_program_count
+ * @method static \AdvisingApp\BasicNeeds\Database\Factories\BasicNeedsCategoryFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsCategory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsCategory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsCategory onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsCategory query()
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsCategory whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsCategory whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsCategory whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsCategory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsCategory whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsCategory whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsCategory withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsCategory withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperBasicNeedsCategory {}
+}
+
+namespace AdvisingApp\BasicNeeds\Models{
+/**
+ * AdvisingApp\BasicNeeds\Models\BasicNeedsProgram
+ *
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property string $basic_needs_category_id
+ * @property string|null $contact_person
+ * @property string|null $contact_email
+ * @property string|null $contact_phone
+ * @property string|null $location
+ * @property string|null $availability
+ * @property string|null $eligibility_criteria
+ * @property string|null $application_process
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\BasicNeeds\Models\BasicNeedsCategory $basicNeedsCategories
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $prospects
+ * @property-read int|null $prospects_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Student> $students
+ * @property-read int|null $students_count
+ * @method static \AdvisingApp\BasicNeeds\Database\Factories\BasicNeedsProgramFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram query()
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram whereApplicationProcess($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram whereAvailability($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram whereBasicNeedsCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram whereContactEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram whereContactPerson($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram whereContactPhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram whereEligibilityCriteria($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|BasicNeedsProgram withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperBasicNeedsProgram {}
+}
+
+namespace AdvisingApp\BasicNeeds\Models{
+/**
+ * AdvisingApp\BasicNeeds\Models\ProgramParticipant
+ *
+ * @property string $basic_needs_program_id
+ * @property string $program_participants_type
+ * @property string $program_participants_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\BasicNeeds\Models\BasicNeedsProgram $basicNeedsPrograms
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $program_participants
+ * @method static \Illuminate\Database\Eloquent\Builder|ProgramParticipant newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProgramParticipant newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProgramParticipant query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProgramParticipant whereBasicNeedsProgramId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProgramParticipant whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProgramParticipant whereProgramParticipantsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProgramParticipant whereProgramParticipantsType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProgramParticipant whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperProgramParticipant {}
+}
+
 namespace AdvisingApp\Campaign\Models{
 /**
  * AdvisingApp\Campaign\Models\Campaign
  *
  * @property string $id
  * @property string $user_id
- * @property string $caseload_id
  * @property string $name
  * @property bool $enabled
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string $segment_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Campaign\Models\CampaignAction> $actions
  * @property-read int|null $actions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\CaseloadManagement\Models\Caseload $caseload
+ * @property-read \AdvisingApp\Segment\Models\Segment $segment
  * @property-read \App\Models\User $user
  * @method static \AdvisingApp\Campaign\Database\Factories\CampaignFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign hasNotBeenExecuted()
@@ -1411,12 +1573,12 @@ namespace AdvisingApp\Campaign\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign query()
- * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereCaseloadId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereSegmentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign withTrashed()
@@ -1496,76 +1658,6 @@ namespace AdvisingApp\CareTeam\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperCareTeam {}
-}
-
-namespace AdvisingApp\CaseloadManagement\Models{
-/**
- * AdvisingApp\CaseloadManagement\Models\Caseload
- *
- * @property string $id
- * @property string $name
- * @property string|null $description
- * @property array|null $filters
- * @property \AdvisingApp\CaseloadManagement\Enums\CaseloadModel $model
- * @property \AdvisingApp\CaseloadManagement\Enums\CaseloadType $type
- * @property string $user_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseloadManagement\Models\CaseloadSubject> $subjects
- * @property-read int|null $subjects_count
- * @property-read \App\Models\User $user
- * @method static \AdvisingApp\CaseloadManagement\Database\Factories\CaseloadFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Caseload model(\AdvisingApp\CaseloadManagement\Enums\CaseloadModel $model)
- * @method static \Illuminate\Database\Eloquent\Builder|Caseload newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Caseload newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Caseload query()
- * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereFilters($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereModel($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperCaseload {}
-}
-
-namespace AdvisingApp\CaseloadManagement\Models{
-/**
- * AdvisingApp\CaseloadManagement\Models\CaseloadSubject
- *
- * @property string $id
- * @property string $subject_id
- * @property string $subject_type
- * @property string $caseload_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \AdvisingApp\CaseloadManagement\Models\Caseload $caseload
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $subject
- * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject query()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereCaseloadId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereSubjectId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereSubjectType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperCaseloadSubject {}
 }
 
 namespace AdvisingApp\Consent\Models{
@@ -3599,6 +3691,8 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read int|null $asset_check_outs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\BasicNeeds\Models\BasicNeedsProgram> $basicNeedsPrograms
+ * @property-read int|null $basic_needs_programs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $careTeam
  * @property-read int|null $care_team_count
  * @property-read \App\Models\User|null $createdBy
@@ -3630,6 +3724,7 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read int|null $subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Task\Models\Task> $tasks
  * @property-read int|null $tasks_count
+ * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timeline
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Alert\Histories\AlertHistory[] $alertHistories
@@ -3782,16 +3877,39 @@ namespace AdvisingApp\Segment\Models{
 /**
  * AdvisingApp\Segment\Models\Segment
  *
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property array|null $filters
  * @property \AdvisingApp\Segment\Enums\SegmentModel $model
  * @property \AdvisingApp\Segment\Enums\SegmentType $type
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Campaign\Models\Campaign> $campaigns
+ * @property-read int|null $campaigns_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Segment\Models\SegmentSubject> $subjects
  * @property-read int|null $subjects_count
- * @property-read \App\Models\User|null $user
+ * @property-read \App\Models\User $user
  * @method static \AdvisingApp\Segment\Database\Factories\SegmentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Segment model(\AdvisingApp\Segment\Enums\SegmentModel $model)
  * @method static \Illuminate\Database\Eloquent\Builder|Segment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Segment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Segment onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Segment query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Segment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Segment whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Segment whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Segment whereFilters($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Segment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Segment whereModel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Segment whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Segment whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Segment whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Segment whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Segment withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Segment withoutTrashed()
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -3802,12 +3920,26 @@ namespace AdvisingApp\Segment\Models{
 /**
  * AdvisingApp\Segment\Models\SegmentSubject
  *
- * @property-read \AdvisingApp\Segment\Models\Segment|null $segment
+ * @property string $id
+ * @property string $subject_id
+ * @property string $subject_type
+ * @property string $segment_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Segment\Models\Segment $segment
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $subject
  * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject whereSegmentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject whereSubjectId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject whereSubjectType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|SegmentSubject withoutTrashed()
  * @mixin \Eloquent
@@ -4676,6 +4808,10 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string|null $lastlmslogin
  * @property string|null $f_e_term
  * @property string|null $mr_e_term
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $created_at_source
+ * @property string|null $updated_at_source
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Alert\Models\Alert> $alerts
  * @property-read int|null $alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $applicationSubmissions
@@ -4686,6 +4822,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $asset_check_outs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\BasicNeeds\Models\BasicNeedsProgram> $basicNeedsPrograms
+ * @property-read int|null $basic_needs_programs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $careTeam
  * @property-read int|null $care_team_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\EngagementFile> $engagementFiles
@@ -4720,6 +4858,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Task\Models\Task> $tasks
  * @property-read int|null $tasks_count
+ * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timeline
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Alert\Histories\AlertHistory[] $alertHistories
@@ -4735,6 +4874,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereAddress3($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereBirthdate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereCity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereCreatedAtSource($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereDfw($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereDual($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereEmail($value)
@@ -4760,6 +4901,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereSisid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereSmsOptOut($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereState($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereUpdatedAtSource($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]

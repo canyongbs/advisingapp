@@ -13,6 +13,5 @@ class AiMessageDeleted
 
     public function __construct(public AiMessage $message)
     {
-        // test
     }
 }

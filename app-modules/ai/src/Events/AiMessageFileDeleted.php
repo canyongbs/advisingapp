@@ -11,5 +11,7 @@ class AiMessageFileDeleted
     use Dispatchable;
     use InteractsWithSockets;
 
-    public function __construct(AiMessageFile $aiMessageFile) {}
+    public function __construct(public AiMessageFile $aiMessageFile)
+    {
+    }
 }

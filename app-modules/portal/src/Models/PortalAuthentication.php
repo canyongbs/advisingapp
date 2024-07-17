@@ -46,7 +46,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @property Carbon|null $created_at
- *
  * @mixin IdeHelperPortalAuthentication
  */
 #[NoPermissions]
