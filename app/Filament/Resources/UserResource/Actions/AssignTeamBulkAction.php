@@ -82,13 +82,13 @@ class AssignTeamBulkAction extends BulkAction
                 if ($fail > 0) {
                     Notification::make()
                         ->title('Assigned Team')
-                        ->body($fail . ' ' . ((count($records) > 1) ? 'users were' : 'user was') . ' fail to added to the team.')
+                        ->body($fail . ' ' . (($fail > 1) ? 'users were' : 'user was') . ' fail to added to the team.')
                         ->success()
                         ->send();
                 } else {
                     Notification::make()
                         ->title('Assigned Team')
-                        ->body($success . ' ' . ((count($records) > 1) ? 'users were' : 'user was') . ' successfully added to the team.')
+                        ->body($success . ' ' . (($success > 1) ? 'users were' : 'user was') . ' successfully added to the team.')
                         ->success()
                         ->send();
                 }
