@@ -37,6 +37,7 @@
 namespace AdvisingApp\Alert\Models;
 
 use Exception;
+use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
 use AdvisingApp\Alert\Enums\AlertStatus;
@@ -59,7 +60,6 @@ use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
-use App\Models\User;
 
 /**
  * @property-read Student|Prospect $concern
@@ -80,7 +80,7 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
         'severity',
         'status',
         'suggested_intervention',
-        'user_id'
+        'user_id',
     ];
 
     protected $casts = [
@@ -146,15 +146,15 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
         // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
             $builder->tap(new LicensedToEducatable('concern'));
         });
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
     }
 }
