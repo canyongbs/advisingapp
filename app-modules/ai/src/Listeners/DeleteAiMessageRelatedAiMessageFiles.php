@@ -8,6 +8,6 @@ class DeleteAiMessageRelatedAiMessageFiles
 {
     public function handle(AiMessageDeleted $event): void
     {
-        $event->message->files;
+        $event->message->files->each->delete();
     }
 }
