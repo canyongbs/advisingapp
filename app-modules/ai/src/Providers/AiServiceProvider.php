@@ -43,26 +43,53 @@ use AdvisingApp\Ai\Models\AiThread;
 use App\Concerns\ImplementsGraphQL;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\PromptType;
+use Illuminate\Support\Facades\Event;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Models\AiAssistantFile;
+use AdvisingApp\Ai\Events\AiMessageDeleted;
 use AdvisingApp\Ai\Observers\PromptObserver;
 use AdvisingApp\Ai\Registries\AiRbacRegistry;
+use AdvisingApp\Ai\Events\AiMessageFileDeleted;
 use AdvisingApp\Ai\Observers\AiMessageObserver;
 use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Ai\Observers\AiAssistantFileObserver;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Ai\Listeners\DeleteExternalAiMessageFile;
+use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
+use AdvisingApp\Ai\Listeners\DeleteAiMessageRelatedAiMessageFiles;
+use AdvisingApp\Ai\Listeners\HandleAssistantFilesFinishedUploading;
 
 class AiServiceProvider extends ServiceProvider
 {
     use ImplementsGraphQL;
 
+    protected $listen = [
+        AssistantFilesFinishedUploading::class => [
+            HandleAssistantFilesFinishedUploading::class,
+        ],
+        AiMessageDeleted::class => [
+            DeleteAiMessageRelatedAiMessageFiles::class,
+        ],
+        AiMessageFileDeleted::class => [
+            DeleteExternalAiMessageFile::class,
+        ],
+    ];
+
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new AiPlugin()));
+
+        $this->booting(function () {
+            foreach ($this->listen as $event => $listeners) {
+                foreach (array_unique($listeners, SORT_REGULAR) as $listener) {
+                    Event::listen($event, $listener);
+                }
+            }
+        });
     }
 
     public function boot(): void

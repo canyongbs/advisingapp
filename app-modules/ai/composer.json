@@ -1,26 +1,26 @@
 {
-  "name": "canyon-gbs/ai",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "AdvisingApp\\Ai\\": "src/",
-      "AdvisingApp\\Ai\\Tests\\": "tests/",
-      "AdvisingApp\\Ai\\Database\\Factories\\": "database/factories/",
-      "AdvisingApp\\Ai\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/ai",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\Ai\\": "src/",
+            "AdvisingApp\\Ai\\Tests\\": "tests/",
+            "AdvisingApp\\Ai\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\Ai\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\Ai\\Providers\\AiServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "dev",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "AdvisingApp\\Ai\\Providers\\AiServiceProvider"
-      ]
-    }
-  }
 }
