@@ -38,9 +38,9 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use Filament\Tables\Table;
 use Livewire\Attributes\On;
+use Filament\Widgets\TableWidget;
 use Filament\Tables\Columns\TextColumn;
 use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Widgets\TableWidget;
 
 class ProspectReportTableChart extends TableWidget
 {
@@ -71,6 +71,7 @@ class ProspectReportTableChart extends TableWidget
             ->query(
                 function () {
                     $key = (new Prospect())->getKeyName();
+
                     return Prospect::whereIn($key, function ($query) use ($key) {
                         $query->select($key)
                             ->from((new Prospect())->getTable())
