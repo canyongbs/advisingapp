@@ -105,13 +105,15 @@ class AiThread extends BaseModel
     public function prunable(): Builder
     {
         return static::query()
-            ->whereDoesntHave('messages')
             ->where(
                 fn (Builder $query) => $query
-                    ->whereNull('name')
-                    ->orWhereNotNull('deleted_at')
+                    ->whereNotNull('deleted_at')
+                    ->orWhere(
+                        fn (Builder $query) => $query
+                            ->whereNull('saved_at')
+                            ->where('created_at', '<=', now()->subDays(3))
+                    )
             );
-        // TODO: Time constraint of retention period
     }
 
     protected function lastEngagedAt(): Attribute

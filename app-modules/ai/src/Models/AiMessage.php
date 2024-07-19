@@ -39,11 +39,10 @@ namespace AdvisingApp\Ai\Models;
 use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Prunable;
 use AdvisingApp\Ai\Events\AiMessageDeleted;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Ai\Models\Scopes\AuditableAiMessages;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
@@ -55,7 +54,7 @@ class AiMessage extends BaseModel
 {
     use AsPivot;
     use CanAddAssistantLicenseGlobalScope;
-    use MassPrunable;
+    use Prunable;
     use SoftDeletes;
 
     protected $fillable = [
@@ -95,7 +94,8 @@ class AiMessage extends BaseModel
     public function prunable(): Builder
     {
         return static::query()
-            ->whereNot(fn (Builder $query) => $query->tap(app(AuditableAiMessages::class)))
-            ->whereHas('thread', fn (Builder $query) => $query->whereNull('name'));
+            ->whereNotNull('deleted_at')
+            ->orWhereDoesntHave('thread')
+            ->orWhereHas('thread', fn (Builder $query) => $query->whereNotNull('deleted_at'));
     }
 }
