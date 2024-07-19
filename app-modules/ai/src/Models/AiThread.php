@@ -43,6 +43,7 @@ use Carbon\CarbonInterface;
 use App\Settings\DisplaySettings;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Prunable;
+use AdvisingApp\Ai\Events\AiThreadDeleting;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -71,6 +72,10 @@ class AiThread extends BaseModel
     protected $casts = [
         'locked_at' => 'datetime',
         'saved_at' => 'datetime',
+    ];
+
+    protected $dispatchesEvents = [
+        'deleting' => AiThreadDeleting::class,
     ];
 
     public function assistant(): BelongsTo

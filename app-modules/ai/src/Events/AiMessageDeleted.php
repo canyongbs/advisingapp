@@ -11,7 +11,5 @@ class AiMessageDeleted
     use Dispatchable;
     use InteractsWithSockets;
 
-    public function __construct(public AiMessage $message)
-    {
-    }
+    public function __construct(public AiMessage $message) {}
 }
