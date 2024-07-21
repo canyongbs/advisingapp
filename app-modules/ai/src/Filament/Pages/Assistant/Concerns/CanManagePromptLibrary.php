@@ -80,24 +80,52 @@ trait CanManagePromptLibrary
                     ->live(),
                 Checkbox::make('myPrompts')
                     ->label('My prompts only')
-                    ->afterStateUpdated(fn (Get $get, Set $set, $state) => ($state && ! Prompt::find($get('promptId'))?->user->is(auth()->user())) ?
-                        $set('promptId', null) :
-                        null)
+                    ->afterStateUpdated(function (Get $get, Set $set, $state) {
+                        if ($state && ! Prompt::find($get('promptId'))?->user->is(auth()->user())) {
+                            $set('promptId', null);
+                        }
+
+                        $set('myTeamPrompts', false);
+                    })
+                    ->live(),
+                Checkbox::make('myTeamPrompts')
+                    ->label('My team\'s prompts only')
+                    ->afterStateUpdated(function (Set $set) {
+                        $set('myPrompts', false);
+                        $set('promptId', null);
+                    })
+                    ->visible(fn () => count(auth()->user()->teams) ? true : false)
                     ->live(),
                 Select::make('promptId')
                     ->label('Select a prompt')
                     ->searchable()
                     ->allowHtml()
-                    ->options(fn (Get $get): array => $getPromptOptions(Prompt::query()
-                        ->limit(50)
-                        ->when(
-                            filled($get('typeId')),
-                            fn (Builder $query) => $query->where('type_id', $get('typeId')),
+                    ->options(
+                        fn (Get $get): array => $getPromptOptions(
+                            Prompt::query()
+                                ->limit(50)
+                                ->when(
+                                    filled($get('typeId')),
+                                    fn (Builder $query) => $query->where('type_id', $get('typeId')),
+                                )
+                                ->when(
+                                    $get('myPrompts'),
+                                    fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
+                                )
+                                ->when(
+                                    $get('myTeamPrompts') && auth()->user()->has('teams'),
+                                    function (Builder $query) {
+                                        $teamUsers = auth()->user()?->teams()?->first()?->users;
+
+                                        if ($teamUsers) {
+                                            $query->whereHas('user', function ($q) use ($teamUsers) {
+                                                return $q->whereIn('id', $teamUsers->pluck('id'));
+                                            });
+                                        }
+                                    },
+                                )
                         )
-                        ->when(
-                            $get('myPrompts'),
-                            fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
-                        )))
+                    )
                     ->getSearchResultsUsing(function (Get $get, string $search) use ($getPromptOptions): array {
                         $search = (string) str($search)->wrap('%');
 
