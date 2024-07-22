@@ -166,6 +166,7 @@ export default function tiptap({
     floatingMenuTools = [],
     placeholder = null,
     mergeTags = [],
+    uploadingMessage,
 }) {
     let editor = null;
 
@@ -202,7 +203,12 @@ export default function tiptap({
                 DragAndDropExtension,
                 ClassExtension,
                 IdExtension,
-                LocalFilesExtension,
+                LocalFilesExtension.configure({
+                    getFileAttachmentUrl: (fileKey) => this.$wire.mountFormComponentAction(statePath, 'getFileAttachmentUrl', { fileKey }),
+                    statePath,
+                    upload: this.$wire.upload,
+                    uploadingMessage,
+                }),
                 StyleExtension,
                 StatePath.configure({
                     statePath: statePath,

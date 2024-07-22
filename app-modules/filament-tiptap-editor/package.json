@@ -7,8 +7,8 @@
     "build:styles": "npx tailwindcss -i resources/css/plugin.css -o resources/dist/filament-tiptap-editor.css --postcss --minify",
     "build:scripts": "node bin/build.js",
     "build:purge": "filament-purge -i resources/dist/filament-tiptap-editor.css -o resources/dist/filament-tiptap-editor.css -v 3.x",
-    "dev": "npm-run-all --parallel dev:*",
-    "build": "npm-run-all build:*",
+    "dev": "npx tailwindcss -i resources/css/plugin.css -o resources/dist/filament-tiptap-editor.css --postcss --watch && node bin/build.js --dev",
+    "build": "npx tailwindcss -i resources/css/plugin.css -o resources/dist/filament-tiptap-editor.css --postcss --minify && node bin/build.js",
     "prettier": "npx prettier --write ."
   },
   "author": "Adam Weston <awcodes1@gmail.com> (https://github.com/awcodes)",

@@ -3,6 +3,7 @@
 namespace FilamentTiptapEditor;
 
 use Closure;
+use Filament\Forms\Contracts\HasForms;
 use Throwable;
 use JsonException;
 use Livewire\Component;
@@ -168,12 +169,29 @@ class TiptapEditor extends Field
             SourceAction::make(),
             OEmbedAction::make(),
             GridBuilderAction::make(),
+            fn (): Action => $this->getFileAttachmentUrlAction(),
             fn (): Action => $this->getLinkAction(),
             fn (): Action => $this->getMediaAction(),
             fn (): Action => $this->getInsertBlockAction(),
             fn (): Action => $this->getUpdateBlockAction(),
             fn (): Action => EditMediaAction::make(),
         ]);
+    }
+
+    public function getFileAttachmentUrlAction(): Action
+    {
+        return Action::make('getFileAttachmentUrl')
+            ->action(function (TiptapEditor $component, Component&HasForms $livewire, array $arguments): ?string {
+                $livewire->skipRender();
+
+                $file = $livewire->getFormComponentFileAttachment("{$component->getStatePath()}.{$arguments['fileKey']}");
+
+                if (! $file) {
+                    return null;
+                }
+
+                return $file->temporaryUrl();
+            });
     }
 
     public function getCustomListener(string $name, TiptapEditor $component, string $statePath, array $arguments = []): void

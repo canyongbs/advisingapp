@@ -41,6 +41,8 @@
                         floatingMenuTools: @js($floatingMenuTools),
                         placeholder: @js($getPlaceholder()),
                         mergeTags: @js($mergeTags),
+                        uploadFileUrl: @js(url()->signedRoute('livewire.upload-file')),
+                        uploadingMessage: @js(__('filament::components/button.messages.uploading_file')),
                     })"
                     x-init="$nextTick(() => { init() })"
                     x-on:click.away="blur()"

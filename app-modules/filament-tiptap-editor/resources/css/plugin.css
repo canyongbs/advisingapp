@@ -125,6 +125,14 @@
         }
     }
 
+    img {
+        @apply max-w-sm;
+    }
+
+    .filament-tiptap-loading-image {
+        @apply animate-pulse cursor-wait;
+    }
+
     .filament-tiptap-hurdle {
         width: 100%;
         max-width: 100vw;

@@ -9,6 +9,9 @@ export const CustomImage = Image.extend({
             alt: {
                 default: null,
             },
+            class: {
+                default: null,
+            },
             title: {
                 default: null,
             },
@@ -16,6 +19,9 @@ export const CustomImage = Image.extend({
                 default: null,
             },
             height: {
+                default: null,
+            },
+            id: {
                 default: null,
             },
             lazy: {
