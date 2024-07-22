@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Laravel\Pennant\Feature;
 use Filament\Infolists\Infolist;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Cache;
@@ -57,7 +58,6 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use Laravel\Pennant\Feature;
 
 class ManageStudentAlerts extends ManageRelatedRecords
 {
@@ -159,6 +159,7 @@ class ManageStudentAlerts extends ManageRelatedRecords
                         if (Feature::active('alert_created_by')) {
                             $data['created_by'] = auth()->id();
                         }
+
                         return $data;
                     }),
             ])

@@ -38,6 +38,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Laravel\Pennant\Feature;
 use Filament\Infolists\Infolist;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Cache;
@@ -56,7 +57,6 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Laravel\Pennant\Feature;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
 class ManageProspectAlerts extends ManageRelatedRecords
