@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 
-class ProspectEngagementLineChart extends ChartReportWidget
+class ProspectEngagementLineChart extends LineChartReportWidget
 {
     protected static ?string $heading = 'Prospects (Engagement)';
 

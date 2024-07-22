@@ -40,7 +40,7 @@ use Carbon\Carbon;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Support\Facades\Cache;
 
-class SavedConversationsLineChart extends ChartReportWidget
+class SavedConversationsLineChart extends LineChartReportWidget
 {
     protected static ?string $heading = 'Saved Conversations';
 
@@ -49,8 +49,6 @@ class SavedConversationsLineChart extends ChartReportWidget
         'md' => 8,
         'lg' => 8,
     ];
-
-    protected static ?string $maxHeight = '250px';
 
     protected function getOptions(): array
     {

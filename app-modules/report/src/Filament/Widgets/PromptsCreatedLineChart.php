@@ -40,7 +40,7 @@ use Carbon\Carbon;
 use AdvisingApp\Ai\Models\Prompt;
 use Illuminate\Support\Facades\Cache;
 
-class PromptsCreatedLineChart extends ChartReportWidget
+class PromptsCreatedLineChart extends LineChartReportWidget
 {
     protected static ?string $heading = 'Prompts Created';
 
@@ -49,8 +49,6 @@ class PromptsCreatedLineChart extends ChartReportWidget
         'md' => 8,
         'lg' => 8,
     ];
-
-    protected static ?string $maxHeight = '250px';
 
     protected function getOptions(): array
     {

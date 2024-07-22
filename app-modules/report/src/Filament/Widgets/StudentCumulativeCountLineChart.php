@@ -40,7 +40,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use AdvisingApp\StudentDataModel\Models\Student;
 
-class StudentCumulativeCountLineChart extends ChartReportWidget
+class StudentCumulativeCountLineChart extends LineChartReportWidget
 {
     protected static ?string $heading = 'Students (Cumulative)';
 

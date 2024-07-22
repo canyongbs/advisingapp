@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 
-class TaskCumulativeCountLineChart extends ChartReportWidget
+class TaskCumulativeCountLineChart extends LineChartReportWidget
 {
     protected static ?string $heading = 'Tasks (Engagement)';
 
