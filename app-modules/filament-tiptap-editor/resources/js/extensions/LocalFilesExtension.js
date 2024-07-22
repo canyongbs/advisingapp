@@ -164,7 +164,7 @@ const LocalFilesPlugin = ({ key, editor, getFileAttachmentUrl, statePath, upload
 
                             editor
                                 .chain()
-                                .insertContentAt({ from: editor.state.selection.anchor, to: editor.state.selection.anchor + 1 }, {
+                                .insertContentAt({ from: editor.state.selection.anchor - 1, to: editor.state.selection.anchor }, {
                                     type: 'image',
                                     attrs: {
                                         id: fileKey,
