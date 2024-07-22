@@ -42,14 +42,14 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('alerts', function (Blueprint $table) {
-            $table->foreignUuid('user_id')->nullable()->references('id')->on('users')->restrictOnDelete();
+            $table->foreignUuid('created_by')->nullable()->references('id')->on('users')->restrictOnDelete();
         });
     }
 
     public function down(): void
     {
         Schema::table('alerts', function (Blueprint $table) {
-            $table->dropColumn('user_id');
+            $table->dropColumn('created_by');
         });
     }
 };

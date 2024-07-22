@@ -56,6 +56,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Laravel\Pennant\Feature;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
 class ManageProspectAlerts extends ManageRelatedRecords
@@ -101,7 +102,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
                 TextEntry::make('severity'),
                 TextEntry::make('suggested_intervention'),
                 TextEntry::make('status'),
-                TextEntry::make('user.name')->label('Created By'),
+                TextEntry::make('createdBy.name')->label('Created By')->default('N/A')->visible(Feature::active('alert_created_by')),
                 TextEntry::make('created_at')->label('Created Date'),
             ]);
     }
@@ -155,7 +156,9 @@ class ManageProspectAlerts extends ManageRelatedRecords
             ->headerActions([
                 CreateAction::make()
                     ->mutateFormDataUsing(function (array $data): array {
-                        $data['user_id'] = auth()->id();
+                        if (Feature::active('alert_created_by')) {
+                            $data['created_by'] = auth()->id();
+                        }
 
                         return $data;
                     }),

@@ -80,7 +80,7 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
         'severity',
         'status',
         'suggested_intervention',
-        'user_id',
+        'created_by'
     ];
 
     protected $casts = [
@@ -146,15 +146,15 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
         // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
     }
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
             $builder->tap(new LicensedToEducatable('concern'));
         });
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

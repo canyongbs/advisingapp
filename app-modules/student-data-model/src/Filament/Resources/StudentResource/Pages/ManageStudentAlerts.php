@@ -57,6 +57,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use Laravel\Pennant\Feature;
 
 class ManageStudentAlerts extends ManageRelatedRecords
 {
@@ -101,7 +102,7 @@ class ManageStudentAlerts extends ManageRelatedRecords
                 TextEntry::make('severity'),
                 TextEntry::make('suggested_intervention'),
                 TextEntry::make('status'),
-                TextEntry::make('user.name')->label('Created By'),
+                TextEntry::make('createdBy.name')->label('Created By')->default('N/A')->visible(Feature::active('alert_created_by')),
                 TextEntry::make('created_at')->label('Created Date'),
             ]);
     }
@@ -155,8 +156,9 @@ class ManageStudentAlerts extends ManageRelatedRecords
             ->headerActions([
                 CreateAction::make()
                     ->mutateFormDataUsing(function (array $data): array {
-                        $data['user_id'] = auth()->id();
-
+                        if (Feature::active('alert_created_by')) {
+                            $data['created_by'] = auth()->id();
+                        }
                         return $data;
                     }),
             ])
