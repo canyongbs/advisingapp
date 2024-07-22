@@ -42,8 +42,10 @@ use App\Models\BaseModel;
 use Carbon\CarbonInterface;
 use App\Settings\DisplaySettings;
 use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Ai\Events\AiThreadTrashed;
 use Illuminate\Database\Eloquent\Prunable;
 use AdvisingApp\Ai\Events\AiThreadDeleting;
+use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -75,7 +77,8 @@ class AiThread extends BaseModel
     ];
 
     protected $dispatchesEvents = [
-        'deleting' => AiThreadDeleting::class,
+        'trashed' => AiThreadTrashed::class,
+        'forceDeleting' => AiThreadForceDeleting::class,
     ];
 
     public function assistant(): BelongsTo
@@ -110,14 +113,11 @@ class AiThread extends BaseModel
     public function prunable(): Builder
     {
         return static::query()
-            ->where(
+            ->whereNotNull('deleted_at')
+            ->orWhere(
                 fn (Builder $query) => $query
-                    ->whereNotNull('deleted_at')
-                    ->orWhere(
-                        fn (Builder $query) => $query
-                            ->whereNull('saved_at')
-                            ->where('created_at', '<=', now()->subDays(3))
-                    )
+                    ->whereNull('saved_at')
+                    ->where('created_at', '<=', now()->subDays(3))
             );
     }
 
