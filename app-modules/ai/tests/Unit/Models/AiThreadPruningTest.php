@@ -3,20 +3,18 @@
 use function Pest\Laravel\artisan;
 
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiMessage;
 use Illuminate\Support\Facades\Event;
 
-use function Pest\Laravel\assertDatabaseHas;
+use function PHPUnit\Framework\assertNull;
+use function PHPUnit\Framework\assertTrue;
 
 use Illuminate\Database\Console\PruneCommand;
 use AdvisingApp\Ai\Events\AiThreadForceDeleted;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 
-use function Pest\Laravel\assertDatabaseMissing;
-
 it('properly prunes AiThread models', function (AiThread $thread, bool $shouldPrune) {
-    assertDatabaseHas(AiThread::class, [
-        'id' => $thread->id,
-    ]);
+    assertTrue($thread->exists);
 
     Event::fake();
 
@@ -25,27 +23,43 @@ it('properly prunes AiThread models', function (AiThread $thread, bool $shouldPr
     ]);
 
     if ($shouldPrune) {
-        assertDatabaseMissing(AiThread::class, [
-            'id' => $thread->id,
-        ]);
+        assertNull($thread->fresh());
 
         Event::assertDispatched(AiThreadForceDeleting::class);
         Event::assertDispatched(AiThreadForceDeleted::class);
     } else {
-        assertDatabaseHas(AiThread::class, [
-            'id' => $thread->id,
-        ]);
+        assertTrue($thread->fresh()->exists);
 
         Event::assertNotDispatched(AiThreadForceDeleting::class);
         Event::assertNotDispatched(AiThreadForceDeleted::class);
     }
 })->with([
-    'Saved Thread' => [
-        fn () => AiThread::factory()->saved()->create(),
+    'Not soft deleted' => [
+        fn () => AiThread::factory()->create(),
         false,
     ],
-    'Soft Deleted' => [
+    'Not soft deleted with messages' => [
+        fn () => AiThread::factory()->has(AiMessage::factory(), 'messages')->create(),
+        false,
+    ],
+    'Soft deleted recently' => [
         fn () => AiThread::factory()->create(['deleted_at' => now()]),
+        false,
+    ],
+    'Soft deleted recently with messages' => [
+        fn () => AiThread::factory()->has(AiMessage::factory(), 'messages')->create(['deleted_at' => now()]),
+        false,
+    ],
+    'Soft deleted more than a week ago' => [
+        fn () => AiThread::factory()->create(['deleted_at' => now()->subDays(8)]),
         true,
+    ],
+    'Soft deleted more than a week ago with messages' => [
+        fn () => AiThread::factory()->has(AiMessage::factory(), 'messages')->create(['deleted_at' => now()->subDays(8)]),
+        false,
+    ],
+    'Soft deleted more than a week ago with soft deleted messages' => [
+        fn () => AiThread::factory()->has(AiMessage::factory()->state(['deleted_at' => now()]), 'messages')->create(['deleted_at' => now()->subDays(8)]),
+        false,
     ],
 ]);

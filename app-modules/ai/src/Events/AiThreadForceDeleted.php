@@ -2,10 +2,9 @@
 
 namespace AdvisingApp\Ai\Events;
 
-use AdvisingApp\Ai\Listeners\DispatchAiThreadExternalCleanup;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Broadcasting\InteractsWithSockets;
+use AdvisingApp\Ai\Listeners\DispatchAiThreadExternalCleanup;
 
 class AiThreadForceDeleted
 {
