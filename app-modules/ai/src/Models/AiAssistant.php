@@ -46,6 +46,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
+use Spatie\MediaLibrary\MediaCollections\File;
 
 /**
  * @mixin IdeHelperAiAssistant
@@ -80,12 +81,16 @@ class AiAssistant extends BaseModel implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('avatar')
-            ->acceptsFile(function () {
+            ->acceptsFile(function (File $file) {
                 if ($this->application === AiApplication::PersonalAssistant && $this->is_default) {
                     throw new DefaultAssistantLockedPropertyException('avatar');
                 }
 
-                return true;
+                return in_array($file->mimeType, [
+                    'image/png',
+                    'image/jpeg',
+                    'image/gif',
+                ]);
             });
     }
 

@@ -66,7 +66,12 @@ class AiAssistantForm
                     ->collection('avatar')
                     ->visibility('private')
                     ->avatar()
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->acceptedFileTypes([
+                        'image/png',
+                        'image/jpeg',
+                        'image/gif',
+                    ]),
                 TextInput::make('name')
                     ->required()
                     ->string()
@@ -87,22 +92,22 @@ class AiAssistantForm
                         fn (Get $get): array => filled(AiApplication::parse($get('application')))
                             ? collect(AiApplication::parse($get('application'))
                                 ->getModels())
-                                ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
-                                ->all()
+                            ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
+                            ->all()
                             : []
                     )
                     ->searchable()
                     ->required()
                     ->rules(
                         fn (Get $get): array => filled(AiApplication::parse($get('application')))
-                        ? [
-                            Rule::enum(AiModel::class)
-                                ->only(
-                                    AiApplication::parse($get('application'))
-                                        ->getModels()
-                                ),
-                        ]
-                        : []
+                            ? [
+                                Rule::enum(AiModel::class)
+                                    ->only(
+                                        AiApplication::parse($get('application'))
+                                            ->getModels()
+                                    ),
+                            ]
+                            : []
                     )
                     ->visible(fn (Get $get): bool => filled($get('application'))),
                 Textarea::make('description')
@@ -142,7 +147,7 @@ class AiAssistantForm
                             return true;
                         }
 
-                        return ! AiModel::parse($model)->supportsAssistantFileUploads();
+                        return !AiModel::parse($model)->supportsAssistantFileUploads();
                     })
                     ->schema([
                         Repeater::make('files')
@@ -179,7 +184,7 @@ class AiAssistantForm
                                 $files = $get('files');
                                 $firstFile = reset($files);
 
-                                if (! $firstFile || blank($firstFile['name'])) {
+                                if (!$firstFile || blank($firstFile['name'])) {
                                     return 'full';
                                 }
 
