@@ -4,10 +4,13 @@ namespace AdvisingApp\Ai\Console\Commands;
 
 use Illuminate\Console\Command;
 use AdvisingApp\Ai\Models\AiThread;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class DeleteUnsavedAiThreads extends Command
 {
-    protected $signature = 'ai:delete-unsaved-ai-threads';
+    use TenantAware;
+
+    protected $signature = 'ai:delete-unsaved-ai-threads {--tenant=*}';
 
     protected $description = 'Finds unsaved AiThreads older than 3 days and marks them for deletion.';
 

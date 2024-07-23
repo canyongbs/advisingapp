@@ -115,11 +115,7 @@ class AiThread extends BaseModel
     {
         return static::query()
             ->whereNotNull('deleted_at')
-            ->orWhere(
-                fn (Builder $query) => $query
-                    ->whereNull('saved_at')
-                    ->where('created_at', '<=', now()->subDays(3))
-            );
+            ->whereDoesntHave('messages', fn (Builder $query) => $query->withTrashed());
     }
 
     protected function lastEngagedAt(): Attribute

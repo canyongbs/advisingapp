@@ -79,6 +79,11 @@ class Kernel extends ConsoleKernel
                         ->withoutOverlapping()
                         ->sentryMonitor();
 
+                    $schedule->command("ai:delete-unsaved-ai-threads --tenant={$tenant->id}")
+                        ->daily()
+                        ->onOneServer()
+                        ->withoutOverlapping();
+
                     collect([
                         AiMessage::class,
                         Audit::class,
