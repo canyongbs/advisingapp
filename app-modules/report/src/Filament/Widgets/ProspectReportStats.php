@@ -69,7 +69,7 @@ class ProspectReportStats extends StatsOverviewReportWidget
                 maxPrecision: 2,
             )),
             Stat::make('Total Segments', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('pospect-segments-count', now()->addHours(24), function (): int {
+                Cache::tags([$this->cacheTag])->remember('prospect-segments-count', now()->addHours(24), function (): int {
                     return Segment::query()->where('model', SegmentModel::Prospect)->count();
                 }),
                 maxPrecision: 2,
