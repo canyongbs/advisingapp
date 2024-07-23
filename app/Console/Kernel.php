@@ -41,6 +41,8 @@ use App\Models\Tenant;
 use AdvisingApp\Audit\Models\Audit;
 use Illuminate\Support\Facades\Log;
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Models\AiThread;
 use App\Models\Scopes\SetupIsComplete;
 use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\Form\Models\FormAuthentication;
@@ -85,7 +87,9 @@ class Kernel extends ConsoleKernel
                         ->withoutOverlapping();
 
                     collect([
+                        AiMessageFile::class,
                         AiMessage::class,
+                        AiThread::class,
                         Audit::class,
                         EngagementFile::class,
                         FailedImportRow::class,
