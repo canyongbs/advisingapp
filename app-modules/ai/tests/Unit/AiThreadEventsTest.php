@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Event;
 use AdvisingApp\Ai\Events\AiThreadTrashed;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 use AdvisingApp\Ai\Listeners\AiThreadCascadeDeleteAiMessages;
+use AdvisingApp\Ai\Listeners\AiThreadCascadeForceDeletingAiMessages;
 
 it('dispatches the AiThreadTrashed event when an AiThread is deleted', function () {
     $aiThread = AiThread::factory()->create();
@@ -14,7 +15,7 @@ it('dispatches the AiThreadTrashed event when an AiThread is deleted', function 
     $aiThread->delete();
 
     Event::assertDispatched(AiThreadTrashed::class, function (AiThreadTrashed $event) use ($aiThread) {
-        return $event->aiThread->is($aiThread);
+        return $event->aiThread->is($aiThread) && $event->aiThread->trashed();
     });
 
     Event::assertListening(
@@ -36,6 +37,6 @@ it('dispatches the AiThreadForceDeleting event when an AiThread is force deleted
 
     Event::assertListening(
         expectedEvent: AiThreadForceDeleting::class,
-        expectedListener: AiThreadCascadeDeleteAiMessages::class
+        expectedListener: AiThreadCascadeForceDeletingAiMessages::class
     );
 });
