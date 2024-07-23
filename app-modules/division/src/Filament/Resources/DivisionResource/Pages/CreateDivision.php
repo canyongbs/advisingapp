@@ -37,10 +37,10 @@
 namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
 
 use Filament\Forms\Form;
+use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
-use FilamentTiptapEditor\TiptapEditor;
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
 
 class CreateDivision extends CreateRecord

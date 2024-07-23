@@ -10,7 +10,7 @@ const dispatchFormEvent = (editorView, name, detail = {}) => {
             cancelable: true,
             detail,
         }),
-    )
+    );
 };
 
 const LocalFilesPlugin = ({ key, editor, getFileAttachmentUrl, statePath, upload, uploadingMessage }) =>
@@ -31,7 +31,7 @@ const LocalFilesPlugin = ({ key, editor, getFileAttachmentUrl, statePath, upload
                 }
 
                 dispatchFormEvent(editorView, 'form-processing-started', {
-                    message: uploadingMessage
+                    message: uploadingMessage,
                 });
 
                 event.preventDefault();
@@ -61,44 +61,37 @@ const LocalFilesPlugin = ({ key, editor, getFileAttachmentUrl, statePath, upload
                             .run();
                     };
 
-                    let fileKey = (
-                        [1e7] +
-                        -1e3 +
-                        -4e3 +
-                        -8e3 +
-                        -1e11
-                    ).replace(/[018]/g, (c) =>
-                        (
-                            c ^
-                            (crypto.getRandomValues(new Uint8Array(1))[0] &
-                                (15 >> (c / 4)))
-                        ).toString(16),
-                    )
+                    let fileKey = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+                        (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16),
+                    );
 
                     upload(`componentFileAttachments.${statePath}.${fileKey}`, file, () => {
                         getFileAttachmentUrl(fileKey).then((url) => {
-                            if (! url) {
+                            if (!url) {
                                 return;
                             }
 
                             editor
                                 .chain()
-                                .insertContentAt({ from: position?.pos ?? 0, to: (position?.pos ?? 0) + 1 }, {
-                                    type: 'image',
-                                    attrs: {
-                                        id: fileKey,
-                                        src: url,
+                                .insertContentAt(
+                                    { from: position?.pos ?? 0, to: (position?.pos ?? 0) + 1 },
+                                    {
+                                        type: 'image',
+                                        attrs: {
+                                            id: fileKey,
+                                            src: url,
+                                        },
                                     },
-                                })
+                                )
                                 .run();
 
                             editor.setEditable(true);
 
-                            if (fileIndex === (files.length - 1)) {
+                            if (fileIndex === files.length - 1) {
                                 dispatchFormEvent(editorView, 'form-processing-finished');
                             }
-                        })
-                    })
+                        });
+                    });
                 });
 
                 return true;
@@ -120,7 +113,7 @@ const LocalFilesPlugin = ({ key, editor, getFileAttachmentUrl, statePath, upload
                 event.stopPropagation();
 
                 dispatchFormEvent(editorView, 'form-processing-started', {
-                    message: uploadingMessage
+                    message: uploadingMessage,
                 });
 
                 files.forEach((file, fileIndex) => {
@@ -142,44 +135,37 @@ const LocalFilesPlugin = ({ key, editor, getFileAttachmentUrl, statePath, upload
                             .run();
                     };
 
-                    let fileKey = (
-                        [1e7] +
-                        -1e3 +
-                        -4e3 +
-                        -8e3 +
-                        -1e11
-                    ).replace(/[018]/g, (c) =>
-                        (
-                            c ^
-                            (crypto.getRandomValues(new Uint8Array(1))[0] &
-                                (15 >> (c / 4)))
-                        ).toString(16),
-                    )
+                    let fileKey = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+                        (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16),
+                    );
 
                     upload(`componentFileAttachments.${statePath}.${fileKey}`, file, () => {
                         getFileAttachmentUrl(fileKey).then((url) => {
-                            if (! url) {
+                            if (!url) {
                                 return;
                             }
 
                             editor
                                 .chain()
-                                .insertContentAt({ from: editor.state.selection.anchor - 1, to: editor.state.selection.anchor }, {
-                                    type: 'image',
-                                    attrs: {
-                                        id: fileKey,
-                                        src: url,
+                                .insertContentAt(
+                                    { from: editor.state.selection.anchor - 1, to: editor.state.selection.anchor },
+                                    {
+                                        type: 'image',
+                                        attrs: {
+                                            id: fileKey,
+                                            src: url,
+                                        },
                                     },
-                                })
+                                )
                                 .run();
 
                             editor.setEditable(true);
 
-                            if (fileIndex === (files.length - 1)) {
+                            if (fileIndex === files.length - 1) {
                                 dispatchFormEvent(editorView, 'form-processing-finished');
                             }
-                        })
-                    })
+                        });
+                    });
                 });
 
                 return true;

@@ -3,13 +3,13 @@
 namespace FilamentTiptapEditor;
 
 use Closure;
-use Filament\Forms\Contracts\HasForms;
 use Throwable;
 use JsonException;
 use Livewire\Component;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Actions\Action;
 use FilamentTiptapEditor\Actions\OEmbedAction;
 use FilamentTiptapEditor\Actions\SourceAction;

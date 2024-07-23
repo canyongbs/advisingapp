@@ -28,7 +28,7 @@
                 height: media.height || '',
                 id: media.id || '',
             };
-
+    
             {{ $action }}
         }
     }"

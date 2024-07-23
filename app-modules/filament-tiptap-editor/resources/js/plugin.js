@@ -204,7 +204,8 @@ export default function tiptap({
                 ClassExtension,
                 IdExtension,
                 LocalFilesExtension.configure({
-                    getFileAttachmentUrl: (fileKey) => this.$wire.mountFormComponentAction(statePath, 'getFileAttachmentUrl', { fileKey }),
+                    getFileAttachmentUrl: (fileKey) =>
+                        this.$wire.mountFormComponentAction(statePath, 'getFileAttachmentUrl', { fileKey }),
                     statePath,
                     upload: this.$wire.upload,
                     uploadingMessage,

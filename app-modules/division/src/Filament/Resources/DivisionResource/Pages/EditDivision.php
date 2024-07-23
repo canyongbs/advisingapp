@@ -40,11 +40,11 @@ use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
 use App\Models\NotificationSetting;
 use Filament\Forms\Components\Select;
+use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\Division\Models\Division;
-use FilamentTiptapEditor\TiptapEditor;
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
 
 class EditDivision extends EditRecord

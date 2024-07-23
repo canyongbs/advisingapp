@@ -3,18 +3,15 @@
 namespace FilamentTiptapEditor\Actions;
 
 use Livewire\Component;
-use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Str;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Contracts\HasForms;
 use FilamentTiptapEditor\TiptapEditor;
-use Filament\Forms\Components\Checkbox;
-use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\BaseFileUpload;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class MediaAction extends Action
