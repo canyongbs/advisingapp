@@ -5,9 +5,9 @@ namespace AdvisingApp\Ai\Jobs;
 use Illuminate\Bus\Queueable;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
 
 class DeleteExternalAiMessageFile implements ShouldQueue
@@ -23,21 +23,10 @@ class DeleteExternalAiMessageFile implements ShouldQueue
         $this->aiMessageFile = clone $aiMessageFile;
 
         $this->aiMessageFile->load([
-            'message' => fn (Builder $query) => $query->withTrashed(),
-            'message.thread' => fn (Builder $query) => $query->withTrashed(),
-            'message.thread.assistant' => fn (Builder $query) => $query->withTrashed(),
+            'message' => fn (BelongsTo $query) => $query->withTrashed(),
+            'message.thread' => fn (BelongsTo $query) => $query->withTrashed(),
+            'message.thread.assistant' => fn (BelongsTo $query) => $query->withTrashed(),
         ]);
-
-        // /** @var AiMessage $message */
-        // $message = $aiMessageFile->message()->withTrashed()->firstOrFail();
-
-        // /** @var AiThread $thread */
-        // $message->thread()->withTrashed()->firstOrFail();
-
-        // /** @var AiAssistant $assistant */
-        // $assistant = $thread->assistant()->withTrashed()->firstOrFail();
-
-        // $service = $assistant->model->getService();
     }
 
     public function handle(): void
