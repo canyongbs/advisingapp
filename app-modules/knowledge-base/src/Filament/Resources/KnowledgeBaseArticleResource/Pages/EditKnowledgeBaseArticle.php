@@ -45,7 +45,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Actions\Action as BaseAction;
 use Filament\Forms\Components\Actions\Action;
-use App\Filament\Forms\Components\TiptapEditor;
+use FilamentTiptapEditor\TiptapEditor;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource;
 
 class EditKnowledgeBaseArticle extends EditRecord

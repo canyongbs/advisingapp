@@ -505,7 +505,7 @@ export default function tiptap({
                             title: media?.title,
                             width: media?.width,
                             height: media?.height,
-                            lazy: media?.lazy,
+                            id: media?.id,
                         })
                         .run();
                 } else {

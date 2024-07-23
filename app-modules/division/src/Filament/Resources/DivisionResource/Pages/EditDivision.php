@@ -44,7 +44,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\Division\Models\Division;
-use App\Filament\Forms\Components\TiptapEditor;
+use FilamentTiptapEditor\TiptapEditor;
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
 
 class EditDivision extends EditRecord

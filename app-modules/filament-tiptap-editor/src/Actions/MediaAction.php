@@ -2,6 +2,8 @@
 
 namespace FilamentTiptapEditor\Actions;
 
+use Livewire\Component;
+use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Str;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
@@ -28,7 +30,6 @@ class MediaAction extends Action
                 'title' => '',
                 'width' => '',
                 'height' => '',
-                'lazy' => null,
             ])
             ->modalWidth('md')
             ->mountUsing(function (TiptapEditor $component, ComponentContainer $form, array $arguments) {
@@ -43,30 +44,25 @@ class MediaAction extends Action
                     'title' => $arguments['title'] ?? '',
                     'width' => $arguments['width'] ?? '',
                     'height' => $arguments['height'] ?? '',
-                    'lazy' => $arguments['lazy'] ?? false,
                 ]);
             })->modalHeading(function (TiptapEditor $component, array $arguments) {
                 $context = blank($arguments['src'] ?? null) ? 'insert' : 'update';
 
                 return trans('filament-tiptap-editor::media-modal.heading.' . $context);
-            })->form(function (TiptapEditor $component) {
+            })->form(function (TiptapEditor $component, array $arguments) {
                 return [
                     FileUpload::make('src')
-                        ->label(trans('filament-tiptap-editor::media-modal.labels.file'))
-                        ->disk($component->getDisk())
-                        ->directory($component->getDirectory())
-                        ->visibility($component->getVisibility())
-                        ->preserveFilenames($component->shouldPreserveFileNames())
+                        ->label(blank($arguments['src'] ?? null) ? 'Upload file' : 'Replace file (optional)')
                         ->acceptedFileTypes($component->getAcceptedFileTypes())
-                        ->maxFiles(1)
                         ->maxSize($component->getMaxSize())
                         ->minSize($component->getMinSize())
                         ->imageResizeMode($component->getImageResizeMode())
                         ->imageCropAspectRatio($component->getImageCropAspectRatio())
                         ->imageResizeTargetWidth($component->getImageResizeTargetWidth())
                         ->imageResizeTargetHeight($component->getImageResizeTargetHeight())
-                        ->required()
+                        ->required(blank($arguments['src'] ?? null))
                         ->live()
+                        ->storeFiles(false)
                         ->afterStateUpdated(function (TemporaryUploadedFile $state, callable $set) {
                             if (Str::contains($state->getMimeType(), 'image')) {
                                 $set('type', 'image');
@@ -78,19 +74,6 @@ class MediaAction extends Action
                                 $set('width', $dimensions[0]);
                                 $set('height', $dimensions[1]);
                             }
-                        })
-                        ->saveUploadedFileUsing(function (BaseFileUpload $component, TemporaryUploadedFile $file, callable $set) {
-                            $filename = $component->shouldPreserveFilenames() ? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) : Str::uuid();
-                            $storeMethod = $component->getVisibility() === 'public' ? 'storePubliclyAs' : 'storeAs';
-                            $extension = $file->getClientOriginalExtension();
-
-                            if (Storage::disk($component->getDiskName())->exists(ltrim($component->getDirectory() . '/' . $filename . '.' . $extension, '/'))) {
-                                $filename = $filename . '-' . time();
-                            }
-
-                            $upload = $file->{$storeMethod}($component->getDirectory(), $filename . '.' . $extension, $component->getDiskName());
-
-                            return Storage::disk($component->getDiskName())->url($upload);
                         }),
                     TextInput::make('link_text')
                         ->label(trans('filament-tiptap-editor::media-modal.labels.link_text'))
@@ -107,9 +90,6 @@ class MediaAction extends Action
                         ),
                     TextInput::make('title')
                         ->label(trans('filament-tiptap-editor::media-modal.labels.title')),
-                    Checkbox::make('lazy')
-                        ->label(trans('filament-tiptap-editor::media-modal.labels.lazy'))
-                        ->default(false),
                     Group::make([
                         TextInput::make('width'),
                         TextInput::make('height'),
@@ -117,29 +97,22 @@ class MediaAction extends Action
                     Hidden::make('type')
                         ->default('document'),
                 ];
-            })->action(function (TiptapEditor $component, $data) {
-                if (config('filament-tiptap-editor.use_relative_paths')) {
-                    $source = Str::of($data['src'])
-                        ->replace(config('app.url'), '')
-                        ->ltrim('/')
-                        ->prepend('/');
-                } else {
-                    $source = str_starts_with($data['src'], 'http')
-                        ? $data['src']
-                        : Storage::disk(config('filament-tiptap-editor.disk'))->url($data['src']);
+            })->action(function (TiptapEditor $component, Component&HasForms $livewire, array $data, array $arguments) {
+                if (filled($data['src'])) {
+                    $livewire->componentFileAttachments[$id = (string) Str::uuid()] = $data['src'];
                 }
 
-                $component->getLivewire()->dispatch(
+                $livewire->dispatch(
                     event: 'insertFromAction',
                     type: 'media',
                     statePath: $component->getStatePath(),
                     media: [
-                        'src' => $source,
+                        'src' => filled($data['src']) ? $data['src']->temporaryUrl() : ($arguments['src'] ?? null),
+                        'id' => filled($data['src']) ? $id : ($arguments['id'] ?? null),
                         'alt' => $data['alt'] ?? null,
-                        'title' => $data['title'],
-                        'width' => $data['width'],
-                        'height' => $data['height'],
-                        'lazy' => $data['lazy'] ?? false,
+                        'title' => $data['title'] ?? null,
+                        'width' => $data['width'] ?? null,
+                        'height' => $data['height'] ?? null,
                         'link_text' => $data['link_text'] ?? null,
                     ],
                 );

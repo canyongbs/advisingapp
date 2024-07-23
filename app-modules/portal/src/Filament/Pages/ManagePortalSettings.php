@@ -57,7 +57,7 @@ use FilamentTiptapEditor\Enums\TiptapOutput;
 use Filament\Forms\Components\Actions\Action;
 use App\Filament\Forms\Components\ColorSelect;
 use AdvisingApp\Portal\Settings\PortalSettings;
-use App\Filament\Forms\Components\TiptapEditor;
+use FilamentTiptapEditor\TiptapEditor;
 use AdvisingApp\Portal\Actions\GeneratePortalEmbedCode;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 

@@ -41,7 +41,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use App\Filament\Forms\Components\TiptapEditor;
+use FilamentTiptapEditor\TiptapEditor;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource;
 
 class EditEmailTemplate extends EditRecord
