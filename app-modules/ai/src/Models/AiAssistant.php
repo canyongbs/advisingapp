@@ -42,11 +42,11 @@ use Spatie\MediaLibrary\HasMedia;
 use AdvisingApp\Ai\Enums\AiApplication;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\MediaCollections\File;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
-use Spatie\MediaLibrary\MediaCollections\File;
 
 /**
  * @mixin IdeHelperAiAssistant
