@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Ai\Events\AiThreadForceDeleted;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\BaseModel;
@@ -78,6 +79,7 @@ class AiThread extends BaseModel
     protected $dispatchesEvents = [
         'trashed' => AiThreadTrashed::class,
         'forceDeleting' => AiThreadForceDeleting::class,
+        'forceDeleted' => AiThreadForceDeleted::class,
     ];
 
     public function assistant(): BelongsTo

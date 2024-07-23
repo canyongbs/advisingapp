@@ -212,7 +212,7 @@ trait CanManageThreads
             blank($this->thread->name) &&
             (! $this->thread->messages()->exists())
         ) {
-            app(DeleteThread::class)($this->thread);
+            $this->thread->delete();
         }
 
         if (! $thread->user()->is(auth()->user())) {

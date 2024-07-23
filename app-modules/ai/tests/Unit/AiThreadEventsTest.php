@@ -1,11 +1,13 @@
 <?php
 
+use AdvisingApp\Ai\Events\AiThreadForceDeleted;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Support\Facades\Event;
 use AdvisingApp\Ai\Events\AiThreadTrashed;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 use AdvisingApp\Ai\Listeners\AiThreadCascadeDeleteAiMessages;
 use AdvisingApp\Ai\Listeners\AiThreadCascadeForceDeletingAiMessages;
+use AdvisingApp\Ai\Listeners\DispatchAiThreadExternalCleanup;
 
 it('dispatches the AiThreadTrashed event when an AiThread is deleted', function () {
     $aiThread = AiThread::factory()->create();
@@ -38,5 +40,22 @@ it('dispatches the AiThreadForceDeleting event when an AiThread is force deleted
     Event::assertListening(
         expectedEvent: AiThreadForceDeleting::class,
         expectedListener: AiThreadCascadeForceDeletingAiMessages::class
+    );
+});
+
+it('dispatches the AiThreadForceDeleted event when an AiThread is force deleted', function () {
+    $aiThread = AiThread::factory()->create();
+
+    Event::fake();
+
+    $aiThread->forceDelete();
+
+    Event::assertDispatched(AiThreadForceDeleted::class, function (AiThreadForceDeleted $event) use ($aiThread) {
+        return $event->aiThread->is($aiThread);
+    });
+
+    Event::assertListening(
+        expectedEvent: AiThreadForceDeleted::class,
+        expectedListener: DispatchAiThreadExternalCleanup::class
     );
 });

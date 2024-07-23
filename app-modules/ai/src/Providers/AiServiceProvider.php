@@ -54,6 +54,7 @@ use AdvisingApp\Ai\Events\AiMessageTrashed;
 use AdvisingApp\Ai\Observers\PromptObserver;
 use AdvisingApp\Ai\Registries\AiRbacRegistry;
 use AdvisingApp\Ai\Events\AiMessageFileDeleted;
+use AdvisingApp\Ai\Events\AiThreadForceDeleted;
 use AdvisingApp\Ai\Observers\AiMessageObserver;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 use AdvisingApp\Ai\Events\AiMessageForceDeleting;
@@ -74,6 +75,7 @@ class AiServiceProvider extends ServiceProvider
         ],
         AiThreadTrashed::class => AiThreadTrashed::LISTENERS,
         AiThreadForceDeleting::class => AiThreadForceDeleting::LISTENERS,
+        AiThreadForceDeleted::class => AiThreadForceDeleted::LISTENERS,
         AiMessageTrashed::class => AiMessageTrashed::LISTENERS,
         AiMessageForceDeleting::class => AiMessageForceDeleting::LISTENERS,
         AiMessageFileDeleted::class => AiMessageFileDeleted::LISTENERS,
