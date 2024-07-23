@@ -63,4 +63,9 @@ abstract class LineChartReportWidget extends ChartWidget
     {
         $this->dispatch('$refresh');
     }
+
+    protected function getType(): string
+    {
+        return 'line';
+    }
 }

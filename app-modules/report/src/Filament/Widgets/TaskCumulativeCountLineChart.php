@@ -133,9 +133,4 @@ class TaskCumulativeCountLineChart extends LineChartReportWidget
             'labels' => array_keys($runningTotalPerMonth['studentTasks']),
         ];
     }
-
-    protected function getType(): string
-    {
-        return 'line';
-    }
 }

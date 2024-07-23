@@ -97,9 +97,4 @@ class SavedConversationsLineChart extends LineChartReportWidget
             'labels' => array_keys($runningTotalPerMonth),
         ];
     }
-
-    protected function getType(): string
-    {
-        return 'line';
-    }
 }

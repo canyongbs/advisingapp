@@ -121,9 +121,4 @@ class StudentEngagementLineChart extends LineChartReportWidget
             'labels' => array_keys($runningTotalPerMonth['emailEngagement']),
         ];
     }
-
-    protected function getType(): string
-    {
-        return 'line';
-    }
 }
