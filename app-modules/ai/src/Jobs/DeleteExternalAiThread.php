@@ -23,6 +23,8 @@ class DeleteExternalAiThread implements ShouldQueue
     {
         $service = $this->aiThread->assistant->model->getService();
 
-        $service->deleteThread($this->aiThread);
+        if ($service->isThreadExisting($this->aiThread)) {
+            $service->deleteThread($this->aiThread);
+        }
     }
 }
