@@ -48,22 +48,20 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThreadFolder;
+use AdvisingApp\Ai\Events\AiThreadTrashed;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Events\AiMessageTrashed;
-use AdvisingApp\Ai\Events\AiThreadDeleting;
 use AdvisingApp\Ai\Observers\PromptObserver;
 use AdvisingApp\Ai\Registries\AiRbacRegistry;
 use AdvisingApp\Ai\Events\AiMessageFileDeleted;
 use AdvisingApp\Ai\Observers\AiMessageObserver;
-use AdvisingApp\Ai\Events\AiMessageForceDeleting;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
-use AdvisingApp\Ai\Events\AiThreadTrashed;
+use AdvisingApp\Ai\Events\AiMessageForceDeleting;
 use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Ai\Observers\AiAssistantFileObserver;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
-use AdvisingApp\Ai\Listeners\AiThreadCascadeDeleteAiMessages;
 use AdvisingApp\Ai\Listeners\HandleAssistantFilesFinishedUploading;
 
 class AiServiceProvider extends ServiceProvider

@@ -44,7 +44,6 @@ use App\Settings\DisplaySettings;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Ai\Events\AiThreadTrashed;
 use Illuminate\Database\Eloquent\Prunable;
-use AdvisingApp\Ai\Events\AiThreadDeleting;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
