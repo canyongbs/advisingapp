@@ -95,7 +95,7 @@ class AiMessage extends BaseModel
     {
         return static::query()
             ->whereNotNull('deleted_at')
-            ->orWhereDoesntHave('thread')
-            ->orWhereHas('thread', fn (Builder $query) => $query->whereNotNull('deleted_at'));
+            ->where('deleted_at', '<=', now()->subDays(7))
+            ->whereDoesntHave('files', fn (Builder $query) => $query->withTrashed());
     }
 }
