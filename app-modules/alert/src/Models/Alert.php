@@ -37,6 +37,7 @@
 namespace AdvisingApp\Alert\Models;
 
 use Exception;
+use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
 use AdvisingApp\Alert\Enums\AlertStatus;
@@ -79,6 +80,7 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
         'severity',
         'status',
         'suggested_intervention',
+        'created_by',
     ];
 
     protected $casts = [
@@ -142,6 +144,11 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
         }
 
         // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     protected static function booted(): void
