@@ -57,7 +57,6 @@ use AdvisingApp\Ai\Events\AiMessageFileDeleted;
 use AdvisingApp\Ai\Events\AiThreadForceDeleted;
 use AdvisingApp\Ai\Observers\AiMessageObserver;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
-use AdvisingApp\Ai\Events\AiMessageForceDeleting;
 use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Ai\Observers\AiAssistantFileObserver;
@@ -77,7 +76,6 @@ class AiServiceProvider extends ServiceProvider
         AiThreadForceDeleting::class => AiThreadForceDeleting::LISTENERS,
         AiThreadForceDeleted::class => AiThreadForceDeleted::LISTENERS,
         AiMessageTrashed::class => AiMessageTrashed::LISTENERS,
-        AiMessageForceDeleting::class => AiMessageForceDeleting::LISTENERS,
         AiMessageFileDeleted::class => AiMessageFileDeleted::LISTENERS,
     ];
 

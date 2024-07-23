@@ -40,8 +40,6 @@ use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Prunable;
-use AdvisingApp\Ai\Events\AiMessageDeleted;
-use AdvisingApp\Ai\Events\AiMessageForceDeleting;
 use AdvisingApp\Ai\Events\AiMessageTrashed;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -76,7 +74,6 @@ class AiMessage extends BaseModel
 
     protected $dispatchesEvents = [
         'trashed' => AiMessageTrashed::class,
-        'forceDeleting' => AiMessageForceDeleting::class,
     ];
 
     public function thread(): BelongsTo
