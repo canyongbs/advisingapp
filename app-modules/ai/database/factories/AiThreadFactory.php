@@ -59,4 +59,14 @@ class AiThreadFactory extends Factory
             'user_id' => User::factory(),
         ];
     }
+
+    public function saved(): AiThreadFactory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'name' => fake()->word(),
+                'saved_at' => fake()->dateTime(),
+            ];
+        });
+    }
 }
