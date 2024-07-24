@@ -4,17 +4,15 @@ namespace FilamentTiptapEditor;
 
 use Closure;
 use Exception;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 use JsonException;
 use Livewire\Component;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Contracts\HasForms;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\Actions\Action;
 use FilamentTiptapEditor\Actions\OEmbedAction;
 use FilamentTiptapEditor\Actions\SourceAction;
@@ -25,8 +23,10 @@ use FilamentTiptapEditor\Concerns\HasCustomActions;
 use FilamentTiptapEditor\Concerns\InteractsWithMedia;
 use FilamentTiptapEditor\Concerns\InteractsWithMenus;
 use Filament\Forms\Components\Concerns\HasPlaceholder;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 
 class TiptapEditor extends Field
 {
@@ -315,57 +315,6 @@ class TiptapEditor extends Field
             ->delete();
 
         data_forget($livewire->componentFileAttachments, $statePath);
-    }
-
-    protected function processImagesInDocument(array $document, HasMedia $record, MediaCollection $existingImages, array $newImages, array $unusedImageKeys): array
-    {
-        $content = $document['content'] ?? [];
-
-        foreach ($content as $block) {
-            if (array_key_exists('content', $block)) {
-                $unusedImageKeys = $this->processImagesInDocument($block, $record, $existingImages, $newImages, $unusedImageKeys);
-            }
-
-            if (($block['type'] ?? null) !== 'image') {
-                continue;
-            }
-
-            $id = $block['attrs']['id'] ?? null;
-
-            if (blank($id)) {
-                continue;
-            }
-
-            if (($unusedMediaIndex = array_search($id, $unusedImageKeys)) !== false) {
-                unset($unusedImageKeys[$unusedMediaIndex]);
-            }
-
-            if ($existingImages->has($id)) {
-                continue;
-            }
-
-            if (array_key_exists($id, $newImages)) {
-                $image = $record
-                    ->addMediaFromString($newImages[$id]->get())
-                    ->usingFileName(((string) Str::ulid()) . '.' . $newImages[$id]->getClientOriginalExtension())
-                    ->withAttributes(['uuid' => $id])
-                    ->toMediaCollection($this->getName(), diskName: $this->getDisk());
-
-                $existingImages->put($id, $image);
-
-                continue;
-            }
-
-            $existingMedia = Media::findByUuid($id);
-
-            if (! $existingMedia) {
-                continue;
-            }
-
-            $existingMedia->copy($record, collectionName: $this->getName(), diskName: $this->getDisk());
-        }
-
-        return $unusedImageKeys;
     }
 
     /**
@@ -661,5 +610,56 @@ class TiptapEditor extends Field
     public function getGridLayouts(): array
     {
         return $this->gridLayouts;
+    }
+
+    protected function processImagesInDocument(array $document, HasMedia $record, MediaCollection $existingImages, array $newImages, array $unusedImageKeys): array
+    {
+        $content = $document['content'] ?? [];
+
+        foreach ($content as $block) {
+            if (array_key_exists('content', $block)) {
+                $unusedImageKeys = $this->processImagesInDocument($block, $record, $existingImages, $newImages, $unusedImageKeys);
+            }
+
+            if (($block['type'] ?? null) !== 'image') {
+                continue;
+            }
+
+            $id = $block['attrs']['id'] ?? null;
+
+            if (blank($id)) {
+                continue;
+            }
+
+            if (($unusedMediaIndex = array_search($id, $unusedImageKeys)) !== false) {
+                unset($unusedImageKeys[$unusedMediaIndex]);
+            }
+
+            if ($existingImages->has($id)) {
+                continue;
+            }
+
+            if (array_key_exists($id, $newImages)) {
+                $image = $record
+                    ->addMediaFromString($newImages[$id]->get())
+                    ->usingFileName(((string) Str::ulid()) . '.' . $newImages[$id]->getClientOriginalExtension())
+                    ->withAttributes(['uuid' => $id])
+                    ->toMediaCollection($this->getName(), diskName: $this->getDisk());
+
+                $existingImages->put($id, $image);
+
+                continue;
+            }
+
+            $existingMedia = Media::findByUuid($id);
+
+            if (! $existingMedia) {
+                continue;
+            }
+
+            $existingMedia->copy($record, collectionName: $this->getName(), diskName: $this->getDisk());
+        }
+
+        return $unusedImageKeys;
     }
 }

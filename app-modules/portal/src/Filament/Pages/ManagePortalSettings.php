@@ -54,7 +54,6 @@ use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\GlobalSettings;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Infolists\Components\TextEntry;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use Filament\Forms\Components\Actions\Action;
 use App\Filament\Forms\Components\ColorSelect;
 use AdvisingApp\Portal\Settings\PortalSettings;
@@ -238,7 +237,7 @@ class ManagePortalSettings extends SettingsPage
                         TiptapEditor::make('footer_copyright_statement')
                             ->label('Copyright statement')
                             ->tools(['bold', 'underline', 'italic', 'link'])
-                            ->columnSpanFull()
+                            ->columnSpanFull(),
                     ])
                     ->columns(2),
             ]);

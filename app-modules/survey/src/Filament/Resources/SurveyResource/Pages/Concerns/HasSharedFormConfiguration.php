@@ -51,7 +51,6 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\Survey\Models\SurveyStep;
 use AdvisingApp\Survey\Models\SurveyField;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use App\Filament\Forms\Components\ColorSelect;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use AdvisingApp\Survey\Filament\Blocks\SurveyFieldBlockRegistry;

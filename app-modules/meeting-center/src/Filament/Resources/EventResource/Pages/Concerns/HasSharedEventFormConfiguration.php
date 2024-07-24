@@ -51,7 +51,6 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\MeetingCenter\Models\Event;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use Filament\Forms\Components\DateTimePicker;
 use App\Filament\Forms\Components\ColorSelect;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
