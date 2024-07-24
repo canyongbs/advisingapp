@@ -39,7 +39,6 @@ use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\TextInput;
-use FilamentTiptapEditor\Tests\TestCase;
 use FilamentTiptapEditor\Tests\Models\Page;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use FilamentTiptapEditor\Tests\Fixtures\Livewire as LivewireFixture;
