@@ -58,7 +58,7 @@ it('will create a new engagement batch', function () {
         'user' => User::factory()->create(),
         'records' => Student::factory()->count(1)->create(),
         'subject' => 'Test Subject',
-        'body' => ['Test Body'],
+        'body' => ['content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
         'deliveryMethod' => EngagementDeliveryMethod::Email->value,
     ]));
 
@@ -75,7 +75,7 @@ it('will create an engagement for every record provided', function () {
         'user' => User::factory()->create(),
         'records' => $students,
         'subject' => 'Test Subject',
-        'body' => ['Test Body'],
+        'body' => ['content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
         'deliveryMethod' => EngagementDeliveryMethod::Email->value,
     ]));
 
@@ -92,7 +92,7 @@ it('will associate the engagement with the batch', function () {
         'user' => User::factory()->create(),
         'records' => Student::factory()->count(4)->create(),
         'subject' => 'Test Subject',
-        'body' => ['Test Body'],
+        'body' => ['content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
         'deliveryMethod' => EngagementDeliveryMethod::Email->value,
     ]));
 
@@ -107,7 +107,7 @@ it('will create deliverables for the created engagements', function () {
         'user' => User::factory()->create(),
         'records' => Student::factory()->count(1)->create(),
         'subject' => 'Test Subject',
-        'body' => ['Test Body'],
+        'body' => ['content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
         'deliveryMethod' => EngagementDeliveryMethod::Email->value,
     ]));
 
@@ -123,7 +123,7 @@ it('will dispatch a batch of jobs for each engagement that needs to be delivered
         'user' => User::factory()->create(),
         'records' => Student::factory()->count(5)->create(),
         'subject' => 'Test Subject',
-        'body' => ['Test Body'],
+        'body' => ['content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
         'deliveryMethod' => EngagementDeliveryMethod::Email->value,
     ]));
 
@@ -147,7 +147,7 @@ it('will dispatch a notification to the user who initiated the batch engagement 
         'user' => $user,
         'records' => Student::factory()->count(1)->create(),
         'subject' => 'Test Subject',
-        'body' => ['Test Body'],
+        'body' => ['content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
         'deliveryMethod' => EngagementDeliveryMethod::Email->value,
     ]));
 
