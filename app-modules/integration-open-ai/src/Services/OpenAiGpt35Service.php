@@ -37,6 +37,7 @@
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
 use OpenAI;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 
 class OpenAiGpt35Service extends BaseOpenAiService

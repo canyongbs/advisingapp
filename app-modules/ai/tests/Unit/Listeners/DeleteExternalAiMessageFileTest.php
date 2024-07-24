@@ -48,11 +48,11 @@ use AdvisingApp\Ai\Listeners\DeleteExternalAiMessageFile;
 
 it('deletes a thread', function () {
     $aiMessageFile = AiMessageFile::factory()
-        ->has(
+        ->for(
             factory: AiMessage::factory()
-                ->has(
+                ->for(
                     factory: AiThread::factory()
-                        ->has(AiAssistant::factory()->state(['model' => AiModel::OpenAiGpt4o]), 'assistant'),
+                        ->for(AiAssistant::factory()->state(['model' => AiModel::OpenAiGpt4o]), 'assistant'),
                     relationship: 'thread'
                 ),
             relationship: 'message',
@@ -62,8 +62,7 @@ it('deletes a thread', function () {
     mock(
         $aiMessageFile->message->thread->assistant->model->getService()::class,
         fn (MockInterface $mock) => $mock
-            ->shouldReceive('supportsMessageFileUploads')->once()->andReturn(true)
-            ->shouldReceive('deleteFile')->once(),
+            ->shouldReceive('beforeMessageFileForceDeleted')->once(),
     );
 
     (new DeleteExternalAiMessageFile())->handle(new AiMessageFileForceDeleting($aiMessageFile));
