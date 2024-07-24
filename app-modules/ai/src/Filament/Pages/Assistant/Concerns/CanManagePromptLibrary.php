@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
+use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Actions\Action;
@@ -113,13 +114,15 @@ trait CanManagePromptLibrary
                                     fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
                                 )
                                 ->when(
-                                    $get('myTeamPrompts') && auth()->user()->has('teams'),
+                                    $get('myTeamPrompts'),
                                     function (Builder $query) {
-                                        $teamUsers = auth()->user()?->teams()?->first()?->users;
+                                        /** @var User $user */
+                                        $user = auth()->user();
+                                        $teamUsers = $user?->teams->first()?->users;
 
                                         if ($teamUsers) {
-                                            $query->whereHas('user', function ($q) use ($teamUsers) {
-                                                return $q->whereIn('id', $teamUsers->pluck('id'));
+                                            $query->whereHas('user', function (Builder $query) use ($teamUsers) {
+                                                return $query->whereIn('id', $teamUsers->pluck('id'));
                                             });
                                         }
                                     },
