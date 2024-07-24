@@ -36,65 +36,50 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Carbon\Carbon;
-use AdvisingApp\Ai\Models\Prompt;
+use Illuminate\Support\Number;
+use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Support\Facades\Cache;
+use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
-class PromptsCreatedLineChart extends LineChartReportWidget
+class ProspectReportStats extends StatsOverviewReportWidget
 {
-    protected static ?string $heading = 'Prompts Created';
-
     protected int | string | array $columnSpan = [
-        'sm' => 12,
-        'md' => 8,
-        'lg' => 8,
+        'sm' => 2,
+        'md' => 4,
+        'lg' => 4,
     ];
 
-    protected function getOptions(): array
+    protected function getStats(): array
     {
         return [
-            'plugins' => [
-                'legend' => [
-                    'display' => false,
-                ],
-            ],
-            'scales' => [
-                'y' => [
-                    'min' => 0,
-                ],
-            ],
-        ];
-    }
-
-    protected function getData(): array
-    {
-        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('prompts_created_line_chart', now()->addHours(24), function (): array {
-            $totalCreatedPerMonth = Prompt::query()
-                ->toBase()
-                ->selectRaw('date_trunc(\'month\', created_at) as month')
-                ->selectRaw('count(*) as total')
-                ->where('created_at', '>', now()->subYear())
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('total', 'month');
-
-            $runningTotalPerMonth = [];
-
-            foreach (range(11, 0) as $month) {
-                $month = Carbon::now()->subMonths($month);
-                $runningTotalPerMonth[$month->format('M Y')] = $totalCreatedPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-            }
-
-            return $runningTotalPerMonth;
-        });
-
-        return [
-            'datasets' => [
-                [
-                    'data' => array_values($runningTotalPerMonth),
-                ],
-            ],
-            'labels' => array_keys($runningTotalPerMonth),
+            Stat::make('Total Prospects', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('prospects-count', now()->addHours(24), function (): int {
+                    return Prospect::count();
+                }),
+                maxPrecision: 2,
+            )),
+            Stat::make('Total Alerts', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('prospect-alerts-count', now()->addHours(24), function (): int {
+                    return Alert::whereHasMorph('concern', Prospect::class)->count();
+                }),
+                maxPrecision: 2,
+            )),
+            Stat::make('Total Segments', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('prospect-segments-count', now()->addHours(24), function (): int {
+                    return Segment::query()->where('model', SegmentModel::Prospect)->count();
+                }),
+                maxPrecision: 2,
+            )),
+            Stat::make('Total Tasks', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('prospect-tasks-count', now()->addHours(24), function (): int {
+                    return Task::whereHasMorph('concern', Prospect::class)->count();
+                }),
+                maxPrecision: 2,
+            )),
         ];
     }
 }

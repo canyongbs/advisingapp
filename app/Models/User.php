@@ -504,6 +504,15 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->phone_number;
     }
 
+    public function assignTeam($teamId)
+    {
+        // Remove the current team if exists
+        $this->teams()->detach();
+
+        // Assign the new team
+        $this->teams()->attach($teamId);
+    }
+
     protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');

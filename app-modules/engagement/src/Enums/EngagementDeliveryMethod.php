@@ -92,6 +92,19 @@ enum EngagementDeliveryMethod: string implements HasLabel, HasIcon
             ->toArray();
     }
 
+    public static function parse(string | self | null $value): ?self
+    {
+        if (blank($value)) {
+            return null;
+        }
+
+        if ($value instanceof self) {
+            return $value;
+        }
+
+        return self::tryFrom($value);
+    }
+
     private function caseDependsOnIntegration(): ?Integration
     {
         return match ($this) {

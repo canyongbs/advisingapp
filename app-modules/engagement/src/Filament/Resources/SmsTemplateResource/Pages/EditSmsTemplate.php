@@ -38,11 +38,14 @@ namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Actions;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
+use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 
 class EditSmsTemplate extends EditRecord
 {
@@ -60,7 +63,7 @@ class EditSmsTemplate extends EditRecord
                 Textarea::make('description')
                     ->string(),
                 TiptapEditor::make('content')
-                    ->mergeTags([
+                    ->mergeTags($mergeTags = [
                         'student first name',
                         'student last name',
                         'student full name',
@@ -70,6 +73,11 @@ class EditSmsTemplate extends EditRecord
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->required(),
+                Actions::make([
+                    DraftTemplateWithAiAction::make()
+                        ->deliveryMethod(EngagementDeliveryMethod::Sms)
+                        ->mergeTags($mergeTags),
+                ]),
             ]);
     }
 

@@ -40,6 +40,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Actions;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
@@ -50,6 +51,7 @@ use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftCampaignEngagementBlockWithAi;
 
 class EngagementBatchEmailBlock extends CampaignActionBlock
 {
@@ -76,7 +78,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
             TiptapEditor::make($fieldPrefix . 'body')
                 ->disk('s3-public')
                 ->label('Body')
-                ->mergeTags([
+                ->mergeTags($mergeTags = [
                     'student first name',
                     'student last name',
                     'student full name',
@@ -137,6 +139,12 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                     }))
                 ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                 ->columnSpanFull(),
+            Actions::make([
+                DraftCampaignEngagementBlockWithAi::make()
+                    ->deliveryMethod(EngagementDeliveryMethod::Email)
+                    ->fieldPrefix($fieldPrefix)
+                    ->mergeTags($mergeTags),
+            ]),
             DateTimePicker::make('execute_at')
                 ->label('When should the journey step be executed?')
                 ->columnSpanFull()

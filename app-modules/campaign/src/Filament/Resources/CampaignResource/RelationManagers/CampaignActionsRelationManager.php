@@ -38,6 +38,7 @@ namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\RelationManag
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Builder;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -68,7 +69,8 @@ class CampaignActionsRelationManager extends RelationManager
                     ->required()
                     ->maxLength(255)
                     ->disabled(),
-                ...$action->type->getEditFields(),
+                Group::make($action->type->getEditFields())
+                    ->statePath('data'),
             ]);
     }
 
