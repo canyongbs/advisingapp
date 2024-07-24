@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Cache;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 
-class StudentEngagementLineChart extends ChartReportWidget
+class StudentEngagementLineChart extends LineChartReportWidget
 {
     protected static ?string $heading = 'Students (Engagement)';
 
@@ -120,10 +120,5 @@ class StudentEngagementLineChart extends ChartReportWidget
             ],
             'labels' => array_keys($runningTotalPerMonth['emailEngagement']),
         ];
-    }
-
-    protected function getType(): string
-    {
-        return 'line';
     }
 }
