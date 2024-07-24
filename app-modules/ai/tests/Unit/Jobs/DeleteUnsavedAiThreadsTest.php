@@ -1,12 +1,12 @@
 <?php
 
-use AdvisingApp\Ai\Models\AiThread;
 use App\Models\Tenant;
 
 use function Pest\Laravel\artisan;
-use function PHPUnit\Framework\assertNull;
 
-it('selects and soft deletes the proper records', function() {
+use AdvisingApp\Ai\Models\AiThread;
+
+it('selects and soft deletes the proper records', function () {
     $notSavedAndOlderThanThreeDays = AiThread::factory()->create(['saved_at' => null, 'created_at' => now()->subDays(4)]);
     $notSavedAndEarlierThanThreeDays = AiThread::factory()->create(['saved_at' => null, 'created_at' => now()->subDays(2)]);
     $savedAndOlderThanThreeDays = AiThread::factory()->create(['saved_at' => now(), 'created_at' => now()->subDays(4)]);

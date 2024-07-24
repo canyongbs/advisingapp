@@ -43,6 +43,7 @@ use AdvisingApp\Form\Models\SubmissibleAuthentication;
 #[NoPermissions]
 /**
  * @property-read EventRegistrationForm $submissible
+ *
  * @mixin IdeHelperEventRegistrationFormAuthentication
  */
 class EventRegistrationFormAuthentication extends SubmissibleAuthentication

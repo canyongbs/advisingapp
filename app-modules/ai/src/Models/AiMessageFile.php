@@ -38,9 +38,11 @@ namespace AdvisingApp\Ai\Models;
 
 use App\Models\BaseModel;
 use Spatie\MediaLibrary\HasMedia;
+use Illuminate\Database\Eloquent\Prunable;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -51,6 +53,7 @@ class AiMessageFile extends BaseModel implements AiFile, HasMedia
 {
     use SoftDeletes;
     use InteractsWithMedia;
+    use Prunable;
 
     protected $fillable = [
         'file_id',
@@ -73,5 +76,12 @@ class AiMessageFile extends BaseModel implements AiFile, HasMedia
     {
         $this->addMediaCollection('files')
             ->singleFile();
+    }
+
+    public function prunable(): Builder
+    {
+        return static::query()
+            ->whereNotNull('deleted_at')
+            ->where('deleted_at', '<=', now()->subDays(7));
     }
 }

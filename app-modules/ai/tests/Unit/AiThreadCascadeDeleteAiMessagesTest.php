@@ -2,12 +2,12 @@
 
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
+use Illuminate\Support\Facades\Event;
 use AdvisingApp\Ai\Events\AiThreadTrashed;
 
 use function Pest\Laravel\assertDatabaseCount;
 
 use AdvisingApp\Ai\Listeners\AiThreadCascadeDeleteAiMessages;
-use Illuminate\Support\Facades\Event;
 
 it('soft deletes related AiMessages when an AiThread is deleted', function () {
     $aiThread = AiThread::factory()
