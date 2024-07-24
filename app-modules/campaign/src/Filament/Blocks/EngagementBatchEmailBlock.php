@@ -131,7 +131,9 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                             return;
                         }
 
-                        $component->state($template->content);
+                        $component->state(
+                            $component->generateImageUrls($template->content),
+                        );
                     }))
                 ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                 ->columnSpanFull(),

@@ -130,7 +130,9 @@ class EditEngagement extends EditRecord
                                 return;
                             }
 
-                            $component->state($template->content);
+                            $component->state(
+                                $component->generateImageUrls($template->content),
+                            );
                         }))
                     ->visible(fn (Engagement $record): bool => $record->deliverable->channel === EngagementDeliveryMethod::Email)
                     ->showMergeTagsInBlocksPanel($form->getLivewire() instanceof Page)

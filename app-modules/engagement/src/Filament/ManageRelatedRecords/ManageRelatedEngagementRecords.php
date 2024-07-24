@@ -223,7 +223,9 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                                     return;
                                 }
 
-                                $component->state($template->content);
+                                $component->state(
+                                    $component->generateImageUrls($template->content),
+                                );
                             }))
                         ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
                         ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
@@ -356,11 +358,12 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                     ->label('New Email or Text')
                     ->modalHeading('Create new email or text')
                     ->createAnother(false)
-                    ->record(fn (Timeline $record) => $record->timelineable)
-                    ->action(function (array $data) {
+                    ->action(function (array $data, Form $form) {
                         $engagement = new Engagement($data);
                         $engagement->recipient()->associate($this->getRecord());
                         $engagement->save();
+
+                        $form->model($engagement)->saveRelationships();
 
                         $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
 

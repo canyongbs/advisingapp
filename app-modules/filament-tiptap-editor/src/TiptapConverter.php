@@ -5,6 +5,7 @@ namespace FilamentTiptapEditor;
 use Tiptap\Editor;
 use Tiptap\Nodes\Table;
 use Tiptap\Nodes\TableRow;
+use Illuminate\Support\Str;
 use Tiptap\Marks\Highlight;
 use Tiptap\Marks\Subscript;
 use Tiptap\Marks\TextStyle;
@@ -14,12 +15,16 @@ use Tiptap\Marks\Superscript;
 use Tiptap\Nodes\TableHeader;
 use Spatie\MediaLibrary\HasMedia;
 use Tiptap\Extensions\StarterKit;
+use Illuminate\Support\Collection;
 use Tiptap\Nodes\CodeBlockHighlight;
 use Illuminate\Database\Eloquent\Model;
 use FilamentTiptapEditor\Extensions\Marks;
 use FilamentTiptapEditor\Extensions\Nodes;
 use FilamentTiptapEditor\Extensions\Extensions;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use FilamentTiptapEditor\Exceptions\ImagesNotResolvableException;
+use Livewire\Features\SupportFileUploads\FileUploadConfiguration;
 
 class TiptapConverter
 {
@@ -139,6 +144,66 @@ class TiptapConverter
         return $decoded ? json_decode($editor->getJSON(), true) : $editor->getJSON();
     }
 
+    public function saveImages(array $document, string $disk, HasMedia $record, string $recordAttribute, array $newImages, ?Collection $existingImages = null, array $unusedImageKeys = []): array
+    {
+        $existingImages ??= collect([]);
+
+        return [json_decode($this->getEditor()->setContent($document)->descendants(function (&$node) use ($disk, $existingImages, $newImages, $record, $recordAttribute, &$unusedImageKeys) {
+            if ($node->type !== 'image') {
+                return;
+            }
+
+            $id = $node->attrs->id ?? null;
+
+            if (blank($id)) {
+                return;
+            }
+
+            if (($unusedImageIndex = array_search($id, $unusedImageKeys)) !== false) {
+                unset($unusedImageKeys[$unusedImageIndex]);
+            }
+
+            if ($existingImages->has($id)) {
+                return;
+            }
+
+            if (array_key_exists($id, $newImages)) {
+                $newImage = $newImages[$id];
+
+                $content = ($newImage instanceof TemporaryUploadedFile) ?
+                    $newImage->get() :
+                    FileUploadConfiguration::storage()->get($newImage['path']);
+
+                $extension = ($newImage instanceof TemporaryUploadedFile) ?
+                    $newImage->getClientOriginalExtension() :
+                    $newImage['extension'];
+
+                $image = $record
+                    ->addMediaFromString($content)
+                    ->usingFileName(((string) Str::ulid()) . '.' . $extension)
+                    ->toMediaCollection($recordAttribute, diskName: $disk);
+
+                $existingImages->put($image->uuid, $image);
+
+                $node->attrs->id = $image->uuid;
+
+                return;
+            }
+
+            $existingImage = Media::findByUuid($id);
+
+            if (! $existingImage) {
+                return;
+            }
+
+            $newImage = $existingImage->copy($record, collectionName: $recordAttribute, diskName: $disk);
+
+            $existingImages->put($newImage->uuid, $newImage);
+
+            $node->attrs->id = $newImage->uuid;
+        })->getJSON(), associative: true), $unusedImageKeys];
+    }
+
     public function copyImagesToNewRecord(array $content, Model $replica): array
     {
         $editor = $this->getEditor()->setContent($content);
@@ -151,7 +216,7 @@ class TiptapConverter
             $record->getMedia(collectionName: $recordAttribute)->keyBy('uuid') :
             collect([]);
 
-        $editor->descendants(function (&$node) use ($images, $record, $recordAttribute) {
+        $editor->descendants(function (&$node) use ($images, $record, $recordAttribute, $replica) {
             if ($node->type !== 'image') {
                 return;
             }
@@ -173,12 +238,12 @@ class TiptapConverter
                 return;
             }
 
-            $newImage = $images->get($id)->copy($record, collectionName: $this->getName(), diskName: $this->getDisk());
+            $newImage = $images->get($id)->copy($replica, collectionName: $this->getName(), diskName: $this->getDisk());
 
             $node->attrs->id = $newImage->uuid;
         });
 
-        return json_decode($editor->getJSON());
+        return json_decode($editor->getJSON(), associative: true);
     }
 
     public function asText(string | array $content): string
@@ -320,7 +385,7 @@ class TiptapConverter
 
             $image = $images->get($id);
 
-            if (config("filesystems.disks.{$images->disk}.visibility") === 'public') {
+            if (config("filesystems.disks.{$image->disk}.media_library_visibility") === 'public') {
                 $node->attrs->src = $image->getUrl();
 
                 return;

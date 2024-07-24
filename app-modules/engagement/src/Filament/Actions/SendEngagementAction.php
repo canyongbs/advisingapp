@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Forms\Form;
 use Filament\Actions\Action;
 use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Select;
@@ -47,6 +48,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use Filament\Forms\Components\Actions\Action as FormAction;
@@ -55,13 +57,16 @@ use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\Engageme
 
 class SendEngagementAction extends Action
 {
+    protected Educatable $educatable;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->icon('heroicon-o-chat-bubble-bottom-center-text')
             ->modalHeading('Send Engagement')
-            ->modalDescription(fn (Educatable $record) => "Send an engagement to {$record->display_name}.")
+            ->modalDescription(fn () => "Send an engagement to {$this->getEducatable()->display_name}.")
+            ->model(Engagement::class)
             ->form([
                 Select::make('delivery_method')
                     ->label('What would you like to send?')
@@ -136,17 +141,23 @@ class SendEngagementAction extends Action
                                         return;
                                     }
 
-                                    $component->state($template->content);
+                                    $component->state(
+                                        $component->generateImageUrls($template->content),
+                                    );
                                 }))
                             ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
                             ->columnSpanFull(),
                         EngagementSmsBodyField::make(context: 'create'),
                     ]),
             ])
-            ->action(function (Educatable $record, array $data) {
+            ->action(function (array $data, Form $form) {
                 $createOnDemandEngagement = resolve(CreateOnDemandEngagement::class);
 
-                $createOnDemandEngagement($record, $data);
+                $createOnDemandEngagement(
+                    $this->getEducatable(),
+                    $data,
+                    afterCreation: fn (Engagement $engagement) => $form->model($engagement)->saveRelationships(),
+                );
             })
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)
@@ -166,5 +177,17 @@ class SendEngagementAction extends Action
     public static function getDefaultName(): ?string
     {
         return 'engage';
+    }
+
+    public function educatable(Educatable $educatable): static
+    {
+        $this->educatable = $educatable;
+
+        return $this;
+    }
+
+    public function getEducatable(): Educatable
+    {
+        return $this->educatable;
     }
 }

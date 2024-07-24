@@ -310,7 +310,7 @@ class MessageCenter extends Page
     public function createAction(): Action
     {
         return SendEngagementAction::make()
-            ->record($this->recordModel)
+            ->educatable($this->recordModel)
             ->after(fn () => $this->refreshSelectedEducatable());
     }
 

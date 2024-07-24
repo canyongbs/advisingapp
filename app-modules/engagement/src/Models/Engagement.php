@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Illuminate\Database\Eloquent\Model;
@@ -46,6 +47,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -70,11 +72,12 @@ use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
  *
  * @mixin IdeHelperEngagement
  */
-class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline, HasDeliveryMethod
+class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline, HasDeliveryMethod, HasMedia
 {
     use AuditableTrait;
     use BelongsToEducatable;
     use SoftDeletes;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'user_id',
@@ -204,7 +207,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return app(GenerateEngagementBodyContent::class)(
             $this->body,
             $this->getMergeData(),
-            $this,
+            $this->batch ?? $this,
             'body',
         );
     }

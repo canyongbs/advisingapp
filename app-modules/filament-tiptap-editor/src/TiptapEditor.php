@@ -10,6 +10,7 @@ use Livewire\Component;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
+use Illuminate\Support\Collection;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Database\Eloquent\Model;
@@ -26,7 +27,6 @@ use Filament\Forms\Components\Concerns\HasPlaceholder;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
-use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 
 class TiptapEditor extends Field
 {
@@ -100,6 +100,14 @@ class TiptapEditor extends Field
             $livewire->validateOnly($component->getStatePath());
         });
 
+        $this->beforeStateDehydrated(function (TiptapEditor $component, string | array | null $state) {
+            if (! is_array($state)) {
+                return;
+            }
+
+            $component->state($component->processImages($state));
+        });
+
         $this->dehydrateStateUsing(function (TiptapEditor $component, string | array | null $state): string | array | null {
             if (! $state) {
                 return null;
@@ -115,7 +123,6 @@ class TiptapEditor extends Field
 
             $state = $component->decodeBlocks($state);
             $state = $component->removeImageUrls($state);
-            $component->processImages($state);
 
             return $state;
         });
@@ -214,21 +221,19 @@ class TiptapEditor extends Field
             ->mountFormComponentAction($statePath, $name, $arguments);
     }
 
-    public function generateImageUrls(array $document): array
+    public function generateImageUrls(array $document, ?Collection $images = null): array
     {
         $record = $this->getRecord();
 
-        if (! ($record instanceof HasMedia)) {
-            return $document;
-        }
-
-        $media = $record->getMedia(collectionName: $this->getName())->keyBy('uuid');
+        $images ??= ($record instanceof HasMedia) ?
+            $record->getMedia(collectionName: $this->getName())->keyBy('uuid') :
+            collect();
 
         $content = $document['content'] ?? [];
 
         foreach ($content as $blockIndex => $block) {
             if (array_key_exists('content', $block)) {
-                $content[$blockIndex] = $this->generateImageUrls($block);
+                $content[$blockIndex] = $this->generateImageUrls($block, $images);
             }
 
             if (($block['type'] ?? null) !== 'image') {
@@ -241,11 +246,21 @@ class TiptapEditor extends Field
                 continue;
             }
 
-            if (! $media->has($id)) {
+            if ($images->has($id)) {
+                $content[$blockIndex]['attrs']['src'] = $images->get($id)->getTemporaryUrl(now()->addDay());
+
                 continue;
             }
 
-            $content[$blockIndex]['attrs']['src'] = $media->get($id)->getTemporaryUrl(now()->addDay());
+            $image = Media::findByUuid($id);
+
+            if (! $image) {
+                continue;
+            }
+
+            $images->put($id, $image);
+
+            $content[$blockIndex]['attrs']['src'] = $image->getTemporaryUrl(now()->addDay());
         }
 
         $document['content'] = $content;
@@ -308,13 +323,14 @@ class TiptapEditor extends Field
         $unusedImageKeys = $images->keys()->all();
 
         $livewire = $this->getLivewire();
-        $statePath = $this->getStatePath();
 
-        [$newState, $unusedImageKeys] = $this->processImagesInDocument(
+        [$newState, $unusedImageKeys] = tiptap_converter()->saveImages(
             $originalState,
-            $record,
+            disk: $this->getDisk(),
+            record: $record,
+            recordAttribute: $this->getName(),
+            newImages: $this->getTemporaryImages(),
             existingImages: $images,
-            newImages: data_get($livewire->componentFileAttachments, $statePath) ?? [],
             unusedImageKeys: $unusedImageKeys,
         );
 
@@ -322,7 +338,7 @@ class TiptapEditor extends Field
             ->whereIn('uuid', $unusedImageKeys)
             ->delete();
 
-        data_forget($livewire->componentFileAttachments, $statePath);
+        data_forget($livewire->componentFileAttachments, $this->getStatePath());
 
         // We need to save the new state back to the record if the image IDs have changed.
         if (
@@ -335,6 +351,11 @@ class TiptapEditor extends Field
         }
 
         return $newState;
+    }
+
+    public function getTemporaryImages(): array
+    {
+        return data_get($this->getLivewire()->componentFileAttachments, $this->getStatePath()) ?? [];
     }
 
     /**
@@ -630,60 +651,5 @@ class TiptapEditor extends Field
     public function getGridLayouts(): array
     {
         return $this->gridLayouts;
-    }
-
-    protected function processImagesInDocument(array $document, HasMedia $record, MediaCollection $existingImages, array $newImages, array $unusedImageKeys): array
-    {
-        $content = $document['content'] ?? [];
-
-        foreach ($content as $blockIndex => $block) {
-            if (array_key_exists('content', $block)) {
-                [$content[$blockIndex], $unusedImageKeys] = $this->processImagesInDocument($block, $record, $existingImages, $newImages, $unusedImageKeys);
-            }
-
-            if (($block['type'] ?? null) !== 'image') {
-                continue;
-            }
-
-            $id = $block['attrs']['id'] ?? null;
-
-            if (blank($id)) {
-                continue;
-            }
-
-            if (($unusedImageIndex = array_search($id, $unusedImageKeys)) !== false) {
-                unset($unusedImageKeys[$unusedImageIndex]);
-            }
-
-            if ($existingImages->has($id)) {
-                continue;
-            }
-
-            if (array_key_exists($id, $newImages)) {
-                $image = $record
-                    ->addMediaFromString($newImages[$id]->get())
-                    ->usingFileName(((string) Str::ulid()) . '.' . $newImages[$id]->getClientOriginalExtension())
-                    ->withAttributes(['uuid' => $id])
-                    ->toMediaCollection($this->getName(), diskName: $this->getDisk());
-
-                $existingImages->put($id, $image);
-
-                continue;
-            }
-
-            $existingImage = Media::findByUuid($id);
-
-            if (! $existingImage) {
-                continue;
-            }
-
-            $newImage = $existingImage->copy($record, collectionName: $this->getName(), diskName: $this->getDisk());
-
-            $content[$blockIndex]['attrs']['id'] = $newImage->uuid;
-        }
-
-        $document['content'] = $content;
-
-        return [$document, $unusedImageKeys];
     }
 }
