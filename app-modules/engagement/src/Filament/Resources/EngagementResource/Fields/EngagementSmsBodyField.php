@@ -68,7 +68,6 @@ class EngagementSmsBodyField
             ])
             ->showMergeTagsInBlocksPanel(is_null($form) ? false : ! ($form->getLivewire() instanceof RelationManager))
             ->profile('sms')
-            ->output(TiptapOutput::Json)
             ->required()
             ->hintAction(fn (TiptapEditor $component) => Action::make('loadSmsTemplate')
                 ->label('Load SMS template')

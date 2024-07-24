@@ -91,7 +91,6 @@ class SendEngagementAction extends Action
                                 'student email',
                             ])
                             ->profile('email')
-                            ->output(TiptapOutput::Json)
                             ->required()
                             ->hintAction(fn (TiptapEditor $component) => FormAction::make('loadEmailTemplate')
                                 ->form([

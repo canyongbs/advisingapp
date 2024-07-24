@@ -145,7 +145,6 @@ trait HasSharedFormConfiguration
     public function fieldBuilder(): TiptapEditor
     {
         return TiptapEditor::make('content')
-            ->output(TiptapOutput::Json)
             ->blocks(FormFieldBlockRegistry::get())
             ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
             ->placeholder('Drag blocks here to build your form')
@@ -154,6 +153,8 @@ trait HasSharedFormConfiguration
                 if ($component->isDisabled()) {
                     return;
                 }
+
+                $record->wasRecentlyCreated && $component->processImages();
 
                 $form = $record instanceof Form ? $record : $record->submissible;
                 $formStep = $record instanceof FormStep ? $record : null;
@@ -166,7 +167,7 @@ trait HasSharedFormConfiguration
                 $content = [];
 
                 if (filled($component->getState())) {
-                    $content = $component->decodeBlocksBeforeSave($component->getJSON(decoded: true));
+                    $content = $component->decodeBlocks($component->getJSON(decoded: true));
                 }
 
                 $content['content'] = $this->saveFieldsFromComponents(

@@ -86,7 +86,6 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                     'student email',
                 ])
                 ->profile('email')
-                ->output(TiptapOutput::Json)
                 ->required()
                 ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
                     ->form([

@@ -70,7 +70,6 @@ class CreateSmsTemplate extends CreateRecord
                         'student email',
                     ])
                     ->profile('sms')
-                    ->output(TiptapOutput::Json)
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->required(),

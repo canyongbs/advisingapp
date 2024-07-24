@@ -178,7 +178,6 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                         ])
                         ->showMergeTagsInBlocksPanel(! ($form->getLivewire() instanceof RelationManager))
                         ->profile('email')
-                        ->output(TiptapOutput::Json)
                         ->required()
                         ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
                             ->form([

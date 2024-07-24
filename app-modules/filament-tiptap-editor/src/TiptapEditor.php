@@ -3,6 +3,11 @@
 namespace FilamentTiptapEditor;
 
 use Closure;
+use Exception;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 use JsonException;
 use Livewire\Component;
@@ -84,7 +89,9 @@ class TiptapEditor extends Field
                 $state = tiptap_converter()->asJSON($state, decoded: true);
             }
 
-            $state = $this->renderBlockPreviews($state, $component);
+            $state = $component->generateImageUrls($state);
+
+            $state = $component->renderBlockPreviews($state);
 
             $component->state($state);
         });
@@ -98,20 +105,22 @@ class TiptapEditor extends Field
                 return null;
             }
 
-            if ($this->expectsJSON()) {
-                if (! is_array($state)) {
-                    $state = tiptap_converter()->asJSON($state, decoded: true);
-                }
-
-                return $this->decodeBlocksBeforeSave($state);
+            if (! $component->expectsJSON()) {
+                throw new Exception('TipTap content should be stored in JSON only, in order to process media and blocks correctly.');
             }
 
-            if ($this->expectsText()) {
-                return tiptap_converter()->asText($state);
+            if (! is_array($state)) {
+                $state = tiptap_converter()->asJSON($state, decoded: true);
             }
 
-            return tiptap_converter()->asHTML($state);
+            $state = $component->decodeBlocks($state);
+            $state = $component->removeImageUrls($state);
+            $component->processImages();
+
+            return $state;
         });
+
+        $this->saveRelationshipsUsing(fn (TiptapEditor $component, Model $record) => $record->wasRecentlyCreated && $component->processImages());
 
         $this->registerListeners([
             'tiptap::setGridBuilderContent' => [
@@ -205,27 +214,181 @@ class TiptapEditor extends Field
             ->mountFormComponentAction($statePath, $name, $arguments);
     }
 
+    public function generateImageUrls(array $document): array
+    {
+        $record = $this->getRecord();
+
+        if (! ($record instanceof HasMedia)) {
+            return $document;
+        }
+
+        $media = $record->getMedia(collectionName: $this->getName())->keyBy('uuid');
+
+        $content = $document['content'] ?? [];
+
+        foreach ($content as $blockIndex => $block) {
+            if (array_key_exists('content', $block)) {
+                $content[$blockIndex] = $this->generateImageUrls($block);
+            }
+
+            if (($block['type'] ?? null) !== 'image') {
+                continue;
+            }
+
+            $id = $block['attrs']['id'] ?? null;
+
+            if (blank($id)) {
+                continue;
+            }
+
+            if (! $media->has($id)) {
+                continue;
+            }
+
+            $content[$blockIndex]['attrs']['src'] = $media->get($id)->getTemporaryUrl(now()->addDay());
+        }
+
+        $document['content'] = $content;
+
+        return $document;
+    }
+
+    public function removeImageUrls(array $document): array
+    {
+        $content = $document['content'] ?? [];
+
+        foreach ($content as $blockIndex => $block) {
+            if (array_key_exists('content', $block)) {
+                $content[$blockIndex] = $this->removeImageUrls($block);
+            }
+
+            if (($block['type'] ?? null) !== 'image') {
+                continue;
+            }
+
+            if (! array_key_exists('attrs', $block)) {
+                continue;
+            }
+
+            if (! array_key_exists('src', $block['attrs'])) {
+                continue;
+            }
+
+            $id = $block['attrs']['id'] ?? null;
+
+            if (blank($id)) {
+                continue;
+            }
+
+            unset($content[$blockIndex]['attrs']['src']);
+        }
+
+        $document['content'] = $content;
+
+        return $document;
+    }
+
+    public function processImages(): void
+    {
+        $record = $this->getRecord();
+
+        if (! ($record instanceof HasMedia)) {
+            return;
+        }
+
+        $images = $record->getMedia(collectionName: $this->getName())->keyBy('uuid');
+        $unusedImageKeys = $images->keys()->all();
+
+        $livewire = $this->getLivewire();
+        $statePath = $this->getStatePath();
+
+        $unusedImageKeys = $this->processImagesInDocument(
+            $this->getState(),
+            $record,
+            existingImages: $images,
+            newImages: data_get($livewire->componentFileAttachments, $statePath) ?? [],
+            unusedImageKeys: $unusedImageKeys,
+        );
+
+        Media::query()
+            ->whereIn('uuid', $unusedImageKeys)
+            ->delete();
+
+        data_forget($livewire->componentFileAttachments, $statePath);
+    }
+
+    protected function processImagesInDocument(array $document, HasMedia $record, MediaCollection $existingImages, array $newImages, array $unusedImageKeys): array
+    {
+        $content = $document['content'] ?? [];
+
+        foreach ($content as $block) {
+            if (array_key_exists('content', $block)) {
+                $unusedImageKeys = $this->processImagesInDocument($block, $record, $existingImages, $newImages, $unusedImageKeys);
+            }
+
+            if (($block['type'] ?? null) !== 'image') {
+                continue;
+            }
+
+            $id = $block['attrs']['id'] ?? null;
+
+            if (blank($id)) {
+                continue;
+            }
+
+            if (($unusedMediaIndex = array_search($id, $unusedImageKeys)) !== false) {
+                unset($unusedImageKeys[$unusedMediaIndex]);
+            }
+
+            if ($existingImages->has($id)) {
+                continue;
+            }
+
+            if (array_key_exists($id, $newImages)) {
+                $image = $record
+                    ->addMediaFromString($newImages[$id]->get())
+                    ->usingFileName(((string) Str::ulid()) . '.' . $newImages[$id]->getClientOriginalExtension())
+                    ->withAttributes(['uuid' => $id])
+                    ->toMediaCollection($this->getName(), diskName: $this->getDisk());
+
+                $existingImages->put($id, $image);
+
+                continue;
+            }
+
+            $existingMedia = Media::findByUuid($id);
+
+            if (! $existingMedia) {
+                continue;
+            }
+
+            $existingMedia->copy($record, collectionName: $this->getName(), diskName: $this->getDisk());
+        }
+
+        return $unusedImageKeys;
+    }
+
     /**
      * @throws Throwable
      * @throws JsonException
      */
-    public function renderBlockPreviews(array $document, TiptapEditor $component): array
+    public function renderBlockPreviews(array $document): array
     {
-        $content = $document['content'];
+        $content = $document['content'] ?? [];
 
-        foreach ($content as $k => $block) {
-            if ($block['type'] === 'tiptapBlock') {
-                $instance = $this->getBlock($block['attrs']['type']);
+        foreach ($content as $blockIndex => $block) {
+            if (($block['type'] ?? null) === 'tiptapBlock') {
+                $instance = $this->getBlock($block['attrs']['type'] ?? '');
                 $orderedAttrs = [
-                    'preview' => $instance->getPreview($block['attrs']['data'], $component),
-                    'statePath' => $component->getStatePath(),
-                    'type' => $block['attrs']['type'],
+                    'preview' => $instance->getPreview($block['attrs']['data'] ?? [], $this),
+                    'statePath' => $this->getStatePath(),
+                    'type' => $block['attrs']['type'] ?? '',
                     'label' => $instance->getLabel(),
-                    'data' => Js::from($block['attrs']['data'])->toHtml(),
+                    'data' => Js::from($block['attrs']['data'] ?? [])->toHtml(),
                 ];
-                $content[$k]['attrs'] = $orderedAttrs;
+                $content[$blockIndex]['attrs'] = $orderedAttrs;
             } elseif (array_key_exists('content', $block)) {
-                $content[$k] = $this->renderBlockPreviews($block, $component);
+                $content[$blockIndex] = $this->renderBlockPreviews($block);
             }
         }
 
@@ -234,7 +397,7 @@ class TiptapEditor extends Field
         return $document;
     }
 
-    public function decodeBlocksBeforeSave(array $document): array
+    public function decodeBlocks(array $document): array
     {
         $content = $document['content'];
 
@@ -250,7 +413,7 @@ class TiptapEditor extends Field
                 }
                 unset($content[$k]['attrs']['statePath'], $content[$k]['attrs']['preview'], $content[$k]['attrs']['label']);
             } elseif (array_key_exists('content', $block)) {
-                $content[$k] = $this->decodeBlocksBeforeSave($block);
+                $content[$k] = $this->decodeBlocks($block);
             }
         }
 

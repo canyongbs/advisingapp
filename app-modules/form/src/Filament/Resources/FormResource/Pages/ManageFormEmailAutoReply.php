@@ -104,7 +104,6 @@ class ManageFormEmailAutoReply extends EditRecord
                                 'student email',
                             ])
                             ->profile('email')
-                            ->output(TiptapOutput::Json)
                             ->required(fn (Get $get) => $get('is_enabled'))
                             ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
                                 ->form([

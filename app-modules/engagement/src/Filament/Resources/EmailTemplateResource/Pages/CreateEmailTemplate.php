@@ -71,7 +71,6 @@ class CreateEmailTemplate extends CreateRecord
                         'student email',
                     ])
                     ->profile('email')
-                    ->output(TiptapOutput::Json)
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->required(),

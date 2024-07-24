@@ -98,7 +98,6 @@ class BulkEngagementAction
                             ])
                             ->showMergeTagsInBlocksPanel(false)
                             ->profile('email')
-                            ->output(TiptapOutput::Json)
                             ->required()
                             ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
                                 ->form([

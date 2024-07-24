@@ -96,7 +96,9 @@ class MediaAction extends Action
                 ];
             })->action(function (TiptapEditor $component, Component&HasForms $livewire, array $data, array $arguments) {
                 if (filled($data['src'])) {
-                    $livewire->componentFileAttachments[$id = (string) Str::uuid()] = $data['src'];
+                    $id = (string) Str::uuid();
+
+                    data_set($livewire->componentFileAttachments, "{$component->getStatePath()}.{$id}", $data['src']);
                 }
 
                 $livewire->dispatch(

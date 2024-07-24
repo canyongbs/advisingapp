@@ -168,7 +168,6 @@ trait HasSharedEventFormConfiguration
     public function fieldBuilder(): TiptapEditor
     {
         return TiptapEditor::make('content')
-            ->output(TiptapOutput::Json)
             ->blocks(FormFieldBlockRegistry::get())
             ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
             ->placeholder('Drag blocks here to build your form')
@@ -177,6 +176,8 @@ trait HasSharedEventFormConfiguration
                 if ($component->isDisabled()) {
                     return;
                 }
+
+                $record->wasRecentlyCreated && $component->processImages();
 
                 $form = $record instanceof EventRegistrationForm ? $record : $record->submissible;
                 $formStep = $record instanceof EventRegistrationFormStep ? $record : null;
@@ -189,7 +190,7 @@ trait HasSharedEventFormConfiguration
                 $content = [];
 
                 if (filled($component->getState())) {
-                    $content = $component->decodeBlocksBeforeSave($component->getJSON(decoded: true));
+                    $content = $component->decodeBlocks($component->getJSON(decoded: true));
                 }
 
                 $content['content'] = $this->saveFieldsFromComponents(

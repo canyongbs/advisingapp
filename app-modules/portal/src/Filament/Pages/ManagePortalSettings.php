@@ -239,7 +239,6 @@ class ManagePortalSettings extends SettingsPage
                             ->label('Copyright statement')
                             ->tools(['bold', 'underline', 'italic', 'link'])
                             ->columnSpanFull()
-                            ->output(TiptapOutput::Json),
                     ])
                     ->columns(2),
             ]);
