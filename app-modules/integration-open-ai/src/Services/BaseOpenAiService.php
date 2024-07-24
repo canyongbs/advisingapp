@@ -375,7 +375,7 @@ abstract class BaseOpenAiService implements AiService
         return true;
     }
 
-    public function fake()
+    public function fake(): void
     {
         $this->client = new ClientFake();
     }
