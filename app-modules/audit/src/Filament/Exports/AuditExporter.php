@@ -62,7 +62,8 @@ class AuditExporter extends Exporter
             ExportColumn::make('ip_address')
                 ->label('IP address'),
             ExportColumn::make('change_agent_id')
-                ->label('Change Agent ID'),
+                ->label('Change Agent ID')
+                ->default('N/A'),
             ExportColumn::make('change_agent_name')
                 ->label('Change Agent Name')
                 ->state(function ($record) {
