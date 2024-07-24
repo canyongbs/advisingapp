@@ -66,7 +66,12 @@ class AiAssistantForm
                     ->collection('avatar')
                     ->visibility('private')
                     ->avatar()
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->acceptedFileTypes([
+                        'image/png',
+                        'image/jpeg',
+                        'image/gif',
+                    ]),
                 TextInput::make('name')
                     ->required()
                     ->string()
@@ -95,14 +100,14 @@ class AiAssistantForm
                     ->required()
                     ->rules(
                         fn (Get $get): array => filled(AiApplication::parse($get('application')))
-                        ? [
-                            Rule::enum(AiModel::class)
-                                ->only(
-                                    AiApplication::parse($get('application'))
-                                        ->getModels()
-                                ),
-                        ]
-                        : []
+                            ? [
+                                Rule::enum(AiModel::class)
+                                    ->only(
+                                        AiApplication::parse($get('application'))
+                                            ->getModels()
+                                    ),
+                            ]
+                            : []
                     )
                     ->visible(fn (Get $get): bool => filled($get('application'))),
                 Textarea::make('description')
