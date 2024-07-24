@@ -40,7 +40,7 @@
             "src/helpers.php"
         ],
         "psr-4": {
-            "FilamentTiptapEditor\\": "src/",
+            "FilamentTiptapEditor\\": "src/"
         }
     },
     "extra": {

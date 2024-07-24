@@ -12,7 +12,6 @@ parameters:
 
     excludePaths:
         - app-modules/*/vendor/*
-        - app-modules/filament-tiptap-editor/tests/*
 
     scanFiles:
         - ./_ide_helper_models.php
