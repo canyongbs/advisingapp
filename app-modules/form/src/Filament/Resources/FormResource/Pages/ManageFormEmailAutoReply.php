@@ -50,7 +50,6 @@ use Filament\Forms\Form as FilamentForm;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Form\Filament\Resources\FormResource;
@@ -95,8 +94,6 @@ class ManageFormEmailAutoReply extends EditRecord
                             ->columnSpanFull(),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
-                            ->visibility('public')
-                            ->directory('editor-images/engagements')
                             ->mergeTags([
                                 'student first name',
                                 'student last name',
@@ -104,7 +101,6 @@ class ManageFormEmailAutoReply extends EditRecord
                                 'student email',
                             ])
                             ->profile('email')
-                            ->output(TiptapOutput::Json)
                             ->required(fn (Get $get) => $get('is_enabled'))
                             ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
                                 ->form([
@@ -159,7 +155,9 @@ class ManageFormEmailAutoReply extends EditRecord
                                         return;
                                     }
 
-                                    $component->state($template->content);
+                                    $component->state(
+                                        $component->generateImageUrls($template->content),
+                                    );
                                 }))
                             ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull()

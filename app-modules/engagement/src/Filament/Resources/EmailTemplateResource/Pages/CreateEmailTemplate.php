@@ -43,7 +43,6 @@ use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource;
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
@@ -65,8 +64,6 @@ class CreateEmailTemplate extends CreateRecord
                     ->string(),
                 TiptapEditor::make('content')
                     ->disk('s3-public')
-                    ->visibility('public')
-                    ->directory('editor-images/email-templates')
                     ->mergeTags($mergeTags = [
                         'student first name',
                         'student last name',
@@ -74,7 +71,6 @@ class CreateEmailTemplate extends CreateRecord
                         'student email',
                     ])
                     ->profile('email')
-                    ->output(TiptapOutput::Json)
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->required(),

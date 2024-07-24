@@ -37,10 +37,10 @@
 namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
 
 use Filament\Forms\Form;
+use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
-use App\Filament\Forms\Components\TiptapEditor;
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
 
 class CreateDivision extends CreateRecord
@@ -63,12 +63,10 @@ class CreateDivision extends CreateRecord
                     ->string(),
                 TiptapEditor::make('header')
                     ->disk('s3-public')
-                    ->visibility('public')
                     ->string()
                     ->columnSpanFull(),
                 TiptapEditor::make('footer')
                     ->disk('s3-public')
-                    ->visibility('public')
                     ->string()
                     ->columnSpanFull(),
             ]);

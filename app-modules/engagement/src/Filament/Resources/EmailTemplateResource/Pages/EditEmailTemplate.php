@@ -39,10 +39,10 @@ namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages;
 use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Actions;
+use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use App\Filament\Forms\Components\TiptapEditor;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource;
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
@@ -64,7 +64,6 @@ class EditEmailTemplate extends EditRecord
                     ->string(),
                 TiptapEditor::make('content')
                     ->disk('s3-public')
-                    ->visibility('public')
                     ->mergeTags($mergeTags = [
                         'student first name',
                         'student last name',

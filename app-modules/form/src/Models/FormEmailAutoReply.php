@@ -37,7 +37,9 @@
 namespace AdvisingApp\Form\Models;
 
 use App\Models\BaseModel;
+use Spatie\MediaLibrary\HasMedia;
 use AdvisingApp\Prospect\Models\Prospect;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -46,9 +48,10 @@ use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
 /**
  * @mixin IdeHelperFormEmailAutoReply
  */
-class FormEmailAutoReply extends BaseModel
+class FormEmailAutoReply extends BaseModel implements HasMedia
 {
     use SoftDeletes;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'subject',
@@ -71,6 +74,8 @@ class FormEmailAutoReply extends BaseModel
         return app(GenerateEngagementBodyContent::class)(
             $this->body,
             $this->getMergeData($author),
+            $this,
+            'body',
         );
     }
 

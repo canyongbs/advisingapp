@@ -43,7 +43,6 @@ use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
@@ -73,7 +72,6 @@ class CreateSmsTemplate extends CreateRecord
                         'student email',
                     ])
                     ->profile('sms')
-                    ->output(TiptapOutput::Json)
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->required(),

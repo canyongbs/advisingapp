@@ -46,7 +46,6 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Engagement\Models\EmailTemplate;
@@ -78,8 +77,6 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                 ->required(),
             TiptapEditor::make($fieldPrefix . 'body')
                 ->disk('s3-public')
-                ->visibility('public')
-                ->directory('editor-images/engagements')
                 ->label('Body')
                 ->mergeTags($mergeTags = [
                     'student first name',
@@ -88,7 +85,6 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                     'student email',
                 ])
                 ->profile('email')
-                ->output(TiptapOutput::Json)
                 ->required()
                 ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
                     ->form([
@@ -137,7 +133,9 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                             return;
                         }
 
-                        $component->state($template->content);
+                        $component->state(
+                            $component->generateImageUrls($template->content),
+                        );
                     }))
                 ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                 ->columnSpanFull(),

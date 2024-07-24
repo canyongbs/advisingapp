@@ -48,7 +48,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use App\Filament\Forms\Components\ColorSelect;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestForm;
@@ -149,7 +148,6 @@ trait HasSharedFormConfiguration
     public function fieldBuilder(): TiptapEditor
     {
         return TiptapEditor::make('content')
-            ->output(TiptapOutput::Json)
             ->blocks(FormFieldBlockRegistry::get())
             ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
             ->placeholder('Drag blocks here to build your service request form')
@@ -158,6 +156,8 @@ trait HasSharedFormConfiguration
                 if ($component->isDisabled()) {
                     return;
                 }
+
+                $record->wasRecentlyCreated && $component->processImages();
 
                 $serviceRequestForm = $record instanceof ServiceRequestForm ? $record : $record->submissible;
                 $serviceRequestFormStep = $record instanceof ServiceRequestFormStep ? $record : null;
@@ -170,7 +170,7 @@ trait HasSharedFormConfiguration
                 $content = [];
 
                 if (filled($component->getState())) {
-                    $content = $component->decodeBlocksBeforeSave($component->getJSON(decoded: true));
+                    $content = $component->decodeBlocks($component->getJSON(decoded: true));
                 }
 
                 $content['content'] = $this->saveFieldsFromComponents(

@@ -51,7 +51,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use AdvisingApp\Engagement\Models\Engagement;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
@@ -77,15 +76,12 @@ class EditEngagement extends EditRecord
                     ->visible(fn (Engagement $record): bool => $record->deliverable->channel === EngagementDeliveryMethod::Email),
                 TiptapEditor::make('body')
                     ->disk('s3-public')
-                    ->visibility('public')
-                    ->directory('editor-images/engagements')
                     ->label('Body')
                     ->mergeTags([
                         'student full name',
                         'student email',
                     ])
                     ->profile('email')
-                    ->output(TiptapOutput::Json)
                     ->required()
                     ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
                         ->form([
@@ -134,7 +130,9 @@ class EditEngagement extends EditRecord
                                 return;
                             }
 
-                            $component->state($template->content);
+                            $component->state(
+                                $component->generateImageUrls($template->content),
+                            );
                         }))
                     ->visible(fn (Engagement $record): bool => $record->deliverable->channel === EngagementDeliveryMethod::Email)
                     ->showMergeTagsInBlocksPanel($form->getLivewire() instanceof Page)

@@ -47,7 +47,6 @@ use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 use AdvisingApp\KnowledgeBase\Registries\KnowledgeBaseRbacRegistry;
-use AdvisingApp\KnowledgeBase\Observers\KnowledgeBaseArticleObserver;
 
 class KnowledgeBaseServiceProvider extends ServiceProvider
 {
@@ -67,14 +66,8 @@ class KnowledgeBaseServiceProvider extends ServiceProvider
             'knowledge_base_status' => KnowledgeBaseStatus::class,
         ]);
 
-        $this->registerObservers();
         $this->discoverSchema(__DIR__ . '/../../graphql/knowledge-base-article.graphql');
 
         AuthorizationRoleRegistry::register(KnowledgeBaseRbacRegistry::class);
-    }
-
-    public function registerObservers(): void
-    {
-        KnowledgeBaseArticle::observe(KnowledgeBaseArticleObserver::class);
     }
 }

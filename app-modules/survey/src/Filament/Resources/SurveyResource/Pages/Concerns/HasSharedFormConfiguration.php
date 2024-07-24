@@ -51,7 +51,6 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\Survey\Models\SurveyStep;
 use AdvisingApp\Survey\Models\SurveyField;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use App\Filament\Forms\Components\ColorSelect;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use AdvisingApp\Survey\Filament\Blocks\SurveyFieldBlockRegistry;
@@ -145,7 +144,6 @@ trait HasSharedFormConfiguration
     public function fieldBuilder(): TiptapEditor
     {
         return TiptapEditor::make('content')
-            ->output(TiptapOutput::Json)
             ->blocks(SurveyFieldBlockRegistry::get())
             ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
             ->placeholder('Drag blocks here to build your survey')
@@ -154,6 +152,8 @@ trait HasSharedFormConfiguration
                 if ($component->isDisabled()) {
                     return;
                 }
+
+                $record->wasRecentlyCreated && $component->processImages();
 
                 $survey = $record instanceof Survey ? $record : $record->submissible;
                 $surveyStep = $record instanceof SurveyStep ? $record : null;
@@ -166,7 +166,7 @@ trait HasSharedFormConfiguration
                 $content = [];
 
                 if (filled($component->getState())) {
-                    $content = $component->decodeBlocksBeforeSave($component->getJSON(decoded: true));
+                    $content = $component->decodeBlocks($component->getJSON(decoded: true));
                 }
 
                 $content['content'] = $this->saveFieldsFromComponents(

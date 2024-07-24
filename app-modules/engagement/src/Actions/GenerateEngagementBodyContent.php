@@ -37,23 +37,16 @@
 namespace AdvisingApp\Engagement\Actions;
 
 use Illuminate\Support\HtmlString;
+use Illuminate\Database\Eloquent\Model;
 
 class GenerateEngagementBodyContent
 {
-    public function __invoke(string|array $content, array $mergeData = []): HtmlString
+    public function __invoke(string|array $content, array $mergeData, Model $record, string $recordAttribute): HtmlString
     {
         $content = tiptap_converter()
-            ->getEditor()
-            ->setContent($content)
-            ->descendants(function ($node) use ($mergeData) {
-                if ($node->type !== 'mergeTag') {
-                    return;
-                }
-
-                $node->type = 'text';
-                $node->text = $mergeData[$node->attrs->id ?? null] ?? '';
-            })
-            ->getHTML();
+            ->mergeTagsMap($mergeData)
+            ->record($record, $recordAttribute)
+            ->asHTML($content);
 
         return str($content)->sanitizeHtml()->toHtmlString();
     }

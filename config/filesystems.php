@@ -87,6 +87,7 @@ return [
             'use_path_style_endpoint' => env('AWS_S3_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
             'root' => env('AWS_S3_ROOT'),
+            'media_library_visibility' => 'private',
         ],
 
         's3-public' => [
@@ -100,6 +101,7 @@ return [
             'use_path_style_endpoint' => env('AWS_S3_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
             'root' => env('AWS_S3_PUBLIC_ROOT', env('AWS_S3_ROOT') . '/PUBLIC'),
+            'media_library_visibility' => 'public',
         ],
     ],
 

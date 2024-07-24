@@ -38,14 +38,17 @@ namespace AdvisingApp\Engagement\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @mixin IdeHelperEmailTemplate
  */
-class EmailTemplate extends BaseModel
+class EmailTemplate extends BaseModel implements HasMedia
 {
+    use InteractsWithMedia;
     use SoftDeletes;
 
     protected $fillable = [

@@ -48,5 +48,6 @@ class EngagementBatchCreationData extends Data
         public string $deliveryMethod,
         public ?string $subject = null,
         public ?array $body = null,
+        public array $temporaryBodyImages = [],
     ) {}
 }

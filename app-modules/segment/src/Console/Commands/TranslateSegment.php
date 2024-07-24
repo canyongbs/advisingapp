@@ -53,7 +53,7 @@ class TranslateSegment extends Command
     {
         Segment::all()
             ->each(function (Segment $segment) {
-                ray(resolve(TranslateSegmentFilters::class)->handle($segment)->get());
+                resolve(TranslateSegmentFilters::class)->handle($segment)->get();
             });
 
         return static::SUCCESS;

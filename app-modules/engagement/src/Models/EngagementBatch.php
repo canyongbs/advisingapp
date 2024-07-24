@@ -41,6 +41,8 @@ use Throwable;
 use DOMDocument;
 use App\Models\User;
 use App\Models\BaseModel;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
@@ -51,9 +53,10 @@ use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
 /**
  * @mixin IdeHelperEngagementBatch
  */
-class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
+class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction, HasMedia
 {
     use HasManyEngagements;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'user_id',

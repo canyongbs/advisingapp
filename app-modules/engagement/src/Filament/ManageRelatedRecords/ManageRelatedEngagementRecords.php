@@ -58,7 +58,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use AdvisingApp\Engagement\Models\Engagement;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
@@ -159,8 +158,6 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                         ->columnSpanFull(),
                     TiptapEditor::make('body')
                         ->disk('s3-public')
-                        ->visibility('public')
-                        ->directory('editor-images/engagements')
                         ->label('Body')
                         ->mergeTags($mergeTags = [
                             'student first name',
@@ -170,7 +167,6 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                         ])
                         ->showMergeTagsInBlocksPanel(! ($form->getLivewire() instanceof RelationManager))
                         ->profile('email')
-                        ->output(TiptapOutput::Json)
                         ->required()
                         ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
                             ->form([
@@ -219,7 +215,9 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                                     return;
                                 }
 
-                                $component->state($template->content);
+                                $component->state(
+                                    $component->generateImageUrls($template->content),
+                                );
                             }))
                         ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
                         ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
@@ -278,11 +276,12 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                     ->label('New Email or Text')
                     ->modalHeading('Create new email or text')
                     ->createAnother(false)
-                    ->record(fn (Timeline $record) => $record->timelineable)
-                    ->action(function (array $data) {
+                    ->action(function (array $data, Form $form) {
                         $engagement = new Engagement($data);
                         $engagement->recipient()->associate($this->getRecord());
                         $engagement->save();
+
+                        $form->model($engagement)->saveRelationships();
 
                         $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
 

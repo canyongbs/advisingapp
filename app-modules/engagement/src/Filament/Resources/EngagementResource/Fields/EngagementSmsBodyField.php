@@ -45,7 +45,6 @@ use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Checkbox;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use AdvisingApp\Engagement\Models\Engagement;
 use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Engagement\Models\SmsTemplate;
@@ -68,7 +67,6 @@ class EngagementSmsBodyField
             ])
             ->showMergeTagsInBlocksPanel(is_null($form) ? false : ! ($form->getLivewire() instanceof RelationManager))
             ->profile('sms')
-            ->output(TiptapOutput::Json)
             ->required()
             ->hintAction(fn (TiptapEditor $component) => Action::make('loadSmsTemplate')
                 ->label('Load SMS template')

@@ -178,7 +178,7 @@ export default {
                 950: '#4b0c2f',
             },
         },
-      
+
     },
     plugins: [
         forms,

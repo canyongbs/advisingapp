@@ -48,16 +48,15 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Section;
+use FilamentTiptapEditor\TiptapEditor;
 use AdvisingApp\Portal\Enums\PortalType;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\GlobalSettings;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Infolists\Components\TextEntry;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use Filament\Forms\Components\Actions\Action;
 use App\Filament\Forms\Components\ColorSelect;
 use AdvisingApp\Portal\Settings\PortalSettings;
-use App\Filament\Forms\Components\TiptapEditor;
 use AdvisingApp\Portal\Actions\GeneratePortalEmbedCode;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
@@ -238,8 +237,7 @@ class ManagePortalSettings extends SettingsPage
                         TiptapEditor::make('footer_copyright_statement')
                             ->label('Copyright statement')
                             ->tools(['bold', 'underline', 'italic', 'link'])
-                            ->columnSpanFull()
-                            ->output(TiptapOutput::Json),
+                            ->columnSpanFull(),
                     ])
                     ->columns(2),
             ]);

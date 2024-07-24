@@ -39,13 +39,13 @@ namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResou
 use Filament\Forms\Form;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Section;
+use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Actions\Action as BaseAction;
 use Filament\Forms\Components\Actions\Action;
-use App\Filament\Forms\Components\TiptapEditor;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource;
 
 class EditKnowledgeBaseArticle extends EditRecord
@@ -92,13 +92,6 @@ class EditKnowledgeBaseArticle extends EditRecord
                         'class' => 'text-gray-900 dark:bg-gray-800 dark:text-gray-100 border-2 dark:border-0 border-gray-200 rounded-none mx-4 my-2 px-8 py-4',
                     ]),
             ]);
-    }
-
-    public function afterSave(): void
-    {
-        $this->record = $this->getRecord()->fresh();
-
-        $this->fillForm();
     }
 
     protected function getSavedNotificationTitle(): ?string

@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Forms\Form;
 use Illuminate\Support\Collection;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Actions;
@@ -48,11 +49,11 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Filament\Forms\Components\Wizard\Step;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
 use AdvisingApp\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
@@ -88,8 +89,6 @@ class BulkEngagementAction
                             ->columnSpanFull(),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
-                            ->visibility('public')
-                            ->directory('editor-images/engagements')
                             ->label('Body')
                             ->mergeTags($mergeTags = [
                                 'student first name',
@@ -99,7 +98,6 @@ class BulkEngagementAction
                             ])
                             ->showMergeTagsInBlocksPanel(false)
                             ->profile('email')
-                            ->output(TiptapOutput::Json)
                             ->required()
                             ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
                                 ->form([
@@ -148,7 +146,9 @@ class BulkEngagementAction
                                         return;
                                     }
 
-                                    $component->state($template->content);
+                                    $component->state(
+                                        $component->generateImageUrls($template->content),
+                                    );
                                 }))
                             ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
                             ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
@@ -160,13 +160,20 @@ class BulkEngagementAction
                         ]),
                     ]),
             ])
-            ->action(function (Collection $records, array $data) {
+            ->action(function (Collection $records, array $data, Form $form) {
                 CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
                     'user' => auth()->user(),
                     'records' => $records,
                     'deliveryMethod' => $data['delivery_method'],
                     'subject' => $data['subject'] ?? null,
                     'body' => $data['body'] ?? null,
+                    'temporaryBodyImages' => array_map(
+                        fn (TemporaryUploadedFile $file): array => [
+                            'extension' => $file->getClientOriginalExtension(),
+                            'path' => (fn () => $this->path)->call($file),
+                        ],
+                        $form->getFlatFields()['body']->getTemporaryImages(),
+                    ),
                 ]));
             })
             ->modalSubmitActionLabel('Send')

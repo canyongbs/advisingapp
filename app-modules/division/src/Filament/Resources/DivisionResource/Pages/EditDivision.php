@@ -40,11 +40,11 @@ use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
 use App\Models\NotificationSetting;
 use Filament\Forms\Components\Select;
+use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\Division\Models\Division;
-use App\Filament\Forms\Components\TiptapEditor;
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
 
 class EditDivision extends EditRecord
@@ -68,12 +68,10 @@ class EditDivision extends EditRecord
                     ->columnSpanFull(),
                 TiptapEditor::make('header')
                     ->disk('s3-public')
-                    ->visibility('public')
                     ->string()
                     ->columnSpanFull(),
                 TiptapEditor::make('footer')
                     ->disk('s3-public')
-                    ->visibility('public')
                     ->string()
                     ->columnSpanFull(),
                 Select::make('notification_setting_id')
