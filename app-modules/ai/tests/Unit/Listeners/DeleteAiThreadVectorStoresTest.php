@@ -1,10 +1,11 @@
 <?php
 
-use AdvisingApp\Ai\Enums\AiModel;
 use Mockery\MockInterface;
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Jobs\DeleteAiThreadVectorStores;
+use AdvisingApp\Ai\Events\AiThreadForceDeleting;
+use AdvisingApp\Ai\Listeners\DeleteAiThreadVectorStores;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
 
 it('deletes vector stores for a thread', function () {
@@ -27,5 +28,5 @@ it('deletes vector stores for a thread', function () {
             ->shouldReceive('deleteVectorStore')->times(3),
     );
 
-    (new DeleteAiThreadVectorStores($aiThread))->handle();
+    (new DeleteAiThreadVectorStores())->handle(new AiThreadForceDeleting($aiThread));
 });

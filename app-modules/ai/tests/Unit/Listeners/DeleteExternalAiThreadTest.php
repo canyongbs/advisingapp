@@ -4,7 +4,8 @@ use Mockery\MockInterface;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Jobs\DeleteExternalAiThread;
+use AdvisingApp\Ai\Events\AiThreadForceDeleting;
+use AdvisingApp\Ai\Listeners\DeleteExternalAiThread;
 
 it('deletes vector stores for a thread', function () {
     $aiThread = AiThread::factory()
@@ -22,5 +23,5 @@ it('deletes vector stores for a thread', function () {
             ->shouldReceive('deleteThread')->once(),
     );
 
-    (new DeleteExternalAiThread($aiThread))->handle();
+    (new DeleteExternalAiThread())->handle(new AiThreadForceDeleting($aiThread));
 });

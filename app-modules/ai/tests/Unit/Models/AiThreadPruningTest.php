@@ -10,7 +10,6 @@ use function PHPUnit\Framework\assertNull;
 use function PHPUnit\Framework\assertTrue;
 
 use Illuminate\Database\Console\PruneCommand;
-use AdvisingApp\Ai\Events\AiThreadForceDeleted;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 
 it('properly prunes AiThread models', function (AiThread $thread, bool $shouldPrune) {
@@ -26,12 +25,10 @@ it('properly prunes AiThread models', function (AiThread $thread, bool $shouldPr
         assertNull($thread->fresh());
 
         Event::assertDispatched(AiThreadForceDeleting::class);
-        Event::assertDispatched(AiThreadForceDeleted::class);
     } else {
         assertTrue($thread->fresh()->exists);
 
         Event::assertNotDispatched(AiThreadForceDeleting::class);
-        Event::assertNotDispatched(AiThreadForceDeleted::class);
     }
 })->with([
     'Not soft deleted' => [

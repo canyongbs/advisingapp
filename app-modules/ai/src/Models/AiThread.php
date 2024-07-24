@@ -45,7 +45,6 @@ use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Ai\Events\AiThreadTrashed;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\Ai\Events\AiThreadForceDeleted;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -79,7 +78,6 @@ class AiThread extends BaseModel
     protected $dispatchesEvents = [
         'trashed' => AiThreadTrashed::class,
         'forceDeleting' => AiThreadForceDeleting::class,
-        'forceDeleted' => AiThreadForceDeleted::class,
     ];
 
     public function assistant(): BelongsTo
