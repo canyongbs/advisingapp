@@ -185,7 +185,7 @@ class TiptapConverter
         $document['content'] ??= [];
 
         return [json_decode($this->getEditor()->setContent($document)->descendants(function (&$node) use ($disk, $existingImages, $newImages, $record, $recordAttribute, &$unusedImageKeys) {
-            if (($node->type ?? null) !== 'image') {
+            if ($node->type !== 'image') {
                 return;
             }
 
