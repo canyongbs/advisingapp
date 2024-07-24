@@ -2,18 +2,21 @@
 
 namespace AdvisingApp\Ai\Listeners;
 
+use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
+use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
+
 class DeleteExternalAiMessageFile
 {
-    public function handle(object $event): void
+    public function handle(AiMessageFileForceDeleting $event): void
     {
-        if (empty($this->aiMessageFile->file_id)) {
+        if (empty($event->aiMessageFile->file_id)) {
             return;
         }
 
-        $service = $this->aiMessageFile->message->thread->assistant->model->getService();
+        $service = $event->aiMessageFile->message->thread->assistant->model->getService();
 
         if ($service->supportsMessageFileUploads() && in_array(UploadsFiles::class, class_uses_recursive($service::class))) {
-            $service->deleteFile($this->aiMessageFile);
+            $service->deleteFile($event->aiMessageFile);
         }
     }
 }

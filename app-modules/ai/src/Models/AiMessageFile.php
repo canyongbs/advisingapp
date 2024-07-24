@@ -41,7 +41,7 @@ use Spatie\MediaLibrary\HasMedia;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\Ai\Events\AiMessageFileDeleted;
+use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -61,7 +61,7 @@ class AiMessageFile extends BaseModel implements AiFile, HasMedia
     ];
 
     protected $dispatchesEvents = [
-        'deleted' => AiMessageFileDeleted::class,
+        'forceDeleting' => AiMessageFileForceDeleting::class,
     ];
 
     public function message(): BelongsTo

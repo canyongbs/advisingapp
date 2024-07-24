@@ -5,10 +5,10 @@ use AdvisingApp\Ai\Models\AiMessage;
 use Illuminate\Support\Facades\Event;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\Events\AiMessageFileDeleted;
-use AdvisingApp\Ai\Listeners\DispatchDeleteExternalAiMessageFile;
+use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
+use AdvisingApp\Ai\Listeners\DeleteExternalAiMessageFile;
 
-it('dispatches the AiMessageFileDeleted event when an AiMessageFile is deleted', function () {
+it('dispatches the AiMessageFileForceDeleting event when an AiMessageFile is force deleting', function () {
     $aiMessageFile = AiMessageFile::factory()
         ->has(
             factory: AiMessage::factory()
@@ -23,14 +23,14 @@ it('dispatches the AiMessageFileDeleted event when an AiMessageFile is deleted',
 
     Event::fake();
 
-    $aiMessageFile->delete();
+    $aiMessageFile->forceDelete();
 
-    Event::assertDispatched(AiMessageFileDeleted::class, function (AiMessageFileDeleted $event) use ($aiMessageFile) {
+    Event::assertDispatched(AiMessageFileForceDeleting::class, function (AiMessageFileForceDeleting $event) use ($aiMessageFile) {
         return $event->aiMessageFile->is($aiMessageFile);
     });
 
     Event::assertListening(
-        expectedEvent: AiMessageFileDeleted::class,
-        expectedListener: DispatchDeleteExternalAiMessageFile::class
+        expectedEvent: AiMessageFileForceDeleting::class,
+        expectedListener: DeleteExternalAiMessageFile::class
     );
 });

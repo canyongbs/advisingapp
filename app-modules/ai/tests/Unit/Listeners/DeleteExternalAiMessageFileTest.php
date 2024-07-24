@@ -43,7 +43,8 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\Jobs\DeleteExternalAiMessageFile;
+use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
+use AdvisingApp\Ai\Listeners\DeleteExternalAiMessageFile;
 
 it('deletes a thread', function () {
     $aiMessageFile = AiMessageFile::factory()
@@ -65,5 +66,5 @@ it('deletes a thread', function () {
             ->shouldReceive('deleteFile')->once(),
     );
 
-    (new DeleteExternalAiMessageFile($aiMessageFile))->handle();
+    (new DeleteExternalAiMessageFile())->handle(new AiMessageFileForceDeleting($aiMessageFile));
 });

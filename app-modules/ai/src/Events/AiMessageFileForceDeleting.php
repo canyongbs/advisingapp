@@ -4,14 +4,14 @@ namespace AdvisingApp\Ai\Events;
 
 use AdvisingApp\Ai\Models\AiMessageFile;
 use Illuminate\Foundation\Events\Dispatchable;
-use AdvisingApp\Ai\Listeners\DispatchDeleteExternalAiMessageFile;
+use AdvisingApp\Ai\Listeners\DeleteExternalAiMessageFile;
 
-class AiMessageFileDeleted
+class AiMessageFileForceDeleting
 {
     use Dispatchable;
 
     public const LISTENERS = [
-        DispatchDeleteExternalAiMessageFile::class,
+        DeleteExternalAiMessageFile::class,
     ];
 
     public function __construct(public AiMessageFile $aiMessageFile) {}
