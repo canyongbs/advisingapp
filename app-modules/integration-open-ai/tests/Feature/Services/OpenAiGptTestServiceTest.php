@@ -43,6 +43,7 @@ use function Tests\asSuperAdmin;
 use OpenAI\Resources\Assistants;
 use AdvisingApp\Ai\Enums\AiModel;
 use OpenAI\Resources\ThreadsRuns;
+use OpenAI\Resources\VectorStores;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Http\Client\Request;
 use AdvisingApp\Ai\Models\AiMessage;
@@ -60,6 +61,7 @@ use OpenAI\Responses\Threads\ThreadDeleteResponse;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use OpenAI\Responses\Threads\Runs\ThreadRunListResponse;
 use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
+use OpenAI\Responses\VectorStores\VectorStoreDeleteResponse;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
 use OpenAI\Responses\Threads\Messages\ThreadMessageListResponse;
 
@@ -221,6 +223,16 @@ it('can delete a thread', function () {
     $client = $service->getClient();
 
     $client->addResponses([
+        ThreadResponse::fake([
+            'tool_resources' => [
+                'file_search' => [
+                    'vector_store_ids' => [1, 2, 3],
+                ],
+            ],
+        ]),
+        VectorStoreDeleteResponse::fake(),
+        VectorStoreDeleteResponse::fake(),
+        VectorStoreDeleteResponse::fake(),
         ThreadDeleteResponse::fake(),
     ]);
 
@@ -234,7 +246,8 @@ it('can delete a thread', function () {
     expect($thread->thread_id)
         ->toBeNull();
 
-    $client->assertSent(Threads::class, 1);
+    $client->assertSent(Threads::class, 2);
+    $client->assertSent(VectorStores::class, 3);
 });
 
 it('can send a message', function () {
@@ -359,7 +372,9 @@ it('can retry a message', function () {
             ->state([
                 'thread_id' => Str::random(),
             ]), 'thread')
-        ->make();
+        ->make([
+            'message_id' => null,
+        ]);
 
     $service->retryMessage($message, [], function () {});
 

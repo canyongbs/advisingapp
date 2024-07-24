@@ -38,6 +38,7 @@ namespace AdvisingApp\IntegrationOpenAi\Services;
 
 use OpenAI;
 use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
 use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
@@ -97,5 +98,10 @@ class OpenAiGpt4oService extends BaseOpenAiService implements AiServiceLifecycle
     public function supportsMessageFileUploads(): bool
     {
         return true;
+    }
+
+    public function beforeMessageFileForceDeleted(AiMessageFile $file): void
+    {
+        $this->deleteFile($file);
     }
 }

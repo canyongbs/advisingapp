@@ -34,20 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Actions;
+use Mockery\MockInterface;
 
+use function Pest\Laravel\mock;
+
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
+use AdvisingApp\Ai\Listeners\DeleteExternalAiMessageFile;
 
-class DeleteThread
-{
-    public function __invoke(AiThread $thread): void
-    {
-        $aiService = $thread->assistant->model->getService();
+it('deletes a thread', function () {
+    $aiMessageFile = AiMessageFile::factory()
+        ->for(
+            factory: AiMessage::factory()
+                ->for(
+                    factory: AiThread::factory()
+                        ->for(AiAssistant::factory()->state(['model' => AiModel::OpenAiGpt4o]), 'assistant'),
+                    relationship: 'thread'
+                ),
+            relationship: 'message',
+        )
+        ->create();
 
-        if ($aiService->isThreadExisting($thread)) {
-            $aiService->deleteThread($thread);
-        }
+    mock(
+        $aiMessageFile->message->thread->assistant->model->getService()::class,
+        fn (MockInterface $mock) => $mock
+            ->shouldReceive('beforeMessageFileForceDeleted')->once(),
+    );
 
-        $thread->delete();
-    }
-}
+    (new DeleteExternalAiMessageFile())->handle(new AiMessageFileForceDeleting($aiMessageFile));
+});

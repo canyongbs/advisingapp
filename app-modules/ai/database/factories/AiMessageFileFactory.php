@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
+use AdvisingApp\Ai\Models\AiMessage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -51,7 +52,11 @@ class AiMessageFileFactory extends Factory
     public function definition(): array
     {
         return [
+            'message_id' => AiMessage::factory(),
+            'file_id' => fake()->uuid(),
             'name' => fake()->word(),
+            'temporary_url' => fake()->url(),
+            'mime_type' => fake()->mimeType(),
         ];
     }
 }

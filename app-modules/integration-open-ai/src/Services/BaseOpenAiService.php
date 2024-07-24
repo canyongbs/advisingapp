@@ -39,6 +39,7 @@ namespace AdvisingApp\IntegrationOpenAi\Services;
 use Closure;
 use Generator;
 use Throwable;
+use OpenAI\Testing\ClientFake;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use Illuminate\Support\Facades\Http;
@@ -233,6 +234,10 @@ abstract class BaseOpenAiService implements AiService
 
     public function deleteThread(AiThread $thread): void
     {
+        foreach ($this->retrieveThread($thread)->vectorStoreIds as $vectorStoreId) {
+            $this->deleteVectorStore($vectorStoreId);
+        }
+
         $this->client->threads()->delete($thread->thread_id);
 
         $thread->thread_id = null;
@@ -368,6 +373,11 @@ abstract class BaseOpenAiService implements AiService
     public function supportsAssistantFileUploads(): bool
     {
         return true;
+    }
+
+    public function fake(): void
+    {
+        $this->client = new ClientFake();
     }
 
     protected function createMessage(string $threadId, string $content, array $files): array

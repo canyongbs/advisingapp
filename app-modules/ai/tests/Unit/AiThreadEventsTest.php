@@ -34,40 +34,43 @@
 </COPYRIGHT>
 */
 
-use Mockery\MockInterface;
-
-use function Tests\asSuperAdmin;
-
-use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Ai\Actions\DeleteThread;
-use AdvisingApp\Ai\Services\TestAiService;
+use Illuminate\Support\Facades\Event;
+use AdvisingApp\Ai\Events\AiThreadTrashed;
+use AdvisingApp\Ai\Events\AiThreadForceDeleting;
+use AdvisingApp\Ai\Listeners\DeleteExternalAiThread;
+use AdvisingApp\Ai\Listeners\AiThreadCascadeDeleteAiMessages;
 
-use function Pest\Laravel\assertSoftDeleted;
+it('dispatches the AiThreadTrashed event when an AiThread is deleted', function () {
+    $aiThread = AiThread::factory()->create();
 
-it('deletes a thread', function () {
-    asSuperAdmin();
+    Event::fake();
 
-    /** @phpstan-ignore-next-line */
-    $this->mock(
-        TestAiService::class,
-        fn (MockInterface $mock) => $mock
-            ->shouldReceive('isThreadExisting')->once()->andReturn(true)
-            ->shouldReceive('deleteThread')->once(),
+    $aiThread->delete();
+
+    Event::assertDispatched(AiThreadTrashed::class, function (AiThreadTrashed $event) use ($aiThread) {
+        return $event->aiThread->is($aiThread) && $event->aiThread->trashed();
+    });
+
+    Event::assertListening(
+        expectedEvent: AiThreadTrashed::class,
+        expectedListener: AiThreadCascadeDeleteAiMessages::class
     );
+});
 
-    $thread = AiThread::factory()
-        ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::Test,
-            'is_default' => true,
-            'model' => AiModel::Test,
-        ]), 'assistant')
-        ->for(auth()->user())
-        ->create();
+it('dispatches the AiThreadForceDeleting event when an AiThread is force deleted', function () {
+    $aiThread = AiThread::factory()->create();
 
-    app(DeleteThread::class)($thread);
+    Event::fake();
 
-    assertSoftDeleted($thread);
+    $aiThread->forceDelete();
+
+    Event::assertDispatched(AiThreadForceDeleting::class, function (AiThreadForceDeleting $event) use ($aiThread) {
+        return $event->aiThread->is($aiThread);
+    });
+
+    Event::assertListening(
+        expectedEvent: AiThreadForceDeleting::class,
+        expectedListener: DeleteExternalAiThread::class,
+    );
 });

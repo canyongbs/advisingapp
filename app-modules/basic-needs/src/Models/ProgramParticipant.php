@@ -41,6 +41,9 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @mixin IdeHelperProgramParticipant
+ */
 class ProgramParticipant extends Model
 {
     use HasFactory;

@@ -34,23 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\AiMessageLogResource\Pages;
+namespace AdvisingApp\Ai\Events;
 
-use Filament\Actions\ExportAction;
-use Filament\Resources\Pages\ManageRecords;
-use AdvisingApp\Ai\Filament\Exports\AiMessageExporter;
-use AdvisingApp\Ai\Filament\Resources\AiMessageLogResource;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use Illuminate\Foundation\Events\Dispatchable;
+use AdvisingApp\Ai\Listeners\DeleteExternalAiMessageFile;
 
-class ManageAiMessageLogs extends ManageRecords
+class AiMessageFileForceDeleting
 {
-    protected static string $resource = AiMessageLogResource::class;
+    use Dispatchable;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            ExportAction::make()
-                ->label('Export message logs')
-                ->exporter(AiMessageExporter::class),
-        ];
-    }
+    public const LISTENERS = [
+        DeleteExternalAiMessageFile::class,
+    ];
+
+    public function __construct(public AiMessageFile $aiMessageFile) {}
 }

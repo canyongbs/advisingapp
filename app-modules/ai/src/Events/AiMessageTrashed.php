@@ -34,39 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+namespace AdvisingApp\Ai\Events;
 
-use App\Models\BaseModel;
-use Spatie\MediaLibrary\HasMedia;
-use AdvisingApp\Ai\Models\Contracts\AiFile;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Ai\Models\AiMessage;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Events\Dispatchable;
+use AdvisingApp\Ai\Listeners\AiMessageCascadeDeleteAiMessageFiles;
 
-/**
- * @mixin IdeHelperAiAssistantFile
- */
-class AiAssistantFile extends BaseModel implements AiFile, HasMedia
+class AiMessageTrashed
 {
-    use SoftDeletes;
-    use InteractsWithMedia;
+    use Dispatchable;
+    use SerializesModels;
 
-    protected $fillable = [
-        'file_id',
-        'message_id',
-        'mime_type',
-        'name',
-        'temporary_url',
+    public const LISTENERS = [
+        AiMessageCascadeDeleteAiMessageFiles::class,
     ];
 
-    public function assistant(): BelongsTo
-    {
-        return $this->belongsTo(AiAssistant::class, 'assistant_id');
-    }
-
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('file')
-            ->singleFile();
-    }
+    public function __construct(public AiMessage $aiMessage) {}
 }
