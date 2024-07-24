@@ -41,8 +41,6 @@
         ],
         "psr-4": {
             "FilamentTiptapEditor\\": "src/",
-            "FilamentTiptapEditor\\Tests\\": "tests/src",
-            "FilamentTiptapEditor\\Tests\\Database\\Factories\\": "tests/database/factories"
         }
     },
     "extra": {
