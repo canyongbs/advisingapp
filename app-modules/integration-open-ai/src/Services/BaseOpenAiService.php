@@ -233,6 +233,10 @@ abstract class BaseOpenAiService implements AiService
 
     public function deleteThread(AiThread $thread): void
     {
+        foreach ($this->retrieveThread($thread)->vectorStoreIds as $vectorStoreId) {
+            $this->deleteVectorStore($vectorStoreId);
+        }
+
         $this->client->threads()->delete($thread->thread_id);
 
         $thread->thread_id = null;

@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 use AdvisingApp\Ai\Listeners\DeleteExternalAiThread;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
 
 it('deletes vector stores for a thread', function () {
     $aiThread = AiThread::factory()
@@ -55,6 +56,11 @@ it('deletes vector stores for a thread', function () {
         fn (MockInterface $mock) => $mock
             ->shouldReceive('isThreadExisting')->with($aiThread)->once()->andReturn(true)
             ->shouldReceive('deleteThread')->once(),
+        // ->shouldReceive('retrieveThread')->once()->andReturn(ThreadsDataTransferObject::from([
+        //     'id' => 1,
+        //     'vectorStoreIds' => [1, 2, 3],
+        // ]))
+        // ->shouldReceive('deleteVectorStore')->times(3),
     );
 
     (new DeleteExternalAiThread())->handle(new AiThreadForceDeleting($aiThread));
