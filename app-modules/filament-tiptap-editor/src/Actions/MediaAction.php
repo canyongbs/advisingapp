@@ -129,6 +129,8 @@ class MediaAction extends Action
                         ->default('document'),
                 ];
             })->action(function (TiptapEditor $component, Component&HasForms $livewire, array $data, array $arguments) {
+                $id = null;
+
                 if (filled($data['src'])) {
                     $id = (string) Str::uuid();
 

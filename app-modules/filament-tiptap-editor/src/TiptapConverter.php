@@ -238,7 +238,7 @@ class TiptapConverter
         })->getJSON(), associative: true), $unusedImageKeys];
     }
 
-    public function copyImagesToNewRecord(array $content, Model $replica): array
+    public function copyImagesToNewRecord(array $content, Model $replica, string $disk): array
     {
         $editor = $this->getEditor()->setContent($content);
 
@@ -250,7 +250,7 @@ class TiptapConverter
             $record->getMedia(collectionName: $recordAttribute)->keyBy('uuid') :
             collect([]);
 
-        $editor->descendants(function (&$node) use ($images, $record, $recordAttribute, $replica) {
+        $editor->descendants(function (&$node) use ($disk, $images, $record, $recordAttribute, $replica) {
             if ($node->type !== 'image') {
                 return;
             }
@@ -272,7 +272,7 @@ class TiptapConverter
                 return;
             }
 
-            $newImage = $images->get($id)->copy($replica, collectionName: $this->getName(), diskName: $this->getDisk());
+            $newImage = $images->get($id)->copy($replica, collectionName: $recordAttribute, diskName: $disk);
 
             $node->attrs->id = $newImage->uuid;
         });

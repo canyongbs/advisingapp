@@ -36,19 +36,28 @@
 
 namespace FilamentTiptapEditor\Tests\Fixtures;
 
+use Filament\Forms\ComponentContainer;
+use Filament\Forms\Form;
 use Livewire\Component;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Concerns\InteractsWithForms;
 
+/**
+ * @property-read Form $form
+ */
 class Livewire extends Component implements HasForms
 {
     use InteractsWithForms;
 
     public $data;
 
+    final public function __construct()
+    {
+    }
+
     public static function make(): static
     {
-        return new static();
+        return new static::class();
     }
 
     public function mount(): void

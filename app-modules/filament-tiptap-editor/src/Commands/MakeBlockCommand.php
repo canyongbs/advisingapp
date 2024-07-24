@@ -97,7 +97,7 @@ class MakeBlockCommand extends Command
 
         $path = (string) str($block)
             ->prepend('/')
-            ->prepend($path ?? '')
+            ->prepend($path)
             ->replace('\\', '/')
             ->replace('//', '/')
             ->append('.php');

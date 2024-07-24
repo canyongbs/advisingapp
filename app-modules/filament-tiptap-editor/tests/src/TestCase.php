@@ -52,6 +52,7 @@ use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use FilamentTiptapEditor\FilamentTiptapEditorServiceProvider;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 
+/** @phpstan-ignore-next-line */
 class TestCase extends Orchestra
 {
     use LazilyRefreshDatabase;
@@ -92,6 +93,7 @@ class TestCase extends Orchestra
 
     protected function defineDatabaseMigrations(): void
     {
+        /** @phpstan-ignore-next-line */
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 }

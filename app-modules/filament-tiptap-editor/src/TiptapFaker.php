@@ -47,6 +47,8 @@ class TiptapFaker
 
     protected string $output = '';
 
+    final public function __construct() {}
+
     public static function make(): static
     {
         $static = new static();
