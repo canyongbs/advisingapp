@@ -63,12 +63,10 @@ class CreateDivision extends CreateRecord
                     ->string(),
                 TiptapEditor::make('header')
                     ->disk('s3-public')
-                    ->visibility('public')
                     ->string()
                     ->columnSpanFull(),
                 TiptapEditor::make('footer')
                     ->disk('s3-public')
-                    ->visibility('public')
                     ->string()
                     ->columnSpanFull(),
             ]);

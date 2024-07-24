@@ -61,8 +61,6 @@ class CreateEmailTemplate extends CreateRecord
                     ->string(),
                 TiptapEditor::make('content')
                     ->disk('s3-public')
-                    ->visibility('public')
-                    ->directory('editor-images/email-templates')
                     ->mergeTags([
                         'student first name',
                         'student last name',

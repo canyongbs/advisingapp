@@ -204,6 +204,8 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return app(GenerateEngagementBodyContent::class)(
             $this->body,
             $this->getMergeData(),
+            $this,
+            'body',
         );
     }
 

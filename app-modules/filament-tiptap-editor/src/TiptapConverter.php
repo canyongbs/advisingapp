@@ -12,11 +12,14 @@ use Tiptap\Marks\Underline;
 use Tiptap\Nodes\TableCell;
 use Tiptap\Marks\Superscript;
 use Tiptap\Nodes\TableHeader;
+use Spatie\MediaLibrary\HasMedia;
 use Tiptap\Extensions\StarterKit;
 use Tiptap\Nodes\CodeBlockHighlight;
+use Illuminate\Database\Eloquent\Model;
 use FilamentTiptapEditor\Extensions\Marks;
 use FilamentTiptapEditor\Extensions\Nodes;
 use FilamentTiptapEditor\Extensions\Extensions;
+use FilamentTiptapEditor\Exceptions\ImagesNotResolvableException;
 
 class TiptapConverter
 {
@@ -27,6 +30,10 @@ class TiptapConverter
     protected bool $tableOfContents = false;
 
     protected array $mergeTagsMap = [];
+
+    protected ?Model $record = null;
+
+    protected ?string $recordAttribute = null;
 
     public function getEditor(): Editor
     {
@@ -112,6 +119,8 @@ class TiptapConverter
             $this->parseMergeTags($editor);
         }
 
+        $this->generateImageUrls($editor);
+
         return $editor->getHTML();
     }
 
@@ -128,6 +137,48 @@ class TiptapConverter
         }
 
         return $decoded ? json_decode($editor->getJSON(), true) : $editor->getJSON();
+    }
+
+    public function copyImagesToNewRecord(array $content, Model $replica): array
+    {
+        $editor = $this->getEditor()->setContent($content);
+
+        $record = $this->getRecord();
+
+        $recordAttribute = $this->getRecordAttribute();
+
+        $images = $record instanceof HasMedia ?
+            $record->getMedia(collectionName: $recordAttribute)->keyBy('uuid') :
+            collect([]);
+
+        $editor->descendants(function (&$node) use ($images, $record, $recordAttribute) {
+            if ($node->type !== 'image') {
+                return;
+            }
+
+            $id = $node->attrs?->id;
+
+            if (blank($id)) {
+                return;
+            }
+
+            if (
+                (! ($record instanceof HasMedia)) ||
+                blank($recordAttribute)
+            ) {
+                throw new ImagesNotResolvableException("Image [{$id}] attempted to be replicated, but the TipTap converter was not configured with the media record and attribute.");
+            }
+
+            if (! $images->has($id)) {
+                return;
+            }
+
+            $newImage = $images->get($id)->copy($record, collectionName: $this->getName(), diskName: $this->getDisk());
+
+            $node->attrs->id = $newImage->uuid;
+        });
+
+        return json_decode($editor->getJSON());
     }
 
     public function asText(string | array $content): string
@@ -235,6 +286,52 @@ class TiptapConverter
         return $editor;
     }
 
+    public function generateImageUrls(Editor $editor): Editor
+    {
+        $record = $this->getRecord();
+
+        $recordAttribute = $this->getRecordAttribute();
+
+        $images = $record instanceof HasMedia ? $record->getMedia(collectionName: $recordAttribute)->keyBy('uuid') : collect([]);
+
+        $editor->descendants(function (&$node) use ($images, $record, $recordAttribute) {
+            if ($node->type !== 'image') {
+                return;
+            }
+
+            $id = $node->attrs?->id;
+
+            if (blank($id)) {
+                return;
+            }
+
+            if (
+                (! ($record instanceof HasMedia)) ||
+                blank($recordAttribute)
+            ) {
+                throw new ImagesNotResolvableException("Image [{$id}] attempted to be rendered, but the TipTap converter was not configured with the media record and attribute.");
+            }
+
+            unset($node->attrs->id);
+
+            if (! $images->has($id)) {
+                return;
+            }
+
+            $image = $images->get($id);
+
+            if (config("filesystems.disks.{$images->disk}.visibility") === 'public') {
+                $node->attrs->src = $image->getUrl();
+
+                return;
+            }
+
+            $node->attrs->src = $image->getTemporaryUrl(now()->addDay());
+        });
+
+        return $editor;
+    }
+
     public function generateNestedTOC(array $headings, int $parentLevel = 0): string
     {
         $result = '<ul>';
@@ -252,5 +349,23 @@ class TiptapConverter
         $result .= '</ul>';
 
         return $result;
+    }
+
+    public function record(?Model $record, ?string $attribute): static
+    {
+        $this->record = $record;
+        $this->recordAttribute = $attribute;
+
+        return $this;
+    }
+
+    public function getRecord(): ?Model
+    {
+        return $this->record;
+    }
+
+    public function getRecordAttribute(): ?string
+    {
+        return $this->recordAttribute;
     }
 }

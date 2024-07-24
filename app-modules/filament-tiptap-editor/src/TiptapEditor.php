@@ -115,7 +115,7 @@ class TiptapEditor extends Field
 
             $state = $component->decodeBlocks($state);
             $state = $component->removeImageUrls($state);
-            $component->processImages();
+            $component->processImages($state);
 
             return $state;
         });
@@ -270,6 +270,12 @@ class TiptapEditor extends Field
                 continue;
             }
 
+            if (($block['attrs']['class'] ?? null) === 'filament-tiptap-loading-image') {
+                unset($content[$blockIndex]);
+
+                continue;
+            }
+
             if (! array_key_exists('src', $block['attrs'])) {
                 continue;
             }
@@ -288,12 +294,14 @@ class TiptapEditor extends Field
         return $document;
     }
 
-    public function processImages(): void
+    public function processImages(?array $originalState = null): array
     {
         $record = $this->getRecord();
 
+        $originalState ??= ($record?->{$this->getName()} ?? $this->getState());
+
         if (! ($record instanceof HasMedia)) {
-            return;
+            return $originalState;
         }
 
         $images = $record->getMedia(collectionName: $this->getName())->keyBy('uuid');
@@ -302,8 +310,8 @@ class TiptapEditor extends Field
         $livewire = $this->getLivewire();
         $statePath = $this->getStatePath();
 
-        $unusedImageKeys = $this->processImagesInDocument(
-            $this->getState(),
+        [$newState, $unusedImageKeys] = $this->processImagesInDocument(
+            $originalState,
             $record,
             existingImages: $images,
             newImages: data_get($livewire->componentFileAttachments, $statePath) ?? [],
@@ -315,6 +323,18 @@ class TiptapEditor extends Field
             ->delete();
 
         data_forget($livewire->componentFileAttachments, $statePath);
+
+        // We need to save the new state back to the record if the image IDs have changed.
+        if (
+            $record->wasRecentlyCreated &&
+            ($originalState !== $newState)
+        ) {
+            $record->update([
+                $this->getName() => $newState,
+            ]);
+        }
+
+        return $newState;
     }
 
     /**
@@ -616,9 +636,9 @@ class TiptapEditor extends Field
     {
         $content = $document['content'] ?? [];
 
-        foreach ($content as $block) {
+        foreach ($content as $blockIndex => $block) {
             if (array_key_exists('content', $block)) {
-                $unusedImageKeys = $this->processImagesInDocument($block, $record, $existingImages, $newImages, $unusedImageKeys);
+                [$content[$blockIndex], $unusedImageKeys] = $this->processImagesInDocument($block, $record, $existingImages, $newImages, $unusedImageKeys);
             }
 
             if (($block['type'] ?? null) !== 'image') {
@@ -631,8 +651,8 @@ class TiptapEditor extends Field
                 continue;
             }
 
-            if (($unusedMediaIndex = array_search($id, $unusedImageKeys)) !== false) {
-                unset($unusedImageKeys[$unusedMediaIndex]);
+            if (($unusedImageIndex = array_search($id, $unusedImageKeys)) !== false) {
+                unset($unusedImageKeys[$unusedImageIndex]);
             }
 
             if ($existingImages->has($id)) {
@@ -651,15 +671,19 @@ class TiptapEditor extends Field
                 continue;
             }
 
-            $existingMedia = Media::findByUuid($id);
+            $existingImage = Media::findByUuid($id);
 
-            if (! $existingMedia) {
+            if (! $existingImage) {
                 continue;
             }
 
-            $existingMedia->copy($record, collectionName: $this->getName(), diskName: $this->getDisk());
+            $newImage = $existingImage->copy($record, collectionName: $this->getName(), diskName: $this->getDisk());
+
+            $content[$blockIndex]['attrs']['id'] = $newImage->uuid;
         }
 
-        return $unusedImageKeys;
+        $document['content'] = $content;
+
+        return [$document, $unusedImageKeys];
     }
 }

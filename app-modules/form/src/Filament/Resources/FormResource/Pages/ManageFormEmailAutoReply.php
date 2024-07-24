@@ -94,8 +94,6 @@ class ManageFormEmailAutoReply extends EditRecord
                             ->columnSpanFull(),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
-                            ->visibility('public')
-                            ->directory('editor-images/engagements')
                             ->mergeTags([
                                 'student first name',
                                 'student last name',

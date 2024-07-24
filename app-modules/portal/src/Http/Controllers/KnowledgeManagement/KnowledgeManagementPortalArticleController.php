@@ -40,7 +40,6 @@ use Laravel\Pennant\Feature;
 use App\Settings\DisplaySettings;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Support\MediaEncoding\TiptapMediaEncoder;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
@@ -67,7 +66,7 @@ class KnowledgeManagementPortalArticleController extends Controller
                 'categoryId' => $article->category_id,
                 'name' => $article->title,
                 'lastUpdated' => $articleUpdatedAt->format('M d Y, h:m a'),
-                'content' => tiptap_converter()->asHTML(TiptapMediaEncoder::decode($article->article_details)),
+                'content' => tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details),
             ]),
         ]);
     }

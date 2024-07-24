@@ -71,6 +71,8 @@ class FormEmailAutoReply extends BaseModel
         return app(GenerateEngagementBodyContent::class)(
             $this->body,
             $this->getMergeData($author),
+            $this,
+            'body',
         );
     }
 

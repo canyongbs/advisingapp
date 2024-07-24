@@ -68,12 +68,10 @@ class EditDivision extends EditRecord
                     ->columnSpanFull(),
                 TiptapEditor::make('header')
                     ->disk('s3-public')
-                    ->visibility('public')
                     ->string()
                     ->columnSpanFull(),
                 TiptapEditor::make('footer')
                     ->disk('s3-public')
-                    ->visibility('public')
                     ->string()
                     ->columnSpanFull(),
                 Select::make('notification_setting_id')

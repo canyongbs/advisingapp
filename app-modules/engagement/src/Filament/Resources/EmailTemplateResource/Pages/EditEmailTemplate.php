@@ -61,7 +61,6 @@ class EditEmailTemplate extends EditRecord
                     ->string(),
                 TiptapEditor::make('content')
                     ->disk('s3-public')
-                    ->visibility('public')
                     ->mergeTags([
                         'student first name',
                         'student last name',

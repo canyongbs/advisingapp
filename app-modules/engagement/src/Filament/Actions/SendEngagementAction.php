@@ -80,8 +80,6 @@ class SendEngagementAction extends Action
                             ->columnSpanFull(),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
-                            ->visibility('public')
-                            ->directory('editor-images/engagements')
                             ->label('Body')
                             ->mergeTags([
                                 'student first name',
