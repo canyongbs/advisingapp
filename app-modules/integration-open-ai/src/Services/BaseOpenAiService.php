@@ -39,6 +39,7 @@ namespace AdvisingApp\IntegrationOpenAi\Services;
 use Closure;
 use Generator;
 use Throwable;
+use OpenAI\Testing\ClientFake;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use Illuminate\Support\Facades\Http;
@@ -372,6 +373,11 @@ abstract class BaseOpenAiService implements AiService
     public function supportsAssistantFileUploads(): bool
     {
         return true;
+    }
+
+    public function fake()
+    {
+        $this->client = new ClientFake();
     }
 
     protected function createMessage(string $threadId, string $content, array $files): array

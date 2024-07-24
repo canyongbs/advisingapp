@@ -36,13 +36,11 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
-use OpenAI;
-
 class OpenAiGptTestService extends BaseOpenAiService
 {
     public function __construct()
     {
-        $this->client = new OpenAI\Testing\ClientFake();
+        $this->fake();
     }
 
     public function supportsAssistantFileUploads(): bool
