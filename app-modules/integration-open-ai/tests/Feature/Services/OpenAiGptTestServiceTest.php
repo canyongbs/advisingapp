@@ -359,7 +359,9 @@ it('can retry a message', function () {
             ->state([
                 'thread_id' => Str::random(),
             ]), 'thread')
-        ->make();
+        ->make([
+            'message_id' => null,
+        ]);
 
     $service->retryMessage($message, [], function () {});
 
