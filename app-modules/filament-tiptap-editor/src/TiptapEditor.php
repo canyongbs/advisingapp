@@ -92,6 +92,8 @@ class TiptapEditor extends Field
 
     protected bool $shouldShowMergeTagsInBlocksPanel = true;
 
+    protected ?string $recordAttribute = null;
+
     protected array $gridLayouts = [
         'two-columns',
         'three-columns',
@@ -260,7 +262,7 @@ class TiptapEditor extends Field
         $record = $this->getRecord();
 
         $images ??= ($record instanceof HasMedia) ?
-            $record->getMedia(collectionName: $this->getName())->keyBy('uuid') :
+            $record->getMedia(collectionName: $this->getRecordAttribute())->keyBy('uuid') :
             collect();
 
         $content = $document['content'] ?? [];
@@ -347,13 +349,13 @@ class TiptapEditor extends Field
     {
         $record = $this->getRecord();
 
-        $originalState ??= ($record?->{$this->getName()} ?? $this->getState());
+        $originalState ??= (data_get($record, $this->getRecordAttribute()) ?? $this->getState());
 
         if (! ($record instanceof HasMedia)) {
             return $originalState;
         }
 
-        $images = $record->getMedia(collectionName: $this->getName())->keyBy('uuid');
+        $images = $record->getMedia(collectionName: $this->getRecordAttribute())->keyBy('uuid');
         $unusedImageKeys = $images->keys()->all();
 
         $livewire = $this->getLivewire();
@@ -362,7 +364,7 @@ class TiptapEditor extends Field
             $originalState,
             disk: $this->getDisk(),
             record: $record,
-            recordAttribute: $this->getName(),
+            recordAttribute: $this->getRecordAttribute(),
             newImages: $this->getTemporaryImages(),
             existingImages: $images,
             unusedImageKeys: $unusedImageKeys,
@@ -379,9 +381,23 @@ class TiptapEditor extends Field
             $record->wasRecentlyCreated &&
             ($originalState !== $newState)
         ) {
-            $record->update([
-                $this->getName() => $newState,
-            ]);
+            $recordAttribute = $this->getRecordAttribute();
+
+            if (str($recordAttribute)->contains('.')) {
+                $attributeState = $record->getAttribute((string) str($recordAttribute)->before('.'));
+
+                $record->fill([
+                    ((string) str($recordAttribute)->before('.')) => data_set(
+                        $attributeState,
+                        (string) str($recordAttribute)->after('.'),
+                        $newState,
+                    ),
+                ]);
+            } else {
+                $record->{$recordAttribute} = $newState;
+            }
+
+            $record->save();
         }
 
         return $newState;
@@ -685,5 +701,17 @@ class TiptapEditor extends Field
     public function getGridLayouts(): array
     {
         return $this->gridLayouts;
+    }
+
+    public function recordAttribute(?string $attribute): static
+    {
+        $this->recordAttribute = $attribute;
+
+        return $this;
+    }
+
+    public function getRecordAttribute(): string
+    {
+        return $this->recordAttribute ?? $this->getName();
     }
 }

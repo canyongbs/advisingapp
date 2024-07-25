@@ -146,7 +146,7 @@ class TiptapConverter
         return $this;
     }
 
-    public function asHTML(string | array $content, bool $toc = false, int $maxDepth = 3): string
+    public function asHTML(string | array $content, bool $toc = false, int $maxDepth = 3, array $newImages = []): string
     {
         $editor = $this->getEditor()->setContent($content);
 
@@ -158,7 +158,7 @@ class TiptapConverter
             $this->parseMergeTags($editor);
         }
 
-        $this->generateImageUrls($editor);
+        $this->generateImageUrls($editor, $newImages);
 
         return $editor->getHTML();
     }
@@ -387,7 +387,7 @@ class TiptapConverter
         return $editor;
     }
 
-    public function generateImageUrls(Editor $editor): Editor
+    public function generateImageUrls(Editor $editor, array $newImages = []): Editor
     {
         $record = $this->getRecord();
 
@@ -395,7 +395,7 @@ class TiptapConverter
 
         $images = $record instanceof HasMedia ? $record->getMedia(collectionName: $recordAttribute)->keyBy('uuid') : collect([]);
 
-        $editor->descendants(function (&$node) use ($images, $record, $recordAttribute) {
+        $editor->descendants(function (&$node) use ($images, $newImages, $record, $recordAttribute) {
             if ($node->type !== 'image') {
                 return;
             }
@@ -406,14 +406,13 @@ class TiptapConverter
                 return;
             }
 
-            if (
-                (! ($record instanceof HasMedia)) ||
-                blank($recordAttribute)
-            ) {
-                throw new ImagesNotResolvableException("Image [{$id}] attempted to be rendered, but the TipTap converter was not configured with the media record and attribute.");
-            }
-
             unset($node->attrs->id);
+
+            if ($newImage = ($newImages[$id] ?? null)) {
+                $node->attrs->src = $newImage->temporaryUrl();
+
+                return;
+            }
 
             if (! $images->has($id)) {
                 return;

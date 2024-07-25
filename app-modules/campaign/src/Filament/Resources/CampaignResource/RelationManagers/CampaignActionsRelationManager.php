@@ -36,7 +36,10 @@
 
 namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\RelationManagers;
 
+use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
+use AdvisingApp\Campaign\Models\Campaign;
 use Filament\Forms\Form;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Builder;
@@ -51,6 +54,7 @@ use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use Filament\Resources\RelationManagers\RelationManager;
+use Illuminate\Support\Arr;
 
 class CampaignActionsRelationManager extends RelationManager
 {
@@ -58,20 +62,15 @@ class CampaignActionsRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        /** @var CampaignAction $action */
-        $action = $form->model;
-
-        $form->model = $action->type->getModel();
-
         return $form
             ->schema([
                 TextInput::make('type')
                     ->required()
                     ->maxLength(255)
                     ->disabled(),
-                Group::make($action->type->getEditFields())
-                    ->statePath('data'),
-            ]);
+                Group::make(fn (CampaignAction $record) => $record->type->getEditFields()),
+            ])
+            ->columns(1);
     }
 
     public function table(Table $table): Table
@@ -84,27 +83,33 @@ class CampaignActionsRelationManager extends RelationManager
                     ->dateTime(timezone: app(CampaignSettings::class)->getActionExecutionTimezone()),
             ])
             ->headerActions([
-                CreateAction::make()
+                Action::make('create')
+                    ->modalHeading('Create campaign actions')
                     ->form([
                         Builder::make('data')
+                            ->hiddenLabel()
                             ->addActionLabel('Add a new Campaign Action')
-                            ->blocks(CampaignActionType::blocks()),
+                            ->blocks(CampaignActionType::blocks())
+                            ->dehydrated(false)
+                            ->model($this->getOwnerRecord())
+                            ->saveRelationshipsUsing(function (Builder $component, Campaign $record) {
+                                foreach ($component->getChildComponentContainers() as $item) {
+                                    /** @var CampaignActionBlock $block */
+                                    $block = $item->getParentComponent();
+
+                                    $itemData = $item->getState(shouldCallHooksBefore: false);
+
+                                    $action = $record->actions()->create([
+                                        'type' => $block->getName(),
+                                        'data' => Arr::except($itemData, ['execute_at']),
+                                        'execute_at' => $itemData['execute_at'],
+                                    ]);
+
+                                    $item->model($action)->saveRelationships();
+                                }
+                            }),
                     ])
-                    ->using(function (array $data, string $model): CampaignAction {
-                        foreach ($data['data'] as $action) {
-                            $executeAt = $action['data']['execute_at'];
-                            unset($action['data']['execute_at']);
-
-                            $lastModel = $model::create([
-                                'campaign_id' => $this->getOwnerRecord()->id,
-                                'type' => $action['type'],
-                                'data' => $action['data'],
-                                'execute_at' => $executeAt,
-                            ]);
-                        }
-
-                        return $lastModel ?? new CampaignAction();
-                    })
+                    ->action(fn () => null)
                     ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
             ])
             ->actions([

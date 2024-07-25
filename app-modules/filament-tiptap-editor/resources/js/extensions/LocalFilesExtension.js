@@ -77,6 +77,7 @@ const LocalFilesPlugin = ({ key, editor, getFileAttachmentUrl, statePath, upload
 
                 files.forEach((file, fileIndex) => {
                     editor.setEditable(false);
+                    editorView.dom.dispatchEvent(new CustomEvent('tiptap-uploading-file', { bubbles: true, detail: { statePath } }));
 
                     const fileReader = new FileReader();
 
@@ -106,8 +107,10 @@ const LocalFilesPlugin = ({ key, editor, getFileAttachmentUrl, statePath, upload
 
                             editor
                                 .chain()
+                                .setNodeSelection(position?.pos ?? 0)
+                                .deleteSelection()
                                 .insertContentAt(
-                                    { from: position?.pos ?? 0, to: (position?.pos ?? 0) + 1 },
+                                    position?.pos ?? 0,
                                     {
                                         type: 'image',
                                         attrs: {
@@ -119,6 +122,7 @@ const LocalFilesPlugin = ({ key, editor, getFileAttachmentUrl, statePath, upload
                                 .run();
 
                             editor.setEditable(true);
+                            editorView.dom.dispatchEvent(new CustomEvent('tiptap-uploaded-file', { bubbles: true, detail: { statePath } }));
 
                             if (fileIndex === files.length - 1) {
                                 dispatchFormEvent(editorView, 'form-processing-finished');
@@ -151,6 +155,7 @@ const LocalFilesPlugin = ({ key, editor, getFileAttachmentUrl, statePath, upload
 
                 files.forEach((file, fileIndex) => {
                     editor.setEditable(false);
+                    editorView.dom.dispatchEvent(new CustomEvent('tiptap-uploading-file', { bubbles: true, detail: { statePath } }));
 
                     const fileReader = new FileReader();
 
@@ -180,8 +185,10 @@ const LocalFilesPlugin = ({ key, editor, getFileAttachmentUrl, statePath, upload
 
                             editor
                                 .chain()
+                                .setNodeSelection(editor.state.selection.anchor)
+                                .deleteSelection()
                                 .insertContentAt(
-                                    { from: editor.state.selection.anchor - 1, to: editor.state.selection.anchor },
+                                    editor.state.selection.anchor,
                                     {
                                         type: 'image',
                                         attrs: {
@@ -193,6 +200,7 @@ const LocalFilesPlugin = ({ key, editor, getFileAttachmentUrl, statePath, upload
                                 .run();
 
                             editor.setEditable(true);
+                            editorView.dom.dispatchEvent(new CustomEvent('tiptap-uploaded-file', { bubbles: true, detail: { statePath } }));
 
                             if (fileIndex === files.length - 1) {
                                 dispatchFormEvent(editorView, 'form-processing-finished');
