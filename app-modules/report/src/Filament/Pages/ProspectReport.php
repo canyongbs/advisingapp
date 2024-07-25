@@ -45,42 +45,44 @@ use AdvisingApp\Report\Filament\Widgets\ProspectReportTableChart;
 
 class ProspectReport extends Dashboard
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+  protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Prospects';
+  protected static ?string $navigationGroup = 'Prospects';
 
-    protected static string $routePath = 'prospect-report';
+  protected static string $routePath = 'prospect-report';
 
-    protected static ?string $title = 'Prospects (Overview)';
+  protected static ?string $title = 'Overview';
 
-    protected static ?string $cluster = ReportLibrary::class;
+  protected static ?string $cluster = ReportLibrary::class;
 
-    protected $cacheTag = 'prospect-report-cache';
+  protected static ?int $navigationSort = 2;
 
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
+  protected $cacheTag = 'prospect-report-cache';
 
-        return $user->can('report-library.view-any');
-    }
+  public static function canAccess(): bool
+  {
+    /** @var User $user */
+    $user = auth()->user();
 
-    public function getWidgets(): array
-    {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            ProspectReportStats::make(['cacheTag' => $this->cacheTag]),
-            ProspectReportLineChart::make(['cacheTag' => $this->cacheTag]),
-            ProspectReportTableChart::make(['cacheTag' => $this->cacheTag]),
-        ];
-    }
+    return $user->can('report-library.view-any');
+  }
 
-    public function getColumns(): int | string | array
-    {
-        return [
-            'sm' => 2,
-            'md' => 4,
-            'lg' => 4,
-        ];
-    }
+  public function getWidgets(): array
+  {
+    return [
+      RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+      ProspectReportStats::make(['cacheTag' => $this->cacheTag]),
+      ProspectReportLineChart::make(['cacheTag' => $this->cacheTag]),
+      ProspectReportTableChart::make(['cacheTag' => $this->cacheTag]),
+    ];
+  }
+
+  public function getColumns(): int | string | array
+  {
+    return [
+      'sm' => 2,
+      'md' => 4,
+      'lg' => 4,
+    ];
+  }
 }
