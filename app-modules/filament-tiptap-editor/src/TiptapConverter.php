@@ -395,7 +395,7 @@ class TiptapConverter
 
         $images = $record instanceof HasMedia ? $record->getMedia(collectionName: $recordAttribute)->keyBy('uuid') : collect([]);
 
-        $editor->descendants(function (&$node) use ($images, $newImages, $record, $recordAttribute) {
+        $editor->descendants(function (&$node) use ($images, $newImages) {
             if ($node->type !== 'image') {
                 return;
             }
