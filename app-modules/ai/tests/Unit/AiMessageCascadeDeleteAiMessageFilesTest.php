@@ -34,39 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+use AdvisingApp\Ai\Models\AiMessage;
+use Illuminate\Support\Facades\Event;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Events\AiMessageTrashed;
 
-use App\Models\BaseModel;
-use Spatie\MediaLibrary\HasMedia;
-use AdvisingApp\Ai\Models\Contracts\AiFile;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use function Pest\Laravel\assertDatabaseCount;
 
-/**
- * @mixin IdeHelperAiAssistantFile
- */
-class AiAssistantFile extends BaseModel implements AiFile, HasMedia
-{
-    use SoftDeletes;
-    use InteractsWithMedia;
+use AdvisingApp\Ai\Listeners\AiMessageCascadeDeleteAiMessageFiles;
 
-    protected $fillable = [
-        'file_id',
-        'message_id',
-        'mime_type',
-        'name',
-        'temporary_url',
-    ];
+it('soft deletes related AiMessageFiles when an AiMessage is deleted', function () {
+    $aiMessage = AiMessage::factory()
+        ->has(AiMessageFile::factory(), 'files')
+        ->create([
+            'deleted_at' => now(),
+        ]);
 
-    public function assistant(): BelongsTo
-    {
-        return $this->belongsTo(AiAssistant::class, 'assistant_id');
-    }
+    assertDatabaseCount('ai_message_files', 1);
 
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('file')
-            ->singleFile();
-    }
-}
+    $aiMessage->files->each(fn (AiMessageFile $file) => expect($file->trashed())->toBeFalse());
+
+    Event::fake();
+
+    (new AiMessageCascadeDeleteAiMessageFiles())->handle(new AiMessageTrashed($aiMessage));
+
+    assertDatabaseCount('ai_messages', 1);
+
+    $aiMessage->files->each(fn (AiMessageFile $file) => expect($file->fresh()->trashed())->toBeTrue());
+});

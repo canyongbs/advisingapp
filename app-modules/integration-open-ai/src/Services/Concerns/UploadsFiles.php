@@ -117,6 +117,11 @@ trait UploadsFiles
         ]);
     }
 
+    public function deleteVectorStore(string $vectorStoreId): void
+    {
+        $this->client->vectorStores()->delete($vectorStoreId);
+    }
+
     public function awaitVectorStoreProcessing(VectorStoresDataTransferObject $vectorStore): void
     {
         $timeout = 60;

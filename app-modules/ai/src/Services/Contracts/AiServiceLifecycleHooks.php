@@ -37,10 +37,13 @@
 namespace AdvisingApp\Ai\Services\Contracts;
 
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiMessageFile;
 
 interface AiServiceLifecycleHooks
 {
     public function afterThreadSelected(AiThread $thread): void;
 
     public function afterLoadFirstThread(AiThread $thread): void;
+
+    public function beforeMessageFileForceDeleted(AiMessageFile $file): void;
 }

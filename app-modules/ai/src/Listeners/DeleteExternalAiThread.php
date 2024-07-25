@@ -34,39 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+namespace AdvisingApp\Ai\Listeners;
 
-use App\Models\BaseModel;
-use Spatie\MediaLibrary\HasMedia;
-use AdvisingApp\Ai\Models\Contracts\AiFile;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 
-/**
- * @mixin IdeHelperAiAssistantFile
- */
-class AiAssistantFile extends BaseModel implements AiFile, HasMedia
+class DeleteExternalAiThread
 {
-    use SoftDeletes;
-    use InteractsWithMedia;
-
-    protected $fillable = [
-        'file_id',
-        'message_id',
-        'mime_type',
-        'name',
-        'temporary_url',
-    ];
-
-    public function assistant(): BelongsTo
+    public function handle(AiThreadForceDeleting $event): void
     {
-        return $this->belongsTo(AiAssistant::class, 'assistant_id');
-    }
+        $service = $event->aiThread->assistant->model->getService();
 
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('file')
-            ->singleFile();
+        if ($service->isThreadExisting($event->aiThread)) {
+            $service->deleteThread($event->aiThread);
+        }
     }
 }

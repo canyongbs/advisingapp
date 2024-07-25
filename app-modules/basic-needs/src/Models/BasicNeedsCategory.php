@@ -44,6 +44,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
+/**
+ * @mixin IdeHelperBasicNeedsCategory
+ */
 class BasicNeedsCategory extends Model implements Auditable
 {
     use HasFactory;

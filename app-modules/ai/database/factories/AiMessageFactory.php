@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
+use App\Models\User;
+use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -51,7 +53,12 @@ class AiMessageFactory extends Factory
     public function definition(): array
     {
         return [
+            'message_id' => fake()->uuid(),
             'content' => fake()->sentence(),
+            'context' => fake()->word(),
+            'request' => fake()->word(),
+            'thread_id' => AiThread::factory(),
+            'user_id' => User::factory(),
         ];
     }
 }

@@ -34,39 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+use function Pest\Laravel\artisan;
 
-use App\Models\BaseModel;
-use Spatie\MediaLibrary\HasMedia;
-use AdvisingApp\Ai\Models\Contracts\AiFile;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Event;
+use AdvisingApp\Ai\Models\AiMessageFile;
 
-/**
- * @mixin IdeHelperAiAssistantFile
- */
-class AiAssistantFile extends BaseModel implements AiFile, HasMedia
-{
-    use SoftDeletes;
-    use InteractsWithMedia;
+use function PHPUnit\Framework\assertNull;
+use function PHPUnit\Framework\assertTrue;
 
-    protected $fillable = [
-        'file_id',
-        'message_id',
-        'mime_type',
-        'name',
-        'temporary_url',
-    ];
+use Illuminate\Database\Console\PruneCommand;
 
-    public function assistant(): BelongsTo
-    {
-        return $this->belongsTo(AiAssistant::class, 'assistant_id');
+it('properly prunes AiMessageFile models', function (AiMessageFile $messageFile, bool $shouldPrune) {
+    assertTrue($messageFile->exists);
+
+    Event::fake();
+
+    artisan(PruneCommand::class, [
+        '--model' => AiMessageFile::class,
+    ]);
+
+    if ($shouldPrune) {
+        assertNull($messageFile->fresh());
+    } else {
+        assertTrue($messageFile->fresh()->exists);
     }
-
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('file')
-            ->singleFile();
-    }
-}
+})->with([
+    'Not soft deleted' => [
+        fn () => AiMessageFile::factory()->create(),
+        false,
+    ],
+    'Soft deleted recently' => [
+        fn () => AiMessageFile::factory()->create(['deleted_at' => now()]),
+        false,
+    ],
+    'Soft deleted more than a week ago' => [
+        fn () => AiMessageFile::factory()->create(['deleted_at' => now()->subDays(8)]),
+        true,
+    ],
+]);

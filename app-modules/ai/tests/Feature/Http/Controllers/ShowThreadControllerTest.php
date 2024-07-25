@@ -133,6 +133,7 @@ it('converts messages sent by assistants into Markdown', function () {
         ->for(auth()->user())
         ->has(AiMessage::factory()->state([
             'content' => 'Hello, world!',
+            'user_id' => null,
         ]), 'messages')
         ->create();
 
@@ -154,6 +155,7 @@ it('removes unsafe HTML from messages sent by assistants', function () {
         ->for(auth()->user())
         ->has(AiMessage::factory()->state([
             'content' => '<script>alert("Hello, world!")</script>',
+            'user_id' => null,
         ]), 'messages')
         ->create();
 

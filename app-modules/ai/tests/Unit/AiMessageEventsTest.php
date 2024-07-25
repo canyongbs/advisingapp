@@ -34,39 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+use AdvisingApp\Ai\Models\AiMessage;
+use Illuminate\Support\Facades\Event;
+use AdvisingApp\Ai\Events\AiMessageTrashed;
+use AdvisingApp\Ai\Listeners\AiMessageCascadeDeleteAiMessageFiles;
 
-use App\Models\BaseModel;
-use Spatie\MediaLibrary\HasMedia;
-use AdvisingApp\Ai\Models\Contracts\AiFile;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+it('dispatches the AiMessageTrashed event when an AiMessage is deleted', function () {
+    $aiMessage = AiMessage::factory()->create();
 
-/**
- * @mixin IdeHelperAiAssistantFile
- */
-class AiAssistantFile extends BaseModel implements AiFile, HasMedia
-{
-    use SoftDeletes;
-    use InteractsWithMedia;
+    Event::fake();
 
-    protected $fillable = [
-        'file_id',
-        'message_id',
-        'mime_type',
-        'name',
-        'temporary_url',
-    ];
+    $aiMessage->delete();
 
-    public function assistant(): BelongsTo
-    {
-        return $this->belongsTo(AiAssistant::class, 'assistant_id');
-    }
+    Event::assertDispatched(AiMessageTrashed::class, function (AiMessageTrashed $event) use ($aiMessage) {
+        return $event->aiMessage->is($aiMessage) && $event->aiMessage->trashed();
+    });
 
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('file')
-            ->singleFile();
-    }
-}
+    Event::assertListening(
+        expectedEvent: AiMessageTrashed::class,
+        expectedListener: AiMessageCascadeDeleteAiMessageFiles::class
+    );
+});

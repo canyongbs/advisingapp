@@ -34,53 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Exports;
+namespace AdvisingApp\Ai\Console\Commands;
 
-use AdvisingApp\Ai\Models\AiMessage;
-use Filament\Actions\Exports\Exporter;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Actions\Exports\ExportColumn;
-use Filament\Actions\Exports\Models\Export;
-use Filament\Actions\Exports\Enums\ExportFormat;
-use AdvisingApp\Ai\Models\Scopes\AuditableAiMessages;
+use Illuminate\Console\Command;
+use AdvisingApp\Ai\Models\AiThread;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
-class AiMessageExporter extends Exporter
+class DeleteUnsavedAiThreads extends Command
 {
-    protected static ?string $model = AiMessage::class;
+    use TenantAware;
 
-    public static function modifyQuery(Builder $query): Builder
+    protected $signature = 'ai:delete-unsaved-ai-threads {--tenant=*}';
+
+    protected $description = 'Finds unsaved AiThreads older than 3 days and marks them for deletion.';
+
+    public function handle()
     {
-        return $query->tap(app(AuditableAiMessages::class));
-    }
-
-    public static function getColumns(): array
-    {
-        return [
-            ExportColumn::make('content'),
-            ExportColumn::make('context'),
-            ExportColumn::make('user.name'),
-            ExportColumn::make('request')
-                ->listAsJson(),
-            ExportColumn::make('created_at'),
-        ];
-    }
-
-    public static function getCompletedNotificationBody(Export $export): string
-    {
-        $body = 'Your chat message log export has completed and ' . number_format($export->successful_rows) . ' ' . str('row')->plural($export->successful_rows) . ' exported.';
-
-        if ($failedRowsCount = $export->getFailedRowsCount()) {
-            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to export.';
-        }
-
-        return $body;
-    }
-
-    /**
-     * Using CSV format causes issues with the JSON commas not being properly escaped by league/csv.
-     */
-    public function getFormats(): array
-    {
-        return [ExportFormat::Xlsx];
+        AiThread::query()
+            ->whereNull('saved_at')
+            ->where('created_at', '<=', now()->subDays(3))
+            ->each(fn (AiThread $aiThread) => $aiThread->delete());
     }
 }

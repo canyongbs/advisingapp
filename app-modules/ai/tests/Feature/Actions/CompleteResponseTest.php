@@ -63,7 +63,10 @@ it('completes the last response', function () {
             relationship: 'messages',
         )
         ->has(
-            AiMessage::factory()->state(['created_at' => now()->subMinutes(2)]),
+            AiMessage::factory()->state([
+                'created_at' => now()->subMinutes(2),
+                'user_id' => null,
+            ]),
             relationship: 'messages',
         )
         ->has(
@@ -71,7 +74,10 @@ it('completes the last response', function () {
             relationship: 'messages',
         )
         ->has(
-            AiMessage::factory()->state(['created_at' => now()->subMinute()]),
+            AiMessage::factory()->state([
+                'created_at' => now()->subMinute(),
+                'user_id' => null,
+            ]),
             relationship: 'messages',
         )
         ->has(
@@ -79,7 +85,9 @@ it('completes the last response', function () {
             relationship: 'messages',
         )
         ->has(
-            AiMessage::factory(),
+            AiMessage::factory()->state([
+                'user_id' => null,
+            ]),
             relationship: 'messages',
         )
         ->create();
@@ -129,7 +137,10 @@ it('strips the appended ... when completing the last response', function () {
             relationship: 'messages',
         )
         ->has(
-            AiMessage::factory()->state(['content' => 'foo...bar...baz...']),
+            AiMessage::factory()->state([
+                'content' => 'foo...bar...baz...',
+                'user_id' => null,
+            ]),
             relationship: 'messages',
         )
         ->create();

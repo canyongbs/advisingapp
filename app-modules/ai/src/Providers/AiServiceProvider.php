@@ -48,12 +48,16 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThreadFolder;
+use AdvisingApp\Ai\Events\AiThreadTrashed;
 use AdvisingApp\Ai\Models\AiAssistantFile;
+use AdvisingApp\Ai\Events\AiMessageTrashed;
 use AdvisingApp\Ai\Observers\PromptObserver;
 use AdvisingApp\Ai\Registries\AiRbacRegistry;
 use AdvisingApp\Ai\Observers\AiMessageObserver;
+use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
 use AdvisingApp\Ai\Observers\AiAssistantFileObserver;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
@@ -63,9 +67,27 @@ class AiServiceProvider extends ServiceProvider
 {
     use ImplementsGraphQL;
 
+    protected $listen = [
+        AssistantFilesFinishedUploading::class => [
+            HandleAssistantFilesFinishedUploading::class,
+        ],
+        AiThreadTrashed::class => AiThreadTrashed::LISTENERS,
+        AiThreadForceDeleting::class => AiThreadForceDeleting::LISTENERS,
+        AiMessageTrashed::class => AiMessageTrashed::LISTENERS,
+        AiMessageFileForceDeleting::class => AiMessageFileForceDeleting::LISTENERS,
+    ];
+
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new AiPlugin()));
+
+        $this->booting(function () {
+            foreach ($this->listen as $event => $listeners) {
+                foreach (array_unique($listeners, SORT_REGULAR) as $listener) {
+                    Event::listen($event, $listener);
+                }
+            }
+        });
     }
 
     public function boot(): void
@@ -83,21 +105,11 @@ class AiServiceProvider extends ServiceProvider
 
         $this->registerObservers();
 
-        $this->registerEvents();
-
         AuthorizationRoleRegistry::register(AiRbacRegistry::class);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
 
         $this->mergeConfigFrom(__DIR__ . '/../../config/ai.php', 'ai');
-    }
-
-    protected function registerEvents(): void
-    {
-        Event::listen(
-            AssistantFilesFinishedUploading::class,
-            HandleAssistantFilesFinishedUploading::class
-        );
     }
 
     protected function registerObservers(): void

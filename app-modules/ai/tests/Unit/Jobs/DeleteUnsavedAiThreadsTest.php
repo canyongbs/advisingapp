@@ -34,39 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+use App\Models\Tenant;
 
-use App\Models\BaseModel;
-use Spatie\MediaLibrary\HasMedia;
-use AdvisingApp\Ai\Models\Contracts\AiFile;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use function Pest\Laravel\artisan;
 
-/**
- * @mixin IdeHelperAiAssistantFile
- */
-class AiAssistantFile extends BaseModel implements AiFile, HasMedia
-{
-    use SoftDeletes;
-    use InteractsWithMedia;
+use AdvisingApp\Ai\Models\AiThread;
 
-    protected $fillable = [
-        'file_id',
-        'message_id',
-        'mime_type',
-        'name',
-        'temporary_url',
-    ];
+it('selects and soft deletes the proper records', function () {
+    $notSavedAndOlderThanThreeDays = AiThread::factory()->create(['saved_at' => null, 'created_at' => now()->subDays(4)]);
+    $notSavedAndEarlierThanThreeDays = AiThread::factory()->create(['saved_at' => null, 'created_at' => now()->subDays(2)]);
+    $savedAndOlderThanThreeDays = AiThread::factory()->create(['saved_at' => now(), 'created_at' => now()->subDays(4)]);
+    $savedAndEarlierThanThreeDays = AiThread::factory()->create(['saved_at' => now(), 'created_at' => now()->subDays(2)]);
 
-    public function assistant(): BelongsTo
-    {
-        return $this->belongsTo(AiAssistant::class, 'assistant_id');
-    }
+    $tenant = Tenant::current();
 
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('file')
-            ->singleFile();
-    }
-}
+    artisan("ai:delete-unsaved-ai-threads --tenant={$tenant->getKey()}");
+
+    expect($notSavedAndOlderThanThreeDays->fresh()->deleted_at)->not->toBeNull()
+        ->and($notSavedAndEarlierThanThreeDays->fresh()->deleted_at)->toBeNull()
+        ->and($savedAndOlderThanThreeDays->fresh()->deleted_at)->toBeNull()
+        ->and($savedAndEarlierThanThreeDays->fresh()->deleted_at)->toBeNull();
+});

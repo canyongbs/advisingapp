@@ -38,10 +38,12 @@ namespace App\Console;
 
 use Throwable;
 use App\Models\Tenant;
+use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Audit\Models\Audit;
 use Illuminate\Support\Facades\Log;
 use AdvisingApp\Ai\Models\AiMessage;
 use App\Models\Scopes\SetupIsComplete;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\Engagement\Models\EngagementFile;
@@ -64,23 +66,27 @@ class Kernel extends ConsoleKernel
                     $schedule->command("tenants:artisan \"cache:prune-stale-tags\" --tenant={$tenant->id}")
                         ->hourly()
                         ->onOneServer()
-                        ->withoutOverlapping()
-                        ->sentryMonitor();
+                        ->withoutOverlapping();
 
                     $schedule->command("tenants:artisan \"health:check\" --tenant={$tenant->id}")
                         ->everyMinute()
                         ->onOneServer()
-                        ->withoutOverlapping()
-                        ->sentryMonitor();
+                        ->withoutOverlapping();
 
                     $schedule->command("tenants:artisan \"health:queue-check-heartbeat\" --tenant={$tenant->id}")
                         ->everyMinute()
                         ->onOneServer()
-                        ->withoutOverlapping()
-                        ->sentryMonitor();
+                        ->withoutOverlapping();
+
+                    $schedule->command("ai:delete-unsaved-ai-threads --tenant={$tenant->id}")
+                        ->daily()
+                        ->onOneServer()
+                        ->withoutOverlapping();
 
                     collect([
+                        AiMessageFile::class,
                         AiMessage::class,
+                        AiThread::class,
                         Audit::class,
                         EngagementFile::class,
                         FailedImportRow::class,
@@ -91,7 +97,6 @@ class Kernel extends ConsoleKernel
                                 ->daily()
                                 ->onOneServer()
                                 ->withoutOverlapping()
-                                ->sentryMonitor()
                         );
 
                     $schedule->command(
@@ -102,14 +107,12 @@ class Kernel extends ConsoleKernel
                     )
                         ->daily()
                         ->onOneServer()
-                        ->withoutOverlapping()
-                        ->sentryMonitor();
+                        ->withoutOverlapping();
 
                     $schedule->command("tenants:artisan \"health:schedule-check-heartbeat\" --tenant={$tenant->id}")
                         ->everyMinute()
                         ->onOneServer()
-                        ->withoutOverlapping()
-                        ->sentryMonitor();
+                        ->withoutOverlapping();
                 } catch (Throwable $th) {
                     Log::error('Error scheduling tenant commands.', [
                         'tenant' => $tenant->id,

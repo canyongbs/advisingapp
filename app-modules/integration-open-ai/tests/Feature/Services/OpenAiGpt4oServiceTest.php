@@ -34,39 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+use OpenAI\Resources\Files;
 
-use App\Models\BaseModel;
-use Spatie\MediaLibrary\HasMedia;
-use AdvisingApp\Ai\Models\Contracts\AiFile;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use function Tests\asSuperAdmin;
 
-/**
- * @mixin IdeHelperAiAssistantFile
- */
-class AiAssistantFile extends BaseModel implements AiFile, HasMedia
-{
-    use SoftDeletes;
-    use InteractsWithMedia;
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use OpenAI\Responses\Files\DeleteResponse;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
 
-    protected $fillable = [
-        'file_id',
-        'message_id',
-        'mime_type',
-        'name',
-        'temporary_url',
-    ];
+it('can delete a file', function () {
+    asSuperAdmin();
 
-    public function assistant(): BelongsTo
-    {
-        return $this->belongsTo(AiAssistant::class, 'assistant_id');
-    }
+    /** @var OpenAiGpt4oService $service */
+    $service = AiModel::OpenAiGpt4o->getService();
 
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('file')
-            ->singleFile();
-    }
-}
+    $service->fake();
+
+    /** @var ClientFake $client */
+    $client = $service->getClient();
+
+    $client->addResponses([
+        DeleteResponse::fake(),
+    ]);
+
+    $aiMessageFile = AiMessageFile::factory()
+        ->make();
+
+    $service->beforeMessageFileForceDeleted($aiMessageFile);
+
+    $client->assertSent(Files::class, 1);
+});

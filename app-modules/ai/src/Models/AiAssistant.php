@@ -42,6 +42,7 @@ use Spatie\MediaLibrary\HasMedia;
 use AdvisingApp\Ai\Enums\AiApplication;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\MediaCollections\File;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
@@ -80,12 +81,16 @@ class AiAssistant extends BaseModel implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('avatar')
-            ->acceptsFile(function () {
+            ->acceptsFile(function (File $file) {
                 if ($this->application === AiApplication::PersonalAssistant && $this->is_default) {
                     throw new DefaultAssistantLockedPropertyException('avatar');
                 }
 
-                return true;
+                return in_array($file->mimeType, [
+                    'image/png',
+                    'image/jpeg',
+                    'image/gif',
+                ]);
             });
     }
 

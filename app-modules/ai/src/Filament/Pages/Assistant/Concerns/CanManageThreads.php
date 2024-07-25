@@ -54,7 +54,6 @@ use Filament\Support\Enums\Alignment;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Support\Enums\ActionSize;
 use AdvisingApp\Ai\Actions\CreateThread;
-use AdvisingApp\Ai\Actions\DeleteThread;
 use App\Models\Scopes\WithoutSuperAdmin;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
@@ -212,7 +211,7 @@ trait CanManageThreads
             blank($this->thread->name) &&
             (! $this->thread->messages()->exists())
         ) {
-            app(DeleteThread::class)($this->thread);
+            $this->thread->delete();
         }
 
         if (! $thread->user()->is(auth()->user())) {

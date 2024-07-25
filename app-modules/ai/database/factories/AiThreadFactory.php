@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
+use App\Models\User;
+use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -51,7 +53,20 @@ class AiThreadFactory extends Factory
     public function definition(): array
     {
         return [
+            'thread_id' => fake()->uuid(),
             'name' => fake()->word(),
+            'assistant_id' => AiAssistant::factory(),
+            'user_id' => User::factory(),
         ];
+    }
+
+    public function saved(): AiThreadFactory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'name' => fake()->word(),
+                'saved_at' => fake()->dateTime(),
+            ];
+        });
     }
 }

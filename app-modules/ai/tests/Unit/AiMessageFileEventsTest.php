@@ -34,39 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiMessage;
+use Illuminate\Support\Facades\Event;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
+use AdvisingApp\Ai\Listeners\DeleteExternalAiMessageFile;
 
-use App\Models\BaseModel;
-use Spatie\MediaLibrary\HasMedia;
-use AdvisingApp\Ai\Models\Contracts\AiFile;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+it('dispatches the AiMessageFileForceDeleting event when an AiMessageFile is force deleting', function () {
+    $aiMessageFile = AiMessageFile::factory()
+        ->has(
+            factory: AiMessage::factory()
+                ->has(
+                    factory: AiThread::factory()
+                        ->has(AiAssistant::factory(), 'assistant'),
+                    relationship: 'thread'
+                ),
+            relationship: 'message',
+        )
+        ->create();
 
-/**
- * @mixin IdeHelperAiAssistantFile
- */
-class AiAssistantFile extends BaseModel implements AiFile, HasMedia
-{
-    use SoftDeletes;
-    use InteractsWithMedia;
+    Event::fake();
 
-    protected $fillable = [
-        'file_id',
-        'message_id',
-        'mime_type',
-        'name',
-        'temporary_url',
-    ];
+    $aiMessageFile->forceDelete();
 
-    public function assistant(): BelongsTo
-    {
-        return $this->belongsTo(AiAssistant::class, 'assistant_id');
-    }
+    Event::assertDispatched(AiMessageFileForceDeleting::class, function (AiMessageFileForceDeleting $event) use ($aiMessageFile) {
+        return $event->aiMessageFile->is($aiMessageFile);
+    });
 
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('file')
-            ->singleFile();
-    }
-}
+    Event::assertListening(
+        expectedEvent: AiMessageFileForceDeleting::class,
+        expectedListener: DeleteExternalAiMessageFile::class
+    );
+});

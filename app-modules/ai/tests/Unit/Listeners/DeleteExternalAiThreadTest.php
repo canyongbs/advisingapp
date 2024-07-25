@@ -34,39 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+use Mockery\MockInterface;
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Events\AiThreadForceDeleting;
+use AdvisingApp\Ai\Listeners\DeleteExternalAiThread;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
 
-use App\Models\BaseModel;
-use Spatie\MediaLibrary\HasMedia;
-use AdvisingApp\Ai\Models\Contracts\AiFile;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+it('deletes vector stores for a thread', function () {
+    $aiThread = AiThread::factory()
+        ->for(
+            factory: AiAssistant::factory()->state(['model' => AiModel::OpenAiGpt4o]),
+            relationship: 'assistant',
+        )
+        ->create();
 
-/**
- * @mixin IdeHelperAiAssistantFile
- */
-class AiAssistantFile extends BaseModel implements AiFile, HasMedia
-{
-    use SoftDeletes;
-    use InteractsWithMedia;
+    /** @phpstan-ignore-next-line */
+    $this->mock(
+        $aiThread->assistant->model->getService()::class,
+        fn (MockInterface $mock) => $mock
+            ->shouldReceive('isThreadExisting')->with($aiThread)->once()->andReturn(true)
+            ->shouldReceive('deleteThread')->once(),
+        // ->shouldReceive('retrieveThread')->once()->andReturn(ThreadsDataTransferObject::from([
+        //     'id' => 1,
+        //     'vectorStoreIds' => [1, 2, 3],
+        // ]))
+        // ->shouldReceive('deleteVectorStore')->times(3),
+    );
 
-    protected $fillable = [
-        'file_id',
-        'message_id',
-        'mime_type',
-        'name',
-        'temporary_url',
-    ];
-
-    public function assistant(): BelongsTo
-    {
-        return $this->belongsTo(AiAssistant::class, 'assistant_id');
-    }
-
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('file')
-            ->singleFile();
-    }
-}
+    (new DeleteExternalAiThread())->handle(new AiThreadForceDeleting($aiThread));
+});
