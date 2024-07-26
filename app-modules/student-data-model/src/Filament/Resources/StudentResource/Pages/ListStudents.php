@@ -80,8 +80,10 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
                 TextColumn::make('phone')
                     ->searchable(),
                 TextColumn::make('sisid')
+                    ->label('SIS ID')
                     ->searchable(),
                 TextColumn::make('otherid')
+                    ->label('Other ID')
                     ->searchable(),
             ])
             ->filters([
