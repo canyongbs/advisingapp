@@ -51,13 +51,13 @@ class Students extends Dashboard
 
     protected static ?string $navigationGroup = 'Students';
 
-    protected static ?string $navigationLabel = 'Students (Overview)';
+    protected static ?string $navigationLabel = 'Overview';
 
     protected static ?string $title = 'Students (Overview)';
 
     protected static string $routePath = 'students';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 1;
 
     protected $cacheTag = 'report-students';
 

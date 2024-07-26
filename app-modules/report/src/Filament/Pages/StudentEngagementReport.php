@@ -45,7 +45,7 @@ use AdvisingApp\Report\Filament\Widgets\StudentEngagementLineChart;
 
 class StudentEngagementReport extends Dashboard
 {
-    protected static ?string $title = 'Student Engagement';
+    protected static ?string $title = 'Engagement';
 
     protected static ?string $cluster = ReportLibrary::class;
 
@@ -57,7 +57,7 @@ class StudentEngagementReport extends Dashboard
 
     protected $cacheTag = 'report-student-engagement';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 4;
 
     public static function canAccess(): bool
     {

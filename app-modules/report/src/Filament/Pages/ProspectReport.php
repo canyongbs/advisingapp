@@ -51,9 +51,11 @@ class ProspectReport extends Dashboard
 
     protected static string $routePath = 'prospect-report';
 
-    protected static ?string $title = 'Prospects (Overview)';
+    protected static ?string $title = 'Overview';
 
     protected static ?string $cluster = ReportLibrary::class;
+
+    protected static ?int $navigationSort = 2;
 
     protected $cacheTag = 'prospect-report-cache';
 

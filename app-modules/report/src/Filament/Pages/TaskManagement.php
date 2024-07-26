@@ -51,7 +51,7 @@ class TaskManagement extends Dashboard
 
     protected static ?string $navigationGroup = 'Engagement Features';
 
-    protected static ?string $navigationLabel = 'Tasks (Overview)';
+    protected static ?string $navigationLabel = 'Tasks Management';
 
     protected static ?string $title = 'Tasks (Overview)';
 

@@ -59,7 +59,7 @@ class ArtificialIntelligence extends Dashboard
 
     protected static string $routePath = 'artificial-intelligence';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 3;
 
     protected $cacheTag = 'report-artificial-intelligence';
 

@@ -44,7 +44,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class TaskCumulativeCountLineChart extends LineChartReportWidget
 {
-    protected static ?string $heading = 'Tasks (Engagement)';
+    protected static ?string $heading = 'Tasks by Affiliation';
 
     protected int | string | array $columnSpan = 'full';
 

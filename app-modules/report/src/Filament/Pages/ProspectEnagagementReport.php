@@ -49,7 +49,7 @@ class ProspectEnagagementReport extends Dashboard
 
     protected static ?string $navigationGroup = 'Prospects';
 
-    protected static ?string $title = 'Prospect Engagement';
+    protected static ?string $title = 'Engagement';
 
     protected static string $routePath = 'prospect-enagement-report';
 
