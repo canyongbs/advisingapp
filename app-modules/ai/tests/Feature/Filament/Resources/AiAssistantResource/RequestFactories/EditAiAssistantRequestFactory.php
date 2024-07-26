@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Enums\AiModel;
 use Illuminate\Http\UploadedFile;
 use Worksome\RequestFactories\RequestFactory;
 
-class CreateAiAssistantRequestFactory extends RequestFactory
+class EditAiAssistantRequestFactory extends RequestFactory
 {
     public function definition(): array
     {

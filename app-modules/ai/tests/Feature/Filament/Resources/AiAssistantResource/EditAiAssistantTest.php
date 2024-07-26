@@ -51,7 +51,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\EditAiAssistant;
-use AdvisingApp\Ai\Tests\Feature\Filament\Resources\AiAssistantResource\RequestFactories\CreateAiAssistantRequestFactory;
+use AdvisingApp\Ai\Tests\Feature\Filament\Resources\AiAssistantResource\RequestFactories\EditAiAssistantRequestFactory;
 
 /** @var array<LicenseType> $licenses */
 $licenses = [
@@ -139,7 +139,7 @@ it('can edit a record', function () use ($licenses, $permissions) {
 
     $aiAssistant = AiAssistant::factory()->create();
 
-    $request = collect(CreateAiAssistantRequestFactory::new()->create());
+    $request = collect(EditAiAssistantRequestFactory::new()->create());
 
     livewire(EditAiAssistant::class, [
         'record' => $aiAssistant->getRouteKey(),
@@ -180,7 +180,7 @@ it('validates the inputs', function ($data, $errors) use ($licenses, $permission
 
     $settings->save();
 
-    $request = collect(CreateAiAssistantRequestFactory::new($data)->create());
+    $request = collect(EditAiAssistantRequestFactory::new($data)->create());
 
     $aiAssistant = AiAssistant::factory()->create();
 
@@ -193,35 +193,35 @@ it('validates the inputs', function ($data, $errors) use ($licenses, $permission
 })->with(
     [
         'name required' => [
-            CreateAiAssistantRequestFactory::new()->state(['name' => null]),
+            EditAiAssistantRequestFactory::new()->state(['name' => null]),
             ['name' => 'required'],
         ],
         'name string' => [
-            CreateAiAssistantRequestFactory::new()->state(['name' => 1]),
+            EditAiAssistantRequestFactory::new()->state(['name' => 1]),
             ['name' => 'string'],
         ],
         'name max' => [
-            CreateAiAssistantRequestFactory::new()->state(['name' => str()->random(256)]),
+            EditAiAssistantRequestFactory::new()->state(['name' => str()->random(256)]),
             ['name' => 'max'],
         ],
         'model required' => [
-            CreateAiAssistantRequestFactory::new()->state(['model' => null]),
+            EditAiAssistantRequestFactory::new()->state(['model' => null]),
             ['model' => 'required'],
         ],
         'model must be correct enum' => [
-            CreateAiAssistantRequestFactory::new()->state(['model' => AiModel::OpenAiGpt4]),
+            EditAiAssistantRequestFactory::new()->state(['model' => AiModel::OpenAiGpt4]),
             ['model' => Enum::class],
         ],
         'description required' => [
-            CreateAiAssistantRequestFactory::new()->state(['description' => null]),
+            EditAiAssistantRequestFactory::new()->state(['description' => null]),
             ['description' => 'required'],
         ],
         'instructions required' => [
-            CreateAiAssistantRequestFactory::new()->state(['instructions' => null]),
+            EditAiAssistantRequestFactory::new()->state(['instructions' => null]),
             ['instructions' => 'required'],
         ],
         'instructions max' => [
-            CreateAiAssistantRequestFactory::new()->withOverMaxInstructions(),
+            EditAiAssistantRequestFactory::new()->withOverMaxInstructions(),
             ['instructions' => 'max'],
         ],
     ]
