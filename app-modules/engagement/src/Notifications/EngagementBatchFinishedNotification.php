@@ -52,11 +52,18 @@ class EngagementBatchFinishedNotification extends BaseNotification implements Da
     use DatabaseChannelTrait;
     use EmailChannelTrait;
 
+    private string $title;
+
     public function __construct(
         public EngagementBatch $engagementBatch,
         public int $processedJobs,
         public int $failedJobs,
-    ) {}
+        public string $deliveryMethod,
+    ) {
+        $this->title = $this->deliveryMethod === 'email'
+                    ? 'Bulk email request has been processed and emails have been sent successfully.'
+                    : 'Bulk text message request has been processed and text messages have been sent successfully.';
+    }
 
     public function toEmail(object $notifiable): MailMessage
     {
@@ -70,7 +77,7 @@ class EngagementBatchFinishedNotification extends BaseNotification implements Da
         }
 
         return $message
-            ->subject('Bulk Engagements Finished Processing Successfully.')
+            ->subject($this->title)
             ->line("{$this->processedJobs} jobs processed successfully.");
     }
 
@@ -86,7 +93,7 @@ class EngagementBatchFinishedNotification extends BaseNotification implements Da
 
         return FilamentNotification::make()
             ->success()
-            ->title('Bulk Engagement processing finished')
+            ->title($this->title)
             ->body("{$this->processedJobs} jobs processed successfully.")
             ->getDatabaseMessage();
     }
