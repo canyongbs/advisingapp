@@ -38,7 +38,10 @@ namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
 use App\Models\User;
 use Filament\Tables\Table;
+use Laravel\Pennant\Feature;
 use Filament\Actions\ExportAction;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\Checkbox;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Tables\Columns\IdColumn;
@@ -55,6 +58,8 @@ class ListAudits extends ListRecords
 {
     protected static string $resource = AuditResource::class;
 
+    protected static ?string $title = 'System Administration';
+
     public function table(Table $table): Table
     {
         return $table
@@ -65,12 +70,28 @@ class ListAudits extends ListRecords
                     ->sortable(),
                 TextColumn::make('user.name')
                     ->label('Change Agent (User)')
-                    ->sortable(),
+                    ->sortable()
+                    ->visible(! Feature::active('change-agent-name')),
+                TextColumn::make('change_agent_name')
+                    ->label('Change Agent (User)')
+                    ->sortable()
+                    ->default('System')
+                    ->visible(Feature::active('change-agent-name')),
                 TextColumn::make('event')
                     ->label('Event')
                     ->sortable(),
             ])
             ->filters([
+                Filter::make('exclude_system_user')
+                    ->label('Exclude System User')
+                    ->query(
+                        fn (Builder $query, array $data): Builder => $query->when($data['isActive'], fn (Builder $query) => $query->whereHas('user'))
+                    )
+                    ->form([
+                        Checkbox::make('isActive')
+                            ->label('Exclude System User')
+                            ->default(true),
+                    ]),
                 SelectFilter::make('change_agent_user')
                     ->label('Change Agent (User)')
                     ->options(fn (): array => User::query()->pluck('name', 'id')->all())
@@ -87,7 +108,8 @@ class ListAudits extends ListRecords
             ->bulkActions([
                 BulkActionGroup::make([
                     ExportBulkAction::make()
-                        ->exporter(AuditExporter::class),
+                        ->exporter(AuditExporter::class)
+                        ->label('Export Records'),
                 ]),
             ]);
     }
@@ -96,7 +118,8 @@ class ListAudits extends ListRecords
     {
         return [
             ExportAction::make()
-                ->exporter(AuditExporter::class),
+                ->exporter(AuditExporter::class)
+                ->label('Export Records'),
         ];
     }
 }

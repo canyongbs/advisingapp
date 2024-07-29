@@ -34,25 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\LegacyAiMessageLogResource\Pages;
+namespace App\AuditResolvers;
 
-use Filament\Actions;
-use Filament\Resources\Pages\ManageRecords;
-use AdvisingApp\Ai\Filament\Exports\LegacyAiMessageExporter;
-use AdvisingApp\Ai\Filament\Resources\LegacyAiMessageLogResource;
+use OwenIt\Auditing\Contracts\Resolver;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ManageLegacyAiMessageLogs extends ManageRecords
+class ChangeAgentNameResolver implements Resolver
 {
-    protected static string $resource = LegacyAiMessageLogResource::class;
-
-    protected static ?string $title = 'Assistant Utilization';
-
-    protected function getHeaderActions(): array
+    public static function resolve(Auditable $auditable)
     {
-        return [
-            Actions\ExportAction::make()
-                ->exporter(LegacyAiMessageExporter::class)
-                ->label('Export Records'),
-        ];
+        return $auditable->preloadedResolverData['change_agent_name'] ?? call_user_func([config('audit.user.resolver'), 'resolve'])?->name;
     }
 }

@@ -34,25 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\LegacyAiMessageLogResource\Pages;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Actions;
-use Filament\Resources\Pages\ManageRecords;
-use AdvisingApp\Ai\Filament\Exports\LegacyAiMessageExporter;
-use AdvisingApp\Ai\Filament\Resources\LegacyAiMessageLogResource;
-
-class ManageLegacyAiMessageLogs extends ManageRecords
-{
-    protected static string $resource = LegacyAiMessageLogResource::class;
-
-    protected static ?string $title = 'Assistant Utilization';
-
-    protected function getHeaderActions(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            Actions\ExportAction::make()
-                ->exporter(LegacyAiMessageExporter::class)
-                ->label('Export Records'),
-        ];
+        Feature::activate('change-agent-name');
     }
-}
+
+    public function down(): void
+    {
+        Feature::deactivate('change-agent-name');
+    }
+};

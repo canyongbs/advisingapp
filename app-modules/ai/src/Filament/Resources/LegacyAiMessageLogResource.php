@@ -59,13 +59,15 @@ class LegacyAiMessageLogResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
 
-    protected static ?string $navigationLabel = 'Personal Assistant';
+    protected static ?string $navigationLabel = 'Assistant Utilization';
 
     protected static ?int $navigationSort = 30;
 
     protected static ?string $modelLabel = 'message log';
 
     protected static ?string $cluster = UsageAuditing::class;
+
+    protected static ?string $slug = 'assistant-utilization';
 
     public static function infolist(Infolist $infolist): Infolist
     {
@@ -112,7 +114,8 @@ class LegacyAiMessageLogResource extends Resource
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     ExportBulkAction::make()
-                        ->exporter(LegacyAiMessageExporter::class),
+                        ->exporter(LegacyAiMessageExporter::class)
+                        ->label('Export Records'),
                 ]),
             ])
             ->defaultSort('sent_at', 'desc');

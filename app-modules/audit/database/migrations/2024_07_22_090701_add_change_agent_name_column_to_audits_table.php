@@ -34,25 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\LegacyAiMessageLogResource\Pages;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Actions;
-use Filament\Resources\Pages\ManageRecords;
-use AdvisingApp\Ai\Filament\Exports\LegacyAiMessageExporter;
-use AdvisingApp\Ai\Filament\Resources\LegacyAiMessageLogResource;
-
-class ManageLegacyAiMessageLogs extends ManageRecords
-{
-    protected static string $resource = LegacyAiMessageLogResource::class;
-
-    protected static ?string $title = 'Assistant Utilization';
-
-    protected function getHeaderActions(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            Actions\ExportAction::make()
-                ->exporter(LegacyAiMessageExporter::class)
-                ->label('Export Records'),
-        ];
+        Schema::table('audits', function (Blueprint $table) {
+            $table->string('change_agent_name')->nullable();
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('audits', function (Blueprint $table) {
+            $table->dropColumn('change_agent_name');
+        });
+    }
+};

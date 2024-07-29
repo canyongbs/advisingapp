@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Audit\Filament\Exports;
 
+use Laravel\Pennant\Feature;
 use AdvisingApp\Audit\Models\Audit;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\ExportColumn;
@@ -60,6 +61,16 @@ class AuditExporter extends Exporter
             ExportColumn::make('url'),
             ExportColumn::make('ip_address')
                 ->label('IP address'),
+            ExportColumn::make('change_agent_id')
+                ->label('Change Agent ID')
+                ->default('N/A'),
+            ...(Feature::active('change-agent-name') ? [
+                ExportColumn::make('change_agent_name')
+                    ->label('Change Agent Name')
+                    ->state(function ($record) {
+                        return $record->change_agent_name ?? 'System';
+                    }),
+            ] : []),
             ExportColumn::make('user_agent'),
             ExportColumn::make('tags'),
             ExportColumn::make('created_at'),

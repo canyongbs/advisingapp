@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Audit\Models\Audit;
+use App\AuditResolvers\ChangeAgentNameResolver;
 
 return [
     'enabled' => env('AUDITING_ENABLED', true),
@@ -81,6 +82,7 @@ return [
         'ip_address' => OwenIt\Auditing\Resolvers\IpAddressResolver::class,
         'user_agent' => OwenIt\Auditing\Resolvers\UserAgentResolver::class,
         'url' => OwenIt\Auditing\Resolvers\UrlResolver::class,
+        'change_agent_name' => ChangeAgentNameResolver::class,
     ],
 
     /*
