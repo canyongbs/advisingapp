@@ -65,11 +65,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        try {
-            DB::table('audits')
-                ->update(['change_agent_name' => null]);
-        } catch (Exception $error) {
-            throw $error;
-        }
+        DB::table('audits')
+            ->update(['change_agent_name' => null]);
     }
 };
