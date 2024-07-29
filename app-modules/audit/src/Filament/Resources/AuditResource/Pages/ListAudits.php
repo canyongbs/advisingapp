@@ -68,6 +68,10 @@ class ListAudits extends ListRecords
                 TextColumn::make('auditable_type')
                     ->label('Auditable')
                     ->sortable(),
+                TextColumn::make('user.name')
+                    ->label('Change Agent (User)')
+                    ->sortable()
+                    ->visible(! Feature::active('change-agent-name')),
                 TextColumn::make('change_agent_name')
                     ->label('Change Agent (User)')
                     ->sortable()
@@ -80,13 +84,9 @@ class ListAudits extends ListRecords
             ->filters([
                 Filter::make('exclude_system_user')
                     ->label('Exclude System User')
-                    ->query(function (Builder $query, array $data): Builder {
-                        if (isset($data['isActive']) && $data['isActive']) {
-                            $query->whereHas('user');
-                        }
-
-                        return $query;
-                    })
+                    ->query(
+                        fn (Builder $query, array $data): Builder => $query->when($data['isActive'], fn (Builder $query) => $query->whereHas('user'))
+                    )
                     ->form([
                         Checkbox::make('isActive')
                             ->label('Exclude System User')
