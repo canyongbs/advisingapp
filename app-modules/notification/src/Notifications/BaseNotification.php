@@ -37,6 +37,7 @@
 namespace AdvisingApp\Notification\Notifications;
 
 use Exception;
+use App\Models\Tenant;
 use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
@@ -104,6 +105,10 @@ abstract class BaseNotification extends Notification implements ShouldQueue
         $this->metadata = [
             'outbound_deliverable_id' => $deliverable->id,
         ];
+
+        if (Tenant::checkCurrent()) {
+            $this->metadata['tenant_id'] = Tenant::current()->getKey();
+        }
 
         return $deliverable;
     }

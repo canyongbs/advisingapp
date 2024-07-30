@@ -76,7 +76,7 @@ it('handles a bounce event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -103,7 +103,7 @@ it('handles a complaint event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -130,7 +130,7 @@ it('handles a delivery event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -157,7 +157,7 @@ it('handles a send event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -184,7 +184,7 @@ it('handles a reject event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -211,7 +211,7 @@ it('handles a open event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -238,7 +238,7 @@ it('handles a click event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -265,7 +265,7 @@ it('handles a renderingFailure event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -292,7 +292,7 @@ it('handles a DeliveryDelay event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -319,7 +319,7 @@ it('handles a Subscription event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
