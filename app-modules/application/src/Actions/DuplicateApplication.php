@@ -45,8 +45,7 @@ class DuplicateApplication
     public function __construct(
         private Application $original,
         private Application $replica
-    ) {
-    }
+    ) {}
 
     public function __invoke(): void
     {
