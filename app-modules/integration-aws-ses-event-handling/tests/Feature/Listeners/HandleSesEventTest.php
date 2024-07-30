@@ -49,6 +49,8 @@ beforeEach(function () {
 });
 
 it('correctly handles the incoming SES event', function (string $event, NotificationDeliveryStatus $status, ?string $deliveryResponse) {
+    // TODO: Change this test to run in a isolated non-tenantized landlord environment
+
     // Given that we have an outbound deliverable
     $deliverable = OutboundDeliverable::factory()->create();
 
@@ -64,8 +66,6 @@ it('correctly handles the incoming SES event', function (string $event, Notifica
     expect($deliverable->hasBeenDelivered())->toBe(false);
     expect($deliverable->delivery_status)->toBe(NotificationDeliveryStatus::Awaiting);
     expect($deliverable->last_delivery_attempt)->toBeNull();
-
-    // Tenant::forgetCurrent();
 
     $response = withHeaders(
         [
@@ -85,8 +85,6 @@ it('correctly handles the incoming SES event', function (string $event, Notifica
     );
 
     $response->assertOk();
-
-    // $tenant->makeCurrent();
 
     // The outbound deliverable should be appropriately updated based on the event
     $deliverable->refresh();
