@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages;
 
+use AdvisingApp\Application\Actions\DuplicateApplication;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\Action;
@@ -47,39 +48,65 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\ReplicateAction;
+use Filament\Forms\Form;
+use Illuminate\Database\Eloquent\Model;
 
 class ListApplications extends ListRecords
 {
-    protected ?string $heading = 'Online Admissions';
+  protected ?string $heading = 'Online Admissions';
 
-    protected static string $resource = ApplicationResource::class;
+  protected static string $resource = ApplicationResource::class;
 
-    public function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name'),
-            ])
-            ->actions([
-                Action::make('Respond')
-                    ->url(fn (Application $application) => route('applications.show', ['application' => $application]))
-                    ->icon('heroicon-m-arrow-top-right-on-square')
-                    ->openUrlInNewTab()
-                    ->color('gray'),
-                EditAction::make(),
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+  public function table(Table $table): Table
+  {
+    return $table
+      ->columns([
+        IdColumn::make(),
+        TextColumn::make('name'),
+      ])
+      ->actions([
+        Action::make('Respond')
+          ->url(fn (Application $application) => route('applications.show', ['application' => $application]))
+          ->icon('heroicon-m-arrow-top-right-on-square')
+          ->openUrlInNewTab()
+          ->color('gray'),
+        EditAction::make(),
+        ReplicateAction::make('Duplicate')
+          ->label('Duplicate')
+          ->modalHeading('Duplicate Application')
+          ->modalSubmitActionLabel('Duplicate')
+          ->mutateRecordDataUsing(function (array $data): array {
+            $data['name'] = "Copy - {$data['name']}";
+
+            return $data;
+          })
+          ->form(function (Form $form): Form {
+            return $form->schema([
+              TextInput::make('name')
+                ->label('Name')
+                ->required(),
             ]);
-    }
+          })
+          ->beforeReplicaSaved(function (Model $replica, array $data): void {
+            $replica->name = $data['name'];
+          })
+          ->after(function (Application $replica, Application $record): void {
+            resolve(DuplicateApplication::class, ['original' => $record, 'replica' => $replica])();
+          }),
+      ])
+      ->bulkActions([
+        BulkActionGroup::make([
+          DeleteBulkAction::make(),
+        ]),
+      ]);
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      CreateAction::make(),
+    ];
+  }
 }
