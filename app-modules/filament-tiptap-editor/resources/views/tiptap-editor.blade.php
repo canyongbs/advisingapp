@@ -55,7 +55,14 @@
                     'ring-gray-950/10 dark:ring-white/20' => !$errors->has($statePath),
                     'ring-danger-600 dark:ring-danger-600' => $errors->has($statePath),
                 ])
-                x-data="{}"
+                x-data="{
+                    isUploadingFile: false,
+                }"
+                x-bind:class="{
+                    'pointer-events-none opacity-50 cursor-wait': isUploadingFile,
+                }"
+                x-on:tiptap-uploading-file.stop="if ($event.detail.statePath === @js($statePath)) isUploadingFile = true"
+                x-on:tiptap-uploaded-file.stop="if ($event.detail.statePath === @js($statePath)) isUploadingFile = false"
                 @if (!$shouldDisableStylesheet()) x-load-css="[@js(\Filament\Support\Facades\FilamentAsset::getStyleHref('tiptap', 'awcodes/tiptap-editor'))]" @endif
             >
                 <div

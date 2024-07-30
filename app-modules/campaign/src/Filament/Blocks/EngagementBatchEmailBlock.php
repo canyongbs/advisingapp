@@ -39,6 +39,7 @@ namespace AdvisingApp\Campaign\Filament\Blocks;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Carbon\CarbonImmutable;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Actions;
 use FilamentTiptapEditor\TiptapEditor;
@@ -67,15 +68,14 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
     public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            TextInput::make($fieldPrefix . 'delivery_method')
-                ->default(EngagementDeliveryMethod::Email->value)
-                ->hidden()
-                ->disabled(),
+            Hidden::make($fieldPrefix . 'delivery_method')
+                ->default(EngagementDeliveryMethod::Email->value),
             TextInput::make($fieldPrefix . 'subject')
                 ->columnSpanFull()
                 ->placeholder(__('Subject'))
                 ->required(),
             TiptapEditor::make($fieldPrefix . 'body')
+                ->recordAttribute('data.body')
                 ->disk('s3-public')
                 ->label('Body')
                 ->mergeTags($mergeTags = [

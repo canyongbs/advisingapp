@@ -77,6 +77,9 @@ const LocalFilesPlugin = ({ key, editor, getFileAttachmentUrl, statePath, upload
 
                 files.forEach((file, fileIndex) => {
                     editor.setEditable(false);
+                    editorView.dom.dispatchEvent(
+                        new CustomEvent('tiptap-uploading-file', { bubbles: true, detail: { statePath } }),
+                    );
 
                     const fileReader = new FileReader();
 
@@ -119,6 +122,9 @@ const LocalFilesPlugin = ({ key, editor, getFileAttachmentUrl, statePath, upload
                                 .run();
 
                             editor.setEditable(true);
+                            editorView.dom.dispatchEvent(
+                                new CustomEvent('tiptap-uploaded-file', { bubbles: true, detail: { statePath } }),
+                            );
 
                             if (fileIndex === files.length - 1) {
                                 dispatchFormEvent(editorView, 'form-processing-finished');
@@ -151,6 +157,9 @@ const LocalFilesPlugin = ({ key, editor, getFileAttachmentUrl, statePath, upload
 
                 files.forEach((file, fileIndex) => {
                     editor.setEditable(false);
+                    editorView.dom.dispatchEvent(
+                        new CustomEvent('tiptap-uploading-file', { bubbles: true, detail: { statePath } }),
+                    );
 
                     const fileReader = new FileReader();
 
@@ -193,6 +202,9 @@ const LocalFilesPlugin = ({ key, editor, getFileAttachmentUrl, statePath, upload
                                 .run();
 
                             editor.setEditable(true);
+                            editorView.dom.dispatchEvent(
+                                new CustomEvent('tiptap-uploaded-file', { bubbles: true, detail: { statePath } }),
+                            );
 
                             if (fileIndex === files.length - 1) {
                                 dispatchFormEvent(editorView, 'form-processing-finished');

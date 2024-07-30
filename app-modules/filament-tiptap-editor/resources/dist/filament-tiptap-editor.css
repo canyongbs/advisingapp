@@ -309,7 +309,6 @@
 }
 .tiptap-editor .ProseMirror .filament-tiptap-loading-image {
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    cursor: wait;
 }
 .tiptap-editor .ProseMirror .filament-tiptap-hurdle {
     width: 100%;
