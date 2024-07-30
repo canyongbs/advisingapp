@@ -163,7 +163,7 @@
     }
 
     .filament-tiptap-loading-image {
-        @apply animate-pulse cursor-wait;
+        @apply animate-pulse;
     }
 
     .filament-tiptap-hurdle {

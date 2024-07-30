@@ -37,8 +37,8 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use Carbon\CarbonImmutable;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
@@ -59,10 +59,8 @@ class EngagementBatchSmsBlock extends CampaignActionBlock
     public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            TextInput::make($fieldPrefix . 'delivery_method')
-                ->default(EngagementDeliveryMethod::Sms->value)
-                ->hidden()
-                ->disabled(),
+            Hidden::make($fieldPrefix . 'delivery_method')
+                ->default(EngagementDeliveryMethod::Sms->value),
             EngagementSmsBodyField::make(context: 'create'),
             Actions::make([
                 DraftCampaignEngagementBlockWithAi::make()

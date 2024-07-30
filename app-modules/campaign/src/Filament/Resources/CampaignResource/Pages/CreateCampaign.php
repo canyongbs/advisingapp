@@ -37,22 +37,20 @@
 namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use App\Models\User;
+use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
 use AdvisingApp\Campaign\Models\Campaign;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
-use AdvisingApp\Campaign\Actions\CreateActionsForCampaign;
+use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
-use AdvisingApp\Campaign\DataTransferObjects\CampaignActionCreationData;
-use AdvisingApp\Campaign\DataTransferObjects\CampaignActionsCreationData;
 
 class CreateCampaign extends CreateRecord
 {
@@ -83,7 +81,24 @@ class CreateCampaign extends CreateRecord
                         ->label(fn () => new HtmlString('<span class="text-xl">Journey Steps</span>'))
                         ->addActionLabel('Add a new Journey Step')
                         ->minItems(1)
-                        ->blocks(CampaignActionType::blocks()),
+                        ->blocks(CampaignActionType::blocks())
+                        ->dehydrated(false)
+                        ->saveRelationshipsUsing(function (Builder $component, Campaign $record) {
+                            foreach ($component->getChildComponentContainers() as $item) {
+                                /** @var CampaignActionBlock $block */
+                                $block = $item->getParentComponent();
+
+                                $itemData = $item->getState(shouldCallHooksBefore: false);
+
+                                $action = $record->actions()->create([
+                                    'type' => $block->getName(),
+                                    'data' => Arr::except($itemData, ['execute_at']),
+                                    'execute_at' => $itemData['execute_at'],
+                                ]);
+
+                                $item->model($action)->saveRelationships();
+                            }
+                        }),
                 ]),
             Step::make('Review Campaign')
                 ->schema([
@@ -94,23 +109,5 @@ class CreateCampaign extends CreateRecord
                         ->view('filament.forms.components.campaigns.step-summary'),
                 ]),
         ];
-    }
-
-    protected function handleRecordCreation(array $data): Model
-    {
-        /** @var Model $model */
-        $model = static::getModel();
-
-        /** @var Campaign $campaign */
-        $campaign = $model::query()->create($data);
-
-        resolve(CreateActionsForCampaign::class)->from(
-            $campaign,
-            CampaignActionsCreationData::from([
-                'actions' => CampaignActionCreationData::collection($data['actions']),
-            ])
-        );
-
-        return $campaign;
     }
 }

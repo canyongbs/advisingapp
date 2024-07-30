@@ -73,6 +73,7 @@ class TaskBlock extends CampaignActionBlock
                     Select::make($fieldPrefix . 'assigned_to')
                         ->label('Assigned To')
                         ->relationship('assignedTo', 'name')
+                        ->model(Task::class)
                         ->nullable()
                         ->searchable()
                         ->default(auth()->id()),

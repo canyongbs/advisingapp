@@ -47,7 +47,6 @@ use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 
@@ -69,11 +68,13 @@ class ServiceRequestBlock extends CampaignActionBlock
         return [
             Select::make($fieldPrefix . 'division_id')
                 ->relationship('division', 'name')
+                ->model(ServiceRequest::class)
                 ->label('Division')
                 ->required()
                 ->exists((new Division())->getTable(), 'id'),
             Select::make($fieldPrefix . 'status_id')
                 ->relationship('status', 'name')
+                ->model(ServiceRequest::class)
                 ->preload()
                 ->label('Status')
                 ->required()
@@ -84,17 +85,13 @@ class ServiceRequestBlock extends CampaignActionBlock
                     titleAttribute: 'name',
                     modifyQueryUsing: fn (Builder $query) => $query->orderBy('order'),
                 )
+                ->model(ServiceRequest::class)
                 ->label('Priority')
                 ->required()
                 ->exists((new ServiceRequestPriority())->getTable(), 'id'),
-            Select::make($fieldPrefix . 'type_id')
-                ->relationship('type', 'name')
-                ->preload()
-                ->label('Type')
-                ->required()
-                ->exists((new ServiceRequestType())->getTable(), 'id'),
             Select::make($fieldPrefix . 'assigned_to_id')
                 ->relationship('assignedTo.user', 'name')
+                ->model(ServiceRequest::class)
                 ->searchable()
                 ->label('Assign Service Request to')
                 ->nullable()

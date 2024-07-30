@@ -43,12 +43,12 @@
 
 <div>
     <div class="flex flex-col space-y-4">
-        @foreach ($sortedActions as $action)
+        @foreach ($sortedActions as $actionIndex => $action)
             @php
                 $view = CampaignActionType::from($action['type'])->getStepSummaryView();
             @endphp
 
-            @include($view, ['action' => $action['data']])
+            @include($view, ['action' => $action['data'], 'actionIndex' => $actionIndex])
         @endforeach
     </div>
 
