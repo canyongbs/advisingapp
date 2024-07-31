@@ -32,7 +32,7 @@
 </COPYRIGHT>
 */
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
-@import '../../../../vendor/awcodes/filament-tiptap-editor/resources/css/plugin.css';
+@import '../../../../vendor/canyongbs/filament-tiptap-editor/resources/css/plugin.css';
 @import 'tippy.js/dist/tippy.css';
 @import 'custom.css';
 
