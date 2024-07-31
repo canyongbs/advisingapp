@@ -39,11 +39,13 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     public function up(): void
     {
-        Feature::activate('introduce-checkboxes-form-field');
+        Feature::purge('introduce-checkboxes-form-field');
+        Feature::purge('rename-checkbox-form-field');
     }
 
     public function down(): void
     {
-        Feature::deactivate('introduce-checkboxes-form-field');
+        Feature::activate('rename-checkbox-form-field');
+        Feature::activate('introduce-checkboxes-form-field');
     }
 };

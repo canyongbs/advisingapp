@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
-use Laravel\Pennant\Feature;
 use AdvisingApp\Form\Models\SubmissibleField;
 
 class AgreementFormFieldBlock extends FormFieldBlock
@@ -49,11 +48,7 @@ class AgreementFormFieldBlock extends FormFieldBlock
 
     public static function type(): string
     {
-        if (Feature::active('rename-checkbox-form-field')) {
-            return 'agreement';
-        }
-
-        return 'checkbox';
+        return 'agreement';
     }
 
     public function fields(): array
