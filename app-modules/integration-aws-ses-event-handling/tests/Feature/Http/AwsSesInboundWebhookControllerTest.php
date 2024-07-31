@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Event;
 
 use function Pest\Laravel\withHeaders;
@@ -61,7 +62,11 @@ beforeEach(function () {
 it('handles a bounce event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'Bounce'));
+    $tenant = Tenant::current();
+
+    $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Bounce');
+    data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
+    $snsData['Message'] = json_encode($messageContent);
 
     $response = withHeaders(
         [
@@ -76,7 +81,7 @@ it('handles a bounce event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -88,7 +93,11 @@ it('handles a bounce event', function () {
 it('handles a complaint event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'Complaint'));
+    $tenant = Tenant::current();
+
+    $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Complaint');
+    data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
+    $snsData['Message'] = json_encode($messageContent);
 
     $response = withHeaders(
         [
@@ -103,7 +112,7 @@ it('handles a complaint event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -115,7 +124,11 @@ it('handles a complaint event', function () {
 it('handles a delivery event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'Delivery'));
+    $tenant = Tenant::current();
+
+    $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Delivery');
+    data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
+    $snsData['Message'] = json_encode($messageContent);
 
     $response = withHeaders(
         [
@@ -130,7 +143,7 @@ it('handles a delivery event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -142,7 +155,11 @@ it('handles a delivery event', function () {
 it('handles a send event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'Send'));
+    $tenant = Tenant::current();
+
+    $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Send');
+    data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
+    $snsData['Message'] = json_encode($messageContent);
 
     $response = withHeaders(
         [
@@ -157,7 +174,7 @@ it('handles a send event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -169,7 +186,11 @@ it('handles a send event', function () {
 it('handles a reject event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'Reject'));
+    $tenant = Tenant::current();
+
+    $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Reject');
+    data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
+    $snsData['Message'] = json_encode($messageContent);
 
     $response = withHeaders(
         [
@@ -184,7 +205,7 @@ it('handles a reject event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -196,7 +217,11 @@ it('handles a reject event', function () {
 it('handles a open event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'Open'));
+    $tenant = Tenant::current();
+
+    $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Open');
+    data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
+    $snsData['Message'] = json_encode($messageContent);
 
     $response = withHeaders(
         [
@@ -211,7 +236,7 @@ it('handles a open event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -223,7 +248,11 @@ it('handles a open event', function () {
 it('handles a click event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'Click'));
+    $tenant = Tenant::current();
+
+    $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Click');
+    data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
+    $snsData['Message'] = json_encode($messageContent);
 
     $response = withHeaders(
         [
@@ -238,7 +267,7 @@ it('handles a click event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -250,7 +279,11 @@ it('handles a click event', function () {
 it('handles a renderingFailure event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'RenderingFailure'));
+    $tenant = Tenant::current();
+
+    $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'RenderingFailure');
+    data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
+    $snsData['Message'] = json_encode($messageContent);
 
     $response = withHeaders(
         [
@@ -265,7 +298,7 @@ it('handles a renderingFailure event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -277,7 +310,11 @@ it('handles a renderingFailure event', function () {
 it('handles a DeliveryDelay event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'DeliveryDelay'));
+    $tenant = Tenant::current();
+
+    $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'DeliveryDelay');
+    data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
+    $snsData['Message'] = json_encode($messageContent);
 
     $response = withHeaders(
         [
@@ -292,7 +329,7 @@ it('handles a DeliveryDelay event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
@@ -304,7 +341,11 @@ it('handles a DeliveryDelay event', function () {
 it('handles a Subscription event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'Subscription'));
+    $tenant = Tenant::current();
+
+    $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Subscription');
+    data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
+    $snsData['Message'] = json_encode($messageContent);
 
     $response = withHeaders(
         [
@@ -319,7 +360,7 @@ it('handles a Subscription event', function () {
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 

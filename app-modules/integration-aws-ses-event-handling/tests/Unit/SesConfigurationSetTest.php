@@ -35,6 +35,7 @@
 */
 
 use App\Models\User;
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Mail\Events\MessageSent;
@@ -81,7 +82,7 @@ it('The configuration set headers are present and emails are sent if configurati
 
     Event::assertDispatched(
         fn (MessageSent $event) => $event->message->getHeaders()->get('X-SES-CONFIGURATION-SET')->getBody() === $configurationSet
-            && $event->message->getHeaders()->get('X-SES-MESSAGE-TAGS')->getBody() === 'outbound_deliverable_id=' . OutboundDeliverable::first()->getKey()
+            && $event->message->getHeaders()->get('X-SES-MESSAGE-TAGS')->getBody() === sprintf('outbound_deliverable_id=%s, tenant_id=%s', OutboundDeliverable::first()->getKey(), Tenant::current()->getKey())
     );
 });
 

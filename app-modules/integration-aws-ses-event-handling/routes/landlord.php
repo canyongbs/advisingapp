@@ -39,11 +39,21 @@ use AdvisingApp\Webhook\Http\Middleware\HandleAwsSnsRequest;
 use AdvisingApp\Webhook\Http\Middleware\VerifyAwsSnsRequest;
 use AdvisingApp\IntegrationAwsSesEventHandling\Http\Controllers\AwsSesInboundWebhookController;
 
-Route::post('/inbound/webhook/awsses', AwsSesInboundWebhookController::class)
-    ->middleware(
-        [
-            VerifyAwsSnsRequest::class,
-            HandleAwsSnsRequest::class,
-        ]
+Route::prefix('landlord/api')
+    ->as('landlord.api.')
+    ->domain(
+        (string) str(config('app.landlord_url'))
+            ->after('http://')
+            ->after('https://')
+            ->rtrim('/'),
     )
-    ->name('inbound.webhook.awsses');
+    ->group(function () {
+        Route::post('/inbound/webhook/awsses', AwsSesInboundWebhookController::class)
+            ->middleware(
+                [
+                    VerifyAwsSnsRequest::class,
+                    HandleAwsSnsRequest::class,
+                ]
+            )
+            ->name('inbound.webhook.awsses');
+    });

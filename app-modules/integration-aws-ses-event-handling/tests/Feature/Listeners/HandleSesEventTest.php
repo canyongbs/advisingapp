@@ -34,6 +34,8 @@
 </COPYRIGHT>
 */
 
+use App\Models\Tenant;
+
 use function Pest\Laravel\withHeaders;
 use function Tests\loadFixtureFromModule;
 use function Pest\Laravel\withoutMiddleware;
@@ -47,13 +49,18 @@ beforeEach(function () {
 });
 
 it('correctly handles the incoming SES event', function (string $event, NotificationDeliveryStatus $status, ?string $deliveryResponse) {
+    // TODO: Change this test to run in a isolated non-tenantized landlord environment
+
     // Given that we have an outbound deliverable
     $deliverable = OutboundDeliverable::factory()->create();
+
+    $tenant = Tenant::current();
 
     // And we receive some sort of SES event when attempting to deliver
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
     $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', $event);
     data_set($messageContent, 'mail.tags.outbound_deliverable_id.0', $deliverable->id);
+    data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
     $snsData['Message'] = json_encode($messageContent);
 
     expect($deliverable->hasBeenDelivered())->toBe(false);
@@ -73,7 +80,7 @@ it('correctly handles the incoming SES event', function (string $event, Notifica
             'User-Agent' => 'Amazon Simple Notification Service Agent',
         ]
     )->postJson(
-        route('inbound.webhook.awsses'),
+        route('landlord.api.inbound.webhook.awsses'),
         $snsData,
     );
 
