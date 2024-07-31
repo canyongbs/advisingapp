@@ -70,9 +70,8 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
         if (! $user->hasLicense(LicenseType::ConversationalAi)) {
             return false;
         }
-
-        // TODO: Determine from Product what permission to use here
-        return $user->can(['assistant.access_ai_settings']);
+        
+        return $user->can(['ai.access_integrated_assistant_settings']);
     }
 
     public function form(Form $form): Form
