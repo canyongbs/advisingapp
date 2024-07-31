@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Filament\Pages;
 
 use App\Models\User;
 use Filament\Forms\Form;
+use Laravel\Pennant\Feature;
 use Filament\Pages\SettingsPage;
 use AdvisingApp\Ai\Enums\AiModel;
 use Filament\Forms\Components\Select;
@@ -64,13 +65,17 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
+        if (Feature::inactive('ai-integrated-assistant-settings')) {
+            return false;
+        }
+
         /** @var User $user */
         $user = auth()->user();
 
         if (! $user->hasLicense(LicenseType::ConversationalAi)) {
             return false;
         }
-        
+
         return $user->can(['ai.access_integrated_assistant_settings']);
     }
 
