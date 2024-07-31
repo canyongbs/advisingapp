@@ -55,6 +55,8 @@ class ManageReportAssistantSettings extends SettingsPage
 
     protected static ?string $navigationIcon = 'heroicon-o-beaker';
 
+    protected static ?int $navigationSort = 20;
+
     public static function canAccess(): bool
     {
         /** @var User $user */

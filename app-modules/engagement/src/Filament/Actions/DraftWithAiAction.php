@@ -45,10 +45,10 @@ use Filament\Resources\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Vite;
 use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Settings\AiSettings;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 
 class DraftWithAiAction extends Action
@@ -78,7 +78,7 @@ class DraftWithAiAction extends Action
                     ->required(),
             ])
             ->action(function (array $data, Get $get, Set $set, Page $livewire) {
-                $service = app(AiSettings::class)->default_model->getService();
+                $service = app(AiIntegratedAssistantSettings::class)->default_model->getService();
 
                 $userName = auth()->user()->name;
                 $userJobTitle = auth()->user()->job_title ?? 'staff member';
@@ -132,8 +132,7 @@ class DraftWithAiAction extends Action
                 $set('body', (string) str($content)->after("\n")->markdown());
             })
             ->visible(
-                auth()->user()->hasLicense(LicenseType::ConversationalAi) &&
-                app(AiSettings::class)->default_model
+                auth()->user()->hasLicense(LicenseType::ConversationalAi)
             );
     }
 
