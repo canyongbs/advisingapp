@@ -97,10 +97,10 @@ class ListApplications extends ListRecords
                     }),
             ])
             ->bulkActions([
-            BulkActionGroup::make([
+                BulkActionGroup::make([
                     DeleteBulkAction::make(),
-            ]),
-        ]);
+                ]),
+            ]);
     }
 
     protected function getHeaderActions(): array
