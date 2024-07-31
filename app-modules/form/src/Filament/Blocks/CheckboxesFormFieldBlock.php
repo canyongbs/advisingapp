@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
-use Laravel\Pennant\Feature;
 use Filament\Forms\Components\KeyValue;
 use AdvisingApp\Form\Models\SubmissibleField;
 
@@ -48,11 +47,7 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
 
     public static function type(): string
     {
-        if (Feature::active('introduce-checkboxes-form-field')) {
-            return 'checkboxes';
-        }
-
-        return 'checkbox';
+        return 'checkboxes';
     }
 
     public function fields(): array
