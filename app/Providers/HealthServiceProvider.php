@@ -73,14 +73,15 @@ class HealthServiceProvider extends ServiceProvider
             DebugModeCheck::new()
                 ->unless($local),
             EnvironmentCheck::new()
-                ->unless($local),
+                ->unless($local || app()->environment('staging')),
             // cloudflare dns
             PingCheck::new()
                 ->url('1.1.1.1')
                 ->timeout(2),
             QueueCheck::new(),
             RedisCheck::new(),
-            ScheduleCheck::new(),
+            ScheduleCheck::new()
+                ->heartbeatMaxAgeInMinutes(2),
         ]);
     }
 }

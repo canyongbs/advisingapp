@@ -88,7 +88,7 @@
         "owen-it/laravel-auditing": "^13.6",
         "saade/filament-fullcalendar": "^3.2",
         "sentry/sentry-laravel": "^4.6",
-        "shuvroroy/filament-spatie-laravel-health": "^2.0",
+        "shuvroroy/filament-spatie-laravel-health": "^2.1.0",
         "socialiteproviders/google": "^4.1",
         "socialiteproviders/microsoft-azure": "^5.2",
         "spatie/laravel-cookie-consent": "^3.3",

@@ -1043,8 +1043,10 @@ namespace AdvisingApp\Alert\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $created_by
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \App\Models\User|null $createdBy
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Alert\Histories\AlertHistory> $histories
  * @property-read int|null $histories_count
  * @method static \AdvisingApp\Alert\Database\Factories\AlertFactory factory($count = null, $state = [])
@@ -1057,6 +1059,7 @@ namespace AdvisingApp\Alert\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Alert whereConcernId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert whereConcernType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Alert whereCreatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert whereId($value)
@@ -1311,6 +1314,7 @@ namespace AdvisingApp\Audit\Models{
  * @property string|null $tags
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $change_agent_name
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $auditable
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $user
  * @method static \AdvisingApp\Audit\Database\Factories\AuditFactory factory($count = null, $state = [])
@@ -1320,6 +1324,7 @@ namespace AdvisingApp\Audit\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Audit whereAuditableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Audit whereAuditableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Audit whereChangeAgentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit whereChangeAgentName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Audit whereChangeAgentType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Audit whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Audit whereEvent($value)
@@ -1641,6 +1646,8 @@ namespace AdvisingApp\Campaign\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \AdvisingApp\Campaign\Models\Campaign $campaign
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
  * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction campaignEnabled()
  * @method static \AdvisingApp\Campaign\Database\Factories\CampaignActionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction hasNotBeenExecuted()
@@ -1824,6 +1831,8 @@ namespace AdvisingApp\Engagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
  * @property-read \App\Models\User|null $user
  * @method static \AdvisingApp\Engagement\Database\Factories\EmailTemplateFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate newModelQuery()
@@ -1870,6 +1879,8 @@ namespace AdvisingApp\Engagement\Models{
  * @property-read \AdvisingApp\Engagement\Models\EngagementDeliverable|null $deliverable
  * @property-read \AdvisingApp\Engagement\Models\EngagementBatch|null $engagementBatch
  * @property-read \AdvisingApp\Engagement\Models\EngagementDeliverable|null $engagementDeliverable
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
  * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timelineRecord
  * @property-read \App\Models\User|null $user
  * @method static \AdvisingApp\Engagement\Database\Factories\EngagementFactory factory($count = null, $state = [])
@@ -1916,6 +1927,8 @@ namespace AdvisingApp\Engagement\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\Engagement> $engagements
  * @property-read int|null $engagements_count
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
  * @property-read \App\Models\User $user
  * @method static \AdvisingApp\Engagement\Database\Factories\EngagementBatchFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementBatch newModelQuery()

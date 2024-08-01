@@ -110,9 +110,9 @@ class Kernel extends ConsoleKernel
                         ->withoutOverlapping();
 
                     $schedule->command("tenants:artisan \"health:schedule-check-heartbeat\" --tenant={$tenant->id}")
+                        ->name("health:schedule-check-heartbeat-{$tenant->id}")
                         ->everyMinute()
-                        ->onOneServer()
-                        ->withoutOverlapping();
+                        ->onOneServer();
                 } catch (Throwable $th) {
                     Log::error('Error scheduling tenant commands.', [
                         'tenant' => $tenant->id,
