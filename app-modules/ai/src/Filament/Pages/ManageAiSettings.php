@@ -72,6 +72,8 @@ class ManageAiSettings extends SettingsPage
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
+    protected static ?int $navigationSort = 30;
+
     public static function canAccess(): bool
     {
         /** @var User $user */
@@ -143,7 +145,6 @@ class ManageAiSettings extends SettingsPage
                         ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
                         ->all())
                     ->searchable()
-                    ->helperText('Used for general purposes like generating content when an assistant is not being used.')
                     ->required(),
             ]);
     }

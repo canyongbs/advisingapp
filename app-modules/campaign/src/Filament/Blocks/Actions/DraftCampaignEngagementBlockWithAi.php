@@ -41,6 +41,7 @@ use Exception;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Illuminate\Support\Str;
+use Laravel\Pennant\Feature;
 use App\Settings\LicenseSettings;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Vite;
@@ -49,6 +50,7 @@ use AdvisingApp\Ai\Settings\AiSettings;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 
 class DraftCampaignEngagementBlockWithAi extends Action
@@ -81,7 +83,9 @@ class DraftCampaignEngagementBlockWithAi extends Action
                     ->required(),
             ])
             ->action(function (array $data, Get $get, Set $set) {
-                $service = app(AiSettings::class)->default_model->getService();
+                $service = Feature::active('ai-integrated-assistant-settings')
+                    ? app(AiIntegratedAssistantSettings::class)->default_model->getService()
+                    : app(AiSettings::class)->default_model->getService();
 
                 $userName = auth()->user()->name;
                 $userJobTitle = auth()->user()->job_title ?? 'staff member';
@@ -134,8 +138,7 @@ class DraftCampaignEngagementBlockWithAi extends Action
                 $set("{$this->getFieldPrefix()}body", (string) str($content)->after("\n")->markdown());
             })
             ->visible(
-                auth()->user()->hasLicense(LicenseType::ConversationalAi) &&
-                app(AiSettings::class)->default_model
+                auth()->user()->hasLicense(LicenseType::ConversationalAi)
             );
     }
 
