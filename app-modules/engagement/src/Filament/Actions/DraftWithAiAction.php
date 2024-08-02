@@ -48,8 +48,10 @@ use Illuminate\Support\Facades\Vite;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
 use Filament\Forms\Components\Textarea;
+use Filament\Notifications\Notification;
 use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 
@@ -96,38 +98,66 @@ class DraftWithAiAction extends Action
                     ->join(', ', ' and ');
 
                 if ($get('delivery_method') === EngagementDeliveryMethod::Sms->value) {
-                    $content = $service->complete(<<<EOL
-                        The user's name is {$userName} and they are a {$userJobTitle} at {$clientName}.
-                        Please draft a short SMS message for {$educatableLabel} at their college.
-                        The user will send a message to you containing instructions for the content.
+                    try {
+                        $content = $service->complete(<<<EOL
+                            The user's name is {$userName} and they are a {$userJobTitle} at {$clientName}.
+                            Please draft a short SMS message for {$educatableLabel} at their college.
+                            The user will send a message to you containing instructions for the content.
 
-                        You should only respond with the SMS content, you should never greet them.
+                            You should only respond with the SMS content, you should never greet them.
 
-                        You may use merge tags to insert dynamic data about the student in the body of the SMS:
-                        {$mergeTagsList}
-                    EOL, $data['instructions']);
+                            You may use merge tags to insert dynamic data about the student in the body of the SMS:
+                            {$mergeTagsList}
+                        EOL, $data['instructions']);
+                    } catch (MessageResponseException $exception) {
+                        report($exception);
+
+                        Notification::make()
+                            ->title('AI Assistant Error')
+                            ->body('There was an issue using the AI assistant. Please try again later.')
+                            ->danger()
+                            ->send();
+
+                        $this->halt();
+
+                        return;
+                    }
 
                     $set('body', Str::markdown($content));
 
                     return;
                 }
 
-                $content = $service->complete(<<<EOL
-                    The user's name is {$userName} and they are a {$userJobTitle} at {$clientName}.
-                    Please draft an email for {$educatableLabel} at their college.
-                    The user will send a message to you containing instructions for the content.
+                try {
+                    $content = $service->complete(<<<EOL
+                        The user's name is {$userName} and they are a {$userJobTitle} at {$clientName}.
+                        Please draft an email for {$educatableLabel} at their college.
+                        The user will send a message to you containing instructions for the content.
 
-                    You should only respond with the email content, you should never greet them.
-                    The first line should contain the raw subject of the email, with no "Subject: " label at the start.
-                    All following lines after the subject are the email body.
+                        You should only respond with the email content, you should never greet them.
+                        The first line should contain the raw subject of the email, with no "Subject: " label at the start.
+                        All following lines after the subject are the email body.
 
-                    When you answer, it is crucial that you format the email body using rich text in Markdown format.
-                    The subject line can not use Markdown formatting, it is plain text.
-                    Do not ever mention in your response that the answer is being formatted/rendered in Markdown.
+                        When you answer, it is crucial that you format the email body using rich text in Markdown format.
+                        The subject line can not use Markdown formatting, it is plain text.
+                        Do not ever mention in your response that the answer is being formatted/rendered in Markdown.
 
-                    You may use merge tags to insert dynamic data about the student in the body of the email, but these do not work in the subject line:
-                    {$mergeTagsList}
-                EOL, $data['instructions']);
+                        You may use merge tags to insert dynamic data about the student in the body of the email, but these do not work in the subject line:
+                        {$mergeTagsList}
+                    EOL, $data['instructions']);
+                } catch (MessageResponseException $exception) {
+                    report($exception);
+
+                    Notification::make()
+                        ->title('AI Assistant Error')
+                        ->body('There was an issue using the AI assistant. Please try again later.')
+                        ->danger()
+                        ->send();
+
+                    $this->halt();
+
+                    return;
+                }
 
                 $set('subject', (string) str($content)
                     ->before("\n")
