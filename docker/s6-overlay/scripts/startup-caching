@@ -10,6 +10,18 @@ fi
 
 USERNAME=$(id -nu "$PUID")
 
+# Modules caching
+
+if [ "${CACHE_MODULES:="false"}" == "true" ]; then
+  echo "Caching modules..."
+
+  s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" modules:cache
+
+  echo "Modules cached!"
+else
+    echo "Skipping module caching because it was specifically disabled..."
+fi
+
 # Config caching
 
 if [ "${CACHE_CONFIG:="false"}" == "true" ]; then
