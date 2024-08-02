@@ -34,41 +34,62 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources;
+namespace AdvisingApp\Ai\Filament\Pages;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Ai\Models\PromptType;
+use App\Models\User;
+use Filament\Forms\Form;
+use Laravel\Pennant\Feature;
+use Filament\Pages\SettingsPage;
+use AdvisingApp\Ai\Enums\AiModel;
+use Filament\Forms\Components\Select;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages\EditPromptType;
-use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages\ViewPromptType;
-use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages\ListPromptTypes;
-use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages\CreatePromptType;
-use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\RelationManagers\PromptsRelationManager;
+use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 
-class PromptTypeResource extends Resource
+/**
+ * @property-read ?AiAssistant $defaultAssistant
+
+ */
+class ManageAiIntegratedAssistantSettings extends SettingsPage
 {
-    protected static ?string $model = PromptType::class;
+    protected static string $settings = AiIntegratedAssistantSettings::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static ?int $navigationSort = 50;
+    protected static ?string $title = 'Integrated Assistant';
 
     protected static ?string $cluster = ArtificialIntelligence::class;
 
-    public static function getRelations(): array
+    protected static ?string $navigationIcon = 'heroicon-o-cube-transparent';
+
+    protected static ?int $navigationSort = 40;
+
+    public static function canAccess(): bool
     {
-        return [
-            PromptsRelationManager::class,
-        ];
+        if (Feature::inactive('ai-integrated-assistant-settings')) {
+            return false;
+        }
+
+        /** @var User $user */
+        $user = auth()->user();
+
+        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
+            return false;
+        }
+
+        return $user->can(['ai.access_integrated_assistant_settings']);
     }
 
-    public static function getPages(): array
+    public function form(Form $form): Form
     {
-        return [
-            'index' => ListPromptTypes::route('/'),
-            'create' => CreatePromptType::route('/create'),
-            'view' => ViewPromptType::route('/{record}'),
-            'edit' => EditPromptType::route('/{record}/edit'),
-        ];
+        return $form
+            ->schema([
+                Select::make('default_model')
+                    ->options(collect(AiModel::getDefaultModels())
+                        ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
+                        ->all())
+                    ->searchable()
+                    ->helperText('Used for general purposes like generating content when an assistant is not being used.')
+                    ->required(),
+            ]);
     }
 }

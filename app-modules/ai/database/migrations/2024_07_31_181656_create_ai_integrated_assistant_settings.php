@@ -34,41 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Ai\Models\PromptType;
-use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages\EditPromptType;
-use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages\ViewPromptType;
-use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages\ListPromptTypes;
-use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages\CreatePromptType;
-use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\RelationManagers\PromptsRelationManager;
-
-class PromptTypeResource extends Resource
-{
-    protected static ?string $model = PromptType::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static ?int $navigationSort = 50;
-
-    protected static ?string $cluster = ArtificialIntelligence::class;
-
-    public static function getRelations(): array
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return [
-            PromptsRelationManager::class,
-        ];
+        $this->migrator->add('ai-integrated-assistant.default_model', 'openai_gpt_4o');
     }
 
-    public static function getPages(): array
+    public function down(): void
     {
-        return [
-            'index' => ListPromptTypes::route('/'),
-            'create' => CreatePromptType::route('/create'),
-            'view' => ViewPromptType::route('/{record}'),
-            'edit' => EditPromptType::route('/{record}/edit'),
-        ];
+        $this->migrator->deleteIfExists('ai-integrated-assistant.default_model');
     }
-}
+};
