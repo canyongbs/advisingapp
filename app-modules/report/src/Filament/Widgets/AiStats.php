@@ -37,9 +37,8 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use Illuminate\Support\Number;
-use AdvisingApp\Ai\Models\PromptUse;
 use Illuminate\Support\Facades\Cache;
-use AdvisingApp\Ai\Models\PromptUpvote;
+use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use AdvisingApp\Authorization\Enums\LicenseType;
 
@@ -56,15 +55,15 @@ class AiStats extends StatsOverviewReportWidget
                 }),
                 maxPrecision: 2,
             )),
-            Stat::make('Prompts Liked', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('prompts-liked-count', now()->addHours(24), function (): int {
-                    return PromptUpvote::count();
+            Stat::make('Available Licenses', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('available-ai-licenses', now()->addHours(24), function (): int {
+                    return LicenseType::ConversationalAi->getAvailableSeats();
                 }),
                 maxPrecision: 2,
             )),
-            Stat::make('Prompt Insertions', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('prompts-insertions-count', now()->addHours(24), function (): int {
-                    return PromptUse::count();
+            Stat::make('Number of Assistants', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('ai-assistants-count', now()->addHours(24), function (): int {
+                    return AiAssistant::count();
                 }),
                 maxPrecision: 2,
             )),
