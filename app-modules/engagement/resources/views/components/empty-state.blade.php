@@ -39,6 +39,6 @@
         icon="heroicon-o-rectangle-group"
     />
 
-    <span class="mt-2 block text-sm font-semibold text-gray-800 dark:text-gray-200">Select an item from the lefthand menu
-        to see engagements</span>
+    <span class="mt-2 block text-sm font-semibold text-gray-800 dark:text-gray-200">Select a name from the list to your
+        left to view related emails and text messages</span>
 </div>
