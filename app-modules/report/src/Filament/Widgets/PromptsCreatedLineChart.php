@@ -44,11 +44,7 @@ class PromptsCreatedLineChart extends LineChartReportWidget
 {
     protected static ?string $heading = 'Prompts Created';
 
-    protected int | string | array $columnSpan = [
-        'sm' => 12,
-        'md' => 8,
-        'lg' => 8,
-    ];
+    protected int | string | array $columnSpan = 'full';
 
     protected function getOptions(): array
     {
