@@ -2,14 +2,15 @@
 
 namespace AdvisingApp\Report\Models;
 
-use AdvisingApp\Report\Enums\TrackedEventType;
 use App\Models\BaseModel;
+use AdvisingApp\Report\Enums\TrackedEventType;
 
 class TrackedEventCount extends BaseModel
 {
     protected $fillable = [
         'type',
         'count',
+        'last_occurred_at',
     ];
 
     protected $casts = [

@@ -11,6 +11,7 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
             $table->string('type')->unique();
             $table->unsignedBigInteger('count')->default(0);
+            $table->timestamp('last_occurred_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
