@@ -92,7 +92,7 @@ class ManageStudentCareTeam extends ManageRelatedRecords
                     ->attachAnother(false)
                     ->color('primary')
                     ->recordSelect(
-                        fn (Select $select) => $select->placeholder('Select a Users'),
+                        fn (Select $select) => $select->placeholder('Select Users'),
                     )
                     ->multiple()
                     ->recordSelectOptionsQuery(
