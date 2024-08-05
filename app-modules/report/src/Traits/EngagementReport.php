@@ -34,50 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+namespace AdvisingApp\Report\Traits;
 
-use Filament\Pages\Dashboard;
-use App\Filament\Clusters\ReportLibrary;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
-use AdvisingApp\Report\Filament\Widgets\ProspectReportLineChart;
-use AdvisingApp\Report\Filament\Widgets\ProspectReportTableChart;
-use AdvisingApp\Report\Traits\ProspectReport as TraitsProspectReport;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
-class ProspectReport extends Dashboard
+trait EngagementReport
 {
-  use TraitsProspectReport;
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
 
-  protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
-  protected static ?string $navigationGroup = 'Prospects';
-
-  protected static string $routePath = 'prospect-report';
-
-  protected static ?string $title = 'Overview';
-
-  protected static ?string $cluster = ReportLibrary::class;
-
-  protected static ?int $navigationSort = 2;
-
-  protected $cacheTag = 'prospect-report-cache';
-
-  public function getWidgets(): array
-  {
-    return [
-      RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-      ProspectReportStats::make(['cacheTag' => $this->cacheTag]),
-      ProspectReportLineChart::make(['cacheTag' => $this->cacheTag]),
-      ProspectReportTableChart::make(['cacheTag' => $this->cacheTag]),
-    ];
-  }
-
-  public function getColumns(): int | string | array
-  {
-    return [
-      'sm' => 2,
-      'md' => 4,
-      'lg' => 4,
-    ];
-  }
+        return ($user->hasLicense(LicenseType::RetentionCrm) || $user->hasLicense(LicenseType::RecruitmentCrm)) && $user->can('report-library.view-any');
+    }
 }
