@@ -67,8 +67,7 @@ abstract class TasksWidget extends BaseWidget
                 return $user
                     ->assignedTasks()
                     ->whereMorphedTo('concern', $this->concern())
-                    ->getQuery()
-                    ->byNextDue();
+                    ->getQuery();
             })
             ->columns([
                 IdColumn::make(),
@@ -91,6 +90,7 @@ abstract class TasksWidget extends BaseWidget
                         default => null,
                     }),
             ])
+            ->defaultSort('due')
             ->filters([
                 SelectFilter::make('status')
                     ->options(TaskStatus::class)
