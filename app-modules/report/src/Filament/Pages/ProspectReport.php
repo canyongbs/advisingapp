@@ -46,38 +46,38 @@ use AdvisingApp\Report\Traits\ProspectReport as TraitsProspectReport;
 
 class ProspectReport extends Dashboard
 {
-  use TraitsProspectReport;
+    use TraitsProspectReport;
 
-  protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-  protected static ?string $navigationGroup = 'Prospects';
+    protected static ?string $navigationGroup = 'Prospects';
 
-  protected static string $routePath = 'prospect-report';
+    protected static string $routePath = 'prospect-report';
 
-  protected static ?string $title = 'Overview';
+    protected static ?string $title = 'Overview';
 
-  protected static ?string $cluster = ReportLibrary::class;
+    protected static ?string $cluster = ReportLibrary::class;
 
-  protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 2;
 
-  protected $cacheTag = 'prospect-report-cache';
+    protected $cacheTag = 'prospect-report-cache';
 
-  public function getWidgets(): array
-  {
-    return [
-      RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-      ProspectReportStats::make(['cacheTag' => $this->cacheTag]),
-      ProspectReportLineChart::make(['cacheTag' => $this->cacheTag]),
-      ProspectReportTableChart::make(['cacheTag' => $this->cacheTag]),
-    ];
-  }
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            ProspectReportStats::make(['cacheTag' => $this->cacheTag]),
+            ProspectReportLineChart::make(['cacheTag' => $this->cacheTag]),
+            ProspectReportTableChart::make(['cacheTag' => $this->cacheTag]),
+        ];
+    }
 
-  public function getColumns(): int | string | array
-  {
-    return [
-      'sm' => 2,
-      'md' => 4,
-      'lg' => 4,
-    ];
-  }
+    public function getColumns(): int | string | array
+    {
+        return [
+            'sm' => 2,
+            'md' => 4,
+            'lg' => 4,
+        ];
+    }
 }

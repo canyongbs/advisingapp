@@ -45,6 +45,6 @@ trait ProspectReport
         /** @var User $user */
         $user = auth()->user();
 
-        return  $user->hasLicense(LicenseType::RecruitmentCrm) && $user->can('report-library.view-any');
+        return $user->hasLicense(LicenseType::RecruitmentCrm) && $user->can('report-library.view-any');
     }
 }

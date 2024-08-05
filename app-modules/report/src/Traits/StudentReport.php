@@ -40,11 +40,11 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 
 trait StudentReport
 {
-  public static function canAccess(): bool
-  {
-    /** @var User $user */
-    $user = auth()->user();
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
 
-    return  $user->hasLicense(LicenseType::RetentionCrm) && $user->can('report-library.view-any');
-  }
+        return $user->hasLicense(LicenseType::RetentionCrm) && $user->can('report-library.view-any');
+    }
 }

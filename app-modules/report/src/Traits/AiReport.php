@@ -45,6 +45,6 @@ trait AiReport
         /** @var User $user */
         $user = auth()->user();
 
-        return  $user->hasLicense(LicenseType::ConversationalAi) && $user->can('report-library.view-any');
+        return $user->hasLicense(LicenseType::ConversationalAi) && $user->can('report-library.view-any');
     }
 }
