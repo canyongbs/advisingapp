@@ -34,10 +34,26 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\AiMessage;
-use Illuminate\Support\Facades\Event;
+use AdvisingApp\Ai\Events\AiMessageCreated;
 use AdvisingApp\Ai\Events\AiMessageTrashed;
 use AdvisingApp\Ai\Listeners\AiMessageCascadeDeleteAiMessageFiles;
+use AdvisingApp\Ai\Listeners\CreateAiMessageLog;
+use AdvisingApp\Ai\Models\AiMessage;
+use Illuminate\Support\Facades\Event;
+
+
+it('dispatches the AiMessageCreated event when an AiMessage is created', function () {
+    Event::fake();
+
+    AiMessage::factory()->create();
+
+    Event::assertDispatched(AiMessageCreated::class);
+
+    Event::assertListening(
+        expectedEvent: AiMessageCreated::class,
+        expectedListener: CreateAiMessageLog::class
+    );
+});
 
 it('dispatches the AiMessageTrashed event when an AiMessage is deleted', function () {
     $aiMessage = AiMessage::factory()->create();
