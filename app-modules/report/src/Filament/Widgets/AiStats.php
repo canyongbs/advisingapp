@@ -39,6 +39,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Report\Models\TrackedEvent;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -78,6 +79,15 @@ class AiStats extends StatsOverviewReportWidget
                 $count = TrackedEventCount::where('type', TrackedEventType::AiExchange)->first()?->count;
 
                 return ! is_null($count) ? Number::abbreviate($count, maxPrecision: 2) : 'N/A';
+            })),
+            Stat::make('New Exchanges', Cache::tags([$this->cacheTag])->remember('ai-new-exchanges', now()->addHours(24), function (): int {
+                return Number::abbreviate(
+                    TrackedEvent::query()
+                        ->where('type', TrackedEventType::AiExchange)
+                        ->whereDate('occurred_at', '>=', now()->subDays(30))
+                        ->count(),
+                    maxPrecision: 2
+                );
             })),
         ];
     }
