@@ -44,6 +44,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Actions\SendMessage;
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
@@ -211,4 +212,5 @@ it('dispatches tracking for AiExchange for both sent message and response', func
         ->toBe(2);
 
     Queue::assertPushed(RecordTrackedEvent::class, 2);
+    Queue::assertPushed(RecordTrackedEvent::class, fn (RecordTrackedEvent $job) => $job->type === TrackedEventType::AiExchange);
 });
