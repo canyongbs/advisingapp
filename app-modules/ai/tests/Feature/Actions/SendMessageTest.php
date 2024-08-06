@@ -211,6 +211,8 @@ it('dispatches tracking for AiExchange for both sent message and response', func
     expect($messages->count())
         ->toBe(2);
 
-    Queue::assertPushed(RecordTrackedEvent::class, 2);
-    Queue::assertPushed(RecordTrackedEvent::class, fn (RecordTrackedEvent $job) => $job->type === TrackedEventType::AiExchange);
+    expect(Queue::pushed(RecordTrackedEvent::class))
+        ->toHaveCount(2)
+        ->each
+        ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
 });
