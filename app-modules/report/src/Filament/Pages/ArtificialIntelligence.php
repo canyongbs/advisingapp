@@ -37,50 +37,50 @@
 namespace AdvisingApp\Report\Filament\Pages;
 
 use App\Filament\Clusters\ReportLibrary;
+use AdvisingApp\Report\Abstract\AiReport;
 use AdvisingApp\Report\Filament\Widgets\AiStats;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\PromptsCreatedLineChart;
 use AdvisingApp\Report\Filament\Widgets\SavedConversationsLineChart;
 use AdvisingApp\Report\Filament\Widgets\SpecialActionsDoughnutChart;
 use AdvisingApp\Report\Filament\Widgets\PromptsByCategoryDoughnutChart;
-use AdvisingApp\Report\Abstract\AiReport;
 
 class ArtificialIntelligence extends AiReport
 {
-  protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-  protected static ?string $cluster = ReportLibrary::class;
+    protected static ?string $cluster = ReportLibrary::class;
 
-  protected static ?string $navigationGroup = 'Artificial Intelligence';
+    protected static ?string $navigationGroup = 'Artificial Intelligence';
 
-  protected static ?string $navigationLabel = 'Artificial Intelligence';
+    protected static ?string $navigationLabel = 'Artificial Intelligence';
 
-  protected static ?string $title = 'Artificial Intelligence';
+    protected static ?string $title = 'Artificial Intelligence';
 
-  protected static string $routePath = 'artificial-intelligence';
+    protected static string $routePath = 'artificial-intelligence';
 
-  protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 3;
 
-  protected $cacheTag = 'report-artificial-intelligence';
+    protected $cacheTag = 'report-artificial-intelligence';
 
-  public function getWidgets(): array
-  {
-    return [
-      RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-      AiStats::make(['cacheTag' => $this->cacheTag]),
-      SavedConversationsLineChart::make(['cacheTag' => $this->cacheTag]),
-      SpecialActionsDoughnutChart::make(['cacheTag' => $this->cacheTag]),
-      PromptsByCategoryDoughnutChart::make(['cacheTag' => $this->cacheTag]),
-      PromptsCreatedLineChart::make(['cacheTag' => $this->cacheTag]),
-    ];
-  }
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            AiStats::make(['cacheTag' => $this->cacheTag]),
+            SavedConversationsLineChart::make(['cacheTag' => $this->cacheTag]),
+            SpecialActionsDoughnutChart::make(['cacheTag' => $this->cacheTag]),
+            PromptsByCategoryDoughnutChart::make(['cacheTag' => $this->cacheTag]),
+            PromptsCreatedLineChart::make(['cacheTag' => $this->cacheTag]),
+        ];
+    }
 
-  public function getColumns(): int | string | array
-  {
-    return [
-      'sm' => 12,
-      'md' => 12,
-      'lg' => 12,
-    ];
-  }
+    public function getColumns(): int | string | array
+    {
+        return [
+            'sm' => 12,
+            'md' => 12,
+            'lg' => 12,
+        ];
+    }
 }

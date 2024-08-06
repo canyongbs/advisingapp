@@ -37,44 +37,44 @@
 namespace AdvisingApp\Report\Filament\Pages;
 
 use App\Filament\Clusters\ReportLibrary;
+use AdvisingApp\Report\Abstract\StudentReport;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\StudentEngagementStats;
 use AdvisingApp\Report\Filament\Widgets\MostEngagedStudentsTable;
 use AdvisingApp\Report\Filament\Widgets\StudentEngagementLineChart;
-use AdvisingApp\Report\Abstract\StudentReport;
 
 class StudentEngagementReport extends StudentReport
 {
-  protected static ?string $title = 'Engagement';
+    protected static ?string $title = 'Engagement';
 
-  protected static ?string $cluster = ReportLibrary::class;
+    protected static ?string $cluster = ReportLibrary::class;
 
-  protected static string $routePath = 'student-engagement-report';
+    protected static string $routePath = 'student-engagement-report';
 
-  protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-  protected static ?string $navigationGroup = 'Students';
+    protected static ?string $navigationGroup = 'Students';
 
-  protected $cacheTag = 'report-student-engagement';
+    protected $cacheTag = 'report-student-engagement';
 
-  protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 4;
 
-  public function getColumns(): int | string | array
-  {
-    return [
-      'sm' => 2,
-      'md' => 4,
-      'lg' => 4,
-    ];
-  }
+    public function getColumns(): int | string | array
+    {
+        return [
+            'sm' => 2,
+            'md' => 4,
+            'lg' => 4,
+        ];
+    }
 
-  public function getWidgets(): array
-  {
-    return [
-      RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-      StudentEngagementStats::make(['cacheTag' => $this->cacheTag]),
-      StudentEngagementLineChart::make(['cacheTag' => $this->cacheTag]),
-      MostEngagedStudentsTable::make(['cacheTag' => $this->cacheTag]),
-    ];
-  }
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            StudentEngagementStats::make(['cacheTag' => $this->cacheTag]),
+            StudentEngagementLineChart::make(['cacheTag' => $this->cacheTag]),
+            MostEngagedStudentsTable::make(['cacheTag' => $this->cacheTag]),
+        ];
+    }
 }

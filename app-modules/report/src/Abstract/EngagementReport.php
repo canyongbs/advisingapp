@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Report\Abstract;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
 use Filament\Pages\Dashboard;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
 abstract class EngagementReport extends Dashboard
 {
-  public static function canAccess(): bool
-  {
-    /** @var User $user */
-    $user = auth()->user();
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
 
-    return ($user->hasLicense(LicenseType::RetentionCrm) || $user->hasLicense(LicenseType::RecruitmentCrm)) && $user->can('report-library.view-any');
-  }
+        return ($user->hasLicense(LicenseType::RetentionCrm) || $user->hasLicense(LicenseType::RecruitmentCrm)) && $user->can('report-library.view-any');
+    }
 }

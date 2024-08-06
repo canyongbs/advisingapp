@@ -37,44 +37,44 @@
 namespace AdvisingApp\Report\Filament\Pages;
 
 use App\Filament\Clusters\ReportLibrary;
+use AdvisingApp\Report\Abstract\ProspectReport;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\ProspectEngagementState;
 use AdvisingApp\Report\Filament\Widgets\MostEngagedProspectsTable;
 use AdvisingApp\Report\Filament\Widgets\ProspectEngagementLineChart;
-use AdvisingApp\Report\Abstract\ProspectReport;
 
 class ProspectEnagagementReport extends ProspectReport
 {
-  protected static ?string $cluster = ReportLibrary::class;
+    protected static ?string $cluster = ReportLibrary::class;
 
-  protected static ?string $navigationGroup = 'Prospects';
+    protected static ?string $navigationGroup = 'Prospects';
 
-  protected static ?string $title = 'Engagement';
+    protected static ?string $title = 'Engagement';
 
-  protected static string $routePath = 'prospect-enagement-report';
+    protected static string $routePath = 'prospect-enagement-report';
 
-  protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-  protected $cacheTag = 'report-prospect-engagement';
+    protected $cacheTag = 'report-prospect-engagement';
 
-  protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 20;
 
-  public function getColumns(): int | string | array
-  {
-    return [
-      'sm' => 2,
-      'md' => 4,
-      'lg' => 4,
-    ];
-  }
+    public function getColumns(): int | string | array
+    {
+        return [
+            'sm' => 2,
+            'md' => 4,
+            'lg' => 4,
+        ];
+    }
 
-  public function getWidgets(): array
-  {
-    return [
-      RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-      ProspectEngagementState::make(['cacheTag' => $this->cacheTag]),
-      ProspectEngagementLineChart::make(['cacheTag' => $this->cacheTag]),
-      MostEngagedProspectsTable::make(['cacheTag' => $this->cacheTag]),
-    ];
-  }
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            ProspectEngagementState::make(['cacheTag' => $this->cacheTag]),
+            ProspectEngagementLineChart::make(['cacheTag' => $this->cacheTag]),
+            MostEngagedProspectsTable::make(['cacheTag' => $this->cacheTag]),
+        ];
+    }
 }

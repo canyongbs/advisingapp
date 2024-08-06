@@ -37,46 +37,46 @@
 namespace AdvisingApp\Report\Filament\Pages;
 
 use App\Filament\Clusters\ReportLibrary;
+use AdvisingApp\Report\Abstract\StudentReport;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\StudentsStats;
 use AdvisingApp\Report\Filament\Widgets\MostRecentStudentsTable;
 use AdvisingApp\Report\Filament\Widgets\StudentCumulativeCountLineChart;
-use AdvisingApp\Report\Abstract\StudentReport;
 
 class Students extends StudentReport
 {
-  protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-  protected static ?string $cluster = ReportLibrary::class;
+    protected static ?string $cluster = ReportLibrary::class;
 
-  protected static ?string $navigationGroup = 'Students';
+    protected static ?string $navigationGroup = 'Students';
 
-  protected static ?string $navigationLabel = 'Overview';
+    protected static ?string $navigationLabel = 'Overview';
 
-  protected static ?string $title = 'Students (Overview)';
+    protected static ?string $title = 'Students (Overview)';
 
-  protected static string $routePath = 'students';
+    protected static string $routePath = 'students';
 
-  protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 1;
 
-  protected $cacheTag = 'report-students';
+    protected $cacheTag = 'report-students';
 
-  public function getWidgets(): array
-  {
-    return [
-      RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-      StudentsStats::make(['cacheTag' => $this->cacheTag]),
-      StudentCumulativeCountLineChart::make(['cacheTag' => $this->cacheTag]),
-      MostRecentStudentsTable::make(['cacheTag' => $this->cacheTag]),
-    ];
-  }
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            StudentsStats::make(['cacheTag' => $this->cacheTag]),
+            StudentCumulativeCountLineChart::make(['cacheTag' => $this->cacheTag]),
+            MostRecentStudentsTable::make(['cacheTag' => $this->cacheTag]),
+        ];
+    }
 
-  public function getColumns(): int | string | array
-  {
-    return [
-      'sm' => 2,
-      'md' => 4,
-      'lg' => 4,
-    ];
-  }
+    public function getColumns(): int | string | array
+    {
+        return [
+            'sm' => 2,
+            'md' => 4,
+            'lg' => 4,
+        ];
+    }
 }
