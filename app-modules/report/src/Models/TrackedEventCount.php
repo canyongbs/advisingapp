@@ -5,6 +5,9 @@ namespace AdvisingApp\Report\Models;
 use App\Models\BaseModel;
 use AdvisingApp\Report\Enums\TrackedEventType;
 
+/**
+ * @mixin IdeHelperTrackedEventCount
+ */
 class TrackedEventCount extends BaseModel
 {
     protected $fillable = [
@@ -15,5 +18,6 @@ class TrackedEventCount extends BaseModel
 
     protected $casts = [
         'type' => TrackedEventType::class,
+        'last_occurred_at' => 'datetime',
     ];
 }

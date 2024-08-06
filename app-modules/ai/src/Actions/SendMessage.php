@@ -40,11 +40,10 @@ use Closure;
 use Illuminate\Support\Arr;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
-use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use AdvisingApp\Report\Models\TrackedEvent;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 
 class SendMessage
 {

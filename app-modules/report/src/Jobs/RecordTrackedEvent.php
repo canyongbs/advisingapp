@@ -44,6 +44,7 @@ class RecordTrackedEvent implements ShouldQueue
                             'type' => $this->type,
                             'count' => 1,
                             'last_occurred_at' => $this->occurredAt,
+                            'updated_at' => now(),
                             'created_at' => now(),
                         ],
                     ],

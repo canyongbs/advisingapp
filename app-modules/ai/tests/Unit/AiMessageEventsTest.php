@@ -34,13 +34,12 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Events\AiMessageCreated;
-use AdvisingApp\Ai\Events\AiMessageTrashed;
-use AdvisingApp\Ai\Listeners\AiMessageCascadeDeleteAiMessageFiles;
-use AdvisingApp\Ai\Listeners\CreateAiMessageLog;
 use AdvisingApp\Ai\Models\AiMessage;
 use Illuminate\Support\Facades\Event;
-
+use AdvisingApp\Ai\Events\AiMessageCreated;
+use AdvisingApp\Ai\Events\AiMessageTrashed;
+use AdvisingApp\Ai\Listeners\CreateAiMessageLog;
+use AdvisingApp\Ai\Listeners\AiMessageCascadeDeleteAiMessageFiles;
 
 it('dispatches the AiMessageCreated event when an AiMessage is created', function () {
     Event::fake();
