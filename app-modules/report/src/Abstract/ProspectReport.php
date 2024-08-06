@@ -34,17 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Traits;
+namespace AdvisingApp\Report\Abstract;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use Filament\Pages\Dashboard;
 
-trait ProspectReport
+abstract class ProspectReport extends Dashboard
 {
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
+  public static function canAccess(): bool
+  {
+    /** @var User $user */
+    $user = auth()->user();
 
-        return $user->hasLicense(LicenseType::RecruitmentCrm) && $user->can('report-library.view-any');
-    }
+    return  $user->hasLicense(LicenseType::RecruitmentCrm) && $user->can('report-library.view-any');
+  }
 }

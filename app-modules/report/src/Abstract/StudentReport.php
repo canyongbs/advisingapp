@@ -34,11 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Traits;
+namespace AdvisingApp\Report\Abstract;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use Filament\Pages\Dashboard;
 
-trait StudentReport
+abstract class StudentReport extends Dashboard
 {
     public static function canAccess(): bool
     {
