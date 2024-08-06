@@ -75,7 +75,7 @@ class AiStats extends StatsOverviewReportWidget
                 }),
                 maxPrecision: 2,
             )),
-            Stat::make('Exchanges', Cache::tags([$this->cacheTag])->remember('ai-exchanges', now()->addHours(24), function (): int {
+            Stat::make('Exchanges', Cache::tags([$this->cacheTag])->remember('ai-exchanges', now()->addHours(24), function (): int|string {
                 $count = TrackedEventCount::where('type', TrackedEventType::AiExchange)->first()?->count;
 
                 return ! is_null($count) ? Number::abbreviate($count, maxPrecision: 2) : 'N/A';
@@ -88,6 +88,11 @@ class AiStats extends StatsOverviewReportWidget
                         ->count(),
                     maxPrecision: 2
                 );
+            })),
+            Stat::make('Saved Conversations', Cache::tags([$this->cacheTag])->remember('ai-saved-conversations', now()->addHours(24), function (): int|string {
+                $count = TrackedEventCount::where('type', TrackedEventType::AiThreadSaved)->first()?->count;
+
+                return ! is_null($count) ? Number::abbreviate($count, maxPrecision: 2) : 'N/A';
             })),
         ];
     }
