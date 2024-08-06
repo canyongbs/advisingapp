@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use Filament\Pages\Dashboard;
 use App\Filament\Clusters\ReportLibrary;
+use AdvisingApp\Report\Abstract\AiReport;
 use AdvisingApp\Report\Filament\Widgets\AiStats;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\PromptsCreatedLineChart;
@@ -45,7 +45,7 @@ use AdvisingApp\Report\Filament\Widgets\SavedConversationsLineChart;
 use AdvisingApp\Report\Filament\Widgets\SpecialActionsDoughnutChart;
 use AdvisingApp\Report\Filament\Widgets\PromptsByCategoryDoughnutChart;
 
-class ArtificialIntelligence extends Dashboard
+class ArtificialIntelligence extends AiReport
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
@@ -62,14 +62,6 @@ class ArtificialIntelligence extends Dashboard
     protected static ?int $navigationSort = 3;
 
     protected $cacheTag = 'report-artificial-intelligence';
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can('report-library.view-any');
-    }
 
     public function getWidgets(): array
     {

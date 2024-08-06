@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use App\Filament\Pages\Dashboard;
 use App\Filament\Clusters\ReportLibrary;
+use AdvisingApp\Report\Abstract\EngagementReport;
 use AdvisingApp\Report\Filament\Widgets\TaskStats;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\MostRecentTasksTable;
 use AdvisingApp\Report\Filament\Widgets\TaskCumulativeCountLineChart;
 
-class TaskManagement extends Dashboard
+class TaskManagement extends EngagementReport
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
@@ -60,14 +60,6 @@ class TaskManagement extends Dashboard
     protected static ?int $navigationSort = 10;
 
     protected $cacheTag = 'report-tasks';
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can('report-library.view-any');
-    }
 
     public function getWidgets(): array
     {

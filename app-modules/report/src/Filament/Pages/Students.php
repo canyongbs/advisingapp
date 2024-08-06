@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use Filament\Pages\Dashboard;
 use App\Filament\Clusters\ReportLibrary;
+use AdvisingApp\Report\Abstract\StudentReport;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\StudentsStats;
 use AdvisingApp\Report\Filament\Widgets\MostRecentStudentsTable;
 use AdvisingApp\Report\Filament\Widgets\StudentCumulativeCountLineChart;
 
-class Students extends Dashboard
+class Students extends StudentReport
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
@@ -60,14 +60,6 @@ class Students extends Dashboard
     protected static ?int $navigationSort = 1;
 
     protected $cacheTag = 'report-students';
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can('report-library.view-any');
-    }
 
     public function getWidgets(): array
     {

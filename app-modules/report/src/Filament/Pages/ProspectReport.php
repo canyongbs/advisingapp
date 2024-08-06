@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use Filament\Pages\Dashboard;
 use App\Filament\Clusters\ReportLibrary;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportLineChart;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportTableChart;
+use AdvisingApp\Report\Abstract\ProspectReport as AbstractProspectReport;
 
-class ProspectReport extends Dashboard
+class ProspectReport extends AbstractProspectReport
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
@@ -58,14 +58,6 @@ class ProspectReport extends Dashboard
     protected static ?int $navigationSort = 2;
 
     protected $cacheTag = 'prospect-report-cache';
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can('report-library.view-any');
-    }
 
     public function getWidgets(): array
     {

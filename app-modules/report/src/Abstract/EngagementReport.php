@@ -34,47 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+namespace AdvisingApp\Report\Abstract;
 
-use App\Filament\Clusters\ReportLibrary;
-use AdvisingApp\Report\Abstract\StudentReport;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\Report\Filament\Widgets\StudentEngagementStats;
-use AdvisingApp\Report\Filament\Widgets\MostEngagedStudentsTable;
-use AdvisingApp\Report\Filament\Widgets\StudentEngagementLineChart;
+use Filament\Pages\Dashboard;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
-class StudentEngagementReport extends StudentReport
+abstract class EngagementReport extends Dashboard
 {
-    protected static ?string $title = 'Engagement';
-
-    protected static ?string $cluster = ReportLibrary::class;
-
-    protected static string $routePath = 'student-engagement-report';
-
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
-    protected static ?string $navigationGroup = 'Students';
-
-    protected $cacheTag = 'report-student-engagement';
-
-    protected static ?int $navigationSort = 4;
-
-    public function getColumns(): int | string | array
+    public static function canAccess(): bool
     {
-        return [
-            'sm' => 2,
-            'md' => 4,
-            'lg' => 4,
-        ];
-    }
+        /** @var User $user */
+        $user = auth()->user();
 
-    public function getWidgets(): array
-    {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            StudentEngagementStats::make(['cacheTag' => $this->cacheTag]),
-            StudentEngagementLineChart::make(['cacheTag' => $this->cacheTag]),
-            MostEngagedStudentsTable::make(['cacheTag' => $this->cacheTag]),
-        ];
+        return ($user->hasLicense(LicenseType::RetentionCrm) || $user->hasLicense(LicenseType::RecruitmentCrm)) && $user->can('report-library.view-any');
     }
 }
