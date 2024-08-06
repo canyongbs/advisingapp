@@ -67,6 +67,12 @@ class AiStats extends StatsOverviewReportWidget
                 }),
                 maxPrecision: 2,
             )),
+            // Stat::make('Exchanges', Number::abbreviate(
+            //     Cache::tags([$this->cacheTag])->remember('ai-exchanges', now()->addHours(24), function (): int {
+            //         return 'N/A';
+            //     }),
+            //     maxPrecision: 2,
+            // )),
         ];
     }
 }
