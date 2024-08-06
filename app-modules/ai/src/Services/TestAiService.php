@@ -54,6 +54,11 @@ class TestAiService implements AiService
 
     public function complete(string $prompt, string $content): string
     {
+        dispatch(new RecordTrackedEvent(
+            type: TrackedEventType::AiExchange,
+            occurredAt: now(),
+        ));
+
         return fake()->paragraph();
     }
 

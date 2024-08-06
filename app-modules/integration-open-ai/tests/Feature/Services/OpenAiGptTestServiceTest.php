@@ -506,6 +506,8 @@ it('can create a run if one does not exist without sending the message again whe
 });
 
 it('can complete a prompt', function () {
+    Queue::fake();
+
     asSuperAdmin();
 
     /** @var BaseOpenAiService $service */
@@ -545,4 +547,9 @@ it('can complete a prompt', function () {
 
         return true;
     });
+
+    expect(Queue::pushed(RecordTrackedEvent::class))
+        ->toHaveCount(1)
+        ->each
+        ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
 });

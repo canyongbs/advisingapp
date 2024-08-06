@@ -106,6 +106,11 @@ abstract class BaseOpenAiService implements AiService
             throw new MessageResponseException('Failed to complete the prompt: [' . $response->body() . '].');
         }
 
+        dispatch(new RecordTrackedEvent(
+            type: TrackedEventType::AiExchange,
+            occurredAt: now(),
+        ));
+
         return $response->json(
             key: 'choices.0.message.content',
             default: fn () => throw new MessageResponseException('Missing response content when completing a prompt: [' . $response->body() . '].'),
