@@ -6,7 +6,7 @@ use Filament\Support\Contracts\HasLabel;
 
 enum TrackedEventType: string implements HasLabel
 {
-    case AiUtterance = 'ai-utterance';
+    case AiExchange = 'ai-exchange';
 
     public function getLabel(): ?string
     {

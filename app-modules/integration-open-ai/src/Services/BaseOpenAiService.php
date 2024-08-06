@@ -48,6 +48,8 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use OpenAI\Responses\Threads\ThreadResponse;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
@@ -272,6 +274,11 @@ abstract class BaseOpenAiService implements AiService
         $message->context = $instructions;
         $message->message_id = $newMessageResponse->id;
         $message->save();
+
+        dispatch(new RecordTrackedEvent(
+            type: TrackedEventType::AiExchange,
+            occurredAt: now(),
+        ));
 
         if (! empty($createdFiles)) {
             foreach ($createdFiles as $file) {

@@ -40,6 +40,8 @@ use Closure;
 use Illuminate\Support\Arr;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 
@@ -82,6 +84,11 @@ class RetryMessage
             saveResponse: function (AiMessage $response) use ($thread) {
                 $response->thread()->associate($thread);
                 $response->save();
+
+                dispatch(new RecordTrackedEvent(
+                    type: TrackedEventType::AiExchange,
+                    occurredAt: now(),
+                ));
 
                 $thread->touch();
             },

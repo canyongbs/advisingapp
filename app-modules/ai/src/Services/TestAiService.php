@@ -43,9 +43,12 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 
-class TestAiService implements Contracts\AiService
+class TestAiService implements AiService
 {
     use HasAiServiceHelpers;
 
@@ -76,6 +79,11 @@ class TestAiService implements Contracts\AiService
     {
         $message->context = fake()->paragraph();
         $message->save();
+
+        dispatch(new RecordTrackedEvent(
+            type: TrackedEventType::AiExchange,
+            occurredAt: now(),
+        ));
 
         if (! empty($files)) {
             $createdFiles = $this->createFiles($message, $files);
