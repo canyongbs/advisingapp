@@ -63,6 +63,8 @@ it('creates the proper TrackedEvent record', function () {
 });
 
 it('creates the proper TrackedEventCount record if one does not already exist', function () {
+    TrackedEventCount::truncate();
+
     expect(TrackedEventCount::count())
         ->toBe(0);
 
@@ -86,6 +88,8 @@ it('creates the proper TrackedEventCount record if one does not already exist', 
 });
 
 it('updates the proper TrackedEventCount record if one already exists', function () {
+    TrackedEventCount::truncate();
+
     /** @var TrackedEventCount $originalTrackedEventCount */
     $originalTrackedEventCount = TrackedEventCount::factory()->create();
 
@@ -113,6 +117,8 @@ it('updates the proper TrackedEventCount record if one already exists', function
 });
 
 it('does not update the TrackedEventCount record last_occurate_at date if the event was before the current set date', function () {
+    TrackedEventCount::truncate();
+
     /** @var TrackedEventCount $originalTrackedEventCount */
     $originalTrackedEventCount = TrackedEventCount::factory()->create();
 
