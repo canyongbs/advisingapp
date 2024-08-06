@@ -84,20 +84,30 @@ abstract class BaseOpenAiService implements AiService
 
     public function complete(string $prompt, string $content): string
     {
-        $aiSettings = app(AiSettings::class);
+        try {
+            $response = Http::asJson()
+                ->withHeader('api-key', $this->getApiKey())
+                ->post("{$this->getDeployment()}/deployments/{$this->getModel()}/chat/completions?api-version={$this->getApiVersion()}", [
+                    'messages' => [
+                        ['role' => 'system', 'content' => $prompt],
+                        ['role' => 'user', 'content' => $content],
+                    ],
+                    'temperature' => app(AiSettings::class)->temperature,
+                ]);
+        } catch (Throwable $exception) {
+            report($exception);
 
-        $completionResponse = Http::asJson()
-            ->withHeader('api-key', $this->getApiKey())
-            ->post("{$this->getDeployment()}/deployments/{$this->getModel()}/chat/completions?api-version={$this->getApiVersion()}", [
-                'messages' => [
-                    ['role' => 'system', 'content' => $prompt],
-                    ['role' => 'user', 'content' => $content],
-                ],
-                'temperature' => $aiSettings->temperature,
-            ])
-            ->json();
+            throw new MessageResponseException('Failed to complete the prompt: [' . $exception->getMessage() . '].');
+        }
 
-        return $completionResponse['choices'][0]['message']['content'] ?? '';
+        if (! $response->successful()) {
+            throw new MessageResponseException('Failed to complete the prompt: [' . $response->body() . '].');
+        }
+
+        return $response->json(
+            key: 'choices.0.message.content',
+            default: fn () => throw new MessageResponseException('Missing response content when completing a prompt: [' . $response->body() . '].'),
+        );
     }
 
     public function createAssistant(AiAssistant $assistant): void
