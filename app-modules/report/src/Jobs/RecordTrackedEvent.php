@@ -2,7 +2,9 @@
 
 namespace AdvisingApp\Report\Jobs;
 
+use Exception;
 use Throwable;
+use Laravel\Pennant\Feature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -28,6 +30,10 @@ class RecordTrackedEvent implements ShouldQueue
 
     public function handle(): void
     {
+        if (Feature::inactive('tracked-events')) {
+            $this->fail(new Exception('Tracked events feature is not active.'));
+        }
+
         try {
             DB::beginTransaction();
 
