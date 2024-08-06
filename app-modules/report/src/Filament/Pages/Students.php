@@ -37,7 +37,6 @@
 namespace AdvisingApp\Report\Filament\Pages;
 
 use App\Filament\Clusters\ReportLibrary;
-use AdvisingApp\Report\Traits\StudentReport;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\StudentsStats;
 use AdvisingApp\Report\Filament\Widgets\MostRecentStudentsTable;
