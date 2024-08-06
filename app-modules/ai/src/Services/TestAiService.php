@@ -80,10 +80,12 @@ class TestAiService implements AiService
         $message->context = fake()->paragraph();
         $message->save();
 
-        dispatch(new RecordTrackedEvent(
-            type: TrackedEventType::AiExchange,
-            occurredAt: now(),
-        ));
+        if ($message->wasRecentlyCreated || $message->wasChanged('content')) {
+            dispatch(new RecordTrackedEvent(
+                type: TrackedEventType::AiExchange,
+                occurredAt: now(),
+            ));
+        }
 
         if (! empty($files)) {
             $createdFiles = $this->createFiles($message, $files);

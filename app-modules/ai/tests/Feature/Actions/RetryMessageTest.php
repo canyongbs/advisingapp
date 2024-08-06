@@ -41,13 +41,18 @@ use function Tests\asSuperAdmin;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
+use Illuminate\Support\Facades\Queue;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Actions\RetryMessage;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 
 it('retries a message', function () {
+    Queue::fake();
+
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -91,9 +96,16 @@ it('retries a message', function () {
         ->user->toBeNull();
 
     expect($streamedContent)->toBe($response->content);
+
+    expect(Queue::pushed(RecordTrackedEvent::class))
+        ->toHaveCount(2)
+        ->each
+        ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
 });
 
 it('does not create a new message if the most recent one has the same content', function () {
+    Queue::fake();
+
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -140,9 +152,16 @@ it('does not create a new message if the most recent one has the same content', 
         ->user->toBeNull();
 
     expect($streamedContent)->toBe($response->content);
+
+    expect(Queue::pushed(RecordTrackedEvent::class))
+        ->toHaveCount(1)
+        ->each
+        ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
 });
 
 it('does not match messages with the same content sent by other users in the same thread', function () {
+    Queue::fake();
+
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -170,9 +189,16 @@ it('does not match messages with the same content sent by other users in the sam
 
     expect(AiMessage::count())
         ->toBe(3);
+
+    expect(Queue::pushed(RecordTrackedEvent::class))
+        ->toHaveCount(2)
+        ->each
+        ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
 });
 
 it('does not match messages with the same content belonging to other threads', function () {
+    Queue::fake();
+
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -205,9 +231,16 @@ it('does not match messages with the same content belonging to other threads', f
 
     expect(AiMessage::count())
         ->toBe(3);
+
+    expect(Queue::pushed(RecordTrackedEvent::class))
+        ->toHaveCount(2)
+        ->each
+        ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
 });
 
 it('does not match messages with different content', function () {
+    Queue::fake();
+
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -231,6 +264,11 @@ it('does not match messages with different content', function () {
 
     expect(AiMessage::count())
         ->toBe(3);
+
+    expect(Queue::pushed(RecordTrackedEvent::class))
+        ->toHaveCount(2)
+        ->each
+        ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
 });
 
 it('throws an exception if the thread is locked', function () {
