@@ -39,12 +39,19 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Report\Enums\TrackedEventType;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Report\Models\TrackedEventCount;
 
 class AiStats extends StatsOverviewReportWidget
 {
     protected int | string | array $columnSpan = 'full';
+
+    protected function getColumns(): int
+    {
+        return 3;
+    }
 
     protected function getStats(): array
     {
@@ -67,12 +74,11 @@ class AiStats extends StatsOverviewReportWidget
                 }),
                 maxPrecision: 2,
             )),
-            // Stat::make('Exchanges', Number::abbreviate(
-            //     Cache::tags([$this->cacheTag])->remember('ai-exchanges', now()->addHours(24), function (): int {
-            //         return 'N/A';
-            //     }),
-            //     maxPrecision: 2,
-            // )),
+            Stat::make('Exchanges', Cache::tags([$this->cacheTag])->remember('ai-exchanges', now()->addHours(24), function (): int {
+                $count = TrackedEventCount::where('type', TrackedEventType::AiExchange)->first()?->count;
+
+                return ! is_null($count) ? Number::abbreviate($count, maxPrecision: 2) : 'N/A';
+            })),
         ];
     }
 }
