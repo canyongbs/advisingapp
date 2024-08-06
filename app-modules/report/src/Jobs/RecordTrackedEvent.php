@@ -12,6 +12,7 @@ use AdvisingApp\Report\Models\TrackedEvent;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Models\TrackedEventCount;
 
 class RecordTrackedEvent implements ShouldQueue
 {
@@ -37,18 +38,28 @@ class RecordTrackedEvent implements ShouldQueue
 
             DB::table('tracked_event_counts')
                 ->upsert(
-                    values: [
-                        'type' => $this->type,
-                        'count' => DB::raw('count + 1'),
-                        'last_occurred_at' => DB::raw('GREATEST(last_occurred_at, ?)', [$this->occurredAt]),
+                    [
+                        [
+                            'id' => (new TrackedEventCount())->newUniqueId(),
+                            'type' => $this->type,
+                            'count' => 1,
+                            'last_occurred_at' => $this->occurredAt,
+                            'created_at' => now(),
+                        ],
                     ],
-                    uniqueBy: ['type'],
-                    update: ['count', 'last_occurred_at']
+                    ['type'],
+                    [
+                        'count' => DB::raw('tracked_event_counts.count + 1'),
+                        'last_occurred_at' => DB::raw("GREATEST(tracked_event_counts.last_occurred_at, '{$this->occurredAt}')"),
+                        'updated_at' => now(),
+                    ]
                 );
 
             DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();
+
+            throw $e;
         }
     }
 }
