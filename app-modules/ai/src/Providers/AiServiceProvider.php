@@ -50,10 +50,10 @@ use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Events\AiThreadTrashed;
 use AdvisingApp\Ai\Models\AiAssistantFile;
+use AdvisingApp\Ai\Events\AiMessageCreated;
 use AdvisingApp\Ai\Events\AiMessageTrashed;
 use AdvisingApp\Ai\Observers\PromptObserver;
 use AdvisingApp\Ai\Registries\AiRbacRegistry;
-use AdvisingApp\Ai\Observers\AiMessageObserver;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -73,6 +73,7 @@ class AiServiceProvider extends ServiceProvider
         ],
         AiThreadTrashed::class => AiThreadTrashed::LISTENERS,
         AiThreadForceDeleting::class => AiThreadForceDeleting::LISTENERS,
+        AiMessageCreated::class => AiMessageCreated::LISTENERS,
         AiMessageTrashed::class => AiMessageTrashed::LISTENERS,
         AiMessageFileForceDeleting::class => AiMessageFileForceDeleting::LISTENERS,
     ];
@@ -116,7 +117,6 @@ class AiServiceProvider extends ServiceProvider
     {
         AiAssistant::observe(AiAssistantObserver::class);
         AiAssistantFile::observe(AiAssistantFileObserver::class);
-        AiMessage::observe(AiMessageObserver::class);
         Prompt::observe(PromptObserver::class);
     }
 }
