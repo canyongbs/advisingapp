@@ -92,14 +92,20 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                     ->attachAnother(false)
                     ->color('primary')
                     ->recordSelect(
-                        fn (Select $select) => $select->placeholder('Select a User'),
+                        fn (Select $select) => $select->placeholder('Select Users'),
                     )
+                    ->multiple()
                     ->recordSelectOptionsQuery(
                         fn (Builder $query) => $query->tap(new HasLicense(Prospect::getLicenseType())),
                     )
-                    ->successNotificationTitle(function (User $record) {
+                    ->successNotificationTitle(function (array $data) {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
+
+                        if (count($data['recordId']) > 1) {
+                            return count($data['recordId']) . " users were added to {$prospect->display_name}'s Care Team";
+                        }
+                        $record = User::find($data['recordId'][0]);
 
                         return "{$record->name} was added to {$prospect->display_name}'s Care Team";
                     }),
