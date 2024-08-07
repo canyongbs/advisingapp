@@ -34,31 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Listeners;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Laravel\Pennant\Feature;
-use AdvisingApp\Ai\Events\AiMessageCreated;
-use AdvisingApp\Ai\Models\LegacyAiMessageLog;
-
-class CreateAiMessageLog
-{
-    public function handle(AiMessageCreated $event): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $message = $event->aiMessage;
-
-        if (! $message->user || ! $message->request) {
-            return;
-        }
-
-        LegacyAiMessageLog::create([
-            'message' => $message->content,
-            'metadata' => [
-                'context' => $message->context,
-            ],
-            'request' => $message->request,
-            'sent_at' => now(),
-            'user_id' => $message->user_id,
-            ...Feature::active('ai-assistant-auditing-changes') ? ['ai_assistant_name' => $message->thread?->assistant?->name ?? null] : [],
-        ]);
+        Schema::table('assistant_chat_message_logs', function (Blueprint $table) {
+            $table->string('ai_assistant_name')->nullable();
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('assistant_chat_message_logs', function (Blueprint $table) {
+            $table->dropColumn('ai_assistant_name');
+        });
+    }
+};

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Filament\Resources;
 
 use Filament\Tables\Table;
+use Laravel\Pennant\Feature;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\ViewAction;
@@ -77,6 +78,10 @@ class LegacyAiMessageLogResource extends Resource
                 TextEntry::make('sent_at')
                     ->label('Sent')
                     ->dateTime(),
+                TextEntry::make('ai_assistant_name')
+                    ->label('Assistant')
+                    ->default('N/A')
+                    ->visible(Feature::active('ai-assistant-auditing-changes')),
                 TextEntry::make('message')
                     ->prose()
                     ->columnSpanFull(),

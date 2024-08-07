@@ -53,6 +53,7 @@ class LegacyAiMessageLog extends BaseModel
         'request',
         'sent_at',
         'user_id',
+        'ai_assistant_name',
     ];
 
     protected $casts = [

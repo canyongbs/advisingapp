@@ -34,31 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Listeners;
-
 use Laravel\Pennant\Feature;
-use AdvisingApp\Ai\Events\AiMessageCreated;
-use AdvisingApp\Ai\Models\LegacyAiMessageLog;
+use Illuminate\Database\Migrations\Migration;
 
-class CreateAiMessageLog
-{
-    public function handle(AiMessageCreated $event): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $message = $event->aiMessage;
-
-        if (! $message->user || ! $message->request) {
-            return;
-        }
-
-        LegacyAiMessageLog::create([
-            'message' => $message->content,
-            'metadata' => [
-                'context' => $message->context,
-            ],
-            'request' => $message->request,
-            'sent_at' => now(),
-            'user_id' => $message->user_id,
-            ...Feature::active('ai-assistant-auditing-changes') ? ['ai_assistant_name' => $message->thread?->assistant?->name ?? null] : [],
-        ]);
+        Feature::activate('ai-assistant-auditing-changes');
     }
-}
+
+    public function down(): void
+    {
+        Feature::purge('ai-assistant-auditing-changes');
+    }
+};

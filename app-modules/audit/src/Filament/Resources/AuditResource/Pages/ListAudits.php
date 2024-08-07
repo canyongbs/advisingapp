@@ -81,6 +81,7 @@ class ListAudits extends ListRecords
                     ->label('Event')
                     ->sortable(),
             ])
+            ->defaultSort('id', 'desc')
             ->filters([
                 Filter::make('exclude_system_user')
                     ->label('Exclude System User')
