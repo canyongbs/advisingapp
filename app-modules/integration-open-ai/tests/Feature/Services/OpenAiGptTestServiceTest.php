@@ -49,12 +49,15 @@ use Illuminate\Http\Client\Request;
 use AdvisingApp\Ai\Models\AiMessage;
 use Illuminate\Support\Facades\Http;
 use OpenAI\Responses\StreamResponse;
+use Illuminate\Support\Facades\Queue;
 use OpenAI\Resources\ThreadsMessages;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Settings\AiSettings;
 use OpenAI\Responses\Threads\ThreadResponse;
 use GuzzleHttp\Stream\Stream as GuzzleStream;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use OpenAI\Responses\Assistants\AssistantResponse;
 use OpenAI\Responses\Threads\ThreadDeleteResponse;
@@ -251,6 +254,8 @@ it('can delete a thread', function () {
 });
 
 it('can send a message', function () {
+    Queue::fake();
+
     asSuperAdmin();
 
     /** @var BaseOpenAiService $service */
@@ -294,6 +299,11 @@ it('can send a message', function () {
 
     $client->assertSent(ThreadsRuns::class, 2);
     $client->assertSent(ThreadsMessages::class, 1);
+
+    expect(Queue::pushed(RecordTrackedEvent::class))
+        ->toHaveCount(1)
+        ->each
+        ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
 });
 
 it('can complete a message response', function () {
@@ -496,6 +506,8 @@ it('can create a run if one does not exist without sending the message again whe
 });
 
 it('can complete a prompt', function () {
+    Queue::fake();
+
     asSuperAdmin();
 
     /** @var BaseOpenAiService $service */
@@ -535,4 +547,9 @@ it('can complete a prompt', function () {
 
         return true;
     });
+
+    expect(Queue::pushed(RecordTrackedEvent::class))
+        ->toHaveCount(1)
+        ->each
+        ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
 });

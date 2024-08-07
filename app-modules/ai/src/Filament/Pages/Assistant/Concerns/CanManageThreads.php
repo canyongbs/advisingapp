@@ -58,7 +58,9 @@ use App\Models\Scopes\WithoutSuperAdmin;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
+use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
+use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
 use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -251,6 +253,11 @@ trait CanManageThreads
                 $this->thread->saved_at = now();
 
                 $this->thread->save();
+
+                dispatch(new RecordTrackedEvent(
+                    type: TrackedEventType::AiThreadSaved,
+                    occurredAt: now(),
+                ));
 
                 $folder = auth()->user()->aiThreadFolders()
                     ->where('application', static::APPLICATION)

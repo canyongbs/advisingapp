@@ -3920,6 +3920,55 @@ namespace AdvisingApp\Report\Models{
 	class IdeHelperReport {}
 }
 
+namespace AdvisingApp\Report\Models{
+/**
+ * AdvisingApp\Report\Models\TrackedEvent
+ *
+ * @property string $id
+ * @property \AdvisingApp\Report\Enums\TrackedEventType $type
+ * @property string|null $occurred_at
+ * @property string|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEvent newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEvent newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEvent query()
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEvent whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEvent whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEvent whereOccurredAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEvent whereType($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperTrackedEvent {}
+}
+
+namespace AdvisingApp\Report\Models{
+/**
+ * AdvisingApp\Report\Models\TrackedEventCount
+ *
+ * @property string $id
+ * @property \AdvisingApp\Report\Enums\TrackedEventType $type
+ * @property int $count
+ * @property \Illuminate\Support\Carbon|null $last_occurred_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @method static \AdvisingApp\Report\Database\Factories\TrackedEventCountFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount query()
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount whereCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount whereLastOccurredAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperTrackedEventCount {}
+}
+
 namespace AdvisingApp\Segment\Models{
 /**
  * AdvisingApp\Segment\Models\Segment

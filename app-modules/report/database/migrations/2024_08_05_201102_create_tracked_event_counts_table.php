@@ -34,39 +34,25 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\AiMessage;
-use Illuminate\Support\Facades\Event;
-use AdvisingApp\Ai\Events\AiMessageCreated;
-use AdvisingApp\Ai\Events\AiMessageTrashed;
-use AdvisingApp\Ai\Listeners\CreateAiMessageLog;
-use AdvisingApp\Ai\Listeners\AiMessageCascadeDeleteAiMessageFiles;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-it('dispatches the AiMessageCreated event when an AiMessage is created', function () {
-    Event::fake();
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('tracked_event_counts', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('type')->unique();
+            $table->unsignedBigInteger('count')->default(0);
+            $table->timestamp('last_occurred_at')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
 
-    AiMessage::factory()->create();
-
-    Event::assertDispatched(AiMessageCreated::class);
-
-    Event::assertListening(
-        expectedEvent: AiMessageCreated::class,
-        expectedListener: CreateAiMessageLog::class
-    );
-});
-
-it('dispatches the AiMessageTrashed event when an AiMessage is deleted', function () {
-    $aiMessage = AiMessage::factory()->create();
-
-    Event::fake();
-
-    $aiMessage->delete();
-
-    Event::assertDispatched(AiMessageTrashed::class, function (AiMessageTrashed $event) use ($aiMessage) {
-        return $event->aiMessage->is($aiMessage) && $event->aiMessage->trashed();
-    });
-
-    Event::assertListening(
-        expectedEvent: AiMessageTrashed::class,
-        expectedListener: AiMessageCascadeDeleteAiMessageFiles::class
-    );
-});
+    public function down(): void
+    {
+        Schema::dropIfExists('tracked_event_counts');
+    }
+};

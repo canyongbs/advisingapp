@@ -34,39 +34,29 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\AiMessage;
-use Illuminate\Support\Facades\Event;
+namespace AdvisingApp\Ai\Listeners;
+
 use AdvisingApp\Ai\Events\AiMessageCreated;
-use AdvisingApp\Ai\Events\AiMessageTrashed;
-use AdvisingApp\Ai\Listeners\CreateAiMessageLog;
-use AdvisingApp\Ai\Listeners\AiMessageCascadeDeleteAiMessageFiles;
+use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 
-it('dispatches the AiMessageCreated event when an AiMessage is created', function () {
-    Event::fake();
+class CreateAiMessageLog
+{
+    public function handle(AiMessageCreated $event): void
+    {
+        $message = $event->aiMessage;
 
-    AiMessage::factory()->create();
+        if (! $message->user || ! $message->request) {
+            return;
+        }
 
-    Event::assertDispatched(AiMessageCreated::class);
-
-    Event::assertListening(
-        expectedEvent: AiMessageCreated::class,
-        expectedListener: CreateAiMessageLog::class
-    );
-});
-
-it('dispatches the AiMessageTrashed event when an AiMessage is deleted', function () {
-    $aiMessage = AiMessage::factory()->create();
-
-    Event::fake();
-
-    $aiMessage->delete();
-
-    Event::assertDispatched(AiMessageTrashed::class, function (AiMessageTrashed $event) use ($aiMessage) {
-        return $event->aiMessage->is($aiMessage) && $event->aiMessage->trashed();
-    });
-
-    Event::assertListening(
-        expectedEvent: AiMessageTrashed::class,
-        expectedListener: AiMessageCascadeDeleteAiMessageFiles::class
-    );
-});
+        LegacyAiMessageLog::create([
+            'message' => $message->content,
+            'metadata' => [
+                'context' => $message->context,
+            ],
+            'request' => $message->request,
+            'sent_at' => now(),
+            'user_id' => $message->user_id,
+        ]);
+    }
+}

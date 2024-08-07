@@ -34,39 +34,48 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\AiMessage;
-use Illuminate\Support\Facades\Event;
-use AdvisingApp\Ai\Events\AiMessageCreated;
-use AdvisingApp\Ai\Events\AiMessageTrashed;
-use AdvisingApp\Ai\Listeners\CreateAiMessageLog;
-use AdvisingApp\Ai\Listeners\AiMessageCascadeDeleteAiMessageFiles;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
 
-it('dispatches the AiMessageCreated event when an AiMessage is created', function () {
-    Event::fake();
+return new class () extends Migration {
+    public function up(): void
+    {
+        DB::table('tracked_event_counts')
+            ->insertOrIgnore([
+                'id' => (string) Str::orderedUuid(),
+                'type' => 'ai-exchange',
+                'count' => 0,
+                'created_at' => now(),
+            ]);
 
-    AiMessage::factory()->create();
+        DB::table('ai_messages')
+            ->whereNotNull('message_id')
+            ->eachById(function ($message) {
+                DB::table('tracked_events')
+                    ->insert([
+                        'id' => (string) Str::orderedUuid(),
+                        'type' => 'ai-exchange',
+                        'occurred_at' => $message->created_at,
+                    ]);
 
-    Event::assertDispatched(AiMessageCreated::class);
+                DB::table('tracked_event_counts')
+                    ->where('type', 'ai-exchange')
+                    ->update([
+                        'count' => DB::raw('count + 1'),
+                        'last_occurred_at' => DB::raw("GREATEST(last_occurred_at, '{$message->created_at}')"),
+                        'updated_at' => now(),
+                    ]);
+            });
+    }
 
-    Event::assertListening(
-        expectedEvent: AiMessageCreated::class,
-        expectedListener: CreateAiMessageLog::class
-    );
-});
+    public function down(): void
+    {
+        DB::table('tracked_event_counts')
+            ->where('type', 'ai-exchange')
+            ->delete();
 
-it('dispatches the AiMessageTrashed event when an AiMessage is deleted', function () {
-    $aiMessage = AiMessage::factory()->create();
-
-    Event::fake();
-
-    $aiMessage->delete();
-
-    Event::assertDispatched(AiMessageTrashed::class, function (AiMessageTrashed $event) use ($aiMessage) {
-        return $event->aiMessage->is($aiMessage) && $event->aiMessage->trashed();
-    });
-
-    Event::assertListening(
-        expectedEvent: AiMessageTrashed::class,
-        expectedListener: AiMessageCascadeDeleteAiMessageFiles::class
-    );
-});
+        DB::table('tracked_events')
+            ->where('type', 'ai-exchange')
+            ->delete();
+    }
+};

@@ -47,8 +47,8 @@ class PromptsByCategoryDoughnutChart extends ChartReportWidget
 
     protected int | string | array $columnSpan = [
         'sm' => 12,
-        'md' => 4,
-        'lg' => 4,
+        'md' => 6,
+        'lg' => 6,
     ];
 
     protected static ?string $maxHeight = '240px';

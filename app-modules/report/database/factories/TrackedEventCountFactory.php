@@ -34,31 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Observers;
+namespace AdvisingApp\Report\Database\Factories;
 
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\LegacyAiMessageLog;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Models\TrackedEventCount;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class AiMessageObserver
+/**
+ * @extends Factory<TrackedEventCount>
+ */
+class TrackedEventCountFactory extends Factory
 {
-    public function created(AiMessage $message): void
+    public function definition(): array
     {
-        if (! $message->user) {
-            return;
-        }
-
-        if (! $message->request) {
-            return;
-        }
-
-        LegacyAiMessageLog::create([
-            'message' => $message->content,
-            'metadata' => [
-                'context' => $message->context,
-            ],
-            'request' => $message->request,
-            'sent_at' => now(),
-            'user_id' => $message->user_id,
-        ]);
+        return [
+            'type' => fake()->randomElement(TrackedEventType::cases()),
+            'count' => fake()->numberBetween(1, 100),
+            'last_occurred_at' => fake()->dateTime(),
+        ];
     }
 }

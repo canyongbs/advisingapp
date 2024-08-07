@@ -40,6 +40,7 @@ use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Prunable;
+use AdvisingApp\Ai\Events\AiMessageCreated;
 use AdvisingApp\Ai\Events\AiMessageTrashed;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -73,6 +74,7 @@ class AiMessage extends BaseModel
     protected $table = 'ai_messages';
 
     protected $dispatchesEvents = [
+        'created' => AiMessageCreated::class,
         'trashed' => AiMessageTrashed::class,
     ];
 

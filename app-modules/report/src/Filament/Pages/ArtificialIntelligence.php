@@ -53,11 +53,11 @@ class ArtificialIntelligence extends AiReport
 
     protected static ?string $navigationGroup = 'Artificial Intelligence';
 
-    protected static ?string $navigationLabel = 'Artificial Intelligence';
+    protected static ?string $navigationLabel = 'Utilization';
 
-    protected static ?string $title = 'Artificial Intelligence';
+    protected static ?string $title = 'Utilization';
 
-    protected static string $routePath = 'artificial-intelligence';
+    protected static string $routePath = 'artificial-intelligence-utilization';
 
     protected static ?int $navigationSort = 3;
 

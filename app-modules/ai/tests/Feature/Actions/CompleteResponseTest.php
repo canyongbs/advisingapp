@@ -39,14 +39,19 @@ use function Tests\asSuperAdmin;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
+use Illuminate\Support\Facades\Queue;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Actions\CompleteResponse;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 use AdvisingApp\Ai\Exceptions\AiResponseToCompleteDoesNotExistException;
 
 it('completes the last response', function () {
+    Queue::fake();
+
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -118,6 +123,11 @@ it('completes the last response', function () {
 
     expect($response->content)
         ->toBe("{$originalResponseContent}{$streamedContent}");
+
+    expect(Queue::pushed(RecordTrackedEvent::class))
+        ->toHaveCount(1)
+        ->each
+        ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
 });
 
 it('strips the appended ... when completing the last response', function () {

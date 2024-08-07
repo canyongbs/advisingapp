@@ -34,39 +34,17 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\AiMessage;
-use Illuminate\Support\Facades\Event;
-use AdvisingApp\Ai\Events\AiMessageCreated;
-use AdvisingApp\Ai\Events\AiMessageTrashed;
-use AdvisingApp\Ai\Listeners\CreateAiMessageLog;
-use AdvisingApp\Ai\Listeners\AiMessageCascadeDeleteAiMessageFiles;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-it('dispatches the AiMessageCreated event when an AiMessage is created', function () {
-    Event::fake();
+return new class () extends Migration {
+    public function up(): void
+    {
+        Feature::activate('tracked-events');
+    }
 
-    AiMessage::factory()->create();
-
-    Event::assertDispatched(AiMessageCreated::class);
-
-    Event::assertListening(
-        expectedEvent: AiMessageCreated::class,
-        expectedListener: CreateAiMessageLog::class
-    );
-});
-
-it('dispatches the AiMessageTrashed event when an AiMessage is deleted', function () {
-    $aiMessage = AiMessage::factory()->create();
-
-    Event::fake();
-
-    $aiMessage->delete();
-
-    Event::assertDispatched(AiMessageTrashed::class, function (AiMessageTrashed $event) use ($aiMessage) {
-        return $event->aiMessage->is($aiMessage) && $event->aiMessage->trashed();
-    });
-
-    Event::assertListening(
-        expectedEvent: AiMessageTrashed::class,
-        expectedListener: AiMessageCascadeDeleteAiMessageFiles::class
-    );
-});
+    public function down(): void
+    {
+        Feature::purge('tracked-events');
+    }
+};
