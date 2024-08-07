@@ -36,23 +36,23 @@
 
 namespace AdvisingApp\Ai\Filament\Resources;
 
-use AdvisingApp\Ai\Filament\Exports\LegacyAiMessageExporter;
-use AdvisingApp\Ai\Filament\Resources\LegacyAiMessageLogResource\Pages\ManageLegacyAiMessageLogs;
-use AdvisingApp\Ai\Models\LegacyAiMessageLog;
-use App\Filament\Clusters\UsageAuditing;
-use App\Filament\Infolists\Components\CodeEntry;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\ExportBulkAction;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Laravel\Pennant\Feature;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Resource;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use App\Filament\Clusters\UsageAuditing;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Tables\Actions\BulkActionGroup;
+use AdvisingApp\Ai\Models\LegacyAiMessageLog;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\ExportBulkAction;
+use App\Filament\Infolists\Components\CodeEntry;
+use AdvisingApp\Ai\Filament\Exports\LegacyAiMessageExporter;
+use AdvisingApp\Ai\Filament\Resources\LegacyAiMessageLogResource\Pages\ManageLegacyAiMessageLogs;
 
 class LegacyAiMessageLogResource extends Resource
 {
