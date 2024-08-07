@@ -40,9 +40,11 @@ use App\Models\BaseModel;
 use AdvisingApp\Ai\Enums\AiModel;
 use Spatie\MediaLibrary\HasMedia;
 use AdvisingApp\Ai\Enums\AiApplication;
+use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\MediaCollections\File;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
@@ -51,11 +53,12 @@ use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
 /**
  * @mixin IdeHelperAiAssistant
  */
-class AiAssistant extends BaseModel implements HasMedia
+class AiAssistant extends BaseModel implements HasMedia, Auditable
 {
     use CanAddAssistantLicenseGlobalScope;
     use InteractsWithMedia;
     use SoftDeletes;
+    use AuditableTrait;
 
     protected $fillable = [
         'archived_at',
