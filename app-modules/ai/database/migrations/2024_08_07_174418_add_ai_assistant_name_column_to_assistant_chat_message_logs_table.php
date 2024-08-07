@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('assistant_chat_message_logs', function (Blueprint $table) {
-            $table->string('ai_assistant_name');
+            $table->string('ai_assistant_name')->nullable();
         });
     }
 
