@@ -36,10 +36,9 @@
 
 namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource\Pages;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\KnowledgeBase\Filament\Actions\DraftWithAiAction;
 use Filament\Forms\Form;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Section;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Model;
@@ -48,8 +47,9 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Actions\Action as BaseAction;
 use Filament\Forms\Components\Actions\Action;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\KnowledgeBase\Filament\Actions\DraftWithAiAction;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseArticleResource;
-use Filament\Forms\Components\Actions;
 
 class EditKnowledgeBaseArticle extends EditRecord
 {
@@ -94,12 +94,12 @@ class EditKnowledgeBaseArticle extends EditRecord
                         'style' => 'min-height: 32rem;',
                         'class' => 'text-gray-900 dark:bg-gray-800 dark:text-gray-100 border-2 dark:border-0 border-gray-200 rounded-none mx-4 my-2 px-8 py-4',
                     ]),
-                    Actions::make([
-                        DraftWithAiAction::make(),
-                    ])
+                Actions::make([
+                    DraftWithAiAction::make(),
+                ])
                     ->visible(
                         auth()->user()->hasLicense(LicenseType::ConversationalAi)
-                    )
+                    ),
             ]);
     }
 
@@ -112,7 +112,6 @@ class EditKnowledgeBaseArticle extends EditRecord
     {
         return [
             $this->getSubmitFormAction()->label('Save Article Details'),
-            
         ];
     }
 
