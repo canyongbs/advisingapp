@@ -94,8 +94,16 @@ class DraftWithAiAction extends Action
 
                 try {
                     $content = $service->complete(<<<EOL
-                        My name is {$userName}, and I am a {$userJobTitle} at {$clientName}. I am currently editing an article in the knowledge base of the college. The current title is “{$articleTitle}”. Please write an article based on this title. Ensure that the title is displayed clearly as the article's subject, without any prefixes, special characters, or formatting. The body of the article can be richly formatted with headings, bullet points, bold text, etc., as needed. Here are the details:
-                    EOL, $data['instructions']);
+                                    My name is {$userName}, and I am a {$userJobTitle} at {$clientName}. I am currently editing an article in the knowledge base of the college. The current title is "{$articleTitle}". 
+
+                                    Please provide the title as a plain string, without any prefixes, labels like "Title:", or formatting such as bold, italics, or quotes. The title should appear as a simple string.
+
+                                    Then, write the article content and if needed use the markdown format, using headings, bullet points, bold text, etc.
+
+                                    Here are the details:
+                                    EOL, $data['instructions']
+                                );
+
                 } catch (MessageResponseException $exception) {
                     report($exception);
 
