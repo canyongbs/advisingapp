@@ -39,10 +39,10 @@ namespace AdvisingApp\KnowledgeBase\Filament\Actions;
 use Closure;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Illuminate\Support\Str;
 use Laravel\Pennant\Feature;
 use App\Settings\LicenseSettings;
 use Filament\Resources\Pages\Page;
+use Illuminate\Support\Facades\Log;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Vite;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -53,8 +53,6 @@ use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
-use Illuminate\Support\Facades\Log;
 
 class DraftWithAiAction extends Action
 {
