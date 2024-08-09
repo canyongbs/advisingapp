@@ -98,7 +98,7 @@ class ViewStudent extends ViewRecord
                         TextEntry::make('email')
                             ->label('Email Address'),
                         TextEntry::make('email_2')
-                            ->label('Email Address 2')
+                            ->label('Alternate Email')
                             ->default('N/A'),
                         TextEntry::make('mobile'),
                         TextEntry::make('phone'),
