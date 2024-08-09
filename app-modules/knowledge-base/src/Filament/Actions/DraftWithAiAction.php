@@ -42,7 +42,6 @@ use Filament\Forms\Set;
 use Laravel\Pennant\Feature;
 use App\Settings\LicenseSettings;
 use Filament\Resources\Pages\Page;
-use Illuminate\Support\Facades\Log;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Vite;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -91,7 +90,8 @@ class DraftWithAiAction extends Action
                 $articleTitle = $livewire?->data['title'];
 
                 try {
-                    $content = $service->complete(<<<EOL
+                    $content = $service->complete(
+                        <<<EOL
                                     My name is {$userName}, and I am a {$userJobTitle} at {$clientName}. I am currently editing an article in the knowledge base of the college. The current title is "{$articleTitle}". 
 
                                     Please provide the title as a plain string, without any prefixes, labels like "Title:", or formatting such as bold, italics, or quotes. The title should appear as a simple string.
@@ -99,9 +99,9 @@ class DraftWithAiAction extends Action
                                     Then, write the article content and if needed use the markdown format, using headings, bullet points, bold text, etc.
 
                                     Here are the details:
-                                    EOL, $data['instructions']
-                                );
-
+                                    EOL,
+                        $data['instructions']
+                    );
                 } catch (MessageResponseException $exception) {
                     report($exception);
 
@@ -115,8 +115,6 @@ class DraftWithAiAction extends Action
 
                     return;
                 }
-
-                Log::debug($content);
 
                 $set('title', (string) str($content)
                     ->before("\n")
