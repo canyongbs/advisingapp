@@ -85,7 +85,7 @@ class ViewProspect extends ViewRecord
                             ->label('Email')
                             ->translateLabel(),
                         TextEntry::make('email_2')
-                            ->label('Email 2')
+                            ->label('Alternate Email')
                             ->translateLabel(),
                         TextEntry::make('mobile')
                             ->label('Mobile')
