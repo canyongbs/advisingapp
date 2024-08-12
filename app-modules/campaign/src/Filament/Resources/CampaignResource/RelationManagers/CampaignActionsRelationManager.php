@@ -54,10 +54,13 @@ use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 class CampaignActionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'actions';
+
+    protected static ?string $title = 'Journey Steps';
 
     public function form(Form $form): Form
     {
@@ -76,9 +79,10 @@ class CampaignActionsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('id')
+            ->modifyQueryUsing(fn (QueryBuilder $query) => $query->orderBy('execute_at', 'ASC'))
             ->columns([
-                TextColumn::make('type'),
-                TextColumn::make('execute_at')
+                TextColumn::make('type')->label('Step Type'),
+                TextColumn::make('execute_at')->label('Schedule')
                     ->dateTime(timezone: app(CampaignSettings::class)->getActionExecutionTimezone()),
             ])
             ->headerActions([
