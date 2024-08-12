@@ -42,6 +42,7 @@ use Filament\Forms\Form;
 use Laravel\Pennant\Feature;
 use Illuminate\Support\Carbon;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -50,6 +51,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Interaction\Models\InteractionType;
@@ -61,6 +63,7 @@ use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
+use AdvisingApp\Interaction\Filament\Actions\DraftWithInteractionAiAction;
 
 class CreateInteraction extends CreateRecord
 {
@@ -209,6 +212,12 @@ class CreateInteraction extends CreateRecord
                             ->required(),
                     ])
                     ->columns(1),
+                Actions::make([
+                    DraftWithInteractionAiAction::make(),
+                ])
+                    ->visible(
+                        auth()->user()->hasLicense(LicenseType::ConversationalAi)
+                    ),
             ]);
     }
 }
