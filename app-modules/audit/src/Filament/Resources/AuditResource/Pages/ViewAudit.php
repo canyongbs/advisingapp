@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
-use Laravel\Pennant\Feature;
 use Filament\Infolists\Infolist;
 use AdvisingApp\Audit\Models\Audit;
 use Filament\Resources\Pages\ViewRecord;

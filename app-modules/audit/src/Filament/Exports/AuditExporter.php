@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Audit\Filament\Exports;
 
-use Laravel\Pennant\Feature;
 use AdvisingApp\Audit\Models\Audit;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\ExportColumn;
