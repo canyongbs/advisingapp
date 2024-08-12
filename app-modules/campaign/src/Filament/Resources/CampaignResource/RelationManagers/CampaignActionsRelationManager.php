@@ -53,8 +53,8 @@ use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
 
 class CampaignActionsRelationManager extends RelationManager
 {
