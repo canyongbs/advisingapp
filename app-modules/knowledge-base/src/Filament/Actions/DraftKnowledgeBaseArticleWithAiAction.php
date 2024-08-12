@@ -53,7 +53,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 
-class DraftWithAiAction extends Action
+class DraftKnowledgeBaseArticleWithAiAction extends Action
 {
     protected array | Closure $mergeTags = [];
 
@@ -92,14 +92,19 @@ class DraftWithAiAction extends Action
                 try {
                     $content = $service->complete(
                         <<<EOL
-                                    My name is {$userName}, and I am a {$userJobTitle} at {$clientName}. I am currently editing an article in the knowledge base of the college. The current title is "{$articleTitle}". 
+                            My name is {$userName}, and I am a {$userJobTitle} at {$clientName}. I am currently editing an article in the knowledge base of the college. The current title is "{$articleTitle}". 
 
-                                    Please provide the title as a plain string, without any prefixes, labels like "Title:", or formatting such as bold, italics, or quotes. The title should appear as a simple string.
+                            You should only respond with the article content, you should never greet them.
+                            The first line should contain the raw title of the article, with no "Title: " label at the start.
+                            All following lines after the title are the article body.
 
-                                    Then, write the article content and if needed use the markdown format, using headings, bullet points, bold text, etc.
+                            When you answer, it is crucial that you format the article body using rich text in Markdown format.
+                            The title line can not use Markdown formatting, it is plain text.
 
-                                    Here are the details:
-                                    EOL,
+                            Then, write the article content on the following instructions provided by user.
+
+                            Here are the details:
+                        EOL,
                         $data['instructions']
                     );
                 } catch (MessageResponseException $exception) {
