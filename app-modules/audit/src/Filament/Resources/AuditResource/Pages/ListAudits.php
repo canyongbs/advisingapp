@@ -38,7 +38,6 @@ namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
 use App\Models\User;
 use Filament\Tables\Table;
-use Laravel\Pennant\Feature;
 use Filament\Actions\ExportAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Checkbox;
@@ -68,15 +67,10 @@ class ListAudits extends ListRecords
                 TextColumn::make('auditable_type')
                     ->label('Auditable')
                     ->sortable(),
-                TextColumn::make('user.name')
-                    ->label('Change Agent (User)')
-                    ->sortable()
-                    ->visible(! Feature::active('change-agent-name')),
                 TextColumn::make('change_agent_name')
                     ->label('Change Agent (User)')
                     ->sortable()
-                    ->default('System')
-                    ->visible(Feature::active('change-agent-name')),
+                    ->default('System'),
                 TextColumn::make('event')
                     ->label('Event')
                     ->sortable(),
