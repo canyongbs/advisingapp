@@ -34,33 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Listeners;
+namespace AdvisingApp\Ai\Actions;
 
-use AdvisingApp\Ai\Enums\AiFeature;
-use AdvisingApp\Ai\Events\AiMessageCreated;
-use AdvisingApp\Ai\Models\LegacyAiMessageLog;
+use Illuminate\Support\Arr;
 use Laravel\Pennant\Feature;
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Enums\AiFeature;
+use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 
-class CreateAiMessageLog
+class CompletePrompt
 {
-    public function handle(AiMessageCreated $event): void
+    public function __invoke(AiModel $aiModel, string $prompt, string $content): string
     {
-        $message = $event->aiMessage;
+        $service = $aiModel->getService();
 
-        if (! $message->user || ! $message->request) {
-            return;
-        }
+        $completion = $service->complete($prompt, $content);
 
         LegacyAiMessageLog::create([
-            'message' => $message->content,
+            'message' => $content,
             'metadata' => [
-                'context' => $message->context,
+                'prompt' => $prompt,
+                'completion' => $completion,
             ],
-            'request' => $message->request,
+            'request' => [
+                'headers' => Arr::only(
+                    request()->headers->all(),
+                    ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
+                ),
+                'ip' => request()->ip(),
+            ],
             'sent_at' => now(),
-            'user_id' => $message->user_id,
-            ...Feature::active('ai-assistant-auditing-changes') ? ['ai_assistant_name' => $message->thread?->assistant?->name ?? null] : [],
-            ...Feature::active('ai-log-features') ? ['feature' => AiFeature::Conversations] : [],
+            'user_id' => auth()->id(),
+            ...Feature::active('ai-assistant-auditing-changes') ? ['ai_assistant_name' => 'Institutional Assistant'] : [],
+            ...Feature::active('ai-log-features') ? ['feature' => AiFeature::DraftWithAi] : [],
         ]);
+
+        return $completion;
     }
 }

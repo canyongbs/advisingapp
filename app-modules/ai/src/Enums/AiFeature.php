@@ -34,33 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Listeners;
+namespace AdvisingApp\Ai\Enums;
 
-use AdvisingApp\Ai\Enums\AiFeature;
-use AdvisingApp\Ai\Events\AiMessageCreated;
-use AdvisingApp\Ai\Models\LegacyAiMessageLog;
-use Laravel\Pennant\Feature;
+use Filament\Support\Contracts\HasLabel;
 
-class CreateAiMessageLog
+enum AiFeature: string implements HasLabel
 {
-    public function handle(AiMessageCreated $event): void
-    {
-        $message = $event->aiMessage;
+    case DraftWithAi = 'draft_with_ai';
 
-        if (! $message->user || ! $message->request) {
-            return;
+    case Conversations = 'conversations';
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::DraftWithAi => 'Draft With AI',
+            self::Conversations => 'Conversations',
+        };
+    }
+
+    public static function parse(string | self | null $value): ?self
+    {
+        if ($value instanceof self) {
+            return $value;
         }
 
-        LegacyAiMessageLog::create([
-            'message' => $message->content,
-            'metadata' => [
-                'context' => $message->context,
-            ],
-            'request' => $message->request,
-            'sent_at' => now(),
-            'user_id' => $message->user_id,
-            ...Feature::active('ai-assistant-auditing-changes') ? ['ai_assistant_name' => $message->thread?->assistant?->name ?? null] : [],
-            ...Feature::active('ai-log-features') ? ['feature' => AiFeature::Conversations] : [],
-        ]);
+        return self::tryFrom($value);
     }
 }
