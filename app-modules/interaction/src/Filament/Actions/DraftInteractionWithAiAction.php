@@ -2,7 +2,6 @@
 
 namespace AdvisingApp\Interaction\Filament\Actions;
 
-use Closure;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Laravel\Pennant\Feature;
@@ -56,10 +55,34 @@ class DraftInteractionWithAiAction extends Action
                 $userJobTitle = auth()->user()->job_title ?? 'staff member';
                 $clientName = app(LicenseSettings::class)->data->subscription->clientName;
                 $model = $livewire::getResource()::getModelLabel();
-                $initiative = InteractionInitiative::find($get('interaction_initiative_id'));
-                $driver = InteractionDriver::find($get('interaction_driver_id'));
-                $outcome = InteractionOutcome::find($get('interaction_outcome_id'));
-                $type = InteractionType::find($get('interaction_type_id'));
+
+                $context = collect();
+
+                if ($id = $get('interaction_initiative_id')) {
+                    if ($initiative = InteractionInitiative::find($id)) {
+                        $context->push("- Mention the related initiative: {$initiative->name}.");
+                    }
+                }
+
+                if ($id = $get('interaction_driver_id')) {
+                    if ($driver = InteractionDriver::find($id)) {
+                        $context->push("- Include the call driver: {$driver->name}.");
+                    }
+                }
+
+                if ($id = $get('interaction_outcome_id')) {
+                    if ($outcome = InteractionOutcome::find($id)) {
+                        $context->push("- State the interaction outcome: {$outcome->name}.");
+                    }
+                }
+
+                if ($id = $get('interaction_type_id')) {
+                    if ($type = InteractionType::find($id)) {
+                        $context->push("- Specify the type of engagement: {$type->name}.");
+                    }
+                }
+
+                $additionalContext = $context->isNotEmpty() ? $context->implode("\n") : '';
 
                 try {
                     $content = $service->complete(
@@ -73,11 +96,8 @@ class DraftInteractionWithAiAction extends Action
                             - The first line should be the raw subject of the interaction with no "Subject: " label, written in plain text.
                             - The interaction body should start on the second line, using plain text only, with no special formatting.
                             - Never mention in your response that the content is formatted or rendered in plain text.
-                            - Use the following context, if available, to enhance the interaction body (but not the subject line):
-                            1. Mention the related initiative: {$initiative?->name}.
-                            2. Include the call driver: {$driver?->name}.
-                            3. State the interaction outcome: {$outcome?->name}.
-                            4. Specify the type of engagement: {$type?->name}.
+                            - Use the following context, only if it's available and not blank , to enhance the interaction body (but not the subject line):
+                            {$additionalContext}
                         EOL,
                         $data['instructions']
                     );
