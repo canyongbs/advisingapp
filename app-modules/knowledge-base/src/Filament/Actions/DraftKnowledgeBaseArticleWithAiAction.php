@@ -47,6 +47,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
+use AdvisingApp\Ai\Actions\CompletePrompt;
 use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
@@ -77,9 +78,9 @@ class DraftKnowledgeBaseArticleWithAiAction extends Action
                     ->required(),
             ])
             ->action(function (array $data, Get $get, Set $set, Page $livewire) {
-                $service = Feature::active('ai-integrated-assistant-settings')
-                    ? app(AiIntegratedAssistantSettings::class)->default_model->getService()
-                    : app(AiSettings::class)->default_model->getService();
+                $model = Feature::active('ai-integrated-assistant-settings')
+                    ? app(AiIntegratedAssistantSettings::class)->default_model
+                    : app(AiSettings::class)->default_model;
 
                 $userName = auth()->user()->name;
                 $userJobTitle = auth()->user()->job_title ?? 'staff member';
@@ -87,8 +88,9 @@ class DraftKnowledgeBaseArticleWithAiAction extends Action
                 $articleTitle = $livewire?->data['title'];
 
                 try {
-                    $content = $service->complete(
-                        <<<EOL
+                    $content = app(CompletePrompt::class)->execute(
+                        aiModel: $model,
+                        prompt: <<<EOL
                             My name is {$userName}, and I am a {$userJobTitle} at {$clientName}. I am currently editing an article in the knowledge base of the college. The current title is "{$articleTitle}". 
 
                             You should only respond with the article content, you should never greet them.
@@ -102,7 +104,7 @@ class DraftKnowledgeBaseArticleWithAiAction extends Action
 
                             Here are the details:
                         EOL,
-                        $data['instructions']
+                        content: $data['instructions'],
                     );
                 } catch (MessageResponseException $exception) {
                     report($exception);
