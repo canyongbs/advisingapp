@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\KnowledgeBase\Filament\Actions;
 
-use Closure;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Laravel\Pennant\Feature;
@@ -55,8 +54,6 @@ use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 
 class DraftKnowledgeBaseArticleWithAiAction extends Action
 {
-    protected array | Closure $mergeTags = [];
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -135,17 +132,5 @@ class DraftKnowledgeBaseArticleWithAiAction extends Action
     public static function getDefaultName(): ?string
     {
         return 'draftWithAi';
-    }
-
-    public function mergeTags(array | Closure $tags): static
-    {
-        $this->mergeTags = $tags;
-
-        return $this;
-    }
-
-    public function getMergeTags(): array
-    {
-        return $this->evaluate($this->mergeTags);
     }
 }
