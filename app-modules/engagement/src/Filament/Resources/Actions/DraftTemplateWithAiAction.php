@@ -100,8 +100,8 @@ class DraftTemplateWithAiAction extends Action
 
                 if ($this->getDeliveryMethod() === EngagementDeliveryMethod::Sms) {
                     try {
-                        $content = app(CompletePrompt::class)(
-                            model: $model,
+                        $content = app(CompletePrompt::class)->execute(
+                            aiModel: $model,
                             prompt: <<<EOL
                                 The user's name is {$userName} and they are a {$userJobTitle} at {$clientName}.
                                 Please draft a short SMS message template for a student at their college.
@@ -134,8 +134,8 @@ class DraftTemplateWithAiAction extends Action
                 }
 
                 try {
-                    $content = app(CompletePrompt::class)(
-                        model: $model,
+                    $content = app(CompletePrompt::class)->execute(
+                        aiModel: $model,
                         prompt: <<<EOL
                             The user's name is {$userName} and they are a {$userJobTitle} at {$clientName}.
                             Please draft an email template for a student at their college.

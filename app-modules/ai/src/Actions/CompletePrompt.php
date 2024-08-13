@@ -44,7 +44,7 @@ use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 
 class CompletePrompt
 {
-    public function __invoke(AiModel $aiModel, string $prompt, string $content): string
+    public function execute(AiModel $aiModel, string $prompt, string $content): string
     {
         $service = $aiModel->getService();
 
