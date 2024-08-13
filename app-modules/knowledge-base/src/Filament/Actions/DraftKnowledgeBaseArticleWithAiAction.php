@@ -62,7 +62,7 @@ class DraftKnowledgeBaseArticleWithAiAction extends Action
             ->label('Draft with AI Assistant')
             ->link()
             ->icon('heroicon-m-pencil')
-            ->modalContent(fn (Page $livewire) => view('knowledge-base::filament.actions.draft-with-ai-modal-content', [
+            ->modalContent(fn (Page $livewire) => view('knowledge-base::filament.actions.draft-with-ai-modal-content-knowledge-base', [
                 'recordTitle' => $livewire?->data['title'],
                 'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
                     ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
