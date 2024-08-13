@@ -53,7 +53,7 @@
                      style="height: 75px; max-height: 75px; max-width: 100vw;"
                      alt="{{ config('app.name') }}">
             @else
-                <img src="{{ url(Vite::asset('resources/images/default-logo-light.png')) }}"
+                <img src="{{ url(Vite::asset('resources/images/default-logo-light.svg')) }}"
                      style="height: 75px; max-height: 75px; max-width: 100vw;"
                      alt="{{ config('app.name') }}">
             @endif
