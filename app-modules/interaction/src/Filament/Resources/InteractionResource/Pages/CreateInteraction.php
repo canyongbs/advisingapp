@@ -63,7 +63,7 @@ use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
-use AdvisingApp\Interaction\Filament\Actions\DraftWithInteractionAiAction;
+use AdvisingApp\Interaction\Filament\Actions\DraftInteractionWithAiAction;
 
 class CreateInteraction extends CreateRecord
 {
@@ -213,7 +213,7 @@ class CreateInteraction extends CreateRecord
                     ])
                     ->columns(1),
                 Actions::make([
-                    DraftWithInteractionAiAction::make(),
+                    DraftInteractionWithAiAction::make(),
                 ])
                     ->visible(
                         auth()->user()->hasLicense(LicenseType::ConversationalAi)

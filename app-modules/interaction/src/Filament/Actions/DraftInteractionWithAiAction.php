@@ -23,10 +23,8 @@ use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 
-class DraftWithInteractionAiAction extends Action
+class DraftInteractionWithAiAction extends Action
 {
-    protected array | Closure $mergeTags = [];
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -57,7 +55,7 @@ class DraftWithInteractionAiAction extends Action
                 $userName = auth()->user()->name;
                 $userJobTitle = auth()->user()->job_title ?? 'staff member';
                 $clientName = app(LicenseSettings::class)->data->subscription->clientName;
-                $modal = $livewire::getResource()::getPluralModelLabel();
+                $model = $livewire::getResource()::getModelLabel();
                 $initiative = InteractionInitiative::find($get('interaction_initiative_id'));
                 $driver = InteractionDriver::find($get('interaction_driver_id'));
                 $outcome = InteractionOutcome::find($get('interaction_outcome_id'));
@@ -68,7 +66,7 @@ class DraftWithInteractionAiAction extends Action
                         <<<EOL
                             My name is {$userName}, and I am a {$userJobTitle} at {$clientName}.
 
-                            Please document my interaction with {$modal} at our college based on the following details:
+                            Please document my interaction with the {$model} {$livewire->record}['full_name'] at our college based on the following details:
 
                             Instructions:
                             - Respond only with the interaction content—no greetings or additional comments.
@@ -111,17 +109,5 @@ class DraftWithInteractionAiAction extends Action
     public static function getDefaultName(): ?string
     {
         return 'draftWithAi';
-    }
-
-    public function mergeTags(array | Closure $tags): static
-    {
-        $this->mergeTags = $tags;
-
-        return $this;
-    }
-
-    public function getMergeTags(): array
-    {
-        return $this->evaluate($this->mergeTags);
     }
 }
