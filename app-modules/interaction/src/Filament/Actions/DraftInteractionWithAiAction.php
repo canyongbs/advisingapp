@@ -89,7 +89,7 @@ class DraftInteractionWithAiAction extends Action
                         <<<EOL
                             My name is {$userName}, and I am a {$userJobTitle} at {$clientName}.
 
-                            Please document my interaction with the {$model} {$livewire->record}['full_name'] at our college based on the following details:
+                            Please document my interaction with the {$model} {$livewire->record->full_name} at our college based on the following details:
 
                             Instructions:
                             - Respond only with the interaction content—no greetings or additional comments.
