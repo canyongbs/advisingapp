@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Ai\Listeners;
 
+use Laravel\Pennant\Feature;
 use AdvisingApp\Ai\Enums\AiFeature;
 use AdvisingApp\Ai\Events\AiMessageCreated;
 use AdvisingApp\Ai\Models\LegacyAiMessageLog;
-use Laravel\Pennant\Feature;
 
 class CreateAiMessageLog
 {

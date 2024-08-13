@@ -42,9 +42,6 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiFeature;
 use AdvisingApp\Ai\Actions\CompletePrompt;
 use AdvisingApp\Ai\Services\TestAiService;
-
-use function Pest\Laravel\assertDatabaseHas;
-
 use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 
 it('calls the passed AI Models service class complete method', function () {
