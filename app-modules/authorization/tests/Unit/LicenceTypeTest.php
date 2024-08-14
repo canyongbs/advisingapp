@@ -77,7 +77,7 @@ test('Users with a Super Admin role are not counted in the available seats', fun
     $licenseSettings->save();
 
     $superAdmin = User::factory()->create();
-    $superAdmin->assignRole('authorization.super_admin');
+    $superAdmin->assignRole('SaaS Global Admin');
 
     $superAdmin->grantLicense($licenseType);
 

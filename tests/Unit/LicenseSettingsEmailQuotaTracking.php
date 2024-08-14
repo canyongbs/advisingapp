@@ -115,7 +115,7 @@ it('An email is sent to a super admin user even if there is no available quota',
 
     $notifiable = User::factory()->create();
 
-    $notifiable->assignRole('authorization.super_admin');
+    $notifiable->assignRole('SaaS Global Admin');
 
     $notification = new TestEmailNotification();
 

@@ -68,7 +68,7 @@ class UserResource extends Resource
     {
         return parent::getEloquentQuery()
             ->unless(
-                auth()->user()->hasRole('authorization.super_admin'),
+                auth()->user()->hasRole('SaaS Global Admin'),
                 fn (Builder $query) => $query->tap(new WithoutSuperAdmin())
             );
     }
