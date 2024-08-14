@@ -42,10 +42,16 @@ use Illuminate\View\ViewException;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+
+use Filament\Forms\Components\Select;
+use App\Filament\Resources\UserResource;
+use Filament\Tables\Actions\AttachAction;
+
 use function Pest\Laravel\assertDatabaseHas;
 
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 use App\Filament\Resources\UserResource\Pages\EditUser;
+use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 
 it('renders impersonate button for non super admin users when user is super admin', function () {
     asSuperAdmin();
@@ -129,4 +135,52 @@ it('allows user with permission to impersonate', function () {
 
     expect($second->isImpersonated())->toBeTrue();
     expect(auth()->id())->toBe($second->id);
+});
+it('allows user which has sass global admin role to assign sass global admin role to other user', function () {
+    $user = User::factory()->create();
+    $user->assignRole('SaaS Global Admin');
+
+    $second = User::factory()->create();
+
+    actingAs($user)
+        ->get(
+            UserResource::getUrl('edit', [
+                'record' => $second,
+            ])
+        )->assertSuccessful();
+
+    livewire(RolesRelationManager::class, [
+        'ownerRecord' => $second,
+        'pageClass' => EditUser::class,
+    ])
+        ->mountTableAction(AttachAction::class)
+        ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) {
+            $options = $select->getSearchResults('SaaS Global Admin');
+
+            return ! empty($options) ? true : false;
+        })->assertSuccessful();
+});
+it('Not allows user which has not sass global admin role to assign sass global admin role to other user', function () {
+    $user = User::factory()->create();
+    $user->assignRole('authorization.permission_manager', 'authorization.role_manager', 'authorization.user_management');
+
+    $second = User::factory()->create();
+
+    actingAs($user)
+        ->get(
+            UserResource::getUrl('edit', [
+                'record' => $second,
+            ])
+        )->assertSuccessful();
+
+    livewire(RolesRelationManager::class, [
+        'ownerRecord' => $second,
+        'pageClass' => EditUser::class,
+    ])
+        ->mountTableAction(AttachAction::class)
+        ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) {
+            $options = $select->getSearchResults('SaaS Global Admin');
+
+            return empty($options) ? true : false;
+        })->assertSuccessful();
 });

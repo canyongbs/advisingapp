@@ -128,7 +128,7 @@ test('Super Admin Users cannot be added to a team', function () {
     $user->givePermissionTo('team.view-any');
     $user->givePermissionTo('team.*.update');
 
-    $superAdmin->assignRole('authorization.super_admin');
+    $superAdmin->assignRole('SaaS Global Admin');
 
     actingAs($user)
         ->get(
@@ -158,7 +158,7 @@ test('Super Admin Users do not show up in UsersRelationManager for Teams search 
     $user->givePermissionTo('team.view-any');
     $user->givePermissionTo('team.*.update');
 
-    $superAdmin->assignRole('authorization.super_admin');
+    $superAdmin->assignRole('SaaS Global Admin');
 
     actingAs($user)
         ->get(

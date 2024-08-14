@@ -46,7 +46,7 @@ class SampleSuperAdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        $superAdminRole = Role::where('name', 'authorization.super_admin')->firstOrFail();
+        $superAdminRole = Role::where('name', 'SaaS Global Admin')->firstOrFail();
 
         if (app()->isLocal()) {
             $superAdmin = User::factory()->licensed(LicenseType::cases())->create([

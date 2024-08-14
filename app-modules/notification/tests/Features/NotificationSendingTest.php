@@ -73,7 +73,7 @@ it('will not count emails sent to Super Admin Users against quota usage', functi
     $user = User::factory()->create();
     $nonSuperAdminUser = User::factory()->create();
 
-    $user->assignRole('authorization.super_admin');
+    $user->assignRole('SaaS Global Admin');
 
     // And they are sent a deliverable of any kind
     $notification = new TestMultipleChannelNotification();

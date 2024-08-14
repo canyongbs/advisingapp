@@ -129,7 +129,7 @@ class EmailChannel extends MailChannel
         return collect($recipients)->filter(function ($recipient) {
             $user = User::with('roles')->where('email', $recipient->getAddress())->first();
 
-            return ! $user || ! $user->hasRole('authorization.super_admin');
+            return ! $user || ! $user->hasRole('SaaS Global Admin');
         })->count();
     }
 
@@ -146,7 +146,7 @@ class EmailChannel extends MailChannel
 
             $recipient = $deliverable->recipient;
 
-            if ($recipient instanceof User && $recipient->hasRole('authorization.super_admin')) {
+            if ($recipient instanceof User && $recipient->hasRole('SaaS Global Admin')) {
                 $primaryRecipientUsage = 0;
             }
         }

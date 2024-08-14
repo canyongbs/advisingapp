@@ -77,7 +77,13 @@ class RolesRelationManager extends RelationManager
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->where('guard_name', 'web'))
+                    ->recordSelectOptionsQuery(function (Builder $query) {
+                        if (auth()->user()->hasRole('SaaS Global Admin')) {
+                            return $query->where('guard_name', 'web');
+                        }
+
+                        return $query->where('name', '!=', 'SaaS Global Admin')->where('guard_name', 'web');
+                    })
                     ->multiple()
                     ->preloadRecordSelect(),
             ])

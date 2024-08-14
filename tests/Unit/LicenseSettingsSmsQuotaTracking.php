@@ -151,7 +151,7 @@ it('An sms is prevented from being sent if there is no available quota', functio
 it('An sms is sent to a super admin user even if there is no available quota', function () {
     $notifiable = User::factory()->create();
 
-    $notifiable->assignRole('authorization.super_admin');
+    $notifiable->assignRole('SaaS Global Admin');
 
     $notification = new Tests\Unit\TestSmsNotification();
 
