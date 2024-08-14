@@ -85,7 +85,7 @@ it('creates a new AI message log', function () {
             ->andReturn('test-completion'),
     );
 
-    $completion = app(CompletePrompt::class)->execute($aiModel, $prompt, $content);
+    app(CompletePrompt::class)->execute($aiModel, $prompt, $content);
 
     expect(LegacyAiMessageLog::count())->toBe(1);
 
