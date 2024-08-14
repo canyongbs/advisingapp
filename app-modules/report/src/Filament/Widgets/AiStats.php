@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Laravel\Pennant\Feature;
 use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -77,19 +76,11 @@ class AiStats extends StatsOverviewReportWidget
                 maxPrecision: 2,
             )),
             Stat::make('Exchanges', Cache::tags([$this->cacheTag])->remember('ai-exchanges', now()->addHours(24), function (): int|string {
-                if (Feature::inactive('tracked-events')) {
-                    return 'N/A';
-                }
-
                 $count = TrackedEventCount::where('type', TrackedEventType::AiExchange)->first()?->count;
 
                 return ! is_null($count) ? Number::abbreviate($count, maxPrecision: 2) : 'N/A';
             })),
             Stat::make('New Exchanges', Cache::tags([$this->cacheTag])->remember('ai-new-exchanges', now()->addHours(24), function (): int|string {
-                if (Feature::inactive('tracked-events')) {
-                    return 'N/A';
-                }
-
                 return Number::abbreviate(
                     TrackedEvent::query()
                         ->where('type', TrackedEventType::AiExchange)
@@ -99,10 +90,6 @@ class AiStats extends StatsOverviewReportWidget
                 );
             })),
             Stat::make('Saved Conversations', Cache::tags([$this->cacheTag])->remember('ai-saved-conversations', now()->addHours(24), function (): int|string {
-                if (Feature::inactive('tracked-events')) {
-                    return 'N/A';
-                }
-
                 $count = TrackedEventCount::where('type', TrackedEventType::AiThreadSaved)->first()?->count;
 
                 return ! is_null($count) ? Number::abbreviate($count, maxPrecision: 2) : 'N/A';
