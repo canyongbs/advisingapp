@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Ai\Listeners;
 
+use Exception;
 use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
 use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
-use Exception;
 
 class DeleteExternalAiMessageFile
 {
