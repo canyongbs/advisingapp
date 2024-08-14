@@ -54,7 +54,7 @@ class SetupRoles extends Command
     {
         $this->line('Creating roles...');
 
-        $superAdminRole = Role::create([
+        Role::create([
             'name' => 'SaaS Global Admin',
             'guard_name' => 'web',
         ]);
