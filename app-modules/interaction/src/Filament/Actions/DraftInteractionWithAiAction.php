@@ -58,28 +58,20 @@ class DraftInteractionWithAiAction extends Action
 
                 $context = collect();
 
-                if ($id = $get('interaction_initiative_id')) {
-                    if ($initiative = InteractionInitiative::find($id)) {
-                        $context->push("- Related Initiative: Explain this as the specific project or goal that the interaction is part of. Mention the related initiative {$initiative->name}.");
-                    }
+                if (! is_null($get('interaction_initiative_id')) && $initiative = InteractionInitiative::find($get('interaction_initiative_id'))) {
+                    $context->push("- Related Initiative: Explain this as the specific project or goal that the interaction is part of. Mention the related initiative {$initiative->name}.");
                 }
 
-                if ($id = $get('interaction_driver_id')) {
-                    if ($driver = InteractionDriver::find($id)) {
-                        $context->push("- Call Driver: Describe {$driver->name} as the reason or motivation for making the call or engaging in the interaction.");
-                    }
+                if (! is_null($get('interaction_driver_id')) && $driver = InteractionDriver::find($get('interaction_driver_id'))) {
+                    $context->push("- Call Driver: Describe {$driver->name} as the reason or motivation for making the call or engaging in the interaction.");
                 }
 
-                if ($id = $get('interaction_outcome_id')) {
-                    if ($outcome = InteractionOutcome::find($id)) {
-                        $context->push("- Interaction Outcome: Describe {$outcome->name} as the result or effect of the interaction.");
-                    }
+                if (! is_null($get('interaction_outcome_id')) && $outcome = InteractionOutcome::find($get('interaction_outcome_id'))) {
+                    $context->push("- Interaction Outcome: Describe {$outcome->name} as the result or effect of the interaction.");
                 }
 
-                if ($id = $get('interaction_type_id')) {
-                    if ($type = InteractionType::find($id)) {
-                        $context->push("- Type of Engagement: Explain {$type->name} as the nature of the interaction, such as whether it was a meeting, call, or another form of communication.");
-                    }
+                if (! is_null($get('interaction_type_id')) && $type = InteractionType::find($get('interaction_type_id'))) {
+                    $context->push("- Type of Engagement: Explain {$type->name} as the nature of the interaction, such as whether it was a meeting, call, or another form of communication.");
                 }
 
                 $additionalContext = $context->isNotEmpty() ? $context->implode("\n") : '';
