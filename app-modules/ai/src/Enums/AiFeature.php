@@ -34,17 +34,30 @@
 </COPYRIGHT>
 */
 
-use Laravel\Pennant\Feature;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\Ai\Enums;
 
-return new class () extends Migration {
-    public function up(): void
+use Filament\Support\Contracts\HasLabel;
+
+enum AiFeature: string implements HasLabel
+{
+    case DraftWithAi = 'draft_with_ai';
+
+    case Conversations = 'conversations';
+
+    public function getLabel(): string
     {
-        Feature::activate('tracked-events');
+        return match ($this) {
+            self::DraftWithAi => 'Draft With AI',
+            self::Conversations => 'Conversations',
+        };
     }
 
-    public function down(): void
+    public static function parse(string | self | null $value): ?self
     {
-        Feature::purge('tracked-events');
+        if ($value instanceof self) {
+            return $value;
+        }
+
+        return self::tryFrom($value);
     }
-};
+}

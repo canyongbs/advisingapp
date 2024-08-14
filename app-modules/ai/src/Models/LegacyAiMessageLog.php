@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use AdvisingApp\Ai\Enums\AiFeature;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -54,12 +55,14 @@ class LegacyAiMessageLog extends BaseModel
         'sent_at',
         'user_id',
         'ai_assistant_name',
+        'feature',
     ];
 
     protected $casts = [
         'metadata' => 'encrypted:array',
         'request' => 'encrypted:array',
         'sent_at' => 'datetime',
+        'feature' => AiFeature::class,
     ];
 
     public function user(): BelongsTo

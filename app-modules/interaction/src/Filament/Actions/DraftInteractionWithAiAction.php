@@ -34,14 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords\Actions;
+namespace AdvisingApp\Interaction\Filament\Actions;
 
-use Closure;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Illuminate\Support\Str;
 use Laravel\Pennant\Feature;
 use App\Settings\LicenseSettings;
+use Filament\Resources\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Vite;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -51,15 +50,15 @@ use Filament\Notifications\Notification;
 use AdvisingApp\Ai\Actions\CompletePrompt;
 use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Interaction\Models\InteractionType;
+use AdvisingApp\Interaction\Models\InteractionDriver;
+use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
-use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords;
 
-class DraftWithAiAction extends Action
+class DraftInteractionWithAiAction extends Action
 {
-    protected array | Closure $mergeTags = [];
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -68,8 +67,8 @@ class DraftWithAiAction extends Action
             ->label('Draft with AI Assistant')
             ->link()
             ->icon('heroicon-m-pencil')
-            ->modalContent(fn (ManageRelatedEngagementRecords $livewire) => view('engagement::filament.manage-related-records.manage-related-engagement-records.draft-with-ai-modal-content', [
-                'recordTitle' => $livewire->getRecordTitle(),
+            ->modalContent(fn (Page $livewire) => view('interaction::filament.actions.draft-with-ai-modal-content', [
+                'recordTitle' => $livewire->record['full_name'],
                 'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
                     ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
             ]))
@@ -82,7 +81,7 @@ class DraftWithAiAction extends Action
                     ->placeholder('What do you want to write about?')
                     ->required(),
             ])
-            ->action(function (array $data, Get $get, Set $set, ManageRelatedEngagementRecords $livewire) {
+            ->action(function (array $data, Get $get, Set $set, Page $livewire) {
                 $model = Feature::active('ai-integrated-assistant-settings')
                     ? app(AiIntegratedAssistantSettings::class)->default_model
                     : app(AiSettings::class)->default_model;
@@ -90,67 +89,43 @@ class DraftWithAiAction extends Action
                 $userName = auth()->user()->name;
                 $userJobTitle = auth()->user()->job_title ?? 'staff member';
                 $clientName = app(LicenseSettings::class)->data->subscription->clientName;
-                $educatableLabel = $livewire->getOwnerRecord()::getLabel();
+                $model = $livewire::getResource()::getModelLabel();
 
-                $mergeTagsList = collect($this->getMergeTags())
-                    ->map(fn (string $tag): string => <<<HTML
-                        <span data-type="mergeTag" data-id="{$tag}" contenteditable="false">{$tag}</span>
-                    HTML)
-                    ->join(', ', ' and ');
+                $context = collect();
 
-                if ($get('delivery_method') === EngagementDeliveryMethod::Sms->value) {
-                    try {
-                        $content = app(CompletePrompt::class)->execute(
-                            aiModel: $model,
-                            prompt: <<<EOL
-                                The user's name is {$userName} and they are a {$userJobTitle} at {$clientName}.
-                                Please draft a short SMS message for a {$educatableLabel} at their college.
-                                The user will send a message to you containing instructions for the content.
-
-                                You should only respond with the SMS content, you should never greet them.
-
-                                You may use merge tags to insert dynamic data about the student in the body of the SMS:
-                                {$mergeTagsList}
-                            EOL,
-                            content: $data['instructions'],
-                        );
-                    } catch (MessageResponseException $exception) {
-                        report($exception);
-
-                        Notification::make()
-                            ->title('AI Assistant Error')
-                            ->body('There was an issue using the AI assistant. Please try again later.')
-                            ->danger()
-                            ->send();
-
-                        $this->halt();
-
-                        return;
-                    }
-
-                    $set('body', Str::markdown($content));
-
-                    return;
+                if (! is_null($get('interaction_initiative_id')) && $initiative = InteractionInitiative::find($get('interaction_initiative_id'))) {
+                    $context->push("- Related Initiative: Explain this as the specific project or goal that the interaction is part of. Mention the related initiative {$initiative->name}.");
                 }
+
+                if (! is_null($get('interaction_driver_id')) && $driver = InteractionDriver::find($get('interaction_driver_id'))) {
+                    $context->push("- Call Driver: Describe {$driver->name} as the reason or motivation for making the call or engaging in the interaction.");
+                }
+
+                if (! is_null($get('interaction_outcome_id')) && $outcome = InteractionOutcome::find($get('interaction_outcome_id'))) {
+                    $context->push("- Interaction Outcome: Describe {$outcome->name} as the result or effect of the interaction.");
+                }
+
+                if (! is_null($get('interaction_type_id')) && $type = InteractionType::find($get('interaction_type_id'))) {
+                    $context->push("- Type of Engagement: Explain {$type->name} as the nature of the interaction, such as whether it was a meeting, call, or another form of communication.");
+                }
+
+                $additionalContext = $context->isNotEmpty() ? $context->implode("\n") : '';
 
                 try {
                     $content = app(CompletePrompt::class)->execute(
                         aiModel: $model,
                         prompt: <<<EOL
-                            The user's name is {$userName} and they are a {$userJobTitle} at {$clientName}.
-                            Please draft an email for a {$educatableLabel} at their college.
-                            The user will send a message to you containing instructions for the content.
+                            My name is {$userName}, and I am a {$userJobTitle} at {$clientName}.
 
-                            You should only respond with the email content, you should never greet them.
-                            The first line should contain the raw subject of the email, with no "Subject: " label at the start.
-                            All following lines after the subject are the email body.
+                            Please document my interaction with the {$model} {$livewire->record->full_name} at our college based on the following details:
 
-                            When you answer, it is crucial that you format the email body using rich text in Markdown format.
-                            The subject line can not use Markdown formatting, it is plain text.
-                            Do not ever mention in your response that the answer is being formatted/rendered in Markdown.
-
-                            You may use merge tags to insert dynamic data about the student in the body of the email, but these do not work in the subject line:
-                            {$mergeTagsList}
+                            Instructions:
+                            - Respond only with the interaction content—no greetings or additional comments.
+                            - The first line should be the raw subject of the interaction with no "Subject: " label, written in plain text.
+                            - The interaction body should start on the second line, using plain text only, with no special formatting.
+                            - Never mention in your response that the content is formatted or rendered in plain text.
+                            - Use the following context, only if it's available and not blank , to enhance the interaction body:
+                            {$additionalContext}
                         EOL,
                         content: $data['instructions'],
                     );
@@ -172,7 +147,7 @@ class DraftWithAiAction extends Action
                     ->before("\n")
                     ->trim());
 
-                $set('body', (string) str($content)->after("\n")->markdown());
+                $set('description', (string) str($content)->after("\n")->ltrim("\n"));
             })
             ->visible(
                 auth()->user()->hasLicense(LicenseType::ConversationalAi)
@@ -182,17 +157,5 @@ class DraftWithAiAction extends Action
     public static function getDefaultName(): ?string
     {
         return 'draftWithAi';
-    }
-
-    public function mergeTags(array | Closure $tags): static
-    {
-        $this->mergeTags = $tags;
-
-        return $this;
-    }
-
-    public function getMergeTags(): array
-    {
-        return $this->evaluate($this->mergeTags);
     }
 }

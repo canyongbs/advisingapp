@@ -36,7 +36,6 @@
 
 namespace App\Console\Commands;
 
-use App\Settings\BrandSettings;
 use Illuminate\Console\Command;
 use App\Settings\OlympusSettings;
 use Illuminate\Support\Facades\Http;
@@ -69,10 +68,6 @@ class ConnectOlympus extends Command
         $olympusSettings = app(OlympusSettings::class);
         $olympusSettings->fill($response->json('olympus'));
         $olympusSettings->save();
-
-        $brandSettings = app(BrandSettings::class);
-        $brandSettings->fill($response->json('brand'));
-        $brandSettings->save();
 
         $this->info('The app has been connected to Olympus.');
 

@@ -49,6 +49,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
+use AdvisingApp\Ai\Actions\CompletePrompt;
 use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
@@ -85,9 +86,9 @@ class DraftCampaignEngagementBlockWithAi extends Action
                     ->required(),
             ])
             ->action(function (array $data, Get $get, Set $set) {
-                $service = Feature::active('ai-integrated-assistant-settings')
-                    ? app(AiIntegratedAssistantSettings::class)->default_model->getService()
-                    : app(AiSettings::class)->default_model->getService();
+                $model = Feature::active('ai-integrated-assistant-settings')
+                    ? app(AiIntegratedAssistantSettings::class)->default_model
+                    : app(AiSettings::class)->default_model;
 
                 $userName = auth()->user()->name;
                 $userJobTitle = auth()->user()->job_title ?? 'staff member';
@@ -101,16 +102,20 @@ class DraftCampaignEngagementBlockWithAi extends Action
 
                 if ($get('delivery_method') === EngagementDeliveryMethod::Sms->value) {
                     try {
-                        $content = $service->complete(<<<EOL
-                            The user's name is {$userName} and they are a {$userJobTitle} at {$clientName}.
-                            Please draft a short SMS message for a student at their college.
-                            The user will send a message to you containing instructions for the content.
+                        $content = app(CompletePrompt::class)->execute(
+                            aiModel: $model,
+                            prompt: <<<EOL
+                                The user's name is {$userName} and they are a {$userJobTitle} at {$clientName}.
+                                Please draft a short SMS message for a student at their college.
+                                The user will send a message to you containing instructions for the content.
 
-                            You should only respond with the SMS content, you should never greet them.
+                                You should only respond with the SMS content, you should never greet them.
 
-                            You may use merge tags to insert dynamic data about the student in the body of the SMS:
-                            {$mergeTagsList}
-                        EOL, $data['instructions']);
+                                You may use merge tags to insert dynamic data about the student in the body of the SMS:
+                                {$mergeTagsList}
+                            EOL,
+                            content: $data['instructions'],
+                        );
                     } catch (MessageResponseException $exception) {
                         report($exception);
 
@@ -131,22 +136,26 @@ class DraftCampaignEngagementBlockWithAi extends Action
                 }
 
                 try {
-                    $content = $service->complete(<<<EOL
-                        The user's name is {$userName} and they are a {$userJobTitle} at {$clientName}.
-                        Please draft an email for a student at their college.
-                        The user will send a message to you containing instructions for the content.
+                    $content = app(CompletePrompt::class)->execute(
+                        aiModel: $model,
+                        prompt: <<<EOL
+                            The user's name is {$userName} and they are a {$userJobTitle} at {$clientName}.
+                            Please draft an email for a student at their college.
+                            The user will send a message to you containing instructions for the content.
 
-                        You should only respond with the email content, you should never greet them.
-                        The first line should contain the raw subject of the email, with no "Subject: " label at the start.
-                        All following lines after the subject are the email body.
+                            You should only respond with the email content, you should never greet them.
+                            The first line should contain the raw subject of the email, with no "Subject: " label at the start.
+                            All following lines after the subject are the email body.
 
-                        When you answer, it is crucial that you format the email body using rich text in Markdown format.
-                        The subject line can not use Markdown formatting, it is plain text.
-                        Do not ever mention in your response that the answer is being formatted/rendered in Markdown.
+                            When you answer, it is crucial that you format the email body using rich text in Markdown format.
+                            The subject line can not use Markdown formatting, it is plain text.
+                            Do not ever mention in your response that the answer is being formatted/rendered in Markdown.
 
-                        You may use merge tags to insert dynamic data about the student in the body of the email, but these do not work in the subject line:
-                        {$mergeTagsList}
-                    EOL, $data['instructions']);
+                            You may use merge tags to insert dynamic data about the student in the body of the email, but these do not work in the subject line:
+                            {$mergeTagsList}
+                        EOL,
+                        content: $data['instructions'],
+                    );
                 } catch (MessageResponseException $exception) {
                     report($exception);
 

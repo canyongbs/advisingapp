@@ -68,13 +68,13 @@
     @endif
 @else
     <img
-        src="{{ Vite::asset('resources/images/default-logo-light.png') }}"
+        src="{{ Vite::asset('resources/images/default-logo-light.svg') }}"
         class="h-9 dark:hidden block"
 
     />
 
     <img
-        src="{{ Vite::asset('resources/images/default-logo-dark.png') }}"
+        src="{{ Vite::asset('resources/images/default-logo-dark.svg') }}"
         class="h-9 hidden dark:block"
     />
 @endif

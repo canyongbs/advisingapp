@@ -34,17 +34,41 @@
 </COPYRIGHT>
 */
 
+namespace AdvisingApp\Ai\Actions;
+
+use Illuminate\Support\Arr;
 use Laravel\Pennant\Feature;
-use Illuminate\Database\Migrations\Migration;
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Enums\AiFeature;
+use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 
-return new class () extends Migration {
-    public function up(): void
+class CompletePrompt
+{
+    public function execute(AiModel $aiModel, string $prompt, string $content): string
     {
-        Feature::activate('ai-assistant-auditing-changes');
-    }
+        $service = $aiModel->getService();
 
-    public function down(): void
-    {
-        Feature::purge('ai-assistant-auditing-changes');
+        $completion = $service->complete($prompt, $content);
+
+        LegacyAiMessageLog::create([
+            'message' => $content,
+            'metadata' => [
+                'prompt' => $prompt,
+                'completion' => $completion,
+            ],
+            'request' => [
+                'headers' => Arr::only(
+                    request()->headers->all(),
+                    ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
+                ),
+                'ip' => request()->ip(),
+            ],
+            'sent_at' => now(),
+            'user_id' => auth()->id(),
+            'ai_assistant_name' => 'Institutional Assistant',
+            ...Feature::active('ai-log-features') ? ['feature' => AiFeature::DraftWithAi] : [],
+        ]);
+
+        return $completion;
     }
-};
+}

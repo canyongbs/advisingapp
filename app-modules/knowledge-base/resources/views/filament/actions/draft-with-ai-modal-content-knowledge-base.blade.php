@@ -31,32 +31,30 @@
 
 </COPYRIGHT>
 --}}
-@props(['url', 'settings' => null])
-@php
-    use App\Models\SettingsProperty;
-    use AdvisingApp\Theme\Settings\ThemeSettings;
+<div class="mb-3 flex gap-4 text-base md:gap-6">
+    <div class="flex flex-shrink-0 flex-col items-end">
+        <img
+            class="h-8 w-8 rounded-full object-cover object-center"
+            src="{{ $avatarUrl }}"
+            alt="Assistant avatar"
+        >
+    </div>
 
-    $themeSettings = app(ThemeSettings::class);
-    $settingsProperty = SettingsProperty::getInstance('theme.is_logo_active');
-    $logo = $settingsProperty->getFirstMedia('logo');
-@endphp
-<tr>
-    <td class="header">
-        <a href="{{ $url }}" style="display: inline-block;">
-            @if ($settings?->hasMedia('logo'))
-                {{-- TODO: Don't use temporary urls? --}}
-                <img src="{{ $settings?->getFirstTemporaryUrl(now()->addDays(6), 'logo') }}"
-                     style="height: 75px; max-height: 75px; max-width: 100vw;"
-                     alt="{{ config('app.name') }}">
-            @elseif ($themeSettings->is_logo_active && $logo)
-                <img src="{{ $logo->getTemporaryUrl(now()->addDays(6)) }}"
-                     style="height: 75px; max-height: 75px; max-width: 100vw;"
-                     alt="{{ config('app.name') }}">
-            @else
-                <img src="{{ url(Vite::asset('resources/images/default-logo-light.svg')) }}"
-                     style="height: 75px; max-height: 75px; max-width: 100vw;"
-                     alt="{{ config('app.name') }}">
-            @endif
-        </a>
-    </td>
-</tr>
+    <div class="prose h-36 flex-1 dark:prose-invert sm:h-20">
+        <p
+            x-data="{ content: '' }"
+            x-init="const message = @js('Hi ' . auth()->user()->name . ", I am happy to help you draft your knowledge base article for {$recordTitle}. Please describe what information you would like in the article and I will take it from there:");
+            
+            const typeWord = async (word, delay) => {
+                content += word + ' ';
+            
+                await new Promise(resolve => setTimeout(resolve, delay));
+            };
+            
+            for (const word of message.split(' ')) {
+                await typeWord(word, Math.floor(Math.random() * 100));
+            }"
+            x-text="content"
+        ></p>
+    </div>
+</div>

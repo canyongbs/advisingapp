@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,33 +32,24 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@props(['url', 'settings' => null])
-@php
-    use App\Models\SettingsProperty;
-    use AdvisingApp\Theme\Settings\ThemeSettings;
+*/
 
-    $themeSettings = app(ThemeSettings::class);
-    $settingsProperty = SettingsProperty::getInstance('theme.is_logo_active');
-    $logo = $settingsProperty->getFirstMedia('logo');
-@endphp
-<tr>
-    <td class="header">
-        <a href="{{ $url }}" style="display: inline-block;">
-            @if ($settings?->hasMedia('logo'))
-                {{-- TODO: Don't use temporary urls? --}}
-                <img src="{{ $settings?->getFirstTemporaryUrl(now()->addDays(6), 'logo') }}"
-                     style="height: 75px; max-height: 75px; max-width: 100vw;"
-                     alt="{{ config('app.name') }}">
-            @elseif ($themeSettings->is_logo_active && $logo)
-                <img src="{{ $logo->getTemporaryUrl(now()->addDays(6)) }}"
-                     style="height: 75px; max-height: 75px; max-width: 100vw;"
-                     alt="{{ config('app.name') }}">
-            @else
-                <img src="{{ url(Vite::asset('resources/images/default-logo-light.svg')) }}"
-                     style="height: 75px; max-height: 75px; max-width: 100vw;"
-                     alt="{{ config('app.name') }}">
-            @endif
-        </a>
-    </td>
-</tr>
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('assistant_chat_message_logs', function (Blueprint $table) {
+            $table->string('feature')->nullable();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('assistant_chat_message_logs', function (Blueprint $table) {
+            $table->dropColumn('feature');
+        });
+    }
+};
