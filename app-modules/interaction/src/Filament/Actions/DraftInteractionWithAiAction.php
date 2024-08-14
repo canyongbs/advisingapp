@@ -47,6 +47,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
+use AdvisingApp\Ai\Actions\CompletePrompt;
 use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Models\InteractionType;
@@ -81,9 +82,9 @@ class DraftInteractionWithAiAction extends Action
                     ->required(),
             ])
             ->action(function (array $data, Get $get, Set $set, Page $livewire) {
-                $service = Feature::active('ai-integrated-assistant-settings')
-                    ? app(AiIntegratedAssistantSettings::class)->default_model->getService()
-                    : app(AiSettings::class)->default_model->getService();
+                $model = Feature::active('ai-integrated-assistant-settings')
+                    ? app(AiIntegratedAssistantSettings::class)->default_model
+                    : app(AiSettings::class)->default_model;
 
                 $userName = auth()->user()->name;
                 $userJobTitle = auth()->user()->job_title ?? 'staff member';
@@ -111,8 +112,9 @@ class DraftInteractionWithAiAction extends Action
                 $additionalContext = $context->isNotEmpty() ? $context->implode("\n") : '';
 
                 try {
-                    $content = $service->complete(
-                        <<<EOL
+                    $content = app(CompletePrompt::class)->execute(
+                        aiModel: $model,
+                        prompt: <<<EOL
                             My name is {$userName}, and I am a {$userJobTitle} at {$clientName}.
 
                             Please document my interaction with the {$model} {$livewire->record->full_name} at our college based on the following details:
@@ -125,7 +127,7 @@ class DraftInteractionWithAiAction extends Action
                             - Use the following context, only if it's available and not blank , to enhance the interaction body:
                             {$additionalContext}
                         EOL,
-                        $data['instructions']
+                        content: $data['instructions'],
                     );
                 } catch (MessageResponseException $exception) {
                     report($exception);
