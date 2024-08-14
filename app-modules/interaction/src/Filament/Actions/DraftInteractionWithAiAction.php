@@ -60,25 +60,25 @@ class DraftInteractionWithAiAction extends Action
 
                 if ($id = $get('interaction_initiative_id')) {
                     if ($initiative = InteractionInitiative::find($id)) {
-                        $context->push("- Mention the related initiative: {$initiative->name}.");
+                        $context->push("- Related Initiative: Explain this as the specific project or goal that the interaction is part of. Mention the related initiative {$initiative->name}.");
                     }
                 }
 
                 if ($id = $get('interaction_driver_id')) {
                     if ($driver = InteractionDriver::find($id)) {
-                        $context->push("- Include the call driver: {$driver->name}.");
+                        $context->push("- Call Driver: Describe {$driver->name} as the reason or motivation for making the call or engaging in the interaction.");
                     }
                 }
 
                 if ($id = $get('interaction_outcome_id')) {
                     if ($outcome = InteractionOutcome::find($id)) {
-                        $context->push("- State the interaction outcome: {$outcome->name}.");
+                        $context->push("- Interaction Outcome: Describe {$outcome->name} as the result or effect of the interaction.");
                     }
                 }
 
                 if ($id = $get('interaction_type_id')) {
                     if ($type = InteractionType::find($id)) {
-                        $context->push("- Specify the type of engagement: {$type->name}.");
+                        $context->push("- Type of Engagement: Explain {$type->name} as the nature of the interaction, such as whether it was a meeting, call, or another form of communication.");
                     }
                 }
 
@@ -96,7 +96,7 @@ class DraftInteractionWithAiAction extends Action
                             - The first line should be the raw subject of the interaction with no "Subject: " label, written in plain text.
                             - The interaction body should start on the second line, using plain text only, with no special formatting.
                             - Never mention in your response that the content is formatted or rendered in plain text.
-                            - Use the following context, only if it's available and not blank , to enhance the interaction body (but not the subject line):
+                            - Use the following context, only if it's available and not blank , to enhance the interaction body:
                             {$additionalContext}
                         EOL,
                         $data['instructions']
