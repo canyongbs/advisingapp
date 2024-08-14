@@ -82,6 +82,9 @@ class LegacyAiMessageLogResource extends Resource
                     ->label('Assistant')
                     ->default('N/A')
                     ->visible(Feature::active('ai-assistant-auditing-changes')),
+                TextEntry::make('feature')
+                    ->default('N/A')
+                    ->visible(Feature::active('ai-log-features')),
                 TextEntry::make('message')
                     ->prose()
                     ->columnSpanFull(),

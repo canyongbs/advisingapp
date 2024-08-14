@@ -34,39 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use AdvisingApp\Ai\Enums\AiFeature;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-/**
- * @mixin IdeHelperLegacyAiMessageLog
- */
-class LegacyAiMessageLog extends BaseModel
-{
-    protected $table = 'assistant_chat_message_logs';
-
-    protected $fillable = [
-        'message',
-        'metadata',
-        'request',
-        'sent_at',
-        'user_id',
-        'ai_assistant_name',
-        'feature',
-    ];
-
-    protected $casts = [
-        'metadata' => 'encrypted:array',
-        'request' => 'encrypted:array',
-        'sent_at' => 'datetime',
-        'feature' => AiFeature::class,
-    ];
-
-    public function user(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(User::class);
+        Feature::activate('ai-log-features');
     }
-}
+
+    public function down(): void
+    {
+        Feature::deactivate('ai-log-features');
+    }
+};

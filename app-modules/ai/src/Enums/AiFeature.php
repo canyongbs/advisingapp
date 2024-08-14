@@ -34,39 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+namespace AdvisingApp\Ai\Enums;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use AdvisingApp\Ai\Enums\AiFeature;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Filament\Support\Contracts\HasLabel;
 
-/**
- * @mixin IdeHelperLegacyAiMessageLog
- */
-class LegacyAiMessageLog extends BaseModel
+enum AiFeature: string implements HasLabel
 {
-    protected $table = 'assistant_chat_message_logs';
+    case DraftWithAi = 'draft_with_ai';
 
-    protected $fillable = [
-        'message',
-        'metadata',
-        'request',
-        'sent_at',
-        'user_id',
-        'ai_assistant_name',
-        'feature',
-    ];
+    case Conversations = 'conversations';
 
-    protected $casts = [
-        'metadata' => 'encrypted:array',
-        'request' => 'encrypted:array',
-        'sent_at' => 'datetime',
-        'feature' => AiFeature::class,
-    ];
-
-    public function user(): BelongsTo
+    public function getLabel(): string
     {
-        return $this->belongsTo(User::class);
+        return match ($this) {
+            self::DraftWithAi => 'Draft With AI',
+            self::Conversations => 'Conversations',
+        };
+    }
+
+    public static function parse(string | self | null $value): ?self
+    {
+        if ($value instanceof self) {
+            return $value;
+        }
+
+        return self::tryFrom($value);
     }
 }

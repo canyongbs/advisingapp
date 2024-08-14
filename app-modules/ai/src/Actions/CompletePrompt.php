@@ -34,39 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+namespace AdvisingApp\Ai\Actions;
 
-use App\Models\User;
-use App\Models\BaseModel;
+use Illuminate\Support\Arr;
+use Laravel\Pennant\Feature;
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiFeature;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 
-/**
- * @mixin IdeHelperLegacyAiMessageLog
- */
-class LegacyAiMessageLog extends BaseModel
+class CompletePrompt
 {
-    protected $table = 'assistant_chat_message_logs';
-
-    protected $fillable = [
-        'message',
-        'metadata',
-        'request',
-        'sent_at',
-        'user_id',
-        'ai_assistant_name',
-        'feature',
-    ];
-
-    protected $casts = [
-        'metadata' => 'encrypted:array',
-        'request' => 'encrypted:array',
-        'sent_at' => 'datetime',
-        'feature' => AiFeature::class,
-    ];
-
-    public function user(): BelongsTo
+    public function execute(AiModel $aiModel, string $prompt, string $content): string
     {
-        return $this->belongsTo(User::class);
+        $service = $aiModel->getService();
+
+        $completion = $service->complete($prompt, $content);
+
+        LegacyAiMessageLog::create([
+            'message' => $content,
+            'metadata' => [
+                'prompt' => $prompt,
+                'completion' => $completion,
+            ],
+            'request' => [
+                'headers' => Arr::only(
+                    request()->headers->all(),
+                    ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
+                ),
+                'ip' => request()->ip(),
+            ],
+            'sent_at' => now(),
+            'user_id' => auth()->id(),
+            ...Feature::active('ai-assistant-auditing-changes') ? ['ai_assistant_name' => 'Institutional Assistant'] : [],
+            ...Feature::active('ai-log-features') ? ['feature' => AiFeature::DraftWithAi] : [],
+        ]);
+
+        return $completion;
     }
 }
