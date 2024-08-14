@@ -48,6 +48,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ViewRecord;
 use App\Filament\Forms\Components\Licenses;
 use AdvisingApp\Authorization\Models\License;
+use Filament\Facades\Filament;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 
 class ViewUser extends ViewRecord
@@ -100,20 +104,20 @@ class ViewUser extends ViewRecord
         $user = $this->getRecord();
 
         return [
-            Action::make('mfa_status')
-                ->badge()
-                ->disabled()
-                ->visible(fn (User $record) => ! $record->is_external)
-                ->label(fn (User $record) => match (true) {
-                    $record->hasConfirmedMultifactor() => 'MFA Enabled',
-                    $record->hasEnabledMultifactor() => 'MFA Enabled | Not Confirmed',
-                    default => 'MFA Disabled',
-                })
-                ->color(fn (User $record) => match (true) {
-                    $record->hasConfirmedMultifactor() => 'success',
-                    $record->hasEnabledMultifactor() => 'warning',
-                    default => 'gray',
-                }),
+            // Action::make('mfa_status')
+            //     ->badge()
+            //     ->disabled()
+            //     ->visible(fn (User $record) => ! $record->is_external)
+            //     ->label(fn (User $record) => match (true) {
+            //         $record->hasConfirmedMultifactor() => 'MFA Enabled',
+            //         $record->hasEnabledMultifactor() => 'MFA Enabled | Not Confirmed',
+            //         default => 'MFA Disabled',
+            //     })
+            //     ->color(fn (User $record) => match (true) {
+            //         $record->hasConfirmedMultifactor() => 'success',
+            //         $record->hasEnabledMultifactor() => 'warning',
+            //         default => 'gray',
+            //     }),
             Action::make('mfa_reset')
                 ->visible(
                     fn (User $record) => ! $record->is_external
@@ -128,5 +132,15 @@ class ViewUser extends ViewRecord
                 ->record($user),
             EditAction::make(),
         ];
+    }
+
+    public function boot() 
+    {
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER,
+            fn (): View => view('filament.resources.user-resource.mfa-badge')
+                ->with(['class' => 'flex items-center space-x-2']),
+            scopes: ViewUser::class,
+        );
     }
 }
