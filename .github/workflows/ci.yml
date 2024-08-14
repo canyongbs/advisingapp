@@ -160,9 +160,6 @@ jobs:
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-    #   - name: Install packages
-    #     run: apt-get update ; apt-get install -y git zip unzip postgresql-client
-
       - name: Create tenant database
         run: psql -h 127.0.0.1 -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
         env:
@@ -176,6 +173,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
@@ -247,9 +246,6 @@ jobs:
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-    #   - name: Install packages
-    #     run: apt-get update ; apt-get install -y git zip unzip postgresql-client
-
       - name: Create tenant database
         run: psql -h 127.0.0.1 -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
         env:
@@ -263,6 +259,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
