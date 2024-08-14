@@ -1,3 +1,4 @@
+@if(!$this->getRecord()->is_external)
 <x-filament::badge
     :tooltip="$this->getRecord()->hasConfirmedMultifactor()
         ? 'MFA Enabled'
@@ -12,3 +13,4 @@
 >
     {{ $this->getRecord()->hasConfirmedMultifactor() ? 'MFA Enabled' : ($this->getRecord()->hasEnabledMultifactor() ? 'MFA Enabled | Not Confirmed' : 'MFA Disabled') }}
 </x-filament::badge>
+@endif

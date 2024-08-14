@@ -41,17 +41,16 @@ use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use App\Filament\Resources\UserResource;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Facades\FilamentView;
 use App\Filament\Forms\Components\Licenses;
 use AdvisingApp\Authorization\Models\License;
-use Filament\Facades\Filament;
-use Filament\Support\Facades\FilamentView;
-use Filament\View\PanelsRenderHook;
-use Illuminate\Contracts\View\View;
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 
 class ViewUser extends ViewRecord
@@ -98,6 +97,16 @@ class ViewUser extends ViewRecord
             ]);
     }
 
+    public function boot()
+    {
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER,
+            fn (): View => view('filament.resources.user-resource.mfa-badge')
+                ->with(['class' => 'flex items-center space-x-2']),
+            scopes: ViewUser::class,
+        );
+    }
+
     protected function getHeaderActions(): array
     {
         /** @var User $user */
@@ -132,15 +141,5 @@ class ViewUser extends ViewRecord
                 ->record($user),
             EditAction::make(),
         ];
-    }
-
-    public function boot() 
-    {
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER,
-            fn (): View => view('filament.resources.user-resource.mfa-badge')
-                ->with(['class' => 'flex items-center space-x-2']),
-            scopes: ViewUser::class,
-        );
     }
 }

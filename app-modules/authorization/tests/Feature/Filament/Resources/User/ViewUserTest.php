@@ -124,58 +124,6 @@ it('allows user with permission to impersonate', function () {
     expect(auth()->id())->toBe($second->id);
 });
 
-it('does not display the mfa_status Action for an external User', function () {
-    $user = User::factory()->external()->create();
-
-    asSuperAdmin();
-
-    livewire(ViewUser::class, [
-        'record' => $user->getRouteKey(),
-    ])
-        ->assertActionHidden('mfa_status');
-});
-
-it('displays the proper mfa_status Action for an internal User without MFA enabled', function () {
-    $user = User::factory()->internal()->create();
-
-    asSuperAdmin();
-
-    livewire(ViewUser::class, [
-        'record' => $user->getRouteKey(),
-    ])
-        ->assertActionHasLabel('mfa_status', 'MFA Disabled')
-        ->assertActionHasColor('mfa_status', 'gray');
-});
-
-it('displays the proper mfa_status Action for an internal User with MFA enabled but not confirmed', function () {
-    $user = User::factory()->internal()->create();
-
-    $user->enableMultifactorAuthentication();
-
-    asSuperAdmin();
-
-    livewire(ViewUser::class, [
-        'record' => $user->getRouteKey(),
-    ])
-        ->assertActionHasLabel('mfa_status', 'MFA Enabled | Not Confirmed')
-        ->assertActionHasColor('mfa_status', 'warning');
-});
-
-it('displays the proper mfa_status Action for an internal User with MFA enabled and confirmed', function () {
-    $user = User::factory()->internal()->create();
-
-    $user->enableMultifactorAuthentication();
-
-    $user->confirmMultifactorAuthentication();
-
-    asSuperAdmin();
-
-    livewire(ViewUser::class, [
-        'record' => $user->getRouteKey(),
-    ])
-        ->assertActionHasLabel('mfa_status', 'MFA Enabled')
-        ->assertActionHasColor('mfa_status', 'success');
-});
 
 it('does not display the mfa_reset Action if the user is external', function () {
     $user = User::factory()->external()->create();
