@@ -65,7 +65,7 @@ class CompletePrompt
             ],
             'sent_at' => now(),
             'user_id' => auth()->id(),
-            ...Feature::active('ai-assistant-auditing-changes') ? ['ai_assistant_name' => 'Institutional Assistant'] : [],
+            'ai_assistant_name' => 'Institutional Assistant',
             ...Feature::active('ai-log-features') ? ['feature' => AiFeature::DraftWithAi] : [],
         ]);
 
