@@ -59,7 +59,7 @@ class CreateAiMessageLog
             'request' => $message->request,
             'sent_at' => now(),
             'user_id' => $message->user_id,
-            ...Feature::active('ai-assistant-auditing-changes') ? ['ai_assistant_name' => $message->thread?->assistant?->name ?? null] : [],
+            'ai_assistant_name' => $message->thread?->assistant?->name,
             ...Feature::active('ai-log-features') ? ['feature' => AiFeature::Conversations] : [],
         ]);
     }

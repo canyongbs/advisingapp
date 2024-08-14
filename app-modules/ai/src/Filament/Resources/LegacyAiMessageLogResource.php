@@ -80,8 +80,7 @@ class LegacyAiMessageLogResource extends Resource
                     ->dateTime(),
                 TextEntry::make('ai_assistant_name')
                     ->label('Assistant')
-                    ->default('N/A')
-                    ->visible(Feature::active('ai-assistant-auditing-changes')),
+                    ->default('N/A'),
                 TextEntry::make('feature')
                     ->default('N/A')
                     ->visible(Feature::active('ai-log-features')),
