@@ -208,49 +208,11 @@ jobs:
   lint:
     runs-on: ubuntu-22.04
 
-    env:
-      DB_PORT: 5432
-      DB_HOST: 127.0.0.1
-      DB_USERNAME: root
-      DB_PASSWORD: root
-      DB_DATABASE: testing_landlord
-      SCOUT_PREFIX: test_
-
     timeout-minutes: 15
 
     needs: [build-deps,enforce-copyright,fix-code-style]
 
-    services:
-      postgres:
-        # Docker Hub image
-        image: postgres:15
-        ports:
-          - 5432:5432
-        # Provide the password for postgres
-        env:
-          PGPASSWORD: ${{ env.DB_PASSWORD }}
-          POSTGRES_DB: ${{ env.DB_DATABASE }}
-          POSTGRES_USER: ${{ env.DB_USERNAME }}
-          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
-        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
-      - name: Create tenant database
-        run: psql -h 127.0.0.1 -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
-        env:
-          PGPASSWORD: root
-
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
@@ -261,9 +223,6 @@ jobs:
           ref: ${{ github.ref }}
           fetch-depth: 0
           fetch-tags: true
-
-      - name: Copy .env
-        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
