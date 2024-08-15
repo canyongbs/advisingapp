@@ -124,7 +124,7 @@ class ChangeRequest extends BaseModel implements Auditable
 
     public function canBeApprovedBy(User $user): bool
     {
-        return $this->type()->withTrashed()->first()->userApprovers()->pluck('user_id')->contains($user->id) && ! $this->hasBeenApprovedBy($user);
+        return $this->type()->withTrashed()->first()->userApprovers()->where('user_id', $user->id)->exists() && ! $this->hasBeenApprovedBy($user);
     }
 
     public function hasBeenApprovedBy(User $user): bool

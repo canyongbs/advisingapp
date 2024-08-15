@@ -1,5 +1,6 @@
 includes:
     - ./vendor/larastan/larastan/extension.neon
+    - ./vendor/tpetry/laravel-postgresql-enhanced/phpstan-extension.neon
 
 parameters:
 
