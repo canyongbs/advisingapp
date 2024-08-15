@@ -7,7 +7,7 @@ LABEL maintainer="CanyonGBS"
 ARG POSTGRES_VERSION=15
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git s6 gnupg zip unzip php8.2-pgsql php8.2-imagick php8.2-redis php8.2-pcov php8.2-xdebug \
+    && apt-get install -y --no-install-recommends git gnupg php8.2-imagick php8.2-pcov php8.2-pgsql php8.2-redis php8.2-xdebug s6 unzip zip \
     && curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/keyrings/pgdg.gpg >/dev/null \
     && echo "deb [signed-by=/etc/apt/keyrings/pgdg.gpg] https://apt.postgresql.org/pub/repos/apt jammy-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
@@ -85,11 +85,11 @@ RUN chown -R "$PUID":"$PGID" /var/www/html \
 FROM base AS deploy
 
 RUN /generate-queues.sh "default" "\$SQS_QUEUE" \
-&& /generate-queues.sh "landlord" "\$LANDLORD_SQS_QUEUE" \
-&& /generate-queues.sh "outbound-communication" "\$OUTBOUND_COMMUNICATION_QUEUE" \
-&& /generate-queues.sh "audit" "\$AUDIT_QUEUE_QUEUE" \
-&& /generate-queues.sh "meeting-center" "\$MEETING_CENTER_QUEUE" \
-&& /generate-queues.sh "import-export" "\$IMPORT_EXPORT_QUEUE" 
+    && /generate-queues.sh "landlord" "\$LANDLORD_SQS_QUEUE" \
+    && /generate-queues.sh "outbound-communication" "\$OUTBOUND_COMMUNICATION_QUEUE" \
+    && /generate-queues.sh "audit" "\$AUDIT_QUEUE_QUEUE" \
+    && /generate-queues.sh "meeting-center" "\$MEETING_CENTER_QUEUE" \
+    && /generate-queues.sh "import-export" "\$IMPORT_EXPORT_QUEUE" 
 
 RUN rm /generate-queues.sh
 
