@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Listeners;
 
+use OpenAI\Exceptions\ErrorException;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 
 class DeleteExternalAiThread
@@ -45,7 +46,17 @@ class DeleteExternalAiThread
         $service = $event->aiThread->assistant->model->getService();
 
         if ($service->isThreadExisting($event->aiThread)) {
-            $service->deleteThread($event->aiThread);
+            try {
+                $service->deleteThread($event->aiThread);
+            } catch (ErrorException $e) {
+                if (str_contains($e->getMessage(), 'No thread found with id')) {
+                    report($e);
+
+                    return;
+                }
+
+                throw $e;
+            }
         }
     }
 }

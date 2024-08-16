@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Listeners;
 
+use Exception;
 use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
 use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
 
@@ -47,7 +48,13 @@ class DeleteExternalAiMessageFile
             return;
         }
 
-        $service = $event->aiMessageFile->message->thread->assistant->model->getService();
+        $service = $event->aiMessageFile?->message?->thread?->assistant?->model?->getService();
+
+        if ($service === null) {
+            report(new Exception('No AI service found for the message file: ' . $event->aiMessageFile->getKey()));
+
+            return;
+        }
 
         if ($service instanceof AiServiceLifecycleHooks) {
             $service->beforeMessageFileForceDeleted($event->aiMessageFile);
