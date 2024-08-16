@@ -82,8 +82,7 @@ class LegacyAiMessageLogResource extends Resource
                     ->label('Assistant')
                     ->default('N/A'),
                 TextEntry::make('feature')
-                    ->default('N/A')
-                    ->visible(Feature::active('ai-log-features')),
+                    ->default('N/A'),
                 TextEntry::make('message')
                     ->prose()
                     ->columnSpanFull(),

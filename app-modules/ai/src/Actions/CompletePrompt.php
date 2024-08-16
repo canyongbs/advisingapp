@@ -66,7 +66,7 @@ class CompletePrompt
             'sent_at' => now(),
             'user_id' => auth()->id(),
             'ai_assistant_name' => 'Institutional Assistant',
-            ...Feature::active('ai-log-features') ? ['feature' => AiFeature::DraftWithAi] : [],
+            'feature' => AiFeature::DraftWithAi,
         ]);
 
         return $completion;
