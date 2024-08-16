@@ -82,7 +82,7 @@ class DraftInteractionWithAiAction extends Action
                     ->required(),
             ])
             ->action(function (array $data, Get $get, Set $set, Page $livewire) {
-                $model = Feature::active('ai-integrated-assistant-settings')
+                $aiModel = Feature::active('ai-integrated-assistant-settings')
                     ? app(AiIntegratedAssistantSettings::class)->default_model
                     : app(AiSettings::class)->default_model;
 
@@ -113,7 +113,7 @@ class DraftInteractionWithAiAction extends Action
 
                 try {
                     $content = app(CompletePrompt::class)->execute(
-                        aiModel: $model,
+                        aiModel: $aiModel,
                         prompt: <<<EOL
                             My name is {$userName}, and I am a {$userJobTitle} at {$clientName}.
 
