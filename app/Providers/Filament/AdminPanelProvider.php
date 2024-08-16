@@ -39,8 +39,9 @@ namespace App\Providers\Filament;
 use Filament\Panel;
 use App\Models\Tenant;
 use Filament\PanelProvider;
-use App\Settings\BrandSettings;
+use Laravel\Pennant\Feature;
 use App\Models\SettingsProperty;
+use Filament\Support\Assets\Css;
 use App\Filament\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
 use Filament\Actions\ExportAction;
@@ -50,7 +51,6 @@ use Filament\Tables\Columns\Column;
 use Filament\Forms\Components\Field;
 use App\Filament\Pages\ProductHealth;
 use FilamentTiptapEditor\TiptapEditor;
-use Illuminate\Support\Facades\Schema;
 use Filament\Infolists\Components\Entry;
 use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\Authenticate;
@@ -118,7 +118,6 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
-            ->darkMode(Schema::hasTable('settings') ? app(BrandSettings::class)->has_dark_mode : true)
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([])
             ->middleware([
@@ -182,7 +181,28 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 'panels::scripts.before',
                 fn () => view('filament.scripts.scroll-sidebar-to-active-menu-item'),
-            );
+            )
+            ->bootUsing(function (Panel $panel) {
+                if (! Tenant::current()) {
+                    return;
+                }
+
+                if (! Feature::active('synced_theme_settings')) {
+                    return;
+                }
+
+                $themeSettings = app(ThemeSettings::class);
+
+                $panel->colors(array_merge(config('default-colors'), $themeSettings->color_overrides));
+
+                $panel->darkMode($themeSettings->has_dark_mode);
+
+                if ($themeSettings->url) {
+                    $panel->assets([
+                        Css::make('customTheme', $themeSettings->url),
+                    ]);
+                }
+            });
     }
 
     public function boot(): void {}

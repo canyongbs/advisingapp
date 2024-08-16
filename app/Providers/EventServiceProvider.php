@@ -42,9 +42,11 @@ use App\Listeners\ClearSentryUser;
 use Illuminate\Auth\Events\Logout;
 use OwenIt\Auditing\Events\Auditing;
 use Illuminate\Auth\Events\Registered;
+use App\Listeners\LoadSettingsDefaults;
 use Illuminate\Auth\Events\Authenticated;
 use AdvisingApp\Audit\Listeners\AuditingListener;
 use App\Multitenancy\Listeners\SetSentryTenantTag;
+use Spatie\LaravelSettings\Events\LoadingSettings;
 use Illuminate\Console\Events\ScheduledTaskStarting;
 use App\Multitenancy\Listeners\RemoveSentryTenantTag;
 use Spatie\Multitenancy\Events\ForgotCurrentTenantEvent;
@@ -83,6 +85,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         Logout::class => [
             ClearSentryUser::class,
+        ],
+        LoadingSettings::class => [
+            LoadSettingsDefaults::class,
         ],
     ];
 

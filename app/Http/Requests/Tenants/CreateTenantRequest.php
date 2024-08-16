@@ -78,6 +78,9 @@ class CreateTenantRequest extends FormRequest
             'subscription.partnerPo' => ['required', 'string'],
             'subscription.startDate' => ['required', 'string'],
             'subscription.endDate' => ['required', 'string'],
+            'theme.color_overrides' => ['nullable', 'array'],
+            'theme.has_dark_mode' => ['nullable', 'boolean'],
+            'theme.url' => ['nullable', 'string', 'url'],
         ];
     }
 }

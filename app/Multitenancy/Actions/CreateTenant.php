@@ -39,6 +39,7 @@ namespace App\Multitenancy\Actions;
 use Throwable;
 use App\Models\Tenant;
 use App\Jobs\CreateTenantUser;
+use App\Jobs\UpdateTenantTheme;
 use App\Jobs\SeedTenantDatabase;
 use App\Jobs\MigrateTenantDatabase;
 use Illuminate\Support\Facades\Bus;
@@ -48,6 +49,7 @@ use Illuminate\Support\Facades\Event;
 use App\Jobs\DispatchTenantSetupCompleteEvent;
 use App\Multitenancy\Events\NewTenantSetupFailure;
 use App\Multitenancy\DataTransferObjects\TenantUser;
+use AdvisingApp\Theme\DataTransferObjects\ThemeConfig;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use App\DataTransferObjects\LicenseManagement\LicenseData;
 
@@ -59,7 +61,8 @@ class CreateTenant
         TenantConfig $config,
         ?TenantUser $user = null,
         ?LicenseData $licenseData = null,
-        bool $seedTenantDatabase = true
+        ?ThemeConfig $themeConfig = null,
+        bool $seedTenantDatabase = true,
     ): ?Tenant {
         $tenant = Tenant::query()->create([
             'name' => $name,
@@ -73,6 +76,7 @@ class CreateTenant
                 new MigrateTenantDatabase($tenant),
                 ...($seedTenantDatabase ? [new SeedTenantDatabase($tenant)] : []),
                 ...($licenseData ? [new UpdateTenantLicenseData($tenant, $licenseData)] : []),
+                ...($themeConfig ? [new UpdateTenantTheme($tenant, $themeConfig)] : []),
                 ...($user ? [new CreateTenantUser($tenant, $user)] : []),
                 new DispatchTenantSetupCompleteEvent($tenant),
             ],

@@ -37,15 +37,34 @@
 namespace AdvisingApp\Theme\Settings;
 
 use Spatie\LaravelSettings\Settings;
+use App\Settings\Contracts\HasDefaultSettings;
 
-class ThemeSettings extends Settings
+class ThemeSettings extends Settings implements HasDefaultSettings
 {
     public bool $is_logo_active;
 
     public bool $is_favicon_active;
 
+    public array $color_overrides = [];
+
+    public bool $has_dark_mode = true;
+
+    public ?string $url = null;
+
     public static function group(): string
     {
         return 'theme';
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function defaults(): array
+    {
+        return [
+            'color_overrides' => [],
+            'has_dark_mode' => true,
+            'url' => null,
+        ];
     }
 }

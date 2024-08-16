@@ -34,18 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Requests;
+namespace AdvisingApp\Theme\DataTransferObjects;
 
-use Illuminate\Foundation\Http\FormRequest;
+use Spatie\LaravelData\Data;
+use Spatie\LaravelData\Attributes\MapInputName;
+use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
-class UpdateBrandSettingsRequest extends FormRequest
+#[MapInputName(SnakeCaseMapper::class)]
+class ThemeConfig extends Data
 {
-    public function rules(): array
-    {
-        return [
-            'color_overrides' => ['nullable', 'array'],
-            'custom_css' => ['nullable', 'string'],
-            'has_dark_mode' => ['nullable', 'boolean'],
-        ];
-    }
+    public function __construct(
+        public array $colorOverrides = [],
+        public bool $hasDarkMode = true,
+        public ?string $url = null,
+    ) {}
 }

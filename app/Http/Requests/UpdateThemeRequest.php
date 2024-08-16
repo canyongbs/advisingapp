@@ -34,30 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Settings;
+namespace App\Http\Requests;
 
-use Spatie\LaravelSettings\Settings;
+use App\Models\Tenant;
+use Illuminate\Validation\Rule;
+use Illuminate\Foundation\Http\FormRequest;
 
-class BrandSettings extends Settings
+class UpdateThemeRequest extends FormRequest
 {
-    public array $color_overrides = [];
-
-    public ?string $custom_css;
-
-    public bool $has_dark_mode = true;
-
-    public static function repository(): ?string
+    public function rules(): array
     {
-        return 'landlord_database';
-    }
-
-    public static function group(): string
-    {
-        return 'brand';
-    }
-
-    public function mergeColorOverrides(array $colors): array
-    {
-        return array_merge($colors, $this->color_overrides);
+        return [
+            'config.color_overrides' => ['nullable', 'array'],
+            'config.has_dark_mode' => ['nullable', 'boolean'],
+            'config.url' => ['nullable', 'string', 'url'],
+            'tenant_ids' => ['array'],
+            'tenant_ids.*' => [Rule::exists(Tenant::class, 'id')],
+        ];
     }
 }

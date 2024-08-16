@@ -36,46 +36,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Settings\BrandSettings;
+use App\Models\Tenant;
+use App\Jobs\UpdateTenantTheme;
 use Illuminate\Http\JsonResponse;
-use App\Console\Commands\BuildAssets;
-use Illuminate\Support\Facades\Artisan;
-use Laravel\Octane\Commands\ReloadCommand;
-use App\Http\Requests\UpdateBrandSettingsRequest;
+use Illuminate\Support\Facades\Bus;
+use App\Http\Requests\UpdateThemeRequest;
+use AdvisingApp\Theme\DataTransferObjects\ThemeConfig;
 
-class UpdateBrandSettingsController extends Controller
+class UpdateThemeController extends Controller
 {
-    public function __invoke(UpdateBrandSettingsRequest $request): JsonResponse
+    public function __invoke(UpdateThemeRequest $request): JsonResponse
     {
-        $brandSettings = app(BrandSettings::class);
+        $config = new ThemeConfig(
+            colorOverrides: $request->color_overrides ?? [],
+            hasDarkMode: $request->has_dark_mode ?? true,
+            url: $request->url,
+        );
 
-        $oldCustomCss = $brandSettings->custom_css;
-        $oldHasDarkMode = $brandSettings->has_dark_mode;
-        $oldColorOverrides = $brandSettings->color_overrides;
+        $jobs = [];
 
-        $brandSettings->fill($request->validated());
-
-        $brandSettings->save();
-
-        if ($oldCustomCss !== $brandSettings->custom_css) {
-            app()->terminating(function () {
-                Artisan::call(BuildAssets::class, [
-                    'script' => 'vite',
+        Tenant::query()
+            ->whereIn('id', $request->tenant_ids)
+            ->lazyById(100, function (Tenant $tenant) use ($config, &$jobs) {
+                $jobs[] = app(UpdateTenantTheme::class, [
+                    'tenant' => $tenant,
+                    'config' => $config,
                 ]);
             });
-        }
 
-        if (
-            ($oldHasDarkMode !== $brandSettings->has_dark_mode) ||
-            ($oldColorOverrides !== $brandSettings->color_overrides)
-        ) {
-            app()->terminating(function () {
-                Artisan::call(ReloadCommand::class);
-            });
-        }
+        Bus::batch($jobs)
+            ->name('update-theme')
+            ->onQueue(config('queue.landlord_queue'))
+            ->dispatch();
 
         return response()->json([
-            'message' => 'Brand settings updated successfully!',
+            'message' => 'Theme updated successfully!',
         ]);
     }
 }

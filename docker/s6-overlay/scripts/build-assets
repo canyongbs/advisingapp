@@ -19,5 +19,5 @@ if [ "${BUILD_ASSETS:="false"}" == "true" ]; then
 
     s6-setuidgid "$USERNAME" php -d variables_order=EGPCS "$WEBUSER_HOME"/artisan filament:assets
 
-    s6-setuidgid "$USERNAME" php -d variables_order=EGPCS "$WEBUSER_HOME"/artisan app:build-assets vite
+    s6-setuidgid "$USERNAME" npm run build
 fi
