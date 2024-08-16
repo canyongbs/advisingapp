@@ -37,7 +37,6 @@
 namespace AdvisingApp\Ai\Filament\Resources;
 
 use Filament\Tables\Table;
-use Laravel\Pennant\Feature;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\ViewAction;
