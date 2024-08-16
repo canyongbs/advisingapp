@@ -34,61 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Console\Commands;
+use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Settings\BrandSettings;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Process;
-
-class BuildAssets extends Command
-{
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'app:build-assets {script?}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Builds all assets, including custom CSS from the database.';
-
-    /**
-     * Execute the console command.
-     */
-    public function handle(): int
+return new class () extends Migration {
+    public function up(): void
     {
-        if (Schema::hasTable('settings')) {
-            file_put_contents(
-                resource_path('css/filament/admin/custom.css'),
-                app(BrandSettings::class)->custom_css ?? '',
-            );
-        }
-
-        $script = $this->argument('script');
-        $script = filled($script) ? "build:{$script}" : 'build';
-
-        $process = Process::timeout(3600)
-            ->run(
-                command: <<<BASH
-                    #!/bin/bash
-                    [ -s "/usr/local/nvm/nvm.sh" ] && \. "/usr/local/nvm/nvm.sh"
-                    npm run {$script}
-                BASH,
-                output: function (string $type, string $output) {
-                    $this->line($output);
-                }
-            )
-            ->throw();
-
-        $this->line($process->output());
-
-        $this->info('Assets have been built.');
-
-        return static::SUCCESS;
+        Feature::activate('synced_theme_settings');
     }
-}
+
+    public function down(): void
+    {
+        Feature::purge('synced_theme_settings');
+    }
+};

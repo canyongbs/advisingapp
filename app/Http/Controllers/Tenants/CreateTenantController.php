@@ -42,6 +42,7 @@ use Illuminate\Http\JsonResponse;
 use App\Multitenancy\Actions\CreateTenant;
 use App\Http\Requests\Tenants\CreateTenantRequest;
 use App\Multitenancy\DataTransferObjects\TenantUser;
+use AdvisingApp\Theme\DataTransferObjects\ThemeConfig;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use App\DataTransferObjects\LicenseManagement\LicenseData;
 use App\Multitenancy\DataTransferObjects\TenantMailConfig;
@@ -120,7 +121,12 @@ class CreateTenantController
                 subscription: LicenseSubscriptionData::from($request->validated('subscription')),
                 limits: LicenseLimitsData::from($request->validated('limits')),
                 addons: LicenseAddonsData::from($request->validated('addons')),
-            )
+            ),
+            new ThemeConfig(
+                colorOverrides: $request->validated('theme.color_overrides') ?? [],
+                hasDarkMode: $request->validated('theme.has_dark_mode') ?? true,
+                url: $request->validated('theme.url'),
+            ),
         );
 
         return response()->json(['tenant' => [

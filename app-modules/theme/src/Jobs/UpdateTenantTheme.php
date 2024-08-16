@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,3 +33,41 @@
 
 </COPYRIGHT>
 */
+
+namespace App\Jobs;
+
+use App\Models\Tenant;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Spatie\Multitenancy\Jobs\NotTenantAware;
+use AdvisingApp\Theme\Settings\ThemeSettings;
+use AdvisingApp\Theme\DataTransferObjects\ThemeConfig;
+
+class UpdateTenantTheme implements ShouldQueue, NotTenantAware
+{
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use Batchable;
+
+    public function __construct(
+        public Tenant $tenant,
+        public ThemeConfig $config,
+    ) {}
+
+    public function handle(): void
+    {
+        $this->tenant->execute(function () {
+            $settings = app(ThemeSettings::class);
+            $settings->color_overrides = $this->config->colorOverrides;
+            $settings->has_dark_mode = $this->config->hasDarkMode;
+            $settings->url = $this->config->url;
+            $settings->save();
+        });
+    }
+}
