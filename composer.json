@@ -139,7 +139,6 @@
             "vendor/openai-php/client/src/Responses/Threads/Runs/ThreadRunResponse.php"
         ],
         "files": [
-            "overrides/Laravel/Octane/RoadRunner/RoadRunnerClient.php",
             "overrides/OpenAI/Responses/Threads/Runs/ThreadRunResponse.php"
         ]
     },
