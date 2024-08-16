@@ -1,0 +1,5 @@
+# Default Code Owners
+* @canyongbs/canyon-gbs-lead-developers
+
+# CODEOWNERS File Protection
+/.github/CODEOWNERS @joelicatajr @Orrison
