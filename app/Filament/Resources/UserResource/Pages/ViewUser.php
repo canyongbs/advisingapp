@@ -101,8 +101,7 @@ class ViewUser extends ViewRecord
     {
         FilamentView::registerRenderHook(
             PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER,
-            fn (): View => view('filament.resources.user-resource.mfa-badge')
-                ->with(['class' => 'flex items-center space-x-2']),
+            fn (): View => view('filament.resources.user-resource.mfa-badge'),
             scopes: ViewUser::class,
         );
     }
@@ -113,20 +112,6 @@ class ViewUser extends ViewRecord
         $user = $this->getRecord();
 
         return [
-            // Action::make('mfa_status')
-            //     ->badge()
-            //     ->disabled()
-            //     ->visible(fn (User $record) => ! $record->is_external)
-            //     ->label(fn (User $record) => match (true) {
-            //         $record->hasConfirmedMultifactor() => 'MFA Enabled',
-            //         $record->hasEnabledMultifactor() => 'MFA Enabled | Not Confirmed',
-            //         default => 'MFA Disabled',
-            //     })
-            //     ->color(fn (User $record) => match (true) {
-            //         $record->hasConfirmedMultifactor() => 'success',
-            //         $record->hasEnabledMultifactor() => 'warning',
-            //         default => 'gray',
-            //     }),
             Action::make('mfa_reset')
                 ->visible(
                     fn (User $record) => ! $record->is_external
