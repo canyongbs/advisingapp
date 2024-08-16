@@ -37,7 +37,6 @@
 namespace AdvisingApp\Ai\Filament\Resources;
 
 use Filament\Tables\Table;
-use Laravel\Pennant\Feature;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\ViewAction;
@@ -82,8 +81,7 @@ class LegacyAiMessageLogResource extends Resource
                     ->label('Assistant')
                     ->default('N/A'),
                 TextEntry::make('feature')
-                    ->default('N/A')
-                    ->visible(Feature::active('ai-log-features')),
+                    ->default('N/A'),
                 TextEntry::make('message')
                     ->prose()
                     ->columnSpanFull(),

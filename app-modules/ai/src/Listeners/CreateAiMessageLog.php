@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Ai\Listeners;
 
-use Laravel\Pennant\Feature;
 use AdvisingApp\Ai\Enums\AiFeature;
 use AdvisingApp\Ai\Events\AiMessageCreated;
 use AdvisingApp\Ai\Models\LegacyAiMessageLog;
@@ -60,7 +59,7 @@ class CreateAiMessageLog
             'sent_at' => now(),
             'user_id' => $message->user_id,
             'ai_assistant_name' => $message->thread?->assistant?->name,
-            ...Feature::active('ai-log-features') ? ['feature' => AiFeature::Conversations] : [],
+            'feature' => AiFeature::Conversations,
         ]);
     }
 }

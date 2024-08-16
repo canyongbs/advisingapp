@@ -37,7 +37,6 @@
 namespace AdvisingApp\Ai\Actions;
 
 use Illuminate\Support\Arr;
-use Laravel\Pennant\Feature;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiFeature;
 use AdvisingApp\Ai\Models\LegacyAiMessageLog;
@@ -66,7 +65,7 @@ class CompletePrompt
             'sent_at' => now(),
             'user_id' => auth()->id(),
             'ai_assistant_name' => 'Institutional Assistant',
-            ...Feature::active('ai-log-features') ? ['feature' => AiFeature::DraftWithAi] : [],
+            'feature' => AiFeature::DraftWithAi,
         ]);
 
         return $completion;
