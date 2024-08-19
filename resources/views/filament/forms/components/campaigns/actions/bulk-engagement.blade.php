@@ -65,12 +65,14 @@
         @if ($action['body'])
             <div class="flex flex-col pt-3">
                 <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Body</dt>
-                <dd class="text-sm font-semibold">{!! EngagementBatch::renderWithMergeTags(
+                <dd class="prose dark:prose-invert text-sm font-semibold">
+                    {!! EngagementBatch::renderWithMergeTags(
                     tiptap_converter()->asHTML(
                         $action['body'],
                         newImages: $this->componentFileAttachments['data']['actions'][$actionIndex]['data']['body'] ?? [],
                     ),
-                ) !!}</dd>
+                ) !!}
+                </dd>
             </div>
         @endif
         <div class="flex flex-col pt-3">
