@@ -49,7 +49,7 @@ class ManageStudentInformationSystemSettings extends SettingsPage
                             ->options(SisSystem::class)
                             ->enum(SisSystem::class)
                             ->required()
-                            ->dehydrateStateUsing(fn (string $state) => SisSystem::from($state)),
+                            ->dehydrateStateUsing(fn (string|SisSystem $state) => SisSystem::parse($state)),
                     ])
                     ->visible(fn (Get $get) => $get('is_enabled')),
             ]);

@@ -36,13 +36,19 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
+use App\Enums\FeatureFlag;
 use Filament\Infolists\Infolist;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
+use Filament\Support\Facades\FilamentView;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 
 class ViewStudent extends ViewRecord
 {
@@ -50,6 +56,23 @@ class ViewStudent extends ViewRecord
 
     // TODO: Automatically set from Filament
     protected static ?string $navigationLabel = 'View';
+
+    public function boot()
+    {
+        if (
+            FeatureFlag::SisIntegrationSettings->active()
+            && app(StudentInformationSystemSettings::class)->is_enabled
+            && ! empty(app(StudentInformationSystemSettings::class)->sis_system)
+        ) {
+            FilamentView::registerRenderHook(
+                PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE,
+                fn (): View => view('student-data-model::filament.resources.student-resource.sis-sync', [
+                    'student' => $this->getRecord(),
+                ]),
+                scopes: ViewStudent::class,
+            );
+        }
+    }
 
     public function infolist(Infolist $infolist): Infolist
     {
@@ -138,6 +161,14 @@ class ViewStudent extends ViewRecord
                     ])
                     ->columns(2),
             ]);
+    }
+
+    public function sisRefresh()
+    {
+        Notification::make()
+            ->title('Student data successfully synced!')
+            ->success()
+            ->send();
     }
 
     protected function getHeaderActions(): array

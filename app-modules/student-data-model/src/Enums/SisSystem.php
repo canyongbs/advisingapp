@@ -48,4 +48,13 @@ enum SisSystem: string implements HasLabel
             SisSystem::ThesisElements => 'Thesis Elements',
         };
     }
+
+    public static function parse(string | self | null $value): ?self
+    {
+        if ($value instanceof self) {
+            return $value;
+        }
+
+        return self::tryFrom($value);
+    }
 }
