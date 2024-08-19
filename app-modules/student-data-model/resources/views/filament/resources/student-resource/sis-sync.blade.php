@@ -32,18 +32,19 @@
 </COPYRIGHT>
 --}}
 <?php
-    use AdvisingApp\StudentDataModel\Models\Student;
-    use Illuminate\Support\Carbon;
-    use App\Settings\DisplaySettings;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Support\Carbon;
+use App\Settings\DisplaySettings;
 
-    /** @var Student $student */ 
+/** @var Student $student */
 
-    $timezone = app(DisplaySettings::class)->getTimezone();
+$timezone = app(DisplaySettings::class)->getTimezone();
 ?>
-<div class="flex flex-col items-center md:flex-row gap-3">
+<div class="flex flex-col items-center gap-3 md:flex-row">
     <div class="flex-1">
         <p class="text-xs">
-            This record was last updated in the SIS on {{ $student->updated_at_source->setTimezone($timezone)->format('F j, Y g:i A') }}.
+            This record was last updated in the SIS on
+            {{ $student->updated_at_source->setTimezone($timezone)->format('F j, Y g:i A') }}.
         </p>
     </div>
 
