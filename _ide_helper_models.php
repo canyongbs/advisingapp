@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 // phpcs:ignoreFile
 /**
@@ -603,6 +569,8 @@ namespace AdvisingApp\Ai\Models{
  * @property bool $is_default
  * @property \AdvisingApp\Ai\Enums\AiModel $model
  * @property \Illuminate\Support\Carbon|null $archived_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiAssistantFile> $files
  * @property-read int|null $files_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
@@ -881,11 +849,15 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon $sent_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $ai_assistant_name
+ * @property \AdvisingApp\Ai\Enums\AiFeature|null $feature
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog query()
+ * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereAiAssistantName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereFeature($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereMessage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereMetadata($value)
@@ -4907,7 +4879,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $created_at_source
- * @property string|null $updated_at_source
+ * @property \Illuminate\Support\Carbon|null $updated_at_source
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Alert\Models\Alert> $alerts
  * @property-read int|null $alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $applicationSubmissions

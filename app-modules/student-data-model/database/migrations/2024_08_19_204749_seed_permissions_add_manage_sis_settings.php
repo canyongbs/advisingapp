@@ -1,12 +1,9 @@
 <?php
 
-use Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Database\Migrations\Concerns\CanModifyPermissions;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     use CanModifyPermissions;
 
     private array $permissions = [
