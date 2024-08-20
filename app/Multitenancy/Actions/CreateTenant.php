@@ -38,7 +38,6 @@ namespace App\Multitenancy\Actions;
 
 use Throwable;
 use App\Models\Tenant;
-use AdvisingApp\Theme\Jobs\UpdateTenantTheme;
 use App\Jobs\CreateTenantUser;
 use App\Jobs\SeedTenantDatabase;
 use App\Jobs\MigrateTenantDatabase;
@@ -46,6 +45,7 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Encryption\Encrypter;
 use App\Jobs\UpdateTenantLicenseData;
 use Illuminate\Support\Facades\Event;
+use AdvisingApp\Theme\Jobs\UpdateTenantTheme;
 use App\Jobs\DispatchTenantSetupCompleteEvent;
 use App\Multitenancy\Events\NewTenantSetupFailure;
 use App\Multitenancy\DataTransferObjects\TenantUser;

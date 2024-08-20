@@ -36,9 +36,7 @@
 
 namespace AdvisingApp\Theme\Http\Requests;
 
-use App\Models\Tenant;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class UpdateThemeRequest extends FormRequest
 {
@@ -49,7 +47,6 @@ class UpdateThemeRequest extends FormRequest
             'config.has_dark_mode' => ['nullable', 'boolean'],
             'config.url' => ['nullable', 'string', 'url'],
             'tenant_ids' => ['array'],
-            'tenant_ids.*' => [Rule::exists(Tenant::class, 'id')],
         ];
     }
 }

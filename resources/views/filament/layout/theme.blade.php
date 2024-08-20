@@ -1,1 +1,5 @@
-<link href="{{ $url }}" rel="stylesheet" data-navigate-track>
+<link
+    data-navigate-track
+    href="{{ $url }}"
+    rel="stylesheet"
+>

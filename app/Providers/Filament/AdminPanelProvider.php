@@ -36,14 +36,11 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Facades\Filament;
 use Filament\Panel;
 use App\Models\Tenant;
 use Filament\PanelProvider;
-use Filament\Support\Facades\FilamentAsset;
 use Laravel\Pennant\Feature;
 use App\Models\SettingsProperty;
-use Filament\Support\Assets\Css;
 use App\Filament\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
 use Filament\Actions\ExportAction;
