@@ -132,9 +132,9 @@ it('does not display the mfa_status for an external User', function () {
     livewire(ViewUser::class, [
         'record' => $user->getRouteKey(),
     ])
-        ->assertDontSeeText('MFA Enabled')
-        ->assertDontSeeText('MFA Enabled | Not Confirmed')
-        ->assertDontSeeText('MFA Disabled');
+    ->assertDontSeeHtml('data-identifier="mfa-enabled"')
+    ->assertDontSeeHtml('data-identifier="mfa-not-confirmed"')
+    ->assertDontSeeHtml('data-identifier="mfa-disabled"');
 });
 
 it('displays the proper mfa_status for an internal User without MFA enabled', function () {
@@ -145,7 +145,7 @@ it('displays the proper mfa_status for an internal User without MFA enabled', fu
     livewire(ViewUser::class, [
         'record' => $user->getRouteKey(),
     ])
-        ->assertSeeText('MFA Disabled');
+    ->assertSeeHtml('data-identifier="mfa-disabled"');
 });
 
 it('displays the proper mfa_status for an internal User with MFA enabled but not confirmed', function () {
@@ -158,7 +158,7 @@ it('displays the proper mfa_status for an internal User with MFA enabled but not
     livewire(ViewUser::class, [
         'record' => $user->getRouteKey(),
     ])
-        ->assertSeeText('MFA Enabled | Not Confirmed');
+    ->assertSeeHtml('data-identifier="mfa-not-confirmed"');
 });
 
 it('displays the proper mfa_status for an internal User with MFA enabled and confirmed', function () {
@@ -173,7 +173,7 @@ it('displays the proper mfa_status for an internal User with MFA enabled and con
     livewire(ViewUser::class, [
         'record' => $user->getRouteKey(),
     ])
-        ->assertSeeText('MFA Enabled');
+    ->assertSeeHtml('data-identifier="mfa-enabled"');
 });
 
 it('does not display the mfa_reset Action if the user is external', function () {
