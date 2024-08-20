@@ -52,13 +52,13 @@ class ManageBrandConfigurationSettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-paint-brush';
 
-    protected static ?string $navigationLabel = 'Branding';
+    protected static ?string $navigationLabel = 'Partner Branding';
 
     protected static ?int $navigationSort = 30;
 
     protected static string $settings = ThemeSettings::class;
 
-    protected static ?string $title = 'Branding';
+    protected static ?string $title = 'Partner Branding';
 
     protected static ?string $cluster = GlobalSettings::class;
 
@@ -74,7 +74,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
     {
         return $form
             ->schema([
-                Section::make('Favicon')
+                Section::make('Partner Favicon')
                     ->aside()
                     ->schema([
                         SpatieMediaLibraryFileUpload::make('favicon')
@@ -92,7 +92,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->label('Active')
                             ->hidden(fn (Get $get): bool => blank($get('favicon'))),
                     ]),
-                Section::make('Logo')
+                Section::make('Partner Logo')
                     ->aside()
                     ->schema([
                         SpatieMediaLibraryFileUpload::make('logo')
