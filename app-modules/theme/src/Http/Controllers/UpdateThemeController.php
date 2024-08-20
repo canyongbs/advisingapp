@@ -34,30 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Controllers;
+namespace AdvisingApp\Theme\Http\Controllers;
 
+use AdvisingApp\Theme\DataTransferObjects\ThemeConfig;
+use AdvisingApp\Theme\Http\Requests\UpdateThemeRequest;
+use AdvisingApp\Theme\Jobs\UpdateTenantTheme;
+use App\Http\Controllers\Controller;
 use App\Models\Tenant;
-use App\Jobs\UpdateTenantTheme;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Bus;
-use App\Http\Requests\UpdateThemeRequest;
-use AdvisingApp\Theme\DataTransferObjects\ThemeConfig;
 
 class UpdateThemeController extends Controller
 {
     public function __invoke(UpdateThemeRequest $request): JsonResponse
     {
         $config = new ThemeConfig(
-            colorOverrides: $request->color_overrides ?? [],
-            hasDarkMode: $request->has_dark_mode ?? true,
-            url: $request->url,
+            colorOverrides: $request->validated('config.color_overrides') ?? [],
+            hasDarkMode: $request->validated('config.has_dark_mode') ?? true,
+            url: $request->validated('config.url'),
         );
 
         $jobs = [];
 
         Tenant::query()
             ->whereIn('id', $request->tenant_ids)
-            ->lazyById(100, function (Tenant $tenant) use ($config, &$jobs) {
+            ->eachById(function (Tenant $tenant) use ($config, &$jobs) {
                 $jobs[] = app(UpdateTenantTheme::class, [
                     'tenant' => $tenant,
                     'config' => $config,

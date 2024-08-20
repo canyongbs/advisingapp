@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Requests;
+namespace AdvisingApp\Theme\Http\Requests;
 
 use App\Models\Tenant;
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateThemeRequest extends FormRequest
 {
