@@ -48,7 +48,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\TernaryFilter;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
@@ -143,7 +142,6 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
                 BulkActionGroup::make([
                     SubscribeBulkAction::make(),
                     BulkEngagementAction::make(context: 'students'),
-                    DeleteBulkAction::make(),
                     ToggleCareTeamBulkAction::make(),
                 ]),
             ]);
