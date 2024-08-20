@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Theme\Http\Controllers\UpdateThemeController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Tenants\SyncTenantController;
 use App\Http\Controllers\Tenants\CreateTenantController;
 use App\Http\Controllers\Tenants\DeleteTenantController;
-use App\Http\Controllers\Tenants\SyncTenantController;
-use Illuminate\Support\Facades\Route;
+use AdvisingApp\Theme\Http\Controllers\UpdateThemeController;
 
 Route::post('tenants', CreateTenantController::class)
     ->name('tenants.create');
