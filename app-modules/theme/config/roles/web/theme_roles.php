@@ -37,5 +37,6 @@
 return [
     'custom' => [
         'theme.view_theme_settings',
+        'theme.manage_college_brand_settings',
     ],
 ];
