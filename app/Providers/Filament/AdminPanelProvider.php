@@ -36,9 +36,11 @@
 
 namespace App\Providers\Filament;
 
+use Filament\Facades\Filament;
 use Filament\Panel;
 use App\Models\Tenant;
 use Filament\PanelProvider;
+use Filament\Support\Facades\FilamentAsset;
 use Laravel\Pennant\Feature;
 use App\Models\SettingsProperty;
 use Filament\Support\Assets\Css;
@@ -178,9 +180,14 @@ class AdminPanelProvider extends PanelProvider
                     ->url(fn () => EditProfile::getUrl())
                     ->icon('heroicon-s-cog-6-tooth'),
             ])
+            ->colors(fn (ThemeSettings $themeSettings): array => array_merge(config('default-colors'), Feature::active('synced_theme_settings') ? $themeSettings->color_overrides : []))
             ->renderHook(
                 'panels::scripts.before',
                 fn () => view('filament.scripts.scroll-sidebar-to-active-menu-item'),
+            )
+            ->renderHook(
+                'panels::head.end',
+                fn (ThemeSettings $themeSettings) => (Feature::active('synced_theme_settings') && $themeSettings->url) ? view('filament.layout.theme', ['url' => $themeSettings->url]) : null,
             )
             ->bootUsing(function (Panel $panel) {
                 if (! Tenant::current()) {
@@ -191,17 +198,7 @@ class AdminPanelProvider extends PanelProvider
                     return;
                 }
 
-                $themeSettings = app(ThemeSettings::class);
-
-                $panel->colors(array_merge(config('default-colors'), $themeSettings->color_overrides));
-
-                $panel->darkMode($themeSettings->has_dark_mode);
-
-                if ($themeSettings->url) {
-                    $panel->assets([
-                        Css::make('customTheme', $themeSettings->url),
-                    ]);
-                }
+                $panel->darkMode(app(ThemeSettings::class)->has_dark_mode);
             });
     }
 

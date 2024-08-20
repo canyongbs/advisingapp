@@ -38,8 +38,8 @@ namespace App\Multitenancy\Actions;
 
 use Throwable;
 use App\Models\Tenant;
+use AdvisingApp\Theme\Jobs\UpdateTenantTheme;
 use App\Jobs\CreateTenantUser;
-use App\Jobs\UpdateTenantTheme;
 use App\Jobs\SeedTenantDatabase;
 use App\Jobs\MigrateTenantDatabase;
 use Illuminate\Support\Facades\Bus;

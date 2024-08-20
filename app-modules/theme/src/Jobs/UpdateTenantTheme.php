@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace App\Jobs;
+namespace AdvisingApp\Theme\Jobs;
 
 use App\Models\Tenant;
 use Illuminate\Bus\Batchable;

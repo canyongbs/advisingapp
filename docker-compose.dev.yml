@@ -8,7 +8,7 @@ services:
         USER_ID: '${SPIN_USER_ID:-9999}'
         GROUP_ID: '${SPIN_GROUP_ID:-9999}'
     environment:
-      SSL_MODE: "full"
+      SSL_MODE: "mixed"
       LANDLORD_MIGRATE: '${LANDLORD_MIGRATE:-true}'
       TENANT_MIGRATE: '${TENANT_MIGRATE:-true}'
       LARAVEL_SCHEDULER_ENABLED: '${LARAVEL_SCHEDULER_ENABLED:-true}'
