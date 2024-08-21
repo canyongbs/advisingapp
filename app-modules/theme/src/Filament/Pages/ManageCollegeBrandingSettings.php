@@ -31,7 +31,7 @@ class ManageCollegeBrandingSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('theme.manage_college_brand_settings');
+        return $user->can('college_branding.manage_college_brand_settings');
     }
 
     public function form(Form $form): Form
