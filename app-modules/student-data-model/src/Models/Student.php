@@ -110,6 +110,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     protected $casts = [
         'sisid' => 'string',
+        'updated_at_source' => 'datetime',
     ];
 
     public function identifier(): string

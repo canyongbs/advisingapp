@@ -603,6 +603,8 @@ namespace AdvisingApp\Ai\Models{
  * @property bool $is_default
  * @property \AdvisingApp\Ai\Enums\AiModel $model
  * @property \Illuminate\Support\Carbon|null $archived_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiAssistantFile> $files
  * @property-read int|null $files_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
@@ -881,11 +883,15 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon $sent_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $ai_assistant_name
+ * @property \AdvisingApp\Ai\Enums\AiFeature|null $feature
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog query()
+ * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereAiAssistantName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereFeature($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereMessage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LegacyAiMessageLog whereMetadata($value)
@@ -4907,7 +4913,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $created_at_source
- * @property string|null $updated_at_source
+ * @property \Illuminate\Support\Carbon|null $updated_at_source
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Alert\Models\Alert> $alerts
  * @property-read int|null $alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $applicationSubmissions
