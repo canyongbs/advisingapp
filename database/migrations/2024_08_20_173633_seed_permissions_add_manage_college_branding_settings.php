@@ -7,7 +7,7 @@ return new class () extends Migration {
     use CanModifyPermissions;
 
     private array $permissions = [
-        'theme.manage_college_brand_settings' => 'Manage College Brand Settings',
+        'college_branding.manage_college_brand_settings' => 'Manage College Brand Settings',
     ];
 
     private array $guards = [
