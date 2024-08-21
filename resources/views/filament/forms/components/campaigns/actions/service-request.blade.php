@@ -60,10 +60,6 @@
             <dd class="text-sm font-semibold">{{ ServiceRequestPriority::find($action['priority_id'])?->name }}</dd>
         </div>
         <div class="flex flex-col pt-3">
-            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Type</dt>
-            <dd class="text-sm font-semibold">{{ ServiceRequestType::find($action['type_id'])?->name }}</dd>
-        </div>
-        <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Assigned To</dt>
             <dd class="text-sm font-semibold">{{ User::find($action['assigned_to_id'])?->name ?? 'No one' }}</dd>
         </div>
