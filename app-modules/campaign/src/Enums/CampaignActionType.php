@@ -82,13 +82,16 @@ enum CampaignActionType: string implements HasLabel
         $blocks = [
             EngagementBatchEmailBlock::make(),
             EngagementBatchSmsBlock::make(),
-            ServiceRequestBlock::make(),
             ProactiveAlertBlock::make(),
             InteractionBlock::make(),
             CareTeamBlock::make(),
             TaskBlock::make(),
             SubscriptionBlock::make(),
         ];
+
+        if (app(LicenseSettings::class)->data->addons->serviceManagement) {
+            $blocks[] = ServiceRequestBlock::make();
+        }
 
         if (app(LicenseSettings::class)->data->addons->eventManagement) {
             $blocks[] = EventBlock::make();
