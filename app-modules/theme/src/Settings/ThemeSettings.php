@@ -45,11 +45,11 @@ class ThemeSettings extends Settings implements HasDefaultSettings
 
     public bool $is_favicon_active;
 
-    public array $color_overrides = [];
+    public array $color_overrides;
 
-    public bool $has_dark_mode = true;
+    public bool $has_dark_mode;
 
-    public ?string $url = null;
+    public ?string $url;
 
     public static function group(): string
     {
