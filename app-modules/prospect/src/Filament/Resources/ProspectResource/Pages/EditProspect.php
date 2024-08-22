@@ -52,6 +52,9 @@ use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Widgets\ConvertedStudentBadge;
 
 class EditProspect extends EditRecord
 {
@@ -198,8 +201,25 @@ class EditProspect extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            ConvertToStudent::make()->visible(fn(Prospect $record) => !$record->student()->exists()),
+            DisassociateStudent::make()->visible(fn(Prospect $record) => $record->student()->exists()),
             ViewAction::make(),
             DeleteAction::make(),
         ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        $student = $this->getRecord()->student;
+
+        if($student){
+            return [
+                ConvertedStudentBadge::make([
+                    'student' => $student
+                ]),
+            ];
+        }
+
+        return [];
     }
 }

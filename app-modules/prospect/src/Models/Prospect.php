@@ -83,6 +83,7 @@ use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
 use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
+use AdvisingApp\StudentDataModel\Models\Student;
 
 /**
  * @property string $display_name
@@ -166,6 +167,11 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     public function source(): BelongsTo
     {
         return $this->belongsTo(ProspectSource::class);
+    }
+
+    public function student() : BelongsTo
+    {
+        return $this->belongsTo(Student::class,'student_id','sisid');
     }
 
     public function engagementFiles(): MorphToMany

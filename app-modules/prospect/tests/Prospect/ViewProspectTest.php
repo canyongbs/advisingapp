@@ -37,9 +37,15 @@
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
+use Filament\Forms\Components\Select;
 
 // TODO: Write ViewProspectSource page test
 //test('The correct details are displayed on the ViewProspect page', function () {});
@@ -67,4 +73,102 @@ test('ViewProspect is gated with proper access control', function () {
                 'record' => $prospect,
             ])
         )->assertSuccessful();
+});
+
+test('convert action visible when prospect is not converted to student', function () {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+
+    $prospect = Prospect::factory()->create();
+
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('prospect.*.view');
+
+    actingAs($user);
+
+    livewire(ViewProspect::class, [
+        'record' => $prospect->getRouteKey(),
+    ])
+      ->assertSuccessful()
+      ->assertActionVisible(ConvertToStudent::class)
+      ->assertActionHidden(DisassociateStudent::class);
+
+});
+
+test('disassociate student action visible when prospect is converted to student', function () {
+  $user = User::factory()->licensed([Prospect::getLicenseType(),Student::getLicenseType()])->create();
+
+  $prospect = Prospect::factory()
+            ->for(Student::factory(), 'student')
+            ->create();
+
+  $user->givePermissionTo('prospect.view-any');
+  $user->givePermissionTo('prospect.*.view');
+
+  actingAs($user);
+
+  livewire(ViewProspect::class, [
+      'record' => $prospect->getRouteKey(),
+  ])
+    ->assertSuccessful()
+    ->assertActionVisible(DisassociateStudent::class)
+    ->assertActionHidden(ConvertToStudent::class);
+
+});
+
+test('convert prospect to student', function () {
+
+  $user = User::factory()->licensed([Prospect::getLicenseType(),Student::getLicenseType()])->create();
+
+
+  $user->givePermissionTo('prospect.view-any');
+  $user->givePermissionTo('prospect.*.view');
+
+  actingAs($user);
+
+  $prospect = Prospect::factory()
+              ->create();
+
+  $student = Student::factory()
+                      ->create();
+
+  livewire(ViewProspect::class, [
+     'record' => $prospect->getRouteKey(),
+  ])
+  ->mountAction(ConvertToStudent::class)
+  ->callAction(
+      ConvertToStudent::class,
+      data: ['student_id' => $student->getKey()]
+  )->assertSuccessful();
+
+  $prospect->refresh();
+
+  expect($prospect->student()->exists())->toBeTrue();
+
+});
+
+test('disassociate student from prospect', function () {
+
+  $user = User::factory()->licensed([Prospect::getLicenseType(),Student::getLicenseType()])->create();
+
+  $user->givePermissionTo('prospect.view-any');
+  $user->givePermissionTo('prospect.*.view');
+
+  actingAs($user);
+
+  $prospect = Prospect::factory()
+            ->for(Student::factory(), 'student')
+            ->create();
+
+  livewire(ViewProspect::class, [
+     'record' => $prospect->getRouteKey(),
+  ])
+  ->mountAction(DisassociateStudent::class)
+  ->callAction(
+      DisassociateStudent::class,
+  )->assertSuccessful();
+
+  $prospect->refresh();
+
+  expect($prospect->student()->exists())->toBeFalse();
+
 });

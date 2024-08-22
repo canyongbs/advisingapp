@@ -45,6 +45,9 @@ use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Widgets\ConvertedStudentBadge;
 
 class ViewProspect extends ViewRecord
 {
@@ -146,8 +149,27 @@ class ViewProspect extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            ConvertToStudent::make()->visible(fn(Prospect $record) => !$record->student()->exists()),
+            DisassociateStudent::make()->visible(fn(Prospect $record) => $record->student()->exists()),
             EditAction::make(),
             SubscribeHeaderAction::make(),
         ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        $student = $this->getRecord()->student;
+
+        if($student){
+            return [
+                ConvertedStudentBadge::make([
+                    'student' => $student
+                ]),
+            ];
+        }
+
+        return [];
+    }
+
+
 }
