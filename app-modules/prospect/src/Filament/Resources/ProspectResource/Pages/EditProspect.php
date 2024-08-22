@@ -55,6 +55,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Widgets\ConvertedStudentBadge;
+use Laravel\Pennant\Feature;
 
 class EditProspect extends EditRecord
 {
@@ -201,8 +202,8 @@ class EditProspect extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            ConvertToStudent::make()->visible(fn(Prospect $record) => !$record->student()->exists()),
-            DisassociateStudent::make()->visible(fn(Prospect $record) => $record->student()->exists()),
+            ConvertToStudent::make()->visible(fn(Prospect $record) => !$record->student()->exists() && Feature::active('convert_prospect_to_student')),
+            DisassociateStudent::make()->visible(fn(Prospect $record) => $record->student()->exists() && Feature::active('convert_prospect_to_student')),
             ViewAction::make(),
             DeleteAction::make(),
         ];
@@ -210,14 +211,16 @@ class EditProspect extends EditRecord
 
     protected function getHeaderWidgets(): array
     {
-        $student = $this->getRecord()->student;
+        if(Feature::active('convert_prospect_to_student')){
+            $student = $this->getRecord()->student;
 
-        if($student){
-            return [
-                ConvertedStudentBadge::make([
-                    'student' => $student
-                ]),
-            ];
+            if($student){
+                return [
+                    ConvertedStudentBadge::make([
+                        'student' => $student
+                    ]),
+                ];
+            }
         }
 
         return [];
