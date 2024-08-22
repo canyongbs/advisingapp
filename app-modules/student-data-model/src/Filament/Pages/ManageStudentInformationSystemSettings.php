@@ -38,7 +38,6 @@ namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
 use Filament\Forms\Get;
 use Filament\Forms\Form;
-use App\Enums\FeatureFlag;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -66,7 +65,7 @@ class ManageStudentInformationSystemSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return FeatureFlag::SisIntegrationSettings->active() && $user->can('sis.manage_sis_settings');
+        return $user->can('sis.manage_sis_settings');
     }
 
     public function form(Form $form): Form
