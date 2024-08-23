@@ -47,6 +47,9 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\AssetCheckInRelationManager;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\AssetCheckOutRelationManager;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\ServiceRequestsRelationManager;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 
 class ProspectServiceManagement extends ManageRelatedRecords
 {
@@ -89,5 +92,13 @@ class ProspectServiceManagement extends ManageRelatedRecords
             ->map(fn ($relationManager) => self::filterRelationManagers($relationManager, $record))
             ->filter()
             ->toArray();
+    }
+
+    public function boot()
+    {
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_START,
+            fn (): View => view('prospect::student-converted-badge')
+        );
     }
 }

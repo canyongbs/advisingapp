@@ -40,6 +40,9 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\RelationManagers\EngagementFilesRelationManager;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 
 class ManageProspectFiles extends ManageRelatedRecords
 {
@@ -71,5 +74,13 @@ class ManageProspectFiles extends ManageRelatedRecords
         ])
             ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
             ->toArray();
+    }
+
+    public function boot()
+    {
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_START,
+            fn (): View => view('prospect::student-converted-badge')
+        );
     }
 }

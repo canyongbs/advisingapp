@@ -54,6 +54,9 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 
 class ManageProspectApplicationSubmissions extends ManageRelatedRecords
 {
@@ -152,5 +155,13 @@ class ManageProspectApplicationSubmissions extends ManageRelatedRecords
         $item->badge($applicationSubmissionsCount > 0 ? $applicationSubmissionsCount : null);
 
         return [$item];
+    }
+
+    public function boot()
+    {
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_START,
+            fn (): View => view('prospect::student-converted-badge')
+        );
     }
 }

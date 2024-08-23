@@ -13,7 +13,7 @@ class DisassociateStudent extends Action {
         parent::setUp();
 
         $this
-            ->modalHeading('Remove prospect from student?')
+            ->modalHeading('Disassociate Prospect from Student?')
             ->requiresConfirmation()
             ->color('danger')
             ->modalSubmitActionLabel('Yes')
@@ -23,7 +23,7 @@ class DisassociateStudent extends Action {
                 $record->save();
                 
                 Notification::make()
-                    ->title('Prospect removed from student')
+                    ->title('Prospect disassociated from Student')
                     ->success()
                     ->send();
 

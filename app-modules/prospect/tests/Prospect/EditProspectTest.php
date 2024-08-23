@@ -44,12 +44,12 @@ use Filament\Tables\Actions\AttachAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\EditProspect;
 use AdvisingApp\Prospect\Tests\Prospect\RequestFactories\EditProspectRequestFactory;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectPrograms;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProgramRelationManager;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\EditProspect;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectPrograms;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProgramRelationManager;
 
 // TODO: Write EditProspect page tests
 //test('A successful action on the EditProspect page', function () {});
@@ -70,7 +70,7 @@ test('EditProspect is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    livewire(ProspectResource\Pages\EditProspect::class, [
+    livewire(EditProspect::class, [
         'record' => $prospect->getRouteKey(),
     ])
         ->assertForbidden();
@@ -88,7 +88,7 @@ test('EditProspect is gated with proper access control', function () {
     // TODO: Finish these tests to ensure changes are allowed
     $request = collect(EditProspectRequestFactory::new()->create());
 
-    livewire(ProspectResource\Pages\EditProspect::class, [
+    livewire(EditProspect::class, [
         'record' => $prospect->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -166,83 +166,80 @@ test('convert action visible when prospect is not converted to student', functio
     livewire(EditProspect::class, [
         'record' => $prospect->getRouteKey(),
     ])
-      ->assertSuccessful()
-      ->assertActionVisible(ConvertToStudent::class)
-      ->assertActionHidden(DisassociateStudent::class);
-
+        ->assertSuccessful()
+        ->assertActionVisible(ConvertToStudent::class)
+        ->assertActionHidden(DisassociateStudent::class);
 });
 
 test('disassociate student action visible when prospect is converted to student', function () {
-  $user = User::factory()->licensed([Prospect::getLicenseType(),Student::getLicenseType()])->create();
+    $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
 
-  $prospect = Prospect::factory()
-                ->for(Student::factory(), 'student')
-                ->create();
+    $prospect = Prospect::factory()
+        ->for(Student::factory(), 'student')
+        ->create();
 
-  $user->givePermissionTo('prospect.view-any');
-  $user->givePermissionTo('prospect.*.update');
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('prospect.*.update');
 
-  actingAs($user);
+    actingAs($user);
 
-  livewire(EditProspect::class, [
-      'record' => $prospect->getRouteKey(),
-  ])
-    ->assertSuccessful()
-    ->assertActionVisible(DisassociateStudent::class)
-    ->assertActionHidden(ConvertToStudent::class);
+    livewire(EditProspect::class, [
+        'record' => $prospect->getRouteKey(),
+    ])
+        ->assertSuccessful()
+        ->assertActionVisible(DisassociateStudent::class)
+        ->assertActionHidden(ConvertToStudent::class);
 });
 
 test('convert prospect to student', function () {
+    $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
 
-  $user = User::factory()->licensed([Prospect::getLicenseType(),Student::getLicenseType()])->create();
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('prospect.*.update');
 
-  $user->givePermissionTo('prospect.view-any');
-  $user->givePermissionTo('prospect.*.update');
+    actingAs($user);
 
-  actingAs($user);
+    $prospect = Prospect::factory()
+        ->create();
 
-  $prospect = Prospect::factory()
-              ->create();
+    $student = Student::factory()
+        ->create();
 
-  $student = Student::factory()
-                      ->create();
+    livewire(EditProspect::class, [
+        'record' => $prospect->getRouteKey(),
+    ])
+    ->callAction(
+        ConvertToStudent::class,
+        data: ['student_id' => $student->getKey()]
+    )->assertSuccessful();
 
-  livewire(EditProspect::class, [
-     'record' => $prospect->getRouteKey(),
-  ])
-  ->mountAction(ConvertToStudent::class)
-  ->callAction(
-      ConvertToStudent::class,
-      data: ['student_id' => $student->getKey()]
-  )->assertSuccessful();
+    $prospect->refresh();
 
-  $prospect->refresh();
-  expect($prospect->student()->exists())->toBeTrue();
-
+    expect($prospect->student)
+        ->sisid->toBe($student->sisid)
+        ->full_name->toBe($student->full_name)
+        ->email->toBe($student->email);
 });
 
 test('disassociate student from prospect', function () {
+    $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
 
-  $user = User::factory()->licensed([Prospect::getLicenseType(),Student::getLicenseType()])->create();
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('prospect.*.update');
 
-  $user->givePermissionTo('prospect.view-any');
-  $user->givePermissionTo('prospect.*.update');
+    actingAs($user);
 
-  actingAs($user);
+    $prospect = Prospect::factory()
+        ->for(Student::factory(), 'student')
+        ->create();
 
-  $prospect = Prospect::factory()
-            ->for(Student::factory(), 'student')
-            ->create();
+    livewire(EditProspect::class, [
+        'record' => $prospect->getRouteKey(),
+    ])
+    ->callAction(
+        DisassociateStudent::class,
+    )->assertSuccessful();
 
-  livewire(EditProspect::class, [
-     'record' => $prospect->getRouteKey(),
-  ])
-  ->mountAction(DisassociateStudent::class)
-  ->callAction(
-      DisassociateStudent::class,
-  )->assertSuccessful();
-
-  $prospect->refresh();
-  expect($prospect->student()->exists())->toBeFalse();
-
+    $prospect->refresh();
+    expect($prospect->student()->exists())->toBeFalse();
 });

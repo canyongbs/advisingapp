@@ -21,7 +21,7 @@ class ConvertToStudent extends Action
             ->modalSubmitActionLabel('Convert')
             ->form([
                 Select::make('student_id')
-                    ->relationship('student', 'full_name', fn (Builder $query) => $query->whereDoesntHave('prospects'))
+                    ->relationship('student', 'full_name')
                     ->native(false)
                     ->required()
                     ->label('Select Student')
@@ -34,7 +34,7 @@ class ConvertToStudent extends Action
                 
                 if (! $student) {
                     Notification::make()
-                        ->title('Student not found !')
+                        ->title('Student not found!')
                         ->danger()
                         ->send();
 
@@ -47,10 +47,8 @@ class ConvertToStudent extends Action
 
                 $record->save();
                 
-                
-
                 Notification::make()
-                    ->title('Prospect converted to student')
+                    ->title('Prospect converted to Student')
                     ->success()
                     ->send();
             });

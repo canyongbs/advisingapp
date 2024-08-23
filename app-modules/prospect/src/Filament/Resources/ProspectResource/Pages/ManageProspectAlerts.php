@@ -58,6 +58,9 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 
 class ManageProspectAlerts extends ManageRelatedRecords
 {
@@ -173,5 +176,13 @@ class ManageProspectAlerts extends ManageRelatedRecords
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public function boot()
+    {
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_START,
+            fn (): View => view('prospect::student-converted-badge')
+        );
     }
 }

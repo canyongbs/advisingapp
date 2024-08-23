@@ -55,6 +55,9 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Widgets\ConvertedStudentBadge;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 use Laravel\Pennant\Feature;
 
 class EditProspect extends EditRecord
@@ -209,20 +212,11 @@ class EditProspect extends EditRecord
         ];
     }
 
-    protected function getHeaderWidgets(): array
+    public function boot()
     {
-        if(Feature::active('convert_prospect_to_student')){
-            $student = $this->getRecord()->student;
-
-            if($student){
-                return [
-                    ConvertedStudentBadge::make([
-                        'student' => $student
-                    ]),
-                ];
-            }
-        }
-
-        return [];
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_START,
+            fn (): View => view('prospect::student-converted-badge')
+        );
     }
 }

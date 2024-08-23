@@ -42,6 +42,9 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 
 class ProspectEngagementTimeline extends TimelinePage
 {
@@ -59,4 +62,12 @@ class ProspectEngagementTimeline extends TimelinePage
         AlertHistory::class,
         TaskHistory::class,
     ];
+
+    public function boot()
+    {
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_START,
+            fn (): View => view('prospect::student-converted-badge')
+        );
+    }
 }

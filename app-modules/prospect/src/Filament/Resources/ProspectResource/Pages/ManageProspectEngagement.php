@@ -39,6 +39,9 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 use Illuminate\Contracts\Support\Htmlable;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 
 class ManageProspectEngagement extends ManageRelatedEngagementRecords
 {
@@ -47,5 +50,13 @@ class ManageProspectEngagement extends ManageRelatedEngagementRecords
     public function getTitle(): string | Htmlable
     {
         return 'Manage Prospect Email and Texts';
+    }
+
+    public function boot()
+    {
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_START,
+            fn (): View => view('prospect::student-converted-badge')
+        );
     }
 }
