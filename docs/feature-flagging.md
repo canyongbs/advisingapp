@@ -49,6 +49,8 @@ After the deployment containing your new changes and Feature Flag has gone out a
 
 To remove the Feature Flag, you should delete all references to its case, adjust any logic to work as if the Feature Flag were active, and delete any unneeded legacy code. You should then also delete the activation migration, and finally, remove the case from the App\Enums\FeatureFlag ENUM.
 
+The Feature Flag will be purged from the database automatically if it is no longer present in the ENUM.
+
 ### Additional Details
 
 See also [Data Migrations](./data-migrations.md)
