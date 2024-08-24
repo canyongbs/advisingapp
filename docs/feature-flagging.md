@@ -9,7 +9,7 @@ The most common scenario is to allow our application to deploy with zero downtim
 To prevent errors or other issues, we apply Feature Flags to areas that require the migrations to have already been completed. For example:
 
 ```php
-if (FeatureFlag::someFeature->active()) {
+if (FeatureFlag::SomeFeature->active()) {
     // The feature flag is active, so we know the database schema and data migrations have run, and the new logic is executed here.
 } else {
     // Old logic that does not require any changes from schema or data migrations is executed here.
