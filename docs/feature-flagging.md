@@ -20,7 +20,7 @@ if (FeatureFlag::SomeFeature->active()) {
 
 Any change to the database schema or data that would cause issues if the code were accessed and executed before the migrations finished must have a Feature Flag to prevent issues from occurring. This can be done either by preventing the new code from running at all or by using the old code if it is not yet active.
 
-New Feature Flags should be added as a case to the App\Enums\FeatureFlag ENUM. This ENUM contains many helpers for managing Feature Flags, such as activating, deactivating, and checking the status of a Feature Flag.
+New Feature Flags should be added as a case to the `App\Enums\FeatureFlag` ENUM. This ENUM contains many helpers for managing Feature Flags, such as activating, deactivating, and checking the status of a Feature Flag.
 
 After you have created all your schema and data migrations, you should create a new data migration specifically to activate the Feature Flag. For example:
 
