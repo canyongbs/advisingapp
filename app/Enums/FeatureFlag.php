@@ -41,8 +41,6 @@ use Laravel\Pennant\Feature;
 
 enum FeatureFlag: string
 {
-    case SisIntegrationSettings = 'sis_integration_settings';
-
     public function definition(): Closure
     {
         return match ($this) {

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
-use App\Enums\FeatureFlag;
 use Filament\Infolists\Infolist;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
@@ -59,10 +58,11 @@ class ViewStudent extends ViewRecord
 
     public function boot()
     {
+        $sisSettings = app(StudentInformationSystemSettings::class);
+
         if (
-            FeatureFlag::SisIntegrationSettings->active()
-            && app(StudentInformationSystemSettings::class)->is_enabled
-            && ! empty(app(StudentInformationSystemSettings::class)->sis_system)
+            $sisSettings->is_enabled
+            && ! empty($sisSettings->sis_system)
         ) {
             FilamentView::registerRenderHook(
                 PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE,
