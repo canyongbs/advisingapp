@@ -41,7 +41,7 @@ return new class () extends Migration {
 };
 ```
 
-Optionally, you can choose to add a custom match in the definition of the App\Enums\FeatureFlag ENUM to activate the Feature Flag if certain conditions are met, such as checking if certain tables or columns exist, or if certain migrations have run, etc. However, you still MUST create the activation migration to ensure it gets activated, just in case someone executes code that checks the feature, parses the definition, and has marked it as deactivated.
+Optionally, you can choose to add a custom match in the definition of the `App\Enums\FeatureFlag` ENUM to activate the Feature Flag if certain conditions are met, such as checking if certain tables or columns exist, or if certain migrations have run, etc. However, you still MUST create the activation migration to ensure it gets activated, just in case someone executes code that checks the feature, parses the definition, and has marked it as deactivated.
 
 ## Feature Flag cleanup
 
