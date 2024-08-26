@@ -1114,7 +1114,7 @@ it('can email a thread to a user', function () use ($setUp) {
             return false;
         }
 
-        if ($job->targetType !== AiThreadShareTarget::User) {
+        if ($job->targetType !== AiThreadShareTarget::User->value) {
             return false;
         }
 
@@ -1151,7 +1151,7 @@ it('can email a thread to a team', function () use ($setUp) {
             return false;
         }
 
-        if ($job->targetType !== AiThreadShareTarget::Team) {
+        if ($job->targetType !== AiThreadShareTarget::Team->value) {
             return false;
         }
 
