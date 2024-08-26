@@ -27,7 +27,7 @@ When creating data migrations it is important to adhere to the following rules:
 1. Do **NOT** use references to classes and facades that could be removed in the future. This includes Eloquent models. Currently, the only accepted classes to use within migrations are as follows:
     - `Illuminate\Support\Facades\DB`
         - Used to Interact with the database.
-    - `Laravel\Pennant\Feature`
+    - `App\Enums\FeatureFlag`
         - To interact with feature flagging.
 2. As mentioned above, ensure all possible SQL errors are captured and handled, such as `UniqueConstraintExeception`. Also ensure that any database change is surrounded by a transaction to prevent corruption of the query connection.
 2. Ensure that the migration is idempotent. This means that the migration can be run multiple times without causing any issues. Tables and columns should be checked for the existence, SQL errors should be caught and properly handled, and data should be checked if it is in the expected state before it is changed, etc.
