@@ -979,7 +979,7 @@ it('can clone a thread to a user', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('cloneThread', [
-            'targetType' => AiThreadShareTarget::User->value,
+            'targetType' => AiThreadShareTarget::User,
             'targetIds' => [$otherUser->getKey()],
         ], arguments: [
             'thread' => $thread->getKey(),
@@ -991,7 +991,7 @@ it('can clone a thread to a user', function () use ($setUp) {
             return false;
         }
 
-        if ($job->targetType !== AiThreadShareTarget::User->value) {
+        if ($job->targetType !== AiThreadShareTarget::User) {
             return false;
         }
 
@@ -1016,7 +1016,7 @@ it('can clone a thread to a team', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('cloneThread', [
-            'targetType' => AiThreadShareTarget::Team->value,
+            'targetType' => AiThreadShareTarget::Team,
             'targetIds' => [$team->getKey()],
         ], arguments: [
             'thread' => $thread->getKey(),
@@ -1028,7 +1028,7 @@ it('can clone a thread to a team', function () use ($setUp) {
             return false;
         }
 
-        if ($job->targetType !== AiThreadShareTarget::Team->value) {
+        if ($job->targetType !== AiThreadShareTarget::Team) {
             return false;
         }
 
@@ -1064,7 +1064,7 @@ it('can not clone a thread without any targets', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('cloneThread', [
-            'targetType' => AiThreadShareTarget::User->value,
+            'targetType' => AiThreadShareTarget::User,
             'targetIds' => [],
         ], arguments: [
             'thread' => $thread->getKey(),
@@ -1084,7 +1084,7 @@ it('can not clone a thread belonging to a different user', function () use ($set
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('cloneThread', [
-            'targetType' => AiThreadShareTarget::User->value,
+            'targetType' => AiThreadShareTarget::User,
             'targetIds' => [$otherUser->getKey()],
         ], arguments: [
             'thread' => $thread->getKey(),
@@ -1102,7 +1102,7 @@ it('can email a thread to a user', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('emailThread', [
-            'targetType' => AiThreadShareTarget::User->value,
+            'targetType' => AiThreadShareTarget::User,
             'targetIds' => [$otherUser->getKey()],
         ], arguments: [
             'thread' => $thread->getKey(),
@@ -1114,7 +1114,7 @@ it('can email a thread to a user', function () use ($setUp) {
             return false;
         }
 
-        if ($job->targetType !== AiThreadShareTarget::User->value) {
+        if ($job->targetType !== AiThreadShareTarget::User) {
             return false;
         }
 
@@ -1139,7 +1139,7 @@ it('can email a thread to a team', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('emailThread', [
-            'targetType' => AiThreadShareTarget::Team->value,
+            'targetType' => AiThreadShareTarget::Team,
             'targetIds' => [$team->getKey()],
         ], arguments: [
             'thread' => $thread->getKey(),
@@ -1151,7 +1151,7 @@ it('can email a thread to a team', function () use ($setUp) {
             return false;
         }
 
-        if ($job->targetType !== AiThreadShareTarget::Team->value) {
+        if ($job->targetType !== AiThreadShareTarget::Team) {
             return false;
         }
 
@@ -1187,7 +1187,7 @@ it('can not email a thread without any targets', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('emailThread', [
-            'targetType' => AiThreadShareTarget::User->value,
+            'targetType' => AiThreadShareTarget::User,
             'targetIds' => [],
         ], arguments: [
             'thread' => $thread->getKey(),
@@ -1207,7 +1207,7 @@ it('can not email a thread belonging to a different user', function () use ($set
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('emailThread', [
-            'targetType' => AiThreadShareTarget::User->value,
+            'targetType' => AiThreadShareTarget::User,
             'targetIds' => [$otherUser->getKey()],
         ], arguments: [
             'thread' => $thread->getKey(),
@@ -1225,7 +1225,7 @@ it('can not email a thread to a super admin', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('emailThread', [
-            'targetType' => AiThreadShareTarget::User->value,
+            'targetType' => AiThreadShareTarget::User,
             'targetIds' => [$superAdmin->getKey()],
         ], arguments: [
             'thread' => $thread->getKey(),
@@ -1242,7 +1242,7 @@ it('can not clone a thread to a super admin', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('cloneThread', [
-            'targetType' => AiThreadShareTarget::User->value,
+            'targetType' => AiThreadShareTarget::User,
             'targetIds' => [$superAdmin->getKey()],
         ], arguments: [
             'thread' => $thread->getKey(),

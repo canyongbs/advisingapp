@@ -393,7 +393,7 @@ trait CanManageThreads
                     return;
                 }
 
-                dispatch(new PrepareAiThreadCloning($thread, $data['targetType'], $data['targetIds'], auth()->user()));
+                dispatch(new PrepareAiThreadCloning($thread, AiThreadShareTarget::parse($data['targetType']), $data['targetIds'], auth()->user()));
             })
             ->link()
             ->icon('heroicon-m-document-duplicate')
