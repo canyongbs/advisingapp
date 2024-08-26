@@ -78,6 +78,9 @@ class ManageTwilioSettings extends SettingsPage
                 Toggle::make('is_enabled')
                     ->label('Enabled')
                     ->live(),
+                Toggle::make('is_demo_mode_enabled')
+                    ->label('Demo Mode')
+                    ->live(),
                 Section::make()
                     ->schema([
                         TextInput::make('account_sid')
@@ -94,7 +97,8 @@ class ManageTwilioSettings extends SettingsPage
                         TextInput::make('from_number')
                             ->string()
                             ->required(),
-                    ])->visible(fn (Get $get) => $get('is_enabled')),
+                    ])
+                    ->visible(fn (Get $get) => $get('is_enabled') && ! $get('is_demo_mode_enabled')),
             ]);
     }
 }

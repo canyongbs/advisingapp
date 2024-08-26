@@ -37,10 +37,15 @@
 namespace AdvisingApp\IntegrationTwilio\Settings;
 
 use App\Settings\IntegrationSettings;
+use App\Settings\Contracts\HasDefaultSettings;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioApiKey;
 
-class TwilioSettings extends IntegrationSettings
+class TwilioSettings extends IntegrationSettings implements HasDefaultSettings
 {
+    public bool $is_enabled = false;
+
+    public bool $is_demo_mode_enabled = false;
+
     public ?TwilioApiKey $api_key;
 
     public ?string $account_sid;
@@ -67,5 +72,17 @@ class TwilioSettings extends IntegrationSettings
     public function isConfigured(): bool
     {
         return $this->account_sid && $this->auth_token && $this->from_number;
+    }
+
+    public static function defaults(): array
+    {
+        return [
+            'is_enabled' => false,
+            'is_demo_mode_enabled' => false,
+            'api_key' => null,
+            'account_sid' => null,
+            'auth_token' => null,
+            'from_number' => null,
+        ];
     }
 }
