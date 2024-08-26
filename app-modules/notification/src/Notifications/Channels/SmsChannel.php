@@ -99,7 +99,7 @@ class SmsChannel
 
         $twilioSettings = app(TwilioSettings::class);
 
-        if ($twilioSettings->is_demo_mode_enabled) {
+        if ($twilioSettings->is_demo_mode_enabled ?? false) {
             return SmsChannelResultData::from([
                 'success' => true,
                 'message' => new MessageInstance(

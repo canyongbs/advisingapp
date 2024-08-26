@@ -71,7 +71,7 @@ class TwilioSettings extends IntegrationSettings implements HasDefaultSettings
 
     public function isConfigured(): bool
     {
-        return $this->account_sid && $this->auth_token && $this->from_number || $this->is_demo_mode_enabled;
+        return $this->account_sid && $this->auth_token && $this->from_number || $this->is_demo_mode_enabled ?? false;
     }
 
     public static function defaults(): array
