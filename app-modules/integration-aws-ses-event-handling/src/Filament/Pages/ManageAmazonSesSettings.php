@@ -39,9 +39,11 @@ namespace AdvisingApp\IntegrationAwsSesEventHandling\Filament\Pages;
 use Throwable;
 use App\Models\User;
 use App\Models\Tenant;
+use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Illuminate\Support\Facades\DB;
+use Filament\Forms\Components\Toggle;
 use Filament\Support\Exceptions\Halt;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -81,6 +83,9 @@ class ManageAmazonSesSettings extends SettingsPage
     {
         return $form
             ->schema([
+                Toggle::make('isDemoModeEnabled')
+                    ->label('Demo Mode')
+                    ->live(),
                 Section::make()
                     ->columnSpanFull()
                     ->schema([
@@ -122,7 +127,8 @@ class ManageAmazonSesSettings extends SettingsPage
                                     ->label('Local Domain')
                                     ->nullable(),
                             ]),
-                    ]),
+                    ])
+                    ->visible(fn (Get $get): bool => ! $get('isDemoModeEnabled')),
             ]);
     }
 
@@ -142,19 +148,33 @@ class ManageAmazonSesSettings extends SettingsPage
 
             $this->callHook('beforeSave');
 
-            $this->saveTenantData(
-                emailFrom: $data['fromAddress'],
-                emailName: $data['fromName'],
-                host: $data['smtp_host'],
-                port: $data['smtp_port'],
-                encryption: $data['smtp_encryption'],
-                username: $data['smtp_username'],
-                password: $data['smtp_password'],
-                timeout: $data['smtp_timeout'],
-                localDomain: $data['smtp_local_domain'],
-            );
+            /** @var Tenant $tenant */
+            $tenant = Tenant::current();
+
+            /** @var TenantConfig $config */
+            $config = $tenant->config;
+
+            if ($data['isDemoModeEnabled']) {
+                $config->mail->isDemoModeEnabled = $data['isDemoModeEnabled'];
+            } else {
+                $config->mail->isDemoModeEnabled = $data['isDemoModeEnabled'];
+                $config->mail->fromAddress = $data['fromAddress'];
+                $config->mail->fromName = $data['fromName'];
+                $config->mail->mailers->smtp->host = $data['smtp_host'];
+                $config->mail->mailers->smtp->port = $data['smtp_port'];
+                $config->mail->mailers->smtp->encryption = $data['smtp_encryption'];
+                $config->mail->mailers->smtp->username = $data['smtp_username'];
+                $config->mail->mailers->smtp->password = $data['smtp_password'];
+                $config->mail->mailers->smtp->timeout = $data['smtp_timeout'];
+                $config->mail->mailers->smtp->localDomain = $data['smtp_local_domain'];
+            }
+
+            $tenant->config = $config;
+
+            $tenant->save();
 
             unset(
+                $data['isDemoModeEnabled'],
                 $data['fromAddress'],
                 $data['fromName'],
                 $data['smtp_host'],
@@ -216,6 +236,7 @@ class ManageAmazonSesSettings extends SettingsPage
         $data = $this->mutateFormDataBeforeFill(
             [
                 ...$settings->toArray(),
+                'isDemoModeEnabled' => $config->mail->isDemoModeEnabled ?? false,
                 'fromAddress' => $config->mail->fromAddress,
                 'fromName' => $config->mail->fromName,
                 'smtp_host' => $config->mail->mailers->smtp->host,
@@ -231,37 +252,5 @@ class ManageAmazonSesSettings extends SettingsPage
         $this->form->fill($data);
 
         $this->callHook('afterFill');
-    }
-
-    protected function saveTenantData(
-        string $emailFrom,
-        string $emailName,
-        ?string $host,
-        int $port,
-        ?string $encryption,
-        ?string $username,
-        ?string $password,
-        ?int $timeout,
-        ?string $localDomain,
-    ): void {
-        /** @var Tenant $tenant */
-        $tenant = Tenant::current();
-
-        /** @var TenantConfig $config */
-        $config = $tenant->config;
-
-        $config->mail->fromAddress = $emailFrom;
-        $config->mail->fromName = $emailName;
-        $config->mail->mailers->smtp->host = $host;
-        $config->mail->mailers->smtp->port = $port;
-        $config->mail->mailers->smtp->encryption = $encryption;
-        $config->mail->mailers->smtp->username = $username;
-        $config->mail->mailers->smtp->password = $password;
-        $config->mail->mailers->smtp->timeout = $timeout;
-        $config->mail->mailers->smtp->localDomain = $localDomain;
-
-        $tenant->config = $config;
-
-        $tenant->save();
     }
 }
