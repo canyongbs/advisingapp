@@ -36,9 +36,11 @@
 
 namespace AdvisingApp\Ai\Jobs;
 
+use Throwable;
 use App\Models\User;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\DB;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -67,31 +69,39 @@ class CloneAiThread implements ShouldQueue
 
     public function handle(): void
     {
-        $threadReplica = $this->thread->replicate(except: ['id', 'thread_id', 'folder_id', 'saved_at', 'emailed_count', 'cloned_count']);
-        $threadReplica->saved_at = now();
-
-        $threadReplica->user()->associate($this->recipient);
-        $threadReplica->save();
-
-        foreach ($this->thread->messages as $message) {
-            $messageReplica = $message->replicate(['id', 'message_id']);
-            $messageReplica->thread()->associate($threadReplica);
-            $messageReplica->save();
-        }
-
-        $aiService = $threadReplica->assistant->model->getService();
-
-        $threadReplica->locked_at = now();
-        $threadReplica->save();
-
-        $this->thread->cloned_count = $this->thread->cloned_count + 1;
-        $this->thread->save();
-
         try {
-            $aiService->ensureAssistantAndThreadExists($threadReplica->assistant);
-        } finally {
+            DB::beginTransaction();
+
+            $threadReplica = $this->thread->replicate(except: ['id', 'thread_id', 'folder_id', 'saved_at', 'emailed_count', 'cloned_count']);
+            $threadReplica->saved_at = now();
+
+            $threadReplica->user()->associate($this->recipient);
+            $threadReplica->save();
+
+            foreach ($this->thread->messages as $message) {
+                $messageReplica = $message->replicate(['id', 'message_id']);
+                $messageReplica->thread()->associate($threadReplica);
+                $messageReplica->save();
+            }
+
+            $aiService = $threadReplica->assistant->model->getService();
+
+            $threadReplica->locked_at = now();
+            $threadReplica->save();
+
+            $this->thread->cloned_count = $this->thread->cloned_count + 1;
+            $this->thread->save();
+
+            $aiService->ensureAssistantAndThreadExists($threadReplica);
+
             $threadReplica->locked_at = null;
             $threadReplica->save();
+
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+
+            throw $e;
         }
     }
 }
