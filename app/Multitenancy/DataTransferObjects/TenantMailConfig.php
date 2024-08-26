@@ -41,8 +41,8 @@ use Spatie\LaravelData\Data;
 class TenantMailConfig extends Data
 {
     public function __construct(
-        public bool $isDemoModeEnabled = false,
         public TenantMailersConfig $mailers,
+        public bool $isDemoModeEnabled = false,
         public string $mailer = 'smtp',
         public string $fromAddress = 'no-reply@advising.app',
         public string $fromName = 'Advising App™',

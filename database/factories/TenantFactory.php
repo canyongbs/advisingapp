@@ -95,6 +95,7 @@ class TenantFactory extends Factory
                 root: config('filesystems.disks.s3-public.root'),
             ),
             mail: new TenantMailConfig(
+                isDemoModeEnabled: false,
                 mailers: new TenantMailersConfig(
                     smtp: new TenantSmtpMailerConfig(
                         host: config('mail.mailers.smtp.host'),
