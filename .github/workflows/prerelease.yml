@@ -50,16 +50,16 @@ jobs:
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
-        # SHA of release v1.2.0
-        uses: aws-actions/amazon-ecs-render-task-definition@4225e0b507142a2e432b018bc3ccb728559b437a
+        # SHA of release v1.5.0
+        uses: aws-actions/amazon-ecs-render-task-definition@9933bf0d77b7f6d52e3886fbb8aae95a677db1ab
         with:
           task-definition: "docker/devops/ecs/advisingapp/advisingapp-dev-task-definition.json"
           container-name: "app"
           image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
-        # SHA of release v1.4.11
-        uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
+        # SHA of release v2.0.0
+        uses: aws-actions/amazon-ecs-deploy-task-definition@0a9a8fb7b39516cf53cc01d453b05c67c6fc7a2c
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: "advisingapp-dev-service"

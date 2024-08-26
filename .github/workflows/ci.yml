@@ -46,14 +46,16 @@ jobs:
 
       - name: Commit changes
         if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-        uses: stefanzweifel/git-auto-commit-action@v5
+        # SHA of release v5.0.1
+        uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842
         with:
           commit_message: >
             chore: fix enforcement of copyright on all files
 
       - name: Check for changes
         if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
-        uses: tj-actions/verify-changed-files@v19
+        # SHA of release v20.0.1
+        uses: tj-actions/verify-changed-files@6ed7632824d235029086612d4330d659005af687
         with:
           fail-if-changed: 'true'
           files: '*'
@@ -102,14 +104,16 @@ jobs:
 
       - name: Commit changes
         if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-        uses: stefanzweifel/git-auto-commit-action@v5
+        # SHA of release v5.0.1
+        uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842
         with:
           commit_message: >
             chore: fix code style
 
       - name: Check for changes
         if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
-        uses: tj-actions/verify-changed-files@v19
+        # SHA of release v20.0.1
+        uses: tj-actions/verify-changed-files@6ed7632824d235029086612d4330d659005af687
         with:
           fail-if-changed: 'true'
           files: '*'
