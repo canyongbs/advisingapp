@@ -1102,7 +1102,7 @@ it('can email a thread to a user', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('emailThread', [
-            'targetType' => AiThreadShareTarget::User,
+            'targetType' => AiThreadShareTarget::User->value,
             'targetIds' => [$otherUser->getKey()],
         ], arguments: [
             'thread' => $thread->getKey(),
@@ -1139,7 +1139,7 @@ it('can email a thread to a team', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('emailThread', [
-            'targetType' => AiThreadShareTarget::Team,
+            'targetType' => AiThreadShareTarget::Team->value,
             'targetIds' => [$team->getKey()],
         ], arguments: [
             'thread' => $thread->getKey(),
@@ -1187,7 +1187,7 @@ it('can not email a thread without any targets', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('emailThread', [
-            'targetType' => AiThreadShareTarget::User,
+            'targetType' => AiThreadShareTarget::User->value,
             'targetIds' => [],
         ], arguments: [
             'thread' => $thread->getKey(),
@@ -1207,7 +1207,7 @@ it('can not email a thread belonging to a different user', function () use ($set
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('emailThread', [
-            'targetType' => AiThreadShareTarget::User,
+            'targetType' => AiThreadShareTarget::User->value,
             'targetIds' => [$otherUser->getKey()],
         ], arguments: [
             'thread' => $thread->getKey(),
@@ -1225,7 +1225,7 @@ it('can not email a thread to a super admin', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('emailThread', [
-            'targetType' => AiThreadShareTarget::User,
+            'targetType' => AiThreadShareTarget::User->value,
             'targetIds' => [$superAdmin->getKey()],
         ], arguments: [
             'thread' => $thread->getKey(),
