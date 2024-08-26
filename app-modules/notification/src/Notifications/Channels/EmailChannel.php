@@ -50,8 +50,10 @@ use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
+use App\Models\Tenant;
 
 class EmailChannel extends MailChannel
 {
@@ -112,10 +114,16 @@ class EmailChannel extends MailChannel
 
     public static function afterSending(object $notifiable, OutboundDeliverable $deliverable, EmailChannelResultData $result): void
     {
+        $demoMode = false;
+
+        if (Tenant::current()?->config->mail->isDemoModeEnabled ?? false) {
+            $demoMode = true;
+        }
+
         if ($result->success) {
             $deliverable->update([
-                'delivery_status' => NotificationDeliveryStatus::Dispatched,
-                'quota_usage' => self::determineQuotaUsage($result->recipients),
+                'delivery_status' => ! $demoMode ? NotificationDeliveryStatus::Dispatched : NotificationDeliveryStatus::Successful,
+                'quota_usage' => !$demoMode ? self::determineQuotaUsage($result->recipients) : 0,
             ]);
         } else {
             $deliverable->update([

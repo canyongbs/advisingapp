@@ -151,12 +151,14 @@ class SmsChannel
     {
         $twilioSettings = app(TwilioSettings::class);
 
+        $demoMode = $twilioSettings->is_demo_mode_enabled ?? false;
+
         if ($result->success) {
             $deliverable->update([
                 'external_reference_id' => $result->message->sid,
                 'external_status' => $result->message->status,
-                'delivery_status' => ! $twilioSettings->is_demo_mode_enabled ? NotificationDeliveryStatus::Dispatched : NotificationDeliveryStatus::Successful,
-                'quota_usage' => ! $twilioSettings->is_demo_mode_enabled ? self::determineQuotaUsage($result) : 0,
+                'delivery_status' => ! $demoMode ? NotificationDeliveryStatus::Dispatched : NotificationDeliveryStatus::Successful,
+                'quota_usage' => ! $demoMode ? self::determineQuotaUsage($result) : 0,
             ]);
         } else {
             $deliverable->update([
