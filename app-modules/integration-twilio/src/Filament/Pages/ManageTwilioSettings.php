@@ -79,7 +79,8 @@ class ManageTwilioSettings extends SettingsPage
                     ->label('Enabled')
                     ->live(),
                 Toggle::make('is_demo_mode_enabled')
-                    ->label('Demo Mode')
+                    ->label('SMS Demo Mode')
+                    ->helperText('When enabled, no messages will be sent.')
                     ->live(),
                 Section::make()
                     ->schema([
