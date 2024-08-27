@@ -39,7 +39,6 @@ namespace App\Providers\Filament;
 use Filament\Panel;
 use App\Models\Tenant;
 use Filament\PanelProvider;
-use Laravel\Pennant\Feature;
 use App\Models\SettingsProperty;
 use App\Filament\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
@@ -177,21 +176,17 @@ class AdminPanelProvider extends PanelProvider
                     ->url(fn () => EditProfile::getUrl())
                     ->icon('heroicon-s-cog-6-tooth'),
             ])
-            ->colors(fn (ThemeSettings $themeSettings): array => array_merge(config('default-colors'), Feature::active('synced_theme_settings') ? $themeSettings->color_overrides : []))
+            ->colors(fn (ThemeSettings $themeSettings): array => array_merge(config('default-colors'), $themeSettings->color_overrides))
             ->renderHook(
                 'panels::scripts.before',
                 fn () => view('filament.scripts.scroll-sidebar-to-active-menu-item'),
             )
             ->renderHook(
                 'panels::head.end',
-                fn (ThemeSettings $themeSettings) => (Feature::active('synced_theme_settings') && $themeSettings->url) ? view('filament.layout.theme', ['url' => $themeSettings->url]) : null,
+                fn (ThemeSettings $themeSettings) => ($themeSettings->url) ? view('filament.layout.theme', ['url' => $themeSettings->url]) : null,
             )
             ->bootUsing(function (Panel $panel) {
                 if (! Tenant::current()) {
-                    return;
-                }
-
-                if (! Feature::active('synced_theme_settings')) {
                     return;
                 }
 
