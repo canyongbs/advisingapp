@@ -51,6 +51,10 @@ class ViewServiceRequestUpdate extends ViewRecord
 {
     protected static string $resource = ServiceRequestUpdateResource::class;
 
+    protected static ?string $breadcrumb = 'Updates';
+
+    protected static ?string $navigationLabel = 'Updates';
+
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist
@@ -72,6 +76,23 @@ class ViewServiceRequestUpdate extends ViewRecord
                     ])
                     ->columns(),
             ]);
+    }
+
+    public function getBreadcrumbs(): array
+    {
+        $ServiceRequestResource = ServiceRequestResource::class;
+
+        $breadcrumbs = [
+            $ServiceRequestResource::getUrl() => $ServiceRequestResource::getBreadcrumb(),
+            $ServiceRequestResource::getUrl('view', ['record' => $this->getRecord()->serviceRequest]) => $this->getRecord()?->serviceRequest?->service_request_number,
+            ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
+        ];
+
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
+        }
+
+        return $breadcrumbs;
     }
 
     protected function getHeaderActions(): array

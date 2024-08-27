@@ -40,6 +40,7 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Resources\Pages\Page;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Textarea;
@@ -60,6 +61,15 @@ class ServiceRequestUpdateResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static bool $shouldRegisterNavigation = false;
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        $navigationItems = [
+            ViewServiceRequestUpdate::class,
+        ];
+
+        return $page->generateNavigationItems($navigationItems);
+    }
 
     public static function form(Form $form): Form
     {

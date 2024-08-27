@@ -44,6 +44,11 @@ class ListServiceRequestUpdates extends ListRecords
 {
     protected static string $resource = ServiceRequestUpdateResource::class;
 
+    public static function canAccess(array $arguments = []): bool
+    {
+        return false;
+    }
+
     protected function getHeaderActions(): array
     {
         return [
