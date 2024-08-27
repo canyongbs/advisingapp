@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
 use App\Models\User;
 use Filament\Tables\Table;
 use App\Models\Scopes\HasLicense;
@@ -57,6 +58,8 @@ use Illuminate\Contracts\View\View;
 
 class ManageProspectSubscriptions extends ManageRelatedRecords
 {
+    use StudentHolisticViewPage; 
+    
     protected static string $resource = ProspectResource::class;
 
     protected static string $relationship = 'subscribedUsers';
@@ -146,13 +149,5 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
             ])
             ->emptyStateHeading('No Subscriptions')
             ->inverseRelationship('prospectSubscriptions');
-    }
-
-    public function boot()
-    {
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::PAGE_START,
-            fn (): View => view('prospect::student-converted-badge')
-        );
     }
 }

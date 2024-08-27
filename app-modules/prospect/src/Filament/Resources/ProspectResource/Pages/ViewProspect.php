@@ -45,6 +45,7 @@ use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
+use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Widgets\ConvertedStudentBadge;
@@ -55,6 +56,8 @@ use Laravel\Pennant\Feature;
 
 class ViewProspect extends ViewRecord
 {
+    use StudentHolisticViewPage;
+    
     protected static string $resource = ProspectResource::class;
 
     // TODO: Automatically set from Filament
@@ -158,14 +161,6 @@ class ViewProspect extends ViewRecord
             EditAction::make(),
             SubscribeHeaderAction::make(),
         ];
-    }
-
-    public function boot()
-    {
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::PAGE_START,
-            fn (): View => view('prospect::student-converted-badge')
-        );
     }
 
 }

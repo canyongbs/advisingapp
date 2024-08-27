@@ -53,6 +53,7 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
 use AdvisingApp\Alert\Enums\AlertSeverity;
+use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -64,6 +65,8 @@ use Illuminate\Contracts\View\View;
 
 class ManageProspectAlerts extends ManageRelatedRecords
 {
+    use StudentHolisticViewPage;
+    
     protected static string $resource = ProspectResource::class;
 
     protected static string $relationship = 'alerts';
@@ -176,13 +179,5 @@ class ManageProspectAlerts extends ManageRelatedRecords
                     DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public function boot()
-    {
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::PAGE_START,
-            fn (): View => view('prospect::student-converted-badge')
-        );
     }
 }

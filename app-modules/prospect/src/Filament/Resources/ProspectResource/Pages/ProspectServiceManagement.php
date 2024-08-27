@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
 use App\Enums\Feature;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Model;
@@ -54,6 +55,7 @@ use Illuminate\Contracts\View\View;
 class ProspectServiceManagement extends ManageRelatedRecords
 {
     use FiltersManagersFromGroups;
+    use StudentHolisticViewPage;
 
     protected static string $resource = ProspectResource::class;
 
@@ -92,13 +94,5 @@ class ProspectServiceManagement extends ManageRelatedRecords
             ->map(fn ($relationManager) => self::filterRelationManagers($relationManager, $record))
             ->filter()
             ->toArray();
-    }
-
-    public function boot()
-    {
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::PAGE_START,
-            fn (): View => view('prospect::student-converted-badge')
-        );
     }
 }

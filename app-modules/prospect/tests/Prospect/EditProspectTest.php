@@ -243,3 +243,5 @@ test('disassociate student from prospect', function () {
     $prospect->refresh();
     expect($prospect->student()->exists())->toBeFalse();
 });
+
+

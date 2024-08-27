@@ -55,12 +55,15 @@ use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Form\Filament\Actions\RequestFormSubmission;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Form\Filament\Tables\Filters\FormSubmissionStatusFilter;
+use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
 
 class ManageProspectFormSubmissions extends ManageRelatedRecords
 {
+    use StudentHolisticViewPage;
+    
     protected static string $resource = ProspectResource::class;
 
     protected static string $relationship = 'formSubmissions';
@@ -137,13 +140,5 @@ class ManageProspectFormSubmissions extends ManageRelatedRecords
         $item->badge($formSubmissionsCount > 0 ? $formSubmissionsCount : null);
 
         return [$item];
-    }
-
-    public function boot()
-    {
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::PAGE_START,
-            fn (): View => view('prospect::student-converted-badge')
-        );
     }
 }

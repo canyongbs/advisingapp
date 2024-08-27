@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Task\Filament\RelationManagers\BaseTaskRelationManager;
 use Filament\Support\Facades\FilamentView;
@@ -44,6 +45,8 @@ use Illuminate\Contracts\View\View;
 
 class ManageProspectTasks extends BaseTaskRelationManager
 {
+    use StudentHolisticViewPage;
+
     protected static string $resource = ProspectResource::class;
 
     protected static string $relationship = 'tasks';
@@ -55,12 +58,4 @@ class ManageProspectTasks extends BaseTaskRelationManager
     protected static ?string $breadcrumb = 'Tasks';
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-
-    public function boot()
-    {
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::PAGE_START,
-            fn (): View => view('prospect::student-converted-badge')
-        );
-    }
 }

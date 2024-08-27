@@ -43,12 +43,15 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource\RelationManagers\HasManyMorphedInteractionsRelationManager;
+use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
 
 class ManageProspectInteractions extends ManageRelatedRecords
 {
+    use StudentHolisticViewPage;
+    
     protected static string $resource = ProspectResource::class;
 
     protected static string $relationship = 'interactions';
@@ -74,13 +77,5 @@ class ManageProspectInteractions extends ManageRelatedRecords
     public function table(Table $table): Table
     {
         return (resolve(HasManyMorphedInteractionsRelationManager::class))->table($table);
-    }
-
-    public function boot()
-    {
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::PAGE_START,
-            fn (): View => view('prospect::student-converted-badge')
-        );
     }
 }

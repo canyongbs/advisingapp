@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
 use App\Models\User;
 use Filament\Tables\Table;
 use App\Models\Scopes\HasLicense;
@@ -51,12 +52,11 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use Filament\Support\Facades\FilamentView;
-use Filament\View\PanelsRenderHook;
-use Illuminate\Contracts\View\View;
 
 class ManageProspectCareTeam extends ManageRelatedRecords
 {
+    use StudentHolisticViewPage;
+    
     protected static string $resource = ProspectResource::class;
 
     protected static string $relationship = 'careTeam';
@@ -151,13 +151,5 @@ class ManageProspectCareTeam extends ManageRelatedRecords
             ])
             ->emptyStateHeading('No Users')
             ->inverseRelationship('prospectCareTeams');
-    }
-
-    public function boot()
-    {
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::PAGE_START,
-            fn (): View => view('prospect::student-converted-badge')
-        );
     }
 }

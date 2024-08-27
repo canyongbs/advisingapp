@@ -40,12 +40,12 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\RelationManagers\EngagementFilesRelationManager;
-use Filament\Support\Facades\FilamentView;
-use Filament\View\PanelsRenderHook;
-use Illuminate\Contracts\View\View;
+use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
 
 class ManageProspectFiles extends ManageRelatedRecords
 {
+    use StudentHolisticViewPage;
+    
     protected static string $resource = ProspectResource::class;
 
     // TODO: Obsolete when there is no table, remove from Filament
@@ -74,13 +74,5 @@ class ManageProspectFiles extends ManageRelatedRecords
         ])
             ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
             ->toArray();
-    }
-
-    public function boot()
-    {
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::PAGE_START,
-            fn (): View => view('prospect::student-converted-badge')
-        );
     }
 }

@@ -47,12 +47,15 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 use AdvisingApp\MeetingCenter\Filament\Actions\InviteEventAttendeeAction;
 use AdvisingApp\MeetingCenter\Filament\Actions\Table\ViewEventAttendeeAction;
+use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
 
 class ManageProspectEvents extends ManageRelatedRecords
 {
+    use StudentHolisticViewPage;
+    
     protected static string $resource = ProspectResource::class;
 
     protected static string $relationship = 'eventAttendeeRecords';
@@ -90,13 +93,5 @@ class ManageProspectEvents extends ManageRelatedRecords
         return [
             InviteEventAttendeeAction::make(),
         ];
-    }
-
-    public function boot()
-    {
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::PAGE_START,
-            fn (): View => view('prospect::student-converted-badge')
-        );
     }
 }
