@@ -80,11 +80,11 @@ class ViewServiceRequestUpdate extends ViewRecord
 
     public function getBreadcrumbs(): array
     {
-        $ServiceRequestResource = ServiceRequestResource::class;
+        $serviceRequestResource = ServiceRequestResource::class;
 
         $breadcrumbs = [
-            $ServiceRequestResource::getUrl() => $ServiceRequestResource::getBreadcrumb(),
-            $ServiceRequestResource::getUrl('view', ['record' => $this->getRecord()->serviceRequest]) => $this->getRecord()?->serviceRequest?->service_request_number,
+            $serviceRequestResource::getUrl() => $serviceRequestResource::getBreadcrumb(),
+            $serviceRequestResource::getUrl('view', ['record' => $this->getRecord()->serviceRequest]) => $this->getRecord()?->serviceRequest?->service_request_number,
             ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
         ];
 
