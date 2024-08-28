@@ -89,15 +89,15 @@ class PrepareAiThreadCloning implements ShouldQueue
                     } else {
                         $notification->warning();
 
-                        $succesfulUsersCount = $batch->totalJobs - $batch->failedJobs;
+                        $successfulUsersCount = $batch->totalJobs - $batch->failedJobs;
 
-                        $sucessfulUsersString = Str::plural('User', $succesfulUsersCount);
+                        $sucessfulUsersString = Str::plural('User', $successfulUsersCount);
 
                         $failedUsersString = Str::plural('User', $batch->failedJobs);
 
                         $notification->body(
                             <<<EOT
-                            Succesfully cloned chat to {$succesfulUsersCount} {$sucessfulUsersString}.
+                            successfully cloned chat to {$successfulUsersCount} {$sucessfulUsersString}.
                             Failed to clone chat to {$batch->failedJobs} {$failedUsersString}.
                             EOT
                         );
@@ -107,7 +107,7 @@ class PrepareAiThreadCloning implements ShouldQueue
 
                     $usersString = Str::plural('User', $batch->totalJobs);
 
-                    $notification->body("Succesfully cloned chat to {$batch->totalJobs} {$usersString}.");
+                    $notification->body("successfully cloned chat to {$batch->totalJobs} {$usersString}.");
                 }
 
                 $notification->sendToDatabase($sender);
