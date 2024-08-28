@@ -6,6 +6,6 @@ return new class () extends SettingsMigration {
     public function up(): void
     {
         $this->migrator->delete('audit.audited_models');
-        $this->migrator->add('audit.audited_models_exclude');
+        $this->migrator->add('audit.audited_models_exclude', []);
     }
 };
