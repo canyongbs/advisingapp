@@ -76,6 +76,7 @@ class SendMessageController
             return response()->json([
                 'message' => $exception->getMessage(),
                 'retryAfterSeconds' => $exception->retryAfterSeconds,
+                'isThreadLocked' => true,
             ], 429);
         } catch (Throwable $exception) {
             report($exception);

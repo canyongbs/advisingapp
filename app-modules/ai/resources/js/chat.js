@@ -79,21 +79,16 @@ document.addEventListener('alpine:init', () => {
 
             handleMessageResponse: async function ({ response, isCompletingPreviousResponse }) {
                 if (!response.ok) {
-                    const response = await response.json();
+                    const responseJson = await response.json();
 
-                    this.error = response.message;
-                    this.isRetryable = !response.isThreadLocked;
+                    this.error = responseJson.message;
+                    this.isRetryable = !responseJson.isThreadLocked;
                     this.isSendingMessage = false;
 
-                    if (!response.retryAfterSeconds) { return; }
-
-                    console.log('here');
+                    if (!responseJson.retryAfterSeconds) { return; }
 
                     this.$nextTick(async () => {
-                        console.log('here1');
-                        await new Promise(resolve => setTimeout(resolve, response.retryAfterSeconds * 1000));
-
-                        console.log('here2');
+                        await new Promise(resolve => setTimeout(resolve, responseJson.retryAfterSeconds * 1000));
 
                         await this.handleMessageResponse({
                             response: await fetch(sendMessageUrl, {
