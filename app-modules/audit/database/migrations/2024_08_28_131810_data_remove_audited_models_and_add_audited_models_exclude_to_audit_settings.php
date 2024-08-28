@@ -34,20 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Audit\Listeners;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 
-use OwenIt\Auditing\Events\Auditing;
-use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Audit\Settings\AuditSettings;
-
-class AuditingListener
-{
-    public function handle(Auditing $event): bool
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        /** @var Model $model */
-        $model = $event->model;
+        $this->migrator->deleteIfExists('audit.audited_models');
 
-        return collect(resolve(AuditSettings::class)->audited_models_exclude)
-            ->doesntContain($model->getMorphClass());
+        try {
+            $this->migrator->add('audit.audited_models_exclude', []);
+        } catch (SettingAlreadyExists $exception) {
+            // Ignore
+        }
     }
-}
+};

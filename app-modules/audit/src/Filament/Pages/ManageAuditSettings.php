@@ -71,7 +71,7 @@ class ManageAuditSettings extends SettingsPage
     {
         return $form
             ->schema([
-                Select::make('audited_models')
+                Select::make('audited_models_exclude')
                     ->options(AuditableModels::all())
                     ->multiple()
                     ->in(AuditableModels::all()->keys()->toArray())
@@ -82,7 +82,7 @@ class ManageAuditSettings extends SettingsPage
                     )
                     ->hintIcon(
                         icon: 'heroicon-m-question-mark-circle',
-                        tooltip: 'Items added here will be tracked by the audit trail.'
+                        tooltip: 'Models added here will not be tracked by the audit trail.'
                     )
                     ->columnSpanFull(),
                 TextInput::make('retention_duration_in_days')
