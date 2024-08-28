@@ -95,6 +95,7 @@ class CreateTenantController
                     root: $rootName . '/PUBLIC',
                 ),
                 mail: new TenantMailConfig(
+                    isDemoModeEnabled: false,
                     mailers: new TenantMailersConfig(
                         smtp: new TenantSmtpMailerConfig(
                             host: config('mail.mailers.smtp.host'),

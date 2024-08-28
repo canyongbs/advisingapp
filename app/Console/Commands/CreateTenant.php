@@ -114,6 +114,7 @@ class CreateTenant extends Command
                     root: config('filesystems.disks.s3-public.root') ?? $rootName . '/PUBLIC',
                 ),
                 mail: new TenantMailConfig(
+                    isDemoModeEnabled: false,
                     mailers: new TenantMailersConfig(
                         smtp: new TenantSmtpMailerConfig(
                             host: config('mail.mailers.smtp.host'),

@@ -39,13 +39,18 @@ namespace AdvisingApp\Notification\Notifications\Channels;
 use Exception;
 use App\Models\User;
 use Twilio\Rest\Client;
+use Twilio\Rest\Api\V2010;
+use Illuminate\Support\Str;
+use Twilio\Rest\MessagingBase;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\DB;
 use Twilio\Exceptions\TwilioException;
+use Twilio\Rest\Api\V2010\Account\MessageInstance;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use Talkroute\MessageSegmentCalculator\SegmentCalculator;
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Notifications\SmsNotification;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
@@ -92,6 +97,26 @@ class SmsChannel
     {
         $twilioMessage = $notification->toSms($notifiable);
 
+        $twilioSettings = app(TwilioSettings::class);
+
+        if ($twilioSettings->is_demo_mode_enabled ?? false) {
+            return SmsChannelResultData::from([
+                'success' => true,
+                'message' => new MessageInstance(
+                    new V2010(new MessagingBase(new Client(username: 'abc123', password: 'abc123'))),
+                    [
+                        'sid' => Str::random(),
+                        'status' => 'delivered',
+                        'from' => $twilioMessage->getFrom(),
+                        'to' => $twilioMessage->getRecipientPhoneNumber(),
+                        'body' => $twilioMessage->getContent(),
+                        'num_segments' => 1,
+                    ],
+                    'abc123'
+                ),
+            ]);
+        }
+
         $client = app(Client::class);
 
         $messageContent = [
@@ -124,12 +149,16 @@ class SmsChannel
 
     public static function afterSending(object $notifiable, OutboundDeliverable $deliverable, SmsChannelResultData $result): void
     {
+        $twilioSettings = app(TwilioSettings::class);
+
+        $demoMode = $twilioSettings->is_demo_mode_enabled ?? false;
+
         if ($result->success) {
             $deliverable->update([
                 'external_reference_id' => $result->message->sid,
                 'external_status' => $result->message->status,
-                'delivery_status' => NotificationDeliveryStatus::Dispatched,
-                'quota_usage' => self::determineQuotaUsage($result),
+                'delivery_status' => ! $demoMode ? NotificationDeliveryStatus::Dispatched : NotificationDeliveryStatus::Successful,
+                'quota_usage' => ! $demoMode ? self::determineQuotaUsage($result) : 0,
             ]);
         } else {
             $deliverable->update([

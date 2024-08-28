@@ -78,6 +78,10 @@ class ManageTwilioSettings extends SettingsPage
                 Toggle::make('is_enabled')
                     ->label('Enabled')
                     ->live(),
+                Toggle::make('is_demo_mode_enabled')
+                    ->label('SMS Demo Mode')
+                    ->helperText('When enabled, no messages will be sent.')
+                    ->live(),
                 Section::make()
                     ->schema([
                         TextInput::make('account_sid')
@@ -94,7 +98,8 @@ class ManageTwilioSettings extends SettingsPage
                         TextInput::make('from_number')
                             ->string()
                             ->required(),
-                    ])->visible(fn (Get $get) => $get('is_enabled')),
+                    ])
+                    ->visible(fn (Get $get) => $get('is_enabled') && ! $get('is_demo_mode_enabled')),
             ]);
     }
 }

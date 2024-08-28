@@ -38,6 +38,7 @@ namespace AdvisingApp\Notification\Notifications\Channels;
 
 use Exception;
 use App\Models\User;
+use App\Models\Tenant;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Notifications\Notification;
@@ -112,10 +113,16 @@ class EmailChannel extends MailChannel
 
     public static function afterSending(object $notifiable, OutboundDeliverable $deliverable, EmailChannelResultData $result): void
     {
+        $demoMode = false;
+
+        if (Tenant::current()?->config->mail->isDemoModeEnabled ?? false) {
+            $demoMode = true;
+        }
+
         if ($result->success) {
             $deliverable->update([
-                'delivery_status' => NotificationDeliveryStatus::Dispatched,
-                'quota_usage' => self::determineQuotaUsage($result->recipients),
+                'delivery_status' => ! $demoMode ? NotificationDeliveryStatus::Dispatched : NotificationDeliveryStatus::Successful,
+                'quota_usage' => ! $demoMode ? self::determineQuotaUsage($result->recipients) : 0,
             ]);
         } else {
             $deliverable->update([
