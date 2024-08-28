@@ -51,6 +51,7 @@ use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Notification\Models\Subscription;
@@ -83,7 +84,6 @@ use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
 use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
-use AdvisingApp\StudentDataModel\Models\Student;
 
 /**
  * @property string $display_name
@@ -169,9 +169,9 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return $this->belongsTo(ProspectSource::class);
     }
 
-    public function student() : BelongsTo
+    public function student(): BelongsTo
     {
-        return $this->belongsTo(Student::class,'student_id','sisid');
+        return $this->belongsTo(Student::class, 'student_id', 'sisid');
     }
 
     public function engagementFiles(): MorphToMany

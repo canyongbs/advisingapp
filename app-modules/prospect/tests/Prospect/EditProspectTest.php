@@ -208,10 +208,10 @@ test('convert prospect to student', function () {
     livewire(EditProspect::class, [
         'record' => $prospect->getRouteKey(),
     ])
-    ->callAction(
-        ConvertToStudent::class,
-        data: ['student_id' => $student->getKey()]
-    )->assertSuccessful();
+        ->callAction(
+            ConvertToStudent::class,
+            data: ['student_id' => $student->getKey()]
+        )->assertSuccessful();
 
     $prospect->refresh();
 
@@ -236,12 +236,10 @@ test('disassociate student from prospect', function () {
     livewire(EditProspect::class, [
         'record' => $prospect->getRouteKey(),
     ])
-    ->callAction(
-        DisassociateStudent::class,
-    )->assertSuccessful();
+        ->callAction(
+            DisassociateStudent::class,
+        )->assertSuccessful();
 
     $prospect->refresh();
     expect($prospect->student()->exists())->toBeFalse();
 });
-
-

@@ -40,7 +40,6 @@ use Filament\Actions\Action;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
-use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 class ConvertToStudent extends Action
@@ -62,10 +61,9 @@ class ConvertToStudent extends Action
                     ->searchable(),
             ])
             ->action(function ($data, $record) {
-               
                 /** @var Student $student */
                 $student = Student::find($data['student_id']);
-                
+
                 if (! $student) {
                     Notification::make()
                         ->title('Student not found!')
@@ -80,7 +78,7 @@ class ConvertToStudent extends Action
                 $record->student()->associate($student);
 
                 $record->save();
-                
+
                 Notification::make()
                     ->title('Prospect converted to Student')
                     ->success()

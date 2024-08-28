@@ -38,14 +38,14 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\RelationManagers\EngagementFilesRelationManager;
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 
 class ManageProspectFiles extends ManageRelatedRecords
 {
     use ProspectHolisticViewPage;
-    
+
     protected static string $resource = ProspectResource::class;
 
     // TODO: Obsolete when there is no table, remove from Filament

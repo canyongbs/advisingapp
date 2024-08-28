@@ -45,6 +45,7 @@ use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Form\Models\FormSubmission;
@@ -79,7 +80,6 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
 use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
-use AdvisingApp\Prospect\Models\Prospect;
 
 /**
  * @property string $display_name
@@ -270,9 +270,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return $this->hasManyDeepFromRelations($this->tasks(), (new Task())->histories());
     }
 
-    public function prospects() : HasMany
+    public function prospects(): HasMany
     {
-        return $this->hasMany(Prospect::class,'student_id');
+        return $this->hasMany(Prospect::class, 'student_id');
     }
 
     public static function getLicenseType(): LicenseType

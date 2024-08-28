@@ -36,12 +36,11 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions;
 
-use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
-class DisassociateStudent extends Action {
-
+class DisassociateStudent extends Action
+{
     protected function setUp(): void
     {
         parent::setUp();
@@ -55,18 +54,16 @@ class DisassociateStudent extends Action {
                 /** @var Prospect $record */
                 $record->student()->dissociate();
                 $record->save();
-                
+
                 Notification::make()
                     ->title('Prospect disassociated from Student')
                     ->success()
                     ->send();
-
-                return;
             });
     }
 
     public static function getDefaultName(): ?string
     {
         return 'disassociate';
-    } 
+    }
 }

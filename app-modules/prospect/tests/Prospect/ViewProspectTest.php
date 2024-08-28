@@ -42,24 +42,23 @@ use function Pest\Livewire\livewire;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\EditProspect;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\EditProspect;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectApplicationSubmissions;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectCareTeam;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEngagement;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEvents;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectFiles;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectFormSubmissions;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectInteractions;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectPrograms;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectSubscriptions;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectTasks;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectEngagementTimeline;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEvents;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectCareTeam;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectPrograms;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEngagement;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectServiceManagement;
-use Laravel\Pennant\Feature;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectInteractions;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectEngagementTimeline;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectSubscriptions;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectFormSubmissions;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectApplicationSubmissions;
 
 // TODO: Write ViewProspectSource page test
 //test('The correct details are displayed on the ViewProspect page', function () {});
@@ -182,7 +181,6 @@ test('disassociate student from prospect', function () {
 });
 
 test('can see prospect converted to student badge on', function (string $pages) {
-
     $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -192,19 +190,19 @@ test('can see prospect converted to student badge on', function (string $pages) 
     $user->givePermissionTo('student.view-any');
 
     $user->givePermissionTo('alert.view-any');
-    
+
     $user->givePermissionTo('user.view-any');
-  
+
     $user->givePermissionTo('engagement_file.view-any');
-    
+
     $user->givePermissionTo('interaction.view-any');
 
     $user->givePermissionTo('task.*.view');
-    
+
     $user->givePermissionTo('task.view-any');
 
     $user->givePermissionTo('care_team.view-any');
-    
+
     $user->givePermissionTo('service_request.view-any');
 
     $user->givePermissionTo('event_attendee.view-any');
@@ -216,30 +214,29 @@ test('can see prospect converted to student badge on', function (string $pages) 
     actingAs($user);
 
     $prospect = Prospect::factory()
-                ->for(Student::factory(), 'student')
-                ->create();
+        ->for(Student::factory(), 'student')
+        ->create();
 
     livewire($pages, [
         'record' => $prospect->getRouteKey(),
     ])
-    ->assertSeeHtml('data-identifier="prospect_converted_to_student"');
-
+        ->assertSeeHtml('data-identifier="prospect_converted_to_student"');
 })
-->with([
-    ViewProspect::class,
-    EditProspect::class,
-    ManageProspectAlerts::class,
-    ManageProspectEngagement::class,
-    ManageProspectFiles::class,
-    ManageProspectFormSubmissions::class,
-    ManageProspectApplicationSubmissions::class,
-    ManageProspectInteractions::class,
-    ManageProspectSubscriptions::class,
-    ManageProspectTasks::class,
-    ProspectEngagementTimeline::class,
-    ManageProspectCareTeam::class,
-    ProspectServiceManagement::class,
-    ManageProspectEvents::class,
-    ManageProspectPrograms::class
-])
-->only();
+    ->with([
+        ViewProspect::class,
+        EditProspect::class,
+        ManageProspectAlerts::class,
+        ManageProspectEngagement::class,
+        ManageProspectFiles::class,
+        ManageProspectFormSubmissions::class,
+        ManageProspectApplicationSubmissions::class,
+        ManageProspectInteractions::class,
+        ManageProspectSubscriptions::class,
+        ManageProspectTasks::class,
+        ProspectEngagementTimeline::class,
+        ManageProspectCareTeam::class,
+        ProspectServiceManagement::class,
+        ManageProspectEvents::class,
+        ManageProspectPrograms::class,
+    ])
+    ->only();

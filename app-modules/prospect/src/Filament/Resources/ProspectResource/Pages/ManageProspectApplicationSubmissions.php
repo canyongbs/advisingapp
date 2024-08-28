@@ -55,14 +55,11 @@ use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use Filament\Support\Facades\FilamentView;
-use Filament\View\PanelsRenderHook;
-use Illuminate\Contracts\View\View;
 
 class ManageProspectApplicationSubmissions extends ManageRelatedRecords
 {
     use ProspectHolisticViewPage;
-    
+
     protected static string $resource = ProspectResource::class;
 
     protected static string $relationship = 'applicationSubmissions';
