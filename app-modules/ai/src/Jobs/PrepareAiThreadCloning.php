@@ -37,12 +37,13 @@
 namespace AdvisingApp\Ai\Jobs;
 
 use App\Models\User;
+use Illuminate\Bus\Batch;
+use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;
 use AdvisingApp\Team\Models\Team;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Queue\SerializesModels;
-use Filament\Notifications\Notification;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -58,53 +59,86 @@ class PrepareAiThreadCloning implements ShouldQueue
 
     public function __construct(
         public AiThread $thread,
-        public string $targetType,
+        public AiThreadShareTarget $targetType,
         public array $targetIds,
         public User $sender,
     ) {}
 
     public function handle(): void
     {
-        if ($this->targetType === AiThreadShareTarget::User->value) {
-            User::query()
-                ->whereKey($this->targetIds)
-                ->get()
-                ->each(function (User $recipient) {
-                    dispatch(new CloneAiThread($this->thread, $this->sender, $recipient));
+        $threadName = $this->thread->name;
 
-                    $recipientName = $this->sender->is($recipient) ? 'yourself' : $recipient->name;
+        $sender = $this->sender;
 
-                    Notification::make()
-                        ->success()
-                        ->title("You cloned an AI chat to {$recipientName}.")
-                        ->sendToDatabase($this->sender);
-                });
+        Bus::batch(
+            match ($this->targetType) {
+                AiThreadShareTarget::User => $this->generateSingleUserShareJobs(),
+                AiThreadShareTarget::Team => $this->generateTeamShareJobs(),
+            },
+        )
+            ->name("AiThreadCloning batch for {$this->targetType->getLabel()}")
+            ->finally(function (Batch $batch) use ($threadName, $sender) {
+                $notification = FilamentNotification::make()
+                    ->title("AI chat cloning for {$threadName} processing completed.");
 
-            return;
-        }
+                if ($batch->failedJobs > 0) {
+                    if ($batch->failedJobs === $batch->totalJobs) {
+                        $notification->error();
 
-        if ($this->targetType === AiThreadShareTarget::Team->value) {
-            $sender = $this->sender;
+                        $notification->body('Failed to clone chat to any users.');
+                    } else {
+                        $notification->warning();
 
-            Team::query()
-                ->whereKey($this->targetIds)
-                ->with('users')
-                ->get()
-                ->each(function (Team $team) use ($sender) {
-                    Bus::batch(
-                        $team->users()->whereKeyNot($this->sender)->get()
-                            ->map(fn (User $recipient) => new CloneAiThread($this->thread, $this->sender, $recipient))
-                            ->all(),
-                    )
-                        ->name("PrepareAiThreadCloning for team {$team->id}")
-                        ->then(function () use ($sender, $team) {
-                            FilamentNotification::make()
-                                ->success()
-                                ->title("You cloned an AI chat to users in team {$team->name}.")
-                                ->sendToDatabase($sender);
-                        })
-                        ->dispatch();
-                });
-        }
+                        $successfulUsersCount = $batch->totalJobs - $batch->failedJobs;
+
+                        $sucessfulUsersString = Str::plural('User', $successfulUsersCount);
+
+                        $failedUsersString = Str::plural('User', $batch->failedJobs);
+
+                        $notification->body(
+                            <<<EOT
+                            successfully cloned chat to {$successfulUsersCount} {$sucessfulUsersString}.
+                            Failed to clone chat to {$batch->failedJobs} {$failedUsersString}.
+                            EOT
+                        );
+                    }
+                } else {
+                    $notification->success();
+
+                    $usersString = Str::plural('User', $batch->totalJobs);
+
+                    $notification->body("successfully cloned chat to {$batch->totalJobs} {$usersString}.");
+                }
+
+                $notification->sendToDatabase($sender);
+            })
+            ->dispatch();
+    }
+
+    protected function generateSingleUserShareJobs(): array
+    {
+        return User::query()
+            ->whereKey($this->targetIds)
+            ->get()
+            ->map(function (User $recipient) {
+                return new CloneAiThread($this->thread, $this->sender, $recipient);
+            })
+            ->all();
+    }
+
+    protected function generateTeamShareJobs(): array
+    {
+        return Team::query()
+            ->whereKey($this->targetIds)
+            ->with('users')
+            ->get()
+            ->map(function (Team $team) {
+                return $team->users()
+                    ->whereKeyNot($this->sender)
+                    ->get()
+                    ->map(fn (User $recipient) => new CloneAiThread($this->thread, $this->sender, $recipient))
+                    ->all();
+            })
+            ->toArray();
     }
 }

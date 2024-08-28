@@ -53,15 +53,15 @@ class BasicNeedsProgramFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'description' => fake()->paragraph(),
+            'description' => fake()->realText(255),
             'basic_needs_category_id' => BasicNeedsCategory::factory(),
             'contact_person' => fake()->name(),
             'contact_email' => fake()->email(),
             'contact_phone' => fake()->numerify('+1 ### ### ####'),
             'location' => fake()->city(),
-            'availability' => fake()->randomElement(),
-            'eligibility_criteria' => fake()->sentence(),
-            'application_process' => fake()->paragraph(),
+            'availability' => fake()->realText(255),
+            'eligibility_criteria' => fake()->realText(255),
+            'application_process' => fake()->realText(255),
         ];
     }
 }
