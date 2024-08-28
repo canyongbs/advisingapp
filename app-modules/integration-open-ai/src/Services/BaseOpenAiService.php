@@ -51,6 +51,7 @@ use OpenAI\Responses\Threads\ThreadResponse;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Ai\Services\Contracts\AiService;
+use AdvisingApp\Ai\Exceptions\RateLimitException;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
@@ -516,6 +517,21 @@ abstract class BaseOpenAiService implements AiService
                         report(new MessageResponseTimeoutException());
 
                         return;
+                    }
+
+                    if (
+                        $streamResponse->event === 'thread.run.failed'
+                        && $streamResponse->response->lastError->code === 'rate_limit_exceeded'
+                    ) {
+                        preg_match(
+                            '/Try\sagain\sin\s([0-9]+)\sseconds/',
+                            $streamResponse->response->lastError->message,
+                            $matches,
+                        );
+
+                        if (! empty($matches[1])) {
+                            throw new RateLimitException($matches[1]);
+                        }
                     }
 
                     if (in_array($streamResponse->event, [

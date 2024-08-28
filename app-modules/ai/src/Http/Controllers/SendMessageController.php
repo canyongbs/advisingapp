@@ -40,6 +40,7 @@ use Throwable;
 use Illuminate\Http\JsonResponse;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Actions\SendMessage;
+use AdvisingApp\Ai\Exceptions\RateLimitException;
 use AdvisingApp\Ai\Http\Requests\SendMessageRequest;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -71,6 +72,11 @@ class SendMessageController
                 'isThreadLocked' => true,
                 'message' => $exception->getMessage(),
             ], 503);
+        } catch (RateLimitException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage(),
+                'retryAfterSeconds' => $exception->retryAfterSeconds,
+            ], 429);
         } catch (Throwable $exception) {
             report($exception);
 

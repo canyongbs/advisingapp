@@ -85,6 +85,32 @@ document.addEventListener('alpine:init', () => {
                     this.isRetryable = !response.isThreadLocked;
                     this.isSendingMessage = false;
 
+                    if (!response.retryAfterSeconds) { return; }
+
+                    console.log('here');
+
+                    this.$nextTick(async () => {
+                        console.log('here1');
+                        await new Promise(resolve => setTimeout(resolve, response.retryAfterSeconds * 1000));
+
+                        console.log('here2');
+
+                        await this.handleMessageResponse({
+                            response: await fetch(sendMessageUrl, {
+                                method: 'POST',
+                                headers: {
+                                    Accept: 'application/json',
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken,
+                                },
+                                body: JSON.stringify({
+                                    content: this.latestMessage,
+                                    files: this.$wire.files,
+                                }),
+                            }),
+                        });
+                    });
+
                     return;
                 }
 
