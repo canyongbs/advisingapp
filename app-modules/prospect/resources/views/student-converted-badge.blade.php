@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,34 +30,23 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@use('AdvisingApp\StudentDataModel\Filament\Resources\StudentResource')
+@use('Laravel\Pennant\Feature')
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
-
-use AdvisingApp\Task\Histories\TaskHistory;
-use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-
-class ProspectEngagementTimeline extends TimelinePage
-{
-    use ProspectHolisticViewPage;
-
-    protected static string $resource = ProspectResource::class;
-
-    protected static ?string $navigationLabel = 'Timeline';
-
-    public string $emptyStateMessage = 'There are no engagements to show for this prospect.';
-
-    public string $noMoreRecordsMessage = "You have reached the end of this prospect's engagement timeline.";
-
-    public array $modelsToTimeline = [
-        Engagement::class,
-        EngagementResponse::class,
-        AlertHistory::class,
-        TaskHistory::class,
-    ];
-}
+@if (Feature::active('convert_prospect_to_student') && $this->getRecord()->student)
+    <x-filament::badge
+        class="-mb-4 mt-3 px-3 py-3"
+        data-identifier="prospect_converted_to_student"
+        size="md"
+        color="success"
+    >
+        <span>
+            This record has been merged with a student record.
+            <a
+                class="underline"
+                href="{{ StudentResource::getUrl('view', ['record' => $this->getRecord()?->student]) }}"
+            >Click here</a> to visit the student record.
+        </span>
+    </x-filament::badge>
+@endif

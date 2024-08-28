@@ -57,10 +57,13 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
 class ManageProspectAlerts extends ManageRelatedRecords
 {
+    use ProspectHolisticViewPage;
+
     protected static string $resource = ProspectResource::class;
 
     protected static string $relationship = 'alerts';

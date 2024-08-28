@@ -34,45 +34,60 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions;
 
-use Illuminate\Database\Eloquent\Model;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\RelationManagers\EngagementFilesRelationManager;
+use Filament\Actions\Action;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-class ManageProspectFiles extends ManageRelatedRecords
+class ConvertToStudent extends Action
 {
-    use ProspectHolisticViewPage;
-
-    protected static string $resource = ProspectResource::class;
-
-    // TODO: Obsolete when there is no table, remove from Filament
-    protected static string $relationship = 'engagementFiles';
-
-    protected static ?string $navigationLabel = 'Files and Documents';
-
-    protected static ?string $breadcrumb = 'Files';
-
-    protected static ?string $navigationIcon = 'heroicon-o-folder';
-
-    public static function canAccess(array $arguments = []): bool
+    protected function setUp(): void
     {
-        return (bool) count(static::managers($arguments['record'] ?? null));
+        parent::setUp();
+
+        $this
+            ->modalHeading('Convert Prospect to Student')
+            ->modalWidth(MaxWidth::ExtraLarge)
+            ->modalSubmitActionLabel('Convert')
+            ->form([
+                Select::make('student_id')
+                    ->relationship('student', 'full_name')
+                    ->native(false)
+                    ->required()
+                    ->label('Select Student')
+                    ->searchable(),
+            ])
+            ->action(function ($data, $record) {
+                /** @var Student $student */
+                $student = Student::find($data['student_id']);
+
+                if (! $student) {
+                    Notification::make()
+                        ->title('Student not found!')
+                        ->danger()
+                        ->send();
+
+                    $this->halt();
+
+                    return;
+                }
+
+                $record->student()->associate($student);
+
+                $record->save();
+
+                Notification::make()
+                    ->title('Prospect converted to Student')
+                    ->success()
+                    ->send();
+            });
     }
 
-    public function getRelationManagers(): array
+    public static function getDefaultName(): ?string
     {
-        return static::managers($this->getRecord());
-    }
-
-    private static function managers(?Model $record = null): array
-    {
-        return collect([
-            EngagementFilesRelationManager::class,
-        ])
-            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
-            ->toArray();
+        return 'convert';
     }
 }

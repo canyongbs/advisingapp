@@ -34,32 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Task\Histories\TaskHistory;
-use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('prospects', function (Blueprint $table) {
+            $table->string('student_id')->nullable();
+        });
+    }
 
-class ProspectEngagementTimeline extends TimelinePage
-{
-    use ProspectHolisticViewPage;
-
-    protected static string $resource = ProspectResource::class;
-
-    protected static ?string $navigationLabel = 'Timeline';
-
-    public string $emptyStateMessage = 'There are no engagements to show for this prospect.';
-
-    public string $noMoreRecordsMessage = "You have reached the end of this prospect's engagement timeline.";
-
-    public array $modelsToTimeline = [
-        Engagement::class,
-        EngagementResponse::class,
-        AlertHistory::class,
-        TaskHistory::class,
-    ];
-}
+    public function down(): void
+    {
+        Schema::table('prospects', function (Blueprint $table) {
+            $table->dropColumn('student_id');
+        });
+    }
+};

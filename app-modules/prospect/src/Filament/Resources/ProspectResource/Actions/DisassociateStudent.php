@@ -34,32 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions;
 
-use AdvisingApp\Task\Histories\TaskHistory;
-use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 
-class ProspectEngagementTimeline extends TimelinePage
+class DisassociateStudent extends Action
 {
-    use ProspectHolisticViewPage;
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-    protected static string $resource = ProspectResource::class;
+        $this
+            ->modalHeading('Disassociate Prospect from Student?')
+            ->requiresConfirmation()
+            ->color('danger')
+            ->modalSubmitActionLabel('Yes')
+            ->action(function ($record) {
+                /** @var Prospect $record */
+                $record->student()->dissociate();
+                $record->save();
 
-    protected static ?string $navigationLabel = 'Timeline';
+                Notification::make()
+                    ->title('Prospect disassociated from Student')
+                    ->success()
+                    ->send();
+            });
+    }
 
-    public string $emptyStateMessage = 'There are no engagements to show for this prospect.';
-
-    public string $noMoreRecordsMessage = "You have reached the end of this prospect's engagement timeline.";
-
-    public array $modelsToTimeline = [
-        Engagement::class,
-        EngagementResponse::class,
-        AlertHistory::class,
-        TaskHistory::class,
-    ];
+    public static function getDefaultName(): ?string
+    {
+        return 'disassociate';
+    }
 }

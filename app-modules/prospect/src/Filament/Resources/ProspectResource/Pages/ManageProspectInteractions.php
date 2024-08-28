@@ -40,12 +40,15 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource\RelationManagers\HasManyMorphedInteractionsRelationManager;
 
 class ManageProspectInteractions extends ManageRelatedRecords
 {
+    use ProspectHolisticViewPage;
+
     protected static string $resource = ProspectResource::class;
 
     protected static string $relationship = 'interactions';

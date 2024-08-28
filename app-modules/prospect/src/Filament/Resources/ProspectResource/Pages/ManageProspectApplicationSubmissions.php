@@ -53,10 +53,13 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
 class ManageProspectApplicationSubmissions extends ManageRelatedRecords
 {
+    use ProspectHolisticViewPage;
+
     protected static string $resource = ProspectResource::class;
 
     protected static string $relationship = 'applicationSubmissions';

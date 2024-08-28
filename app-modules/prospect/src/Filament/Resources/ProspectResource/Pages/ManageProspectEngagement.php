@@ -37,11 +37,14 @@
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Illuminate\Contracts\Support\Htmlable;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords;
 
 class ManageProspectEngagement extends ManageRelatedEngagementRecords
 {
+    use ProspectHolisticViewPage;
+
     protected static string $resource = ProspectResource::class;
 
     public function getTitle(): string | Htmlable

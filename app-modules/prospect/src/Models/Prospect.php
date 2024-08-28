@@ -51,6 +51,7 @@ use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Notification\Models\Subscription;
@@ -166,6 +167,11 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     public function source(): BelongsTo
     {
         return $this->belongsTo(ProspectSource::class);
+    }
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'student_id', 'sisid');
     }
 
     public function engagementFiles(): MorphToMany

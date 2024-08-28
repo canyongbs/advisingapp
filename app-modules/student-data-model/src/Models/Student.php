@@ -45,6 +45,7 @@ use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Form\Models\FormSubmission;
@@ -267,6 +268,11 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     public function taskHistories(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->tasks(), (new Task())->histories());
+    }
+
+    public function prospects(): HasMany
+    {
+        return $this->hasMany(Prospect::class, 'student_id');
     }
 
     public static function getLicenseType(): LicenseType

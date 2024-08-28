@@ -43,6 +43,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Concerns\FiltersManagersFromGroups;
 use Filament\Resources\RelationManagers\RelationGroup;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\AssetCheckInRelationManager;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\AssetCheckOutRelationManager;
@@ -51,6 +52,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\Se
 class ProspectServiceManagement extends ManageRelatedRecords
 {
     use FiltersManagersFromGroups;
+    use ProspectHolisticViewPage;
 
     protected static string $resource = ProspectResource::class;
 

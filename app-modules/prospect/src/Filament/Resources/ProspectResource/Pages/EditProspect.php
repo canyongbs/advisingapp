@@ -38,6 +38,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use App\Models\User;
 use Filament\Forms\Form;
+use Laravel\Pennant\Feature;
 use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Radio;
@@ -51,10 +52,15 @@ use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
 
 class EditProspect extends EditRecord
 {
+    use ProspectHolisticViewPage;
+
     protected static string $resource = ProspectResource::class;
 
     // TODO: Automatically set from Filament
@@ -198,6 +204,8 @@ class EditProspect extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists() && Feature::active('convert_prospect_to_student')),
+            DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists() && Feature::active('convert_prospect_to_student')),
             ViewAction::make(),
             DeleteAction::make(),
         ];

@@ -34,32 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Prospect\Concerns;
 
-use AdvisingApp\Task\Histories\TaskHistory;
-use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
+use Filament\Support\Facades\FilamentView;
 
-class ProspectEngagementTimeline extends TimelinePage
+trait ProspectHolisticViewPage
 {
-    use ProspectHolisticViewPage;
-
-    protected static string $resource = ProspectResource::class;
-
-    protected static ?string $navigationLabel = 'Timeline';
-
-    public string $emptyStateMessage = 'There are no engagements to show for this prospect.';
-
-    public string $noMoreRecordsMessage = "You have reached the end of this prospect's engagement timeline.";
-
-    public array $modelsToTimeline = [
-        Engagement::class,
-        EngagementResponse::class,
-        AlertHistory::class,
-        TaskHistory::class,
-    ];
+    public function boot()
+    {
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_START,
+            fn (): View => view('prospect::student-converted-badge')
+        );
+    }
 }
