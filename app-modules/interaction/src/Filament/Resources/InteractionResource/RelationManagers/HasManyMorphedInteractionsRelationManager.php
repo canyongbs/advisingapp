@@ -115,7 +115,8 @@ class HasManyMorphedInteractionsRelationManager extends RelationManager
                 CreateAction::make(),
             ])
             ->actions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->modalHeading('Interaction Details'),
                 EditAction::make(),
             ]);
     }
