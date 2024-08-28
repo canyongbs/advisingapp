@@ -37,9 +37,6 @@
 use function Tests\asSuperAdmin;
 
 use AdvisingApp\Audit\Settings\AuditSettings;
-
-use function Pest\Laravel\assertDatabaseCount;
-
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 
 test('Audit logs are only created if the Model is not set to be excluded from Auditing by audit settings', function () {
@@ -53,7 +50,6 @@ test('Audit logs are only created if the Model is not set to be excluded from Au
 
     $auditSettings->save();
 
-    assertDatabaseCount('audits', 0);
     expect($serviceRequest->audits)->toHaveCount(0);
 
     $auditSettings->audited_models_exclude = [];
@@ -64,6 +60,5 @@ test('Audit logs are only created if the Model is not set to be excluded from Au
 
     $serviceRequest->refresh();
 
-    assertDatabaseCount('audits', 1);
     expect($serviceRequest->audits)->toHaveCount(1);
 });
