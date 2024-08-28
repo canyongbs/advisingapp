@@ -45,7 +45,7 @@ use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
-use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Widgets\ConvertedStudentBadge;
@@ -56,7 +56,7 @@ use Laravel\Pennant\Feature;
 
 class ViewProspect extends ViewRecord
 {
-    use StudentHolisticViewPage;
+    use ProspectHolisticViewPage;
     
     protected static string $resource = ProspectResource::class;
 

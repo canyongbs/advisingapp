@@ -40,11 +40,11 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\RelationManagers\EngagementFilesRelationManager;
-use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 
 class ManageProspectFiles extends ManageRelatedRecords
 {
-    use StudentHolisticViewPage;
+    use ProspectHolisticViewPage;
     
     protected static string $resource = ProspectResource::class;
 

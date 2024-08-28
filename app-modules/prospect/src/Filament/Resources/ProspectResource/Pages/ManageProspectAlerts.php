@@ -53,7 +53,7 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
 use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -65,7 +65,7 @@ use Illuminate\Contracts\View\View;
 
 class ManageProspectAlerts extends ManageRelatedRecords
 {
-    use StudentHolisticViewPage;
+    use ProspectHolisticViewPage;
     
     protected static string $resource = ProspectResource::class;
 

@@ -53,7 +53,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Application\Models\ApplicationSubmission;
-use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
@@ -61,7 +61,7 @@ use Illuminate\Contracts\View\View;
 
 class ManageProspectApplicationSubmissions extends ManageRelatedRecords
 {
-    use StudentHolisticViewPage;
+    use ProspectHolisticViewPage;
     
     protected static string $resource = ProspectResource::class;
 

@@ -39,11 +39,11 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProgramRelationManager;
-use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 
 class ManageProspectPrograms extends ManageRelatedRecords
 {
-    use StudentHolisticViewPage; 
+    use ProspectHolisticViewPage; 
     
     protected static string $resource = ProspectResource::class;
 

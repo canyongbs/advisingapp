@@ -40,13 +40,13 @@ use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
 class ProspectEngagementTimeline extends TimelinePage
 {
-    use StudentHolisticViewPage; 
+    use ProspectHolisticViewPage; 
     
     protected static string $resource = ProspectResource::class;
 

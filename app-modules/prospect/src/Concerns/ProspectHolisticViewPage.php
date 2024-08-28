@@ -6,7 +6,7 @@ use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
 use Filament\Support\Facades\FilamentView;
 
-trait StudentHolisticViewPage
+trait ProspectHolisticViewPage
 {
     public function boot()
     {

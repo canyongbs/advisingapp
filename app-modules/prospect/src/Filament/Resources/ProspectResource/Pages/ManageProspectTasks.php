@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Task\Filament\RelationManagers\BaseTaskRelationManager;
 use Filament\Support\Facades\FilamentView;
@@ -45,7 +45,7 @@ use Illuminate\Contracts\View\View;
 
 class ManageProspectTasks extends BaseTaskRelationManager
 {
-    use StudentHolisticViewPage;
+    use ProspectHolisticViewPage;
 
     protected static string $resource = ProspectResource::class;
 

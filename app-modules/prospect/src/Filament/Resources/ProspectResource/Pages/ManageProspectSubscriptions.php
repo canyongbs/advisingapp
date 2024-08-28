@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use App\Models\User;
 use Filament\Tables\Table;
 use App\Models\Scopes\HasLicense;
@@ -58,7 +58,7 @@ use Illuminate\Contracts\View\View;
 
 class ManageProspectSubscriptions extends ManageRelatedRecords
 {
-    use StudentHolisticViewPage; 
+    use ProspectHolisticViewPage; 
     
     protected static string $resource = ProspectResource::class;
 

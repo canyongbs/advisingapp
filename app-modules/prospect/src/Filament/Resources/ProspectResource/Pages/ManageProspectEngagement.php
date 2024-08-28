@@ -39,14 +39,14 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 use Illuminate\Contracts\Support\Htmlable;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords;
-use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
 
 class ManageProspectEngagement extends ManageRelatedEngagementRecords
 {
-    use StudentHolisticViewPage;
+    use ProspectHolisticViewPage;
     
     protected static string $resource = ProspectResource::class;
 

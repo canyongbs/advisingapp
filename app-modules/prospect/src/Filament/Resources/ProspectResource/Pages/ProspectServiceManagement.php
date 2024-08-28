@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use App\Enums\Feature;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Model;
@@ -55,7 +55,7 @@ use Illuminate\Contracts\View\View;
 class ProspectServiceManagement extends ManageRelatedRecords
 {
     use FiltersManagersFromGroups;
-    use StudentHolisticViewPage;
+    use ProspectHolisticViewPage;
 
     protected static string $resource = ProspectResource::class;
 

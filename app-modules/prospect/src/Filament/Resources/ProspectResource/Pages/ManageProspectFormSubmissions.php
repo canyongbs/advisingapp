@@ -55,14 +55,14 @@ use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Form\Filament\Actions\RequestFormSubmission;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Form\Filament\Tables\Filters\FormSubmissionStatusFilter;
-use AdvisingApp\Prospect\Concerns\StudentHolisticViewPage;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
 
 class ManageProspectFormSubmissions extends ManageRelatedRecords
 {
-    use StudentHolisticViewPage;
+    use ProspectHolisticViewPage;
     
     protected static string $resource = ProspectResource::class;
 
