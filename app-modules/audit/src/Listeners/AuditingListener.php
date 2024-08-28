@@ -47,7 +47,7 @@ class AuditingListener
         /** @var Model $model */
         $model = $event->model;
 
-        return collect(resolve(AuditSettings::class)->audited_models)
-            ->contains($model->getMorphClass());
+        return collect(resolve(AuditSettings::class)->audited_models_exclude)
+            ->doesntContain($model->getMorphClass());
     }
 }
