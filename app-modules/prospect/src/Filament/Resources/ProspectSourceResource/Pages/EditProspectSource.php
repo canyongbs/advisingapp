@@ -52,7 +52,6 @@ class EditProspectSource extends EditRecord
             ->schema([
                 TextInput::make('name')
                     ->label('Name')
-                    ->translateLabel()
                     ->required()
                     ->string(),
             ]);

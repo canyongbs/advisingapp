@@ -130,8 +130,7 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                     ->columns(),
             ],
             EngagementResponse::class => [
-                TextEntry::make('content')
-                    ->translateLabel(),
+                TextEntry::make('content'),
                 TextEntry::make('sent_at')
                     ->dateTime('Y-m-d H:i:s'),
             ],

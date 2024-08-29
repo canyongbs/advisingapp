@@ -71,7 +71,6 @@ class InteractionStatusResource extends Resource
                     ->placeholder('Interaction Status Name'),
                 Select::make('color')
                     ->label('Color')
-                    ->translateLabel()
                     ->searchable()
                     ->options(InteractionStatusColorOptions::class)
                     ->required()

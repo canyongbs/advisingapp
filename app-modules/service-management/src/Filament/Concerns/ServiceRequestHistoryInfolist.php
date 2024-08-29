@@ -48,7 +48,6 @@ trait ServiceRequestHistoryInfolist
         return [
             TextEntry::make('serviceRequest.service_request_number')
                 ->label('Service Request')
-                ->translateLabel()
                 ->url(fn (ServiceRequestHistory $serviceRequestHistory): string => ServiceRequestResource::getUrl('view', ['record' => $serviceRequestHistory->serviceRequest]))
                 ->color('primary'),
             TextEntry::make('getUpdates')

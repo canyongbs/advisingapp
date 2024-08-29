@@ -58,8 +58,7 @@ class EngagementResponsesRelationManager extends RelationManager
     {
         return $infolist
             ->schema([
-                TextEntry::make('content')
-                    ->translateLabel(),
+                TextEntry::make('content'),
                 TextEntry::make('sent_at')
                     ->dateTime('Y-m-d H:i:s'),
             ]);

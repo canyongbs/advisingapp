@@ -69,7 +69,6 @@ class ServiceRequestUpdateResource extends Resource
                     ->relationship('serviceRequest', 'id')
                     ->preload()
                     ->label('Service Request')
-                    ->translateLabel()
                     ->required()
                     ->exists(
                         table: (new ServiceRequest())->getTable(),
@@ -148,11 +147,9 @@ class ServiceRequestUpdateResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('internal')
-                    ->label('Internal')
-                    ->translateLabel(),
+                    ->label('Internal'),
                 Tables\Filters\SelectFilter::make('direction')
                     ->label('Direction')
-                    ->translateLabel()
                     ->options(ServiceRequestUpdateDirection::class),
             ])
             ->actions([

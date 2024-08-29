@@ -49,7 +49,6 @@ trait ServiceRequestAssignmentInfolist
         return [
             TextEntry::make('serviceRequest.service_request_number')
                 ->label('Service Request')
-                ->translateLabel()
                 ->url(fn (ServiceRequestAssignment $serviceRequestAssignment): string => ServiceRequestResource::getUrl('view', ['record' => $serviceRequestAssignment->serviceRequest]))
                 ->color('primary'),
             TextEntry::make('user.name')

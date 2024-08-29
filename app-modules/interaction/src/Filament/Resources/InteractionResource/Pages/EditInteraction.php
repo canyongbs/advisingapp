@@ -67,7 +67,6 @@ class EditInteraction extends EditRecord
             ->schema([
                 MorphToSelect::make('interactable')
                     ->label('Related To')
-                    ->translateLabel()
                     ->searchable()
                     ->required()
                     ->types([
