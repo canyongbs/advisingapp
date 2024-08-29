@@ -58,7 +58,6 @@ jobs:
         uses: tj-actions/verify-changed-files@6ed7632824d235029086612d4330d659005af687
         with:
           fail-if-changed: 'true'
-          files: '*'
 
   fix-code-style:
     runs-on: ubuntu-22.04
@@ -116,7 +115,6 @@ jobs:
         uses: tj-actions/verify-changed-files@6ed7632824d235029086612d4330d659005af687
         with:
           fail-if-changed: 'true'
-          files: '*'
 
   test:
     runs-on: ubuntu-22.04
