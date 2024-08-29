@@ -74,25 +74,20 @@ class ListKnowledgeBaseArticles extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('title')
                     ->label('Title')
-                    ->translateLabel()
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('quality.name')
                     ->label('Quality')
-                    ->translateLabel()
                     ->sortable(),
                 TextColumn::make('status.name')
                     ->label('Status')
-                    ->translateLabel()
                     ->sortable(),
                 TextColumn::make('public')
                     ->label('Public')
-                    ->translateLabel()
                     ->sortable()
                     ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No'),
                 TextColumn::make('category.name')
                     ->label('Category')
-                    ->translateLabel()
                     ->sortable(),
                 TextColumn::make('views_count')
                     ->label('Views')

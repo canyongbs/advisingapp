@@ -63,13 +63,11 @@ class ViewEngagement extends ViewRecord
                     ->schema([
                         TextEntry::make('user.name')
                             ->label('Created By')
-                            ->translateLabel()
                             ->color('primary')
                             ->url(function (Engagement $record) {
                                 return UserResource::getUrl('view', ['record' => $record->user->id]);
                             }),
                         TextEntry::make('recipient')
-                            ->translateLabel()
                             ->color('primary')
                             ->state(function (Engagement $record): string {
                                 /** @var Student|Prospect $recipient */

@@ -84,7 +84,6 @@ class ManageStudentApplicationSubmissions extends ManageRelatedRecords
                     ->url(fn (ApplicationSubmission $record): string => ApplicationResource::getUrl('edit', ['record' => $record->submissible])),
                 TextColumn::make('state')
                     ->badge()
-                    ->translateLabel()
                     ->state(function (ApplicationSubmission $record) {
                         return $record->state->name;
                     })

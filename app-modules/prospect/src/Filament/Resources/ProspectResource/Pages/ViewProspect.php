@@ -66,45 +66,33 @@ class ViewProspect extends ViewRecord
                 Section::make('Demographics')
                     ->schema([
                         TextEntry::make('first_name')
-                            ->label('First Name')
-                            ->translateLabel(),
+                            ->label('First Name'),
                         TextEntry::make('last_name')
-                            ->label('Last Name')
-                            ->translateLabel(),
+                            ->label('Last Name'),
                         TextEntry::make(Prospect::displayNameKey())
-                            ->label('Full Name')
-                            ->translateLabel(),
+                            ->label('Full Name'),
                         TextEntry::make('preferred')
-                            ->label('Preferred Name')
-                            ->translateLabel(),
+                            ->label('Preferred Name'),
                         TextEntry::make('birthdate')
-                            ->label('Birthdate')
-                            ->translateLabel(),
+                            ->label('Birthdate'),
                         TextEntry::make('hsgrad')
-                            ->label('High School Grad')
-                            ->translateLabel(),
+                            ->label('High School Grad'),
                     ])
                     ->columns(2),
                 Section::make('Contact Information')
                     ->schema([
                         TextEntry::make('email')
-                            ->label('Email')
-                            ->translateLabel(),
+                            ->label('Email'),
                         TextEntry::make('email_2')
-                            ->label('Alternate Email')
-                            ->translateLabel(),
+                            ->label('Alternate Email'),
                         TextEntry::make('mobile')
-                            ->label('Mobile')
-                            ->translateLabel(),
+                            ->label('Mobile'),
                         TextEntry::make('phone')
-                            ->label('Phone')
-                            ->translateLabel(),
+                            ->label('Phone'),
                         TextEntry::make('address')
-                            ->label('Address')
-                            ->translateLabel(),
+                            ->label('Address'),
                         TextEntry::make('address_2')
-                            ->label('Address 2')
-                            ->translateLabel(),
+                            ->label('Address 2'),
                         TextEntry::make('address_3')
                             ->label('Address 3'),
                         TextEntry::make('city')
@@ -118,14 +106,11 @@ class ViewProspect extends ViewRecord
                 Section::make('Classification')
                     ->schema([
                         TextEntry::make('status.name')
-                            ->label('Status')
-                            ->translateLabel(),
+                            ->label('Status'),
                         TextEntry::make('source.name')
-                            ->label('Source')
-                            ->translateLabel(),
+                            ->label('Source'),
                         TextEntry::make('description')
                             ->label('Description')
-                            ->translateLabel()
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
@@ -142,8 +127,7 @@ class ViewProspect extends ViewRecord
                 Section::make('Record Details')
                     ->schema([
                         TextEntry::make('createdBy.name')
-                            ->label('Created By')
-                            ->translateLabel(),
+                            ->label('Created By'),
                     ])
                     ->columns(2),
             ]);

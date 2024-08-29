@@ -89,23 +89,19 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                     ->sortable(),
                 TextColumn::make('email')
                     ->label('Email')
-                    ->translateLabel()
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('mobile')
                     ->label('Mobile')
-                    ->translateLabel()
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('status.name')
                     ->badge()
-                    ->translateLabel()
                     ->color(fn (Prospect $record) => $record->status->color->value)
                     ->toggleable()
                     ->sortable(['sort']),
                 TextColumn::make('source.name')
                     ->label('Source')
-                    ->translateLabel()
                     ->toggleable()
                     ->sortable(),
                 TextColumn::make('created_at')

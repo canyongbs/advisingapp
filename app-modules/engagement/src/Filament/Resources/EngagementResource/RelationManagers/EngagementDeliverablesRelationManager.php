@@ -62,7 +62,6 @@ class EngagementDeliverablesRelationManager extends RelationManager
             ->schema([
                 Select::make('channel')
                     ->label('How would you like to send this engagement?')
-                    ->translateLabel()
                     ->options(EngagementDeliveryMethod::class)
                     ->disableOptionWhen(fn (string $value) => $this->ownerRecord->deliverable->channel === EngagementDeliveryMethod::from($value))
                     ->validationAttribute('Delivery Method')

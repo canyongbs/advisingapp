@@ -59,7 +59,6 @@ class ViewServiceRequestUpdate extends ViewRecord
                     ->schema([
                         TextEntry::make('serviceRequest.service_request_number')
                             ->label('Service Request')
-                            ->translateLabel()
                             ->url(fn (ServiceRequestUpdate $serviceRequestUpdate): string => ServiceRequestResource::getUrl('view', ['record' => $serviceRequestUpdate->serviceRequest]))
                             ->color('primary'),
                         IconEntry::make('internal')

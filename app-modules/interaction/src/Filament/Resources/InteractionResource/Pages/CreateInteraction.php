@@ -97,7 +97,6 @@ class CreateInteraction extends CreateRecord
             ->schema([
                 MorphToSelect::make('interactable')
                     ->label('Related To')
-                    ->translateLabel()
                     ->searchable()
                     ->required()
                     ->types([

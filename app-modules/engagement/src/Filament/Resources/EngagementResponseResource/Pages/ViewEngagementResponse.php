@@ -59,7 +59,6 @@ class ViewEngagementResponse extends ViewRecord
                     ->schema([
                         TextEntry::make('sender')
                             ->label('Sent By')
-                            ->translateLabel()
                             ->color('primary')
                             ->state(function (EngagementResponse $record): string {
                                 /** @var Student|Prospect $sender */
@@ -79,8 +78,7 @@ class ViewEngagementResponse extends ViewRecord
                                     Prospect::class => ProspectResource::getUrl('view', ['record' => $sender->id]),
                                 };
                             }),
-                        TextEntry::make('content')
-                            ->translateLabel(),
+                        TextEntry::make('content'),
                     ])
                     ->columns(),
             ]);

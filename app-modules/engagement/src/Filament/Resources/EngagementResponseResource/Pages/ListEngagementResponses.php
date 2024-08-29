@@ -52,8 +52,7 @@ class ListEngagementResponses extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('content')
-                    ->translateLabel(),
+                TextColumn::make('content'),
             ])
             ->actions([
                 ViewAction::make(),

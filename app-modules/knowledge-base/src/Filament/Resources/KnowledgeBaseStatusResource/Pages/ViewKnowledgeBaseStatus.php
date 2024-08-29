@@ -54,8 +54,7 @@ class ViewKnowledgeBaseStatus extends ViewRecord
                 Section::make()
                     ->schema([
                         TextEntry::make('name')
-                            ->label('Name')
-                            ->translateLabel(),
+                            ->label('Name'),
                     ])
                     ->columns(),
             ]);

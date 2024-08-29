@@ -44,8 +44,7 @@ trait EngagementResponseInfolist
     public function engagementResponseInfolist(): array
     {
         return [
-            TextEntry::make('content')
-                ->translateLabel(),
+            TextEntry::make('content'),
             TextEntry::make('sent_at')
                 ->dateTime('Y-m-d H:i:s'),
         ];
