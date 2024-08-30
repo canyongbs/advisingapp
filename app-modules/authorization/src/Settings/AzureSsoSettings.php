@@ -40,13 +40,13 @@ use Spatie\LaravelSettings\Settings;
 
 class AzureSsoSettings extends Settings
 {
-    public bool $is_enabled;
+    public bool $is_enabled = false;
 
-    public ?string $client_id;
+    public ?string $client_id = null;
 
-    public ?string $client_secret;
+    public ?string $client_secret = null;
 
-    public ?string $tenant_id;
+    public ?string $tenant_id = null;
 
     public static function group(): string
     {

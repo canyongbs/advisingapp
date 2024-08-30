@@ -40,11 +40,11 @@ use Spatie\LaravelSettings\Settings;
 
 class GoogleRecaptchaSettings extends Settings
 {
-    public bool $is_enabled;
+    public bool $is_enabled = false;
 
-    public ?string $site_key;
+    public ?string $site_key = null;
 
-    public ?string $secret_key;
+    public ?string $secret_key = null;
 
     public static function group(): string
     {

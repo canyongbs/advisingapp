@@ -41,15 +41,15 @@ use App\Settings\Contracts\HasDefaultSettings;
 
 class ThemeSettings extends Settings implements HasDefaultSettings
 {
-    public bool $is_logo_active;
+    public bool $is_logo_active = false;
 
-    public bool $is_favicon_active;
+    public bool $is_favicon_active = false;
 
-    public array $color_overrides;
+    public array $color_overrides = [];
 
-    public bool $has_dark_mode;
+    public bool $has_dark_mode = true;
 
-    public ?string $url;
+    public ?string $url = null;
 
     public static function group(): string
     {

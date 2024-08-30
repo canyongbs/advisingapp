@@ -46,13 +46,13 @@ class TwilioSettings extends IntegrationSettings implements HasDefaultSettings
 
     public bool $is_demo_mode_enabled = false;
 
-    public ?TwilioApiKey $api_key;
+    public ?TwilioApiKey $api_key = null;
 
-    public ?string $account_sid;
+    public ?string $account_sid = null;
 
-    public ?string $auth_token;
+    public ?string $auth_token = null;
 
-    public ?string $from_number;
+    public ?string $from_number = null;
 
     public static function group(): string
     {

@@ -41,9 +41,9 @@ use AdvisingApp\StudentDataModel\Enums\SisSystem;
 
 class StudentInformationSystemSettings extends Settings
 {
-    public bool $is_enabled;
+    public bool $is_enabled = false;
 
-    public ?SisSystem $sis_system;
+    public ?SisSystem $sis_system = null;
 
     public static function group(): string
     {

@@ -40,11 +40,11 @@ use Spatie\LaravelSettings\Settings;
 
 class GoogleSsoSettings extends Settings
 {
-    public bool $is_enabled;
+    public bool $is_enabled = false;
 
-    public ?string $client_id;
+    public ?string $client_id = null;
 
-    public ?string $client_secret;
+    public ?string $client_secret = null;
 
     public static function group(): string
     {

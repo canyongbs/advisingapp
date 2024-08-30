@@ -72,7 +72,7 @@ class PortalSettings extends Settings
 
     public ?string $footer_color = null;
 
-    public ?string $footer_copyright_statement;
+    public ?string $footer_copyright_statement = null;
 
     /**
     * Knowledge Base Portal

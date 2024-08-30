@@ -40,7 +40,7 @@ use Spatie\LaravelSettings\Settings;
 
 class SesSettings extends Settings
 {
-    public ?string $configuration_set;
+    public ?string $configuration_set = null;
 
     public static function group(): string
     {

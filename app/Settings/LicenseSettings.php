@@ -41,9 +41,9 @@ use App\DataTransferObjects\LicenseManagement\LicenseData;
 
 class LicenseSettings extends Settings
 {
-    public ?string $license_key;
+    public ?string $license_key = null;
 
-    public ?LicenseData $data;
+    public ?LicenseData $data = null;
 
     public static function group(): string
     {
