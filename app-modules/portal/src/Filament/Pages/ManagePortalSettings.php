@@ -40,7 +40,6 @@ use App\Models\User;
 use App\Enums\Feature;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
-use App\Models\SettingsProperty;
 use Filament\Pages\SettingsPage;
 use AdvisingApp\Form\Enums\Rounding;
 use Illuminate\Support\Facades\Gate;
@@ -94,7 +93,7 @@ class ManagePortalSettings extends SettingsPage
                             ->visibility('private')
                             ->image()
                             ->model(
-                                SettingsProperty::getInstance('portal.logo'),
+                                PortalSettings::getSettingsPropertyModel('portal.logo'),
                             )
                             ->columnSpanFull(),
                         ColorPicker::make('primary_color')

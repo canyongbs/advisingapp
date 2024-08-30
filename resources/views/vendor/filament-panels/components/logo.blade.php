@@ -32,13 +32,12 @@
 </COPYRIGHT>
 --}}
 @php
-    use App\Models\SettingsProperty;
     use AdvisingApp\Theme\Settings\ThemeSettings;
     use Illuminate\Support\Facades\Vite;
 
     $themeSettings = app(ThemeSettings::class);
 
-    $settingsProperty = SettingsProperty::getInstance('theme.is_logo_active');
+    $settingsProperty = $themeSettings::getSettingsPropertyModel('theme.is_logo_active');
     $logo = $settingsProperty->getFirstMedia('logo');
     $darkLogo = $settingsProperty->getFirstMedia('dark_logo');
 @endphp

@@ -42,6 +42,7 @@ use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Theme\Registries\ThemeRbacRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Theme\Settings\SettingsProperties\ThemeSettingsProperty;
 
 class ThemeServiceProvider extends ServiceProvider
 {
@@ -52,9 +53,9 @@ class ThemeServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Relation::morphMap(
-            [],
-        );
+        Relation::morphMap([
+            'theme_settings_property' => ThemeSettingsProperty::class,
+        ]);
 
         AuthorizationRoleRegistry::register(ThemeRbacRegistry::class);
     }

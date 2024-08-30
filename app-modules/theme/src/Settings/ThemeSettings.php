@@ -36,9 +36,10 @@
 
 namespace AdvisingApp\Theme\Settings;
 
-use Spatie\LaravelSettings\Settings;
+use App\Settings\SettingsWithMedia;
+use AdvisingApp\Theme\Settings\SettingsProperties\ThemeSettingsProperty;
 
-class ThemeSettings extends Settings
+class ThemeSettings extends SettingsWithMedia
 {
     public bool $is_logo_active = false;
 
@@ -53,5 +54,10 @@ class ThemeSettings extends Settings
     public static function group(): string
     {
         return 'theme';
+    }
+
+    public static function getSettingsPropertyModelClass(): string
+    {
+        return ThemeSettingsProperty::class;
     }
 }
