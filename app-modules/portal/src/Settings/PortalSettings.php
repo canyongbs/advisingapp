@@ -36,9 +36,11 @@
 
 namespace AdvisingApp\Portal\Settings;
 
+use AdvisingApp\Portal\Settings\SettingsProperties\PortalSettingsProperty;
+use App\Settings\SettingsWithMedia;
 use Spatie\LaravelSettings\Settings;
 
-class PortalSettings extends Settings
+class PortalSettings extends SettingsWithMedia
 {
     public null $logo = null;
 
@@ -88,6 +90,11 @@ class PortalSettings extends Settings
     public ?string $knowledge_management_portal_rounding = null;
 
     public ?string $knowledge_management_portal_authorized_domain = null;
+
+    public static function getSettingsPropertyModelClass(): string
+    {
+        return PortalSettingsProperty::class;
+    }
 
     public static function group(): string
     {
