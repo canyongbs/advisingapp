@@ -34,24 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Pages;
+namespace AdvisingApp\ServiceManagement\Filament\Concerns;
 
-use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
-use AdvisingApp\ServiceManagement\Filament\Concerns\ServiceRequestUpdateBreadcrumbs;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
-class EditServiceRequestUpdate extends EditRecord
+// TODO Re-use this trait across other places where infolist is rendered
+trait ServiceRequestUpdateBreadcrumbs
 {
-    use ServiceRequestUpdateBreadcrumbs;
-
-    protected static string $resource = ServiceRequestUpdateResource::class;
-
-    protected function getHeaderActions(): array
+    public function getBreadcrumbs(): array
     {
-        return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+        $serviceRequestResource = ServiceRequestResource::class;
+
+        $breadcrumbs = [
+            $serviceRequestResource::getUrl() => $serviceRequestResource::getBreadcrumb(),
+            $serviceRequestResource::getUrl('view', ['record' => $this->getRecord()->serviceRequest]) => $this->getRecord()?->serviceRequest?->service_request_number,
+            ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
         ];
+
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
+        }
+
+        return $breadcrumbs;
     }
 }

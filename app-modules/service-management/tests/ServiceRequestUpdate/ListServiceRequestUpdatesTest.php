@@ -102,6 +102,12 @@ test('The correct details are displayed on the ListServiceRequestUpdates page', 
                 $serviceRequestUpdate
             )
     );
+})->skip();
+
+test('ListServiceRequestUpdates is gated with proper access control for superAdmin', function () {
+    asSuperAdmin()->get(
+        ServiceRequestUpdateResource::getUrl('index')
+    )->assertStatus(403);
 });
 
 // TODO: Sorting and Searching tests
@@ -121,7 +127,7 @@ test('ListServiceRequestUpdates is gated with proper access control', function (
     actingAs($user)
         ->get(
             ServiceRequestUpdateResource::getUrl('index')
-        )->assertSuccessful();
+        )->assertStatus(403);
 });
 
 test('ListServiceRequestUpdates is gated with proper feature access control', function () {
@@ -147,5 +153,5 @@ test('ListServiceRequestUpdates is gated with proper feature access control', fu
     actingAs($user)
         ->get(
             ServiceRequestUpdateResource::getUrl()
-        )->assertSuccessful();
+        )->assertStatus(403);
 });

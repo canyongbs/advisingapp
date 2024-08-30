@@ -46,9 +46,12 @@ use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestUpdateDirection;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
+use AdvisingApp\ServiceManagement\Filament\Concerns\ServiceRequestUpdateBreadcrumbs;
 
 class ViewServiceRequestUpdate extends ViewRecord
 {
+    use ServiceRequestUpdateBreadcrumbs;
+
     protected static string $resource = ServiceRequestUpdateResource::class;
 
     protected static ?string $breadcrumb = 'Updates';
@@ -76,23 +79,6 @@ class ViewServiceRequestUpdate extends ViewRecord
                     ])
                     ->columns(),
             ]);
-    }
-
-    public function getBreadcrumbs(): array
-    {
-        $serviceRequestResource = ServiceRequestResource::class;
-
-        $breadcrumbs = [
-            $serviceRequestResource::getUrl() => $serviceRequestResource::getBreadcrumb(),
-            $serviceRequestResource::getUrl('view', ['record' => $this->getRecord()->serviceRequest]) => $this->getRecord()?->serviceRequest?->service_request_number,
-            ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
-        ];
-
-        if (filled($cluster = static::getCluster())) {
-            return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
-        }
-
-        return $breadcrumbs;
     }
 
     protected function getHeaderActions(): array
