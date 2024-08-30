@@ -36,9 +36,8 @@
 
 namespace AdvisingApp\Portal\Settings;
 
-use AdvisingApp\Portal\Settings\SettingsProperties\PortalSettingsProperty;
 use App\Settings\SettingsWithMedia;
-use Spatie\LaravelSettings\Settings;
+use AdvisingApp\Portal\Settings\SettingsProperties\PortalSettingsProperty;
 
 class PortalSettings extends SettingsWithMedia
 {
