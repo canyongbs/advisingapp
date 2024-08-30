@@ -37,9 +37,8 @@
 namespace AdvisingApp\Theme\Settings;
 
 use Spatie\LaravelSettings\Settings;
-use App\Settings\Contracts\HasDefaultSettings;
 
-class ThemeSettings extends Settings implements HasDefaultSettings
+class ThemeSettings extends Settings
 {
     public bool $is_logo_active = false;
 
@@ -54,17 +53,5 @@ class ThemeSettings extends Settings implements HasDefaultSettings
     public static function group(): string
     {
         return 'theme';
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public static function defaults(): array
-    {
-        return [
-            'color_overrides' => [],
-            'has_dark_mode' => true,
-            'url' => null,
-        ];
     }
 }
