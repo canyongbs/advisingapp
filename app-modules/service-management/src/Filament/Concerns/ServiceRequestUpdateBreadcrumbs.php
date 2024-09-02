@@ -38,7 +38,6 @@ namespace AdvisingApp\ServiceManagement\Filament\Concerns;
 
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
-// TODO Re-use this trait across other places where infolist is rendered
 trait ServiceRequestUpdateBreadcrumbs
 {
     public function getBreadcrumbs(): array
