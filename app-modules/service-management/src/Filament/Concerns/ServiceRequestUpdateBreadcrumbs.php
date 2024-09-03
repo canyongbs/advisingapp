@@ -36,17 +36,24 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Concerns;
 
+use Illuminate\Support\Str;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestUpdate;
 
 trait ServiceRequestUpdateBreadcrumbs
 {
     public function getBreadcrumbs(): array
     {
         $serviceRequestResource = ServiceRequestResource::class;
+        $manageServiceRequestUpdate = ManageServiceRequestUpdate::class;
+        $currentResource = static::getResource();
 
         $breadcrumbs = [
+            'Service Management',
             $serviceRequestResource::getUrl() => $serviceRequestResource::getBreadcrumb(),
             $serviceRequestResource::getUrl('view', ['record' => $this->getRecord()->serviceRequest]) => $this->getRecord()?->serviceRequest?->service_request_number,
+            $manageServiceRequestUpdate::getUrl(['record' => $this->getRecord()->serviceRequest]) => 'Updates',
+            $currentResource::getUrl('view', ['record' => $this->getRecord()?->id]) => Str::limit($this->getRecord()?->id, 18),
             ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
         ];
 

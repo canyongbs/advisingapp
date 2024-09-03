@@ -54,9 +54,9 @@ class ViewServiceRequestUpdate extends ViewRecord
 
     protected static string $resource = ServiceRequestUpdateResource::class;
 
-    protected static ?string $breadcrumb = 'Updates';
+    protected static ?string $breadcrumb = 'View';
 
-    protected static ?string $navigationLabel = 'Updates';
+    protected static ?string $navigationLabel = 'View';
 
     public function infolist(Infolist $infolist): Infolist
     {
@@ -84,7 +84,7 @@ class ViewServiceRequestUpdate extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            Actions\DeleteAction::make(),
         ];
     }
 }

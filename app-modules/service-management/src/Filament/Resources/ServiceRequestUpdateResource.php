@@ -66,6 +66,7 @@ class ServiceRequestUpdateResource extends Resource
     {
         $navigationItems = [
             ViewServiceRequestUpdate::class,
+            EditServiceRequestUpdate::class,
         ];
 
         return $page->generateNavigationItems($navigationItems);
