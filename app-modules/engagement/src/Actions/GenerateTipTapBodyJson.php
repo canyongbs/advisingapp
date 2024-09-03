@@ -53,7 +53,7 @@ class GenerateTipTapBodyJson
                 foreach ($node->content as $item) {
                     preg_match_all('/{{2}[\s\S]*?}{2}|\s*\S+\s*/', $item->text, $tokens);
 
-                    if (empty($tokens)) {
+                    if (!$tokens && $tokens == null) {
                         continue;
                     }
 
