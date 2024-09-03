@@ -34,28 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Settings;
+namespace App\Models;
 
-use Spatie\LaravelSettings\Settings;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class GoogleCalendarSettings extends Settings
+abstract class SettingsPropertyWithMedia extends SettingsProperty implements HasMedia
 {
-    public bool $is_enabled = false;
-
-    public ?string $client_id = null;
-
-    public ?string $client_secret = null;
-
-    public static function group(): string
-    {
-        return 'google_calendar';
-    }
-
-    public static function encrypted(): array
-    {
-        return [
-            'client_id',
-            'client_secret',
-        ];
-    }
+    use InteractsWithMedia;
 }

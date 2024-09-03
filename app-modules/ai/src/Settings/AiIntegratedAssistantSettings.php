@@ -41,7 +41,7 @@ use Spatie\LaravelSettings\Settings;
 
 class AiIntegratedAssistantSettings extends Settings
 {
-    public AiModel $default_model;
+    public AiModel $default_model = AiModel::OpenAiGpt4o;
 
     public static function group(): string
     {

@@ -36,35 +36,28 @@
 
 namespace AdvisingApp\Theme\Settings;
 
-use Spatie\LaravelSettings\Settings;
-use App\Settings\Contracts\HasDefaultSettings;
+use App\Settings\SettingsWithMedia;
+use AdvisingApp\Theme\Settings\SettingsProperties\ThemeSettingsProperty;
 
-class ThemeSettings extends Settings implements HasDefaultSettings
+class ThemeSettings extends SettingsWithMedia
 {
-    public bool $is_logo_active;
+    public bool $is_logo_active = false;
 
-    public bool $is_favicon_active;
+    public bool $is_favicon_active = false;
 
-    public array $color_overrides;
+    public array $color_overrides = [];
 
-    public bool $has_dark_mode;
+    public bool $has_dark_mode = true;
 
-    public ?string $url;
+    public ?string $url = null;
 
     public static function group(): string
     {
         return 'theme';
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public static function defaults(): array
+    public static function getSettingsPropertyModelClass(): string
     {
-        return [
-            'color_overrides' => [],
-            'has_dark_mode' => true,
-            'url' => null,
-        ];
+        return ThemeSettingsProperty::class;
     }
 }

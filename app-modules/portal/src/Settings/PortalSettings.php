@@ -36,9 +36,10 @@
 
 namespace AdvisingApp\Portal\Settings;
 
-use Spatie\LaravelSettings\Settings;
+use App\Settings\SettingsWithMedia;
+use AdvisingApp\Portal\Settings\SettingsProperties\PortalSettingsProperty;
 
-class PortalSettings extends Settings
+class PortalSettings extends SettingsWithMedia
 {
     public null $logo = null;
 
@@ -72,7 +73,7 @@ class PortalSettings extends Settings
 
     public ?string $footer_color = null;
 
-    public ?string $footer_copyright_statement;
+    public ?string $footer_copyright_statement = null;
 
     /**
     * Knowledge Base Portal
@@ -88,6 +89,11 @@ class PortalSettings extends Settings
     public ?string $knowledge_management_portal_rounding = null;
 
     public ?string $knowledge_management_portal_authorized_domain = null;
+
+    public static function getSettingsPropertyModelClass(): string
+    {
+        return PortalSettingsProperty::class;
+    }
 
     public static function group(): string
     {

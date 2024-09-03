@@ -39,7 +39,6 @@ namespace App\Providers\Filament;
 use Filament\Panel;
 use App\Models\Tenant;
 use Filament\PanelProvider;
-use App\Models\SettingsProperty;
 use App\Filament\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
 use Filament\Actions\ExportAction;
@@ -102,8 +101,7 @@ class AdminPanelProvider extends PanelProvider
                 }
 
                 $themeSettings = app(ThemeSettings::class);
-                $settingsProperty = SettingsProperty::getInstance('theme.is_favicon_active');
-                $favicon = $settingsProperty->getFirstMedia('favicon');
+                $favicon = $themeSettings::getSettingsPropertyModel('theme.is_favicon_active')->getFirstMedia('favicon');
 
                 return $themeSettings->is_favicon_active && $favicon ? $favicon->getTemporaryUrl(now()->addMinutes(5)) : asset('/images/default-favicon.png');
             })

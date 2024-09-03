@@ -34,28 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Settings;
+namespace AdvisingApp\Theme\Settings\SettingsProperties;
 
-use Spatie\LaravelSettings\Settings;
+use App\Models\SettingsPropertyWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class GoogleCalendarSettings extends Settings
+class ThemeSettingsProperty extends SettingsPropertyWithMedia
 {
-    public bool $is_enabled = false;
-
-    public ?string $client_id = null;
-
-    public ?string $client_secret = null;
-
-    public static function group(): string
+    public function registerMediaConversions(Media $media = null): void
     {
-        return 'google_calendar';
+        $this->addMediaConversion('logo-height-250px')
+            ->performOnCollections('logo', 'dark_logo')
+            ->height(250)
+            ->keepOriginalImageFormat();
     }
 
-    public static function encrypted(): array
+    public function registerMediaCollections(): void
     {
-        return [
-            'client_id',
-            'client_secret',
-        ];
+        $this->addMediaCollection('logo')
+            ->singleFile()
+            ->acceptsMimeTypes([
+                'image/png',
+                'image/jpeg',
+                'image/webp',
+                'image/jpg',
+                'image/svg',
+            ]);
+
+        $this->addMediaCollection('dark_logo')
+            ->singleFile()
+            ->acceptsMimeTypes([
+                'image/png',
+                'image/jpeg',
+                'image/webp',
+                'image/jpg',
+                'image/svg',
+            ]);
     }
 }

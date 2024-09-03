@@ -36,23 +36,19 @@
 
 namespace App\Listeners;
 
-use App\Settings\Contracts\HasDefaultSettings;
+use ReflectionClass;
 use Spatie\LaravelSettings\Events\LoadingSettings;
 
 class LoadSettingsDefaults
 {
     public function handle(LoadingSettings $event): void
     {
-        if (! is_a($event->settingsClass, HasDefaultSettings::class, allow_string: true)) {
-            return;
-        }
-
-        foreach ($event->settingsClass::defaults() as $key => $value) {
-            if ($event->properties->has($key)) {
+        foreach ((new ReflectionClass($event->settingsClass))->getProperties() as $property) {
+            if ($event->properties->has($property->getName())) {
                 continue;
             }
 
-            $event->properties->put($key, $value);
+            $event->properties->put($property->getName(), $property->getDefaultValue());
         }
     }
 }

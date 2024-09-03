@@ -40,7 +40,7 @@ use Spatie\LaravelSettings\Settings;
 
 abstract class IntegrationSettings extends Settings
 {
-    public bool $is_enabled;
+    public bool $is_enabled = false;
 
     abstract public function isConfigured(): bool;
 

@@ -40,11 +40,11 @@ use Spatie\LaravelSettings\Settings;
 
 class OlympusSettings extends Settings
 {
-    public ?string $application_id;
+    public ?string $application_id = null;
 
-    public ?string $key;
+    public ?string $key = null;
 
-    public ?string $url;
+    public ?string $url = null;
 
     public static function repository(): ?string
     {

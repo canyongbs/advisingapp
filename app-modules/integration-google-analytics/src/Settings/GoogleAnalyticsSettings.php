@@ -40,9 +40,9 @@ use Spatie\LaravelSettings\Settings;
 
 class GoogleAnalyticsSettings extends Settings
 {
-    public bool $is_enabled;
+    public bool $is_enabled = false;
 
-    public ?string $id;
+    public ?string $id = null;
 
     public static function group(): string
     {

@@ -34,12 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace App\Settings\Contracts;
+namespace App\Settings;
 
-interface HasDefaultSettings
+use Spatie\LaravelSettings\Settings;
+use App\Models\SettingsPropertyWithMedia;
+use Spatie\LaravelSettings\SettingsRepositories\SettingsRepository;
+use Spatie\LaravelSettings\SettingsRepositories\DatabaseSettingsRepository;
+
+abstract class SettingsWithMedia extends Settings
 {
     /**
-     * @return array<string, mixed>
+     * @return class-string<SettingsPropertyWithMedia>
      */
-    public static function defaults(): array;
+    abstract public static function getSettingsPropertyModelClass(): string;
+
+    public function getRepository(): SettingsRepository
+    {
+        return new DatabaseSettingsRepository([
+            ...config('settings.repositories.database'),
+            ...[
+                'model' => static::getSettingsPropertyModelClass(),
+            ],
+        ]);
+    }
+
+    public static function getSettingsPropertyModel(string $property): SettingsPropertyWithMedia
+    {
+        return static::getSettingsPropertyModelClass()::getInstance($property);
+    }
 }
