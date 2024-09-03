@@ -85,6 +85,11 @@ class ProspectPolicy
 
     public function update(Authenticatable $authenticatable, Prospect $prospect): Response
     {
+        
+        if ($prospect->student()->exists()) {
+            return Response::deny('Edit Access Denied As Prospect is Converted to Student.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["prospect.{$prospect->id}.update"],
             denyResponse: 'You do not have permission to update this prospect.'

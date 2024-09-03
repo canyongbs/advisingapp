@@ -72,6 +72,7 @@ use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 use Filament\Infolists\Components\Fieldset as InfolistFieldset;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords\Actions\DraftWithAiAction;
+use AdvisingApp\Prospect\Models\Prospect;
 
 class ManageRelatedEngagementRecords extends ManageRelatedRecords
 {
@@ -275,6 +276,14 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                     ->label('New Email or Text')
                     ->modalHeading('Create new email or text')
                     ->createAnother(false)
+                    ->visible(function(){
+                        
+                        if($this->getOwnerRecord() instanceof Prospect && $this->getOwnerRecord()->student_id){
+                           return false;
+                        }
+
+                        return true;
+                    })
                     ->action(function (array $data, Form $form) {
                         $engagement = new Engagement($data);
                         $engagement->recipient()->associate($this->getRecord());

@@ -51,6 +51,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
+use AdvisingApp\Prospect\Models\Prospect;
 
 class EngagementFilesRelationManager extends RelationManager
 {
@@ -115,7 +116,8 @@ class EngagementFilesRelationManager extends RelationManager
                     }),
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                        ->visible($this->getOwnerRecord() instanceof Prospect && $this->getOwnerRecord()->student_id ? false : true)
             ])
             ->actions([
                 Action::make('download')
@@ -129,7 +131,8 @@ class EngagementFilesRelationManager extends RelationManager
                                     ->getPathRelativeToRoot()
                             )
                     ),
-                EditAction::make(),
+                EditAction::make()
+                        ->visible($this->getOwnerRecord() instanceof Prospect && $this->getOwnerRecord()->student_id ? false : true),
                 DeleteAction::make(),
             ])
             ->bulkActions([

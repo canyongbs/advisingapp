@@ -48,5 +48,10 @@ trait ProspectHolisticViewPage
             PanelsRenderHook::PAGE_START,
             fn (): View => view('prospect::student-converted-badge')
         );
+
+        FilamentView::registerRenderHook(
+          PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER,
+          fn (): View => view('prospect::lock-icon'),
+        );
     }
 }

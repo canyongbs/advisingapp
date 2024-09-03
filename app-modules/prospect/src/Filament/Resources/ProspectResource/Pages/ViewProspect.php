@@ -48,6 +48,10 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
+use Laravel\Pennant\Feature;
 
 class ViewProspect extends ViewRecord
 {
@@ -135,9 +139,9 @@ class ViewProspect extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists()),
-            DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists()),
-            EditAction::make(),
+            ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists() && Feature::active('convert_prospect_to_student')),
+            DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists() && Feature::active('convert_prospect_to_student')),
+            EditAction::make()->visible(fn (Prospect $record) => !$record->student()->exists()),
             SubscribeHeaderAction::make(),
         ];
     }

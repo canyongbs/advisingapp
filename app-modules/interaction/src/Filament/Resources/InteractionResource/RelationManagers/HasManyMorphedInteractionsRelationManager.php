@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\RelationManagers;
 
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Tables\Table;
 use Carbon\CarbonInterface;
 use Filament\Infolists\Infolist;
@@ -112,12 +113,14 @@ class HasManyMorphedInteractionsRelationManager extends RelationManager
                 TextColumn::make('description'),
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                            ->visible(fn($livewire) => $livewire->record instanceof Prospect && $livewire->record->student_id ? false : true)
             ])
             ->actions([
                 ViewAction::make()
                     ->modalHeading('Interaction Details'),
-                EditAction::make(),
+                EditAction::make()
+                            ->visible(fn($livewire) => $livewire->record instanceof Prospect && $livewire->record->student_id ? false : true)
             ]);
     }
 }
