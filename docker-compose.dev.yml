@@ -42,7 +42,10 @@ services:
     volumes:
       - '.:/var/www/html'
     networks:
-      - cgbs-development
+      cgbs-development:
+        ipv4_address: 172.16.1.3
+    dns:
+      - 172.16.1.1
     depends_on:
       - advisingapp-redis
       - advisingapp-mailpit
