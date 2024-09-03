@@ -63,6 +63,14 @@ class ListRoles extends ListRecords
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                /** @var User $user */
+                $user = auth()->user();
+
+                if (! $user?->hasRole('SaaS Global Admin')) {
+                    $query->where('name', '!=', 'SaaS Global Admin');
+                }
+            })
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name')
@@ -80,8 +88,6 @@ class ListRoles extends ListRecords
             ])
             ->actions([
                 ViewAction::make(),
-            ])
-            ->bulkActions([
             ]);
     }
 
