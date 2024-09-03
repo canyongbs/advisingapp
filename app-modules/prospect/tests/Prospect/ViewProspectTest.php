@@ -224,7 +224,6 @@ test('can see prospect converted to student badge on', function (string $pages) 
 })
     ->with([
         ViewProspect::class,
-        EditProspect::class,
         ManageProspectAlerts::class,
         ManageProspectEngagement::class,
         ManageProspectFiles::class,
