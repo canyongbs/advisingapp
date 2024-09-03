@@ -106,7 +106,8 @@
         "talkroute/message-segment-calculator": "^1.0",
         "tapp/filament-timezone-field": "^3.0",
         "tpetry/laravel-postgresql-enhanced": "^0.40",
-        "twilio/sdk": "^7.15"
+        "twilio/sdk": "^7.15",
+        "phpoffice/phpspreadsheet": "dev-security-patch as 1.29.1"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.15",
