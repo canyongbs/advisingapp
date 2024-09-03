@@ -38,7 +38,6 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use App\Models\User;
 use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
 use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Radio;
@@ -204,8 +203,8 @@ class EditProspect extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists() && Feature::active('convert_prospect_to_student')),
-            DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists() && Feature::active('convert_prospect_to_student')),
+            ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists()),
+            DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists()),
             ViewAction::make(),
             DeleteAction::make(),
         ];

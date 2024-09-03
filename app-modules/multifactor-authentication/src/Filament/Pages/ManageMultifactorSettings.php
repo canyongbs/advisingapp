@@ -38,7 +38,6 @@ namespace AdvisingApp\MultifactorAuthentication\Filament\Pages;
 
 use App\Models\User;
 use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use App\Filament\Clusters\GlobalSettings;
@@ -58,10 +57,6 @@ class ManageMultifactorSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
-        if (Feature::inactive('introduce-multifactor-authentication')) {
-            return false;
-        }
-
         /** @var User $user */
         $user = auth()->user();
 

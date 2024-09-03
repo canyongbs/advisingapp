@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Notification\Notifications\Messages;
 
-use Laravel\Pennant\Feature;
 use App\Models\NotificationSetting;
 use Illuminate\Notifications\Messages\MailMessage as BaseMailMessage;
 
@@ -59,13 +58,11 @@ class MailMessage extends BaseMailMessage
 
     public function settings(?NotificationSetting $setting): static
     {
-        if (Feature::active('notification-settings-from-name')) {
-            if (! empty($setting->from_name)) {
-                $this->from(
-                    address: config('mail.from.address'),
-                    name: $setting->from_name,
-                );
-            }
+        if (! empty($setting->from_name)) {
+            $this->from(
+                address: config('mail.from.address'),
+                name: $setting->from_name,
+            );
         }
 
         $this->viewData = [

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
-use Laravel\Pennant\Feature;
 use App\Settings\DisplaySettings;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
@@ -49,11 +48,7 @@ class KnowledgeManagementPortalArticleController extends Controller
 {
     public function show(KnowledgeBaseCategory $category, KnowledgeBaseArticle $article): JsonResponse
     {
-        $articleUpdatedAt = $article->updated_at;
-
-        if (Feature::active('display-settings')) {
-            $articleUpdatedAt = $articleUpdatedAt->setTimezone(app(DisplaySettings::class)->timezone);
-        }
+        $articleUpdatedAt = $article->updated_at->setTimezone(app(DisplaySettings::class)->timezone);
 
         return response()->json([
             'category' => KnowledgeBaseCategoryData::from([
