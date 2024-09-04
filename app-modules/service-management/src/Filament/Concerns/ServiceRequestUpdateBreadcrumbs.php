@@ -53,7 +53,7 @@ trait ServiceRequestUpdateBreadcrumbs
             $serviceRequestResource::getUrl() => $serviceRequestResource::getBreadcrumb(),
             $serviceRequestResource::getUrl('view', ['record' => $this->getRecord()->serviceRequest]) => $this->getRecord()?->serviceRequest?->service_request_number,
             $manageServiceRequestUpdate::getUrl(['record' => $this->getRecord()->serviceRequest]) => 'Updates',
-            $currentResource::getUrl('view', ['record' => $this->getRecord()?->id]) => Str::limit($this->getRecord()?->id, 18),
+            $currentResource::getUrl('view', ['record' => $this->getRecord()?->getKey()]) => Str::limit($this->getRecord()?->getKey(), 18),
             ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
         ];
 

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Pages;
 
-use Filament\Actions;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
@@ -79,12 +78,5 @@ class ViewServiceRequestUpdate extends ViewRecord
                     ])
                     ->columns(),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
     }
 }

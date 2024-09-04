@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Pages;
 
+use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
 use AdvisingApp\ServiceManagement\Filament\Concerns\ServiceRequestUpdateBreadcrumbs;
@@ -49,4 +50,11 @@ class EditServiceRequestUpdate extends EditRecord
     protected static ?string $navigationLabel = 'Edit';
 
     protected static string $resource = ServiceRequestUpdateResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\DeleteAction::make(),
+        ];
+    }
 }
