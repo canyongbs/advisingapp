@@ -51,7 +51,7 @@ class ThemeSettings extends SettingsWithMedia
 
     public ?string $url = null;
 
-    public string $application_name = 'Advising App';
+    public ?string $application_name = 'Advising App';
 
     public static function group(): string
     {

@@ -80,6 +80,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                     ->schema([
                         TextInput::make('application_name')
                             ->label(false)
+                            ->dehydrated(false)
                             ->maxLength('255'),
                     ])
                     ->visible(FeatureFlag::ApplicationName->active()),

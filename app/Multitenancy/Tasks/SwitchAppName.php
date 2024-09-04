@@ -16,7 +16,7 @@ class SwitchAppName implements SwitchTenantTask
 
     public function makeCurrent(Tenant $tenant): void
     {
-        $appName = app(ThemeSettings::class)->application_name;
+        $appName = app(ThemeSettings::class)->application_name ?? config('app.name');
         $this->setAppName($appName);
     }
 
