@@ -50,7 +50,7 @@
         ) }}"
         alt="{{ config('app.name') }}"
         @class([
-            'h-9',
+            'h-full max-h-9 max-w-full',
             'dark:hidden' => $darkLogo,
         ])
     />
@@ -62,18 +62,18 @@
                 conversionName: 'logo-height-250px',
             ) }}"
             alt="{{ config('app.name') }}"
-            class="h-9 hidden dark:block"
+            class="h-full max-h-9 max-w-full hidden dark:block"
         />
     @endif
 @else
     <img
         src="{{ Vite::asset('resources/images/default-logo-light.svg') }}"
-        class="h-9 dark:hidden block"
+        class="h-full max-h-9 max-w-full dark:hidden block"
 
     />
 
     <img
         src="{{ Vite::asset('resources/images/default-logo-dark.svg') }}"
-        class="h-9 hidden dark:block"
+        class="h-full max-h-9 max-w-full hidden dark:block"
     />
 @endif
