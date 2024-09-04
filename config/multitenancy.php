@@ -84,11 +84,11 @@ return [
         SwitchTenantDatabasesTask::class,
         SwitchSessionDriver::class,
         SwitchAppUrl::class,
+        SwitchAppName::class,
         SwitchMailTask::class,
         SwitchS3FilesystemTask::class,
         SwitchS3PublicFilesystemTask::class,
         // \Spatie\Multitenancy\Tasks\SwitchRouteCacheTask::class,
-        SwitchAppName::class,
     ],
 
     /*

@@ -80,10 +80,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                     ->schema([
                         TextInput::make('application_name')
                             ->label(false)
-                            ->maxLength('255')
-                            ->model(
-                                ThemeSettings::getSettingsPropertyModel('theme.application_name'),
-                            ),
+                            ->maxLength('255'),
                     ])
                     ->visible(FeatureFlag::ApplicationName->active()),
                 Section::make('Partner Favicon')
