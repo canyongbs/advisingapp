@@ -51,6 +51,8 @@ class ThemeSettings extends SettingsWithMedia
 
     public ?string $url = null;
 
+    public string $application_name;
+
     public static function group(): string
     {
         return 'theme';

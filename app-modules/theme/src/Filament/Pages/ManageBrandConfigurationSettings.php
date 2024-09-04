@@ -40,9 +40,11 @@ use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
+use App\Enums\FeatureFlag;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\GlobalSettings;
 use AdvisingApp\Theme\Settings\ThemeSettings;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -73,6 +75,17 @@ class ManageBrandConfigurationSettings extends SettingsPage
     {
         return $form
             ->schema([
+                Section::make('Application Name')
+                    ->aside()
+                    ->schema([
+                        TextInput::make('application_name')
+                            ->label(false)
+                            ->maxLength('255')
+                            ->model(
+                                ThemeSettings::getSettingsPropertyModel('theme.application_name'),
+                            ),
+                    ])
+                    ->visible(FeatureFlag::ApplicationName->active()),
                 Section::make('Partner Favicon')
                     ->aside()
                     ->schema([
