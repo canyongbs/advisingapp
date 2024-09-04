@@ -33,7 +33,6 @@
 --}}
 @php
     use Carbon\Carbon;
-    use Laravel\Pennant\Feature;
     use AdvisingApp\Division\Models\Division;
     use AdvisingApp\Campaign\Settings\CampaignSettings;
     use AdvisingApp\Interaction\Models\InteractionType;
