@@ -127,10 +127,10 @@ class ViewStudent extends ViewRecord
                         TextEntry::make('phone'),
                         TextEntry::make('address'),
                         TextEntry::make('address2')
-                            ->label('Address 2')
+                            ->label('Apartment/Unit Number')
                             ->default('N/A'),
                         TextEntry::make('address3')
-                            ->label('Address 3')
+                            ->label('Additional Address')
                             ->default('N/A'),
                         TextEntry::make('city'),
                         TextEntry::make('state'),
