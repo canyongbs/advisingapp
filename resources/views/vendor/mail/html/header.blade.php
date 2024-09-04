@@ -37,8 +37,8 @@
     use AdvisingApp\Theme\Settings\ThemeSettings;
 
     $themeSettings = app(ThemeSettings::class);
-    $settingsProperty = $themeSettings::getSettingsPropertyModel('theme.is_logo_active');
-    $logo = $settingsProperty->getFirstMedia('logo');
+    $settingsProperty = SettingsProperty::getInstance('theme.is_logo_active');
+    $logo = $settingsProperty->getSettingsPropertyModel('theme.is_logo_active')->getFirstMedia('logo');
 @endphp
 <tr>
     <td class="header">
@@ -47,15 +47,15 @@
                 {{-- TODO: Don't use temporary urls? --}}
                 <img src="{{ $settings?->getFirstTemporaryUrl(now()->addDays(6), 'logo') }}"
                      style="height: 75px; max-height: 75px; max-width: 100vw;"
-                     alt="{{ config('app.name') }}">
+                     alt="{{ $themeSettings->application_name }}">
             @elseif ($themeSettings->is_logo_active && $logo)
                 <img src="{{ $logo->getTemporaryUrl(now()->addDays(6)) }}"
                      style="height: 75px; max-height: 75px; max-width: 100vw;"
-                     alt="{{ config('app.name') }}">
+                     alt="{{ $themeSettings->application_name }}">
             @else
                 <img src="{{ url(Vite::asset('resources/images/default-logo-light.svg')) }}"
                      style="height: 75px; max-height: 75px; max-width: 100vw;"
-                     alt="{{ config('app.name') }}">
+                     alt="{{ $themeSettings->application_name }}">
             @endif
         </a>
     </td>
