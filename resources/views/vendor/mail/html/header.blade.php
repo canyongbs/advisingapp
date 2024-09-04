@@ -37,7 +37,7 @@
     use AdvisingApp\Theme\Settings\ThemeSettings;
 
     $themeSettings = app(ThemeSettings::class);
-    $settingsProperty = SettingsProperty::getInstance('theme.is_logo_active');
+    $settingsProperty = $themeSettings::getSettingsPropertyModel('theme.is_logo_active');
     $logo = $settingsProperty->getFirstMedia('logo');
 @endphp
 <tr>
