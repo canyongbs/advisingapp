@@ -92,9 +92,9 @@ class ViewProspect extends ViewRecord
                         TextEntry::make('address')
                             ->label('Address'),
                         TextEntry::make('address_2')
-                            ->label('Address 2'),
+                            ->label('Apartment/Unit Number'),
                         TextEntry::make('address_3')
-                            ->label('Address 3'),
+                            ->label('Additional Address'),
                         TextEntry::make('city')
                             ->label('City'),
                         TextEntry::make('state')

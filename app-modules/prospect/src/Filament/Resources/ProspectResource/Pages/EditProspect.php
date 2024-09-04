@@ -130,11 +130,11 @@ class EditProspect extends EditRecord
                             ->string()
                             ->maxLength(255),
                         TextInput::make('address_2')
-                            ->label('Address 2')
+                            ->label('Apartment/Unit Number')
                             ->string()
                             ->maxLength(255),
                         TextInput::make('address_3')
-                            ->label('Address 3')
+                            ->label('Additional Address')
                             ->string()
                             ->maxLength(255),
                         TextInput::make('city')
