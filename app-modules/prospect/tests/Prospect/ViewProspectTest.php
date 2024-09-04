@@ -238,5 +238,4 @@ test('can see prospect converted to student badge on', function (string $pages) 
         ProspectServiceManagement::class,
         ManageProspectEvents::class,
         ManageProspectPrograms::class,
-    ])
-    ->only();
+    ]);
