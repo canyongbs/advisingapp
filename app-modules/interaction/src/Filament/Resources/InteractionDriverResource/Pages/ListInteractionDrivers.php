@@ -38,7 +38,6 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\P
 
 use Filament\Actions;
 use Filament\Tables\Table;
-use Laravel\Pennant\Feature;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
@@ -63,13 +62,11 @@ class ListInteractionDrivers extends ListRecords
                     ->searchable(),
                 IconColumn::make('is_default')
                     ->label('Default')
-                    ->boolean()
-                    ->visible(fn (): bool => Feature::active('interaction_driver_default')),
+                    ->boolean(),
             ])
             ->filters([
                 Filter::make('is_default')
                     ->label('Default')
-                    ->visible(fn (): bool => Feature::active('interaction_driver_default'))
                     ->query(fn (Builder $query) => $query->where('is_default', true)),
             ])
             ->actions([

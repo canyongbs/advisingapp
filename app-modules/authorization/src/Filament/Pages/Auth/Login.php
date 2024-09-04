@@ -38,7 +38,6 @@ namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
 use App\Models\User;
 use Filament\Actions\Action;
-use Laravel\Pennant\Feature;
 use Filament\Facades\Filament;
 use Livewire\Attributes\Locked;
 use Filament\Forms\Components\TextInput;
@@ -102,57 +101,55 @@ class Login extends FilamentLogin
             $this->throwFailureValidationException();
         }
 
-        if (Feature::active('introduce-multifactor-authentication')) {
-            $mfaSettings = app(MultifactorSettings::class);
+        $mfaSettings = app(MultifactorSettings::class);
 
-            if ($mfaSettings->required) {
-                if (! $user->hasConfirmedMultifactor() && empty($data['code'])) {
-                    $user->enableMultifactorAuthentication();
+        if ($mfaSettings->required) {
+            if (! $user->hasConfirmedMultifactor() && empty($data['code'])) {
+                $user->enableMultifactorAuthentication();
 
-                    $this->needsMfaSetup = true;
-                    $this->needsMFA = true;
+                $this->needsMfaSetup = true;
+                $this->needsMFA = true;
 
-                    return null;
-                }
+                return null;
+            }
+        }
+
+        if ($user->hasEnabledMultifactor()) {
+            if (empty($data['code'])) {
+                Filament::auth()->logout();
+
+                $this->needsMFA = true;
+
+                return null;
             }
 
-            if ($user->hasEnabledMultifactor()) {
-                if (empty($data['code'])) {
-                    Filament::auth()->logout();
+            if (! $this->isValidCode($user, $data['code'])) {
+                Filament::auth()->logout();
 
-                    $this->needsMFA = true;
+                $this->needsMFA = false;
 
-                    return null;
-                }
+                $this->usingRecoveryCode = false;
 
-                if (! $this->isValidCode($user, $data['code'])) {
-                    Filament::auth()->logout();
+                $this->data['code'] = null;
 
-                    $this->needsMFA = false;
+                throw ValidationException::withMessages([
+                    'data.email' => 'Multifactor authentication failed.',
+                ]);
+            }
 
-                    $this->usingRecoveryCode = false;
+            if (empty($user->multifactor_confirmed_at)) {
+                $user->confirmMultifactorAuthentication();
 
-                    $this->data['code'] = null;
+                $this->mountAction('recoveryCodes', [
+                    'user' => $user,
+                    'remember' => $data['remember'],
+                ]);
 
-                    throw ValidationException::withMessages([
-                        'data.email' => 'Multifactor authentication failed.',
-                    ]);
-                }
+                return null;
+            }
 
-                if (empty($user->multifactor_confirmed_at)) {
-                    $user->confirmMultifactorAuthentication();
-
-                    $this->mountAction('recoveryCodes', [
-                        'user' => $user,
-                        'remember' => $data['remember'],
-                    ]);
-
-                    return null;
-                }
-
-                if ($this->usingRecoveryCode) {
-                    $user->destroyRecoveryCode($data['code']);
-                }
+            if ($this->usingRecoveryCode) {
+                $user->destroyRecoveryCode($data['code']);
             }
         }
 

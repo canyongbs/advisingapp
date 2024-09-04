@@ -42,7 +42,6 @@ use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
-use Laravel\Pennant\Feature;
 use Filament\Facades\Filament;
 use App\Settings\DisplaySettings;
 use Filament\Actions\ActionGroup;
@@ -255,7 +254,6 @@ class EditProfile extends Page
                                 $timezone = config('app.timezone');
 
                                 if (
-                                    Feature::active('display-settings') &&
                                     filled($displaySettingsTimezone = app(DisplaySettings::class)->timezone)
                                 ) {
                                     $timezone = $displaySettingsTimezone;

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Campaign\Settings;
 
-use Laravel\Pennant\Feature;
 use App\Settings\DisplaySettings;
 use Spatie\LaravelSettings\Settings;
 
@@ -51,7 +50,7 @@ class CampaignSettings extends Settings
 
     public function getActionExecutionTimezone(): string
     {
-        return $this->action_execution_timezone ?? (Feature::active('display-settings') ? app(DisplaySettings::class)->timezone : null) ?? config('app.timezone');
+        return $this->action_execution_timezone ?? app(DisplaySettings::class)->timezone ?? config('app.timezone');
     }
 
     public function getActionExecutionTimezoneLabel(): string

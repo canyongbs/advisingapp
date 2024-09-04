@@ -37,7 +37,6 @@
 namespace App\Filament\Pages;
 
 use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
 use Filament\Pages\SettingsPage;
 use App\Settings\DisplaySettings;
 use App\Filament\Clusters\GlobalSettings;
@@ -57,10 +56,6 @@ class ManageDisplaySettings extends SettingsPage
 
     public static function canAccess(): bool
     {
-        if (! Feature::active('display-settings')) {
-            return false;
-        }
-
         return auth()->user()->can('display_settings.manage');
     }
 

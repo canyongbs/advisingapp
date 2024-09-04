@@ -38,7 +38,6 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Laravel\Pennant\Feature;
 use Filament\Infolists\Infolist;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Cache;
@@ -102,7 +101,7 @@ class ManageStudentAlerts extends ManageRelatedRecords
                 TextEntry::make('severity'),
                 TextEntry::make('suggested_intervention'),
                 TextEntry::make('status'),
-                TextEntry::make('createdBy.name')->label('Created By')->default('N/A')->visible(Feature::active('alert_created_by')),
+                TextEntry::make('createdBy.name')->label('Created By')->default('N/A'),
                 TextEntry::make('created_at')->label('Created Date'),
             ]);
     }
@@ -156,9 +155,7 @@ class ManageStudentAlerts extends ManageRelatedRecords
             ->headerActions([
                 CreateAction::make()
                     ->mutateFormDataUsing(function (array $data): array {
-                        if (Feature::active('alert_created_by')) {
-                            $data['created_by'] = auth()->id();
-                        }
+                        $data['created_by'] = auth()->id();
 
                         return $data;
                     }),

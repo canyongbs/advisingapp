@@ -38,13 +38,11 @@ namespace AdvisingApp\KnowledgeBase\Filament\Actions;
 
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Laravel\Pennant\Feature;
 use App\Settings\LicenseSettings;
 use Filament\Resources\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Vite;
 use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Settings\AiSettings;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use AdvisingApp\Ai\Actions\CompletePrompt;
@@ -78,9 +76,7 @@ class DraftKnowledgeBaseArticleWithAiAction extends Action
                     ->required(),
             ])
             ->action(function (array $data, Get $get, Set $set, Page $livewire) {
-                $model = Feature::active('ai-integrated-assistant-settings')
-                    ? app(AiIntegratedAssistantSettings::class)->default_model
-                    : app(AiSettings::class)->default_model;
+                $model = app(AiIntegratedAssistantSettings::class)->default_model;
 
                 $userName = auth()->user()->name;
                 $userJobTitle = auth()->user()->job_title ?? 'staff member';

@@ -37,7 +37,6 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages;
 
 use Filament\Tables\Table;
-use Laravel\Pennant\Feature;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\EditAction;
@@ -63,13 +62,11 @@ class ListInteractionInitiatives extends ListRecords
                     ->searchable(),
                 IconColumn::make('is_default')
                     ->label('Default')
-                    ->visible(fn (): bool => Feature::active('interaction_initiative_default'))
                     ->boolean(),
             ])
             ->filters([
                 Filter::make('is_default')
                     ->label('Default')
-                    ->visible(fn (): bool => Feature::active('interaction_initiative_default'))
                     ->query(fn (Builder $query) => $query->where('is_default', true)),
             ])
             ->actions([

@@ -37,7 +37,6 @@
 namespace AdvisingApp\Interaction\Filament\Resources;
 
 use Filament\Forms\Form;
-use Laravel\Pennant\Feature;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
@@ -91,8 +90,7 @@ class InteractionDriverResource extends Resource
                         return "The current default status is '{$currentDefault}', you are replacing it.";
                     })
                     ->hintColor('danger')
-                    ->columnStart(1)
-                    ->visible(fn (): bool => Feature::active('interaction_driver_default')),
+                    ->columnStart(1),
             ]);
     }
 
