@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Pages;
 
-use Filament\Actions;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
@@ -46,10 +45,17 @@ use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestUpdateDirection;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
+use AdvisingApp\ServiceManagement\Filament\Concerns\ServiceRequestUpdateBreadcrumbs;
 
 class ViewServiceRequestUpdate extends ViewRecord
 {
+    use ServiceRequestUpdateBreadcrumbs;
+
     protected static string $resource = ServiceRequestUpdateResource::class;
+
+    protected static ?string $breadcrumb = 'View';
+
+    protected static ?string $navigationLabel = 'View';
 
     public function infolist(Infolist $infolist): Infolist
     {
@@ -71,12 +77,5 @@ class ViewServiceRequestUpdate extends ViewRecord
                     ])
                     ->columns(),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\EditAction::make(),
-        ];
     }
 }

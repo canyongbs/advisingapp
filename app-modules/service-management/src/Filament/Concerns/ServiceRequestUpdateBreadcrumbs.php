@@ -34,25 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Pages;
+namespace AdvisingApp\ServiceManagement\Filament\Concerns;
 
-use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
+use Illuminate\Support\Str;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestUpdate;
 
-class ListServiceRequestUpdates extends ListRecords
+trait ServiceRequestUpdateBreadcrumbs
 {
-    protected static string $resource = ServiceRequestUpdateResource::class;
-
-    public static function canAccess(array $arguments = []): bool
+    public function getBreadcrumbs(): array
     {
-        return false;
-    }
+        $serviceRequestResource = ServiceRequestResource::class;
+        $manageServiceRequestUpdate = ManageServiceRequestUpdate::class;
+        $currentResource = static::getResource();
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\CreateAction::make(),
+        $breadcrumbs = [
+            'Service Management',
+            $serviceRequestResource::getUrl() => $serviceRequestResource::getBreadcrumb(),
+            $serviceRequestResource::getUrl('view', ['record' => $this->getRecord()->serviceRequest]) => $this->getRecord()?->serviceRequest?->service_request_number,
+            $manageServiceRequestUpdate::getUrl(['record' => $this->getRecord()->serviceRequest]) => 'Updates',
+            $currentResource::getUrl('view', ['record' => $this->getRecord()?->getKey()]) => Str::limit($this->getRecord()?->getKey(), 18),
+            ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
         ];
+
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
+        }
+
+        return $breadcrumbs;
     }
 }
