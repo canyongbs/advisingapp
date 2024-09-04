@@ -75,6 +75,7 @@ class EngagementPolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
+        return Response::deny('You');
         return $authenticatable->canOrElse(
             abilities: 'engagement.create',
             denyResponse: 'You do not have permission to create engagements.'

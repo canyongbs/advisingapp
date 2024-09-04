@@ -58,8 +58,12 @@ class EngagementFilePolicy
         );
     }
 
-    public function create(Authenticatable $authenticatable): Response
+    public function create(Authenticatable $authenticatable,$parentRecord = null): Response
     {
+       if($parentRecord && $parentRecord->student_id){
+            return Response::deny('You cannot create engagement file as Prospect has been converted to a Student.');
+       }
+
         return $authenticatable->canOrElse(
             abilities: 'engagement_file.create',
             denyResponse: 'You do not have permissions to create engagement files.'
@@ -68,6 +72,11 @@ class EngagementFilePolicy
 
     public function update(Authenticatable $authenticatable, EngagementFile $engagementFile): Response
     {
+      
+        if(count($engagementFile->prospects) && $engagementFile->prospects->first()->student_id){
+            return Response::deny('You cannot edit engagement file as Prospect has been converted to a Student.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["engagement_file.{$engagementFile->id}.update"],
             denyResponse: 'You do not have permissions to update this engagement file.'

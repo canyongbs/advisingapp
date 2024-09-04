@@ -86,6 +86,10 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
 
     public function update(Authenticatable $authenticatable, Interaction $interaction): Response
     {
+        if($interaction->interactable_type == 'prospect' && $interaction->interactable->student_id){
+            return Response::deny('You do not have permission to update this interaction.');
+        }
+
         if (! $authenticatable->can('view', $interaction->interactable)) {
             return Response::deny('You do not have permission to update this interaction.');
         }

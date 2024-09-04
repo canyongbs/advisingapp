@@ -157,7 +157,6 @@ class ManageProspectAlerts extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->visible(!$this->getOwnerRecord()->student_id)
                     ->mutateFormDataUsing(function (array $data): array {
                         $data['created_by'] = auth()->id();
 
@@ -166,8 +165,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
             ])
             ->actions([
                 ViewAction::make(),
-                EditAction::make()
-                    ->visible(!$this->getOwnerRecord()->student_id),
+                EditAction::make(),
                 DeleteAction::make(),
             ])
             ->bulkActions([

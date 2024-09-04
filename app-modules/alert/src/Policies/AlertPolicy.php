@@ -83,6 +83,10 @@ class AlertPolicy
 
     public function update(Authenticatable $authenticatable, Alert $alert): Response
     {
+        if($alert->concern_type == 'prospect' && $alert->concern->student_id){
+            return Response::deny('You do not have permission to update this alert.');
+        }
+        
         if (! $authenticatable->hasLicense($alert->concern?->getLicenseType())) {
             return Response::deny('You do not have permission to update this alert.');
         }

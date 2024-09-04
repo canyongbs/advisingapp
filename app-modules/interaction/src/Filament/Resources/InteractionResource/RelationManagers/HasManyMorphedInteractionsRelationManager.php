@@ -114,13 +114,11 @@ class HasManyMorphedInteractionsRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make()
-                            ->visible(fn($livewire) => $livewire->record instanceof Prospect && $livewire->record->student_id ? false : true)
             ])
             ->actions([
                 ViewAction::make()
                     ->modalHeading('Interaction Details'),
                 EditAction::make()
-                            ->visible(fn($livewire) => $livewire->record instanceof Prospect && $livewire->record->student_id ? false : true)
             ]);
     }
 }

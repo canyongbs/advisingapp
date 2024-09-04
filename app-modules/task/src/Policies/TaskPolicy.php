@@ -86,6 +86,10 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
 
     public function update(Authenticatable $authenticatable, Task $task): Response
     {
+        if($task->concern_type == 'prospect' && $task->concern->student_id){
+            return Response::deny('You do not have permission to update this task.');
+        }
+        
         if (! $authenticatable->hasLicense($task->concern?->getLicenseType())) {
             return Response::deny('You do not have permission to update this task.');
         }

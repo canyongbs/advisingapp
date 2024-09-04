@@ -149,7 +149,6 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->visible($this->getOwnerRecord() instanceof Prospect && $this->getOwnerRecord()->student_id ? false : true)
                     ->using(function (array $data, string $model): Model {
                         $data = collect($data);
 
@@ -167,8 +166,7 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
             ])
             ->actions([
                 TaskViewAction::make(),
-                EditAction::make()
-                        ->visible($this->getOwnerRecord() instanceof Prospect && $this->getOwnerRecord()->student_id ? false : true),
+                EditAction::make(),
                 DissociateAction::make()
                     ->using(fn (Task $task) => $task->concern()->dissociate()->save()),
             ])

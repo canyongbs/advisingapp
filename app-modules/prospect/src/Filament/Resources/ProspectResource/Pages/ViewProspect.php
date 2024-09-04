@@ -141,7 +141,7 @@ class ViewProspect extends ViewRecord
         return [
             ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists() && Feature::active('convert_prospect_to_student')),
             DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists() && Feature::active('convert_prospect_to_student')),
-            EditAction::make()->visible(fn (Prospect $record) => !$record->student()->exists()),
+            EditAction::make(),
             SubscribeHeaderAction::make(),
         ];
     }

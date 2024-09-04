@@ -117,7 +117,7 @@ class EngagementFilesRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make()
-                        ->visible($this->getOwnerRecord() instanceof Prospect && $this->getOwnerRecord()->student_id ? false : true)
+                            ->authorize('create',$this->getOwnerRecord())
             ])
             ->actions([
                 Action::make('download')
@@ -131,8 +131,7 @@ class EngagementFilesRelationManager extends RelationManager
                                     ->getPathRelativeToRoot()
                             )
                     ),
-                EditAction::make()
-                        ->visible($this->getOwnerRecord() instanceof Prospect && $this->getOwnerRecord()->student_id ? false : true),
+                EditAction::make(),
                 DeleteAction::make(),
             ])
             ->bulkActions([
