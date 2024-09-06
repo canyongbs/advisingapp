@@ -489,7 +489,9 @@ abstract class BaseOpenAiService implements AiService
         $runData = [
             'assistant_id' => $message->thread->assistant->assistant_id,
             'instructions' => $instructions,
-            'max_completion_tokens' => $aiSettings->max_tokens instanceof AiMaxTokens ? $aiSettings->max_tokens->value : $aiSettings->max_tokens,
+            'max_completion_tokens' => ($aiSettings->max_tokens instanceof AiMaxTokens || gettype($aiSettings->max_tokens) === 'string')
+                ? AiMaxTokens::parse($aiSettings->max_tokens)->getTokens()
+                : $aiSettings->max_tokens,
             'temperature' => $aiSettings->temperature,
         ];
 

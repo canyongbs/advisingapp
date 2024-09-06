@@ -38,20 +38,29 @@ namespace AdvisingApp\Ai\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 
-enum AiMaxTokens: int implements HasLabel
+enum AiMaxTokens: string implements HasLabel
 {
-    case Short = 500;
+    case Short = 'short';
 
-    case Medium = 1000;
+    case Medium = 'medium';
 
-    case Long = 2500;
+    case Long = 'long';
 
     public function getLabel(): ?string
     {
         return $this->name;
     }
 
-    public static function parse(int | self | null $value): ?self
+    public function getTokens(): int
+    {
+        return match ($this) {
+            self::Short => 500,
+            self::Medium => 1000,
+            self::Long => 2500,
+        };
+    }
+
+    public static function parse(string | self | null $value): ?self
     {
         if ($value instanceof self) {
             return $value;

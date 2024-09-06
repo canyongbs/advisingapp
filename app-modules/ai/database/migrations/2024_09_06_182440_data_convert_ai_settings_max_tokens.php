@@ -52,16 +52,16 @@ return new class () extends Migration {
             $maxTokens = $maxTokensSetting->payload;
 
             $newPayload = match ($maxTokens) {
-                150 => 500,
-                350 => 1000,
-                500 => 2500,
-                default => 500,
+                150 => 'short',
+                350 => 'medium',
+                500 => 'long',
+                default => 'short',
             };
 
             DB::table('settings')
                 ->where('group', 'ai')
                 ->where('name', 'max_tokens')
-                ->update(['payload' => $newPayload]);
+                ->update(['payload' => json_encode($newPayload)]);
         }
 
         FeatureFlag::AiSettingsMaxTokensUpdate->activate();
@@ -82,10 +82,10 @@ return new class () extends Migration {
             $maxTokens = $maxTokensSetting->payload;
 
             $newPayload = match ($maxTokens) {
-                500 => 150,
-                1000 => 350,
-                2500 => 500,
-                default => 150,
+                '"short"' => 150,
+                '"medium"' => 350,
+                '"long"' => 500,
+                default => '"short"',
             };
 
             DB::table('settings')
