@@ -41,6 +41,7 @@ use AdvisingApp\Task\Models\Task;
 use Illuminate\Auth\Access\Response;
 use App\Concerns\PerformsLicenseChecks;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Prospect\Models\Prospect;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 
 class TaskPolicy implements PerformsChecksBeforeAuthorization
@@ -76,8 +77,12 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
-    public function create(Authenticatable $authenticatable): Response
+    public function create(Authenticatable $authenticatable,?Prospect $prospect = null): Response
     {
+        if ($prospect && $prospect->student_id) {
+            return Response::deny('You cannot create task as Prospect has been converted to a Student.');
+        }
+        
         return $authenticatable->canOrElse(
             abilities: 'task.create',
             denyResponse: 'You do not have permission to create tasks.'

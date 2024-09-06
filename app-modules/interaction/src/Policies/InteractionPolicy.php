@@ -41,6 +41,7 @@ use Illuminate\Auth\Access\Response;
 use App\Concerns\PerformsLicenseChecks;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Prospect\Models\Prospect;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 
 class InteractionPolicy implements PerformsChecksBeforeAuthorization
@@ -76,8 +77,12 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
-    public function create(Authenticatable $authenticatable): Response
+    public function create(Authenticatable $authenticatable, ?Prospect $prospect = null): Response
     {
+        if ($prospect && $prospect->student_id) {
+            return Response::deny('You cannot create alert as Prospect has been converted to a Student.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'interaction.create',
             denyResponse: 'You do not have permission to create interactions.'

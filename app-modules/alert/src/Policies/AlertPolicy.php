@@ -73,8 +73,12 @@ class AlertPolicy
         );
     }
 
-    public function create(Authenticatable $authenticatable): Response
+    public function create(Authenticatable $authenticatable,?Prospect $prospect = null): Response
     {
+        if ($prospect && $prospect->student_id) {
+            return Response::deny('You cannot create alert as Prospect has been converted to a Student.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'alert.create',
             denyResponse: 'You do not have permission to create alerts.'

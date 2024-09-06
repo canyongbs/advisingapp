@@ -149,6 +149,7 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make()
+                    ->authorize('create',$this->getOwnerRecord())
                     ->using(function (array $data, string $model): Model {
                         $data = collect($data);
 

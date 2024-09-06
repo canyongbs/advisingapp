@@ -274,6 +274,7 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                 CreateAction::make()
                     ->label('New Email or Text')
                     ->modalHeading('Create new email or text')
+                    ->authorize('create',$this->getOwnerRecord())
                     ->createAnother(false)
                     ->action(function (array $data, Form $form) {
                         $engagement = new Engagement($data);

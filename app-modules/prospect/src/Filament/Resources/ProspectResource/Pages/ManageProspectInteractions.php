@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
@@ -48,6 +49,7 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionResource\RelationManag
 class ManageProspectInteractions extends ManageRelatedRecords
 {
     use ProspectHolisticViewPage;
+    use HasManyMorphedInteractionsTrait;
 
     protected static string $resource = ProspectResource::class;
 
@@ -64,15 +66,5 @@ class ManageProspectInteractions extends ManageRelatedRecords
     public function form(Form $form): Form
     {
         return (resolve(CreateInteraction::class))->form($form);
-    }
-
-    public function infolist(Infolist $infolist): Infolist
-    {
-        return (resolve(HasManyMorphedInteractionsRelationManager::class))->infolist($infolist);
-    }
-
-    public function table(Table $table): Table
-    {
-        return (resolve(HasManyMorphedInteractionsRelationManager::class))->table($table);
     }
 }
