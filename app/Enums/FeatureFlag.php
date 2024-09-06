@@ -41,8 +41,6 @@ use Laravel\Pennant\Feature;
 
 enum FeatureFlag: string
 {
-    case AiSettingsMaxTokensUpdate = 'ai_settings_max_tokens_update';
-
     public function definition(): Closure
     {
         return match ($this) {
