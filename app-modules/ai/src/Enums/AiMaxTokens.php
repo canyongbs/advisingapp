@@ -34,41 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace App\Enums;
+namespace AdvisingApp\Ai\Enums;
 
-use Closure;
-use Laravel\Pennant\Feature;
+use Filament\Support\Contracts\HasLabel;
 
-enum FeatureFlag: string
+enum AiMaxTokens: string implements HasLabel
 {
-    case AiSettingsMaxTokensUpdate = 'ai_settings_max_tokens_update';
+    case Short = 'short';
 
-    public function definition(): Closure
+    case Medium = 'medium';
+
+    case Long = 'long';
+
+    public function getLabel(): ?string
+    {
+        return $this->name;
+    }
+
+    public function getTokens(): int
     {
         return match ($this) {
-            default => function () {
-                return false;
-            }
+            self::Short => 500,
+            self::Medium => 1000,
+            self::Long => 2500,
         };
     }
 
-    public function active(): bool
+    public static function parse(string | self | null $value): ?self
     {
-        return Feature::active($this->value);
-    }
+        if ($value instanceof self) {
+            return $value;
+        }
 
-    public function activate(): void
-    {
-        Feature::activate($this->value);
-    }
-
-    public function deactivate(): void
-    {
-        Feature::deactivate($this->value);
-    }
-
-    public function purge(): void
-    {
-        Feature::purge($this->value);
+        return self::tryFrom($value);
     }
 }

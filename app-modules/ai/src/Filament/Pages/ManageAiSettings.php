@@ -40,11 +40,13 @@ use Throwable;
 use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
+use App\Enums\FeatureFlag;
 use Filament\Actions\Action;
 use Filament\Pages\SettingsPage;
 use AdvisingApp\Ai\Enums\AiModel;
 use Livewire\Attributes\Computed;
 use Filament\Support\Enums\MaxWidth;
+use AdvisingApp\Ai\Enums\AiMaxTokens;
 use Filament\Forms\Components\Select;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Forms\Components\Section;
@@ -133,7 +135,14 @@ class ManageAiSettings extends SettingsPage
                         350 => 'Medium',
                         500 => 'Long',
                     ])
-                    ->required(),
+                    ->required()
+                    ->visible(fn (): bool => ! FeatureFlag::AiSettingsMaxTokensUpdate->active()),
+                Select::make('max_tokens')
+                    ->label('Response Length')
+                    ->options(AiMaxTokens::class)
+                    ->enum(AiMaxTokens::class)
+                    ->required()
+                    ->visible(fn (): bool => FeatureFlag::AiSettingsMaxTokensUpdate->active()),
                 Slider::make('temperature')
                     ->label('Creativity')
                     ->required()

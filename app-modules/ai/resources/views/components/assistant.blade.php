@@ -426,7 +426,7 @@
                                                         x-on:click="completeResponse"
                                                         x-show="isIncomplete && (messageIndex === (messages.length - 1))"
                                                     >
-                                                        Continue generating
+                                                        Click here to continue generating
                                                     </x-filament::link>
                                                 </div>
                                             </div>
