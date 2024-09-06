@@ -51,7 +51,7 @@ enum AiMaxTokens: int implements HasLabel
         return $this->name;
     }
 
-    public static function parse(string | self | null $value): ?self
+    public static function parse(int | self | null $value): ?self
     {
         if ($value instanceof self) {
             return $value;
