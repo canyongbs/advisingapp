@@ -44,7 +44,6 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use Illuminate\Support\Facades\Http;
 use OpenAI\Contracts\ClientContract;
-use AdvisingApp\Ai\Enums\AiMaxTokens;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\Ai\Models\AiMessageFile;
