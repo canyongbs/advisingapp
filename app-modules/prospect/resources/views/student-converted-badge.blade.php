@@ -33,7 +33,7 @@
 --}}
 @use('AdvisingApp\StudentDataModel\Filament\Resources\StudentResource')
 
-@if (Feature::active('convert_prospect_to_student') && $this->getRecord()->student()->exists())
+@if ($this->getRecord()->student()->exists())
     <x-filament::badge
         class="-mb-4 mt-3 px-3 py-3"
         data-identifier="prospect_converted_to_student"

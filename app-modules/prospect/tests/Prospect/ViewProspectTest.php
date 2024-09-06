@@ -193,6 +193,8 @@ test('can see prospect converted to student badge on', function (string $pages) 
 
     $user->givePermissionTo('user.view-any');
 
+    $user->givePermissionTo('engagement.view-any');
+
     $user->givePermissionTo('engagement_file.view-any');
 
     $user->givePermissionTo('interaction.view-any');
