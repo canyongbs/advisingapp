@@ -40,11 +40,13 @@ use Throwable;
 use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
+use App\Enums\FeatureFlag;
 use Filament\Actions\Action;
 use Filament\Pages\SettingsPage;
 use AdvisingApp\Ai\Enums\AiModel;
 use Livewire\Attributes\Computed;
 use Filament\Support\Enums\MaxWidth;
+use AdvisingApp\Ai\Enums\AiMaxTokens;
 use Filament\Forms\Components\Select;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Forms\Components\Section;
@@ -57,8 +59,6 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Clusters\ArtificialIntelligence;
 use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
 use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
-use AdvisingApp\Ai\Enums\AiMaxTokens;
-use App\Enums\FeatureFlag;
 
 /**
  * @property-read ?AiAssistant $defaultAssistant
