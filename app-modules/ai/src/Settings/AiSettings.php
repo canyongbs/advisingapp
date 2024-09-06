@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Settings;
 
 use AdvisingApp\Ai\Enums\AiModel;
 use Spatie\LaravelSettings\Settings;
+use AdvisingApp\Ai\Enums\AiMaxTokens;
 
 class AiSettings extends Settings
 {
@@ -47,7 +48,7 @@ class AiSettings extends Settings
 
     public ?AiModel $default_model = null;
 
-    public int $max_tokens = 150;
+    public int|AiMaxTokens $max_tokens = AiMaxTokens::Short;
 
     public float $temperature = 0.7;
 

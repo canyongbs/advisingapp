@@ -44,6 +44,7 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use Illuminate\Support\Facades\Http;
 use OpenAI\Contracts\ClientContract;
+use AdvisingApp\Ai\Enums\AiMaxTokens;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\Ai\Models\AiMessageFile;
@@ -488,7 +489,7 @@ abstract class BaseOpenAiService implements AiService
         $runData = [
             'assistant_id' => $message->thread->assistant->assistant_id,
             'instructions' => $instructions,
-            'max_completion_tokens' => $aiSettings->max_tokens,
+            'max_completion_tokens' => $aiSettings->max_tokens instanceof AiMaxTokens ? $aiSettings->max_tokens->value : $aiSettings->max_tokens,
             'temperature' => $aiSettings->temperature,
         ];
 

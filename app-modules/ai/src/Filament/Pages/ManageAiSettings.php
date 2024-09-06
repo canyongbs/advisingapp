@@ -57,6 +57,8 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Clusters\ArtificialIntelligence;
 use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
 use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
+use AdvisingApp\Ai\Enums\AiMaxTokens;
+use App\Enums\FeatureFlag;
 
 /**
  * @property-read ?AiAssistant $defaultAssistant
@@ -133,7 +135,14 @@ class ManageAiSettings extends SettingsPage
                         350 => 'Medium',
                         500 => 'Long',
                     ])
-                    ->required(),
+                    ->required()
+                    ->visible(fn (): bool => ! FeatureFlag::AiSettingsMaxTokensUpdate->active()),
+                Select::make('max_tokens')
+                    ->label('Response Length')
+                    ->options(AiMaxTokens::class)
+                    ->enum(AiMaxTokens::class)
+                    ->required()
+                    ->visible(fn (): bool => FeatureFlag::AiSettingsMaxTokensUpdate->active()),
                 Slider::make('temperature')
                     ->label('Creativity')
                     ->required()
