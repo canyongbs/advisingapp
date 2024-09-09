@@ -36,15 +36,22 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
+use Throwable;
+use App\Models\Tenant;
 use Filament\Infolists\Infolist;
+use App\Settings\OlympusSettings;
+use Spatie\Multitenancy\Landlord;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Support\Facades\FilamentView;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
@@ -165,10 +172,46 @@ class ViewStudent extends ViewRecord
 
     public function sisRefresh()
     {
-        Notification::make()
-            ->title('Student data successfully synced!')
-            ->success()
-            ->send();
+        [$olympusUrl, $olympusKey] = Landlord::execute(function (): array {
+            $settings = app(OlympusSettings::class);
+
+            return [
+                rtrim($settings->url, '/'),
+                $settings->key,
+            ];
+        });
+
+        $tenantId = Tenant::current()->getKey();
+
+        /** @var Student $student */
+        $student = $this->getRecord();
+
+        try {
+            $response = Http::withToken($olympusKey)
+                ->asJson()
+                ->post("{$olympusUrl}/integrations/{$tenantId}/student-on-demand-sync", [
+                    'student' => $student->getKey(),
+                ])
+                ->throw();
+
+            Log::debug($response->status());
+
+            if ($response->ok()) {
+                Log::debug('test');
+                Notification::make()
+                    ->title('Student data sync initiated!')
+                    // ->body('The student data sync has been initiated. Please some time for the data to be updated.')
+                    ->success()
+                    ->send();
+            }
+        } catch (Throwable $e) {
+            report($e);
+
+            Notification::make()
+                ->title('Failed to sync student data.')
+                ->danger()
+                ->send();
+        }
     }
 
     protected function getHeaderActions(): array
