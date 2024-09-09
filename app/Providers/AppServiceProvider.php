@@ -41,19 +41,23 @@ use Sentry\State\Scope;
 use App\Enums\FeatureFlag;
 use App\Models\SystemUser;
 use Laravel\Pennant\Feature;
+use Rector\Caching\CacheFactory;
 
 use function Sentry\configureScope;
 
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Session\SessionManager;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Octane\Commands\ReloadCommand;
 use Filament\Actions\Imports\Jobs\ImportCsv;
+use Illuminate\Session\Middleware\StartSession;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use App\Overrides\Laravel\PermissionMigrationCreator;
 use OpenSearch\Migrations\Filesystem\MigrationStorage;
+use App\Overrides\Laravel\StartSession as OverrideStartSession;
 use App\Overrides\Filament\Actions\Imports\Jobs\ImportCsvOverride;
 use App\Overrides\Filament\Actions\Imports\Jobs\PrepareCsvExportOverride;
 use LastDragon_ru\LaraASP\GraphQL\SearchBy\Types\Condition as GraphQLSearchByTypesCondition;
@@ -82,6 +86,12 @@ class AppServiceProvider extends ServiceProvider
                 ReloadCommand::class,
             ]);
         }
+
+        $this->app->scoped(StartSession::class, function ($app) {
+            return new OverrideStartSession($app->make(SessionManager::class), function () use ($app) {
+                return $app->make(CacheFactory::class);
+            });
+        });
     }
 
     /**

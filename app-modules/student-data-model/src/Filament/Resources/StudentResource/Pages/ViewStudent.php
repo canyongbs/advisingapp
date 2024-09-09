@@ -43,7 +43,6 @@ use App\Settings\OlympusSettings;
 use Spatie\Multitenancy\Landlord;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
@@ -194,24 +193,23 @@ class ViewStudent extends ViewRecord
                 ])
                 ->throw();
 
-            Log::debug($response->status());
-
             if ($response->ok()) {
-                Log::debug('test');
                 Notification::make()
                     ->title('Student data sync initiated!')
-                    // ->body('The student data sync has been initiated. Please some time for the data to be updated.')
+                    ->body('The student data sync has been initiated. Please allow some time for the data to be updated.')
                     ->success()
                     ->send();
             }
+
+            return;
         } catch (Throwable $e) {
             report($e);
-
-            Notification::make()
-                ->title('Failed to sync student data.')
-                ->danger()
-                ->send();
         }
+
+        Notification::make()
+            ->title('Failed to initiate Student data sync.')
+            ->danger()
+            ->send();
     }
 
     protected function getHeaderActions(): array
