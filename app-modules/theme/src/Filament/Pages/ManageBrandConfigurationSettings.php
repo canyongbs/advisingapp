@@ -36,15 +36,18 @@
 
 namespace AdvisingApp\Theme\Filament\Pages;
 
+use Throwable;
 use App\Models\User;
+use App\Models\Tenant;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
-use App\Enums\FeatureFlag;
 use Filament\Pages\SettingsPage;
+use Illuminate\Support\Facades\DB;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use App\Filament\Clusters\GlobalSettings;
 use AdvisingApp\Theme\Settings\ThemeSettings;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -82,8 +85,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->label(false)
                             ->dehydrated(fn (?string $state): bool => filled($state))
                             ->maxLength('255'),
-                    ])
-                    ->visible(FeatureFlag::ApplicationName->active()),
+                    ]),
                 Section::make('Partner Favicon')
                     ->aside()
                     ->schema([
@@ -132,10 +134,91 @@ class ManageBrandConfigurationSettings extends SettingsPage
             ]);
     }
 
+    public function save(): void
+    {
+        DB::beginTransaction();
+
+        try {
+            $this->callHook('beforeValidate');
+
+            $data = $this->form->getState();
+
+            $this->callHook('afterValidate');
+
+            $data = $this->mutateFormDataBeforeSave($data);
+
+            $this->callHook('beforeSave');
+
+            /** @var Tenant $tenant */
+            $tenant = Tenant::current();
+
+            /** @var TenantConfig $config */
+            $config = $tenant->config;
+
+            $config->applicationName = $data['application_name'] ?? config('app.name');
+
+            $tenant->config = $config;
+
+            $tenant->save();
+
+            unset(
+                $data['application_name'],
+            );
+
+            $settings = app(static::getSettings());
+
+            $settings->fill($data);
+            $settings->save();
+
+            $this->callHook('afterSave');
+
+            DB::commit();
+
+            $this->getSavedNotification()?->send();
+
+            if ($redirectUrl = $this->getRedirectUrl()) {
+                $this->redirect($redirectUrl);
+            }
+        } catch (Throwable $exception) {
+            DB::rollBack();
+
+            report($exception);
+
+            Notification::make()
+                ->title('Something went wrong, if this continues please contact support.')
+                ->danger()
+                ->send();
+        }
+    }
+
     public function getRedirectUrl(): ?string
     {
         // After saving, redirect to the current page to refresh
         // the logo preview in the layout.
         return ManageBrandConfigurationSettings::getUrl();
+    }
+
+    protected function fillForm(): void
+    {
+        $this->callHook('beforeFill');
+
+        $settings = app(static::getSettings());
+
+        /** @var Tenant $tenant */
+        $tenant = Tenant::current();
+
+        /** @var TenantConfig $config */
+        $config = $tenant->config;
+
+        $data = $this->mutateFormDataBeforeFill(
+            [
+                ...$settings->toArray(),
+                'application_name' => $config->applicationName ?? config('app.name'),
+            ]
+        );
+
+        $this->form->fill($data);
+
+        $this->callHook('afterFill');
     }
 }

@@ -3,8 +3,8 @@
 namespace App\Multitenancy\Tasks;
 
 use Spatie\Multitenancy\Models\Tenant;
-use AdvisingApp\Theme\Settings\ThemeSettings;
 use Spatie\Multitenancy\Tasks\SwitchTenantTask;
+use App\Multitenancy\DataTransferObjects\TenantConfig;
 
 class SwitchAppName implements SwitchTenantTask
 {
@@ -16,9 +16,12 @@ class SwitchAppName implements SwitchTenantTask
 
     public function makeCurrent(Tenant $tenant): void
     {
-        $appName = app(ThemeSettings::class)->application_name;
-        $appName = ! blank($appName) ? $appName : config('app.name');
-        $this->setAppName($appName);
+        /** @var TenantConfig $config */
+        $config = $tenant->config;
+
+        $this->originalAppName = $config->applicationName ?? config('app.name');
+
+        $this->setAppName($this->originalAppName);
     }
 
     public function forgetCurrent(): void

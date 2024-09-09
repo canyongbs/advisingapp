@@ -48,5 +48,8 @@ class TenantConfig extends Data
         public TenantS3FilesystemConfig $s3Filesystem,
         public TenantS3FilesystemConfig $s3PublicFilesystem,
         public TenantMailConfig $mail,
-    ) {}
+        public ?string $applicationName = null,
+    ) {
+        $this->applicationName = $applicationName ?? config('app.name');
+    }
 }
