@@ -19,9 +19,9 @@ class SwitchAppName implements SwitchTenantTask
         /** @var TenantConfig $config */
         $config = $tenant->config;
 
-        $this->originalAppName = $config->applicationName ?? config('app.name');
+        $appName = $config->applicationName ?? config('app.name');
 
-        $this->setAppName($this->originalAppName);
+        $this->setAppName($appName);
     }
 
     public function forgetCurrent(): void
