@@ -48,7 +48,7 @@ class AiSettings extends Settings
 
     public ?AiModel $default_model = null;
 
-    public string|int|AiMaxTokens $max_tokens = AiMaxTokens::Short;
+    public AiMaxTokens $max_tokens = AiMaxTokens::Short;
 
     public float $temperature = 0.7;
 

@@ -40,7 +40,6 @@ use Throwable;
 use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
-use App\Enums\FeatureFlag;
 use Filament\Actions\Action;
 use Filament\Pages\SettingsPage;
 use AdvisingApp\Ai\Enums\AiModel;
@@ -130,19 +129,9 @@ class ManageAiSettings extends SettingsPage
                     ]),
                 Select::make('max_tokens')
                     ->label('Response Length')
-                    ->options([
-                        150 => 'Short',
-                        350 => 'Medium',
-                        500 => 'Long',
-                    ])
-                    ->required()
-                    ->visible(fn (): bool => ! FeatureFlag::AiSettingsMaxTokensUpdate->active()),
-                Select::make('max_tokens')
-                    ->label('Response Length')
                     ->options(AiMaxTokens::class)
                     ->enum(AiMaxTokens::class)
-                    ->required()
-                    ->visible(fn (): bool => FeatureFlag::AiSettingsMaxTokensUpdate->active()),
+                    ->required(),
                 Slider::make('temperature')
                     ->label('Creativity')
                     ->required()
