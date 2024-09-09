@@ -46,7 +46,6 @@ use AdvisingApp\Ai\Enums\AiModel;
 use Livewire\Attributes\Computed;
 use Filament\Support\Enums\MaxWidth;
 use AdvisingApp\Ai\Enums\AiMaxTokens;
-use AdvisingApp\Ai\Enums\AiMaxTokens;
 use Filament\Forms\Components\Select;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Forms\Components\Section;
