@@ -53,33 +53,34 @@
         src="{{ $logoUrl }}"
         alt="{{ config('app.name') }}"
         @class([
-            'h-full max-h-9 max-w-full',
+            'h-full max-h-9 w-full',
             'dark:hidden' => $darkLogo,
         ])
     />
 
     @if ($darkLogo)
         @php
-            $darkLogoUrl = $darkLogo?->getTemporaryUrl(
+            $darkLogoUrl = $darkLogo->getTemporaryUrl(
                 expiration: now()->addMinutes(5),
                 conversionName: $darkLogo->hasGeneratedConversion('logo-height-250px') ? 'logo-height-250px' : '',
             );
         @endphp
+       
         <img
             src="{{ $darkLogoUrl }}"
             alt="{{ config('app.name') }}"
-            class="h-full max-h-9 max-w-full hidden dark:block"
+            class="h-full max-h-9 w-full hidden dark:block"
         />
     @endif
 @else
     <img
         src="{{ Vite::asset('resources/images/default-logo-light.svg') }}"
-        class="h-full max-h-9 max-w-full dark:hidden block"
+        class="h-full max-h-9 w-full dark:hidden block"
 
     />
 
     <img
         src="{{ Vite::asset('resources/images/default-logo-dark.svg') }}"
-        class="h-full max-h-9 max-w-full hidden dark:block"
+        class="h-full max-h-9 w-full hidden dark:block"
     />
 @endif

@@ -41,34 +41,34 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ThemeSettingsProperty extends SettingsPropertyWithMedia
 {
-    public function registerMediaConversions(Media $media = null): void
-    {
-        $this->addMediaConversion('logo-height-250px')
-            ->performOnCollections('logo', 'dark_logo')
-            ->height(250)
-            ->keepOriginalImageFormat();
-    }
+  public function registerMediaConversions(Media $media = null): void
+  {
+    $this->addMediaConversion('logo-height-250px')
+      ->performOnCollections('logo', 'dark_logo')
+      ->height(250)
+      ->keepOriginalImageFormat();
+  }
 
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('logo')
-            ->singleFile()
-            ->acceptsMimeTypes([
-                'image/png',
-                'image/jpeg',
-                'image/webp',
-                'image/jpg',
-                'image/svg+xml',
-            ]);
+  public function registerMediaCollections(): void
+  {
+    $this->addMediaCollection('logo')
+      ->singleFile()
+      ->acceptsMimeTypes([
+        'image/png',
+        'image/jpeg',
+        'image/webp',
+        'image/jpg',
+        'image/svg+xml',
+      ]);
 
-        $this->addMediaCollection('dark_logo')
-            ->singleFile()
-            ->acceptsMimeTypes([
-                'image/png',
-                'image/jpeg',
-                'image/webp',
-                'image/jpg',
-                'image/svg+xml',
-            ]);
-    }
+    $this->addMediaCollection('dark_logo')
+      ->singleFile()
+      ->acceptsMimeTypes([
+        'image/png',
+        'image/jpeg',
+        'image/webp',
+        'image/jpg',
+        'image/svg+xml',
+      ]);
+  }
 }
