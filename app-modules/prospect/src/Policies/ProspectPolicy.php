@@ -87,7 +87,7 @@ class ProspectPolicy
     {
         
         if ($prospect->student()->exists()) {
-            return Response::deny('Edit Access Denied As Prospect is Converted to Student.');
+            return Response::deny('Edit access denied as Prospect has been converted to a Student.');
         }
 
         return $authenticatable->canOrElse(

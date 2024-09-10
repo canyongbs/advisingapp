@@ -80,7 +80,7 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
     public function create(Authenticatable $authenticatable,$prospect = null): Response
     {
         if ($prospect instanceof Prospect && $prospect->student()->exists()) {
-            return Response::deny('You cannot create task as Prospect has been converted to a Student.');
+            return Response::deny('You cannot create tasks for a Prospect that has been converted to a Student.');
         }
         
         return $authenticatable->canOrElse(
@@ -91,8 +91,8 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
 
     public function update(Authenticatable $authenticatable, Task $task): Response
     {
-        if($task->concern_type == 'prospect' && $task->concern->student_id){
-            return Response::deny('You do not have permission to update this task.');
+        if($task->concern_type === (new Prospect())->getMorphClass() && $task->concern->student_id){
+            return Response::deny('You cannot edit this task as the related Prospect has been converted to a Student.');
         }
         
         if (! $authenticatable->hasLicense($task->concern?->getLicenseType())) {

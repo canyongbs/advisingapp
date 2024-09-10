@@ -51,9 +51,4 @@ class ManageProspectEngagement extends ManageRelatedEngagementRecords
     {
         return 'Manage Prospect Email and Texts';
     }
-
-    public static function canAccess(array $parameters = []): bool
-    {
-        return auth()->user()->can('engagement.view-any');
-    }
 } 

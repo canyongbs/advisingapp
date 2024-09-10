@@ -73,12 +73,8 @@ class EngagementPolicy
         );
     }
 
-    public function create(Authenticatable $authenticatable, ?Prospect $prospect = null): Response
+    public function create(Authenticatable $authenticatable): Response
     {
-        if ($prospect && $prospect->student_id) {
-            return Response::deny('You cannot create engagement as Prospect has been converted to a Student.');
-        }
-
         return $authenticatable->canOrElse(
             abilities: 'engagement.create',
             denyResponse: 'You do not have permission to create engagements.'
@@ -143,10 +139,5 @@ class EngagementPolicy
             abilities: ["engagement.{$engagement->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this engagement.'
         );
-    }
-
-    public function dead(Authenticatable $authenticatable): Response
-    {
-        return Response::deny('dead');
     }
 }

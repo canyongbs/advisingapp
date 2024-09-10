@@ -80,7 +80,7 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
     public function create(Authenticatable $authenticatable, $prospect = null): Response
     {
         if ($prospect instanceof Prospect && $prospect->student()->exists()) {
-            return Response::deny('You cannot create alert as Prospect has been converted to a Student.');
+            return Response::deny('You cannot create interactions for a Prospect that has been converted to a Student.');
         }
 
         return $authenticatable->canOrElse(
@@ -91,8 +91,8 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
 
     public function update(Authenticatable $authenticatable, Interaction $interaction): Response
     {
-        if($interaction->interactable_type == 'prospect' && $interaction->interactable->student_id){
-            return Response::deny('You do not have permission to update this interaction.');
+        if($interaction->interactable_type === (new Prospect())->getMorphClass() && $interaction->interactable->student_id){
+            return Response::deny('You cannot edit this interaction as the related Prospect has been converted to a Student.');
         }
 
         if (! $authenticatable->can('view', $interaction->interactable)) {
