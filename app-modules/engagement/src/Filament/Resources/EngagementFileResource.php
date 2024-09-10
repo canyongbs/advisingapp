@@ -46,7 +46,6 @@ use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\EditE
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\ViewEngagementFile;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\ListEngagementFiles;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\CreateEngagementFile;
-use AdvisingApp\Engagement\Policies\EngagementFilePolicy;
 
 class EngagementFileResource extends Resource
 {

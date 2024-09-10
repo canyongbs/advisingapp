@@ -40,8 +40,8 @@ use App\Models\Authenticatable;
 use AdvisingApp\Task\Models\Task;
 use Illuminate\Auth\Access\Response;
 use App\Concerns\PerformsLicenseChecks;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 
 class TaskPolicy implements PerformsChecksBeforeAuthorization
@@ -82,7 +82,7 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
         if ($prospect && $prospect->student()->exists()) {
             return Response::deny('You cannot create tasks for a Prospect that has been converted to a Student.');
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: 'task.create',
             denyResponse: 'You do not have permission to create tasks.'
@@ -91,10 +91,10 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
 
     public function update(Authenticatable $authenticatable, Task $task): Response
     {
-        if($task->concern_type === (new Prospect())->getMorphClass() && $task->concern->student_id){
+        if ($task->concern_type === (new Prospect())->getMorphClass() && $task->concern->student_id) {
             return Response::deny('You cannot edit this task as the related Prospect has been converted to a Student.');
         }
-        
+
         if (! $authenticatable->hasLicense($task->concern?->getLicenseType())) {
             return Response::deny('You do not have permission to update this task.');
         }

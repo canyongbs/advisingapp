@@ -51,4 +51,4 @@ class ManageProspectEngagement extends ManageRelatedEngagementRecords
     {
         return 'Manage Prospect Email and Texts';
     }
-} 
+}

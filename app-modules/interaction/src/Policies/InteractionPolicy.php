@@ -39,9 +39,9 @@ namespace AdvisingApp\Interaction\Policies;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use App\Concerns\PerformsLicenseChecks;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Prospect\Models\Prospect;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 
 class InteractionPolicy implements PerformsChecksBeforeAuthorization
@@ -91,7 +91,7 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
 
     public function update(Authenticatable $authenticatable, Interaction $interaction): Response
     {
-        if($interaction->interactable_type === (new Prospect())->getMorphClass() && $interaction->interactable->student_id){
+        if ($interaction->interactable_type === (new Prospect())->getMorphClass() && $interaction->interactable->student_id) {
             return Response::deny('You cannot edit this interaction as the related Prospect has been converted to a Student.');
         }
 

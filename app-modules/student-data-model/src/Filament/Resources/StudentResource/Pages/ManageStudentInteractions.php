@@ -36,19 +36,16 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
-use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\RelationManagers\HasManyMorphedInteractionsRelationManager;
 
 class ManageStudentInteractions extends ManageRelatedRecords
 {
     use HasManyMorphedInteractionsTrait;
-    
+
     protected static string $resource = StudentResource::class;
 
     protected static string $relationship = 'interactions';

@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\Interaction\Filament\Concerns;
 
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Prospect\Models\Prospect;
-use App\Filament\Tables\Columns\IdColumn;
+use Filament\Tables\Table;
 use Carbon\CarbonInterface;
-use Filament\Infolists\Components\Fieldset;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use AdvisingApp\Prospect\Models\Prospect;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\Interaction\Models\Interaction;
 
 trait HasManyMorphedInteractionsTrait
 {
@@ -114,15 +114,16 @@ trait HasManyMorphedInteractionsTrait
             ])
             ->headerActions([
                 CreateAction::make()
-                            ->authorize(function(){
-                                $ownerRecord = $this->getOwnerRecord();
-                                return auth()->user()->can('create', [Interaction::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
-                            })
+                    ->authorize(function () {
+                        $ownerRecord = $this->getOwnerRecord();
+
+                        return auth()->user()->can('create', [Interaction::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
+                    }),
             ])
             ->actions([
                 ViewAction::make()
                     ->modalHeading('Interaction Details'),
-                EditAction::make()
+                EditAction::make(),
             ]);
     }
 }

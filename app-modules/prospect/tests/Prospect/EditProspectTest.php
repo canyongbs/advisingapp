@@ -186,7 +186,7 @@ test('edit page is forbidden when prospect is converted to student', function ()
     livewire(EditProspect::class, [
         'record' => $prospect->getRouteKey(),
     ])
-    ->assertForbidden();
+        ->assertForbidden();
 });
 
 test('convert prospect to student', function () {

@@ -51,6 +51,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Timeline\Models\Timeline;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Filters\SelectFilter;
@@ -72,7 +73,6 @@ use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 use Filament\Infolists\Components\Fieldset as InfolistFieldset;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords\Actions\DraftWithAiAction;
-use AdvisingApp\Prospect\Models\Prospect;
 
 class ManageRelatedEngagementRecords extends ManageRelatedRecords
 {
@@ -275,8 +275,9 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                 CreateAction::make()
                     ->label('New Email or Text')
                     ->modalHeading('Create new email or text')
-                    ->authorize(function(){
+                    ->authorize(function () {
                         $ownerRecord = $this->getOwnerRecord();
+
                         return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
                     })
                     ->createAnother(false)

@@ -39,6 +39,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use AdvisingApp\Alert\Models\Alert;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Components\Textarea;
@@ -52,7 +53,6 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
 use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\Alert\Models\Alert;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -158,8 +158,9 @@ class ManageProspectAlerts extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->authorize(function(){
+                    ->authorize(function () {
                         $ownerRecord = $this->getOwnerRecord();
+
                         return auth()->user()->can('create', [Alert::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
                     })
                     ->mutateFormDataUsing(function (array $data): array {

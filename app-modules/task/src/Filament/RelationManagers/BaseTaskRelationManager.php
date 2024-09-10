@@ -149,8 +149,9 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->authorize(function(){
+                    ->authorize(function () {
                         $ownerRecord = $this->getOwnerRecord();
+
                         return auth()->user()->can('create', [Task::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
                     })
                     ->using(function (array $data, string $model): Model {

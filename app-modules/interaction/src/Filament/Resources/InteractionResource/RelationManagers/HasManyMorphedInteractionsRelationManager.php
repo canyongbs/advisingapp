@@ -36,19 +36,8 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\RelationManagers;
 
-use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
-use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Tables\Table;
-use Carbon\CarbonInterface;
-use Filament\Infolists\Infolist;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Infolists\Components\Fieldset;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
+use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
 
 class HasManyMorphedInteractionsRelationManager extends RelationManager
 {

@@ -50,8 +50,8 @@ trait ProspectHolisticViewPage
         );
 
         FilamentView::registerRenderHook(
-          PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER,
-          fn (): View => view('prospect::lock-icon'),
+            PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER,
+            fn (): View => view('prospect::lock-icon'),
         );
     }
 }
