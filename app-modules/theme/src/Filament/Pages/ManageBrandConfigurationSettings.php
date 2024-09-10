@@ -84,7 +84,6 @@ class ManageBrandConfigurationSettings extends SettingsPage
                         TextInput::make('application_name')
                             ->label('Application Name')
                             ->required()
-                            ->dehydrated(fn (?string $state): bool => filled($state))
                             ->maxLength('255'),
                     ]),
                 Section::make('Partner Favicon')
