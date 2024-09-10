@@ -117,7 +117,10 @@ class EngagementFilesRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make()
-                            ->authorize('create',$this->getOwnerRecord())
+                            ->authorize(function(){
+                                $ownerRecord = $this->getOwnerRecord();
+                                return auth()->user()->can('create', [EngagementFile::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
+                            })
             ])
             ->actions([
                 Action::make('download')

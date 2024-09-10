@@ -73,8 +73,12 @@ class EngagementPolicy
         );
     }
 
-    public function create(Authenticatable $authenticatable): Response
+    public function create(Authenticatable $authenticatable, ?Prospect $prospect = null): Response
     {
+        if ($prospect && $prospect->student_id) {
+            return Response::deny('You cannot create an engagement for a Prospect that has been converted to a Student.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'engagement.create',
             denyResponse: 'You do not have permission to create engagements.'

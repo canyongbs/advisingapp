@@ -72,6 +72,7 @@ use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 use Filament\Infolists\Components\Fieldset as InfolistFieldset;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords\Actions\DraftWithAiAction;
+use AdvisingApp\Prospect\Models\Prospect;
 
 class ManageRelatedEngagementRecords extends ManageRelatedRecords
 {
@@ -274,7 +275,10 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                 CreateAction::make()
                     ->label('New Email or Text')
                     ->modalHeading('Create new email or text')
-                    ->authorize('create',$this->getOwnerRecord())
+                    ->authorize(function(){
+                        $ownerRecord = $this->getOwnerRecord();
+                        return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
+                    })
                     ->createAnother(false)
                     ->action(function (array $data, Form $form) {
                         $engagement = new Engagement($data);

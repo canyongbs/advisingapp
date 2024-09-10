@@ -52,6 +52,7 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
 use AdvisingApp\Alert\Enums\AlertSeverity;
+use AdvisingApp\Alert\Models\Alert;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -157,7 +158,10 @@ class ManageProspectAlerts extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->authorize('create',$this->getOwnerRecord())
+                    ->authorize(function(){
+                        $ownerRecord = $this->getOwnerRecord();
+                        return auth()->user()->can('create', [Alert::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
+                    })
                     ->mutateFormDataUsing(function (array $data): array {
                         $data['created_by'] = auth()->id();
 

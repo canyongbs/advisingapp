@@ -2,6 +2,8 @@
 
 namespace AdvisingApp\Interaction\Filament\Concerns;
 
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Tables\Columns\IdColumn;
 use Carbon\CarbonInterface;
 use Filament\Infolists\Components\Fieldset;
@@ -78,7 +80,10 @@ trait HasManyMorphedInteractionsTrait
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->authorize('create',$this->getOwnerRecord()),
+                            ->authorize(function(){
+                                $ownerRecord = $this->getOwnerRecord();
+                                return auth()->user()->can('create', [Interaction::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
+                            })
             ])
             ->actions([
                 ViewAction::make()
