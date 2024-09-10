@@ -82,7 +82,8 @@ class ManageBrandConfigurationSettings extends SettingsPage
                     ->aside()
                     ->schema([
                         TextInput::make('application_name')
-                            ->label(false)
+                            ->label('Application Name')
+                            ->required()
                             ->dehydrated(fn (?string $state): bool => filled($state))
                             ->maxLength('255'),
                     ]),
