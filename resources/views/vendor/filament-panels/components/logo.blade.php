@@ -48,12 +48,13 @@
             expiration: now()->addMinutes(5),
             conversionName: $logo->hasGeneratedConversion('logo-height-250px') ? 'logo-height-250px' : '',
         );
+        $class = ($logo->mime_type == 'image/svg+xml') ? 'h-full max-h-9 w-full' : 'h-full max-h-9 max-w-full';
     @endphp
     <img
         src="{{ $logoUrl }}"
         alt="{{ config('app.name') }}"
         @class([
-            'h-full max-h-9 w-full',
+            $class,
             'dark:hidden' => $darkLogo,
         ])
     />
@@ -64,23 +65,27 @@
                 expiration: now()->addMinutes(5),
                 conversionName: $darkLogo->hasGeneratedConversion('logo-height-250px') ? 'logo-height-250px' : '',
             );
+            $class = ($darkLogo->mime_type == 'image/svg+xml') ? 'h-full max-h-9 w-full' : 'h-full max-h-9 max-w-full';
         @endphp
        
         <img
             src="{{ $darkLogoUrl }}"
             alt="{{ config('app.name') }}"
-            class="h-full max-h-9 w-full hidden dark:block"
+            @class([
+            $class,
+            'hidden dark:block',
+        ])
         />
     @endif
 @else
     <img
         src="{{ Vite::asset('resources/images/default-logo-light.svg') }}"
-        class="h-full max-h-9 w-full dark:hidden block"
+        class="h-full max-h-9 max-w-full dark:hidden block"
 
     />
 
     <img
         src="{{ Vite::asset('resources/images/default-logo-dark.svg') }}"
-        class="h-full max-h-9 w-full hidden dark:block"
+        class="h-full max-h-9 max-w-full hidden dark:block"
     />
 @endif
