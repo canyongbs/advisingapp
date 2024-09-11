@@ -50,7 +50,7 @@
         @if ($collegeBrandingSettings->is_enabled)
             <div
                 style="--c-600: {{ \Filament\Support\Colors\Color::all()[$collegeBrandingSettings->color][600] }}"
-                class="sticky top-16 bg-custom-600 text-sm font-medium text-white px-6 py-2 flex items-center h-10"
+                class="sticky top-16 z-10 bg-custom-600 text-sm font-medium text-white px-6 py-2 flex items-center h-10"
             >
                 {{ $collegeBrandingSettings->college_text }}
             </div>
