@@ -46,25 +46,25 @@ use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
 
 class KnowledgeManagementPortalArticleController extends Controller
 {
-  public function show(KnowledgeBaseCategory $category, KnowledgeBaseArticle $article): JsonResponse
-  {
-    $articleUpdatedAt = $article->updated_at->setTimezone(app(DisplaySettings::class)->timezone);
-    $article->update(['portal_view_count' => $article->portal_view_count + 1]);
+    public function show(KnowledgeBaseCategory $category, KnowledgeBaseArticle $article): JsonResponse
+    {
+        $articleUpdatedAt = $article->updated_at->setTimezone(app(DisplaySettings::class)->timezone);
+        $article->update(['portal_view_count' => $article->portal_view_count + 1]);
 
-    return response()->json([
-      'category' => KnowledgeBaseCategoryData::from([
-        'id' => $category->getKey(),
-        'name' => $category->name,
-        'description' => $category->description,
-      ]),
-      'article' => KnowledgeBaseArticleData::from([
-        'id' => $article->getKey(),
-        'categoryId' => $article->category_id,
-        'name' => $article->title,
-        'lastUpdated' => $articleUpdatedAt->format('M d Y, h:m a'),
-        'content' => tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details),
-      ]),
-      'portal_view_count' => $article->portal_view_count
-    ]);
-  }
+        return response()->json([
+            'category' => KnowledgeBaseCategoryData::from([
+                'id' => $category->getKey(),
+                'name' => $category->name,
+                'description' => $category->description,
+            ]),
+            'article' => KnowledgeBaseArticleData::from([
+                'id' => $article->getKey(),
+                'categoryId' => $article->category_id,
+                'name' => $article->title,
+                'lastUpdated' => $articleUpdatedAt->format('M d Y, h:m a'),
+                'content' => tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details),
+            ]),
+            'portal_view_count' => $article->portal_view_count,
+        ]);
+    }
 }
