@@ -34,22 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace App\Multitenancy\DataTransferObjects;
+namespace App\Multitenancy\Tasks;
 
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Attributes\MapInputName;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
+use Spatie\Multitenancy\Models\Tenant;
+use Spatie\Multitenancy\Tasks\SwitchTenantTask;
+use App\Multitenancy\DataTransferObjects\TenantConfig;
 
-#[MapInputName(SnakeCaseMapper::class)]
-class TenantConfig extends Data
+class SwitchAppName implements SwitchTenantTask
 {
     public function __construct(
-        public TenantDatabaseConfig $database,
-        public TenantS3FilesystemConfig $s3Filesystem,
-        public TenantS3FilesystemConfig $s3PublicFilesystem,
-        public TenantMailConfig $mail,
-        public ?string $applicationName = null,
+        protected ?string $originalAppName = null,
     ) {
-        $this->applicationName = $applicationName ?? config('app.name');
+        $this->originalAppName ??= config('app.name');
+    }
+
+    public function makeCurrent(Tenant $tenant): void
+    {
+        /** @var TenantConfig $config */
+        $config = $tenant->config;
+
+        $appName = $config->applicationName ?? config('app.name');
+
+        $this->setAppName($appName);
+    }
+
+    public function forgetCurrent(): void
+    {
+        $this->setAppName($this->originalAppName);
+    }
+
+    protected function setAppName(string $appName): void
+    {
+        config(['app.name' => $appName]);
     }
 }

@@ -37,8 +37,7 @@
     use AdvisingApp\Theme\Settings\ThemeSettings;
 
     $themeSettings = app(ThemeSettings::class);
-    $settingsProperty = $themeSettings::getSettingsPropertyModel('theme.is_logo_active');
-    $logo = $settingsProperty->getFirstMedia('logo');
+    $logo = $themeSettings->getSettingsPropertyModel('theme.is_logo_active')->getFirstMedia('logo');
 @endphp
 <tr>
     <td class="header">
