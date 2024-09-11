@@ -39,6 +39,7 @@ import AppLoading from '@/Components/AppLoading.vue';
 import DOMPurify from 'dompurify';
 import { consumer } from '@/Services/Consumer.js';
 import { Bars3Icon } from "@heroicons/vue/24/outline/index.js";
+import { EyeIcon } from '@heroicons/vue/24/outline';
 
 const route = useRoute();
 
@@ -60,6 +61,7 @@ const props = defineProps({
 const loading = ref(true);
 const category = ref(null);
 const article = ref(null);
+const portal_view_count = ref(0);
 
 watch(
     route,
@@ -85,6 +87,7 @@ function getData() {
             category.value = response.data.category;
             article.value = response.data.article;
             loading.value = false;
+            portal_view_count.value = response.data.portal_view_count;
         },
     );
 }
@@ -116,10 +119,13 @@ function getData() {
 
                         <div class="flex flex-col gap-3">
                             <div class="prose max-w-none">
-                                <h1>{{ article.name }}</h1>
+                                <h1>{{ article.name }} </h1>
+                                <div class="flex text-xs text-gray-900">
+                                    <EyeIcon class="h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                                    <span class="ml-2">{{portal_view_count}} Views</span>
+                                    </div>
                                 <div v-html="DOMPurify.sanitize(article.content)"></div>
                             </div>
-
                             <span class="text-xs text-gray-500">Last updated: {{ article.lastUpdated }}</span>
                         </div>
                     </main>
