@@ -61,7 +61,7 @@ class EngagementFilePolicy
 
     public function create(Authenticatable $authenticatable, ?Prospect $prospect = null): Response
     {
-        if ($prospect && $prospect->student()->exists()) {
+        if (filled($prospect?->student_id)) {
             return Response::deny('You cannot create engagement files for a Prospect that has been converted to a Student.');
         }
 
@@ -73,7 +73,7 @@ class EngagementFilePolicy
 
     public function update(Authenticatable $authenticatable, EngagementFile $engagementFile): Response
     {
-        if (count($engagementFile->prospects) && $engagementFile->prospects->first()->student_id) {
+        if ($engagementFile->prospects()->whereNotNull('student_id')->exists()) {
             return Response::deny('You cannot edit engagement file as the related Prospect has been converted to a Student.');
         }
 

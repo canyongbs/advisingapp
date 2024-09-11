@@ -75,7 +75,7 @@ class EngagementPolicy
 
     public function create(Authenticatable $authenticatable, ?Prospect $prospect = null): Response
     {
-        if ($prospect && $prospect->student_id) {
+        if (filled($prospect?->student_id)) {
             return Response::deny('You cannot create an engagement for a Prospect that has been converted to a Student.');
         }
 

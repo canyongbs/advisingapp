@@ -75,7 +75,7 @@ class AlertPolicy
 
     public function create(Authenticatable $authenticatable, ?Prospect $prospect = null): Response
     {
-        if ($prospect && $prospect->student()->exists()) {
+        if (filled($prospect?->student_id)) {
             return Response::deny('You cannot create alerts for a Prospect that has been converted to a Student.');
         }
 
@@ -87,7 +87,7 @@ class AlertPolicy
 
     public function update(Authenticatable $authenticatable, Alert $alert): Response
     {
-        if ($alert->concern_type === (new Prospect())->getMorphClass() && $alert->concern->student_id) {
+        if ($alert->concern_type === (new Prospect())->getMorphClass() && filled($alert->concern->student_id)) {
             return Response::deny('You cannot edit this alert as the related Prospect has been converted to a Student.');
         }
 

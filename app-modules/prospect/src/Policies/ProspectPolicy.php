@@ -85,7 +85,7 @@ class ProspectPolicy
 
     public function update(Authenticatable $authenticatable, Prospect $prospect): Response
     {
-        if ($prospect->student()->exists()) {
+        if (filled($prospect?->student_id)) {
             return Response::deny('Edit access denied as Prospect has been converted to a Student.');
         }
 
