@@ -120,10 +120,11 @@ function getData() {
                         <div class="flex flex-col gap-3">
                             <div class="prose max-w-none">
                                 <h1>{{ article.name }} </h1>
-                                <div class="flex text-xs text-gray-900">
+                                <div class="flex text-xs text-gray-500 mb-2">
                                     <EyeIcon class="h-5 w-5 flex-shrink-0" aria-hidden="true" />
                                     <span class="ml-2">{{portal_view_count}} Views</span>
-                                    </div>
+                                </div>
+                                 <hr class="not-prose">
                                 <div v-html="DOMPurify.sanitize(article.content)"></div>
                             </div>
                             <span class="text-xs text-gray-500">Last updated: {{ article.lastUpdated }}</span>
