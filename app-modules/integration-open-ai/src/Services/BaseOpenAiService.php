@@ -51,7 +51,7 @@ use OpenAI\Responses\Threads\ThreadResponse;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Ai\Services\Contracts\AiService;
-use AdvisingApp\Ai\Exceptions\RateLimitException;
+use AdvisingApp\Ai\Exceptions\RateLimitedException;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
@@ -529,9 +529,15 @@ abstract class BaseOpenAiService implements AiService
                             $matches,
                         );
 
-                        if (! empty($matches[1])) {
-                            throw new RateLimitException($matches[1]);
+                        if (empty($matches[1])) {
+                            yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
+
+                            report(new MessageResponseException('Thread run was rate limited, but the system was unable to extract the number of retry seconds: [' . json_encode($streamResponse->response->toArray()) . '].'));
+
+                            return;
                         }
+
+                        throw new RateLimitedException($matches[1]);
                     }
 
                     if (in_array($streamResponse->event, [

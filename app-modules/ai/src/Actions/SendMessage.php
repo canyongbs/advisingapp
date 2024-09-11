@@ -42,7 +42,7 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use AdvisingApp\Ai\Exceptions\RateLimitException;
+use AdvisingApp\Ai\Exceptions\RateLimitedException;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 
@@ -50,8 +50,6 @@ class SendMessage
 {
     public function __invoke(AiThread $thread, string $content, array $files = []): Closure
     {
-        throw new RateLimitException(20);
-
         if ($thread->locked_at) {
             throw new AiThreadLockedException();
         }

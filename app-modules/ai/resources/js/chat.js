@@ -85,13 +85,15 @@ document.addEventListener('alpine:init', () => {
                     this.isRetryable = !responseJson.isThreadLocked;
                     this.isSendingMessage = false;
 
-                    if (!responseJson.retryAfterSeconds) { return; }
+                    if (!responseJson.retryAfterSeconds) {
+                        return;
+                    }
 
                     this.$nextTick(async () => {
                         await new Promise(resolve => setTimeout(resolve, responseJson.retryAfterSeconds * 1000));
 
                         await this.handleMessageResponse({
-                            response: await fetch(sendMessageUrl, {
+                            response: await fetch(retryMessageUrl, {
                                 method: 'POST',
                                 headers: {
                                     Accept: 'application/json',

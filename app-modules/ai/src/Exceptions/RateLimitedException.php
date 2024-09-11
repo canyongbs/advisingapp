@@ -4,7 +4,7 @@ namespace AdvisingApp\Ai\Exceptions;
 
 use Exception;
 
-class RateLimitException extends Exception
+class RateLimitedException extends Exception
 {
     public int $retryAfterSeconds;
 
