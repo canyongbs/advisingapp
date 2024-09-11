@@ -79,7 +79,7 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
 
     public function create(Authenticatable $authenticatable, ?Prospect $prospect = null): Response
     {
-        if (filled($prospect?->student_id)) {
+        if ($prospect?->student()->exists()) {
             return Response::deny('You cannot create tasks for a Prospect that has been converted to a Student.');
         }
 

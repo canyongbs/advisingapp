@@ -79,7 +79,7 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
 
     public function create(Authenticatable $authenticatable, ?Prospect $prospect = null): Response
     {
-        if (filled($prospect?->student_id)) {
+        if ($prospect?->student()->exists()) {
             return Response::deny('You cannot create interactions for a Prospect that has been converted to a Student.');
         }
 
