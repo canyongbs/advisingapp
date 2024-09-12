@@ -41,7 +41,7 @@ use App\Settings\DisplaySettings;
 $timezone = app(DisplaySettings::class)->getTimezone();
 ?>
 <div class="flex flex-col items-center gap-3 md:flex-row">
-    @if($student->updated_at)
+    @if ($student->updated_at)
         <div class="flex-1">
             <p class="text-xs">
                 This record was last updated in the SIS on
