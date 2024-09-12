@@ -189,9 +189,8 @@ class ViewStudent extends ViewRecord
             $response = Http::withToken($olympusKey)
                 ->asJson()
                 ->post("{$olympusUrl}/integrations/{$tenantId}/student-on-demand-sync", [
-                    // TODO: Determine how to know what identifier to pass per SIS
-                    'student' => $student->getKey(),
-                    'otherId' => $student->otherid,
+                    'sisid' => $student->getKey(),
+                    'otherid' => $student->otherid,
                 ])
                 ->throw();
 
