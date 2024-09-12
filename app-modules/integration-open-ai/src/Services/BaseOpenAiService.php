@@ -324,13 +324,16 @@ abstract class BaseOpenAiService implements AiService
             'limit' => 1,
         ])->data[0] ?? null;
 
-        if (in_array($latestRun?->status, ['failed', 'expired', 'cancelled', 'incomplete'])) {
-            report(new MessageResponseException('Thread run was not successful: [' . json_encode($latestRun->toArray()) . '].'));
-        }
-
         if (
+            ($latestRun?->status === 'failed') &&
+            ($latestRun?->lastError?->code === 'rate_limit_exceeded')
+        ) {
+            // If the latest run failed due to rate limiting, we can retry the message without reporting the error.
+        } elseif (in_array($latestRun?->status, ['failed', 'expired', 'cancelled', 'incomplete'])) {
+            report(new MessageResponseException('Thread run was not successful: [' . json_encode($latestRun->toArray()) . '].'));
+        } elseif (
             $latestRun &&
-            (! in_array($latestRun?->status, ['completed', 'failed', 'expired', 'cancelled', 'incomplete'])) &&
+            ($latestRun?->status !== 'completed') &&
             filled($message->message_id)
         ) {
             $this->awaitThreadRunCompletion($latestRun);
@@ -343,7 +346,7 @@ abstract class BaseOpenAiService implements AiService
             return function () use ($latestMessageResponse, $saveResponse): Generator {
                 $response = new AiMessage();
 
-                yield $latestMessageResponse->content[0]->text->value;
+                yield json_encode(['type' => 'content', 'content' => base64_encode($latestMessageResponse->content[0]->text->value)]);
 
                 $response->content = $latestMessageResponse->content[0]->text->value;
                 $response->message_id = $latestMessageResponse->id;
@@ -445,11 +448,22 @@ abstract class BaseOpenAiService implements AiService
 
         while ($threadRunResponse->status !== 'completed') {
             if (time() >= $expiration) {
-                throw new MessageResponseTimeoutException();
+                report(new MessageResponseTimeoutException());
+
+                return;
+            }
+
+            if (
+                ($threadRunResponse->status === 'failed') &&
+                ($threadRunResponse->lastError->code === 'rate_limit_exceeded')
+            ) {
+                return;
             }
 
             if (in_array($threadRunResponse->status, ['failed', 'expired', 'cancelled', 'incomplete'])) {
-                throw new MessageResponseException('Thread run not successful: [' . json_encode($threadRunResponse->toArray()) . '].');
+                report(new MessageResponseException('Thread run not successful: [' . json_encode($threadRunResponse->toArray()) . '].'));
+
+                return;
             }
 
             usleep(500000);
@@ -520,8 +534,8 @@ abstract class BaseOpenAiService implements AiService
                     }
 
                     if (
-                        $streamResponse->event === 'thread.run.failed'
-                        && $streamResponse->response->lastError->code === 'rate_limit_exceeded'
+                        ($streamResponse->event === 'thread.run.failed') &&
+                        ($streamResponse->response->lastError->code === 'rate_limit_exceeded')
                     ) {
                         preg_match(
                             '/Try\sagain\sin\s([0-9]+)\sseconds/',
@@ -537,7 +551,9 @@ abstract class BaseOpenAiService implements AiService
                             return;
                         }
 
-                        throw new RateLimitedException($matches[1]);
+                        yield json_encode(['type' => 'rate_limited', 'message' => 'Heavy traffic, just a few more moments...', 'retry_after_seconds' => $matches[1]]);
+
+                        return;
                     }
 
                     if (in_array($streamResponse->event, [

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Http\Controllers;
 
+use AdvisingApp\Ai\Exceptions\RateLimitedException;
 use Throwable;
 use Illuminate\Http\JsonResponse;
 use AdvisingApp\Ai\Models\AiThread;

@@ -42,6 +42,7 @@ document.addEventListener('alpine:init', () => {
             isIncomplete: false,
             isLoading: true,
             isSendingMessage: false,
+            isRateLimited: false,
             isRetryable: true,
             latestMessage: '',
             message: '',
@@ -83,47 +84,13 @@ document.addEventListener('alpine:init', () => {
 
                     this.error = responseJson.message;
                     this.isRetryable = !responseJson.isThreadLocked;
+                    this.isRateLimited = false;
                     this.isSendingMessage = false;
-
-                    if (!responseJson.retryAfterSeconds) {
-                        return;
-                    }
-
-                    this.$nextTick(async () => {
-                        await new Promise(resolve => setTimeout(resolve, responseJson.retryAfterSeconds * 1000));
-
-                        await this.handleMessageResponse({
-                            response: await fetch(retryMessageUrl, {
-                                method: 'POST',
-                                headers: {
-                                    Accept: 'application/json',
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': csrfToken,
-                                },
-                                body: JSON.stringify({
-                                    content: this.latestMessage,
-                                    files: this.$wire.files,
-                                }),
-                            }),
-                        });
-                    });
 
                     return;
                 }
 
-                if (!isCompletingPreviousResponse) {
-                    this.messages.push({
-                        content: '',
-                    });
-
-                    this.rawIncomingResponse = '';
-                } else {
-                    if (this.rawIncomingResponse.endsWith('...')) {
-                        this.rawIncomingResponse = this.rawIncomingResponse.slice(0, -3);
-                    }
-
-                    this.rawIncomingResponse += ' ';
-                }
+                let hasSetUpNewMessageForResponse = false;
 
                 const responseReader = response.body.pipeThrough(new TextDecoderStream()).getReader();
 
@@ -136,6 +103,27 @@ document.addEventListener('alpine:init', () => {
 
                     this.parseEvents(value).forEach((event) => {
                         if (event.type === 'content') {
+                            this.error = null;
+                            this.isRateLimited = false;
+
+                            if (!hasSetUpNewMessageForResponse) {
+                                if (!isCompletingPreviousResponse) {
+                                    this.messages.push({
+                                        content: '',
+                                    });
+
+                                    this.rawIncomingResponse = '';
+                                } else {
+                                    if (this.rawIncomingResponse.endsWith('...')) {
+                                        this.rawIncomingResponse = this.rawIncomingResponse.slice(0, -3);
+                                    }
+
+                                    this.rawIncomingResponse += ' ';
+                                }
+
+                                hasSetUpNewMessageForResponse = true;
+                            }
+
                             this.rawIncomingResponse += new TextDecoder().decode(
                                 Uint8Array.from(atob(event.content), (m) => m.codePointAt(0)),
                             );
@@ -147,9 +135,33 @@ document.addEventListener('alpine:init', () => {
                             if (event.incomplete) {
                                 this.isIncomplete = true;
                             }
+                        } else if (event.type === 'rate_limited') {
+                            this.error = event.message;
+                            this.isRateLimited = true;
+
+                            this.$nextTick(async () => {
+                                await new Promise(resolve => setTimeout(resolve, event.retry_after_seconds * 1000));
+
+                                await this.handleMessageResponse({
+                                    response: await fetch(isCompletingPreviousResponse ? completeResponseUrl : retryMessageUrl, {
+                                        method: 'POST',
+                                        headers: {
+                                            Accept: 'application/json',
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': csrfToken,
+                                        },
+                                        body: JSON.stringify(isCompletingPreviousResponse ? {} : {
+                                            content: this.latestMessage,
+                                            files: this.$wire.files,
+                                        }),
+                                    }),
+                                    isCompletingPreviousResponse,
+                                });
+                            });
                         } else if (['timeout', 'failed'].includes(event.type)) {
                             this.error = event.message;
                             this.isRetryable = true;
+                            this.isRateLimited = false;
                         }
                     });
 
@@ -158,7 +170,9 @@ document.addEventListener('alpine:init', () => {
 
                 await readResponse();
 
-                this.isSendingMessage = false;
+                if (! this.isRateLimited) {
+                    this.isSendingMessage = false;
+                }
 
                 if (!isCompletingPreviousResponse) {
                     this.$wire.clearFiles();
