@@ -116,7 +116,7 @@ function getData() {
                                     <ClockIcon class="h-4 w-4 flex-shrink-0" aria-hidden="true" />
                                     <span class="text-xs">Last updated: {{ article.lastUpdated }}</span>
                                 </div>
-                                <hr class="my-4" />
+                                <div class="border-t"></div>
                                 <div v-html="DOMPurify.sanitize(article.content)"></div>
                             </div>
                         </div>
