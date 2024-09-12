@@ -61,7 +61,8 @@ const props = defineProps({
 const loading = ref(true);
 const category = ref(null);
 const article = ref(null);
-const portal_view_count = ref(0);
+const portalViewCount = ref(0);
+const portalViewCountFlag = ref(0);
 
 watch(
     route,
@@ -87,7 +88,8 @@ function getData() {
             category.value = response.data.category;
             article.value = response.data.article;
             loading.value = false;
-            portal_view_count.value = response.data.portal_view_count;
+            portalViewCount.value = response.data.portal_view_count;
+            portalViewCountFlag.value = response.data.portal_view_count_flag;
         },
     );
 }
@@ -120,11 +122,11 @@ function getData() {
                         <div class="flex flex-col gap-3">
                             <div class="prose max-w-none">
                                 <h1>{{ article.name }} </h1>
-                                <div class="flex text-xs text-gray-500 mb-2">
-                                    <EyeIcon class="h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                                    <span class="ml-2">{{portal_view_count}} Views</span>
+                                <div v-if="portalViewCountFlag" class="text-gray-500 flex items-center space-x-1 mb-4">
+                                    <EyeIcon class="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                                    <span class="text-xs">{{portalViewCount}} Views</span>
                                 </div>
-                                 <hr class="not-prose">
+                                <hr class="my-4">
                                 <div v-html="DOMPurify.sanitize(article.content)"></div>
                             </div>
                             <span class="text-xs text-gray-500">Last updated: {{ article.lastUpdated }}</span>
