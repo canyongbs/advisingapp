@@ -373,7 +373,8 @@
                     >
                         <span x-text="error"></span>
 
-                        <span x-show="! (isRetryable || isRateLimited)">We will inform you once you can retry sending your message.</span>
+                        <span x-show="! (isRetryable || isRateLimited)">We will inform you once you can retry sending
+                            your message.</span>
 
                         <x-filament::link
                             x-on:click="retryMessage"
@@ -437,9 +438,9 @@
                                                         messageCopied: false,
                                                         copyMessage: function() {
                                                             navigator.clipboard.writeText(message.content.replace(/(<([^>]+)>)/gi, ''))
-
+                                                    
                                                             this.messageCopied = true
-
+                                                    
                                                             setTimeout(() => { this.messageCopied = false }, 2000)
                                                         }
                                                     }"

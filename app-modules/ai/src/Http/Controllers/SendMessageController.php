@@ -40,7 +40,6 @@ use Throwable;
 use Illuminate\Http\JsonResponse;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Actions\SendMessage;
-use AdvisingApp\Ai\Exceptions\RateLimitedException;
 use AdvisingApp\Ai\Http\Requests\SendMessageRequest;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use Symfony\Component\HttpFoundation\StreamedResponse;

@@ -51,7 +51,6 @@ use OpenAI\Responses\Threads\ThreadResponse;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Ai\Services\Contracts\AiService;
-use AdvisingApp\Ai\Exceptions\RateLimitedException;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;

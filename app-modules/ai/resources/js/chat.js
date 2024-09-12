@@ -140,21 +140,28 @@ document.addEventListener('alpine:init', () => {
                             this.isRateLimited = true;
 
                             this.$nextTick(async () => {
-                                await new Promise(resolve => setTimeout(resolve, event.retry_after_seconds * 1000));
+                                await new Promise((resolve) => setTimeout(resolve, event.retry_after_seconds * 1000));
 
                                 await this.handleMessageResponse({
-                                    response: await fetch(isCompletingPreviousResponse ? completeResponseUrl : retryMessageUrl, {
-                                        method: 'POST',
-                                        headers: {
-                                            Accept: 'application/json',
-                                            'Content-Type': 'application/json',
-                                            'X-CSRF-TOKEN': csrfToken,
+                                    response: await fetch(
+                                        isCompletingPreviousResponse ? completeResponseUrl : retryMessageUrl,
+                                        {
+                                            method: 'POST',
+                                            headers: {
+                                                Accept: 'application/json',
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': csrfToken,
+                                            },
+                                            body: JSON.stringify(
+                                                !isCompletingPreviousResponse
+                                                    ? {
+                                                          content: this.latestMessage,
+                                                          files: this.$wire.files,
+                                                      }
+                                                    : {},
+                                            ),
                                         },
-                                        body: JSON.stringify(isCompletingPreviousResponse ? {} : {
-                                            content: this.latestMessage,
-                                            files: this.$wire.files,
-                                        }),
-                                    }),
+                                    ),
                                     isCompletingPreviousResponse,
                                 });
                             });
@@ -170,7 +177,7 @@ document.addEventListener('alpine:init', () => {
 
                 await readResponse();
 
-                if (! this.isRateLimited) {
+                if (!this.isRateLimited) {
                     this.isSendingMessage = false;
                 }
 
