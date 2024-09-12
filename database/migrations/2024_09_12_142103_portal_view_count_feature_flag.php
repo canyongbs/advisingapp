@@ -34,11 +34,10 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
 use Laravel\Pennant\Feature;
+use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         Feature::activate('portal_view_count');
