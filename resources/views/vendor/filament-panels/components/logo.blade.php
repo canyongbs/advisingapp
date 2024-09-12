@@ -48,13 +48,14 @@
             expiration: now()->addMinutes(5),
             conversionName: $logo->hasGeneratedConversion('logo-height-250px') ? 'logo-height-250px' : '',
         );
-        $class = ($logo->mime_type == 'image/svg+xml') ? 'h-full max-h-9 w-full' : 'h-full max-h-9 max-w-full';
     @endphp
     <img
         src="{{ $logoUrl }}"
         alt="{{ config('app.name') }}"
         @class([
-            $class,
+            'h-full max-h-9',
+            'w-full' => $logo->mime_type == 'image/svg+xml',
+            'max-w-full' => $logo->mime_type != 'image/svg+xml',
             'dark:hidden' => $darkLogo,
         ])
     />
@@ -65,14 +66,15 @@
                 expiration: now()->addMinutes(5),
                 conversionName: $darkLogo->hasGeneratedConversion('logo-height-250px') ? 'logo-height-250px' : '',
             );
-            $class = ($darkLogo->mime_type == 'image/svg+xml') ? 'h-full max-h-9 w-full' : 'h-full max-h-9 max-w-full';
         @endphp
        
         <img
             src="{{ $darkLogoUrl }}"
             alt="{{ config('app.name') }}"
             @class([
-            $class,
+            'h-full max-h-9',
+            'w-full' => $darkLogo->mime_type == 'image/svg+xml',
+            'max-w-full' => $darkLogo->mime_type != 'image/svg+xml',
             'hidden dark:block',
         ])
         />
