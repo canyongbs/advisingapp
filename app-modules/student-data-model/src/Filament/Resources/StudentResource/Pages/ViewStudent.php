@@ -38,12 +38,10 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use Throwable;
 use App\Models\Tenant;
+use App\Services\Olympus;
 use Filament\Infolists\Infolist;
-use App\Settings\OlympusSettings;
-use Spatie\Multitenancy\Landlord;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Http;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
@@ -171,24 +169,15 @@ class ViewStudent extends ViewRecord
 
     public function sisRefresh()
     {
-        [$olympusUrl, $olympusKey] = Landlord::execute(function (): array {
-            $settings = app(OlympusSettings::class);
-
-            return [
-                rtrim($settings->url, '/'),
-                $settings->key,
-            ];
-        });
-
         $tenantId = Tenant::current()->getKey();
 
         /** @var Student $student */
         $student = $this->getRecord();
 
         try {
-            $response = Http::withToken($olympusKey)
+            $response = Olympus::makeRequest()
                 ->asJson()
-                ->post("{$olympusUrl}/integrations/{$tenantId}/student-on-demand-sync", [
+                ->post("integrations/{$tenantId}/student-on-demand-sync", [
                     'sisid' => $student->getKey(),
                     'otherid' => $student->otherid,
                 ])
