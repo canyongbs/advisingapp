@@ -268,8 +268,8 @@ abstract class BaseOpenAiService implements AiService
         ])->data[0] ?? null;
 
         // An existing run might be in progress, so we need to wait for it to complete first.
-        if ($latestRun && (! in_array($latestRun?->status, ['completed', 'failed', 'expired', 'cancelled', 'incomplete']))) {
-            $this->awaitThreadRunCompletion($latestRun);
+        if ($latestRun) {
+            $this->awaitPreviousThreadRunCompletion($latestRun);
         }
 
         [$newMessageResponse, $createdFiles] = $this->createMessage($message->thread->thread_id, $message->content, $files);
@@ -303,8 +303,8 @@ abstract class BaseOpenAiService implements AiService
         ])->data[0] ?? null;
 
         // An existing run might be in progress, so we need to wait for it to complete first.
-        if ($latestRun && (! in_array($latestRun?->status, ['completed', 'failed', 'expired', 'cancelled', 'incomplete']))) {
-            $this->awaitThreadRunCompletion($latestRun);
+        if ($latestRun) {
+            $this->awaitPreviousThreadRunCompletion($latestRun);
         }
 
         $this->createMessage(
@@ -323,35 +323,33 @@ abstract class BaseOpenAiService implements AiService
             'limit' => 1,
         ])->data[0] ?? null;
 
-        if (
-            ($latestRun?->status === 'failed') &&
-            ($latestRun?->lastError?->code === 'rate_limit_exceeded')
-        ) {
-            // If the latest run failed due to rate limiting, we can retry the message without reporting the error.
-        } elseif (in_array($latestRun?->status, ['failed', 'expired', 'cancelled', 'incomplete'])) {
-            report(new MessageResponseException('Thread run was not successful: [' . json_encode($latestRun->toArray()) . '].'));
-        } elseif (
-            $latestRun &&
-            ($latestRun?->status !== 'completed') &&
-            filled($message->message_id)
-        ) {
-            $this->awaitThreadRunCompletion($latestRun);
+        if ($latestRun && (! $this->isThreadRunCompleted($latestRun))) {
+            $this->awaitPreviousThreadRunCompletion($latestRun, shouldCancelIfQueued: false);
 
-            $latestMessageResponse = $this->client->threads()->messages()->list($message->thread->thread_id, [
-                'order' => 'desc',
-                'limit' => 1,
-            ])->data[0];
+            if (filled($message->message_id)) {
+                $latestRun = $this->client->threads()->runs()->list($message->thread->thread_id, [
+                    'order' => 'desc',
+                    'limit' => 1,
+                ])->data[0];
 
-            return function () use ($latestMessageResponse, $saveResponse): Generator {
-                $response = new AiMessage();
+                if ($latestRun?->status === 'completed') {
+                    $latestMessageResponse = $this->client->threads()->messages()->list($message->thread->thread_id, [
+                        'order' => 'desc',
+                        'limit' => 1,
+                    ])->data[0];
 
-                yield json_encode(['type' => 'content', 'content' => base64_encode($latestMessageResponse->content[0]->text->value)]);
+                    return function () use ($latestMessageResponse, $saveResponse): Generator {
+                        $response = new AiMessage();
 
-                $response->content = $latestMessageResponse->content[0]->text->value;
-                $response->message_id = $latestMessageResponse->id;
+                        yield json_encode(['type' => 'content', 'content' => base64_encode($latestMessageResponse->content[0]->text->value)]);
 
-                $saveResponse($response);
-            };
+                        $response->content = $latestMessageResponse->content[0]->text->value;
+                        $response->message_id = $latestMessageResponse->id;
+
+                        $saveResponse($response);
+                    };
+                }
+            }
         }
 
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
@@ -435,8 +433,21 @@ abstract class BaseOpenAiService implements AiService
         return [$this->client->threads()->messages()->create($threadId, $data), $createdFiles];
     }
 
-    protected function awaitThreadRunCompletion(ThreadRunResponse $threadRunResponse): void
+    protected function isThreadRunCompleted(ThreadRunResponse $threadRunResponse): bool
     {
+        if ($threadRunResponse->requiredAction) {
+            return true;
+        }
+
+        return in_array($threadRunResponse->status, ['completed', 'incomplete', 'failed', 'expired', 'requires_action']);
+    }
+
+    protected function awaitPreviousThreadRunCompletion(ThreadRunResponse $threadRunResponse, bool $shouldCancelIfQueued = true): void
+    {
+        if ($this->isThreadRunCompleted($threadRunResponse)) {
+            return;
+        }
+
         $runId = $threadRunResponse->id;
 
         // 60 second total request timeout, with a 10-second buffer.
@@ -447,7 +458,22 @@ abstract class BaseOpenAiService implements AiService
 
         while ($threadRunResponse->status !== 'completed') {
             if (time() >= $expiration) {
-                report(new MessageResponseTimeoutException());
+                return;
+            }
+
+            if (($threadRunResponse->status === 'queued') && $shouldCancelIfQueued) {
+                $this->client->threads()->runs()->cancel($threadRunResponse->threadId, $runId);
+
+                $threadRunResponse = $this->client->threads()->runs()->retrieve($threadRunResponse->threadId, $runId);
+
+                continue;
+            }
+
+            if (
+                ($threadRunResponse->status === 'requires_action') ||
+                $threadRunResponse->requiredAction
+            ) {
+                report(new MessageResponseException('Awaited previous thread run not successful as an action was required: [' . json_encode($threadRunResponse->toArray()) . '].'));
 
                 return;
             }
@@ -456,13 +482,25 @@ abstract class BaseOpenAiService implements AiService
                 ($threadRunResponse->status === 'failed') &&
                 ($threadRunResponse->lastError->code === 'rate_limit_exceeded')
             ) {
+                // If the thread run failed due to rate limiting, we don't need to report the error.
+
                 return;
             }
 
-            if (in_array($threadRunResponse->status, ['failed', 'expired', 'cancelled', 'incomplete'])) {
-                report(new MessageResponseException('Thread run not successful: [' . json_encode($threadRunResponse->toArray()) . '].'));
+            if (in_array($threadRunResponse->status, ['incomplete', 'cancelled'])) {
+                // If the thread run ended up being incomplete or canceled, we don't need to report the error.
 
                 return;
+            }
+
+            if (in_array($threadRunResponse->status, ['failed', 'expired'])) {
+                report(new MessageResponseException('Awaited previous thread run not successful: [' . json_encode($threadRunResponse->toArray()) . '].'));
+
+                return;
+            }
+
+            if (! in_array($threadRunResponse->status, ['in_progress', 'cancelling'])) {
+                report(new MessageResponseException('An unexpected awaited previous thread run response status was encountered, which may be causing users to wait unnecessarily for the previous thread run to complete: [' . json_encode($threadRunResponse->toArray()) . '].'));
             }
 
             usleep(500000);
