@@ -56,6 +56,7 @@ use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
+use Illuminate\Database\Eloquent\Builder;
 
 class EditInteraction extends EditRecord
 {
@@ -72,8 +73,11 @@ class EditInteraction extends EditRecord
                     ->types([
                         ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [MorphToSelect\Type::make(Student::class)
                             ->titleAttribute(Student::displayNameKey())] : []),
-                        ...(auth()->user()->hasLicense(Prospect::getLicenseType()) ? [MorphToSelect\Type::make(Prospect::class)
-                            ->titleAttribute(Prospect::displayNameKey())] : []),
+                        ...(auth()->user()->hasLicense(Prospect::getLicenseType()) ? [
+                            MorphToSelect\Type::make(Prospect::class)
+                            ->titleAttribute(Prospect::displayNameKey())
+                            ->modifyOptionsQueryUsing(fn(Builder $query) => $query->doesntHave('student'))
+                        ] : []),
                         MorphToSelect\Type::make(ServiceRequest::class)
                             ->label('Service Request')
                             ->titleAttribute('service_request_number'),

@@ -63,6 +63,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
 use AdvisingApp\Interaction\Filament\Actions\DraftInteractionWithAiAction;
+use Illuminate\Database\Eloquent\Builder;
 
 class CreateInteraction extends CreateRecord
 {
@@ -102,7 +103,9 @@ class CreateInteraction extends CreateRecord
                         ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [MorphToSelect\Type::make(Student::class)
                             ->titleAttribute(Student::displayNameKey())] : []),
                         ...(auth()->user()->hasLicense(Prospect::getLicenseType()) ? [MorphToSelect\Type::make(Prospect::class)
-                            ->titleAttribute(Prospect::displayNameKey())] : []),
+                            ->titleAttribute(Prospect::displayNameKey())
+                            ->modifyOptionsQueryUsing(fn(Builder $query) => $query->doesntHave('student'))
+                            ] : []),
                         MorphToSelect\Type::make(ServiceRequest::class)
                             ->label('Service Request')
                             ->titleAttribute('service_request_number'),

@@ -42,6 +42,7 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Component;
 use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\Concerns\HasName;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -87,6 +88,7 @@ class EducatableSelect extends Component
     public static function getProspectType(): Type
     {
         return Type::make(Prospect::class)
+            ->modifyOptionsQueryUsing(fn (Builder $query) => $query->doesntHave('student'))
             ->titleAttribute(Prospect::displayNameKey());
     }
 
