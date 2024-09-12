@@ -37,9 +37,9 @@
 namespace App\Services;
 
 use App\Settings\OlympusSettings;
-use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Support\Facades\Http;
 use Spatie\Multitenancy\Landlord;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\PendingRequest;
 
 class Olympus
 {
@@ -55,6 +55,6 @@ class Olympus
         });
 
         return Http::withToken($olympusKey)
-                ->baseUrl($olympusUrl);
+            ->baseUrl($olympusUrl);
     }
 }
