@@ -38,6 +38,7 @@ use App\Models\Tenant;
 use Illuminate\Mail\SendQueuedMailable;
 use Illuminate\Queue\CallQueuedClosure;
 use App\Multitenancy\Tasks\SwitchAppUrl;
+use App\Multitenancy\Tasks\SwitchAppName;
 use Illuminate\Events\CallQueuedListener;
 use App\Multitenancy\Tasks\SwitchMailTask;
 use App\Multitenancy\Tasks\PrefixCacheTask;
@@ -83,6 +84,7 @@ return [
         SwitchTenantDatabasesTask::class,
         SwitchSessionDriver::class,
         SwitchAppUrl::class,
+        SwitchAppName::class,
         SwitchMailTask::class,
         SwitchS3FilesystemTask::class,
         SwitchS3PublicFilesystemTask::class,
