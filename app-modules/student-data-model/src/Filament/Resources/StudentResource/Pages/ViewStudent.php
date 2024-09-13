@@ -175,7 +175,7 @@ class ViewStudent extends ViewRecord
         $student = $this->getRecord();
 
         try {
-            $response = Olympus::makeRequest()
+            $response = app(Olympus::class)->makeRequest()
                 ->asJson()
                 ->post("integrations/{$tenantId}/student-on-demand-sync", [
                     'sisid' => $student->getKey(),

@@ -43,7 +43,7 @@ use Illuminate\Http\Client\PendingRequest;
 
 class Olympus
 {
-    public static function makeRequest(): PendingRequest
+    public function makeRequest(): PendingRequest
     {
         [$olympusUrl, $olympusKey] = Landlord::execute(function (): array {
             $settings = app(OlympusSettings::class);
