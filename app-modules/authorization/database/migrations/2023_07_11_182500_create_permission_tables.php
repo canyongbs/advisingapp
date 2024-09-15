@@ -122,7 +122,7 @@ return new class () extends Migration {
             $table->uuid($columnNames['model_morph_key']);
             $table->string('via')->default('direct');
             $table->index([$columnNames['model_morph_key'], 'model_type'], 'model_has_roles_model_id_model_type_index');
-            
+
             $table->foreign($pivotRole)
                 ->references('id') // role id
                 ->on($tableNames['roles'])
