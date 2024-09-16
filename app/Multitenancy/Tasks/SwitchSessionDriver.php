@@ -86,7 +86,6 @@ class SwitchSessionDriver implements SwitchTenantTask
             'session.domain' => $domain,
         ]);
 
-        app()->forgetInstance('session');
-        app()->forgetInstance('session.store');
+        app()->forgetInstance('cookie');
     }
 }
