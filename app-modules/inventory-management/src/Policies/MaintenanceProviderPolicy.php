@@ -53,7 +53,7 @@ class MaintenanceProviderPolicy
     public function view(Authenticatable $authenticatable, MaintenanceProvider $maintenanceProvider): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['maintenance_provider.*.view', "maintenance_provider.{$maintenanceProvider->id}.view"],
+            abilities: ["maintenance_provider.{$maintenanceProvider->id}.view"],
             denyResponse: 'You do not have permission to view this maintenance provider.'
         );
     }
@@ -69,7 +69,7 @@ class MaintenanceProviderPolicy
     public function update(Authenticatable $authenticatable, MaintenanceProvider $maintenanceProvider): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['maintenance_provider.*.update', "maintenance_provider.{$maintenanceProvider->id}.update"],
+            abilities: ["maintenance_provider.{$maintenanceProvider->id}.update"],
             denyResponse: 'You do not have permission to update this maintenance provider.'
         );
     }
@@ -77,7 +77,7 @@ class MaintenanceProviderPolicy
     public function delete(Authenticatable $authenticatable, MaintenanceProvider $maintenanceProvider): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['maintenance_provider.*.delete', "maintenance_provider.{$maintenanceProvider->id}.delete"],
+            abilities: ["maintenance_provider.{$maintenanceProvider->id}.delete"],
             denyResponse: 'You do not have permission to delete this maintenance provider.'
         );
     }
@@ -85,7 +85,7 @@ class MaintenanceProviderPolicy
     public function restore(Authenticatable $authenticatable, MaintenanceProvider $maintenanceProvider): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['maintenance_provider.*.restore', "maintenance_provider.{$maintenanceProvider->id}.restore"],
+            abilities: ["maintenance_provider.{$maintenanceProvider->id}.restore"],
             denyResponse: 'You do not have permission to restore this maintenance provider.'
         );
     }
@@ -93,7 +93,7 @@ class MaintenanceProviderPolicy
     public function forceDelete(Authenticatable $authenticatable, MaintenanceProvider $maintenanceProvider): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['maintenance_provider.*.force-delete', "maintenance_provider.{$maintenanceProvider->id}.force-delete"],
+            abilities: ["maintenance_provider.{$maintenanceProvider->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this maintenance provider.'
         );
     }

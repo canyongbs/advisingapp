@@ -62,7 +62,7 @@ class StudentPolicy
     public function view(Authenticatable $authenticatable, Student $student): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['student.*.view', "student.{$student->getKey()}.view"],
+            abilities: ["student.{$student->getKey()}.view"],
             denyResponse: 'You do not have permission to view this student.'
         );
     }

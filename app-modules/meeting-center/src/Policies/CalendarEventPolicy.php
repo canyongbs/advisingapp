@@ -78,7 +78,7 @@ class CalendarEventPolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, CalendarEvent $calendarEvent): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['calendar_event.*.view', "calendar_event.{$calendarEvent->id}.view"],
+            abilities: ["calendar_event.{$calendarEvent->id}.view"],
             denyResponse: 'You do not have permission to view this engagement response.'
         );
     }
@@ -94,7 +94,7 @@ class CalendarEventPolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, CalendarEvent $calendarEvent): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['calendar_event.*.update', "calendar_event.{$calendarEvent->id}.update"],
+            abilities: ["calendar_event.{$calendarEvent->id}.update"],
             denyResponse: 'You do not have permission to update this engagement response.'
         );
     }
@@ -102,7 +102,7 @@ class CalendarEventPolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, CalendarEvent $calendarEvent): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['calendar_event.*.delete', "calendar_event.{$calendarEvent->id}.delete"],
+            abilities: ["calendar_event.{$calendarEvent->id}.delete"],
             denyResponse: 'You do not have permission to delete this engagement response.'
         );
     }
@@ -110,7 +110,7 @@ class CalendarEventPolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, CalendarEvent $calendarEvent): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['calendar_event.*.restore', "calendar_event.{$calendarEvent->id}.restore"],
+            abilities: ["calendar_event.{$calendarEvent->id}.restore"],
             denyResponse: 'You do not have permission to restore this engagement response.'
         );
     }
@@ -118,7 +118,7 @@ class CalendarEventPolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, CalendarEvent $calendarEvent): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['calendar_event.*.force-delete', "calendar_event.{$calendarEvent->id}.force-delete"],
+            abilities: ["calendar_event.{$calendarEvent->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this engagement response.'
         );
     }

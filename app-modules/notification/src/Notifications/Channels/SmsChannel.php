@@ -171,7 +171,7 @@ class SmsChannel
     public static function determineQuotaUsage(SmsChannelResultData $result): int
     {
         if ($user = User::with('roles')->where('phone_number', $result->message->to)->first()) {
-            if ($user->hasRole('SaaS Global Admin')) {
+            if ($user->isSuperAdmin()) {
                 return 0;
             }
         }
@@ -189,7 +189,7 @@ class SmsChannel
 
                 $recipient = $deliverable->recipient;
 
-                if ($recipient instanceof User && $recipient->hasRole('SaaS Global Admin')) {
+                if ($recipient instanceof User && $recipient->isSuperAdmin()) {
                     $estimatedQuotaUsage = 0;
                 }
             }

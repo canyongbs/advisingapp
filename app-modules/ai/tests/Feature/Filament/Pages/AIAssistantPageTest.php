@@ -37,6 +37,7 @@
 use App\Models\User;
 use Livewire\Livewire;
 use Illuminate\Support\Str;
+use App\Models\Authenticatable;
 
 use function Tests\asSuperAdmin;
 
@@ -1221,7 +1222,7 @@ it('can not email a thread to a super admin', function () use ($setUp) {
 
     $superAdmin = User::factory()->create();
 
-    $superAdmin->assignRole('SaaS Global Admin');
+    $superAdmin->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('emailThread', [
@@ -1238,7 +1239,7 @@ it('can not clone a thread to a super admin', function () use ($setUp) {
 
     $superAdmin = User::factory()->create();
 
-    $superAdmin->assignRole('SaaS Global Admin');
+    $superAdmin->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('cloneThread', [
@@ -1255,7 +1256,7 @@ test('super admin users do not show up in email user search', function () use ($
 
     $superAdmin = User::factory()->create();
 
-    $superAdmin->assignRole('SaaS Global Admin');
+    $superAdmin->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
     Livewire::test(PersonalAssistant::class)
         ->mountAction('emailThread')
@@ -1272,7 +1273,7 @@ test('super admin users do not show up in clone user search', function () use ($
 
     $superAdmin = User::factory()->create();
 
-    $superAdmin->assignRole('SaaS Global Admin');
+    $superAdmin->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
     Livewire::test(PersonalAssistant::class)
         ->mountAction('cloneThread')

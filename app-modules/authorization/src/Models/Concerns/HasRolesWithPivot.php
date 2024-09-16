@@ -49,6 +49,8 @@ trait HasRolesWithPivot
 
     public function roles(): BelongsToMany
     {
+        $permissionRegistrar = app(PermissionRegistrar::class);
+
         $relation = $this->morphToMany(
             // TODO make a slightly better helper similar to the config helper that still allows
             // Us to pass an exact path to the key within the config, not just the path of the file
@@ -56,16 +58,16 @@ trait HasRolesWithPivot
             'model',
             config('permission.table_names.model_has_roles'),
             config('permission.column_names.model_morph_key'),
-            PermissionRegistrar::$pivotRole
+            $permissionRegistrar->pivotRole
         );
 
-        if (! PermissionRegistrar::$teams) {
+        if (! $permissionRegistrar->teams) {
             return $relation;
         }
 
-        return $relation->wherePivot(PermissionRegistrar::$teamsKey, getPermissionsTeamId())
-            ->where(function ($q) {
-                $teamField = config('permission.table_names.roles') . '.' . PermissionRegistrar::$teamsKey;
+        return $relation->wherePivot($permissionRegistrar->teamsKey, getPermissionsTeamId())
+            ->where(function ($q) use ($permissionRegistrar) {
+                $teamField = config('permission.table_names.roles') . '.' . $permissionRegistrar->teamsKey;
                 $q->whereNull($teamField)->orWhere($teamField, getPermissionsTeamId());
             });
     }

@@ -64,7 +64,7 @@ class InteractionTypePolicy
     public function view(Authenticatable $authenticatable, InteractionType $type): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['interaction_type.*.view', "interaction_type.{$type->id}.view"],
+            abilities: ["interaction_type.{$type->id}.view"],
             denyResponse: 'You do not have permission to view this interaction type.'
         );
     }
@@ -80,7 +80,7 @@ class InteractionTypePolicy
     public function update(Authenticatable $authenticatable, InteractionType $type): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['interaction_type.*.update', "interaction_type.{$type->id}.update"],
+            abilities: ["interaction_type.{$type->id}.update"],
             denyResponse: 'You do not have permission to update this interaction type.'
         );
     }
@@ -88,7 +88,7 @@ class InteractionTypePolicy
     public function delete(Authenticatable $authenticatable, InteractionType $type): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['interaction_type.*.delete', "interaction_type.{$type->id}.delete"],
+            abilities: ["interaction_type.{$type->id}.delete"],
             denyResponse: 'You do not have permission to delete this interaction type.'
         );
     }
@@ -96,7 +96,7 @@ class InteractionTypePolicy
     public function restore(Authenticatable $authenticatable, InteractionType $type): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['interaction_type.*.restore', "interaction_type.{$type->id}.restore"],
+            abilities: ["interaction_type.{$type->id}.restore"],
             denyResponse: 'You do not have permission to restore this interaction type.'
         );
     }
@@ -104,7 +104,7 @@ class InteractionTypePolicy
     public function forceDelete(Authenticatable $authenticatable, InteractionType $type): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['interaction_type.*.force-delete', "interaction_type.{$type->id}.force-delete"],
+            abilities: ["interaction_type.{$type->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction type.'
         );
     }

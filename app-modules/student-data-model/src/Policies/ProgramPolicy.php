@@ -53,7 +53,7 @@ class ProgramPolicy
     public function view(Authenticatable $authenticatable, Program $program): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['program.*.view', "program.{$program->id}.view"],
+            abilities: ["program.{$program->id}.view"],
             denyResponse: 'You do not have permission to view this program.'
         );
     }

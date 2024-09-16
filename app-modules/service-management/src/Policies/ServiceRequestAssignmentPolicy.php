@@ -73,7 +73,7 @@ class ServiceRequestAssignmentPolicy
     public function view(Authenticatable $authenticatable, ServiceRequestAssignment $serviceRequestAssignment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_assignment.*.view', "service_request_assignment.{$serviceRequestAssignment->id}.view"],
+            abilities: ["service_request_assignment.{$serviceRequestAssignment->id}.view"],
             denyResponse: 'You do not have permissions to view this service request assignment.'
         );
     }
@@ -89,7 +89,7 @@ class ServiceRequestAssignmentPolicy
     public function update(Authenticatable $authenticatable, ServiceRequestAssignment $serviceRequestAssignment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_assignment.*.update', "service_request_assignment.{$serviceRequestAssignment->id}.update"],
+            abilities: ["service_request_assignment.{$serviceRequestAssignment->id}.update"],
             denyResponse: 'You do not have permissions to update this service request assignment.'
         );
     }
@@ -97,7 +97,7 @@ class ServiceRequestAssignmentPolicy
     public function delete(Authenticatable $authenticatable, ServiceRequestAssignment $serviceRequestAssignment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_assignment.*.delete', "service_request_assignment.{$serviceRequestAssignment->id}.delete"],
+            abilities: ["service_request_assignment.{$serviceRequestAssignment->id}.delete"],
             denyResponse: 'You do not have permissions to delete this service request assignment.'
         );
     }
@@ -105,7 +105,7 @@ class ServiceRequestAssignmentPolicy
     public function restore(Authenticatable $authenticatable, ServiceRequestAssignment $serviceRequestAssignment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_assignment.*.restore', "service_request_assignment.{$serviceRequestAssignment->id}.restore"],
+            abilities: ["service_request_assignment.{$serviceRequestAssignment->id}.restore"],
             denyResponse: 'You do not have permissions to restore this service request assignment.'
         );
     }
@@ -113,7 +113,7 @@ class ServiceRequestAssignmentPolicy
     public function forceDelete(Authenticatable $authenticatable, ServiceRequestAssignment $serviceRequestAssignment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_assignment.*.force-delete', "service_request_assignment.{$serviceRequestAssignment->id}.force-delete"],
+            abilities: ["service_request_assignment.{$serviceRequestAssignment->id}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this service request assignment.'
         );
     }

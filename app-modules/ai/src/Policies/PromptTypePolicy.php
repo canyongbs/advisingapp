@@ -67,7 +67,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, PromptType $promptType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['prompt_type.*.view', "prompt_type.{$promptType->id}.view"],
+            abilities: ["prompt_type.{$promptType->id}.view"],
             denyResponse: 'You do not have permission to view this prompt type.'
         );
     }
@@ -83,7 +83,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, PromptType $promptType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['prompt_type.*.update', "prompt_type.{$promptType->id}.update"],
+            abilities: ["prompt_type.{$promptType->id}.update"],
             denyResponse: 'You do not have permission to update this prompt type.'
         );
     }
@@ -91,7 +91,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, PromptType $promptType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['prompt_type.*.delete', "prompt_type.{$promptType->id}.delete"],
+            abilities: ["prompt_type.{$promptType->id}.delete"],
             denyResponse: 'You do not have permission to delete this prompt type.'
         );
     }
@@ -99,7 +99,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, PromptType $promptType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['prompt_type.*.restore', "prompt_type.{$promptType->id}.restore"],
+            abilities: ["prompt_type.{$promptType->id}.restore"],
             denyResponse: 'You do not have permission to restore this prompt type.'
         );
     }
@@ -107,7 +107,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, PromptType $promptType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['prompt_type.*.force-delete', "prompt_type.{$promptType->id}.force-delete"],
+            abilities: ["prompt_type.{$promptType->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this prompt type.'
         );
     }

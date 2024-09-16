@@ -64,7 +64,7 @@ class InteractionStatusPolicy
     public function view(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['interaction_status.*.view', "interaction_status.{$status->id}.view"],
+            abilities: ["interaction_status.{$status->id}.view"],
             denyResponse: 'You do not have permission to view this interaction status.'
         );
     }
@@ -80,7 +80,7 @@ class InteractionStatusPolicy
     public function update(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['interaction_status.*.update', "interaction_status.{$status->id}.update"],
+            abilities: ["interaction_status.{$status->id}.update"],
             denyResponse: 'You do not have permission to update this interaction status.'
         );
     }
@@ -88,7 +88,7 @@ class InteractionStatusPolicy
     public function delete(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['interaction_status.*.delete', "interaction_status.{$status->id}.delete"],
+            abilities: ["interaction_status.{$status->id}.delete"],
             denyResponse: 'You do not have permission to delete this interaction status.'
         );
     }
@@ -96,7 +96,7 @@ class InteractionStatusPolicy
     public function restore(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['interaction_status.*.restore', "interaction_status.{$status->id}.restore"],
+            abilities: ["interaction_status.{$status->id}.restore"],
             denyResponse: 'You do not have permission to restore this interaction status.'
         );
     }
@@ -104,7 +104,7 @@ class InteractionStatusPolicy
     public function forceDelete(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['interaction_status.*.force-delete', "interaction_status.{$status->id}.force-delete"],
+            abilities: ["interaction_status.{$status->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction status.'
         );
     }

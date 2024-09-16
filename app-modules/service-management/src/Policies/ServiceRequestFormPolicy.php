@@ -74,7 +74,7 @@ class ServiceRequestFormPolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, ServiceRequestForm $serviceRequestForm): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_form.*.view', "service_request_form.{$serviceRequestForm->id}.view"],
+            abilities: ["service_request_form.{$serviceRequestForm->id}.view"],
             denyResponse: 'You do not have permission to view this service request form.'
         );
     }
@@ -90,7 +90,7 @@ class ServiceRequestFormPolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, ServiceRequestForm $serviceRequestForm): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_form.*.update', "service_request_form.{$serviceRequestForm->id}.update"],
+            abilities: ["service_request_form.{$serviceRequestForm->id}.update"],
             denyResponse: 'You do not have permission to update this service request form.'
         );
     }
@@ -98,7 +98,7 @@ class ServiceRequestFormPolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, ServiceRequestForm $serviceRequestForm): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_form.*.delete', "service_request_form.{$serviceRequestForm->id}.delete"],
+            abilities: ["service_request_form.{$serviceRequestForm->id}.delete"],
             denyResponse: 'You do not have permission to delete this service request form.'
         );
     }
@@ -106,7 +106,7 @@ class ServiceRequestFormPolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, ServiceRequestForm $serviceRequestForm): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_form.*.restore', "service_request_form.{$serviceRequestForm->id}.restore"],
+            abilities: ["service_request_form.{$serviceRequestForm->id}.restore"],
             denyResponse: 'You do not have permission to restore this service request form.'
         );
     }
@@ -114,7 +114,7 @@ class ServiceRequestFormPolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, ServiceRequestForm $serviceRequestForm): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_form.*.force-delete', "service_request_form.{$serviceRequestForm->id}.force-delete"],
+            abilities: ["service_request_form.{$serviceRequestForm->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this service request form.'
         );
     }

@@ -60,7 +60,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Gate::after(function (Authenticatable $authenticatable, string $ability, bool|null|Response $result, mixed $arguments) {
-            return $authenticatable->hasRole('SaaS Global Admin') && ! $result instanceof FeatureAccessResponse
+            return ((! $result instanceof FeatureAccessResponse) && $authenticatable->isSuperAdmin())
                     ? true
                     : $result;
         });
