@@ -40,6 +40,7 @@ use App\Models\User;
 use App\Enums\Feature;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
+use App\Enums\FeatureFlag;
 use Filament\Pages\SettingsPage;
 use AdvisingApp\Form\Enums\Rounding;
 use Illuminate\Support\Facades\Gate;
@@ -56,6 +57,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Actions\Action;
 use App\Filament\Forms\Components\ColorSelect;
 use AdvisingApp\Portal\Settings\PortalSettings;
+use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
 use AdvisingApp\Portal\Actions\GeneratePortalEmbedCode;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
@@ -239,6 +241,48 @@ class ManagePortalSettings extends SettingsPage
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
+
+                Section::make('GDPR Banner Notice')
+                    ->schema([
+                        TiptapEditor::make('gdpr_banner_text')
+                            ->label('GDPR Banner Text')
+                            ->required()
+                            ->tools(['link'])
+                            ->columnSpanFull(),
+                        Select::make('gdpr_banner_button_label')
+                            ->options(GdprBannerButtonLabel::class)
+                            ->enum(GdprBannerButtonLabel::class)
+                            ->required()
+                            ->label('GDPR Button Label'),
+                    ])
+                    ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled') && FeatureFlag::GDPRBanner->active()),
             ]);
+    }
+
+    public function save(): void
+    {
+        $this->callHook('beforeValidate');
+
+        $data = $this->form->getState();
+
+        $this->callHook('afterValidate');
+
+        $data = $this->mutateFormDataBeforeSave($data);
+
+        $this->callHook('beforeSave');
+
+        $settings = app(static::getSettings());
+
+        if (FeatureFlag::GDPRBanner->active()) {
+            $settings->gdpr_banner_text = $data['gdpr_banner_text'];
+            $settings->gdpr_banner_button_label = $data['gdpr_banner_button_label'];
+        }
+
+        $settings->fill($data);
+        $settings->save();
+
+        $this->callHook('afterSave');
+
+        $this->getSavedNotification()?->send();
     }
 }

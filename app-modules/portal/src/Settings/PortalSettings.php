@@ -37,6 +37,7 @@
 namespace AdvisingApp\Portal\Settings;
 
 use App\Settings\SettingsWithMedia;
+use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
 use AdvisingApp\Portal\Settings\SettingsProperties\PortalSettingsProperty;
 
 class PortalSettings extends SettingsWithMedia
@@ -89,6 +90,10 @@ class PortalSettings extends SettingsWithMedia
     public ?string $knowledge_management_portal_rounding = null;
 
     public ?string $knowledge_management_portal_authorized_domain = null;
+
+    public array $gdpr_banner_text = [];
+
+    public GdprBannerButtonLabel $gdpr_banner_button_label = GdprBannerButtonLabel::AllowCookies;
 
     public static function getSettingsPropertyModelClass(): string
     {
