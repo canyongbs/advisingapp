@@ -71,7 +71,7 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['interaction.*.view', "interaction.{$interaction->id}.view"],
+            abilities: ["interaction.{$interaction->id}.view"],
             denyResponse: 'You do not have permission to view this interaction.'
         );
     }
@@ -91,7 +91,7 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['interaction.*.update', "interaction.{$interaction->id}.update"],
+            abilities: ["interaction.{$interaction->id}.update"],
             denyResponse: 'You do not have permission to update this interaction.'
         );
     }
@@ -103,7 +103,7 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['interaction.*.delete', "interaction.{$interaction->id}.delete"],
+            abilities: ["interaction.{$interaction->id}.delete"],
             denyResponse: 'You do not have permission to delete this interaction.'
         );
     }
@@ -115,7 +115,7 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['interaction.*.restore', "interaction.{$interaction->id}.restore"],
+            abilities: ["interaction.{$interaction->id}.restore"],
             denyResponse: 'You do not have permission to restore this interaction.'
         );
     }
@@ -127,7 +127,7 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['interaction.*.force-delete', "interaction.{$interaction->id}.force-delete"],
+            abilities: ["interaction.{$interaction->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction.'
         );
     }

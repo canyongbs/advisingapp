@@ -53,7 +53,7 @@ class EnrollmentPolicy
     public function view(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['enrollment.*.view', "enrollment.{$enrollment->id}.view"],
+            abilities: ["enrollment.{$enrollment->id}.view"],
             denyResponse: 'You do not have permission to view this enrollment.'
         );
     }

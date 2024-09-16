@@ -53,7 +53,7 @@ class PerformancePolicy
     public function view(Authenticatable $authenticatable, Performance $performance): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['performance.*.view', "performance.{$performance->id}.view"],
+            abilities: ["performance.{$performance->id}.view"],
             denyResponse: 'You do not have permission to view this performance.'
         );
     }

@@ -73,7 +73,7 @@ class ServiceRequestPriorityPolicy
     public function view(Authenticatable $authenticatable, ServiceRequestPriority $serviceRequestPriority): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_priority.*.view', "service_request_priority.{$serviceRequestPriority->id}.view"],
+            abilities: ["service_request_priority.{$serviceRequestPriority->id}.view"],
             denyResponse: 'You do not have permissions to view this service request priority.'
         );
     }
@@ -89,7 +89,7 @@ class ServiceRequestPriorityPolicy
     public function update(Authenticatable $authenticatable, ServiceRequestPriority $serviceRequestPriority): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_priority.*.update', "service_request_priority.{$serviceRequestPriority->id}.update"],
+            abilities: ["service_request_priority.{$serviceRequestPriority->id}.update"],
             denyResponse: 'You do not have permissions to update this service request priority.'
         );
     }
@@ -97,7 +97,7 @@ class ServiceRequestPriorityPolicy
     public function delete(Authenticatable $authenticatable, ServiceRequestPriority $serviceRequestPriority): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_priority.*.delete', "service_request_priority.{$serviceRequestPriority->id}.delete"],
+            abilities: ["service_request_priority.{$serviceRequestPriority->id}.delete"],
             denyResponse: 'You do not have permissions to delete this service request priority.'
         );
     }
@@ -105,7 +105,7 @@ class ServiceRequestPriorityPolicy
     public function restore(Authenticatable $authenticatable, ServiceRequestPriority $serviceRequestPriority): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_priority.*.restore', "service_request_priority.{$serviceRequestPriority->id}.restore"],
+            abilities: ["service_request_priority.{$serviceRequestPriority->id}.restore"],
             denyResponse: 'You do not have permissions to restore this service request priority.'
         );
     }
@@ -113,7 +113,7 @@ class ServiceRequestPriorityPolicy
     public function forceDelete(Authenticatable $authenticatable, ServiceRequestPriority $serviceRequestPriority): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_priority.*.force-delete', "service_request_priority.{$serviceRequestPriority->id}.force-delete"],
+            abilities: ["service_request_priority.{$serviceRequestPriority->id}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this service request priority.'
         );
     }

@@ -53,7 +53,7 @@ class NotificationSettingPolicy
     public function view(Authenticatable $authenticatable, NotificationSetting $notificationSetting): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['notification_setting.*.view', "notification_setting.{$notificationSetting->id}.view"],
+            abilities: ["notification_setting.{$notificationSetting->id}.view"],
             denyResponse: 'You do not have permission to view this notification setting.'
         );
     }
@@ -69,7 +69,7 @@ class NotificationSettingPolicy
     public function update(Authenticatable $authenticatable, NotificationSetting $notificationSetting): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['notification_setting.*.update', "notification_setting.{$notificationSetting->id}.update"],
+            abilities: ["notification_setting.{$notificationSetting->id}.update"],
             denyResponse: 'You do not have permission to update this notification setting.'
         );
     }
@@ -77,7 +77,7 @@ class NotificationSettingPolicy
     public function delete(Authenticatable $authenticatable, NotificationSetting $notificationSetting): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['notification_setting.*.delete', "notification_setting.{$notificationSetting->id}.delete"],
+            abilities: ["notification_setting.{$notificationSetting->id}.delete"],
             denyResponse: 'You do not have permission to delete this notification setting.'
         );
     }
@@ -85,7 +85,7 @@ class NotificationSettingPolicy
     public function restore(Authenticatable $authenticatable, NotificationSetting $notificationSetting): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['notification_setting.*.restore', "notification_setting.{$notificationSetting->id}.restore"],
+            abilities: ["notification_setting.{$notificationSetting->id}.restore"],
             denyResponse: 'You do not have permission to restore this notification setting.'
         );
     }
@@ -93,7 +93,7 @@ class NotificationSettingPolicy
     public function forceDelete(Authenticatable $authenticatable, NotificationSetting $notificationSetting): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['notification_setting.*.force-delete', "notification_setting.{$notificationSetting->id}.force-delete"],
+            abilities: ["notification_setting.{$notificationSetting->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this notification setting.'
         );
     }

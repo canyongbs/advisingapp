@@ -74,7 +74,7 @@ class ChangeRequestTypePolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, ChangeRequestType $changeRequestType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['change_request_type.*.view', "change_request_type.{$changeRequestType->id}.view"],
+            abilities: ["change_request_type.{$changeRequestType->id}.view"],
             denyResponse: 'You do not have permission to view this change request type.'
         );
     }
@@ -90,7 +90,7 @@ class ChangeRequestTypePolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, ChangeRequestType $changeRequestType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['change_request_type.*.update', "change_request_type.{$changeRequestType->id}.update"],
+            abilities: ["change_request_type.{$changeRequestType->id}.update"],
             denyResponse: 'You do not have permission to update this change request type.'
         );
     }
@@ -98,7 +98,7 @@ class ChangeRequestTypePolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, ChangeRequestType $changeRequestType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['change_request_type.*.delete', "change_request_type.{$changeRequestType->id}.delete"],
+            abilities: ["change_request_type.{$changeRequestType->id}.delete"],
             denyResponse: 'You do not have permission to delete this change request type.'
         );
     }
@@ -106,7 +106,7 @@ class ChangeRequestTypePolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, ChangeRequestType $changeRequestType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['change_request_type.*.restore', "change_request_type.{$changeRequestType->id}.restore"],
+            abilities: ["change_request_type.{$changeRequestType->id}.restore"],
             denyResponse: 'You do not have permission to restore this change request type.'
         );
     }
@@ -118,7 +118,7 @@ class ChangeRequestTypePolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['change_request_type.*.force-delete', "change_request_type.{$changeRequestType->id}.force-delete"],
+            abilities: ["change_request_type.{$changeRequestType->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this change request type.'
         );
     }

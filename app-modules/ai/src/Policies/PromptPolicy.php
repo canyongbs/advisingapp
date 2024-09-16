@@ -67,7 +67,7 @@ class PromptPolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, Prompt $prompt): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['prompt.*.view', "prompt.{$prompt->id}.view"],
+            abilities: ["prompt.{$prompt->id}.view"],
             denyResponse: 'You do not have permission to view this prompt.'
         );
     }
@@ -83,7 +83,7 @@ class PromptPolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, Prompt $prompt): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['prompt.*.update', "prompt.{$prompt->id}.update"],
+            abilities: ["prompt.{$prompt->id}.update"],
             denyResponse: 'You do not have permission to update this prompt.'
         );
     }
@@ -91,7 +91,7 @@ class PromptPolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, Prompt $prompt): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['prompt.*.delete', "prompt.{$prompt->id}.delete"],
+            abilities: ["prompt.{$prompt->id}.delete"],
             denyResponse: 'You do not have permission to delete this prompt.'
         );
     }
@@ -99,7 +99,7 @@ class PromptPolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, Prompt $prompt): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['prompt.*.restore', "prompt.{$prompt->id}.restore"],
+            abilities: ["prompt.{$prompt->id}.restore"],
             denyResponse: 'You do not have permission to restore this prompt.'
         );
     }
@@ -107,7 +107,7 @@ class PromptPolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, Prompt $prompt): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['prompt.*.force-delete', "prompt.{$prompt->id}.force-delete"],
+            abilities: ["prompt.{$prompt->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this prompt.'
         );
     }

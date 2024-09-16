@@ -71,7 +71,7 @@ class SegmentPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['segment.*.view', "segment.{$segment->id}.view"],
+            abilities: ["segment.{$segment->id}.view"],
             denyResponse: 'You do not have permission to view this segment.'
         );
     }
@@ -91,7 +91,7 @@ class SegmentPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['segment.*.update', "segment.{$segment->id}.update"],
+            abilities: ["segment.{$segment->id}.update"],
             denyResponse: 'You do not have permission to update this segment.'
         );
     }
@@ -103,7 +103,7 @@ class SegmentPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['segment.*.delete', "segment.{$segment->id}.delete"],
+            abilities: ["segment.{$segment->id}.delete"],
             denyResponse: 'You do not have permission to delete this segment.'
         );
     }
@@ -115,7 +115,7 @@ class SegmentPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['segment.*.restore', "segment.{$segment->id}.restore"],
+            abilities: ["segment.{$segment->id}.restore"],
             denyResponse: 'You do not have permission to restore this segment.'
         );
     }
@@ -127,7 +127,7 @@ class SegmentPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['segment.*.force-delete', "segment.{$segment->id}.force-delete"],
+            abilities: ["segment.{$segment->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this segment.'
         );
     }

@@ -63,7 +63,7 @@ class ProspectStatusPolicy
     public function view(Authenticatable $authenticatable, ProspectStatus $prospectStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['prospect_status.*.view', "prospect_status.{$prospectStatus->id}.view"],
+            abilities: ["prospect_status.{$prospectStatus->id}.view"],
             denyResponse: 'You do not have permission to view prospect statuses.'
         );
     }
@@ -79,7 +79,7 @@ class ProspectStatusPolicy
     public function update(Authenticatable $authenticatable, ProspectStatus $prospectStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['prospect_status.*.update', "prospect_status.{$prospectStatus->id}.update"],
+            abilities: ["prospect_status.{$prospectStatus->id}.update"],
             denyResponse: 'You do not have permission to update prospect statuses.'
         );
     }
@@ -87,7 +87,7 @@ class ProspectStatusPolicy
     public function delete(Authenticatable $authenticatable, ProspectStatus $prospectStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['prospect_status.*.delete', "prospect_status.{$prospectStatus->id}.delete"],
+            abilities: ["prospect_status.{$prospectStatus->id}.delete"],
             denyResponse: 'You do not have permission to delete prospect statuses.'
         );
     }
@@ -95,7 +95,7 @@ class ProspectStatusPolicy
     public function restore(Authenticatable $authenticatable, ProspectStatus $prospectStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['prospect_status.*.restore', "prospect_status.{$prospectStatus->id}.restore"],
+            abilities: ["prospect_status.{$prospectStatus->id}.restore"],
             denyResponse: 'You do not have permission to restore prospect statuses.'
         );
     }
@@ -103,7 +103,7 @@ class ProspectStatusPolicy
     public function forceDelete(Authenticatable $authenticatable, ProspectStatus $prospectStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['prospect_status.*.force-delete', "prospect_status.{$prospectStatus->id}.force-delete"],
+            abilities: ["prospect_status.{$prospectStatus->id}.force-delete"],
             denyResponse: 'You do not have permission to force delete prospect statuses.'
         );
     }
