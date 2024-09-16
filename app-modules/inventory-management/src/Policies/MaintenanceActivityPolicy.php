@@ -53,7 +53,7 @@ class MaintenanceActivityPolicy
     public function view(Authenticatable $authenticatable, MaintenanceActivity $maintenanceActivity): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['maintenance_activity.*.view', "maintenance_activity.{$maintenanceActivity->id}.view"],
+            abilities: ["maintenance_activity.{$maintenanceActivity->id}.view"],
             denyResponse: 'You do not have permission to view this maintenance activity.'
         );
     }
@@ -69,7 +69,7 @@ class MaintenanceActivityPolicy
     public function update(Authenticatable $authenticatable, MaintenanceActivity $maintenanceActivity): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['maintenance_activity.*.update', "maintenance_activity.{$maintenanceActivity->id}.update"],
+            abilities: ["maintenance_activity.{$maintenanceActivity->id}.update"],
             denyResponse: 'You do not have permission to update this maintenance activity.'
         );
     }
@@ -77,7 +77,7 @@ class MaintenanceActivityPolicy
     public function delete(Authenticatable $authenticatable, MaintenanceActivity $maintenanceActivity): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['maintenance_activity.*.delete', "maintenance_activity.{$maintenanceActivity->id}.delete"],
+            abilities: ["maintenance_activity.{$maintenanceActivity->id}.delete"],
             denyResponse: 'You do not have permission to delete this maintenance activity.'
         );
     }
@@ -85,7 +85,7 @@ class MaintenanceActivityPolicy
     public function restore(Authenticatable $authenticatable, MaintenanceActivity $maintenanceActivity): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['maintenance_activity.*.restore', "maintenance_activity.{$maintenanceActivity->id}.restore"],
+            abilities: ["maintenance_activity.{$maintenanceActivity->id}.restore"],
             denyResponse: 'You do not have permission to restore this maintenance activity.'
         );
     }
@@ -93,7 +93,7 @@ class MaintenanceActivityPolicy
     public function forceDelete(Authenticatable $authenticatable, MaintenanceActivity $maintenanceActivity): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['maintenance_activity.*.force-delete', "maintenance_activity.{$maintenanceActivity->id}.force-delete"],
+            abilities: ["maintenance_activity.{$maintenanceActivity->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this maintenance activity.'
         );
     }

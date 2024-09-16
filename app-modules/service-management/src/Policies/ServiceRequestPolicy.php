@@ -77,7 +77,7 @@ class ServiceRequestPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['service_request.*.view', "service_request.{$serviceRequest->id}.view"],
+            abilities: ["service_request.{$serviceRequest->id}.view"],
             denyResponse: 'You do not have permission to view this service request.'
         );
     }
@@ -97,7 +97,7 @@ class ServiceRequestPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['service_request.*.update', "service_request.{$serviceRequest->id}.update"],
+            abilities: ["service_request.{$serviceRequest->id}.update"],
             denyResponse: 'You do not have permission to update this service request.'
         );
     }
@@ -109,7 +109,7 @@ class ServiceRequestPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['service_request.*.delete', "service_request.{$serviceRequest->id}.delete"],
+            abilities: ["service_request.{$serviceRequest->id}.delete"],
             denyResponse: 'You do not have permission to delete this service request.'
         );
     }
@@ -121,7 +121,7 @@ class ServiceRequestPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['service_request.*.restore', "service_request.{$serviceRequest->id}.restore"],
+            abilities: ["service_request.{$serviceRequest->id}.restore"],
             denyResponse: 'You do not have permission to restore this service request.'
         );
     }
@@ -133,7 +133,7 @@ class ServiceRequestPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['service_request.*.force-delete', "service_request.{$serviceRequest->id}.force-delete"],
+            abilities: ["service_request.{$serviceRequest->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this service request.'
         );
     }

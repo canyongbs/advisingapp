@@ -53,7 +53,7 @@ class InboundWebhookPolicy
     public function view(Authenticatable $authenticatable, InboundWebhook $inboundWebhook): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['inbound_webhook.*.view', "inbound_webhook.{$inboundWebhook->id}.view"],
+            abilities: ["inbound_webhook.{$inboundWebhook->id}.view"],
             denyResponse: 'You do not have permission to view this inbound webhook.'
         );
     }

@@ -68,7 +68,7 @@ class AlertPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['alert.*.view', "alert.{$alert->id}.view"],
+            abilities: ["alert.{$alert->id}.view"],
             denyResponse: 'You do not have permission to view this alert.'
         );
     }
@@ -88,7 +88,7 @@ class AlertPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['alert.*.update', "alert.{$alert->id}.update"],
+            abilities: ["alert.{$alert->id}.update"],
             denyResponse: 'You do not have permission to update this alert.'
         );
     }
@@ -100,7 +100,7 @@ class AlertPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['alert.*.delete', "alert.{$alert->id}.delete"],
+            abilities: ["alert.{$alert->id}.delete"],
             denyResponse: 'You do not have permission to delete this alert.'
         );
     }
@@ -112,7 +112,7 @@ class AlertPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['alert.*.restore', "alert.{$alert->id}.restore"],
+            abilities: ["alert.{$alert->id}.restore"],
             denyResponse: 'You do not have permission to restore this alert.'
         );
     }
@@ -124,7 +124,7 @@ class AlertPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['alert.*.force-delete', "alert.{$alert->id}.force-delete"],
+            abilities: ["alert.{$alert->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this alert.'
         );
     }

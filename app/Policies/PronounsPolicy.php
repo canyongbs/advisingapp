@@ -53,7 +53,7 @@ class PronounsPolicy
     public function view(Authenticatable $authenticatable, Pronouns $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['pronouns.*.view', "pronouns.{$model->id}.view"],
+            abilities: ["pronouns.{$model->id}.view"],
             denyResponse: 'You do not have permission to view these pronouns.'
         );
     }
@@ -69,7 +69,7 @@ class PronounsPolicy
     public function update(Authenticatable $authenticatable, Pronouns $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['pronouns.*.update', "pronouns.{$model->id}.update"],
+            abilities: ["pronouns.{$model->id}.update"],
             denyResponse: 'You do not have permission to update these pronouns.'
         );
     }
@@ -77,7 +77,7 @@ class PronounsPolicy
     public function delete(Authenticatable $authenticatable, Pronouns $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['pronouns.*.delete', "pronouns.{$model->id}.delete"],
+            abilities: ["pronouns.{$model->id}.delete"],
             denyResponse: 'You do not have permission to delete these pronouns.'
         );
     }
@@ -85,7 +85,7 @@ class PronounsPolicy
     public function restore(Authenticatable $authenticatable, Pronouns $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['pronouns.*.restore', "pronouns.{$model->id}.restore"],
+            abilities: ["pronouns.{$model->id}.restore"],
             denyResponse: 'You do not have permission to restore these pronouns.'
         );
     }
@@ -93,7 +93,7 @@ class PronounsPolicy
     public function forceDelete(Authenticatable $authenticatable, Pronouns $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['pronouns.*.force-delete', "pronouns.{$model->id}.force-delete"],
+            abilities: ["pronouns.{$model->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete these pronouns.'
         );
     }
