@@ -35,6 +35,7 @@
 */
 
 use App\Models\User;
+use App\Models\Authenticatable;
 
 use function Tests\asSuperAdmin;
 
@@ -138,7 +139,7 @@ it('allows user with permission to impersonate', function () {
 });
 it('allows user which has sass global admin role to assign sass global admin role to other user', function () {
     $user = User::factory()->create();
-    $user->assignRole('SaaS Global Admin');
+    $user->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
     $second = User::factory()->create();
 
@@ -155,7 +156,7 @@ it('allows user which has sass global admin role to assign sass global admin rol
     ])
         ->mountTableAction(AttachAction::class)
         ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) {
-            $options = $select->getSearchResults('SaaS Global Admin');
+            $options = $select->getSearchResults(Authenticatable::SUPER_ADMIN_ROLE);
 
             return ! empty($options) ? true : false;
         })->assertSuccessful();
@@ -179,7 +180,7 @@ it('Not allows user which has not sass global admin role to assign sass global a
     ])
         ->mountTableAction(AttachAction::class)
         ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) {
-            $options = $select->getSearchResults('SaaS Global Admin');
+            $options = $select->getSearchResults(Authenticatable::SUPER_ADMIN_ROLE);
 
             return empty($options) ? true : false;
         })->assertSuccessful();

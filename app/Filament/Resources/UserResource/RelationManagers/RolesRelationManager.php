@@ -39,6 +39,7 @@ namespace App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\Authenticatable;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Tables\Columns\IdColumn;
@@ -84,8 +85,8 @@ class RolesRelationManager extends RelationManager
                         /** @var User $user */
                         $user = auth()->user();
 
-                        if (! $user->hasRole('SaaS Global Admin')) {
-                            $query->where('name', '!=', 'SaaS Global Admin');
+                        if (! $user->isSuperAdmin()) {
+                            $query->where('name', '!=', Authenticatable::SUPER_ADMIN_ROLE);
                         }
                     })
                     ->multiple()

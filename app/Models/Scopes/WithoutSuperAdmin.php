@@ -36,12 +36,13 @@
 
 namespace App\Models\Scopes;
 
+use App\Models\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 
 class WithoutSuperAdmin
 {
     public function __invoke(Builder $query): void
     {
-        $query->whereNot->role('SaaS Global Admin');
+        $query->whereNot->role(Authenticatable::SUPER_ADMIN_ROLE);
     }
 }

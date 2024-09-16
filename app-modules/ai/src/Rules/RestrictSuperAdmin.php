@@ -57,7 +57,7 @@ class RestrictSuperAdmin implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         foreach ($value as $id) {
-            if (User::findOrFail($id)->hasRole('SaaS Global Admin')) {
+            if (User::findOrFail($id)->isSuperAdmin()) {
                 if ($this->type === 'clone') {
                     $fail('Super admin users cannot have a thread shared with them.');
                 } elseif ($this->type === 'email') {

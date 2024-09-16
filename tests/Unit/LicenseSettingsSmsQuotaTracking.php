@@ -39,6 +39,7 @@ use Twilio\Rest\Client;
 use Tests\Unit\ClientMock;
 use Twilio\Rest\Api\V2010;
 use Twilio\Rest\MessagingBase;
+use App\Models\Authenticatable;
 use App\Settings\LicenseSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 
@@ -151,7 +152,7 @@ it('An sms is prevented from being sent if there is no available quota', functio
 it('An sms is sent to a super admin user even if there is no available quota', function () {
     $notifiable = User::factory()->create();
 
-    $notifiable->assignRole('SaaS Global Admin');
+    $notifiable->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
     $notification = new Tests\Unit\TestSmsNotification();
 
