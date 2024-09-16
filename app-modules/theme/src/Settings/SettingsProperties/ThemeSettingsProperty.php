@@ -58,7 +58,7 @@ class ThemeSettingsProperty extends SettingsPropertyWithMedia
                 'image/jpeg',
                 'image/webp',
                 'image/jpg',
-                'image/svg',
+                'image/svg+xml',
             ]);
 
         $this->addMediaCollection('dark_logo')
@@ -68,7 +68,7 @@ class ThemeSettingsProperty extends SettingsPropertyWithMedia
                 'image/jpeg',
                 'image/webp',
                 'image/jpg',
-                'image/svg',
+                'image/svg+xml',
             ]);
     }
 }
