@@ -35,6 +35,7 @@
 */
 
 use App\Models\User;
+use App\Models\Authenticatable;
 use App\Settings\LicenseSettings;
 
 use function PHPUnit\Framework\assertEquals;
@@ -77,7 +78,7 @@ test('Users with a Super Admin role are not counted in the available seats', fun
     $licenseSettings->save();
 
     $superAdmin = User::factory()->create();
-    $superAdmin->assignRole('SaaS Global Admin');
+    $superAdmin->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
     $superAdmin->grantLicense($licenseType);
 

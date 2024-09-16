@@ -89,7 +89,7 @@ class UsersRelationManager extends RelationManager
                                     }
 
                                     //TODO: remove this if we want to allow super admin user as team member.
-                                    if (User::findOrFail($value)->hasRole('SaaS Global Admin')) {
+                                    if (User::findOrFail($value)->isSuperAdmin()) {
                                         $fail('Super admin users cannot be added to a team.');
                                     }
                                 },

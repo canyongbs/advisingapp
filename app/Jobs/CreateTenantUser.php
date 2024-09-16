@@ -41,6 +41,7 @@ use App\Models\Tenant;
 use Illuminate\Support\Arr;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
+use App\Models\Authenticatable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use AdvisingApp\Authorization\Models\Role;
@@ -83,7 +84,7 @@ class CreateTenantUser implements ShouldQueue, NotTenantAware
                 }
             }
 
-            $user->roles()->sync(Role::where('name', 'SaaS Global Admin')->firstOrFail());
+            $user->roles()->sync(Role::where('name', Authenticatable::SUPER_ADMIN_ROLE)->firstOrFail());
         });
     }
 }

@@ -48,6 +48,10 @@ abstract class Authenticatable extends BaseAuthenticatable
     use CanOrElse;
     use UsesTenantConnection;
 
+    public const SUPER_ADMIN_ROLE = 'SaaS Global Admin';
+
+    protected bool $isSuperAdmin;
+
     /**
      * @param LicenseType | string | array<LicenseType | string> | null $type
      */
@@ -57,4 +61,9 @@ abstract class Authenticatable extends BaseAuthenticatable
      * @param LicenseType | string | array<LicenseType | string> | null $type
      */
     abstract public function hasAnyLicense(LicenseType | string | array | null $type): bool;
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->isSuperAdmin ??= $this->hasRole(static::SUPER_ADMIN_ROLE);
+    }
 }

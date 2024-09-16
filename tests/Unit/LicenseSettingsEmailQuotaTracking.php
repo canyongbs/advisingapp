@@ -35,6 +35,7 @@
 */
 
 use App\Models\User;
+use App\Models\Authenticatable;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Event;
 use Tests\Unit\TestEmailNotification;
@@ -115,7 +116,7 @@ it('An email is sent to a super admin user even if there is no available quota',
 
     $notifiable = User::factory()->create();
 
-    $notifiable->assignRole('SaaS Global Admin');
+    $notifiable->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
     $notification = new TestEmailNotification();
 
