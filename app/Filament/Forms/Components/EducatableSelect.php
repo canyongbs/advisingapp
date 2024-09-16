@@ -62,14 +62,14 @@ class EducatableSelect extends Component
         $this->name($name);
     }
 
-    public static function make(string $name): EducatableSelect | MorphToSelect
+    public static function make(string $name, bool $isExcludingConvertedProspects = false, bool $isEditPage = false): EducatableSelect | MorphToSelect
     {
         if (auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
             return MorphToSelect::make($name)
                 ->searchable()
                 ->types([
                     static::getStudentType(),
-                    static::getProspectType(),
+                    static::getProspectType($isExcludingConvertedProspects,$isEditPage),
                 ]);
         }
 
@@ -81,19 +81,29 @@ class EducatableSelect extends Component
 
     public static function getStudentType(): Type
     {
-        return Type::make(Student::class)
+         return Type::make(Student::class)
             ->titleAttribute(Student::displayNameKey());
     }
 
-    public static function getProspectType(): Type
+    public static function getProspectType($isExcludingConvertedProspects,$isEditPage): Type
     {
-        return Type::make(Prospect::class)
-            ->modifyOptionsQueryUsing(fn (Builder $query) => $query->doesntHave('student'))
+        $prospectType = Type::make(Prospect::class)
             ->titleAttribute(Prospect::displayNameKey());
+       
+        if($isExcludingConvertedProspects){
+            $prospectType->modifyOptionsQueryUsing(fn (Builder $query) => $query->excludeConvertedProspects());
+        }
+
+        if($isEditPage){
+            $prospectType->modifyOptionsQueryUsing(fn (Builder $query,$record) => $query->where('id',$record->concern_id));
+        }
+        
+        return $prospectType;
     }
 
     public function getChildComponents(): array
     {
+       
         /** @var Authenticatable $user */
         $user = auth()->user();
 

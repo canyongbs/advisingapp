@@ -104,7 +104,7 @@ class CreateInteraction extends CreateRecord
                             ->titleAttribute(Student::displayNameKey())] : []),
                         ...(auth()->user()->hasLicense(Prospect::getLicenseType()) ? [MorphToSelect\Type::make(Prospect::class)
                             ->titleAttribute(Prospect::displayNameKey())
-                            ->modifyOptionsQueryUsing(fn(Builder $query) => $query->doesntHave('student'))
+                            ->modifyOptionsQueryUsing(fn(Builder $query) => $query->excludeConvertedProspects())
                             ] : []),
                         MorphToSelect\Type::make(ServiceRequest::class)
                             ->label('Service Request')

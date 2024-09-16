@@ -45,6 +45,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -56,7 +57,6 @@ use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
-use Illuminate\Database\Eloquent\Builder;
 
 class EditInteraction extends EditRecord
 {
@@ -75,8 +75,11 @@ class EditInteraction extends EditRecord
                             ->titleAttribute(Student::displayNameKey())] : []),
                         ...(auth()->user()->hasLicense(Prospect::getLicenseType()) ? [
                             MorphToSelect\Type::make(Prospect::class)
-                            ->titleAttribute(Prospect::displayNameKey())
-                            ->modifyOptionsQueryUsing(fn(Builder $query) => $query->doesntHave('student'))
+                                ->titleAttribute(Prospect::displayNameKey())
+                                ->modifyOptionsQueryUsing(
+                                    fn (Builder $query, $record) => $query->excludeConvertedProspects()
+                                        ->orWhere('id', '=', $record->interactable_id)
+                                ),
                         ] : []),
                         MorphToSelect\Type::make(ServiceRequest::class)
                             ->label('Service Request')
