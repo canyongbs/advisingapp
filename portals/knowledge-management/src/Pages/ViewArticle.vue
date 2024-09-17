@@ -62,7 +62,7 @@ const loading = ref(true);
 const category = ref(null);
 const article = ref(null);
 const portalViewCount = ref(0);
-const portalViewCountFlag = ref(0);
+const portalViewCountFlag = ref(false);
 
 watch(
     route,

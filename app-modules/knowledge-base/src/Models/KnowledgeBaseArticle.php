@@ -67,7 +67,6 @@ class KnowledgeBaseArticle extends BaseModel implements Auditable, HasMedia
     protected $fillable = [
         'article_details',
         'category_id',
-        'portal_view_count',
         'notes',
         'public',
         'quality_id',
