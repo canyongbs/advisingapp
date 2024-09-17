@@ -373,11 +373,12 @@
                     >
                         <span x-text="error"></span>
 
-                        <span x-show="! isRetryable">We will inform you once you can retry sending your message.</span>
+                        <span x-show="! (isRetryable || isRateLimited)">We will inform you once you can retry sending
+                            your message.</span>
 
                         <x-filament::link
                             x-on:click="retryMessage"
-                            x-show="isRetryable"
+                            x-show="isRetryable && (! isRateLimited)"
                             tag="button"
                             color="gray"
                         >Click here to retry.

@@ -36,6 +36,9 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
+use Throwable;
+use App\Models\Tenant;
+use App\Services\Olympus;
 use Filament\Infolists\Infolist;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
@@ -45,6 +48,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Support\Facades\FilamentView;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
@@ -165,9 +169,36 @@ class ViewStudent extends ViewRecord
 
     public function sisRefresh()
     {
+        $tenantId = Tenant::current()->getKey();
+
+        /** @var Student $student */
+        $student = $this->getRecord();
+
+        try {
+            $response = app(Olympus::class)->makeRequest()
+                ->asJson()
+                ->post("integrations/{$tenantId}/student-on-demand-sync", [
+                    'sisid' => $student->getKey(),
+                    'otherid' => $student->otherid,
+                ])
+                ->throw();
+
+            if ($response->ok()) {
+                Notification::make()
+                    ->title('Student data sync initiated!')
+                    ->body('The student data sync has been initiated. Please allow some time for the data to be updated.')
+                    ->success()
+                    ->send();
+            }
+
+            return;
+        } catch (Throwable $e) {
+            report($e);
+        }
+
         Notification::make()
-            ->title('Student data successfully synced!')
-            ->success()
+            ->title('Failed to initiate Student data sync.')
+            ->danger()
             ->send();
     }
 

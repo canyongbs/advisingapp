@@ -73,7 +73,7 @@ class ServiceRequestStatusPolicy
     public function view(Authenticatable $authenticatable, ServiceRequestStatus $serviceRequestStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_status.*.view', "service_request_status.{$serviceRequestStatus->id}.view"],
+            abilities: ["service_request_status.{$serviceRequestStatus->id}.view"],
             denyResponse: 'You do not have permissions to view this service request status.'
         );
     }
@@ -89,7 +89,7 @@ class ServiceRequestStatusPolicy
     public function update(Authenticatable $authenticatable, ServiceRequestStatus $serviceRequestStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_status.*.update', "service_request_status.{$serviceRequestStatus->id}.update"],
+            abilities: ["service_request_status.{$serviceRequestStatus->id}.update"],
             denyResponse: 'You do not have permissions to update this service request status.'
         );
     }
@@ -97,7 +97,7 @@ class ServiceRequestStatusPolicy
     public function delete(Authenticatable $authenticatable, ServiceRequestStatus $serviceRequestStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_status.*.delete', "service_request_status.{$serviceRequestStatus->id}.delete"],
+            abilities: ["service_request_status.{$serviceRequestStatus->id}.delete"],
             denyResponse: 'You do not have permissions to delete this service request status.'
         );
     }
@@ -105,7 +105,7 @@ class ServiceRequestStatusPolicy
     public function restore(Authenticatable $authenticatable, ServiceRequestStatus $serviceRequestStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_status.*.restore', "service_request_status.{$serviceRequestStatus->id}.restore"],
+            abilities: ["service_request_status.{$serviceRequestStatus->id}.restore"],
             denyResponse: 'You do not have permissions to restore this service request status.'
         );
     }
@@ -117,7 +117,7 @@ class ServiceRequestStatusPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['service_request_status.*.force-delete', "service_request_status.{$serviceRequestStatus->id}.force-delete"],
+            abilities: ["service_request_status.{$serviceRequestStatus->id}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this service request status.'
         );
     }

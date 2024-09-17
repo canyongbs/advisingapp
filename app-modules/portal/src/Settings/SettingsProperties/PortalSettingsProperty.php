@@ -49,7 +49,7 @@ class PortalSettingsProperty extends SettingsPropertyWithMedia
                 'image/jpeg',
                 'image/webp',
                 'image/jpg',
-                'image/svg',
+                'image/svg+xml',
             ]);
     }
 }

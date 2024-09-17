@@ -53,7 +53,7 @@ class SmsTemplatePolicy
     public function view(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['sms_template.*.view', "sms_template.{$smsTemplate->id}.view"],
+            abilities: ["sms_template.{$smsTemplate->id}.view"],
             denyResponse: 'You do not have permission to view this sms template.'
         );
     }
@@ -69,7 +69,7 @@ class SmsTemplatePolicy
     public function update(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['sms_template.*.update', "sms_template.{$smsTemplate->id}.update"],
+            abilities: ["sms_template.{$smsTemplate->id}.update"],
             denyResponse: 'You do not have permission to update this sms template.'
         );
     }
@@ -77,7 +77,7 @@ class SmsTemplatePolicy
     public function delete(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['sms_template.*.delete', "sms_template.{$smsTemplate->id}.delete"],
+            abilities: ["sms_template.{$smsTemplate->id}.delete"],
             denyResponse: 'You do not have permission to delete this sms template.'
         );
     }
@@ -85,7 +85,7 @@ class SmsTemplatePolicy
     public function restore(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['sms_template.*.restore', "sms_template.{$smsTemplate->id}.restore"],
+            abilities: ["sms_template.{$smsTemplate->id}.restore"],
             denyResponse: 'You do not have permission to restore this sms template.'
         );
     }
@@ -93,7 +93,7 @@ class SmsTemplatePolicy
     public function forceDelete(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['sms_template.*.force-delete', "sms_template.{$smsTemplate->id}.force-delete"],
+            abilities: ["sms_template.{$smsTemplate->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this sms template.'
         );
     }

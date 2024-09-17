@@ -53,7 +53,7 @@ class LicensePolicy
     public function view(Authenticatable $authenticatable, License $license): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['license.*.view', "license.{$license->id}.view"],
+            abilities: ["license.{$license->id}.view"],
             denyResponse: 'You do not have permission to view this license.'
         );
     }
@@ -69,7 +69,7 @@ class LicensePolicy
     public function update(Authenticatable $authenticatable, License $license): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['license.*.update', "license.{$license->id}.update"],
+            abilities: ["license.{$license->id}.update"],
             denyResponse: 'You do not have permission to update this license.'
         );
     }
@@ -77,7 +77,7 @@ class LicensePolicy
     public function delete(Authenticatable $authenticatable, License $license): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['license.*.delete', "license.{$license->id}.delete"],
+            abilities: ["license.{$license->id}.delete"],
             denyResponse: 'You do not have permission to delete this license.'
         );
     }
@@ -85,7 +85,7 @@ class LicensePolicy
     public function restore(Authenticatable $authenticatable, License $license): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['license.*.restore', "license.{$license->id}.restore"],
+            abilities: ["license.{$license->id}.restore"],
             denyResponse: 'You do not have permission to restore this license.'
         );
     }
@@ -93,7 +93,7 @@ class LicensePolicy
     public function forceDelete(Authenticatable $authenticatable, License $license): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['license.*.force-delete', "license.{$license->id}.force-delete"],
+            abilities: ["license.{$license->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this license.'
         );
     }

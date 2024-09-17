@@ -73,7 +73,7 @@ class SlaPolicy
     public function view(Authenticatable $authenticatable, Sla $sla): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['sla.*.view', "sla.{$sla->id}.view"],
+            abilities: ["sla.{$sla->id}.view"],
             denyResponse: 'You do not have permission to view this SLA.'
         );
     }
@@ -89,7 +89,7 @@ class SlaPolicy
     public function update(Authenticatable $authenticatable, Sla $sla): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['sla.*.update', "sla.{$sla->id}.update"],
+            abilities: ["sla.{$sla->id}.update"],
             denyResponse: 'You do not have permission to update this SLA.'
         );
     }
@@ -97,7 +97,7 @@ class SlaPolicy
     public function delete(Authenticatable $authenticatable, Sla $sla): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['sla.*.delete', "sla.{$sla->id}.delete"],
+            abilities: ["sla.{$sla->id}.delete"],
             denyResponse: 'You do not have permission to delete this SLA.'
         );
     }
@@ -105,7 +105,7 @@ class SlaPolicy
     public function restore(Authenticatable $authenticatable, Sla $sla): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['sla.*.restore', "sla.{$sla->id}.restore"],
+            abilities: ["sla.{$sla->id}.restore"],
             denyResponse: 'You do not have permission to restore this SLA.'
         );
     }
@@ -113,7 +113,7 @@ class SlaPolicy
     public function forceDelete(Authenticatable $authenticatable, Sla $sla): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['sla.*.force-delete', "sla.{$sla->id}.force-delete"],
+            abilities: ["sla.{$sla->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this SLA.'
         );
     }

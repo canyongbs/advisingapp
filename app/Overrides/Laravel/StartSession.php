@@ -34,16 +34,32 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
+namespace App\Overrides\Laravel;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        Feature::activate('setup-complete');
-    }
+use Illuminate\Contracts\Session\Session;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Session\Middleware\StartSession as BaseStartSession;
 
-    public function down(): void
+class StartSession extends BaseStartSession
+{
+    protected function addCookieToResponse(Response $response, Session $session)
     {
-        Feature::deactivate('setup-complete');
+        $config = app()->make('config')->get('session');
+
+        if ($this->sessionIsPersistent($config)) {
+            $response->headers->setCookie(new Cookie(
+                $session->getName(),
+                $session->getId(),
+                $this->getCookieExpirationDate(),
+                $config['path'],
+                $config['domain'],
+                $config['secure'] ?? false,
+                $config['http_only'] ?? true,
+                false,
+                $config['same_site'] ?? null,
+                $config['partitioned'] ?? false
+            ));
+        }
     }
-};
+}

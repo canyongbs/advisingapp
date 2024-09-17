@@ -38,8 +38,7 @@ import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import AppLoading from '@/Components/AppLoading.vue';
 import DOMPurify from 'dompurify';
 import { consumer } from '@/Services/Consumer.js';
-import { Bars3Icon } from "@heroicons/vue/24/outline/index.js";
-import { EyeIcon } from '@heroicons/vue/24/outline';
+import { Bars3Icon, ClockIcon } from "@heroicons/vue/24/outline/index.js";
 
 const route = useRoute();
 
@@ -96,9 +95,7 @@ function getData() {
 </script>
 
 <template>
-    <div
-        class="sticky top-0 z-40 flex flex-col items-center bg-gray-50"
-    >
+    <div class="sticky top-0 z-40 flex flex-col items-center bg-gray-50">
         <button class="w-full p-3 lg:hidden" type="button" @click="$emit('sidebarOpened')">
             <span class="sr-only">Open sidebar</span>
 
@@ -112,24 +109,26 @@ function getData() {
                 </div>
                 <div v-else>
                     <main class="flex flex-col gap-8">
-                        <Breadcrumbs
-                            :breadcrumbs="[
-                                { name: category.name, route: 'view-category', params: { categoryId: category.id } },
-                            ]"
-                            currentCrumb="Articles"
-                        ></Breadcrumbs>
+                        <Breadcrumbs :breadcrumbs="[
+                            { name: category.name, route: 'view-category', params: { categoryId: category.id } },
+                        ]" currentCrumb="Articles"></Breadcrumbs>
 
                         <div class="flex flex-col gap-3">
                             <div class="prose max-w-none">
-                                <h1>{{ article.name }} </h1>
-                                <div v-if="portalViewCountFlag" class="text-gray-500 flex items-center space-x-1 mb-4">
-                                    <EyeIcon class="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-                                    <span class="text-xs">{{portalViewCount}} Views</span>
+                                <h1>{{ article.name }}</h1>
+                                <div class="flex mb-4">
+                                  <div v-if="portalViewCountFlag" class="text-gray-500 flex items-center space-x-1 mr-2">
+                                      <EyeIcon class="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                                      <span class="text-xs">{{portalViewCount}} Views</span>
+                                  </div>
+                                  <div class="text-gray-500 flex items-center space-x-1">
+                                      <ClockIcon class="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                                      <span class="text-xs">Last updated: {{ article.lastUpdated }}</span>
+                                  </div>
                                 </div>
-                                <hr class="my-4">
+                                <div class="border-t"></div>
                                 <div v-html="DOMPurify.sanitize(article.content)"></div>
                             </div>
-                            <span class="text-xs text-gray-500">Last updated: {{ article.lastUpdated }}</span>
                         </div>
                     </main>
                 </div>

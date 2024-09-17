@@ -64,7 +64,7 @@ class InteractionOutcomePolicy
     public function view(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['interaction_outcome.*.view', "interaction_outcome.{$outcome->id}.view"],
+            abilities: ["interaction_outcome.{$outcome->id}.view"],
             denyResponse: 'You do not have permission to view this interaction outcome.'
         );
     }
@@ -80,7 +80,7 @@ class InteractionOutcomePolicy
     public function update(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['interaction_outcome.*.update', "interaction_outcome.{$outcome->id}.update"],
+            abilities: ["interaction_outcome.{$outcome->id}.update"],
             denyResponse: 'You do not have permission to update this interaction outcome.'
         );
     }
@@ -88,7 +88,7 @@ class InteractionOutcomePolicy
     public function delete(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['interaction_outcome.*.delete', "interaction_outcome.{$outcome->id}.delete"],
+            abilities: ["interaction_outcome.{$outcome->id}.delete"],
             denyResponse: 'You do not have permission to delete this interaction outcome.'
         );
     }
@@ -96,7 +96,7 @@ class InteractionOutcomePolicy
     public function restore(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['interaction_outcome.*.restore', "interaction_outcome.{$outcome->id}.restore"],
+            abilities: ["interaction_outcome.{$outcome->id}.restore"],
             denyResponse: 'You do not have permission to restore this interaction outcome.'
         );
     }
@@ -104,7 +104,7 @@ class InteractionOutcomePolicy
     public function forceDelete(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['interaction_outcome.*.force-delete', "interaction_outcome.{$outcome->id}.force-delete"],
+            abilities: ["interaction_outcome.{$outcome->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction outcome.'
         );
     }

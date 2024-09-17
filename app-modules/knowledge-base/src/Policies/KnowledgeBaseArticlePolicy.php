@@ -74,7 +74,7 @@ class KnowledgeBaseArticlePolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, KnowledgeBaseArticle $knowledgeBaseArticle): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['knowledge_base_article.*.view', "knowledge_base_article.{$knowledgeBaseArticle->id}.view"],
+            abilities: ["knowledge_base_article.{$knowledgeBaseArticle->id}.view"],
             denyResponse: 'You do not have permissions to view this knowledge base article.'
         );
     }
@@ -90,7 +90,7 @@ class KnowledgeBaseArticlePolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, KnowledgeBaseArticle $knowledgeBaseArticle): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['knowledge_base_article.*.update', "knowledge_base_article.{$knowledgeBaseArticle->id}.update"],
+            abilities: ["knowledge_base_article.{$knowledgeBaseArticle->id}.update"],
             denyResponse: 'You do not have permissions to update this knowledge base article.'
         );
     }
@@ -98,7 +98,7 @@ class KnowledgeBaseArticlePolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, KnowledgeBaseArticle $knowledgeBaseArticle): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['knowledge_base_article.*.delete', "knowledge_base_article.{$knowledgeBaseArticle->id}.delete"],
+            abilities: ["knowledge_base_article.{$knowledgeBaseArticle->id}.delete"],
             denyResponse: 'You do not have permissions to delete this knowledge base article.'
         );
     }
@@ -106,7 +106,7 @@ class KnowledgeBaseArticlePolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, KnowledgeBaseArticle $knowledgeBaseArticle): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['knowledge_base_article.*.restore', "knowledge_base_article.{$knowledgeBaseArticle->id}.restore"],
+            abilities: ["knowledge_base_article.{$knowledgeBaseArticle->id}.restore"],
             denyResponse: 'You do not have permissions to restore this knowledge base article.'
         );
     }
@@ -114,7 +114,7 @@ class KnowledgeBaseArticlePolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, KnowledgeBaseArticle $knowledgeBaseArticle): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['knowledge_base_article.*.force-delete', "knowledge_base_article.{$knowledgeBaseArticle->id}.force-delete"],
+            abilities: ["knowledge_base_article.{$knowledgeBaseArticle->id}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this knowledge base article.'
         );
     }
