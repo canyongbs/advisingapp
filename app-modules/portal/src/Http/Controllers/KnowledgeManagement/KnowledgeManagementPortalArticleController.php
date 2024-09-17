@@ -47,31 +47,31 @@ use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
 
 class KnowledgeManagementPortalArticleController extends Controller
 {
-  public function show(KnowledgeBaseCategory $category, KnowledgeBaseArticle $article): JsonResponse
-  {
-    $portalViewCountFlag = Feature::active('portal_view_count');
+    public function show(KnowledgeBaseCategory $category, KnowledgeBaseArticle $article): JsonResponse
+    {
+        $portalViewCountFlag = Feature::active('portal_view_count');
 
-    $articleUpdatedAt = $article->updated_at->setTimezone(app(DisplaySettings::class)->timezone);
+        $articleUpdatedAt = $article->updated_at->setTimezone(app(DisplaySettings::class)->timezone);
 
-    if ($portalViewCountFlag) {
-      $article->increment('portal_view_count');
+        if ($portalViewCountFlag) {
+            $article->increment('portal_view_count');
+        }
+
+        return response()->json([
+            'category' => KnowledgeBaseCategoryData::from([
+                'id' => $category->getKey(),
+                'name' => $category->name,
+                'description' => $category->description,
+            ]),
+            'article' => KnowledgeBaseArticleData::from([
+                'id' => $article->getKey(),
+                'categoryId' => $article->category_id,
+                'name' => $article->title,
+                'lastUpdated' => $articleUpdatedAt->format('M d Y, h:m a'),
+                'content' => tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details),
+            ]),
+            'portal_view_count' => $article->portal_view_count,
+            'portal_view_count_flag' => $portalViewCountFlag,
+        ]);
     }
-
-    return response()->json([
-      'category' => KnowledgeBaseCategoryData::from([
-        'id' => $category->getKey(),
-        'name' => $category->name,
-        'description' => $category->description,
-      ]),
-      'article' => KnowledgeBaseArticleData::from([
-        'id' => $article->getKey(),
-        'categoryId' => $article->category_id,
-        'name' => $article->title,
-        'lastUpdated' => $articleUpdatedAt->format('M d Y, h:m a'),
-        'content' => tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details),
-      ]),
-      'portal_view_count' => $article->portal_view_count,
-      'portal_view_count_flag' => $portalViewCountFlag,
-    ]);
-  }
 }
