@@ -258,31 +258,4 @@ class ManagePortalSettings extends SettingsPage
                     ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled') && FeatureFlag::GDPRBanner->active()),
             ]);
     }
-
-    public function save(): void
-    {
-        $this->callHook('beforeValidate');
-
-        $data = $this->form->getState();
-
-        $this->callHook('afterValidate');
-
-        $data = $this->mutateFormDataBeforeSave($data);
-
-        $this->callHook('beforeSave');
-
-        $settings = app(static::getSettings());
-
-        if (FeatureFlag::GDPRBanner->active()) {
-            $settings->gdpr_banner_text = $data['gdpr_banner_text'];
-            $settings->gdpr_banner_button_label = $data['gdpr_banner_button_label'];
-        }
-
-        $settings->fill($data);
-        $settings->save();
-
-        $this->callHook('afterSave');
-
-        $this->getSavedNotification()?->send();
-    }
 }
