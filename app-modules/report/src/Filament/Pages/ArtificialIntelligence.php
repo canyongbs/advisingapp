@@ -39,9 +39,9 @@ namespace AdvisingApp\Report\Filament\Pages;
 use App\Filament\Clusters\ReportLibrary;
 use AdvisingApp\Report\Abstract\AiReport;
 use AdvisingApp\Report\Filament\Widgets\AiStats;
+use AdvisingApp\Report\Filament\Widgets\ExchangesByMonthLineChart;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\PromptsCreatedLineChart;
-use AdvisingApp\Report\Filament\Widgets\SavedConversationsLineChart;
 use AdvisingApp\Report\Filament\Widgets\SpecialActionsDoughnutChart;
 use AdvisingApp\Report\Filament\Widgets\PromptsByCategoryDoughnutChart;
 
@@ -68,7 +68,7 @@ class ArtificialIntelligence extends AiReport
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
             AiStats::make(['cacheTag' => $this->cacheTag]),
-            SavedConversationsLineChart::make(['cacheTag' => $this->cacheTag]),
+            ExchangesByMonthLineChart::make(['cacheTag' => $this->cacheTag]),
             SpecialActionsDoughnutChart::make(['cacheTag' => $this->cacheTag]),
             PromptsByCategoryDoughnutChart::make(['cacheTag' => $this->cacheTag]),
             PromptsCreatedLineChart::make(['cacheTag' => $this->cacheTag]),

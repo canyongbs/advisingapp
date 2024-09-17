@@ -42,7 +42,7 @@ use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Models\TrackedEvent;
 use Illuminate\Support\Facades\Cache;
 
-class SavedConversationsLineChart extends LineChartReportWidget
+class ExchangesByMonthLineChart extends LineChartReportWidget
 {
     protected static ?string $heading = 'Exchanges by month';
 
