@@ -38,11 +38,13 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use Carbon\Carbon;
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Models\TrackedEvent;
 use Illuminate\Support\Facades\Cache;
 
 class SavedConversationsLineChart extends LineChartReportWidget
 {
-    protected static ?string $heading = 'Saved Conversations';
+    protected static ?string $heading = 'Exchanges by month';
 
     protected int | string | array $columnSpan = 'full';
 
@@ -64,15 +66,17 @@ class SavedConversationsLineChart extends LineChartReportWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('saved_conversations_line_chart', now()->addHours(24), function (): array {
-            $totalCreatedPerMonth = AiThread::query()
-                ->toBase()
-                ->selectRaw('date_trunc(\'month\', saved_at) as month')
-                ->selectRaw('count(*) as total')
-                ->where('saved_at', '>', now()->subYear())
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('total', 'month');
+        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('exchanges_by_month_data', now()->addHours(24), function (): array {
+           
+            $totalCreatedPerMonth = TrackedEvent::query()
+                                    ->toBase() 
+                                    ->selectRaw("date_trunc('month', occurred_at) as month") 
+                                    ->selectRaw('count(*) as total') 
+                                    ->where('occurred_at', '>', now()->subYear()) 
+                                    ->where('type', TrackedEventType::AiExchange) 
+                                    ->groupBy('month') 
+                                    ->orderBy('month') 
+                                    ->pluck('total', 'month');
 
             $runningTotalPerMonth = [];
 
