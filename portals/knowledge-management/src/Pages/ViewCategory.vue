@@ -79,11 +79,11 @@ watch(
 );
 
 const fetchNextPage = () => {
-    currentPage.value !== lastPage.value ? currentPage.value++ : lastPage.value;
+    currentPage.value = currentPage.value !== lastPage.value ? currentPage.value + 1 : lastPage.value;
     getData(currentPage.value);
 };
 const fetchPreviousPage = () => {
-    currentPage.value !== 1 ? currentPage.value-- : 1;
+    currentPage.value = currentPage.value !== 1 ? currentPage.value - 1 : 1;
     getData(currentPage.value);
 };
 const fetchPage = (page) => {
