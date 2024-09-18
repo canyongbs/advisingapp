@@ -32,7 +32,7 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { defineProps, ref, watch, onMounted } from 'vue';
+import { defineProps, ref, watch } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import AppLoading from '@/Components/AppLoading.vue';
@@ -215,7 +215,7 @@ async function getData(page = 1) {
                                                     <!-- Page Numbers -->
                                                     <button v-for="page in visiblePages()" :key="page"
                                                         @click="fetchPage(page)"
-                                                        aria-current="page {{ page }} {{ currentPage }}"
+                                                        aria-current="page"
                                                         class="relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                                         :class="page === currentPage
                                                             ? 'bg-indigo-600 text-white'
