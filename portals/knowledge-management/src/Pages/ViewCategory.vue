@@ -145,7 +145,7 @@ async function getData(page = 1) {
 
                             <div
                                 class="flex flex-col divide-y ring-1 ring-black/5 shadow-sm px-3 pt-3 pb-1 rounded bg-white">
-                                <h3 class="text-lg font-semibold text-gray-800 px-3 pt-1 pb-3">Articles</h3>
+                                <h3 class="text-lg font-semibold text-gray-800 px-3 pt-1 pb-3">Articles ({{ totalArticles }})</h3>
 
                                 <div v-if="articles.length > 0">
                                     <ul role="list" class="divide-y">
