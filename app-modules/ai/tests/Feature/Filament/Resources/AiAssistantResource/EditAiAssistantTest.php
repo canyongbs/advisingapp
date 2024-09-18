@@ -115,7 +115,7 @@ it('can render', function () use ($licenses, $permissions) {
 
     $settings->save();
 
-    $aiAssistant = AiAssistant::factory()->create(['model' => AiModel::OpenAiGptTest]);
+    $aiAssistant = AiAssistant::factory()->create();
 
     get(EditAiAssistant::getUrl([
         'record' => $aiAssistant->getRouteKey(),
