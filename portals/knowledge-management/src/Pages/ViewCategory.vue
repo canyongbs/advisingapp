@@ -97,10 +97,6 @@ const visiblePages = () => {
     return Array.from({ length: end - start + 1 }, (_, i) => i + start);
 };
 
-// onMounted(async function () {
-//     await getData();
-// });
-
 async function getData(page = 1) {
     loadingResults.value = true;
 
