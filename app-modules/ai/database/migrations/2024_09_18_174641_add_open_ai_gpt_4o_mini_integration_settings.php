@@ -34,36 +34,35 @@
 </COPYRIGHT>
 */
 
-return [
-    'gpt_35_base_uri' => env('OPEN_AI_GPT_35_BASE_URI'),
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 
-    'gpt_35_api_key' => env('OPEN_AI_GPT_35_API_KEY'),
+return new class () extends SettingsMigration {
+    public function up(): void
+    {
+        try {
+            $this->migrator->add('ai.open_ai_gpt_4o_mini_base_uri', config('integration-open-ai.gpt_4o_mini_base_uri'), encrypted: true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-    'gpt_35_api_version' => env('OPEN_AI_GPT_35_API_VERSION'),
+        try {
+            $this->migrator->add('ai.open_ai_gpt_4o_mini_api_key', config('integration-open-ai.gpt_4o_mini_api_key'), encrypted: true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-    'gpt_35_model' => env('OPEN_AI_GPT_35_MODEL'),
+        try {
+            $this->migrator->add('ai.open_ai_gpt_4o_mini_model', config('integration-open-ai.gpt_4o_mini_model'), encrypted: true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
+    }
 
-    'gpt_4_base_uri' => env('OPEN_AI_GPT_4_BASE_URI'),
-
-    'gpt_4_api_key' => env('OPEN_AI_GPT_4_API_KEY'),
-
-    'gpt_4_api_version' => env('OPEN_AI_GPT_4_API_VERSION'),
-
-    'gpt_4_model' => env('OPEN_AI_GPT_4_MODEL'),
-
-    'gpt_4o_base_uri' => env('OPEN_AI_GPT_4O_BASE_URI'),
-
-    'gpt_4o_api_key' => env('OPEN_AI_GPT_4O_API_KEY'),
-
-    'gpt_4o_api_version' => env('OPEN_AI_GPT_4O_API_VERSION'),
-
-    'gpt_4o_model' => env('OPEN_AI_GPT_4O_MODEL'),
-
-    'gpt_4o_mini_base_uri' => env('OPEN_AI_GPT_4O_MINI_BASE_URI'),
-
-    'gpt_4o_mini_api_key' => env('OPEN_AI_GPT_4O_MINI_API_KEY'),
-
-    'gpt_4o_mini_api_version' => env('OPEN_AI_GPT_4O_MINI_API_VERSION'),
-
-    'gpt_4o_mini_model' => env('OPEN_AI_GPT_4O_MINI_MODEL'),
-];
+    public function down(): void
+    {
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_mini_base_uri');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_mini_api_key');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_mini_model');
+    }
+};

@@ -43,6 +43,7 @@ use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt35Service;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oMiniService;
 
 enum AiModel: string implements HasLabel
 {
@@ -51,6 +52,8 @@ enum AiModel: string implements HasLabel
     case OpenAiGpt4 = 'openai_gpt_4';
 
     case OpenAiGpt4o = 'openai_gpt_4o';
+
+    case OpenAiGpt4oMini = 'openai_gpt_4o_mini';
 
     case OpenAiGptTest = 'openai_gpt_test';
 
@@ -62,6 +65,7 @@ enum AiModel: string implements HasLabel
             self::OpenAiGpt35 => 'Canyon GPT-3.5',
             self::OpenAiGpt4 => 'Canyon GPT-4',
             self::OpenAiGpt4o => 'Canyon GPT-4o',
+            self::OpenAiGpt4oMini => 'Canyon GPT-4o mini',
             self::OpenAiGptTest => 'Canyon GPT Test',
             self::Test => 'Test',
         };
@@ -76,6 +80,7 @@ enum AiModel: string implements HasLabel
             self::OpenAiGpt35 => OpenAiGpt35Service::class,
             self::OpenAiGpt4 => OpenAiGpt4Service::class,
             self::OpenAiGpt4o => OpenAiGpt4oService::class,
+            self::OpenAiGpt4oMini => OpenAiGpt4oMiniService::class,
             self::OpenAiGptTest => OpenAiGptTestService::class,
             self::Test => TestAiService::class,
         };
@@ -110,7 +115,7 @@ enum AiModel: string implements HasLabel
     public function isVisibleForApplication(AiApplication $aiApplication): bool
     {
         return match ($this) {
-            self::OpenAiGpt35, self::OpenAiGpt4o => $aiApplication === AiApplication::PersonalAssistant,
+            self::OpenAiGpt35, self::OpenAiGpt4o, self::OpenAiGpt4oMini => $aiApplication === AiApplication::PersonalAssistant,
             self::OpenAiGpt4 => $aiApplication === AiApplication::ReportAssistant,
             self::OpenAiGptTest => false,
             self::Test => true,
@@ -119,8 +124,9 @@ enum AiModel: string implements HasLabel
 
     public function supportsAssistantFileUploads(): bool
     {
+        // TODO: Not actually sure mini supports files, need to confirm
         return match ($this) {
-            self::OpenAiGpt35, self::OpenAiGpt4, self::OpenAiGpt4o => true,
+            self::OpenAiGpt35, self::OpenAiGpt4, self::OpenAiGpt4o, self::OpenAiGpt4oMini => true,
             default => false,
         };
     }
