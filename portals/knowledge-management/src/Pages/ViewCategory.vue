@@ -32,7 +32,7 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { defineProps, ref, watch, onMounted } from 'vue';
+import { defineProps, ref, watch } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import AppLoading from '@/Components/AppLoading.vue';
@@ -97,10 +97,6 @@ const visiblePages = () => {
     return Array.from({ length: end - start + 1 }, (_, i) => i + start);
 };
 
-// onMounted(async function () {
-//     await getData();
-// });
-
 async function getData(page = 1) {
     loadingResults.value = true;
 
@@ -145,6 +141,7 @@ async function getData(page = 1) {
 
                             <div
                                 class="flex flex-col divide-y ring-1 ring-black/5 shadow-sm px-3 pt-3 pb-1 rounded bg-white">
+
                                 <h3 class="text-lg font-semibold text-gray-800 px-3 pt-1 pb-3">Articles ({{ totalArticles }})</h3>
 
                                 <div v-if="articles.length > 0">
@@ -219,7 +216,9 @@ async function getData(page = 1) {
                                                     <!-- Page Numbers -->
                                                     <button v-for="page in visiblePages()" :key="page"
                                                         @click="fetchPage(page)"
+                                                        
                                                         aria-current="page {{ page }} {{ currentPage }}"
+                                                        
                                                         class="relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                                         :class="page === currentPage
                                                             ? 'bg-indigo-600 text-white'
