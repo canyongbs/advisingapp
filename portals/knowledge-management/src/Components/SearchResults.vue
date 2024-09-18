@@ -63,7 +63,7 @@ defineProps({
         </h3>
 
         <div class="flex flex-col divide-y ring-1 ring-black/5 shadow-sm px-3 pt-3 pb-1 rounded bg-white">
-            <h4 class="text-lg font-semibold text-gray-800 px-3 pt-1 pb-3">Articles</h4>
+            <h4 class="text-lg font-semibold text-gray-800 px-3 pt-1 pb-3">Articles ({{ searchResults.data.articles.length }})</h4>
 
             <div v-if="searchResults.data.articles.length > 0">
                 <ul role="list" class="divide-y">
