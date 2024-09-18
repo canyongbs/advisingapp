@@ -37,6 +37,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Authenticatable;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use AdvisingApp\Authorization\Models\Role;
@@ -46,7 +47,7 @@ class SampleSuperAdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        $superAdminRole = Role::where('name', 'SaaS Global Admin')->firstOrFail();
+        $superAdminRole = Role::where('name', Authenticatable::SUPER_ADMIN_ROLE)->firstOrFail();
 
         if (app()->isLocal()) {
             $superAdmin = User::factory()->licensed(LicenseType::cases())->create([

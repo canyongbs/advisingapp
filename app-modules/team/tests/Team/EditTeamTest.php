@@ -35,6 +35,7 @@
 */
 
 use App\Models\User;
+use App\Models\Authenticatable;
 use AdvisingApp\Team\Models\Team;
 
 use function Pest\Laravel\actingAs;
@@ -128,7 +129,7 @@ test('Super Admin Users cannot be added to a team', function () {
     $user->givePermissionTo('team.view-any');
     $user->givePermissionTo('team.*.update');
 
-    $superAdmin->assignRole('SaaS Global Admin');
+    $superAdmin->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
     actingAs($user)
         ->get(
@@ -158,7 +159,7 @@ test('Super Admin Users do not show up in UsersRelationManager for Teams search 
     $user->givePermissionTo('team.view-any');
     $user->givePermissionTo('team.*.update');
 
-    $superAdmin->assignRole('SaaS Global Admin');
+    $superAdmin->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
     actingAs($user)
         ->get(

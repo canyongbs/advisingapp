@@ -73,7 +73,7 @@ class ServiceRequestUpdatePolicy
     public function view(Authenticatable $authenticatable, ServiceRequestUpdate $serviceRequestUpdate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_update.*.view', "service_request_update.{$serviceRequestUpdate->id}.view"],
+            abilities: ["service_request_update.{$serviceRequestUpdate->id}.view"],
             denyResponse: 'You do not have permissions to view this service request update.'
         );
     }
@@ -89,7 +89,7 @@ class ServiceRequestUpdatePolicy
     public function update(Authenticatable $authenticatable, ServiceRequestUpdate $serviceRequestUpdate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_update.*.update', "service_request_update.{$serviceRequestUpdate->id}.update"],
+            abilities: ["service_request_update.{$serviceRequestUpdate->id}.update"],
             denyResponse: 'You do not have permissions to update this service request update.'
         );
     }
@@ -97,7 +97,7 @@ class ServiceRequestUpdatePolicy
     public function delete(Authenticatable $authenticatable, ServiceRequestUpdate $serviceRequestUpdate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_update.*.delete', "service_request_update.{$serviceRequestUpdate->id}.delete"],
+            abilities: ["service_request_update.{$serviceRequestUpdate->id}.delete"],
             denyResponse: 'You do not have permissions to delete this service request update.'
         );
     }
@@ -105,7 +105,7 @@ class ServiceRequestUpdatePolicy
     public function restore(Authenticatable $authenticatable, ServiceRequestUpdate $serviceRequestUpdate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_update.*.restore', "service_request_update.{$serviceRequestUpdate->id}.restore"],
+            abilities: ["service_request_update.{$serviceRequestUpdate->id}.restore"],
             denyResponse: 'You do not have permissions to restore this service request update.'
         );
     }
@@ -113,7 +113,7 @@ class ServiceRequestUpdatePolicy
     public function forceDelete(Authenticatable $authenticatable, ServiceRequestUpdate $serviceRequestUpdate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['service_request_update.*.force-delete', "service_request_update.{$serviceRequestUpdate->id}.force-delete"],
+            abilities: ["service_request_update.{$serviceRequestUpdate->id}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this service request update.'
         );
     }

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
 use Filament\Tables\Table;
+use App\Models\Authenticatable;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Components\Tab;
 use Filament\Tables\Actions\ViewAction;
@@ -67,8 +68,8 @@ class ListRoles extends ListRecords
                 /** @var User $user */
                 $user = auth()->user();
 
-                if (! $user?->hasRole('SaaS Global Admin')) {
-                    $query->where('name', '!=', 'SaaS Global Admin');
+                if (! $user?->isSuperAdmin()) {
+                    $query->where('name', '!=', Authenticatable::SUPER_ADMIN_ROLE);
                 }
             })
             ->columns([

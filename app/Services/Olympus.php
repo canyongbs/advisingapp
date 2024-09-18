@@ -34,21 +34,27 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Migrations\Migration;
+namespace App\Services;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        if (Schema::hasColumn('tenants', 'setup_complete')) {
-            DB::table('tenants')->update(['setup_complete' => true]);
-        }
-    }
+use App\Settings\OlympusSettings;
+use Spatie\Multitenancy\Landlord;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\PendingRequest;
 
-    public function down(): void
+class Olympus
+{
+    public function makeRequest(): PendingRequest
     {
-        if (Schema::hasColumn('tenants', 'setup_complete')) {
-            DB::table('tenants')->update(['setup_complete' => false]);
-        }
+        [$olympusUrl, $olympusKey] = Landlord::execute(function (): array {
+            $settings = app(OlympusSettings::class);
+
+            return [
+                rtrim($settings->url, '/'),
+                $settings->key,
+            ];
+        });
+
+        return Http::withToken($olympusKey)
+            ->baseUrl($olympusUrl);
     }
-};
+}

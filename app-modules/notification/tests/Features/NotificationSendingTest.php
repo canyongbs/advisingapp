@@ -35,6 +35,7 @@
 */
 
 use App\Models\User;
+use App\Models\Authenticatable;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
@@ -73,7 +74,7 @@ it('will not count emails sent to Super Admin Users against quota usage', functi
     $user = User::factory()->create();
     $nonSuperAdminUser = User::factory()->create();
 
-    $user->assignRole('SaaS Global Admin');
+    $user->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
     // And they are sent a deliverable of any kind
     $notification = new TestMultipleChannelNotification();

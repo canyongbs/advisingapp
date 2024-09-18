@@ -41,12 +41,14 @@ use App\Settings\DisplaySettings;
 $timezone = app(DisplaySettings::class)->getTimezone();
 ?>
 <div class="flex flex-col items-center gap-3 md:flex-row">
-    <div class="flex-1">
-        <p class="text-xs">
-            This record was last updated in the SIS on
-            {{ $student->updated_at_source->setTimezone($timezone)->format('F j, Y g:i A') }}.
-        </p>
-    </div>
+    @if ($student->updated_at)
+        <div class="flex-1">
+            <p class="text-xs">
+                This record was last updated in the SIS on
+                {{ $student->updated_at->setTimezone($timezone)->format('F j, Y g:i A') }}.
+            </p>
+        </div>
+    @endif
 
     <div class="flex-shrink-0">
 

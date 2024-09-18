@@ -328,7 +328,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function getIsAdminAttribute()
     {
-        return $this->roles()->where('name', 'SaaS Global Admin')->exists();
+        return $this->roles()->where('name', Authenticatable::SUPER_ADMIN_ROLE)->exists();
     }
 
     public function scopeAdmins()
@@ -396,7 +396,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function canBeImpersonated(): bool
     {
-        return ! $this->hasRole('SaaS Global Admin');
+        return ! $this->isSuperAdmin();
     }
 
     public function registerMediaCollections(): void

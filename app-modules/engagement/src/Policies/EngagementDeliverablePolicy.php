@@ -53,7 +53,7 @@ class EngagementDeliverablePolicy
     public function view(Authenticatable $authenticatable, EngagementDeliverable $deliverable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['engagement_deliverable.*.view', "engagement_deliverable.{$deliverable->id}.view"],
+            abilities: ["engagement_deliverable.{$deliverable->id}.view"],
             denyResponse: 'You do not have permission to view this engagement deliverable.'
         );
     }
@@ -73,7 +73,7 @@ class EngagementDeliverablePolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['engagement_deliverable.*.update', "engagement_deliverable.{$deliverable->id}.update"],
+            abilities: ["engagement_deliverable.{$deliverable->id}.update"],
             denyResponse: 'You do not have permission to update this engagement deliverable.'
         );
     }
@@ -85,7 +85,7 @@ class EngagementDeliverablePolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['engagement_deliverable.*.delete', "engagement_deliverable.{$deliverable->id}.delete"],
+            abilities: ["engagement_deliverable.{$deliverable->id}.delete"],
             denyResponse: 'You do not have permission to delete this engagement deliverable.'
         );
     }
@@ -93,7 +93,7 @@ class EngagementDeliverablePolicy
     public function restore(Authenticatable $authenticatable, EngagementDeliverable $deliverable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['engagement_deliverable.*.restore', "engagement_deliverable.{$deliverable->id}.restore"],
+            abilities: ["engagement_deliverable.{$deliverable->id}.restore"],
             denyResponse: 'You do not have permission to restore this engagement deliverable.'
         );
     }
@@ -105,7 +105,7 @@ class EngagementDeliverablePolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ['engagement_deliverable.*.force-delete', "engagement_deliverable.{$deliverable->id}.force-delete"],
+            abilities: ["engagement_deliverable.{$deliverable->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this engagement deliverable.'
         );
     }

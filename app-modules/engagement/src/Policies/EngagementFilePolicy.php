@@ -53,7 +53,7 @@ class EngagementFilePolicy
     public function view(Authenticatable $authenticatable, EngagementFile $engagementFile): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['engagement_file.*.view', "engagement_file.{$engagementFile->id}.view"],
+            abilities: ["engagement_file.{$engagementFile->id}.view"],
             denyResponse: 'You do not have permissions to view this engagement file.'
         );
     }
@@ -69,7 +69,7 @@ class EngagementFilePolicy
     public function update(Authenticatable $authenticatable, EngagementFile $engagementFile): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['engagement_file.*.update', "engagement_file.{$engagementFile->id}.update"],
+            abilities: ["engagement_file.{$engagementFile->id}.update"],
             denyResponse: 'You do not have permissions to update this engagement file.'
         );
     }
@@ -77,7 +77,7 @@ class EngagementFilePolicy
     public function delete(Authenticatable $authenticatable, EngagementFile $engagementFile): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['engagement_file.*.delete', "engagement_file.{$engagementFile->id}.delete"],
+            abilities: ["engagement_file.{$engagementFile->id}.delete"],
             denyResponse: 'You do not have permissions to delete this engagement file.'
         );
     }
@@ -85,7 +85,7 @@ class EngagementFilePolicy
     public function restore(Authenticatable $authenticatable, EngagementFile $engagementFile): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['engagement_file.*.restore', "engagement_file.{$engagementFile->id}.restore"],
+            abilities: ["engagement_file.{$engagementFile->id}.restore"],
             denyResponse: 'You do not have permissions to restore this engagement file.'
         );
     }
@@ -93,7 +93,7 @@ class EngagementFilePolicy
     public function forceDelete(Authenticatable $authenticatable, EngagementFile $engagementFile): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['engagement_file.*.force-delete', "engagement_file.{$engagementFile->id}.force-delete"],
+            abilities: ["engagement_file.{$engagementFile->id}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this engagement file.'
         );
     }

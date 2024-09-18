@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Authorization\Console\Commands;
 
+use App\Models\Authenticatable;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use AdvisingApp\Authorization\Models\Role;
@@ -55,7 +56,7 @@ class SetupRoles extends Command
         $this->line('Creating roles...');
 
         Role::create([
-            'name' => 'SaaS Global Admin',
+            'name' => Authenticatable::SUPER_ADMIN_ROLE,
             'guard_name' => 'web',
         ]);
 

@@ -53,7 +53,7 @@ class PermissionPolicy
     public function view(Authenticatable $authenticatable, Permission $permission): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['permission.*.view', "permission.{$permission->id}.view"],
+            abilities: ["permission.{$permission->id}.view"],
             denyResponse: 'You do not have permission to view this permission.'
         );
     }
