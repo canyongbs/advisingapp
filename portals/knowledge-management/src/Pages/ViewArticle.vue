@@ -38,7 +38,7 @@ import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import AppLoading from '@/Components/AppLoading.vue';
 import DOMPurify from 'dompurify';
 import { consumer } from '@/Services/Consumer.js';
-import { Bars3Icon, ClockIcon } from "@heroicons/vue/24/outline/index.js";
+import { Bars3Icon, ClockIcon, EyeIcon } from "@heroicons/vue/24/outline/index.js";
 
 const route = useRoute();
 
@@ -72,10 +72,6 @@ watch(
         immediate: true,
     },
 );
-
-onMounted(function () {
-    getData();
-});
 
 function getData() {
     loading.value = true;
