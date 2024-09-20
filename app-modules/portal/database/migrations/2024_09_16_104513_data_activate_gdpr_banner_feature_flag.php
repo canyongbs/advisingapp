@@ -34,42 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Enums;
+use App\Enums\FeatureFlag;
+use Illuminate\Database\Migrations\Migration;
 
-use Closure;
-use Laravel\Pennant\Feature;
-
-enum FeatureFlag: string
-{
-    case AiSettingsMaxTokensUpdate = 'ai_settings_max_tokens_update';
-    case GDPRBanner = 'gdpr_banner';
-
-    public function definition(): Closure
+return new class () extends Migration {
+    public function up(): void
     {
-        return match ($this) {
-            default => function () {
-                return false;
-            }
-        };
+        FeatureFlag::GDPRBanner->activate();
     }
 
-    public function active(): bool
+    public function down(): void
     {
-        return Feature::active($this->value);
+        FeatureFlag::GDPRBanner->deactivate();
     }
-
-    public function activate(): void
-    {
-        Feature::activate($this->value);
-    }
-
-    public function deactivate(): void
-    {
-        Feature::deactivate($this->value);
-    }
-
-    public function purge(): void
-    {
-        Feature::purge($this->value);
-    }
-}
+};

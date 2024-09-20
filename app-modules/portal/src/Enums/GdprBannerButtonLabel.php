@@ -34,42 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Enums;
+namespace AdvisingApp\Portal\Enums;
 
-use Closure;
-use Laravel\Pennant\Feature;
+use Filament\Support\Contracts\HasLabel;
 
-enum FeatureFlag: string
+enum GdprBannerButtonLabel: string implements HasLabel
 {
-    case AiSettingsMaxTokensUpdate = 'ai_settings_max_tokens_update';
-    case GDPRBanner = 'gdpr_banner';
+    case Agree = 'Agree';
 
-    public function definition(): Closure
-    {
-        return match ($this) {
-            default => function () {
-                return false;
-            }
-        };
-    }
+    case AllowCookies = 'Allow Cookies';
 
-    public function active(): bool
-    {
-        return Feature::active($this->value);
-    }
+    case IUnderstand = 'I Understand';
 
-    public function activate(): void
-    {
-        Feature::activate($this->value);
-    }
+    case Continue = 'Continue';
 
-    public function deactivate(): void
+    public function getLabel(): string
     {
-        Feature::deactivate($this->value);
-    }
-
-    public function purge(): void
-    {
-        Feature::purge($this->value);
+        return $this->value;
     }
 }

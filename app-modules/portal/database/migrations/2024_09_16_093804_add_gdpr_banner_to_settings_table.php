@@ -34,42 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace App\Enums;
+use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use Closure;
-use Laravel\Pennant\Feature;
-
-enum FeatureFlag: string
-{
-    case AiSettingsMaxTokensUpdate = 'ai_settings_max_tokens_update';
-    case GDPRBanner = 'gdpr_banner';
-
-    public function definition(): Closure
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return match ($this) {
-            default => function () {
-                return false;
-            }
-        };
+        $this->migrator->add(
+            'portal.gdpr_banner_text',
+            [
+                'type' => 'doc',
+                'content' => [
+                    [
+                        'type' => 'paragraph',
+                        'attrs' => [
+                            'textAlign' => 'start',
+                        ],
+                        'content' => [
+                            [
+                                'type' => 'text',
+                                'text' => 'We use cookies to personalize content, to provide social media features, and to analyze our traffic. We also share information about your use of our site with our partners who may combine it with other information that you\'ve provided to them or that they\'ve collected from your use of their services.',
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        );
+
+        $this->migrator->add('portal.gdpr_banner_button_label', GdprBannerButtonLabel::AllowCookies);
     }
 
-    public function active(): bool
+    public function down(): void
     {
-        return Feature::active($this->value);
+        $this->migrator->delete('portal.gdpr_banner_text');
+        $this->migrator->delete('portal.gdpr_banner_button_label');
     }
-
-    public function activate(): void
-    {
-        Feature::activate($this->value);
-    }
-
-    public function deactivate(): void
-    {
-        Feature::deactivate($this->value);
-    }
-
-    public function purge(): void
-    {
-        Feature::purge($this->value);
-    }
-}
+};
