@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
+use Laravel\Pennant\Feature;
 use App\Settings\DisplaySettings;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
@@ -48,7 +49,13 @@ class KnowledgeManagementPortalArticleController extends Controller
 {
     public function show(KnowledgeBaseCategory $category, KnowledgeBaseArticle $article): JsonResponse
     {
+        $portalViewCountFlag = Feature::active('portal_view_count');
+
         $articleUpdatedAt = $article->updated_at->setTimezone(app(DisplaySettings::class)->timezone);
+
+        if ($portalViewCountFlag) {
+            $article->increment('portal_view_count');
+        }
 
         return response()->json([
             'category' => KnowledgeBaseCategoryData::from([
@@ -63,6 +70,8 @@ class KnowledgeManagementPortalArticleController extends Controller
                 'lastUpdated' => $articleUpdatedAt->format('M d Y, h:m a'),
                 'content' => tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details),
             ]),
+            'portal_view_count' => $article->portal_view_count,
+            'portal_view_count_flag' => $portalViewCountFlag,
         ]);
     }
 }
