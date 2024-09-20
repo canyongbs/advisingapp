@@ -34,6 +34,8 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Notification\Models\Subscription;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -43,6 +45,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
 
 // TODO: Write ListProspects page test
 //test('The correct details are displayed on the ListProspects page', function () {});
@@ -133,3 +136,31 @@ test('ListProspects can bulk update characteristics', function () {
                 ->status_id->toBe($status->id)
         );
 });
+
+it('can filter prospects by `subscribed` prospects', function () {
+
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('subscription.view-any');
+    $user->givePermissionTo('subscription.*.view');
+
+    actingAs($user);
+
+    $subscribedProspects = Prospect::factory()->count(3)->hasSubscriptions()->create();
+
+    $subscribedProspects = Prospect::factory()
+                            ->count(3)
+                            ->has(
+                                Subscription::factory()->state(['user_id' => $user->getKey()]),'subscriptions'
+                            )
+                            ->create();
+
+    $notSubscribedProspects = Prospect::factory()->count(3)->create();
+ 
+    livewire(ListProspects::class)
+        ->assertCanSeeTableRecords($notSubscribedProspects->merge($subscribedProspects))
+        ->filterTable('subscribed')
+        ->assertCanSeeTableRecords($subscribedProspects)
+        ->assertCanNotSeeTableRecords($notSubscribedProspects);
+})->only();
