@@ -40,7 +40,7 @@
     <div class="max-w-7xl mx-auto px-6">
         <div class="p-2 rounded-lg bg-primary-100 ring-1 ring-black/5 shadow-sm">
             <div class="flex items-center justify-between flex-wrap">
-                <div class="w-0 flex-1 items-center hidden md:inline">
+                <div class="w-0 flex-1 items-center hidden md:inline [&_a]:text-primary-500 hover:[&_a]:underline">
                     <p class="ml-3 text-primary-950 text-sm font-medium cookie-consent__message">
                         @if(! empty(app(PortalSettings::class)->gdpr_banner_text) && FeatureFlag::GDPRBanner->active())
                             {!! str(tiptap_converter()->asHtml(app(PortalSettings::class)->gdpr_banner_text))->sanitizeHtml() !!}
