@@ -42,19 +42,19 @@ use App\Models\Import;
 use Illuminate\View\View;
 use App\Models\FailedImportRow;
 use App\Settings\DisplaySettings;
+use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Checkbox;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\ServiceProvider;
 use Filament\Forms\Components\DatePicker;
 use Filament\Support\Facades\FilamentView;
+use Filament\Support\Facades\FilamentColor;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Actions\Exports\Models\Export as BaseExport;
 use Filament\Actions\Imports\Models\Import as BaseImport;
 use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
-use Filament\Support\Facades\FilamentColor;
-use Filament\Support\Colors\Color;
 
 class FilamentServiceProvider extends ServiceProvider
 {
@@ -180,7 +180,7 @@ class FilamentServiceProvider extends ServiceProvider
                 950 => '#4b0c2f',
             ],
         ]);
-        
+
         FilamentView::registerRenderHook(
             'panels::footer',
             fn (): View => view('filament.footer'),
