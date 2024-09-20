@@ -58,7 +58,7 @@ class SpecialActionsDoughnutChart extends ChartReportWidget
         [$emailCount, $cloneCount] = $this->getData()['datasets'][0]['data'];
 
         if ($emailCount == 0 && $cloneCount == 0) {
-            return view('livewire.noWidgetData');
+            return view('livewire.no-widget-data');
         }
 
         return view(static::$view, $this->getViewData());
