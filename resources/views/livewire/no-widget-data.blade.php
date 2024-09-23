@@ -32,17 +32,15 @@
 </COPYRIGHT>
 --}}
 @php
-    use Filament\Support\Facades\FilamentView;
-
-    $color = $this->getColor();
     $heading = $this->getHeading();
 @endphp
-<x-filament-widgets::widget class="fi-wi-chart">
+
+<x-filament-widgets::widget>
     <x-filament::section
-        class="relative h-full pt-20"
+        class="flex h-full flex-col [&_.fi-section-content-ctn]:flex-1 [&_.fi-section-content]:h-full"
         :heading="$heading"
     >
-        <div class="inset-0 flex items-center justify-center lg:absolute">
+        <div class="flex h-full items-center justify-center pb-3 text-sm text-gray-600 dark:text-gray-500">
             Insufficient Data
         </div>
     </x-filament::section>
