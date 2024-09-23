@@ -171,6 +171,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                                     ->columnSpanFull(),
                                 TextInput::make('custom_link_label')
                                     ->label('Custom Link URL Label')
+                                    ->alphaNum()
                                     ->maxLength(16)
                                     ->visible(fn (Get $get) => $get('is_custom_link_url_enabled'))
                                     ->hintIcon(fn (TextInput $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)

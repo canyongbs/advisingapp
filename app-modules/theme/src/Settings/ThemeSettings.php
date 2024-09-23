@@ -64,7 +64,6 @@ class ThemeSettings extends SettingsWithMedia
     public ?string $custom_link_label = null;
 
     public ?string $custom_link_url = null;
-    
 
     public static function group(): string
     {
