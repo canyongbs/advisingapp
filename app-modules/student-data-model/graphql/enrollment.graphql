@@ -2,23 +2,9 @@ type Enrollment
     @model(class: "AdvisingApp\\StudentDataModel\\Models\\Enrollment") {
     sisid: String!
 
-    acad_career: String!
-
     division: String!
 
-    semester: String!
-
     class_nbr: String!
-
-    subject: String!
-
-    catalog_nbr: String!
-
-    enrl_status_reason: String!
-
-    enrl_add_dt: DateTime!
-
-    enrl_drop_dt: DateTime!
 
     crse_grade_off: String!
 
@@ -34,23 +20,9 @@ type Enrollment
 input EnrollmentsQuery {
     sisid: String
 
-    acad_career: String
-
     division: String
 
-    semester: String
-
     class_nbr: String
-
-    subject: String
-
-    catalog_nbr: String
-
-    enrl_status_reason: String
-
-    enrl_add_dt: DateTime
-
-    enrl_drop_dt: DateTime
 
     crse_grade_off: String
 
