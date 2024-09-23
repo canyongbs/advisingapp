@@ -65,7 +65,7 @@ class RouteServiceProvider extends ServiceProvider
                 ->name('ping');
 
             Route::prefix('landlord/api')
-                ->middleware('landlord-api')
+                // ->middleware('landlord-api')
                 ->namespace($this->namespace)
                 ->as('landlord.api.')
                 ->domain(
