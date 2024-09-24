@@ -10,7 +10,7 @@ class CareTeamObserver
 {
     public function created(CareTeam $careTeam): void
     {
-        $user = auth()->user();
+        $user = $careTeam->user;
 
         if ($user instanceof User) {
             TriggeredAutoSubscription::dispatch($user, $careTeam);
