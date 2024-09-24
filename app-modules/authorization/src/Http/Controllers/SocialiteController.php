@@ -44,8 +44,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Filament\Notifications\Notification;
-use AdvisingApp\Authorization\Enums\SocialiteProvider;
 use Illuminate\Database\Query\Expression;
+use AdvisingApp\Authorization\Enums\SocialiteProvider;
 
 class SocialiteController extends Controller
 {
