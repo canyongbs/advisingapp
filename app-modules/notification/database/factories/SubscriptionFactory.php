@@ -3,10 +3,11 @@
 namespace AdvisingApp\Notification\Database\Factories;
 
 use App\Models\User;
+use App\Models\Subscription;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Subscription>
+ * @extends Subscription>
  */
 class SubscriptionFactory extends Factory
 {
@@ -19,7 +20,7 @@ class SubscriptionFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'subscribable_id' => null ,
+            'subscribable_id' => null,
             'subscribable_type' => null,
         ];
     }

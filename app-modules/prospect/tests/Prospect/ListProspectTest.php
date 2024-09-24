@@ -163,4 +163,4 @@ it('can filter prospects by `subscribed` prospects', function () {
         ->filterTable('subscribed')
         ->assertCanSeeTableRecords($subscribedProspects)
         ->assertCanNotSeeTableRecords($notSubscribedProspects);
-})->only();
+});
