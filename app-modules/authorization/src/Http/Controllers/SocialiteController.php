@@ -45,6 +45,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Filament\Notifications\Notification;
 use AdvisingApp\Authorization\Enums\SocialiteProvider;
+use Illuminate\Database\Query\Expression;
 
 class SocialiteController extends Controller
 {
@@ -76,7 +77,7 @@ class SocialiteController extends Controller
 
         /** @var User $user */
         $user = User::query()
-            ->where('email', $socialiteUser->getEmail())
+            ->where(new Expression('lower(email)'), strtolower($socialiteUser->getEmail()))
             ->first();
 
         if (! $user?->is_external) {
