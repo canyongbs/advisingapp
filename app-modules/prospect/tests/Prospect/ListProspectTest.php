@@ -34,8 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Notification\Models\Subscription;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -44,6 +42,8 @@ use function Pest\Livewire\livewire;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
 
@@ -79,7 +79,7 @@ test('ListProspects can bulk update characteristics', function () {
 
     $prospects = Prospect::factory()->count(3)->create();
 
-    $component = livewire(ProspectResource\Pages\ListProspects::class);
+    $component = livewire(ListProspects::class);
 
     $component->assertCanSeeTableRecords($prospects)
         ->assertCountTableRecords($prospects->count())
@@ -138,7 +138,6 @@ test('ListProspects can bulk update characteristics', function () {
 });
 
 it('can filter prospects by `subscribed` prospects', function () {
-
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -148,14 +147,15 @@ it('can filter prospects by `subscribed` prospects', function () {
     actingAs($user);
 
     $subscribedProspects = Prospect::factory()
-                            ->count(3)
-                            ->has(
-                                Subscription::factory()->state(['user_id' => $user->getKey()]),'subscriptions'
-                            )
-                            ->create();
+        ->count(3)
+        ->has(
+            Subscription::factory()->state(['user_id' => $user->getKey()]),
+            'subscriptions'
+        )
+        ->create();
 
     $notSubscribedProspects = Prospect::factory()->count(3)->create();
- 
+
     livewire(ListProspects::class)
         ->assertCanSeeTableRecords($notSubscribedProspects->merge($subscribedProspects))
         ->filterTable('subscribed')
