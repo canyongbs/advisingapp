@@ -65,7 +65,7 @@ trait TaskEditForm
                 ->nullable()
                 ->searchable(['name', 'email'])
                 ->default(auth()->id()),
-            EducatableSelect::make('concern',isExcludingConvertedProspects:true,isEditPage:true)
+            EducatableSelect::make('concern',includedRecord:true,isEditPage:true)
                 ->label('Related To')
                 ->afterStateUpdated($this->updateAssignmentAfterConcernSelected()),
         ];

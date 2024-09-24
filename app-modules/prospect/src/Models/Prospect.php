@@ -326,11 +326,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return 'prospect';
     }
 
-    public function scopeExcludeConvertedProspects(Builder $query)
-    {
-        return $query->doesntHave('student');
-    }
-
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {

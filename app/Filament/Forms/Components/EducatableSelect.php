@@ -46,6 +46,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\Concerns\HasName;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Forms\Components\MorphToSelect\Type;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -62,14 +63,14 @@ class EducatableSelect extends Component
         $this->name($name);
     }
 
-    public static function make(string $name, bool $isExcludingConvertedProspects = false, bool $isEditPage = false): EducatableSelect | MorphToSelect
+    public static function make(string $name, bool $includedRecord = false, bool $isEditPage = false): EducatableSelect | MorphToSelect
     {
         if (auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
             return MorphToSelect::make($name)
                 ->searchable()
                 ->types([
                     static::getStudentType(),
-                    static::getProspectType($isExcludingConvertedProspects,$isEditPage),
+                    static::getProspectType($includedRecord,$isEditPage),
                 ]);
         }
 
@@ -85,13 +86,13 @@ class EducatableSelect extends Component
             ->titleAttribute(Student::displayNameKey());
     }
 
-    public static function getProspectType($isExcludingConvertedProspects = false,$isEditPage = false): Type
+    public static function getProspectType($includedRecord = false,$isEditPage = false): Type
     {
         $prospectType = Type::make(Prospect::class)
             ->titleAttribute(Prospect::displayNameKey());
        
-        if($isExcludingConvertedProspects){
-            $prospectType->modifyOptionsQueryUsing(fn (Builder $query) => $query->excludeConvertedProspects());
+        if($includedRecord){
+            $prospectType->modifyOptionsQueryUsing(fn (Builder $query) => $query->tap(new ExcludeConvertedProspects()));
         }
 
         if($isEditPage){

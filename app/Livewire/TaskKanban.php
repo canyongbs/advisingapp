@@ -150,7 +150,7 @@ class TaskKanban extends Component implements HasForms, HasActions
                     ->nullable()
                     ->searchable(['name', 'email'])
                     ->default(auth()->id()),
-                EducatableSelect::make('concern',isExcludingConvertedProspects:true)
+                EducatableSelect::make('concern',includedRecord:true)
                     ->label('Related To'),
             ])
             ->action(function (array $data, array $arguments) {

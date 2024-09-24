@@ -57,6 +57,8 @@ use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
+use App\Models\Scopes\ExcludeConvertedProspects;
+use Filament\Forms\Components\MorphToSelect\Type;
 
 class EditInteraction extends EditRecord
 {
@@ -74,14 +76,15 @@ class EditInteraction extends EditRecord
                         ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [MorphToSelect\Type::make(Student::class)
                             ->titleAttribute(Student::displayNameKey())] : []),
                         ...(auth()->user()->hasLicense(Prospect::getLicenseType()) ? [
-                            MorphToSelect\Type::make(Prospect::class)
+                            Type::make(Prospect::class)
                                 ->titleAttribute(Prospect::displayNameKey())
                                 ->modifyOptionsQueryUsing(
-                                    fn (Builder $query, $record) => $query->excludeConvertedProspects()
-                                        ->orWhere('id', '=', $record->interactable_id)
+                                    fn (Builder $query, $record) => $query
+                                                                    ->tap(new ExcludeConvertedProspects())
+                                                                    ->orWhere('id', '=', $record->interactable_id)
                                 ),
                         ] : []),
-                        MorphToSelect\Type::make(ServiceRequest::class)
+                       Type::make(ServiceRequest::class)
                             ->label('Service Request')
                             ->titleAttribute('service_request_number'),
                     ])
