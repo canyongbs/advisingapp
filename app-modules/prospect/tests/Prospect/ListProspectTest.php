@@ -147,8 +147,6 @@ it('can filter prospects by `subscribed` prospects', function () {
 
     actingAs($user);
 
-    $subscribedProspects = Prospect::factory()->count(3)->hasSubscriptions()->create();
-
     $subscribedProspects = Prospect::factory()
                             ->count(3)
                             ->has(
