@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class BrandedWebsiteLinksRequest extends FormRequest
 {
-
     public function rules(): array
     {
         return [
