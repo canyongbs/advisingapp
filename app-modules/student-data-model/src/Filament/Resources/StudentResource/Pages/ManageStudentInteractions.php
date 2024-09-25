@@ -37,15 +37,15 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\RelationManagers\HasManyMorphedInteractionsRelationManager;
 
 class ManageStudentInteractions extends ManageRelatedRecords
 {
+    use HasManyMorphedInteractionsTrait;
+
     protected static string $resource = StudentResource::class;
 
     protected static string $relationship = 'interactions';
@@ -61,15 +61,5 @@ class ManageStudentInteractions extends ManageRelatedRecords
     public function form(Form $form): Form
     {
         return (resolve(CreateInteraction::class))->form($form);
-    }
-
-    public function infolist(Infolist $infolist): Infolist
-    {
-        return (resolve(HasManyMorphedInteractionsRelationManager::class))->infolist($infolist);
-    }
-
-    public function table(Table $table): Table
-    {
-        return (resolve(HasManyMorphedInteractionsRelationManager::class))->table($table);
     }
 }

@@ -327,8 +327,6 @@ namespace App\Models{
  * @property mixed $payload
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
- * @property-read int|null $media_count
  * @method static \Illuminate\Database\Eloquent\Builder|SettingsProperty newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SettingsProperty newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SettingsProperty query()
@@ -365,15 +363,17 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|SystemUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SystemUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SystemUser onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Authenticatable permission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|Authenticatable permission($permissions, $without = false)
  * @method static \Illuminate\Database\Eloquent\Builder|SystemUser query()
- * @method static \Illuminate\Database\Eloquent\Builder|Authenticatable role($roles, $guard = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|Authenticatable role($roles, $guard = null, $without = false)
  * @method static \Illuminate\Database\Eloquent\Builder|SystemUser whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SystemUser whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SystemUser whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SystemUser whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SystemUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SystemUser withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Authenticatable withoutPermission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|Authenticatable withoutRole($roles, $guard = null)
  * @method static \Illuminate\Database\Eloquent\Builder|SystemUser withoutTrashed()
  * @mixin \Eloquent
  */
@@ -534,9 +534,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Authenticatable permission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|Authenticatable permission($permissions, $without = false)
  * @method static \Illuminate\Database\Eloquent\Builder|User query()
- * @method static \Illuminate\Database\Eloquent\Builder|Authenticatable role($roles, $guard = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|Authenticatable role($roles, $guard = null, $without = false)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereAppointmentsAreRestrictedToExistingStudents($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereArePronounsVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereAreTeamsVisibleOnProfile($value)
@@ -579,6 +579,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereWorkingHours($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereWorkingHoursAreEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Authenticatable withoutPermission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|Authenticatable withoutRole($roles, $guard = null)
  * @method static \Illuminate\Database\Eloquent\Builder|User withoutTrashed()
  * @mixin \Eloquent
  */
@@ -1404,9 +1406,9 @@ namespace AdvisingApp\Authorization\Models{
  * @method static \AdvisingApp\Authorization\Database\Factories\PermissionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Permission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Permission newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Permission permission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission permission($permissions, $without = false)
  * @method static \Illuminate\Database\Eloquent\Builder|Permission query()
- * @method static \Illuminate\Database\Eloquent\Builder|Permission role($roles, $guard = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission role($roles, $guard = null, $without = false)
  * @method static \Illuminate\Database\Eloquent\Builder|Permission web()
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereGroupId($value)
@@ -1414,6 +1416,8 @@ namespace AdvisingApp\Authorization\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission withoutPermission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission withoutRole($roles, $guard = null)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -1468,7 +1472,7 @@ namespace AdvisingApp\Authorization\Models{
  * @method static \AdvisingApp\Authorization\Database\Factories\RoleFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Role newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Role newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Role permission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role permission($permissions, $without = false)
  * @method static \Illuminate\Database\Eloquent\Builder|Role query()
  * @method static \Illuminate\Database\Eloquent\Builder|Role superAdmin()
  * @method static \Illuminate\Database\Eloquent\Builder|Role web()
@@ -1478,6 +1482,7 @@ namespace AdvisingApp\Authorization\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Role whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Role whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Role whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role withoutPermission($permissions)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -3065,6 +3070,7 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int $portal_view_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory|null $category
@@ -3090,6 +3096,7 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle wherePortalViewCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle wherePublic($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereQualityId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereStatusId($value)
@@ -3658,6 +3665,7 @@ namespace AdvisingApp\Notification\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $subscribable
  * @property-read \App\Models\User $user
+ * @method static \AdvisingApp\Notification\Database\Factories\SubscriptionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Subscription licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|Subscription newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Subscription newQuery()
@@ -3734,6 +3742,7 @@ namespace AdvisingApp\Prospect\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $student_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Alert\Models\Alert> $alerts
  * @property-read int|null $alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $applicationSubmissions
@@ -3771,6 +3780,7 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read int|null $service_requests_count
  * @property-read \AdvisingApp\Prospect\Models\ProspectSource $source
  * @property-read \AdvisingApp\Prospect\Models\ProspectStatus $status
+ * @property-read \AdvisingApp\StudentDataModel\Models\Student|null $student
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $subscribedUsers
  * @property-read int|null $subscribed_users_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\Subscription> $subscriptions
@@ -3814,6 +3824,7 @@ namespace AdvisingApp\Prospect\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereSourceId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereState($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereStatusId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereStudentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect withoutTrashed()
@@ -4754,8 +4765,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string $subject
  * @property string $catalog_nbr
  * @property string $enrl_status_reason
- * @property \Illuminate\Support\Carbon $enrl_add_dt
- * @property \Illuminate\Support\Carbon $enrl_drop_dt
+ * @property string $enrl_add_dt
+ * @property string $enrl_drop_dt
  * @property string $crse_grade_off
  * @property int $unt_taken
  * @property int $unt_earned
@@ -4952,6 +4963,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $performances_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Program> $programs
  * @property-read int|null $programs_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $prospects
+ * @property-read int|null $prospects_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $subscribedUsers

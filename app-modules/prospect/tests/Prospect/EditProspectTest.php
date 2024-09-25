@@ -171,7 +171,7 @@ test('convert action visible when prospect is not converted to student', functio
         ->assertActionHidden(DisassociateStudent::class);
 });
 
-test('disassociate student action visible when prospect is converted to student', function () {
+test('edit page is forbidden when prospect is converted to student', function () {
     $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
 
     $prospect = Prospect::factory()
@@ -186,9 +186,7 @@ test('disassociate student action visible when prospect is converted to student'
     livewire(EditProspect::class, [
         'record' => $prospect->getRouteKey(),
     ])
-        ->assertSuccessful()
-        ->assertActionVisible(DisassociateStudent::class)
-        ->assertActionHidden(ConvertToStudent::class);
+        ->assertForbidden();
 });
 
 test('convert prospect to student', function () {
@@ -219,27 +217,4 @@ test('convert prospect to student', function () {
         ->sisid->toBe($student->sisid)
         ->full_name->toBe($student->full_name)
         ->email->toBe($student->email);
-});
-
-test('disassociate student from prospect', function () {
-    $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
-
-    $user->givePermissionTo('prospect.view-any');
-    $user->givePermissionTo('prospect.*.update');
-
-    actingAs($user);
-
-    $prospect = Prospect::factory()
-        ->for(Student::factory(), 'student')
-        ->create();
-
-    livewire(EditProspect::class, [
-        'record' => $prospect->getRouteKey(),
-    ])
-        ->callAction(
-            DisassociateStudent::class,
-        )->assertSuccessful();
-
-    $prospect->refresh();
-    expect($prospect->student()->exists())->toBeFalse();
 });
