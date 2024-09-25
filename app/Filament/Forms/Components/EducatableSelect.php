@@ -38,9 +38,9 @@ namespace App\Filament\Forms\Components;
 
 use Closure;
 use App\Models\Authenticatable;
-use Illuminate\Support\Facades\Log;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\Component;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
@@ -49,7 +49,6 @@ use Filament\Forms\Components\Concerns\HasName;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Forms\Components\MorphToSelect\Type;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class EducatableSelect extends Component
