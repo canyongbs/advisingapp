@@ -51,15 +51,8 @@ class EnrollmentFactory extends Factory
     {
         return [
             'sisid' => Student::factory(),
-            'acad_career' => fake()->randomElement(['NC', 'CRED']),
             'division' => fake()->randomElement(['ABC01', 'ABD02', 'ABE03']),
-            'semester' => fake()->numerify('42##'),
             'class_nbr' => fake()->numerify('19###'),
-            'subject' => fake()->randomElement(['ACC', 'FITNESS', 'MATH', 'SENIORS', 'ART']),
-            'catalog_nbr' => fake()->numerify('###-#####'),
-            'enrl_status_reason' => fake()->randomElement(['DROP', 'ENRL']),
-            'enrl_add_dt' => fake()->dateTime(),
-            'enrl_drop_dt' => fake()->dateTime(),
             'crse_grade_off' => fake()->randomElement(['A', 'B', 'C', 'D', 'W']),
             'unt_taken' => fake()->numberBetween(1, 4),
             'unt_earned' => function (array $attributes) {

@@ -58,4 +58,12 @@ return [
     'gpt_4o_api_version' => env('OPEN_AI_GPT_4O_API_VERSION'),
 
     'gpt_4o_model' => env('OPEN_AI_GPT_4O_MODEL'),
+
+    'gpt_4o_mini_base_uri' => env('OPEN_AI_GPT_4O_MINI_BASE_URI'),
+
+    'gpt_4o_mini_api_key' => env('OPEN_AI_GPT_4O_MINI_API_KEY'),
+
+    'gpt_4o_mini_api_version' => env('OPEN_AI_GPT_4O_MINI_API_VERSION'),
+
+    'gpt_4o_mini_model' => env('OPEN_AI_GPT_4O_MINI_MODEL'),
 ];

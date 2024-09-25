@@ -39,7 +39,6 @@ namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
 
 class KnowledgeManagementPortalCategoryController extends Controller
@@ -71,19 +70,17 @@ class KnowledgeManagementPortalCategoryController extends Controller
                 'name' => $category->name,
                 'description' => $category->description,
             ]),
-            'articles' => KnowledgeBaseArticleData::collection(
-                $category->knowledgeBaseArticles()
-                    ->public()
-                    ->get()
-                    ->map(function ($item) {
-                        return [
-                            'id' => $item->getKey(),
-                            'categoryId' => $item->category_id,
-                            'name' => $item->title,
-                        ];
-                    })
-                    ->toArray()
-            ),
+            'articles' => $category->knowledgeBaseArticles()
+                ->select(['title', 'category_id', 'id'])
+                ->public()
+                ->paginate(10)
+                ->through(function ($category) {
+                    $category->name = $category->title;
+                    $category->categoryId = $category->category_id;
+                    $category->id = $category->getKey();
+
+                    return $category;
+                }),
         ]);
     }
 }

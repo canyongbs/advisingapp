@@ -34,39 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+namespace AdvisingApp\Portal\Enums;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+use Filament\Support\Contracts\HasLabel;
 
-/**
- * @mixin IdeHelperEnrollment
- */
-class Enrollment extends Model
+enum GdprBannerButtonLabel: string implements HasLabel
 {
-    use HasFactory;
-    use UsesTenantConnection;
+    case Agree = 'Agree';
 
-    protected $table = 'enrollments';
+    case AllowCookies = 'Allow Cookies';
 
-    protected $primaryKey = 'sisid';
+    case IUnderstand = 'I Understand';
 
-    public $incrementing = false;
+    case Continue = 'Continue';
 
-    protected $keyType = 'string';
-
-    public $timestamps = false;
-
-    protected $casts = [
-        'last_upd_dt_stmp' => 'datetime',
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
-    ];
-
-    public function student(): BelongsTo
+    public function getLabel(): string
     {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+        return $this->value;
     }
 }

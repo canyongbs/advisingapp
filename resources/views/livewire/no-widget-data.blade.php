@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,41 +30,18 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    $heading = $this->getHeading();
+@endphp
 
-namespace AdvisingApp\StudentDataModel\Models;
-
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-
-/**
- * @mixin IdeHelperEnrollment
- */
-class Enrollment extends Model
-{
-    use HasFactory;
-    use UsesTenantConnection;
-
-    protected $table = 'enrollments';
-
-    protected $primaryKey = 'sisid';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
-    public $timestamps = false;
-
-    protected $casts = [
-        'last_upd_dt_stmp' => 'datetime',
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
-    ];
-
-    public function student(): BelongsTo
-    {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
-    }
-}
+<x-filament-widgets::widget>
+    <x-filament::section
+        class="flex h-full flex-col [&_.fi-section-content-ctn]:flex-1 [&_.fi-section-content]:h-full"
+        :heading="$heading"
+    >
+        <div class="flex h-full items-center justify-center pb-3 text-sm text-gray-600 dark:text-gray-500">
+            Insufficient Data
+        </div>
+    </x-filament::section>
+</x-filament-widgets::widget>

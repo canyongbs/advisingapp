@@ -34,39 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-
-/**
- * @mixin IdeHelperEnrollment
- */
-class Enrollment extends Model
-{
-    use HasFactory;
-    use UsesTenantConnection;
-
-    protected $table = 'enrollments';
-
-    protected $primaryKey = 'sisid';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
-    public $timestamps = false;
-
-    protected $casts = [
-        'last_upd_dt_stmp' => 'datetime',
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
-    ];
-
-    public function student(): BelongsTo
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+        try {
+            $this->migrator->add('ai.open_ai_gpt_4o_mini_base_uri', config('integration-open-ai.gpt_4o_mini_base_uri'), encrypted: true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
+
+        try {
+            $this->migrator->add('ai.open_ai_gpt_4o_mini_api_key', config('integration-open-ai.gpt_4o_mini_api_key'), encrypted: true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
+
+        try {
+            $this->migrator->add('ai.open_ai_gpt_4o_mini_model', config('integration-open-ai.gpt_4o_mini_model'), encrypted: true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
     }
-}
+
+    public function down(): void
+    {
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_mini_base_uri');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_mini_api_key');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_mini_model');
+    }
+};

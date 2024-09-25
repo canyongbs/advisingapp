@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,20 +32,24 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use Filament\Support\Facades\FilamentView;
+*/
 
-    $color = $this->getColor();
-    $heading = $this->getHeading();
-@endphp
-<x-filament-widgets::widget class="fi-wi-chart">
-    <x-filament::section
-        class="relative h-full pt-20"
-        :heading="$heading"
-    >
-        <div class="inset-0 flex items-center justify-center lg:absolute">
-            Insufficient Data
-        </div>
-    </x-filament::section>
-</x-filament-widgets::widget>
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('knowledge_base_articles', function (Blueprint $table) {
+            $table->integer('portal_view_count')->default(0);
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('knowledge_base_articles', function (Blueprint $table) {
+            $table->dropColumn('portal_view_count');
+        });
+    }
+};

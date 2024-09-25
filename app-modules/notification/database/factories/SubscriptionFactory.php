@@ -34,39 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+namespace AdvisingApp\Notification\Database\Factories;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+use App\Models\User;
+use App\Models\Subscription;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperEnrollment
+ * @extends Subscription>
  */
-class Enrollment extends Model
+class SubscriptionFactory extends Factory
 {
-    use HasFactory;
-    use UsesTenantConnection;
-
-    protected $table = 'enrollments';
-
-    protected $primaryKey = 'sisid';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
-    public $timestamps = false;
-
-    protected $casts = [
-        'last_upd_dt_stmp' => 'datetime',
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
-    ];
-
-    public function student(): BelongsTo
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+        return [
+            'user_id' => User::factory(),
+            'subscribable_id' => null,
+            'subscribable_type' => null,
+        ];
     }
 }

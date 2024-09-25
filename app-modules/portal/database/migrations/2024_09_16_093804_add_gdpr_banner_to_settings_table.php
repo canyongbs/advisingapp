@@ -34,39 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-
-/**
- * @mixin IdeHelperEnrollment
- */
-class Enrollment extends Model
-{
-    use HasFactory;
-    use UsesTenantConnection;
-
-    protected $table = 'enrollments';
-
-    protected $primaryKey = 'sisid';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
-    public $timestamps = false;
-
-    protected $casts = [
-        'last_upd_dt_stmp' => 'datetime',
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
-    ];
-
-    public function student(): BelongsTo
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+        $this->migrator->add(
+            'portal.gdpr_banner_text',
+            [
+                'type' => 'doc',
+                'content' => [
+                    [
+                        'type' => 'paragraph',
+                        'attrs' => [
+                            'textAlign' => 'start',
+                        ],
+                        'content' => [
+                            [
+                                'type' => 'text',
+                                'text' => 'We use cookies to personalize content, to provide social media features, and to analyze our traffic. We also share information about your use of our site with our partners who may combine it with other information that you\'ve provided to them or that they\'ve collected from your use of their services.',
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        );
+
+        $this->migrator->add('portal.gdpr_banner_button_label', GdprBannerButtonLabel::AllowCookies);
     }
-}
+
+    public function down(): void
+    {
+        $this->migrator->delete('portal.gdpr_banner_text');
+        $this->migrator->delete('portal.gdpr_banner_button_label');
+    }
+};

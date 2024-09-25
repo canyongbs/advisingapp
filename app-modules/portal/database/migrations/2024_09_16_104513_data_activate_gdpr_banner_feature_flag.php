@@ -34,39 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+use App\Enums\FeatureFlag;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-
-/**
- * @mixin IdeHelperEnrollment
- */
-class Enrollment extends Model
-{
-    use HasFactory;
-    use UsesTenantConnection;
-
-    protected $table = 'enrollments';
-
-    protected $primaryKey = 'sisid';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
-    public $timestamps = false;
-
-    protected $casts = [
-        'last_upd_dt_stmp' => 'datetime',
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
-    ];
-
-    public function student(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+        FeatureFlag::GDPRBanner->activate();
     }
-}
+
+    public function down(): void
+    {
+        FeatureFlag::GDPRBanner->deactivate();
+    }
+};

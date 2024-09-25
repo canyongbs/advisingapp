@@ -131,6 +131,8 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                     ->searchable()
                     ->optionsLimit(20)
                     ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
+                Filter::make('subscribed')
+                    ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
                 SelectFilter::make('status_id')
                     ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
                     ->multiple()

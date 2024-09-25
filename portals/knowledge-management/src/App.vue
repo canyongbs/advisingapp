@@ -375,7 +375,7 @@ watch(route, () => {
 
                     <DesktopSidebar :categories="categories" :api-url="apiUrl" />
 
-                    <div>
+                    <div class="w-3/4">
                         <RouterView
                             @sidebar-opened="showMobileMenu = !showMobileMenu"
                             :search-url="searchUrl"
