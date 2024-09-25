@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Task\Filament\Concerns;
 
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Task\Models\Task;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -48,6 +50,8 @@ trait TaskEditForm
 
     public function editFormFields(): array
     {
+      dd($this);
+        $prospectecord = $record->concern_type == Prospect::class ? $this->getRecord()->concern : null;
         return [
             TextInput::make('title')
                 ->required()
@@ -65,7 +69,7 @@ trait TaskEditForm
                 ->nullable()
                 ->searchable(['name', 'email'])
                 ->default(auth()->id()),
-            EducatableSelect::make('concern',includedRecord:true,isEditPage:true)
+            EducatableSelect::make('concern',$record,isExcludingConvertedProspects:true)
                 ->label('Related To')
                 ->afterStateUpdated($this->updateAssignmentAfterConcernSelected()),
         ];

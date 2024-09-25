@@ -49,6 +49,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Forms\Components\MorphToSelect\Type;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\Log;
 
 class EducatableSelect extends Component
 {
@@ -63,14 +64,14 @@ class EducatableSelect extends Component
         $this->name($name);
     }
 
-    public static function make(string $name, bool $includedRecord = false, bool $isEditPage = false): EducatableSelect | MorphToSelect
+    public static function make(string $name, $includedRecord = null,bool $isExcludingConvertedProspects = false): EducatableSelect | MorphToSelect
     {
         if (auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
             return MorphToSelect::make($name)
                 ->searchable()
                 ->types([
                     static::getStudentType(),
-                    static::getProspectType($includedRecord,$isEditPage),
+                    static::getProspectType($isExcludingConvertedProspects, $includedRecord),
                 ]);
         }
 
@@ -82,29 +83,31 @@ class EducatableSelect extends Component
 
     public static function getStudentType(): Type
     {
-         return Type::make(Student::class)
+        return Type::make(Student::class)
             ->titleAttribute(Student::displayNameKey());
     }
 
-    public static function getProspectType($includedRecord = false,$isEditPage = false): Type
+    public static function getProspectType($isExcludingConvertedProspects = false, ?Prospect $includedRecord = null): Type
     {
         $prospectType = Type::make(Prospect::class)
             ->titleAttribute(Prospect::displayNameKey());
-       
-        if($includedRecord){
-            $prospectType->modifyOptionsQueryUsing(fn (Builder $query) => $query->tap(new ExcludeConvertedProspects()));
-        }
 
-        if($isEditPage){
-            $prospectType->modifyOptionsQueryUsing(fn (Builder $query,$record) => $query->where('id',$record->concern_id));
-        }
-        
+        $prospectType->modifyOptionsQueryUsing(function (Builder $query) use ($isExcludingConvertedProspects, $includedRecord) {
+            $query->when($isExcludingConvertedProspects, function (Builder $query) {
+                return $query->tap(new ExcludeConvertedProspects());
+            });
+
+            $query->when($includedRecord, function (Builder $query) use($includedRecord) {
+                Log::debug($includedRecord);
+                return $query->orWhere('id', $includedRecord->getKey());
+            });
+        });
+
         return $prospectType;
     }
 
     public function getChildComponents(): array
     {
-       
         /** @var Authenticatable $user */
         $user = auth()->user();
 
