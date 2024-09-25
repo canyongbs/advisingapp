@@ -34,42 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CareTeam\Providers;
+use App\Models\User;
+use AdvisingApp\Prospect\Models\Prospect;
 
-use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\CareTeam\CareTeamPlugin;
-use AdvisingApp\CareTeam\Models\CareTeam;
-use AdvisingApp\CareTeam\Observers\CareTeamObserver;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\CareTeam\Registries\CareTeamRbacRegistry;
+use function Pest\Laravel\assertDatabaseHas;
 
-class CareTeamServiceProvider extends ServiceProvider
-{
-    use ImplementsGraphQL;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-    public function register(): void
-    {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new CareTeamPlugin()));
-    }
+it('can auto subscribe user when adding in care team', function ($educatable) {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'care_team' => CareTeam::class,
-        ]);
+    $educatable->careTeam()->sync([$user->getKey()]);
 
-        $this->discoverSchema(__DIR__ . '/../../graphql/care-team.graphql');
+    assertDatabaseHas('care_teams', [
+        'user_id' => $user->getKey(),
+        'educatable_id' => $educatable->getKey(),
+        'educatable_type' => $educatable->getMorphClass(),
+    ]);
 
-        AuthorizationRoleRegistry::register(CareTeamRbacRegistry::class);
-
-        $this->registerObservers();
-    }
-
-    public function registerObservers(): void
-    {
-        CareTeam::observe(CareTeamObserver::class);
-    }
-}
+    assertDatabaseHas('subscriptions', [
+        'user_id' => $user->getKey(),
+        'subscribable_id' => $educatable->getKey(),
+        'subscribable_type' => $educatable->getMorphClass(),
+    ]);
+})
+    ->with([
+        'for Prospect' => [
+            'educatable' => fn () => Prospect::factory()->create(),
+        ],
+        'for Student' => [
+            'educatable' => fn () => Student::factory()->create(),
+        ],
+    ]);

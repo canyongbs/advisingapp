@@ -34,42 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CareTeam\Providers;
+namespace AdvisingApp\CareTeam\Observers;
 
-use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\CareTeam\CareTeamPlugin;
+use App\Models\User;
 use AdvisingApp\CareTeam\Models\CareTeam;
-use AdvisingApp\CareTeam\Observers\CareTeamObserver;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\CareTeam\Registries\CareTeamRbacRegistry;
+use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 
-class CareTeamServiceProvider extends ServiceProvider
+class CareTeamObserver
 {
-    use ImplementsGraphQL;
-
-    public function register(): void
+    public function created(CareTeam $careTeam): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new CareTeamPlugin()));
-    }
+        $user = $careTeam->user;
 
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'care_team' => CareTeam::class,
-        ]);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/care-team.graphql');
-
-        AuthorizationRoleRegistry::register(CareTeamRbacRegistry::class);
-
-        $this->registerObservers();
-    }
-
-    public function registerObservers(): void
-    {
-        CareTeam::observe(CareTeamObserver::class);
+        if ($user instanceof User) {
+            TriggeredAutoSubscription::dispatch($user, $careTeam);
+        }
     }
 }
