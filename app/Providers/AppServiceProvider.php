@@ -136,6 +136,17 @@ class AppServiceProvider extends ServiceProvider
             return null;
         });
 
+        $this->app->singleton('current-version', function ($app) {
+            $gitVersion = Process::run('git describe --tags $(git rev-list --tags --max-count=1)');
+
+            if ($gitVersion->successful()) {
+                return rtrim($gitVersion->output());
+            }
+            report($gitVersion->errorOutput());
+
+            return null;
+        });
+
         collect(FeatureFlag::cases())->each(
             fn (FeatureFlag $feature) => Feature::define($feature->value, $feature->definition())
         );

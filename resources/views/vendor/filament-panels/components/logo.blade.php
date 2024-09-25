@@ -67,7 +67,7 @@
                 conversionName: $darkLogo->hasGeneratedConversion('logo-height-250px') ? 'logo-height-250px' : '',
             );
         @endphp
-       
+
         <img
             src="{{ $darkLogoUrl }}"
             alt="{{ config('app.name') }}"

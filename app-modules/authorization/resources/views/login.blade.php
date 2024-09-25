@@ -36,54 +36,62 @@
     use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthenticationManagement;
 @endphp
 
-<x-filament-panels::page.simple>
-    @if (filament()->hasRegistration())
-        <x-slot name="subheading">
-            {{ __('filament-panels::pages/auth/login.actions.register.before') }}
+<div class="login_form flex w-full flex-col items-center justify-center gap-8 lg:flex-row">
+    <div class="w-full lg:w-1/2 lg:pr-8">
+        @if (filament()->hasRegistration())
+            <x-slot name="subheading">
+                {{ __('filament-panels::pages/auth/login.actions.register.before') }}
 
-            {{ $this->registerAction }}
-        </x-slot>
-    @endif
-
-    <x-filament-panels::form wire:submit="authenticate">
-        @if ($this->needsMfaSetup)
-            <h3 class="flex items-center gap-2 text-lg font-medium">
-                @svg('heroicon-o-question-mark-circle', 'w-6')
-                Multifactor authentication is required for your account.
-            </h3>
-            <p class="text-sm">To finish enabling two factor authentication, scan the following QR code using your
-                phone's authenticator application or enter the setup key and provide the generated OTP code.</p>
-            <div class="mt-3 flex space-x-4">
-                <div>
-                    {!! $this->getMultifactorQrCode() !!}
-                    <p class="pt-2 text-sm">Setup key {{ decrypt($this->user->multifactor_secret) }}</p>
-                </div>
-            </div>
+                {{ $this->registerAction }}
+            </x-slot>
         @endif
 
-        {{ $this->form }}
-
-        <x-filament-panels::form.actions
-            :actions="$this->getCachedFormActions()"
-            :full-width="$this->hasFullWidthFormActions()"
-        />
-        <x-filament-panels::form.actions
-            :actions="$this->getSsoFormActions()"
-            :full-width="$this->hasFullWidthFormActions()"
-        />
-    </x-filament-panels::form>
-    @if ($this->needsMFA && !$this->needsMfaSetup)
-        <x-filament::link
-            class="cursor-pointer"
-            size="sm"
-            wire:click.prevent="toggleUsingRecoveryCodes()"
-            tag="button"
-        >
-            @if ($this->usingRecoveryCode)
-                Use MFA Code
-            @else
-                Use Recovery Code
+        <x-filament-panels::form wire:submit="authenticate">
+            @if ($this->needsMfaSetup)
+                <h3 class="flex items-center gap-2 text-lg font-medium">
+                    @svg('heroicon-o-question-mark-circle', 'w-6')
+                    Multifactor authentication is required for your account.
+                </h3>
+                <p class="text-sm">To finish enabling two factor authentication, scan the following QR code using your
+                    phone's authenticator application or enter the setup key and provide the generated OTP code.</p>
+                <div class="mt-3 flex space-x-4">
+                    <div>
+                        {!! $this->getMultifactorQrCode() !!}
+                        <p class="pt-2 text-sm">Setup key {{ decrypt($this->user->multifactor_secret) }}</p>
+                    </div>
+                </div>
             @endif
-        </x-filament::link>
-    @endif
-</x-filament-panels::page.simple>
+
+            {{ $this->form }}
+
+            <x-filament-panels::form.actions
+                :actions="$this->getCachedFormActions()"
+                :full-width="$this->hasFullWidthFormActions()"
+            />
+            <x-filament-panels::form.actions
+                :actions="$this->getSsoFormActions()"
+                :full-width="$this->hasFullWidthFormActions()"
+            />
+        </x-filament-panels::form>
+        @if ($this->needsMFA && !$this->needsMfaSetup)
+            <x-filament::link
+                class="cursor-pointer"
+                size="sm"
+                wire:click.prevent="toggleUsingRecoveryCodes()"
+                tag="button"
+            >
+                @if ($this->usingRecoveryCode)
+                    Use MFA Code
+                @else
+                    Use Recovery Code
+                @endif
+            </x-filament::link>
+        @endif
+    </div>
+
+    <div class="w-full lg:w-1/2">
+        <x-filament-panels::login-version-card :themeChangelogUrl="$themeChangelogUrl" />
+        <x-filament-panels::login-knowledge-portal-card :productKnowledgebaseUrl="$productKnowledgebaseUrl" />
+    </div>
+
+</div>

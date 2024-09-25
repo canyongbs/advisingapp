@@ -42,6 +42,7 @@ use App\Models\Tenant;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
+use App\Enums\FeatureFlag;
 use Filament\Pages\SettingsPage;
 use Illuminate\Support\Facades\DB;
 use Filament\Forms\Components\Toggle;
@@ -131,6 +132,32 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->label('Active')
                             ->hidden(fn (Get $get): bool => blank($get('logo'))),
                     ]),
+
+                Section::make('Changelog URL')
+                    ->aside()
+                    ->schema([
+                        TextInput::make('changelog_url')
+                            ->label('Changelog URL')
+                            ->url()
+                            ->maxLength('255')
+                            ->model(
+                                ThemeSettings::getSettingsPropertyModel('theme.changelog_url'),
+                            ),
+                    ])
+                    ->visible(fn () => FeatureFlag::AddUrlToThemeSettings->active()),
+
+                Section::make('Product Knowledge Base URL')
+                    ->aside()
+                    ->schema([
+                        TextInput::make('product_knowledge_base_url')
+                            ->label('Product Knowledge Base URL')
+                            ->url()
+                            ->maxLength('255')
+                            ->model(
+                                ThemeSettings::getSettingsPropertyModel('theme.product_knowledge_base_url'),
+                            ),
+                    ])
+                    ->visible(fn () => FeatureFlag::AddUrlToThemeSettings->active()),
             ]);
     }
 

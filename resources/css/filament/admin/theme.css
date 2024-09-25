@@ -152,3 +152,7 @@
 .fi-sidebar-item.fi-active .fi-sidebar-item-label {
     @apply text-gray-700 dark:text-gray-200 !important;
 }
+
+.login_form .fi-input-wrp .fi-input {
+    @apply dark:bg-white dark:text-black !important;
+}

@@ -43,6 +43,8 @@ enum FeatureFlag: string
 {
     case AiSettingsMaxTokensUpdate = 'ai_settings_max_tokens_update';
 
+    case AddUrlToThemeSettings = 'add_url_to_theme_settings';
+
     public function definition(): Closure
     {
         return match ($this) {

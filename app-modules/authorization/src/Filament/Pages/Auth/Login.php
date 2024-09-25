@@ -37,11 +37,13 @@
 namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
 use App\Models\User;
+use App\Enums\FeatureFlag;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Livewire\Attributes\Locked;
 use Filament\Forms\Components\TextInput;
 use Filament\Models\Contracts\FilamentUser;
+use AdvisingApp\Theme\Settings\ThemeSettings;
 use Illuminate\Validation\ValidationException;
 use Filament\Pages\Auth\Login as FilamentLogin;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
@@ -54,6 +56,8 @@ use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 class Login extends FilamentLogin
 {
     protected static string $view = 'authorization::login';
+
+    protected static string $layout = 'filament-panels::components.layout.login';
 
     public ?array $data;
 
@@ -68,6 +72,19 @@ class Login extends FilamentLogin
 
     #[Locked]
     public bool $usingRecoveryCode = false;
+
+    public string $themeChangelogUrl = '';
+
+    public string $productKnowledgebaseUrl = '';
+
+    public function mount(): void
+    {
+        $themeSettings = app(ThemeSettings::class);
+
+        $this->themeChangelogUrl = FeatureFlag::AddUrlToThemeSettings->active() && ! empty($themeSettings->changelog_url) ? $themeSettings->changelog_url : 'https://github.com/canyongbs/advisingapp/releases';
+
+        $this->productKnowledgebaseUrl = FeatureFlag::AddUrlToThemeSettings->active() && ! empty($themeSettings->product_knowledge_base_url) ? $themeSettings->product_knowledge_base_url : 'https://canyongbs.aiding.app/portal/categories/9bcc47d1-05be-40d2-bf95-9bd719209b06';
+    }
 
     public function authenticate(): ?LoginResponse
     {
@@ -241,8 +258,10 @@ class Login extends FilamentLogin
                     ->schema([
                         $this->getEmailFormComponent()
                             ->hidden(fn (Login $livewire) => $livewire->needsMFA)
-                            ->dehydratedWhenHidden(),
+                            ->dehydratedWhenHidden()
+                            ->extraInputAttributes(['class' => 'dark:bg-white dark:text-black']),
                         $this->getPasswordFormComponent()
+                            ->extraInputAttributes(['class' => 'dark:bg-white dark:text-black'])
                             ->hidden(fn (Login $livewire) => $livewire->needsMFA)
                             ->dehydratedWhenHidden(),
                         $this->getRememberFormComponent()
@@ -251,28 +270,28 @@ class Login extends FilamentLogin
                         TextInput::make('code')
                             ->label(
                                 fn (Login $livewire) => ! $livewire->usingRecoveryCode
-                                ? 'Multifactor Authentication Code'
-                                : 'Multifactor Recovery Code'
+                                    ? 'Multifactor Authentication Code'
+                                    : 'Multifactor Recovery Code'
                             )
                             ->placeholder(
                                 fn (Login $livewire) => ! $livewire->usingRecoveryCode
-                                ? '###-###'
-                                : 'abcdef-98765'
+                                    ? '###-###'
+                                    : 'abcdef-98765'
                             )
                             ->mask(
                                 fn (Login $livewire) => ! $livewire->usingRecoveryCode
-                                ? '999-999'
-                                : null
+                                    ? '999-999'
+                                    : null
                             )
                             ->stripCharacters(
                                 fn (Login $livewire) => ! $livewire->usingRecoveryCode
-                                ? '-'
-                                : null
+                                    ? '-'
+                                    : null
                             )
                             ->helperText(
                                 fn (Login $livewire) => $livewire->usingRecoveryCode
-                                ? 'Enter one of your recovery codes provided when you enabled multifactor authentication. Recovery codes are one-time use only. If you have used all of your recovery codes, you will need to contact your administrator to reset your multifactor authentication.'
-                                : null
+                                    ? 'Enter one of your recovery codes provided when you enabled multifactor authentication. Recovery codes are one-time use only. If you have used all of your recovery codes, you will need to contact your administrator to reset your multifactor authentication.'
+                                    : null
                             )
                             ->numeric(fn (Login $livewire) => ! $livewire->usingRecoveryCode)
                             ->string(fn (Login $livewire) => $livewire->usingRecoveryCode)
