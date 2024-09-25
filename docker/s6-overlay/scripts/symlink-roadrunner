@@ -1,0 +1,16 @@
+#!/command/with-contenv bash
+
+# Exit on error
+set -e
+
+{
+    rm -f /var/www/html/rr \
+    && ln -s /usr/local/bin/rr /var/www/html/rr \
+    && echo "Symlinked RoadRunner binary!"
+} || {
+    echo "Failed to symlink RoadRunner binary!"
+
+    exit 1
+}
+
+exit 0
