@@ -3,6 +3,8 @@
 namespace AdvisingApp\Theme\Tests\Feature;
 
 use AdvisingApp\Theme\Settings\ThemeSettings;
+use AdvisingApp\Theme\Tests\RequestFactories\BrandedWebsiteLinksRequestFactory;
+
 use App\Http\Middleware\CheckOlympusKey;
 
 use App\Models\Tenant;
@@ -12,16 +14,7 @@ use function Pest\Laravel\withoutMiddleware;
 test('Branded theme api test', function () {
     $tenant = Tenant::current();
 
-    $data = [
-        'is_support_url_enabled' => fake()->boolean(),
-        'support_url' => fake()->url(),
-        'is_recent_updates_url_enabled' => fake()->boolean(),
-        'recent_updates_url' => fake()->url(),
-        'is_custom_link_url_enabled' => fake()->boolean(),
-        'custom_link_label' => fake()->word(),
-        'custom_link_url' => fake()->url(),
-        'tenant_id' => $tenant->getKey(),
-    ];
+    $data = BrandedWebsiteLinksRequestFactory::new()->create();
 
     withoutMiddleware(CheckOlympusKey::class)
         ->post(
