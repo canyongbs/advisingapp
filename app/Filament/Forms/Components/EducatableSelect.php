@@ -96,7 +96,7 @@ class EducatableSelect extends Component
             ->titleAttribute(Student::displayNameKey());
     }
 
-    public static function getProspectType(string $keyColumnName, $isExcludingConvertedProspects = false, ?Model $record = null): Type
+    public static function getProspectType(string $keyColumnName, $isExcludingConvertedProspects = true, ?Model $record = null): Type
     {
         $prospectType = Type::make(Prospect::class)
             ->titleAttribute(Prospect::displayNameKey());
