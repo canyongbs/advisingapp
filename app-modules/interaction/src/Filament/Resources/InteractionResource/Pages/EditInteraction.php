@@ -49,6 +49,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\Scopes\ExcludeConvertedProspects;
+use Filament\Forms\Components\MorphToSelect\Type;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionStatus;
@@ -57,8 +59,6 @@ use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
-use App\Models\Scopes\ExcludeConvertedProspects;
-use Filament\Forms\Components\MorphToSelect\Type;
 
 class EditInteraction extends EditRecord
 {
@@ -73,18 +73,18 @@ class EditInteraction extends EditRecord
                     ->searchable()
                     ->required()
                     ->types([
-                        ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [MorphToSelect\Type::make(Student::class)
+                        ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [Type::make(Student::class)
                             ->titleAttribute(Student::displayNameKey())] : []),
                         ...(auth()->user()->hasLicense(Prospect::getLicenseType()) ? [
                             Type::make(Prospect::class)
                                 ->titleAttribute(Prospect::displayNameKey())
                                 ->modifyOptionsQueryUsing(
                                     fn (Builder $query, $record) => $query
-                                                                    ->tap(new ExcludeConvertedProspects())
-                                                                    ->orWhere('id', '=', $record->interactable_id)
+                                        ->tap(new ExcludeConvertedProspects())
+                                        ->orWhere('id', '=', $record->interactable_id)
                                 ),
                         ] : []),
-                       Type::make(ServiceRequest::class)
+                        Type::make(ServiceRequest::class)
                             ->label('Service Request')
                             ->titleAttribute('service_request_number'),
                     ])

@@ -38,6 +38,7 @@ namespace App\Filament\Forms\Components;
 
 use Closure;
 use App\Models\Authenticatable;
+use Illuminate\Support\Facades\Log;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Component;
@@ -49,7 +50,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Forms\Components\MorphToSelect\Type;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Support\Facades\Log;
 
 class EducatableSelect extends Component
 {
@@ -64,7 +64,7 @@ class EducatableSelect extends Component
         $this->name($name);
     }
 
-    public static function make(string $name, $includedRecord = null,bool $isExcludingConvertedProspects = false): EducatableSelect | MorphToSelect
+    public static function make(string $name, $includedRecord = null, bool $isExcludingConvertedProspects = false): EducatableSelect | MorphToSelect
     {
         if (auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
             return MorphToSelect::make($name)
@@ -97,8 +97,9 @@ class EducatableSelect extends Component
                 return $query->tap(new ExcludeConvertedProspects());
             });
 
-            $query->when($includedRecord, function (Builder $query) use($includedRecord) {
+            $query->when($includedRecord, function (Builder $query) use ($includedRecord) {
                 Log::debug($includedRecord);
+
                 return $query->orWhere('id', $includedRecord->getKey());
             });
         });
