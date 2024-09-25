@@ -2,6 +2,10 @@
 
 namespace AdvisingApp\Theme\Tests\Feature;
 
+use App\Http\Middleware\CheckOlympusKey;
+use Illuminate\Support\Str;
+
+
 test('Branded theme api test', function () {
     $data = [
         'is_support_url_enabled' => true,
@@ -11,13 +15,13 @@ test('Branded theme api test', function () {
         'is_custom_link_url_enabled' => false,
         'custom_link_label' => '',
         'custom_link_url' => '',
-        'tenant_id' => '',
+        'tenant_id' => Str::uuid(),
     ];
 
-    $response = $this->withoutMiddleware('landlord-api')->post('https://advisingapp.local/landlord/api/branded-website-links', $data);
+    $response = $this->withoutMiddleware(CheckOlympusKey::class)->post('https://advisingapp.local/landlord/api/branded-website-links', $data);
 
     $response->assertStatus(200);
-
+    
     $response->assertJson([
         'message' => 'test successful',
     ]);
