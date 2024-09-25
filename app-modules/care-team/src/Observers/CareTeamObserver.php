@@ -37,14 +37,14 @@
 namespace AdvisingApp\CareTeam\Observers;
 
 use App\Models\User;
-use AdvisingApp\CareTeam\Models\CareTeam;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Notifications\Notification;
 use Illuminate\Support\HtmlString;
+use Filament\Notifications\Notification;
+use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
 class CareTeamObserver
 {
