@@ -49,6 +49,7 @@ use Filament\Forms\Components\Concerns\HasName;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Forms\Components\MorphToSelect\Type;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class EducatableSelect extends Component
@@ -59,24 +60,33 @@ class EducatableSelect extends Component
 
     protected string $view = 'filament-forms::components.group';
 
+    protected $isExcludingConvertedProspects = false;
+
     final public function __construct(string $name)
     {
         $this->name($name);
     }
 
-    public static function make(string $name, $includedRecord = null, bool $isExcludingConvertedProspects = false): EducatableSelect | MorphToSelect
+    public function excludeConvertedProspects(bool $isExcludingConvertedProspects = true): void
+    {
+        $this->isExcludingConvertedProspects = $isExcludingConvertedProspects;
+    }
+
+    public static function make(string $name, bool $isExcludingConvertedProspects = true): EducatableSelect | MorphToSelect
     {
         if (auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
             return MorphToSelect::make($name)
                 ->searchable()
-                ->types([
+                ->types(fn (?Model $record, MorphToSelect $component) => [
                     static::getStudentType(),
-                    static::getProspectType($isExcludingConvertedProspects, $includedRecord),
+                    static::getProspectType($component->getRelationship()->getForeignKeyName(), $isExcludingConvertedProspects, $record),
                 ]);
         }
 
         $static = app(static::class, ['name' => $name]);
         $static->configure();
+
+        $static->excludeConvertedProspects($isExcludingConvertedProspects);
 
         return $static;
     }
@@ -87,22 +97,20 @@ class EducatableSelect extends Component
             ->titleAttribute(Student::displayNameKey());
     }
 
-    public static function getProspectType($isExcludingConvertedProspects = false, ?Prospect $includedRecord = null): Type
+    public static function getProspectType(string $keyColumnName, $isExcludingConvertedProspects = false, ?Model $record = null): Type
     {
         $prospectType = Type::make(Prospect::class)
             ->titleAttribute(Prospect::displayNameKey());
 
-        $prospectType->modifyOptionsQueryUsing(function (Builder $query) use ($isExcludingConvertedProspects, $includedRecord) {
-            $query->when($isExcludingConvertedProspects, function (Builder $query) {
-                return $query->tap(new ExcludeConvertedProspects());
-            });
+        if ($isExcludingConvertedProspects) {
+            $prospectType->modifyOptionsQueryUsing(function (Builder $query) use ($keyColumnName, $record) {
+                $query->tap(new ExcludeConvertedProspects());
 
-            $query->when($includedRecord, function (Builder $query) use ($includedRecord) {
-                Log::debug($includedRecord);
-
-                return $query->orWhere('id', $includedRecord->getKey());
+                if ($record) {
+                    $query->orWhere('id', $record->{$keyColumnName});
+                }
             });
-        });
+        }
 
         return $prospectType;
     }
@@ -112,17 +120,21 @@ class EducatableSelect extends Component
         /** @var Authenticatable $user */
         $user = auth()->user();
 
+        $relationship = $this->getRelationship();
+
         $type = match (true) {
             $user->hasLicense(Student::getLicenseType()) => static::getStudentType(),
-            $user->hasLicense(Prospect::getLicenseType()) => static::getProspectType(),
+            $user->hasLicense(Prospect::getLicenseType()) => static::getProspectType(
+                $relationship->getForeignKeyName(),
+                $this->isExcludingConvertedProspects,
+                $this->getRecord()
+            ),
             default => null,
         };
 
         if (! $type) {
             return [];
         }
-
-        $relationship = $this->getRelationship();
 
         return [
             Hidden::make($relationship->getMorphType())

@@ -75,7 +75,7 @@ class CreateTask extends CreateRecord
                     ->nullable()
                     ->searchable(['name', 'email'])
                     ->default(auth()->id()),
-                EducatableSelect::make('concern', isExcludingConvertedProspects: true)
+                EducatableSelect::make('concern')
                     ->label('Related To')
                     ->afterStateUpdated($this->updateAssignmentAfterConcernSelected()),
             ]);
