@@ -5,67 +5,46 @@ namespace AdvisingApp\CareTeam\Tests;
 use App\Models\User;
 
 use function Tests\asSuperAdmin;
-use function Pest\Livewire\livewire;
 
 use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Tables\Actions\AttachAction;
 
 use function Pest\Laravel\assertDatabaseHas;
 
+use Illuminate\Database\Eloquent\Collection;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectCareTeam;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentCareTeam;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
-it('can auto subscribe user to prospect upon adding in care team', function () {
-    $superAdmin = User::factory()->licensed(Prospect::getLicenseType())->create();
-
-    $careTeamMember = User::factory()->licensed(Prospect::getLicenseType())->create();
+it('can auto subscribe user when adding in care team', function (array $careTeam, Collection $educatables) {
+    $superAdmin = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
 
     asSuperAdmin($superAdmin);
 
-    $prospect = Prospect::factory()->create();
+    $educatables->each(function (Educatable $educatable) use ($careTeam) {
+        $educatable->careTeam()->sync($careTeam);
 
-    livewire(ManageProspectCareTeam::class, [
-        'record' => $prospect->getKey(),
-    ])
-        ->callTableAction(
-            AttachAction::class,
-            data: ['recordId' => [$careTeamMember->getKey()]]
-        )->assertSuccessful();
+        $educatable->careTeam->each(function ($user) use ($educatable) {
+            assertDatabaseHas('care_teams', [
+                'user_id' => $user->getKey(),
+                'educatable_id' => $educatable->getKey(),
+                'educatable_type' => $educatable->getMorphClass(),
+            ]);
 
-    $prospect->refresh();
-
-    expect($prospect->careTeam->pluck('id'))->toContain($careTeamMember->getKey());
-
-    assertDatabaseHas('care_teams', [
-        'educatable_id' => $prospect->getKey(),
-        'user_id' => $careTeamMember->getKey(),
+            assertDatabaseHas('subscriptions', [
+                'user_id' => $user->getKey(),
+                'subscribable_id' => $educatable->getKey(),
+                'subscribable_type' => $educatable->getMorphClass(),
+            ]);
+        });
+    });
+})
+    ->with([
+        'for Prospect' => [
+            'careTeam' => fn () => User::factory()->licensed(LicenseType::cases())->count(1)->create()->pluck('id')->toArray(),
+            'educatables' => fn () => Prospect::factory()->count(1)->create(),
+        ],
+        'for Student' => [
+            'careTeam' => fn () => User::factory()->licensed(LicenseType::cases())->count(1)->create()->pluck('id')->toArray(),
+            'educatables' => fn () => Student::factory()->count(1)->create(),
+        ],
     ]);
-});
-
-it('can auto subscribe user to student upon adding in care team', function () {
-    $superAdmin = User::factory()->licensed(Student::getLicenseType())->create();
-
-    $careTeamMember = User::factory()->licensed(Student::getLicenseType())->create();
-
-    asSuperAdmin($superAdmin);
-
-    $student = Student::factory()->create();
-
-    livewire(ManageStudentCareTeam::class, [
-        'record' => $student->getKey(),
-    ])
-        ->callTableAction(
-            AttachAction::class,
-            data: ['recordId' => [$careTeamMember->getKey()]]
-        )->assertSuccessful();
-
-    $student->refresh();
-
-    expect($student->careTeam->pluck('id'))->toContain($careTeamMember->getKey());
-
-    assertDatabaseHas('care_teams', [
-        'educatable_id' => $student->getKey(),
-        'user_id' => $careTeamMember->getKey(),
-    ]);
-});
