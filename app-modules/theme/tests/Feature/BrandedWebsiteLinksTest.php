@@ -2,27 +2,46 @@
 
 namespace AdvisingApp\Theme\Tests\Feature;
 
+use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Str;
+
+use App\Models\Tenant;
+use function Pest\Laravel\withoutMiddleware;
 
 
 test('Branded theme api test', function () {
+    $tenant = Tenant::current();
+
     $data = [
-        'is_support_url_enabled' => true,
-        'support_url' => 'https://partners.olympus.local/support',
-        'is_recent_updates_url_enabled' => false,
-        'recent_updates_url' => '',
-        'is_custom_link_url_enabled' => false,
-        'custom_link_label' => '',
-        'custom_link_url' => '',
-        'tenant_id' => Str::uuid(),
+        'is_support_url_enabled' => fake()->boolean(),
+        'support_url' => fake()->url(),
+        'is_recent_updates_url_enabled' => fake()->boolean(),
+        'recent_updates_url' => fake()->url(),
+        'is_custom_link_url_enabled' => fake()->boolean(),
+        'custom_link_label' => fake()->word(),
+        'custom_link_url' => fake()->url(),
+        'tenant_id' => $tenant->getKey(),
     ];
 
-    $response = $this->withoutMiddleware(CheckOlympusKey::class)->post('https://advisingapp.local/landlord/api/branded-website-links', $data);
+    withoutMiddleware(CheckOlympusKey::class)
+        ->post(
+            route('landlord.api.brandedWebsiteLinks.update'),
+            $data
+        )
+        ->assertStatus(200)
+        ->assertJson([
+            'message' => 'Theme updated successfully!',
+        ]);
 
-    $response->assertStatus(200);
-    
-    $response->assertJson([
-        'message' => 'test successful',
-    ]);
+    $tenant->execute(function () use ($data) {
+        $settings = app(ThemeSettings::class);
+
+        expect($settings->is_support_url_enabled)->toEqual($data['is_support_url_enabled']);
+        expect($settings->support_url)->toEqual($data['support_url']);
+        expect($settings->is_recent_updates_url_enabled)->toEqual($data['is_recent_updates_url_enabled']);
+        expect($settings->recent_updates_url)->toEqual($data['recent_updates_url']);
+        expect($settings->is_custom_link_url_enabled)->toEqual($data['is_custom_link_url_enabled']);
+        expect($settings->custom_link_label)->toEqual($data['custom_link_label']);
+        expect($settings->custom_link_url)->toEqual($data['custom_link_url']);
+    });
 });

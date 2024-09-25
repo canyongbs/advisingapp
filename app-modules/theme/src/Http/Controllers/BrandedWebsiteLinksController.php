@@ -12,18 +12,20 @@ class BrandedWebsiteLinksController extends Controller
 {
     public function __invoke(BrandedWebsiteLinksRequest $request): JsonResponse
     {
-        $tenant = Tenant::findOrFail($request->validate('tenant_id'));
-        \Log::debug('BrandedWebsiteLinksController >> invoke >> in');
-        $tenant->execute(function () use ($request) {
+        $data = $request->validated();
+
+        $tenant = Tenant::findOrFail($data['tenant_id']);
+
+        $tenant->execute(function () use ($data) {
             $settings = app(ThemeSettings::class);
-            $settings->is_support_url_enabled = $request->validated('is_support_url_enabled');
-            $settings->support_url = $request->validated('support_url');
-            $settings->is_recent_updates_url_enabled = $request->validated('is_recent_updates_url_enabled');
-            $settings->recent_updates_url = $request->validated('recent_updates_url');
-            $settings->is_custom_link_url_enabled = $request->validated('is_custom_link_url_enabled');
-            $settings->custom_link_label = $request->validated('custom_link_label');
-            $settings->custom_link_url = $request->validated('custom_link_url');
-            $settings->tenant_id = $request->validated('tenant_id');
+            $settings->is_support_url_enabled = $data['is_support_url_enabled'];
+            $settings->support_url = $data['support_url'];
+            $settings->is_recent_updates_url_enabled = $data['is_recent_updates_url_enabled'];
+            $settings->recent_updates_url = $data['recent_updates_url'];
+            $settings->is_custom_link_url_enabled = $data['is_custom_link_url_enabled'];
+            $settings->custom_link_label = $data['custom_link_label'];
+            $settings->custom_link_url = $data['custom_link_url'];
+            $settings->tenant_id = $data['tenant_id'];
             $settings->save();
         });
 
