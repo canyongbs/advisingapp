@@ -129,7 +129,7 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
 
     public static function getTimelineData(Model $forModel): Collection
     {
-        return $forModel->orderedEngagements()->get();
+        return $forModel->orderedInteractions()->get();
     }
 
     public function initiative(): BelongsTo
@@ -166,11 +166,6 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
     {
         return $this->belongsTo(InteractionType::class, 'interaction_type_id');
     }
-
-    // public function histories(): MorphMany
-    // {
-    //     return $this->morphMany(InteractionHistory::class, 'subject');
-    // }
 
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {
