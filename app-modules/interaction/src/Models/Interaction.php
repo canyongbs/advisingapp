@@ -56,12 +56,21 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
+use AdvisingApp\Interaction\History\InteractionHistory;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
+use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
+use AdvisingApp\Timeline\Models\Timeline;
+use AdvisingApp\Timeline\Timelines\InteractionHistoryTimeline;
+use AdvisingApp\Timeline\Timelines\InteractionTimeline;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Support\Collection;
 
 /**
  * @mixin IdeHelperInteraction
  */
-class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction
+class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction, ProvidesATimeline
 {
     use AuditableTrait;
     use BelongsToEducatable;
@@ -108,6 +117,21 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         );
     }
 
+    public function timelineRecord(): MorphOne
+    {
+        return $this->morphOne(Timeline::class, 'timelineable');
+    }
+
+    public function timeline(): InteractionTimeline
+    {
+        return new InteractionTimeline($this);
+    }
+
+    public static function getTimelineData(Model $forModel): Collection
+    {
+        return $forModel->orderedEngagements()->get();
+    }
+
     public function initiative(): BelongsTo
     {
         return $this->belongsTo(InteractionInitiative::class, 'interaction_initiative_id');
@@ -142,6 +166,11 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
     {
         return $this->belongsTo(InteractionType::class, 'interaction_type_id');
     }
+
+    // public function histories(): MorphMany
+    // {
+    //     return $this->morphMany(InteractionHistory::class, 'subject');
+    // }
 
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {

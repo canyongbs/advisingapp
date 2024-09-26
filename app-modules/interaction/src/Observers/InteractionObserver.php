@@ -39,6 +39,9 @@ namespace AdvisingApp\Interaction\Observers;
 use App\Models\User;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
+use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
+use Illuminate\Database\Eloquent\Model;
 
 class InteractionObserver
 {
@@ -60,5 +63,18 @@ class InteractionObserver
         if ($user instanceof User) {
             TriggeredAutoSubscription::dispatch($user, $interaction);
         }
+
+        /** @var Model $entity */
+        $entity = $interaction->interactable;
+
+        TimelineableRecordCreated::dispatch($entity, $interaction);
+    }
+
+    public function deleted(Interaction $interaction): void
+    {
+        /** @var Model $entity */
+        $entity = $interaction->interactable;
+
+        TimelineableRecordDeleted::dispatch($entity, $interaction);
     }
 }

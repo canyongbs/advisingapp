@@ -40,6 +40,8 @@ use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Interaction\History\InteractionHistory;
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
@@ -61,5 +63,6 @@ class ProspectEngagementTimeline extends TimelinePage
         EngagementResponse::class,
         AlertHistory::class,
         TaskHistory::class,
+        Interaction::class,
     ];
 }

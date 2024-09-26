@@ -34,26 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models\Concerns;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementResource\Components;
 
+use Filament\Actions\ViewAction;
+use AdvisingApp\Engagement\Filament\Concerns\EngagementInfolist;
 use AdvisingApp\Interaction\Models\Interaction;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\TextEntry;
+use Illuminate\Support\HtmlString;
 
-trait HasManyMorphedInteractions
+class InteractionViewAction extends ViewAction
 {
-    public function interactions(): MorphMany
-    {
-        return $this->morphMany(
-            related: Interaction::class,
-            name: 'interactable',
-            type: 'interactable_type',
-            id: 'interactable_id'
-        );
-    }
+  protected function setUp(): void
+  {
+      parent::setUp();
 
-    public function orderedInteractions(): MorphMany
-    {
-        return $this->interactions()
-            ->orderBy('created_at', 'desc');
-    }
+      $this->infolist(
+        [
+          TextEntry::make('user.name')
+              ->label('Created By'),
+          Fieldset::make('Content')
+              ->schema([
+                  TextEntry::make('subject')
+                      ->hidden(fn ($state): bool => blank($state))
+                      ->columnSpanFull(),
+                  TextEntry::make('description')
+                      ->getStateUsing(fn (Interaction $interaction): string => $interaction->description)
+                      ->columnSpanFull(),
+              ]),
+          Fieldset::make('Interaction Information')
+          ->schema([
+              TextEntry::make('type.name')
+                      ->label('Type'),
+              TextEntry::make('created_at')
+                      ->label('Created At')
+                      ->hidden(fn (Interaction $interaction): bool => is_null($interaction->created_at)),
+          ]),
+      ]
+    );
+  }
 }
