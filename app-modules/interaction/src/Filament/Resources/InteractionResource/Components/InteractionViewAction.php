@@ -34,14 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\EngagementResource\Components;
+namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Components;
 
 use Filament\Actions\ViewAction;
-use AdvisingApp\Engagement\Filament\Concerns\EngagementInfolist;
 use AdvisingApp\Interaction\Models\Interaction;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
-use Illuminate\Support\HtmlString;
 
 class InteractionViewAction extends ViewAction
 {

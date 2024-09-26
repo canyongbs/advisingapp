@@ -2,9 +2,7 @@
 
 namespace AdvisingApp\Timeline\Timelines;
 
-use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Components\EngagementViewAction;
-use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Components\InteractionViewAction;
-use AdvisingApp\Interaction\History\InteractionHistory;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Components\InteractionViewAction;
 use AdvisingApp\Interaction\Models\Interaction;
 use Filament\Actions\ViewAction;
 use AdvisingApp\Timeline\Models\CustomTimeline;
