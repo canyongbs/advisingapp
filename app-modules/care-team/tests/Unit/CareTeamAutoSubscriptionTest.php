@@ -34,34 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+use App\Models\User;
+use AdvisingApp\Prospect\Models\Prospect;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
+use function Pest\Laravel\assertDatabaseHas;
 
-class ManageProspectInteractions extends ManageRelatedRecords
-{
-    use ProspectHolisticViewPage;
-    use HasManyMorphedInteractionsTrait;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-    protected static string $resource = ProspectResource::class;
+it('can auto subscribe user when adding in care team', function ($educatable) {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    protected static string $relationship = 'interactions';
+    $educatable->careTeam()->sync([$user->getKey()]);
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Interactions';
+    assertDatabaseHas('care_teams', [
+        'user_id' => $user->getKey(),
+        'educatable_id' => $educatable->getKey(),
+        'educatable_type' => $educatable->getMorphClass(),
+    ]);
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Interactions';
-
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
-
-    public function form(Form $form): Form
-    {
-        return (resolve(CreateInteraction::class))->form($form);
-    }
-}
+    assertDatabaseHas('subscriptions', [
+        'user_id' => $user->getKey(),
+        'subscribable_id' => $educatable->getKey(),
+        'subscribable_type' => $educatable->getMorphClass(),
+    ]);
+})
+    ->with([
+        'for Prospect' => [
+            'educatable' => fn () => Prospect::factory()->create(),
+        ],
+        'for Student' => [
+            'educatable' => fn () => Student::factory()->create(),
+        ],
+    ]);

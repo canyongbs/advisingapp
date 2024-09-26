@@ -40,11 +40,14 @@ use Closure;
 use App\Models\Authenticatable;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\Component;
 use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\Concerns\HasName;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Forms\Components\MorphToSelect\Type;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -56,24 +59,33 @@ class EducatableSelect extends Component
 
     protected string $view = 'filament-forms::components.group';
 
+    protected $isExcludingConvertedProspects = false;
+
     final public function __construct(string $name)
     {
         $this->name($name);
     }
 
-    public static function make(string $name): EducatableSelect | MorphToSelect
+    public function excludeConvertedProspects(bool $isExcludingConvertedProspects = true): void
+    {
+        $this->isExcludingConvertedProspects = $isExcludingConvertedProspects;
+    }
+
+    public static function make(string $name, bool $isExcludingConvertedProspects = true): EducatableSelect | MorphToSelect
     {
         if (auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
             return MorphToSelect::make($name)
                 ->searchable()
-                ->types([
+                ->types(fn (?Model $record, MorphToSelect $component) => [
                     static::getStudentType(),
-                    static::getProspectType(),
+                    static::getProspectType($component->getRelationship()->getForeignKeyName(), $isExcludingConvertedProspects, $record),
                 ]);
         }
 
         $static = app(static::class, ['name' => $name]);
         $static->configure();
+
+        $static->excludeConvertedProspects($isExcludingConvertedProspects);
 
         return $static;
     }
@@ -84,10 +96,22 @@ class EducatableSelect extends Component
             ->titleAttribute(Student::displayNameKey());
     }
 
-    public static function getProspectType(): Type
+    public static function getProspectType(string $keyColumnName, $isExcludingConvertedProspects = true, ?Model $record = null): Type
     {
-        return Type::make(Prospect::class)
+        $prospectType = Type::make(Prospect::class)
             ->titleAttribute(Prospect::displayNameKey());
+
+        if ($isExcludingConvertedProspects) {
+            $prospectType->modifyOptionsQueryUsing(function (Builder $query) use ($keyColumnName, $record) {
+                $query->tap(new ExcludeConvertedProspects());
+
+                if ($record) {
+                    $query->orWhere('id', $record->{$keyColumnName});
+                }
+            });
+        }
+
+        return $prospectType;
     }
 
     public function getChildComponents(): array
@@ -95,17 +119,21 @@ class EducatableSelect extends Component
         /** @var Authenticatable $user */
         $user = auth()->user();
 
+        $relationship = $this->getRelationship();
+
         $type = match (true) {
             $user->hasLicense(Student::getLicenseType()) => static::getStudentType(),
-            $user->hasLicense(Prospect::getLicenseType()) => static::getProspectType(),
+            $user->hasLicense(Prospect::getLicenseType()) => static::getProspectType(
+                $relationship->getForeignKeyName(),
+                $this->isExcludingConvertedProspects,
+                $this->getRecord()
+            ),
             default => null,
         };
 
         if (! $type) {
             return [];
         }
-
-        $relationship = $this->getRelationship();
 
         return [
             Hidden::make($relationship->getMorphType())

@@ -43,6 +43,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Facades\Storage;
+use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -115,7 +116,12 @@ class EngagementFilesRelationManager extends RelationManager
                     }),
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->authorize(function () {
+                        $ownerRecord = $this->getOwnerRecord();
+
+                        return auth()->user()->can('create', [EngagementFile::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
+                    }),
             ])
             ->actions([
                 Action::make('download')

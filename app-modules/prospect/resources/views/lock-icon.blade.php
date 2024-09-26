@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,36 +30,12 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
-
-use Filament\Forms\Form;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
-
-class ManageProspectInteractions extends ManageRelatedRecords
-{
-    use ProspectHolisticViewPage;
-    use HasManyMorphedInteractionsTrait;
-
-    protected static string $resource = ProspectResource::class;
-
-    protected static string $relationship = 'interactions';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Interactions';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Interactions';
-
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
-
-    public function form(Form $form): Form
-    {
-        return (resolve(CreateInteraction::class))->form($form);
-    }
-}
+--}}
+@if ($this->getRecord()->student()->exists())
+    <x-filament::icon-button
+        icon="heroicon-m-lock-closed"
+        color="gray"
+        size="lg"
+        tooltip="Prospect is converted to Student"
+    />
+@endif
