@@ -229,22 +229,24 @@ class Login extends FilamentLogin
 
         if ($azureSsoSettings->is_enabled && ! empty($azureSsoSettings->client_id)) {
             $ssoActions[] = Action::make('azure_sso')
-                ->label(__('Login with Azure SSO'))
+                ->label(__('Microsoft'))
                 ->url(route('socialite.redirect', ['provider' => 'azure']))
                 ->color('gray')
                 ->icon('icon-microsoft')
-                ->size('sm');
+                ->size('sm')
+                ->extraAttributes(['class' => 'dark_button_border']);
         }
 
         $googleSsoSettings = app(GoogleSsoSettings::class);
 
         if ($googleSsoSettings->is_enabled && ! empty($googleSsoSettings->client_id)) {
             $ssoActions[] = Action::make('google_sso')
-                ->label(__('Login with Google SSO'))
+                ->label(__('Google'))
                 ->url(route('socialite.redirect', ['provider' => 'google']))
                 ->icon('icon-google')
                 ->color('gray')
-                ->size('sm');
+                ->size('sm')
+                ->extraAttributes(['class' => 'dark_button_border']);
         }
 
         return $ssoActions;
@@ -257,11 +259,10 @@ class Login extends FilamentLogin
                 $this->makeForm()
                     ->schema([
                         $this->getEmailFormComponent()
+                            ->label('Email')
                             ->hidden(fn (Login $livewire) => $livewire->needsMFA)
-                            ->dehydratedWhenHidden()
-                            ->extraInputAttributes(['class' => 'dark:bg-white dark:text-black']),
+                            ->dehydratedWhenHidden(),
                         $this->getPasswordFormComponent()
-                            ->extraInputAttributes(['class' => 'dark:bg-white dark:text-black'])
                             ->hidden(fn (Login $livewire) => $livewire->needsMFA)
                             ->dehydratedWhenHidden(),
                         $this->getRememberFormComponent()
@@ -302,5 +303,13 @@ class Login extends FilamentLogin
                     ->statePath('data'),
             ),
         ];
+    }
+
+    protected function getAuthenticateFormAction(): Action
+    {
+        return Action::make('authenticate')
+            ->label('Log in')
+            ->submit('authenticate')
+            ->extraAttributes(['class' => 'dark:bg-gray-800 dark_button_border dark:hover:bg-gray-700']);
     }
 }

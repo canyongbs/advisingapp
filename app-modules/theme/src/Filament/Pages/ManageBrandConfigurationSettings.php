@@ -139,10 +139,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                         TextInput::make('changelog_url')
                             ->label('Changelog URL')
                             ->url()
-                            ->maxLength('255')
-                            ->model(
-                                ThemeSettings::getSettingsPropertyModel('theme.changelog_url'),
-                            ),
+                            ->maxLength('255'),
                     ])
                     ->visible(fn () => FeatureFlag::AddUrlToThemeSettings->active()),
 
@@ -152,10 +149,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                         TextInput::make('product_knowledge_base_url')
                             ->label('Product Knowledge Base URL')
                             ->url()
-                            ->maxLength('255')
-                            ->model(
-                                ThemeSettings::getSettingsPropertyModel('theme.product_knowledge_base_url'),
-                            ),
+                            ->maxLength('255'),
                     ])
                     ->visible(fn () => FeatureFlag::AddUrlToThemeSettings->active()),
             ]);

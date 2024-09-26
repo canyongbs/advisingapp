@@ -36,7 +36,7 @@
     use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthenticationManagement;
 @endphp
 
-<div class="login_form flex w-full flex-col items-center justify-center gap-8 lg:flex-row">
+<div class="flex w-full flex-col items-center justify-center gap-8 lg:flex-row">
     <div class="w-full lg:w-1/2 lg:pr-8">
         @if (filament()->hasRegistration())
             <x-slot name="subheading">
@@ -68,6 +68,9 @@
                 :actions="$this->getCachedFormActions()"
                 :full-width="$this->hasFullWidthFormActions()"
             />
+            @if (count($this->getSsoFormActions()) > 0)
+                <small class="text-gray-800 dark:text-gray-300">or log in with single sign-on</small>
+            @endif
             <x-filament-panels::form.actions
                 :actions="$this->getSsoFormActions()"
                 :full-width="$this->hasFullWidthFormActions()"
