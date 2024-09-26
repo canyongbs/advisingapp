@@ -138,15 +138,12 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->schema([
                                 Toggle::make('is_support_url_enabled')
                                     ->label('Enable Support URL')
-                                    ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                                     ->live()
                                     ->columnSpanFull(),
                                 TextInput::make('support_url')
                                     ->label('Support URL')
                                     ->url()
                                     ->visible(fn (Get $get) => $get('is_support_url_enabled'))
-                                    ->hintIcon(fn (TextInput $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
-                                    ->hintIconTooltip('Knowledge Management is not a part of your current subscription.')
                                     ->columnSpanFull(),
                             ]),
                         Section::make('Recent Updates')
@@ -159,14 +156,12 @@ class ManageBrandConfigurationSettings extends SettingsPage
                                     ->label('Recent Updates URL')
                                     ->url()
                                     ->visible(fn (Get $get) => $get('is_recent_updates_url_enabled'))
-                                    ->hintIcon(fn (TextInput $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                                     ->columnSpanFull(),
                             ]),
                         Section::make('Custom Link')
                             ->schema([
                                 Toggle::make('is_custom_link_url_enabled')
                                     ->label('Enable Custom Link URL')
-                                    ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                                     ->live()
                                     ->columnSpanFull(),
                                 TextInput::make('custom_link_label')
@@ -174,13 +169,11 @@ class ManageBrandConfigurationSettings extends SettingsPage
                                     ->alphaNum()
                                     ->maxLength(16)
                                     ->visible(fn (Get $get) => $get('is_custom_link_url_enabled'))
-                                    ->hintIcon(fn (TextInput $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                                     ->columnSpanFull(),
                                 TextInput::make('custom_link_url')
                                     ->label('Custom Link URL')
                                     ->url()
                                     ->visible(fn (Get $get) => $get('is_custom_link_url_enabled'))
-                                    ->hintIcon(fn (TextInput $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                                     ->columnSpanFull(),
                             ]),
                     ]),
