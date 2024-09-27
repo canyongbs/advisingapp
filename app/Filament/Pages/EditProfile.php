@@ -262,6 +262,12 @@ class EditProfile extends Page
                                 return "Default: {$timezone}";
                             }),
                     ]),
+                Section::make('Disable Branding Bar')
+                    ->aside()
+                    ->schema([
+                        Toggle::make('is_branding_bar_enabled')
+                            ->label(''),
+                    ]),
                 Section::make('Connected Accounts')
                     ->description('Disconnect your external accounts.')
                     ->aside()

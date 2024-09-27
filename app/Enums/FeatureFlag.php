@@ -43,6 +43,7 @@ enum FeatureFlag: string
 {
     case AiSettingsMaxTokensUpdate = 'ai_settings_max_tokens_update';
     case GDPRBanner = 'gdpr_banner';
+    case EnableBrandingBar = 'enable_branding_bar';
 
     public function definition(): Closure
     {

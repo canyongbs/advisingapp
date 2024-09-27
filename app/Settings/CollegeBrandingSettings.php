@@ -46,6 +46,8 @@ class CollegeBrandingSettings extends Settings
 
     public ?string $color = null;
 
+    public bool $dismissible = false;
+
     public static function group(): string
     {
         return 'college_branding';
