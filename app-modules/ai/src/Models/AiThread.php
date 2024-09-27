@@ -124,7 +124,7 @@ class AiThread extends BaseModel
                 $timezone = app(DisplaySettings::class)->getTimezone();
 
                 $date = array_key_exists('messages_max_created_at', $this->getAttributes())
-                    ? $this->messages_max_created_at
+                    ? $this->getAttributeValue('messages_max_created_at')
                     : $this->messages()
                         ->latest()
                         ->value('created_at');
