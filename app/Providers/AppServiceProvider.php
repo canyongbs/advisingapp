@@ -38,7 +38,6 @@ namespace App\Providers;
 
 use App\Models\Tenant;
 use Sentry\State\Scope;
-use App\Enums\FeatureFlag;
 use App\Models\SystemUser;
 use Laravel\Pennant\Feature;
 use Rector\Caching\CacheFactory;
@@ -136,8 +135,6 @@ class AppServiceProvider extends ServiceProvider
             return null;
         });
 
-        collect(FeatureFlag::cases())->each(
-            fn (FeatureFlag $feature) => Feature::define($feature->value, $feature->definition())
-        );
+        Feature::discover();
     }
 }
