@@ -61,7 +61,6 @@ const loading = ref(true);
 const category = ref(null);
 const article = ref(null);
 const portalViewCount = ref(0);
-const portalViewCountFlag = ref(false);
 
 watch(
     route,
@@ -84,7 +83,6 @@ function getData() {
             article.value = response.data.article;
             loading.value = false;
             portalViewCount.value = response.data.portal_view_count;
-            portalViewCountFlag.value = response.data.portal_view_count_flag;
         },
     );
 }
@@ -113,7 +111,7 @@ function getData() {
                             <div class="prose max-w-none">
                                 <h1>{{ article.name }}</h1>
                                 <div class="flex mb-4">
-                                  <div v-if="portalViewCountFlag" class="text-gray-500 flex items-center space-x-1 mr-2">
+                                  <div class="text-gray-500 flex items-center space-x-1 mr-2">
                                       <EyeIcon class="h-4 w-4 flex-shrink-0" aria-hidden="true" />
                                       <span class="text-xs">{{portalViewCount}} Views</span>
                                   </div>

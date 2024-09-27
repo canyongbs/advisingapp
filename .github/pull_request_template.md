@@ -15,11 +15,12 @@
 > If yes, please replace this block with a description of the deployment steps required and apply the `Deployment Steps` label to the PR.
 > If no, please replace this block with "No".
 
-### Are any Feature Flags Added?
+### Are any Feature Flags and/or Data Migrations that can eventually be removed Added?
 
-> Specifically Feature Flags to gate and control logic/flow changes to protect against database schema changes.
+> Specifically Feature Flags to gate and control logic/flow changes to protect against database schema changes. And Data Migrations to provide some type of data fix that can be removed after they are run
 >
-> If yes, please list the name of the added Feature Flags below and apply the `Feature Flag Added` label to the PR.
+> If yes to Feature Flags, please list the name of the added Feature Flag/s and apply the `Feature Flag Added` label to the PR.
+> If yes to Data Migrations, please list the full relative file path of the added Data Migration/s.
 > If no, please replace this block with "No".
 
 _______________________________________________

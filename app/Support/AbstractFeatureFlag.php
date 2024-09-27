@@ -34,17 +34,29 @@
 </COPYRIGHT>
 */
 
-use App\Enums\FeatureFlag;
-use Illuminate\Database\Migrations\Migration;
+namespace App\Support;
 
-return new class () extends Migration {
-    public function up(): void
+use Laravel\Pennant\Feature;
+
+abstract class AbstractFeatureFlag
+{
+    public static function active(): bool
     {
-        FeatureFlag::GDPRBanner->activate();
+        return Feature::active(static::class);
     }
 
-    public function down(): void
+    public static function activate(): void
     {
-        FeatureFlag::GDPRBanner->deactivate();
+        Feature::activate(static::class);
     }
-};
+
+    public static function deactivate(): void
+    {
+        Feature::deactivate(static::class);
+    }
+
+    public static function purge(): void
+    {
+        Feature::purge(static::class);
+    }
+}
