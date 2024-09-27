@@ -178,11 +178,6 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return $this->hasMany(Program::class, 'sisid', 'sisid');
     }
 
-    public function performances(): HasMany
-    {
-        return $this->hasMany(Performance::class, 'sisid', 'sisid');
-    }
-
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class, 'sisid', 'sisid');

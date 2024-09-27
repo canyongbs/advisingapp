@@ -34,31 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Database\Factories;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\StudentDataModel\Models\Performance;
-
-/**
- * @extends Factory<Performance>
- */
-class PerformanceFactory extends Factory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'sisid' => Student::factory(),
-            'acad_career' => $this->faker->randomElement(['NC', 'CRED']),
-            'division' => $this->faker->randomElement(['ABC01', 'ABD02', 'ABE03']),
-            'first_gen' => $this->faker->boolean(),
-            'cum_att' => $this->faker->numerify('##'),
-            'cum_ern' => function (array $attributes) {
-                return $attributes['cum_att'] - $this->faker->numberBetween(0, $attributes['cum_att']);
-            },
-            'pct_ern' => 0,
-            'cum_gpa' => $this->faker->randomFloat(3, 0, 4),
-            'max_dt' => $this->faker->dateTime(),
-        ];
+        Schema::dropIfExists('performance');
     }
-}
+
+    public function down(): void
+    {
+        Schema::create('performance', function (Blueprint $table) {
+            $table->string('sisid');
+            $table->string('acad_career');
+            $table->string('division');
+            $table->boolean('first_gen');
+            $table->integer('cum_att');
+            $table->integer('cum_ern');
+            $table->integer('pct_ern');
+            $table->float('cum_gpa', 4, 3);
+            $table->timestampTz('max_dt');
+        });
+    }
+};
