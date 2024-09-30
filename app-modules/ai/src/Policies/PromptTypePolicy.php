@@ -90,6 +90,10 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
 
     public function delete(Authenticatable $authenticatable, PromptType $promptType): Response
     {
+        if ($promptType->prompts()->exists()) {
+            return Response::deny('The prompt type cannot be deleted because it is associated with a prompt.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["prompt_type.{$promptType->id}.delete"],
             denyResponse: 'You do not have permission to delete this prompt type.'
@@ -106,6 +110,10 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
 
     public function forceDelete(Authenticatable $authenticatable, PromptType $promptType): Response
     {
+        if ($promptType->prompts()->exists()) {
+            return Response::deny('The prompt type cannot be deleted because it is associated with a prompt.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["prompt_type.{$promptType->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this prompt type.'
