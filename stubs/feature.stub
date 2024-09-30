@@ -1,0 +1,13 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Features\AbstractFeatureFlag;
+
+class {{ class }} extends AbstractFeatureFlag
+{
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
+}
