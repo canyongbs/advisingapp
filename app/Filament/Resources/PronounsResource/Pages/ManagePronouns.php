@@ -44,6 +44,8 @@ class ManagePronouns extends ManageRecords
 {
     protected static string $resource = PronounsResource::class;
 
+    protected static ?string $title = 'User Profile Pronoun';
+
     protected function getHeaderActions(): array
     {
         return [
