@@ -34,31 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Database\Factories;
+namespace App\Support;
 
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\StudentDataModel\Models\Performance;
+use Laravel\Pennant\Feature;
 
-/**
- * @extends Factory<Performance>
- */
-class PerformanceFactory extends Factory
+abstract class AbstractFeatureFlag
 {
-    public function definition(): array
+    public static function active(): bool
     {
-        return [
-            'sisid' => Student::factory(),
-            'acad_career' => $this->faker->randomElement(['NC', 'CRED']),
-            'division' => $this->faker->randomElement(['ABC01', 'ABD02', 'ABE03']),
-            'first_gen' => $this->faker->boolean(),
-            'cum_att' => $this->faker->numerify('##'),
-            'cum_ern' => function (array $attributes) {
-                return $attributes['cum_att'] - $this->faker->numberBetween(0, $attributes['cum_att']);
-            },
-            'pct_ern' => 0,
-            'cum_gpa' => $this->faker->randomFloat(3, 0, 4),
-            'max_dt' => $this->faker->dateTime(),
-        ];
+        return Feature::active(static::class);
+    }
+
+    public static function activate(): void
+    {
+        Feature::activate(static::class);
+    }
+
+    public static function deactivate(): void
+    {
+        Feature::deactivate(static::class);
+    }
+
+    public static function purge(): void
+    {
+        Feature::purge(static::class);
     }
 }

@@ -41,7 +41,6 @@ use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\Performance;
 
 class StudentSeeder extends Seeder
 {
@@ -53,9 +52,8 @@ class StudentSeeder extends Seeder
 
         $enrollments = [];
         $programs = [];
-        $performances = [];
 
-        $students->each(function ($student) use (&$enrollments, &$programs, &$performances) {
+        $students->each(function ($student) use (&$enrollments, &$programs) {
             foreach (Enrollment::factory(5)->make(['sisid' => $student->sisid])->toArray() as $enrollment) {
                 $enrollments[] = $enrollment;
             }
@@ -66,13 +64,10 @@ class StudentSeeder extends Seeder
                     'otherid' => $student->otherid,
                 ]
             )->toArray();
-
-            $performances[] = Performance::factory()->make(['sisid' => $student->sisid])->toArray();
         });
 
         Student::insert($students->toArray());
         Enrollment::insert($enrollments);
         Program::insert($programs);
-        Performance::insert($performances);
     }
 }

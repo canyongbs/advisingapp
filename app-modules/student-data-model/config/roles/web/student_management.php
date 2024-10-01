@@ -42,9 +42,6 @@ return [
         'program' => [
             '*',
         ],
-        'performance' => [
-            '*',
-        ],
         'enrollment' => [
             '*',
         ],

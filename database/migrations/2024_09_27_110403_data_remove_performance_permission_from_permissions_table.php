@@ -34,52 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Policies;
+use Illuminate\Support\Arr;
+use Illuminate\Database\Migrations\Migration;
+use Database\Migrations\Concerns\CanModifyPermissions;
 
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
-use AdvisingApp\StudentDataModel\Models\Performance;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-class PerformancePolicy
-{
-    public function viewAny(Authenticatable $authenticatable): Response
+    private array $permissions = [
+        'performance.*.view' => 'Analytics Resource Source',
+        'performance.view-any' => 'Analytics Resource Source',
+    ];
+
+    private array $guards = [
+        'web',
+        'api',
+    ];
+
+    public function up(): void
     {
-        return $authenticatable->canOrElse(
-            abilities: 'performance.view-any',
-            denyResponse: 'You do not have permission to view performances.'
-        );
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $this->deletePermissions(array_keys($this->permissions), $guard);
+            });
     }
 
-    public function view(Authenticatable $authenticatable, Performance $performance): Response
+    public function down(): void
     {
-        return $authenticatable->canOrElse(
-            abilities: ["performance.{$performance->id}.view"],
-            denyResponse: 'You do not have permission to view this performance.'
-        );
-    }
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $permissions = Arr::except($this->permissions, keys: DB::table('permissions')
+                    ->where('guard_name', $guard)
+                    ->pluck('name')
+                    ->all());
 
-    public function create(Authenticatable $authenticatable): Response
-    {
-        return Response::deny('Performances cannot be created.');
+                $this->createPermissions($permissions, $guard);
+            });
     }
-
-    public function update(Authenticatable $authenticatable, Performance $performance): Response
-    {
-        return Response::deny('Performances cannot be updated.');
-    }
-
-    public function delete(Authenticatable $authenticatable, Performance $performance): Response
-    {
-        return Response::deny('Performances cannot be deleted.');
-    }
-
-    public function restore(Authenticatable $authenticatable, Performance $performance): Response
-    {
-        return Response::deny('Performances cannot be restored.');
-    }
-
-    public function forceDelete(Authenticatable $authenticatable, Performance $performance): Response
-    {
-        return Response::deny('Performances cannot be force deleted.');
-    }
-}
+};

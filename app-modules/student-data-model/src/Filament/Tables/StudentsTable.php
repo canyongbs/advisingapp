@@ -160,34 +160,6 @@ class StudentsTable
                         NumberConstraint::make('enrollmentUntEarned')
                             ->label('Enrollment Earned')
                             ->relationship('enrollments', 'unt_earned'),
-                        RelationshipConstraint::make('performances')
-                            ->multiple()
-                            ->attributeLabel(fn (array $settings): string => Str::plural('performance', $settings['count']))
-                            ->icon('heroicon-m-presentation-chart-line'),
-                        TextConstraint::make('performanceSisid')
-                            ->label('Performance SISID')
-                            ->relationship('performances', 'sisid'),
-                        TextConstraint::make('performanceAcadCareer')
-                            ->label('Performance Academic Career')
-                            ->relationship('performances', 'acad_career'),
-                        TextConstraint::make('performanceDivision')
-                            ->label('Performance College')
-                            ->relationship('performances', 'division'),
-                        BooleanConstraint::make('performanceFirstGen')
-                            ->label('Performance First Gen')
-                            ->relationship('performances', 'first_gen'),
-                        NumberConstraint::make('performanceCumAtt')
-                            ->label('Performance Cumulative Attempted')
-                            ->relationship('performances', 'cum_att'),
-                        NumberConstraint::make('performanceCumErn')
-                            ->label('Performance Cumulative Earned')
-                            ->relationship('performances', 'cum_ern'),
-                        NumberConstraint::make('performancePctErn')
-                            ->label('Performance Percent Earned')
-                            ->relationship('performances', 'pct_ern'),
-                        NumberConstraint::make('performanceCumGpa')
-                            ->label('Performance Cumulative GPA')
-                            ->relationship('performances', 'cum_gpa'),
                     ])
                     ->constraintPickerColumns([
                         'md' => 2,

@@ -40,7 +40,6 @@ use App\Models\User;
 use App\Enums\Feature;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
-use App\Enums\FeatureFlag;
 use Filament\Pages\SettingsPage;
 use AdvisingApp\Form\Enums\Rounding;
 use Illuminate\Support\Facades\Gate;
@@ -255,7 +254,7 @@ class ManagePortalSettings extends SettingsPage
                             ->required()
                             ->label('GDPR Button Label'),
                     ])
-                    ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled') && FeatureFlag::GDPRBanner->active()),
+                    ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled')),
             ]);
     }
 }
