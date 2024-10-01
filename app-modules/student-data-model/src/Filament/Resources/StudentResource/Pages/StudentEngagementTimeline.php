@@ -39,8 +39,8 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
@@ -59,6 +59,6 @@ class StudentEngagementTimeline extends TimelinePage
         EngagementResponse::class,
         AlertHistory::class,
         TaskHistory::class,
-        Interaction::class
+        Interaction::class,
     ];
 }

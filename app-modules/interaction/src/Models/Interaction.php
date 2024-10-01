@@ -40,32 +40,29 @@ use Exception;
 use App\Models\User;
 use App\Models\BaseModel;
 use App\Models\Authenticatable;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Timeline\Timelines\InteractionTimeline;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
-use AdvisingApp\Interaction\History\InteractionHistory;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
-use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
-use AdvisingApp\Timeline\Models\Timeline;
-use AdvisingApp\Timeline\Timelines\InteractionHistoryTimeline;
-use AdvisingApp\Timeline\Timelines\InteractionTimeline;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Support\Collection;
 
 /**
  * @mixin IdeHelperInteraction

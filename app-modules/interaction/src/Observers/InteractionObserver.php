@@ -37,11 +37,11 @@
 namespace AdvisingApp\Interaction\Observers;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 
 class InteractionObserver
 {
