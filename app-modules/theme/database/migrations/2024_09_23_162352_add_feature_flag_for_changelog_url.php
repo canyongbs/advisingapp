@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-use App\Enums\FeatureFlag;
 use Illuminate\Database\Migrations\Migration;
+use App\Features\AddUrlToThemeSettingsFeature;
 
 return new class () extends Migration {
     public function up(): void
     {
-        FeatureFlag::AddUrlToThemeSettings->activate();
+        AddUrlToThemeSettingsFeature::activate();
     }
 
     public function down(): void
     {
-        FeatureFlag::AddUrlToThemeSettings->deactivate();
+        AddUrlToThemeSettingsFeature::deactivate();
     }
 };

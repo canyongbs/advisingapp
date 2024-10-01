@@ -42,7 +42,6 @@ use App\Models\Tenant;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
-use App\Enums\FeatureFlag;
 use Filament\Pages\SettingsPage;
 use Illuminate\Support\Facades\DB;
 use Filament\Forms\Components\Toggle;
@@ -51,6 +50,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use App\Filament\Clusters\GlobalSettings;
 use AdvisingApp\Theme\Settings\ThemeSettings;
+use App\Features\AddUrlToThemeSettingsFeature;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class ManageBrandConfigurationSettings extends SettingsPage
@@ -141,7 +141,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->url()
                             ->maxLength('255'),
                     ])
-                    ->visible(fn () => FeatureFlag::AddUrlToThemeSettings->active()),
+                    ->visible(fn () => AddUrlToThemeSettingsFeature::active()),
 
                 Section::make('Product Knowledge Base URL')
                     ->aside()
@@ -151,7 +151,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->url()
                             ->maxLength('255'),
                     ])
-                    ->visible(fn () => FeatureFlag::AddUrlToThemeSettings->active()),
+                    ->visible(fn () => AddUrlToThemeSettingsFeature::active()),
             ]);
     }
 
