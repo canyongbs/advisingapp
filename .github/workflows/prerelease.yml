@@ -22,6 +22,24 @@ jobs:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.PAT }}
 
+      - name: Check if release author is in the canyon-gbs-lead-developers team
+        id: check-author
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const releaseAuthor = context.payload.release.author.login;
+            
+            const teamMembers = await github.rest.teams.listMembersInOrg({
+              org: 'canyongbs',
+              team_slug: 'canyon-gbs-lead-developers'
+            });
+
+            const isAuthorized = teamMembers.data.some(member => member.login === releaseAuthor);
+
+            if (!isAuthorized) {
+              core.setFailed(`The user @${releaseAuthor} is not authorized to trigger deployment.`);
+            }
+
       - name: Configure AWS credentials
         # SHA of release v4.0.2
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
