@@ -37,41 +37,41 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Components;
 
 use Filament\Actions\ViewAction;
-use AdvisingApp\Interaction\Models\Interaction;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\Interaction\Models\Interaction;
 
 class InteractionViewAction extends ViewAction
 {
-  protected function setUp(): void
-  {
-      parent::setUp();
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-      $this->infolist(
-        [
-          TextEntry::make('user.name')
-              ->label('Created By'),
-          Fieldset::make('Content')
-              ->schema([
-                  TextEntry::make('subject')
-                      ->hidden(fn ($state): bool => blank($state))
-                      ->columnSpanFull(),
-                  TextEntry::make('description')
-                      ->getStateUsing(fn (Interaction $interaction): string => $interaction->description)
-                      ->columnSpanFull(),
-              ]),
-          Fieldset::make('Interaction Information')
-          ->schema([
-              TextEntry::make('type.name')
-                      ->label('Type'),
-              TextEntry::make('start_datetime')
-                      ->label('Start Date and Time')
-                      ->hidden(fn (Interaction $interaction): bool => is_null($interaction->start_datetime)),
-              TextEntry::make('end_datetime')
-                      ->label('End Date and Time')
-                      ->hidden(fn (Interaction $interaction): bool => is_null($interaction->end_datetime)),
-          ]),
-      ]
-    );
-  }
+        $this->infolist(
+            [
+                TextEntry::make('user.name')
+                    ->label('Created By'),
+                Fieldset::make('Content')
+                    ->schema([
+                        TextEntry::make('subject')
+                            ->hidden(fn ($state): bool => blank($state))
+                            ->columnSpanFull(),
+                        TextEntry::make('description')
+                            ->getStateUsing(fn (Interaction $interaction): string => $interaction->description ?? 'N/A')
+                            ->columnSpanFull(),
+                    ]),
+                Fieldset::make('Interaction Information')
+                    ->schema([
+                        TextEntry::make('type.name')
+                            ->label('Type'),
+                        TextEntry::make('start_datetime')
+                            ->label('Start Date and Time')
+                            ->hidden(fn (Interaction $interaction): bool => is_null($interaction->start_datetime)),
+                        TextEntry::make('end_datetime')
+                            ->label('End Date and Time')
+                            ->hidden(fn (Interaction $interaction): bool => is_null($interaction->end_datetime)),
+                    ]),
+            ]
+        );
+    }
 }
