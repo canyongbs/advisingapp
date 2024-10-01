@@ -64,9 +64,12 @@ class InteractionViewAction extends ViewAction
           ->schema([
               TextEntry::make('type.name')
                       ->label('Type'),
-              TextEntry::make('created_at')
-                      ->label('Created At')
-                      ->hidden(fn (Interaction $interaction): bool => is_null($interaction->created_at)),
+              TextEntry::make('start_datetime')
+                      ->label('Start Date and Time')
+                      ->hidden(fn (Interaction $interaction): bool => is_null($interaction->start_datetime)),
+              TextEntry::make('end_datetime')
+                      ->label('End Date and Time')
+                      ->hidden(fn (Interaction $interaction): bool => is_null($interaction->end_datetime)),
           ]),
       ]
     );

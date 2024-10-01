@@ -20,7 +20,7 @@ class InteractionTimeline extends CustomTimeline
 
     public function sortableBy(): string
     {
-        return $this->interaction->created_at;
+        return $this->interaction->start_datetime;
     }
 
     public function providesCustomView(): bool

@@ -54,6 +54,6 @@ trait HasManyMorphedInteractions
     public function orderedInteractions(): MorphMany
     {
         return $this->interactions()
-            ->orderBy('created_at', 'desc');
+            ->orderBy('start_datetime', 'asc');
     }
 }

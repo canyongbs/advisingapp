@@ -28,7 +28,7 @@
     </time>
 
     <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
-        Sent {{ $record->created_at->diffForHumans() }}
+        Started on {{ $record->start_datetime->diffForHumans() }}
     </time>
 
     <div
@@ -42,7 +42,7 @@
         <div class="flex flex-col">
             <p class="text-xs text-gray-400 dark:text-gray-500">Description:</p>
             <div class="prose dark:prose-invert">
-                {{ $record->description }}
+                {{ $record->description ?? 'N/A' }}
             </div>
         </div>
     </div>
