@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Filament\Pages;
 use Carbon\Carbon;
 use App\Models\User;
 use Filament\Pages\Page;
+use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
@@ -337,7 +338,7 @@ class MessageCenter extends Page
 
             $studentPopulationQuery = Student::query()
                 ->when($this->search, function ($query, $search) {
-                    $query->where('full_name', 'like', "%{$search}%")
+                    $query->whereRaw('lower(full_name) like ?', ['%' . Str::lower($search) . '%'])
                         ->orWhere('sisid', 'like', "%{$search}%")
                         ->orWhere('otherid', 'like', "%{$search}%")
                         ->orWhere('email', 'like', "%{$search}%")
@@ -356,7 +357,7 @@ class MessageCenter extends Page
 
             $prospectPopulationQuery = Prospect::query()
                 ->when($this->search, function ($query, $search) {
-                    $query->where('full_name', 'like', "%{$search}%");
+                    $query->whereRaw('lower(full_name) like ?', ['%' . Str::lower($search) . '%']);
                 })
                 ->joinSub($prospectLatestActivity, 'latest_activity', function ($join) {
                     $join->on(DB::raw('prospects.id::VARCHAR'), '=', 'latest_activity.educatable_id');
