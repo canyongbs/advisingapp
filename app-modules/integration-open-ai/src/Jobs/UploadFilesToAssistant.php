@@ -88,7 +88,6 @@ class UploadFilesToAssistant
             );
         } else {
             $service->createVectorStoreFilesBatch(
-                service: $this->service,
                 vectorStoreId: $vectorStoreId,
                 fileIds: $assistantFiles->pluck('file_id')->toArray()
             );
@@ -99,7 +98,6 @@ class UploadFilesToAssistant
         }
 
         $service->awaitVectorStoreProcessing(
-            service: $this->service,
             vectorStore: $vectorStore,
         );
 
