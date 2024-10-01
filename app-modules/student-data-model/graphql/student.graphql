@@ -65,10 +65,6 @@ type Student @model(class: "AdvisingApp\\StudentDataModel\\Models\\Student") {
 
     enrollments_count: Int @count(relation: "enrollments")
 
-    performances: [Performance!] @hasMany
-
-    performances_count: Int @count(relation: "performances")
-
     programs: [Program!] @hasMany
 
     programs_count: Int @count(relation: "programs")
@@ -140,8 +136,6 @@ input StudentsQuery {
     mr_e_term: String
 
     enrollments: EnrollmentsQuery
-
-    performances: PerformancesQuery
 
     programs: ProgramsQuery
 

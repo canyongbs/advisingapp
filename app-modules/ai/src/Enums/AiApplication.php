@@ -67,6 +67,7 @@ enum AiApplication: string implements HasLabel
                 self::PersonalAssistant => [
                     AiModel::OpenAiGpt35,
                     AiModel::OpenAiGpt4o,
+                    AiModel::OpenAiGpt4oMini,
                 ],
                 self::ReportAssistant => [
                     AiModel::OpenAiGpt4,

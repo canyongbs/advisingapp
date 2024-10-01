@@ -34,52 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Policies;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
-use AdvisingApp\StudentDataModel\Models\Performance;
-
-class PerformancePolicy
-{
-    public function viewAny(Authenticatable $authenticatable): Response
+return new class () extends Migration {
+    public function up(): void
     {
-        return $authenticatable->canOrElse(
-            abilities: 'performance.view-any',
-            denyResponse: 'You do not have permission to view performances.'
-        );
+        Schema::table('knowledge_base_articles', function (Blueprint $table) {
+            $table->integer('portal_view_count')->default(0);
+        });
     }
 
-    public function view(Authenticatable $authenticatable, Performance $performance): Response
+    public function down(): void
     {
-        return $authenticatable->canOrElse(
-            abilities: ["performance.{$performance->id}.view"],
-            denyResponse: 'You do not have permission to view this performance.'
-        );
+        Schema::table('knowledge_base_articles', function (Blueprint $table) {
+            $table->dropColumn('portal_view_count');
+        });
     }
-
-    public function create(Authenticatable $authenticatable): Response
-    {
-        return Response::deny('Performances cannot be created.');
-    }
-
-    public function update(Authenticatable $authenticatable, Performance $performance): Response
-    {
-        return Response::deny('Performances cannot be updated.');
-    }
-
-    public function delete(Authenticatable $authenticatable, Performance $performance): Response
-    {
-        return Response::deny('Performances cannot be deleted.');
-    }
-
-    public function restore(Authenticatable $authenticatable, Performance $performance): Response
-    {
-        return Response::deny('Performances cannot be restored.');
-    }
-
-    public function forceDelete(Authenticatable $authenticatable, Performance $performance): Response
-    {
-        return Response::deny('Performances cannot be force deleted.');
-    }
-}
+};

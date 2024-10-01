@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,20 +32,31 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use Filament\Support\Facades\FilamentView;
+*/
 
-    $color = $this->getColor();
-    $heading = $this->getHeading();
-@endphp
-<x-filament-widgets::widget class="fi-wi-chart">
-    <x-filament::section
-        class="relative h-full pt-20"
-        :heading="$heading"
-    >
-        <div class="inset-0 flex items-center justify-center lg:absolute">
-            Insufficient Data
-        </div>
-    </x-filament::section>
-</x-filament-widgets::widget>
+namespace App\Support;
+
+use Laravel\Pennant\Feature;
+
+abstract class AbstractFeatureFlag
+{
+    public static function active(): bool
+    {
+        return Feature::active(static::class);
+    }
+
+    public static function activate(): void
+    {
+        Feature::activate(static::class);
+    }
+
+    public static function deactivate(): void
+    {
+        Feature::deactivate(static::class);
+    }
+
+    public static function purge(): void
+    {
+        Feature::purge(static::class);
+    }
+}

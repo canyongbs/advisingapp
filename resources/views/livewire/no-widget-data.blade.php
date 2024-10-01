@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,45 +30,18 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    $heading = $this->getHeading();
+@endphp
 
-namespace App\Enums;
-
-use Closure;
-use Laravel\Pennant\Feature;
-
-enum FeatureFlag: string
-{
-    case AiSettingsMaxTokensUpdate = 'ai_settings_max_tokens_update';
-
-    case AddUrlToThemeSettings = 'add_url_to_theme_settings';
-
-    public function definition(): Closure
-    {
-        return match ($this) {
-            default => function () {
-                return false;
-            }
-        };
-    }
-
-    public function active(): bool
-    {
-        return Feature::active($this->value);
-    }
-
-    public function activate(): void
-    {
-        Feature::activate($this->value);
-    }
-
-    public function deactivate(): void
-    {
-        Feature::deactivate($this->value);
-    }
-
-    public function purge(): void
-    {
-        Feature::purge($this->value);
-    }
-}
+<x-filament-widgets::widget>
+    <x-filament::section
+        class="flex h-full flex-col [&_.fi-section-content-ctn]:flex-1 [&_.fi-section-content]:h-full"
+        :heading="$heading"
+    >
+        <div class="flex h-full items-center justify-center pb-3 text-sm text-gray-600 dark:text-gray-500">
+            Insufficient Data
+        </div>
+    </x-filament::section>
+</x-filament-widgets::widget>

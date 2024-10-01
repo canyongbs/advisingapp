@@ -38,7 +38,7 @@ import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import AppLoading from '@/Components/AppLoading.vue';
 import DOMPurify from 'dompurify';
 import { consumer } from '@/Services/Consumer.js';
-import { Bars3Icon, ClockIcon } from "@heroicons/vue/24/outline/index.js";
+import { Bars3Icon, ClockIcon, EyeIcon } from "@heroicons/vue/24/outline/index.js";
 
 const route = useRoute();
 
@@ -60,6 +60,7 @@ const props = defineProps({
 const loading = ref(true);
 const category = ref(null);
 const article = ref(null);
+const portalViewCount = ref(0);
 
 watch(
     route,
@@ -71,10 +72,6 @@ watch(
     },
 );
 
-onMounted(function () {
-    getData();
-});
-
 function getData() {
     loading.value = true;
 
@@ -85,6 +82,7 @@ function getData() {
             category.value = response.data.category;
             article.value = response.data.article;
             loading.value = false;
+            portalViewCount.value = response.data.portal_view_count;
         },
     );
 }
@@ -112,9 +110,15 @@ function getData() {
                         <div class="flex flex-col gap-3">
                             <div class="prose max-w-none">
                                 <h1>{{ article.name }}</h1>
-                                <div class="text-gray-500 flex items-center space-x-1 mb-4">
-                                    <ClockIcon class="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-                                    <span class="text-xs">Last updated: {{ article.lastUpdated }}</span>
+                                <div class="flex mb-4">
+                                  <div class="text-gray-500 flex items-center space-x-1 mr-2">
+                                      <EyeIcon class="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                                      <span class="text-xs">{{portalViewCount}} Views</span>
+                                  </div>
+                                  <div class="text-gray-500 flex items-center space-x-1">
+                                      <ClockIcon class="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                                      <span class="text-xs">Last updated: {{ article.lastUpdated }}</span>
+                                  </div>
                                 </div>
                                 <div class="border-t"></div>
                                 <div v-html="DOMPurify.sanitize(article.content)"></div>

@@ -56,6 +56,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Actions\Action;
 use App\Filament\Forms\Components\ColorSelect;
 use AdvisingApp\Portal\Settings\PortalSettings;
+use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
 use AdvisingApp\Portal\Actions\GeneratePortalEmbedCode;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
@@ -239,6 +240,21 @@ class ManagePortalSettings extends SettingsPage
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
+
+                Section::make('GDPR Banner Notice')
+                    ->schema([
+                        TiptapEditor::make('gdpr_banner_text')
+                            ->label('GDPR Banner Text')
+                            ->required()
+                            ->tools(['link'])
+                            ->columnSpanFull(),
+                        Select::make('gdpr_banner_button_label')
+                            ->options(GdprBannerButtonLabel::class)
+                            ->enum(GdprBannerButtonLabel::class)
+                            ->required()
+                            ->label('GDPR Button Label'),
+                    ])
+                    ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled')),
             ]);
     }
 }

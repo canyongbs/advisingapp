@@ -48,7 +48,7 @@ class KnowledgeManagementPortalArticleController extends Controller
 {
     public function show(KnowledgeBaseCategory $category, KnowledgeBaseArticle $article): JsonResponse
     {
-        $articleUpdatedAt = $article->updated_at->setTimezone(app(DisplaySettings::class)->timezone);
+        $article->increment('portal_view_count');
 
         return response()->json([
             'category' => KnowledgeBaseCategoryData::from([
@@ -60,9 +60,10 @@ class KnowledgeManagementPortalArticleController extends Controller
                 'id' => $article->getKey(),
                 'categoryId' => $article->category_id,
                 'name' => $article->title,
-                'lastUpdated' => $articleUpdatedAt->format('M d Y, h:m a'),
+                'lastUpdated' => $article->updated_at->setTimezone(app(DisplaySettings::class)->timezone)->format('M d Y, h:m a'),
                 'content' => tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details),
             ]),
+            'portal_view_count' => $article->portal_view_count,
         ]);
     }
 }

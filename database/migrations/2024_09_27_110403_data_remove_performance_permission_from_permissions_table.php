@@ -34,68 +34,41 @@
 </COPYRIGHT>
 */
 
-use App\Enums\FeatureFlag;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Arr;
 use Illuminate\Database\Migrations\Migration;
+use Database\Migrations\Concerns\CanModifyPermissions;
 
 return new class () extends Migration {
+    use CanModifyPermissions;
+
+    private array $permissions = [
+        'performance.*.view' => 'Analytics Resource Source',
+        'performance.view-any' => 'Analytics Resource Source',
+    ];
+
+    private array $guards = [
+        'web',
+        'api',
+    ];
+
     public function up(): void
     {
-        DB::beginTransaction();
-
-        $maxTokensSetting = DB::table('settings')
-            ->where('group', 'ai')
-            ->where('name', 'max_tokens')
-            ->first();
-
-        if ($maxTokensSetting) {
-            $maxTokens = $maxTokensSetting->payload;
-
-            $newPayload = match ($maxTokens) {
-                150 => 'short',
-                350 => 'medium',
-                500 => 'long',
-                default => 'short',
-            };
-
-            DB::table('settings')
-                ->where('group', 'ai')
-                ->where('name', 'max_tokens')
-                ->update(['payload' => json_encode($newPayload)]);
-        }
-
-        FeatureFlag::AiSettingsMaxTokensUpdate->activate();
-
-        DB::commit();
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $this->deletePermissions(array_keys($this->permissions), $guard);
+            });
     }
 
     public function down(): void
     {
-        DB::beginTransaction();
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $permissions = Arr::except($this->permissions, keys: DB::table('permissions')
+                    ->where('guard_name', $guard)
+                    ->pluck('name')
+                    ->all());
 
-        $maxTokensSetting = DB::table('settings')
-            ->where('group', 'ai')
-            ->where('name', 'max_tokens')
-            ->first();
-
-        if ($maxTokensSetting) {
-            $maxTokens = $maxTokensSetting->payload;
-
-            $newPayload = match ($maxTokens) {
-                '"short"' => 150,
-                '"medium"' => 350,
-                '"long"' => 500,
-                default => '"short"',
-            };
-
-            DB::table('settings')
-                ->where('group', 'ai')
-                ->where('name', 'max_tokens')
-                ->update(['payload' => $newPayload]);
-        }
-
-        FeatureFlag::AiSettingsMaxTokensUpdate->deactivate();
-
-        DB::commit();
+                $this->createPermissions($permissions, $guard);
+            });
     }
 };

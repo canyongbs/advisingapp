@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,39 +30,12 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace AdvisingApp\StudentDataModel\Models;
-
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-
-/**
- * @mixin IdeHelperPerformance
- */
-class Performance extends Model
-{
-    use HasFactory;
-    use UsesTenantConnection;
-
-    protected $table = 'performance';
-
-    protected $primaryKey = 'sisid';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
-    public $timestamps = false;
-
-    protected $casts = [
-        'max_dt' => 'datetime',
-    ];
-
-    public function student(): BelongsTo
-    {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
-    }
-}
+--}}
+@if ($this->getRecord()->student()->exists())
+    <x-filament::icon-button
+        icon="heroicon-m-lock-closed"
+        color="gray"
+        size="lg"
+        tooltip="Prospect is converted to Student"
+    />
+@endif

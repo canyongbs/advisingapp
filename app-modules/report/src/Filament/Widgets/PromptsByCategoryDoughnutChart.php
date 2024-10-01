@@ -60,7 +60,7 @@ class PromptsByCategoryDoughnutChart extends ChartReportWidget
         $data = $data->filter();
 
         if (! count($data)) {
-            return view('livewire.noWidgetData');
+            return view('livewire.no-widget-data');
         }
 
         return view(static::$view, $this->getViewData());

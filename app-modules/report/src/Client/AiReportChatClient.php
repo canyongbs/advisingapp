@@ -57,7 +57,6 @@ use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
 //use Illuminate\Auth\Access\AuthorizationException;
 //use AdvisingApp\Interaction\Models\InteractionType;
 //use AdvisingApp\StudentDataModel\Models\Enrollment;
-//use AdvisingApp\StudentDataModel\Models\Performance;
 //use AdvisingApp\Interaction\Models\InteractionDriver;
 //use AdvisingApp\Interaction\Models\InteractionStatus;
 //use AdvisingApp\IntegrationAI\Client\BaseAIChatClient;
@@ -179,7 +178,7 @@ class AiReportChatClient extends OpenAiGpt4Service
     //            CareTeam::class,
     //            Interaction::class, InteractionInitiative::class, InteractionDriver::class, InteractionOutcome::class, InteractionRelation::class, InteractionStatus::class, InteractionType::class,
     //            Prospect::class, ProspectSource::class, ProspectStatus::class,
-    //            Student::class, Enrollment::class, Performance::class, Program::class,
+    //            Student::class, Enrollment::class, Program::class,
     //            Subscription::class,
     //            Task::class,
     //        ])

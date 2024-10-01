@@ -45,13 +45,15 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
+use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
+use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
  * @mixin IdeHelperCareTeam
  */
-class CareTeam extends MorphPivot implements ExecutableFromACampaignAction
+class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanTriggerAutoSubscription
 {
     use HasFactory;
     use HasUuids;
@@ -94,5 +96,10 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction
         }
 
         // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
+    }
+
+    public function getSubscribable(): ?Subscribable
+    {
+        return $this->educatable instanceof Subscribable ? $this->educatable : null;
     }
 }

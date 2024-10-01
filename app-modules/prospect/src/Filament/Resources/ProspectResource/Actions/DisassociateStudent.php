@@ -55,6 +55,8 @@ class DisassociateStudent extends Action
                 $record->student()->dissociate();
                 $record->save();
 
+                $this->dispatch('reload-prospect');
+
                 Notification::make()
                     ->title('Prospect disassociated from Student')
                     ->success()

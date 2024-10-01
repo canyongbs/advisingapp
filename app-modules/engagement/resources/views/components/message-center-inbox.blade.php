@@ -82,6 +82,7 @@
                                             {{ $educatable->display_name }}
                                         </div>
                                         <div class="w-full text-xs font-normal text-gray-700 dark:text-gray-400">
+                                            {{ ucfirst($educatable->type) . ' |' }}
                                             Last engaged at
                                             @php $timezone =  app(DisplaySettings::class)->getTimezone() @endphp
                                             {{ Carbon::parse($educatable->latest_activity)->setTimezone($timezone)->format('g:ia - M j, Y') }}

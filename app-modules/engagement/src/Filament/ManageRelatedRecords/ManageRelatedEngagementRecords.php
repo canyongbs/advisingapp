@@ -51,6 +51,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Timeline\Models\Timeline;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Filters\SelectFilter;
@@ -274,6 +275,11 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                 CreateAction::make()
                     ->label('New Email or Text')
                     ->modalHeading('Create new email or text')
+                    ->authorize(function () {
+                        $ownerRecord = $this->getOwnerRecord();
+
+                        return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
+                    })
                     ->createAnother(false)
                     ->action(function (array $data, Form $form) {
                         $engagement = new Engagement($data);
