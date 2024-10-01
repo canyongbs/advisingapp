@@ -8,14 +8,6 @@
             >
                 {{ $record->user->name }}
             </a>
-            <span class="ml-2 flex space-x-2">
-                <div class="relative">
-                  <x-filament::icon
-                      class="h-5 w-5 text-gray-400 dark:text-gray-100"
-                      icon="heroicon-o-pencil-square"
-                  />
-                </div>
-            </span>
         </h3>
 
         <div>
@@ -28,7 +20,7 @@
     </time>
 
     <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
-        Started on {{ $record->start_datetime->diffForHumans() }}
+        Interaction Started {{ $record->start_datetime->diffForHumans() }}
     </time>
 
     <div

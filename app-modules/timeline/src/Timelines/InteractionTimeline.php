@@ -2,10 +2,10 @@
 
 namespace AdvisingApp\Timeline\Timelines;
 
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Components\InteractionViewAction;
-use AdvisingApp\Interaction\Models\Interaction;
 use Filament\Actions\ViewAction;
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Timeline\Models\CustomTimeline;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Components\InteractionViewAction;
 
 class InteractionTimeline extends CustomTimeline
 {
@@ -15,7 +15,7 @@ class InteractionTimeline extends CustomTimeline
 
     public function icon(): string
     {
-        return 'heroicon-o-arrow-small-right';
+        return 'heroicon-o-pencil-square';
     }
 
     public function sortableBy(): string
