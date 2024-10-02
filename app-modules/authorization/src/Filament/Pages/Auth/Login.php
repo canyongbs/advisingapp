@@ -42,6 +42,8 @@ use Filament\Facades\Filament;
 use Livewire\Attributes\Locked;
 use Filament\Forms\Components\TextInput;
 use Filament\Models\Contracts\FilamentUser;
+use AdvisingApp\Theme\Settings\ThemeSettings;
+use App\Features\AddUrlToThemeSettingsFeature;
 use Illuminate\Validation\ValidationException;
 use Filament\Pages\Auth\Login as FilamentLogin;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
@@ -54,6 +56,8 @@ use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 class Login extends FilamentLogin
 {
     protected static string $view = 'authorization::login';
+
+    protected static string $layout = 'filament-panels::components.layout.login';
 
     public ?array $data;
 
@@ -68,6 +72,19 @@ class Login extends FilamentLogin
 
     #[Locked]
     public bool $usingRecoveryCode = false;
+
+    public string $themeChangelogUrl = '';
+
+    public string $productKnowledgebaseUrl = '';
+
+    public function mount(): void
+    {
+        $themeSettings = app(ThemeSettings::class);
+
+        $this->themeChangelogUrl = AddUrlToThemeSettingsFeature::active() && ! empty($themeSettings->changelog_url) ? $themeSettings->changelog_url : 'https://github.com/canyongbs/advisingapp/releases';
+
+        $this->productKnowledgebaseUrl = AddUrlToThemeSettingsFeature::active() && ! empty($themeSettings->product_knowledge_base_url) ? $themeSettings->product_knowledge_base_url : 'https://canyongbs.aiding.app/portal/categories/9bcc47d1-05be-40d2-bf95-9bd719209b06';
+    }
 
     public function authenticate(): ?LoginResponse
     {
@@ -212,22 +229,24 @@ class Login extends FilamentLogin
 
         if ($azureSsoSettings->is_enabled && ! empty($azureSsoSettings->client_id)) {
             $ssoActions[] = Action::make('azure_sso')
-                ->label(__('Login with Azure SSO'))
+                ->label(__('Microsoft'))
                 ->url(route('socialite.redirect', ['provider' => 'azure']))
                 ->color('gray')
                 ->icon('icon-microsoft')
-                ->size('sm');
+                ->size('sm')
+                ->extraAttributes(['class' => 'dark_button_border']);
         }
 
         $googleSsoSettings = app(GoogleSsoSettings::class);
 
         if ($googleSsoSettings->is_enabled && ! empty($googleSsoSettings->client_id)) {
             $ssoActions[] = Action::make('google_sso')
-                ->label(__('Login with Google SSO'))
+                ->label(__('Google'))
                 ->url(route('socialite.redirect', ['provider' => 'google']))
                 ->icon('icon-google')
                 ->color('gray')
-                ->size('sm');
+                ->size('sm')
+                ->extraAttributes(['class' => 'dark_button_border']);
         }
 
         return $ssoActions;
@@ -240,6 +259,7 @@ class Login extends FilamentLogin
                 $this->makeForm()
                     ->schema([
                         $this->getEmailFormComponent()
+                            ->label('Email')
                             ->hidden(fn (Login $livewire) => $livewire->needsMFA)
                             ->dehydratedWhenHidden(),
                         $this->getPasswordFormComponent()
@@ -251,28 +271,28 @@ class Login extends FilamentLogin
                         TextInput::make('code')
                             ->label(
                                 fn (Login $livewire) => ! $livewire->usingRecoveryCode
-                                ? 'Multifactor Authentication Code'
-                                : 'Multifactor Recovery Code'
+                                    ? 'Multifactor Authentication Code'
+                                    : 'Multifactor Recovery Code'
                             )
                             ->placeholder(
                                 fn (Login $livewire) => ! $livewire->usingRecoveryCode
-                                ? '###-###'
-                                : 'abcdef-98765'
+                                    ? '###-###'
+                                    : 'abcdef-98765'
                             )
                             ->mask(
                                 fn (Login $livewire) => ! $livewire->usingRecoveryCode
-                                ? '999-999'
-                                : null
+                                    ? '999-999'
+                                    : null
                             )
                             ->stripCharacters(
                                 fn (Login $livewire) => ! $livewire->usingRecoveryCode
-                                ? '-'
-                                : null
+                                    ? '-'
+                                    : null
                             )
                             ->helperText(
                                 fn (Login $livewire) => $livewire->usingRecoveryCode
-                                ? 'Enter one of your recovery codes provided when you enabled multifactor authentication. Recovery codes are one-time use only. If you have used all of your recovery codes, you will need to contact your administrator to reset your multifactor authentication.'
-                                : null
+                                    ? 'Enter one of your recovery codes provided when you enabled multifactor authentication. Recovery codes are one-time use only. If you have used all of your recovery codes, you will need to contact your administrator to reset your multifactor authentication.'
+                                    : null
                             )
                             ->numeric(fn (Login $livewire) => ! $livewire->usingRecoveryCode)
                             ->string(fn (Login $livewire) => $livewire->usingRecoveryCode)
@@ -282,6 +302,15 @@ class Login extends FilamentLogin
                     ])
                     ->statePath('data'),
             ),
+        ];
+    }
+
+    protected function getFormActions(): array
+    {
+        return [
+            parent::getAuthenticateFormAction()
+                ->label('Log in')
+                ->extraAttributes(['class' => 'dark:bg-gray-800 dark_button_border dark:hover:bg-gray-700']),
         ];
     }
 }

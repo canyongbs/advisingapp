@@ -34,34 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Theme\Settings;
+use Illuminate\Database\Migrations\Migration;
+use App\Features\AddUrlToThemeSettingsFeature;
 
-use App\Settings\SettingsWithMedia;
-use AdvisingApp\Theme\Settings\SettingsProperties\ThemeSettingsProperty;
-
-class ThemeSettings extends SettingsWithMedia
-{
-    public bool $is_logo_active = false;
-
-    public bool $is_favicon_active = false;
-
-    public array $color_overrides = [];
-
-    public bool $has_dark_mode = true;
-
-    public ?string $url = null;
-
-    public ?string $changelog_url = null;
-
-    public ?string $product_knowledge_base_url = null;
-
-    public static function group(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'theme';
+        AddUrlToThemeSettingsFeature::activate();
     }
 
-    public static function getSettingsPropertyModelClass(): string
+    public function down(): void
     {
-        return ThemeSettingsProperty::class;
+        AddUrlToThemeSettingsFeature::deactivate();
     }
-}
+};

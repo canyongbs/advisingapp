@@ -34,34 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Theme\Settings;
+namespace App\Features;
 
-use App\Settings\SettingsWithMedia;
-use AdvisingApp\Theme\Settings\SettingsProperties\ThemeSettingsProperty;
+use App\Support\AbstractFeatureFlag;
 
-class ThemeSettings extends SettingsWithMedia
+class AddUrlToThemeSettingsFeature extends AbstractFeatureFlag
 {
-    public bool $is_logo_active = false;
-
-    public bool $is_favicon_active = false;
-
-    public array $color_overrides = [];
-
-    public bool $has_dark_mode = true;
-
-    public ?string $url = null;
-
-    public ?string $changelog_url = null;
-
-    public ?string $product_knowledge_base_url = null;
-
-    public static function group(): string
+    public function resolve(mixed $scope): mixed
     {
-        return 'theme';
-    }
-
-    public static function getSettingsPropertyModelClass(): string
-    {
-        return ThemeSettingsProperty::class;
+        return false;
     }
 }

@@ -152,3 +152,7 @@
 .fi-sidebar-item.fi-active .fi-sidebar-item-label {
     @apply text-gray-700 dark:text-gray-200 !important;
 }
+
+.dark_button_border {
+    @apply dark:border dark:border-white dark:hover:border-white !important;
+}
