@@ -8,14 +8,14 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_branding_bar_enabled')->default(true);
+            $table->boolean('is_branding_bar_dismissed')->default(false);
         });
     }
 
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropIfExists('is_branding_bar_enabled');
+            $table->dropIfExists('is_branding_bar_dismissed');
         });
     }
 };

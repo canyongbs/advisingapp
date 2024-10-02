@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Theme\Filament\Pages;
 
-use App\Enums\FeatureFlag;
 use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
+use App\Enums\FeatureFlag;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
@@ -82,7 +82,7 @@ class ManageCollegeBrandingSettings extends SettingsPage
                     ->reactive() // Make the toggle reactive to handle changes dynamically
                     ->afterStateUpdated(function (callable $set, $state) {
                         // When 'is_enabled' is turned off, set 'dismissible' to false
-                        if (! $state) {
+                        if (! $state && FeatureFlag::EnableBrandingBar->active()) {
                             $set('dismissible', false);
                         }
                     }),
@@ -103,6 +103,20 @@ class ManageCollegeBrandingSettings extends SettingsPage
                     ->visible(fn (Get $get) => $get('is_enabled'))
                     ->required(),
             ]);
+    }
+
+    public function save(): void
+    {
+        // Save the settings first
+        parent::save();
+
+        // Retrieve the updated settings
+        $settings = app(CollegeBrandingSettings::class);
+
+        // Check the specific field
+        if (! $settings->dismissible && FeatureFlag::EnableBrandingBar->active()) {
+            User::query()->update(['is_branding_bar_dismissed' => false]);
+        }
     }
 
     public function getRedirectUrl(): ?string
