@@ -305,11 +305,12 @@ class Login extends FilamentLogin
         ];
     }
 
-    protected function getAuthenticateFormAction(): Action
+    protected function getFormActions(): array
     {
-        return Action::make('authenticate')
-            ->label('Log in')
-            ->submit('authenticate')
-            ->extraAttributes(['class' => 'dark:bg-gray-800 dark_button_border dark:hover:bg-gray-700']);
+        return [
+            parent::getAuthenticateFormAction()
+                ->label('Log in')
+                ->extraAttributes(['class' => 'dark:bg-gray-800 dark_button_border dark:hover:bg-gray-700']),
+        ];
     }
 }
