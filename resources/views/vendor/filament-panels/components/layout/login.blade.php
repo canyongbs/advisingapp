@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,36 +30,20 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
 
-namespace AdvisingApp\Theme\Settings;
-
-use App\Settings\SettingsWithMedia;
-use AdvisingApp\Theme\Settings\SettingsProperties\ThemeSettingsProperty;
-
-class ThemeSettings extends SettingsWithMedia
-{
-    public bool $is_logo_active = false;
-
-    public bool $is_favicon_active = false;
-
-    public array $color_overrides = [];
-
-    public bool $has_dark_mode = true;
-
-    public ?string $url = null;
-
-    public ?string $changelog_url = null;
-
-    public ?string $product_knowledge_base_url = null;
-
-    public static function group(): string
-    {
-        return 'theme';
-    }
-
-    public static function getSettingsPropertyModelClass(): string
-    {
-        return ThemeSettingsProperty::class;
-    }
-}
+<x-filament-panels::layout.base :livewire="$livewire">
+    <div class="fi-layout flex h-full w-full flex-row-reverse overflow-x-clip">
+        <div class="fi-main-ctn w-screen flex-1 flex-col">
+            <div class="flex justify-center items-center w-full h-24 border-b border-gray-200 mb-4">
+                <x-filament-panels::logo />
+            </div>
+            <main class="fi-main mx-auto flex justify-center items-center h-full w-full px-4 md:px-6 lg:px-8 max-w-screen-lg">
+                {{ $slot }}
+            </main>
+            <div class="mt-3 mb-6 inline-block w-full">
+                <x-footer class="footer" />
+            </div>
+        </div>
+    </div>
+</x-filament-panels::layout.base>

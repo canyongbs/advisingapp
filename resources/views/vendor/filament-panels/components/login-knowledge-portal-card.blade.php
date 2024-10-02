@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,36 +30,14 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace AdvisingApp\Theme\Settings;
-
-use App\Settings\SettingsWithMedia;
-use AdvisingApp\Theme\Settings\SettingsProperties\ThemeSettingsProperty;
-
-class ThemeSettings extends SettingsWithMedia
-{
-    public bool $is_logo_active = false;
-
-    public bool $is_favicon_active = false;
-
-    public array $color_overrides = [];
-
-    public bool $has_dark_mode = true;
-
-    public ?string $url = null;
-
-    public ?string $changelog_url = null;
-
-    public ?string $product_knowledge_base_url = null;
-
-    public static function group(): string
-    {
-        return 'theme';
-    }
-
-    public static function getSettingsPropertyModelClass(): string
-    {
-        return ThemeSettingsProperty::class;
-    }
-}
+--}}
+<div class="bg-turkish-300 text-white rounded-xl p-6">
+    <div class="flex md:flex-row flex-col justify-center items-center gap-6">
+        <div>
+            <p class="text-gray-800 text-sm font-semibold">Knowledge Portal</p>
+            <p class="text-gray-700 text-sm my-4">Visit our knowledge portal for answers to frequently asked product and service questions.</p>
+            <a href="{{ $productKnowledgebaseUrl }}"  target="_blank" class="border-2 border-gray-700 px-4 py-2 text-gray-700 rounded-xl text-sm font-semibold inline-block">Visit Knowledge Portal</a>
+        </div>
+        <img src="{{ Vite::asset('resources/images/changelog_image.svg') }}" class="block max-h-32" />
+    </div>
+</div>
