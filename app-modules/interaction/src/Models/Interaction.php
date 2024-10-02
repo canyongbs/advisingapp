@@ -40,17 +40,23 @@ use Exception;
 use App\Models\User;
 use App\Models\BaseModel;
 use App\Models\Authenticatable;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Timeline\Timelines\InteractionTimeline;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
@@ -61,7 +67,7 @@ use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 /**
  * @mixin IdeHelperInteraction
  */
-class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction
+class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction, ProvidesATimeline
 {
     use AuditableTrait;
     use BelongsToEducatable;
@@ -106,6 +112,21 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
             type: 'interactable_type',
             id: 'interactable_id',
         );
+    }
+
+    public function timelineRecord(): MorphOne
+    {
+        return $this->morphOne(Timeline::class, 'timelineable');
+    }
+
+    public function timeline(): InteractionTimeline
+    {
+        return new InteractionTimeline($this);
+    }
+
+    public static function getTimelineData(Model $forModel): Collection
+    {
+        return $forModel->orderedInteractions()->get();
     }
 
     public function initiative(): BelongsTo
