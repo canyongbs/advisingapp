@@ -34,37 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+namespace App\Support;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+use Laravel\Pennant\Feature;
 
-/**
- * @mixin IdeHelperPerformance
- */
-class Performance extends Model
+abstract class AbstractFeatureFlag
 {
-    use HasFactory;
-    use UsesTenantConnection;
-
-    protected $table = 'performance';
-
-    protected $primaryKey = 'sisid';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
-    public $timestamps = false;
-
-    protected $casts = [
-        'max_dt' => 'datetime',
-    ];
-
-    public function student(): BelongsTo
+    public static function active(): bool
     {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+        return Feature::active(static::class);
+    }
+
+    public static function activate(): void
+    {
+        Feature::activate(static::class);
+    }
+
+    public static function deactivate(): void
+    {
+        Feature::deactivate(static::class);
+    }
+
+    public static function purge(): void
+    {
+        Feature::purge(static::class);
     }
 }

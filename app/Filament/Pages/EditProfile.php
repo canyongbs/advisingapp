@@ -68,7 +68,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
-use App\Enums\FeatureFlag;
+use App\Features\EnableBrandingBar;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
@@ -272,7 +272,7 @@ class EditProfile extends Page
                         Toggle::make('is_branding_bar_dismissed')
                             ->label(''),
                     ])
-                    ->visible(fn (CollegeBrandingSettings $settings) => FeatureFlag::EnableBrandingBar->active() && $settings->dismissible),
+                    ->visible(fn (CollegeBrandingSettings $settings) => EnableBrandingBar::active() && $settings->dismissible),
                 Section::make('Connected Accounts')
                     ->description('Disconnect your external accounts.')
                     ->aside()

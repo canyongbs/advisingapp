@@ -44,6 +44,7 @@ use AdvisingApp\Team\Models\Team;
 use Spatie\MediaLibrary\HasMedia;
 use App\Support\HasAdvancedFilter;
 use AdvisingApp\Ai\Models\AiThread;
+use App\Features\EnableBrandingBar;
 use AdvisingApp\Team\Models\TeamUser;
 use AdvisingApp\Segment\Models\Segment;
 use App\Filament\Resources\UserResource;
@@ -91,7 +92,6 @@ use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 use AdvisingApp\MultifactorAuthentication\Traits\MultifactorAuthenticatable;
-use App\Enums\FeatureFlag;
 
 /**
  * @mixin IdeHelperUser
@@ -166,7 +166,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     {
         parent::__construct($attributes);
 
-        if (FeatureFlag::EnableBrandingBar->active()) {
+        if (EnableBrandingBar::active()) {
             $this->fillable = [
                 'emplid',
                 'name',
@@ -233,7 +233,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
                 'are_working_hours_visible_on_profile',
                 'working_hours',
                 'job_title',
-                'last_chat_ping_at'
+                'last_chat_ping_at',
             ];
         }
     }

@@ -39,6 +39,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use AdvisingApp\Alert\Models\Alert;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Components\Textarea;
@@ -157,6 +158,11 @@ class ManageProspectAlerts extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make()
+                    ->authorize(function () {
+                        $ownerRecord = $this->getOwnerRecord();
+
+                        return auth()->user()->can('create', [Alert::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
+                    })
                     ->mutateFormDataUsing(function (array $data): array {
                         $data['created_by'] = auth()->id();
 

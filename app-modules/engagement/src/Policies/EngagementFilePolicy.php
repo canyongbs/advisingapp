@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Policies;
 
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Engagement\Models\EngagementFile;
 
 class EngagementFilePolicy
@@ -58,8 +59,12 @@ class EngagementFilePolicy
         );
     }
 
-    public function create(Authenticatable $authenticatable): Response
+    public function create(Authenticatable $authenticatable, ?Prospect $prospect = null): Response
     {
+        if ($prospect?->student()->exists()) {
+            return Response::deny('You cannot create engagement files for a Prospect that has been converted to a Student.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'engagement_file.create',
             denyResponse: 'You do not have permissions to create engagement files.'
@@ -68,6 +73,10 @@ class EngagementFilePolicy
 
     public function update(Authenticatable $authenticatable, EngagementFile $engagementFile): Response
     {
+        if ($engagementFile->prospects()->whereNotNull('student_id')->exists()) {
+            return Response::deny('You cannot edit engagement file as the related Prospect has been converted to a Student.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["engagement_file.{$engagementFile->id}.update"],
             denyResponse: 'You do not have permissions to update this engagement file.'

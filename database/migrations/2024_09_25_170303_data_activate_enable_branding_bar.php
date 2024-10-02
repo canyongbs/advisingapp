@@ -1,16 +1,16 @@
 <?php
 
-use App\Enums\FeatureFlag;
+use App\Features\EnableBrandingBar;
 use Illuminate\Database\Migrations\Migration;
 
 return new class () extends Migration {
     public function up(): void
     {
-        FeatureFlag::EnableBrandingBar->activate();
+        EnableBrandingBar::activate();
     }
 
     public function down(): void
     {
-        FeatureFlag::EnableBrandingBar->deactivate();
+        EnableBrandingBar::deactivate();
     }
 };

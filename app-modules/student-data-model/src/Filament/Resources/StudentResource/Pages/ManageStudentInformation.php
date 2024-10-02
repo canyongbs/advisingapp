@@ -41,7 +41,6 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\PerformanceRelationManager;
 
 class ManageStudentInformation extends ManageRelatedRecords
 {
@@ -71,7 +70,6 @@ class ManageStudentInformation extends ManageRelatedRecords
         return collect([
             ProgramsRelationManager::class,
             EnrollmentsRelationManager::class,
-            PerformanceRelationManager::class,
         ])
             ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
             ->toArray();

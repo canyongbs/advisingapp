@@ -34,43 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Enums;
+namespace App\Models\Scopes;
 
-use Closure;
-use Laravel\Pennant\Feature;
+use Illuminate\Database\Eloquent\Builder;
 
-enum FeatureFlag: string
+class ExcludeConvertedProspects
 {
-    case AiSettingsMaxTokensUpdate = 'ai_settings_max_tokens_update';
-    case GDPRBanner = 'gdpr_banner';
-    case EnableBrandingBar = 'enable_branding_bar';
-
-    public function definition(): Closure
+    public function __invoke(Builder $query): void
     {
-        return match ($this) {
-            default => function () {
-                return false;
-            }
-        };
-    }
-
-    public function active(): bool
-    {
-        return Feature::active($this->value);
-    }
-
-    public function activate(): void
-    {
-        Feature::activate($this->value);
-    }
-
-    public function deactivate(): void
-    {
-        Feature::deactivate($this->value);
-    }
-
-    public function purge(): void
-    {
-        Feature::purge($this->value);
+        $query->doesntHave('student');
     }
 }

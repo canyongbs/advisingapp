@@ -42,7 +42,6 @@ use function Pest\Livewire\livewire;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\EditProspect;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectFiles;
@@ -193,6 +192,8 @@ test('can see prospect converted to student badge on', function (string $pages) 
 
     $user->givePermissionTo('user.view-any');
 
+    $user->givePermissionTo('engagement.view-any');
+
     $user->givePermissionTo('engagement_file.view-any');
 
     $user->givePermissionTo('interaction.view-any');
@@ -224,7 +225,6 @@ test('can see prospect converted to student badge on', function (string $pages) 
 })
     ->with([
         ViewProspect::class,
-        EditProspect::class,
         ManageProspectAlerts::class,
         ManageProspectEngagement::class,
         ManageProspectFiles::class,

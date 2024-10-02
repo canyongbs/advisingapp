@@ -39,8 +39,8 @@ namespace AdvisingApp\Theme\Filament\Pages;
 use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
-use App\Enums\FeatureFlag;
 use Filament\Pages\SettingsPage;
+use App\Features\EnableBrandingBar;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\GlobalSettings;
@@ -82,14 +82,14 @@ class ManageCollegeBrandingSettings extends SettingsPage
                     ->reactive() // Make the toggle reactive to handle changes dynamically
                     ->afterStateUpdated(function (callable $set, $state) {
                         // When 'is_enabled' is turned off, set 'dismissible' to false
-                        if (! $state && FeatureFlag::EnableBrandingBar->active()) {
+                        if (! $state && EnableBrandingBar::active()) {
                             $set('dismissible', false);
                         }
                     }),
                 Toggle::make('dismissible')
                     ->inline(false)
                     ->label('Dismissible')
-                    ->visible(fn (Get $get) => $get('is_enabled') && FeatureFlag::EnableBrandingBar->active())
+                    ->visible(fn (Get $get) => $get('is_enabled') && EnableBrandingBar::active())
                     ->columnSpanFull(),
                 TextInput::make('college_text')
                     ->label('College Text')
@@ -114,7 +114,7 @@ class ManageCollegeBrandingSettings extends SettingsPage
         $settings = app(CollegeBrandingSettings::class);
 
         // Check the specific field
-        if (! $settings->dismissible && FeatureFlag::EnableBrandingBar->active()) {
+        if (! $settings->dismissible && EnableBrandingBar::active()) {
             User::query()->update(['is_branding_bar_dismissed' => false]);
         }
     }

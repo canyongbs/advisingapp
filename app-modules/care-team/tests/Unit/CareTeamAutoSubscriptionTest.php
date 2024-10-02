@@ -34,31 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Database\Factories;
+use App\Models\User;
+use AdvisingApp\Prospect\Models\Prospect;
 
+use function Pest\Laravel\assertDatabaseHas;
+
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\StudentDataModel\Models\Performance;
 
-/**
- * @extends Factory<Performance>
- */
-class PerformanceFactory extends Factory
-{
-    public function definition(): array
-    {
-        return [
-            'sisid' => Student::factory(),
-            'acad_career' => $this->faker->randomElement(['NC', 'CRED']),
-            'division' => $this->faker->randomElement(['ABC01', 'ABD02', 'ABE03']),
-            'first_gen' => $this->faker->boolean(),
-            'cum_att' => $this->faker->numerify('##'),
-            'cum_ern' => function (array $attributes) {
-                return $attributes['cum_att'] - $this->faker->numberBetween(0, $attributes['cum_att']);
-            },
-            'pct_ern' => 0,
-            'cum_gpa' => $this->faker->randomFloat(3, 0, 4),
-            'max_dt' => $this->faker->dateTime(),
-        ];
-    }
-}
+it('can auto subscribe user when adding in care team', function ($educatable) {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $educatable->careTeam()->sync([$user->getKey()]);
+
+    assertDatabaseHas('care_teams', [
+        'user_id' => $user->getKey(),
+        'educatable_id' => $educatable->getKey(),
+        'educatable_type' => $educatable->getMorphClass(),
+    ]);
+
+    assertDatabaseHas('subscriptions', [
+        'user_id' => $user->getKey(),
+        'subscribable_id' => $educatable->getKey(),
+        'subscribable_type' => $educatable->getMorphClass(),
+    ]);
+})
+    ->with([
+        'for Prospect' => [
+            'educatable' => fn () => Prospect::factory()->create(),
+        ],
+        'for Student' => [
+            'educatable' => fn () => Student::factory()->create(),
+        ],
+    ]);

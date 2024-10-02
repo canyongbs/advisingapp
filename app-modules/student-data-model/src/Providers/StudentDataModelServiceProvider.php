@@ -42,7 +42,6 @@ use Illuminate\Support\ServiceProvider;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\Performance;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
@@ -62,7 +61,6 @@ class StudentDataModelServiceProvider extends ServiceProvider
         Relation::morphMap([
             'student' => Student::class,
             'enrollment' => Enrollment::class,
-            'performance' => Performance::class,
             'program' => Program::class,
         ]);
 
