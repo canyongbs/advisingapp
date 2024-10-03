@@ -50,6 +50,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use App\Filament\Clusters\GlobalSettings;
 use AdvisingApp\Theme\Settings\ThemeSettings;
+use App\Features\AddBrandedWebsitesToThemeSettingsFeature;
 use App\Features\AddUrlToThemeSettingsFeature;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
@@ -177,7 +178,8 @@ class ManageBrandConfigurationSettings extends SettingsPage
                                     ->visible(fn (Get $get) => $get('is_custom_link_url_enabled'))
                                     ->columnSpanFull(),
                             ]),
-                    ]),
+                    ])
+                    ->visible(fn () => AddBrandedWebsitesToThemeSettingsFeature::active()),
 
                 Section::make('Changelog URL')
                     ->aside()
