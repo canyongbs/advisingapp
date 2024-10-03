@@ -35,7 +35,6 @@
 */
 
 use Illuminate\Database\Migrations\Migration;
-
 use App\Features\AddBrandedWebsitesToThemeSettingsFeature;
 
 return new class () extends Migration {
