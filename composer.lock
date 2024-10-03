@@ -2910,6 +2910,41 @@
             }
         },
         {
+            "name": "canyon-gbs/student-record-manager",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/student-record-manager",
+                "reference": "d4f8ba8e3ac37296f9e2ea076b953c998eb82d8d"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\StudentRecordManager\\Providers\\StudentRecordManagerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\StudentRecordManager\\": "src/",
+                    "AdvisingApp\\StudentRecordManager\\Tests\\": "tests/",
+                    "AdvisingApp\\StudentRecordManager\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\StudentRecordManager\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "canyongbs/filament-tiptap-editor",
             "version": "1.0.2",
             "source": {
