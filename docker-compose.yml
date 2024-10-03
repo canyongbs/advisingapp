@@ -6,5 +6,3 @@ services:
             args:
                 USER_ID: ${SPIN_USER_ID:-9999}
                 GROUP_ID: ${SPIN_GROUP_ID:-9999}
-        extra_hosts:
-            - 'host.docker.internal:host-gateway'

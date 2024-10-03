@@ -38,9 +38,11 @@ namespace AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages;
 
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
+use AdvisingApp\Ai\Models\PromptType;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Notifications\Notification;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
@@ -75,7 +77,20 @@ class ListPromptTypes extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->action(function ($records) {
+                            $deletedPromptTypesCount = PromptType::query()
+                                ->whereKey($records)
+                                ->whereDoesntHave('prompts')
+                                ->delete();
+
+                            Notification::make()
+                                ->title('Deleted ' . $deletedPromptTypesCount . ' prompt types')
+                                ->body(($deletedPromptTypesCount < $records->count()) ? ($records->count() - $deletedPromptTypesCount) . ' prompt types were not deleted because they have prompts.' : null)
+                                ->success()
+                                ->send();
+                        })
+                        ->fetchSelectedRecords(false),
                 ]),
             ]);
     }

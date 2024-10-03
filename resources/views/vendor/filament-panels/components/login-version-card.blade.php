@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,49 +30,14 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace AdvisingApp\Interaction\Observers;
-
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
-
-class InteractionObserver
-{
-    public function creating(Interaction $interaction): void
-    {
-        if (is_null($interaction->user_id) && ! is_null(auth()->user())) {
-            $interaction->user_id = auth()->user()->id;
-        }
-
-        if (is_null($interaction->start_datetime)) {
-            $interaction->start_datetime = now();
-        }
-    }
-
-    public function created(Interaction $interaction): void
-    {
-        $user = auth()->user();
-
-        if ($user instanceof User) {
-            TriggeredAutoSubscription::dispatch($user, $interaction);
-        }
-
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordCreated::dispatch($entity, $interaction);
-    }
-
-    public function deleted(Interaction $interaction): void
-    {
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordDeleted::dispatch($entity, $interaction);
-    }
-}
+--}}
+<div class="bg-turkish-500 text-white rounded-xl p-6 mb-6">
+    <div class="flex md:flex-row flex-col justify-center items-center gap-6">
+        <div>
+            <p class="text-white text-sm font-semibold">Version {{ app('current-version') }} is now available!</p>
+            <p class="text-white-500 text-sm my-4">Your instance of Advising App&#174; was automatically updated with our latest available features.</p>
+            <a href="{{ $themeChangelogUrl }}" target="_blank" class="border-2 border-white px-4 py-2 text-white rounded-xl text-sm font-semibold inline-block">Learn More</a>
+        </div>
+        <img src="{{ Vite::asset('resources/images/version_image.svg') }}" class="block max-h-32" />
+    </div>
+</div>

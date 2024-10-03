@@ -65,6 +65,10 @@ class ThemeSettings extends SettingsWithMedia
 
     public ?string $custom_link_url = null;
 
+    public ?string $changelog_url = null;
+
+    public ?string $product_knowledge_base_url = null;
+
     public static function group(): string
     {
         return 'theme';

@@ -34,47 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Observers;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
-
-class InteractionObserver
-{
-    public function creating(Interaction $interaction): void
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        if (is_null($interaction->user_id) && ! is_null(auth()->user())) {
-            $interaction->user_id = auth()->user()->id;
-        }
-
-        if (is_null($interaction->start_datetime)) {
-            $interaction->start_datetime = now();
-        }
+        $this->migrator->add('theme.changelog_url');
+        $this->migrator->add('theme.product_knowledge_base_url');
     }
 
-    public function created(Interaction $interaction): void
+    public function down(): void
     {
-        $user = auth()->user();
-
-        if ($user instanceof User) {
-            TriggeredAutoSubscription::dispatch($user, $interaction);
-        }
-
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordCreated::dispatch($entity, $interaction);
+        $this->migrator->delete('theme.changelog_url');
+        $this->migrator->delete('theme.product_knowledge_base_url');
     }
-
-    public function deleted(Interaction $interaction): void
-    {
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordDeleted::dispatch($entity, $interaction);
-    }
-}
+};

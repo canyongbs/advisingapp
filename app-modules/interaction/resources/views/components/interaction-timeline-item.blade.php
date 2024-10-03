@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,49 +30,45 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@use('App\Filament\Resources\UserResource')
+<div>
+    <div class="flex flex-row justify-between">
+        <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
+            <a
+                class="font-medium underline"
+                href="{{ UserResource::getUrl('view', ['record' => $record->user]) }}"
+            >
+                {{ $record->user->name }}
+            </a>
+        </h3>
 
-namespace AdvisingApp\Interaction\Observers;
+        <div>
+            {{ $viewRecordIcon }}
+        </div>
+    </div>
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+    <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+        {{ $record?->type?->name }}
+    </time>
 
-class InteractionObserver
-{
-    public function creating(Interaction $interaction): void
-    {
-        if (is_null($interaction->user_id) && ! is_null(auth()->user())) {
-            $interaction->user_id = auth()->user()->id;
-        }
+    <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+        Interaction Started {{ $record->start_datetime->diffForHumans() }}
+    </time>
 
-        if (is_null($interaction->start_datetime)) {
-            $interaction->start_datetime = now();
-        }
-    }
-
-    public function created(Interaction $interaction): void
-    {
-        $user = auth()->user();
-
-        if ($user instanceof User) {
-            TriggeredAutoSubscription::dispatch($user, $interaction);
-        }
-
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordCreated::dispatch($entity, $interaction);
-    }
-
-    public function deleted(Interaction $interaction): void
-    {
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordDeleted::dispatch($entity, $interaction);
-    }
-}
+    <div
+        class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal text-gray-500 dark:border-gray-800 dark:text-gray-400">
+        @if (!blank($record->subject))
+            <div class="mb-2 flex flex-col">
+                <p class="text-xs text-gray-400 dark:text-gray-500">Subject:</p>
+                <p>{{ $record->subject }}</p>
+            </div>
+        @endif
+        <div class="flex flex-col">
+            <p class="text-xs text-gray-400 dark:text-gray-500">Description:</p>
+            <div class="prose dark:prose-invert">
+                {{ $record->description ?? 'N/A' }}
+            </div>
+        </div>
+    </div>
+</div>

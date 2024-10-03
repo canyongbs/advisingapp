@@ -34,47 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Observers;
+namespace App\Features;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use App\Support\AbstractFeatureFlag;
 
-class InteractionObserver
+class AddUrlToThemeSettingsFeature extends AbstractFeatureFlag
 {
-    public function creating(Interaction $interaction): void
+    public function resolve(mixed $scope): mixed
     {
-        if (is_null($interaction->user_id) && ! is_null(auth()->user())) {
-            $interaction->user_id = auth()->user()->id;
-        }
-
-        if (is_null($interaction->start_datetime)) {
-            $interaction->start_datetime = now();
-        }
-    }
-
-    public function created(Interaction $interaction): void
-    {
-        $user = auth()->user();
-
-        if ($user instanceof User) {
-            TriggeredAutoSubscription::dispatch($user, $interaction);
-        }
-
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordCreated::dispatch($entity, $interaction);
-    }
-
-    public function deleted(Interaction $interaction): void
-    {
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordDeleted::dispatch($entity, $interaction);
+        return false;
     }
 }

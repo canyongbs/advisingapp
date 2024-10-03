@@ -34,47 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Observers;
+namespace AdvisingApp\Timeline\Timelines;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Actions\ViewAction;
 use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use AdvisingApp\Timeline\Models\CustomTimeline;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Components\InteractionViewAction;
 
-class InteractionObserver
+class InteractionTimeline extends CustomTimeline
 {
-    public function creating(Interaction $interaction): void
-    {
-        if (is_null($interaction->user_id) && ! is_null(auth()->user())) {
-            $interaction->user_id = auth()->user()->id;
-        }
+    public function __construct(
+        public Interaction $interaction
+    ) {}
 
-        if (is_null($interaction->start_datetime)) {
-            $interaction->start_datetime = now();
-        }
+    public function icon(): string
+    {
+        return 'heroicon-o-pencil-square';
     }
 
-    public function created(Interaction $interaction): void
+    public function sortableBy(): string
     {
-        $user = auth()->user();
-
-        if ($user instanceof User) {
-            TriggeredAutoSubscription::dispatch($user, $interaction);
-        }
-
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordCreated::dispatch($entity, $interaction);
+        return $this->interaction->start_datetime;
     }
 
-    public function deleted(Interaction $interaction): void
+    public function providesCustomView(): bool
     {
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
+        return true;
+    }
 
-        TimelineableRecordDeleted::dispatch($entity, $interaction);
+    public function renderCustomView(): string
+    {
+        return 'interaction::interaction-timeline-item';
+    }
+
+    public function modalViewAction(): ViewAction
+    {
+        return InteractionViewAction::make()->record($this->interaction);
     }
 }
