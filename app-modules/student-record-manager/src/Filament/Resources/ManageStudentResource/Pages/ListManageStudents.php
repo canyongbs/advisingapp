@@ -42,9 +42,7 @@ class ListManageStudents extends ListRecords
                     BulkAction::make('delete')
                 ]),
             ])
-            ->headerActions([
-                
-            ]);
+            ->headerActions([]);
     }
 
     protected function getHeaderActions(): array

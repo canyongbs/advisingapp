@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "464a221cef0dae4794d4839bfb894142",
+    "content-hash": "a1d4598070fee29c21e9e33af573dfb9",
     "packages": [
         {
             "name": "amphp/amp",
@@ -1046,16 +1046,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.324.4",
+            "version": "3.322.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "4467374b1efda020b58adddd010f05949d9fa383"
+                "reference": "fb5099160e49b676277ae787ff721628e5e4dd5a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4467374b1efda020b58adddd010f05949d9fa383",
-                "reference": "4467374b1efda020b58adddd010f05949d9fa383",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/fb5099160e49b676277ae787ff721628e5e4dd5a",
+                "reference": "fb5099160e49b676277ae787ff721628e5e4dd5a",
                 "shasum": ""
             },
             "require": {
@@ -1138,9 +1138,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.324.4"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.322.8"
             },
-            "time": "2024-10-16T18:04:55+00:00"
+            "time": "2024-09-30T19:09:25+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -3028,6 +3028,41 @@
                     "AdvisingApp\\Segment\\Tests\\": "tests/",
                     "AdvisingApp\\Segment\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\Segment\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/student-record-manager",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/student-record-manager",
+                "reference": "d4f8ba8e3ac37296f9e2ea076b953c998eb82d8d"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\StudentRecordManager\\Providers\\StudentRecordManagerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\StudentRecordManager\\": "src/",
+                    "AdvisingApp\\StudentRecordManager\\Tests\\": "tests/",
+                    "AdvisingApp\\StudentRecordManager\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\StudentRecordManager\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -15223,9 +15258,11 @@
             "name": "spiral/core",
             "version": "3.14.5",
             "version": "3.14.5",
+            "version": "3.14.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spiral/core.git",
+                "reference": "e3e616fe327eaafc567efe408a2635dbf7d1c0bf"
                 "reference": "e3e616fe327eaafc567efe408a2635dbf7d1c0bf"
                 "reference": "e3e616fe327eaafc567efe408a2635dbf7d1c0bf"
             },
@@ -15235,11 +15272,14 @@
                 "reference": "e3e616fe327eaafc567efe408a2635dbf7d1c0bf",
                 "url": "https://api.github.com/repos/spiral/core/zipball/e3e616fe327eaafc567efe408a2635dbf7d1c0bf",
                 "reference": "e3e616fe327eaafc567efe408a2635dbf7d1c0bf",
+                "url": "https://api.github.com/repos/spiral/core/zipball/e3e616fe327eaafc567efe408a2635dbf7d1c0bf",
+                "reference": "e3e616fe327eaafc567efe408a2635dbf7d1c0bf",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.1",
                 "psr/container": "^1.1|^2.0",
+                "spiral/security": "^3.14.5"
                 "spiral/security": "^3.14.5"
                 "spiral/security": "^3.14.5"
             },
@@ -15296,6 +15336,7 @@
                     "type": "github"
                 }
             ],
+            "time": "2024-09-30T19:02:14+00:00"
             "time": "2024-09-30T19:02:14+00:00"
             "time": "2024-09-30T19:02:14+00:00"
         },
@@ -15390,9 +15431,11 @@
             "name": "spiral/hmvc",
             "version": "3.14.5",
             "version": "3.14.5",
+            "version": "3.14.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spiral/hmvc.git",
+                "reference": "6a336225cb365830a42664c636e9389affaf8b00"
                 "reference": "6a336225cb365830a42664c636e9389affaf8b00"
                 "reference": "6a336225cb365830a42664c636e9389affaf8b00"
             },
@@ -15402,11 +15445,15 @@
                 "reference": "6a336225cb365830a42664c636e9389affaf8b00",
                 "url": "https://api.github.com/repos/spiral/hmvc/zipball/6a336225cb365830a42664c636e9389affaf8b00",
                 "reference": "6a336225cb365830a42664c636e9389affaf8b00",
+                "url": "https://api.github.com/repos/spiral/hmvc/zipball/6a336225cb365830a42664c636e9389affaf8b00",
+                "reference": "6a336225cb365830a42664c636e9389affaf8b00",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.1",
                 "psr/event-dispatcher": "^1.0",
+                "spiral/core": "^3.14.5",
+                "spiral/interceptors": "^3.14.5"
                 "spiral/core": "^3.14.5",
                 "spiral/interceptors": "^3.14.5"
                 "spiral/core": "^3.14.5",
@@ -15466,14 +15513,17 @@
             ],
             "time": "2024-09-30T19:02:22+00:00"
             "time": "2024-09-30T19:02:22+00:00"
+            "time": "2024-09-30T19:02:22+00:00"
         },
         {
             "name": "spiral/interceptors",
             "version": "3.14.5",
             "version": "3.14.5",
+            "version": "3.14.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spiral/interceptors.git",
+                "reference": "0abee080a5d11dbb0c3fd34b489040dfacd5899c"
                 "reference": "0abee080a5d11dbb0c3fd34b489040dfacd5899c"
                 "reference": "0abee080a5d11dbb0c3fd34b489040dfacd5899c"
             },
@@ -15483,11 +15533,14 @@
                 "reference": "0abee080a5d11dbb0c3fd34b489040dfacd5899c",
                 "url": "https://api.github.com/repos/spiral/interceptors/zipball/0abee080a5d11dbb0c3fd34b489040dfacd5899c",
                 "reference": "0abee080a5d11dbb0c3fd34b489040dfacd5899c",
+                "url": "https://api.github.com/repos/spiral/interceptors/zipball/0abee080a5d11dbb0c3fd34b489040dfacd5899c",
+                "reference": "0abee080a5d11dbb0c3fd34b489040dfacd5899c",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.1",
                 "psr/event-dispatcher": "^1.0",
+                "spiral/core": "^3.14.5"
                 "spiral/core": "^3.14.5"
                 "spiral/core": "^3.14.5"
             },
@@ -15550,14 +15603,17 @@
             ],
             "time": "2024-09-30T19:02:24+00:00"
             "time": "2024-09-30T19:02:24+00:00"
+            "time": "2024-09-30T19:02:24+00:00"
         },
         {
             "name": "spiral/logger",
             "version": "3.14.5",
             "version": "3.14.5",
+            "version": "3.14.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spiral/logger.git",
+                "reference": "a8e1ad74639a52876865bda933a9125e7a0325c8"
                 "reference": "a8e1ad74639a52876865bda933a9125e7a0325c8"
                 "reference": "a8e1ad74639a52876865bda933a9125e7a0325c8"
             },
@@ -15567,11 +15623,14 @@
                 "reference": "a8e1ad74639a52876865bda933a9125e7a0325c8",
                 "url": "https://api.github.com/repos/spiral/logger/zipball/a8e1ad74639a52876865bda933a9125e7a0325c8",
                 "reference": "a8e1ad74639a52876865bda933a9125e7a0325c8",
+                "url": "https://api.github.com/repos/spiral/logger/zipball/a8e1ad74639a52876865bda933a9125e7a0325c8",
+                "reference": "a8e1ad74639a52876865bda933a9125e7a0325c8",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.1",
                 "psr/log": "1 - 3",
+                "spiral/core": "^3.14.5"
                 "spiral/core": "^3.14.5"
                 "spiral/core": "^3.14.5"
             },
@@ -15625,6 +15684,7 @@
                     "type": "github"
                 }
             ],
+            "time": "2024-09-30T19:02:27+00:00"
             "time": "2024-09-30T19:02:27+00:00"
             "time": "2024-09-30T19:02:27+00:00"
         },
@@ -15918,14 +15978,18 @@
             "name": "spiral/security",
             "version": "3.14.5",
             "version": "3.14.5",
+            "version": "3.14.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spiral/security.git",
                 "reference": "0a29e5b19d6ef768b526c17a4ba36ec7aba79f78"
                 "reference": "0a29e5b19d6ef768b526c17a4ba36ec7aba79f78"
+                "reference": "0a29e5b19d6ef768b526c17a4ba36ec7aba79f78"
             },
             "dist": {
                 "type": "zip",
+                "url": "https://api.github.com/repos/spiral/security/zipball/0a29e5b19d6ef768b526c17a4ba36ec7aba79f78",
+                "reference": "0a29e5b19d6ef768b526c17a4ba36ec7aba79f78",
                 "url": "https://api.github.com/repos/spiral/security/zipball/0a29e5b19d6ef768b526c17a4ba36ec7aba79f78",
                 "reference": "0a29e5b19d6ef768b526c17a4ba36ec7aba79f78",
                 "url": "https://api.github.com/repos/spiral/security/zipball/0a29e5b19d6ef768b526c17a4ba36ec7aba79f78",
@@ -15938,10 +16002,13 @@
                 "spiral/hmvc": "^3.14.5"
                 "spiral/core": "^3.14.5",
                 "spiral/hmvc": "^3.14.5"
+                "spiral/core": "^3.14.5",
+                "spiral/hmvc": "^3.14.5"
             },
             "require-dev": {
                 "mockery/mockery": "^1.5",
                 "phpunit/phpunit": "^10.1",
+                "spiral/console": "^3.14.5",
                 "spiral/console": "^3.14.5",
                 "spiral/console": "^3.14.5",
                 "vimeo/psalm": "^5.9"
@@ -15993,9 +16060,11 @@
             ],
             "time": "2024-09-30T19:06:11+00:00"
             "time": "2024-09-30T19:06:11+00:00"
+            "time": "2024-09-30T19:06:11+00:00"
         },
         {
             "name": "spiral/tokenizer",
+            "version": "3.14.5",
             "version": "3.14.5",
             "version": "3.14.5",
             "source": {
@@ -16003,9 +16072,12 @@
                 "url": "https://github.com/spiral/tokenizer.git",
                 "reference": "c7064974462cd61766e693cebb639b64c82f918e"
                 "reference": "c7064974462cd61766e693cebb639b64c82f918e"
+                "reference": "c7064974462cd61766e693cebb639b64c82f918e"
             },
             "dist": {
                 "type": "zip",
+                "url": "https://api.github.com/repos/spiral/tokenizer/zipball/c7064974462cd61766e693cebb639b64c82f918e",
+                "reference": "c7064974462cd61766e693cebb639b64c82f918e",
                 "url": "https://api.github.com/repos/spiral/tokenizer/zipball/c7064974462cd61766e693cebb639b64c82f918e",
                 "reference": "c7064974462cd61766e693cebb639b64c82f918e",
                 "url": "https://api.github.com/repos/spiral/tokenizer/zipball/c7064974462cd61766e693cebb639b64c82f918e",
@@ -16019,12 +16091,16 @@
                 "spiral/logger": "^3.14.5",
                 "spiral/core": "^3.14.5",
                 "spiral/logger": "^3.14.5",
+                "spiral/core": "^3.14.5",
+                "spiral/logger": "^3.14.5",
                 "symfony/finder": "^5.3.7 || ^6.0 || ^7.0"
             },
             "require-dev": {
                 "mockery/mockery": "^1.6",
                 "phpunit/phpunit": "^10.1",
                 "spiral/attributes": "^2.8|^3.0",
+                "spiral/boot": "^3.14.5",
+                "spiral/files": "^3.14.5",
                 "spiral/boot": "^3.14.5",
                 "spiral/files": "^3.14.5",
                 "spiral/boot": "^3.14.5",
@@ -16076,6 +16152,7 @@
                     "type": "github"
                 }
             ],
+            "time": "2024-09-30T19:08:14+00:00"
             "time": "2024-09-30T19:08:14+00:00"
             "time": "2024-09-30T19:08:14+00:00"
         },
