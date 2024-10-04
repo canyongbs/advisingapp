@@ -50,7 +50,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use App\Filament\Clusters\GlobalSettings;
 use AdvisingApp\Theme\Settings\ThemeSettings;
-use App\Features\AddUrlToThemeSettingsFeature;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class ManageBrandConfigurationSettings extends SettingsPage
@@ -140,8 +139,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->label('Changelog URL')
                             ->url()
                             ->maxLength('255'),
-                    ])
-                    ->visible(fn () => AddUrlToThemeSettingsFeature::active()),
+                    ]),
 
                 Section::make('Product Knowledge Base URL')
                     ->aside()
@@ -150,8 +148,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->label('Product Knowledge Base URL')
                             ->url()
                             ->maxLength('255'),
-                    ])
-                    ->visible(fn () => AddUrlToThemeSettingsFeature::active()),
+                    ]),
             ]);
     }
 
