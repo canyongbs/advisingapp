@@ -34,48 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Theme\Settings;
+namespace AdvisingApp\Theme\Tests\RequestFactories;
 
-use App\Settings\SettingsWithMedia;
-use AdvisingApp\Theme\Settings\SettingsProperties\ThemeSettingsProperty;
+use App\Models\Tenant;
+use Worksome\RequestFactories\RequestFactory;
 
-class ThemeSettings extends SettingsWithMedia
+class BrandedWebsiteLinksRequestFactory extends RequestFactory
 {
-    public bool $is_logo_active = false;
-
-    public bool $is_favicon_active = false;
-
-    public array $color_overrides = [];
-
-    public bool $has_dark_mode = true;
-
-    public bool $is_support_url_enabled = false;
-
-    public bool $is_recent_updates_url_enabled = false;
-
-    public bool $is_custom_link_url_enabled = false;
-
-    public ?string $url = null;
-
-    public ?string $support_url = null;
-
-    public ?string $recent_updates_url = null;
-
-    public ?string $custom_link_label = null;
-
-    public ?string $custom_link_url = null;
-
-    public ?string $changelog_url = null;
-
-    public ?string $product_knowledge_base_url = null;
-
-    public static function group(): string
+    public function definition(): array
     {
-        return 'theme';
-    }
-
-    public static function getSettingsPropertyModelClass(): string
-    {
-        return ThemeSettingsProperty::class;
+        return [
+            'is_support_url_enabled' => fake()->boolean(),
+            'support_url' => fake()->url(),
+            'is_recent_updates_url_enabled' => fake()->boolean(),
+            'recent_updates_url' => fake()->url(),
+            'is_custom_link_url_enabled' => fake()->boolean(),
+            'custom_link_label' => fake()->word(),
+            'custom_link_url' => fake()->url(),
+            'tenant_id' => Tenant::current()->getKey(),
+        ];
     }
 }

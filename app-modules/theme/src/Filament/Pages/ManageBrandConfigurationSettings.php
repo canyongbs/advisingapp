@@ -131,6 +131,52 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->label('Active')
                             ->hidden(fn (Get $get): bool => blank($get('logo'))),
                     ]),
+                Section::make('Branded Website Links')
+                    ->aside()
+                    ->schema([
+                        Section::make('Support')
+                            ->schema([
+                                Toggle::make('is_support_url_enabled')
+                                    ->label('Enable Support URL')
+                                    ->live()
+                                    ->columnSpanFull(),
+                                TextInput::make('support_url')
+                                    ->label('Support URL')
+                                    ->url()
+                                    ->visible(fn (Get $get) => $get('is_support_url_enabled'))
+                                    ->columnSpanFull(),
+                            ]),
+                        Section::make('Recent Updates')
+                            ->schema([
+                                Toggle::make('is_recent_updates_url_enabled')
+                                    ->label('Enable Recent Updates URL')
+                                    ->live()
+                                    ->columnSpanFull(),
+                                TextInput::make('recent_updates_url')
+                                    ->label('Recent Updates URL')
+                                    ->url()
+                                    ->visible(fn (Get $get) => $get('is_recent_updates_url_enabled'))
+                                    ->columnSpanFull(),
+                            ]),
+                        Section::make('Custom Link')
+                            ->schema([
+                                Toggle::make('is_custom_link_url_enabled')
+                                    ->label('Enable Custom Link URL')
+                                    ->live()
+                                    ->columnSpanFull(),
+                                TextInput::make('custom_link_label')
+                                    ->label('Custom Link URL Label')
+                                    ->alphaNum()
+                                    ->maxLength(16)
+                                    ->visible(fn (Get $get) => $get('is_custom_link_url_enabled'))
+                                    ->columnSpanFull(),
+                                TextInput::make('custom_link_url')
+                                    ->label('Custom Link URL')
+                                    ->url()
+                                    ->visible(fn (Get $get) => $get('is_custom_link_url_enabled'))
+                                    ->columnSpanFull(),
+                            ]),
+                    ]),
 
                 Section::make('Changelog URL')
                     ->aside()
