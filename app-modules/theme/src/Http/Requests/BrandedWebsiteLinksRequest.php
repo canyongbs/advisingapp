@@ -34,48 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Theme\Settings;
+namespace AdvisingApp\Theme\Http\Requests;
 
-use App\Settings\SettingsWithMedia;
-use AdvisingApp\Theme\Settings\SettingsProperties\ThemeSettingsProperty;
+use Illuminate\Foundation\Http\FormRequest;
 
-class ThemeSettings extends SettingsWithMedia
+class BrandedWebsiteLinksRequest extends FormRequest
 {
-    public bool $is_logo_active = false;
-
-    public bool $is_favicon_active = false;
-
-    public array $color_overrides = [];
-
-    public bool $has_dark_mode = true;
-
-    public bool $is_support_url_enabled = false;
-
-    public bool $is_recent_updates_url_enabled = false;
-
-    public bool $is_custom_link_url_enabled = false;
-
-    public ?string $url = null;
-
-    public ?string $support_url = null;
-
-    public ?string $recent_updates_url = null;
-
-    public ?string $custom_link_label = null;
-
-    public ?string $custom_link_url = null;
-
-    public ?string $changelog_url = null;
-
-    public ?string $product_knowledge_base_url = null;
-
-    public static function group(): string
+    public function rules(): array
     {
-        return 'theme';
-    }
-
-    public static function getSettingsPropertyModelClass(): string
-    {
-        return ThemeSettingsProperty::class;
+        return [
+            'is_support_url_enabled' => ['nullable', 'boolean'],
+            'support_url' => ['nullable', 'string', 'url'],
+            'is_recent_updates_url_enabled' => ['nullable', 'boolean'],
+            'recent_updates_url' => ['nullable', 'string', 'url'],
+            'is_custom_link_url_enabled' => ['nullable', 'boolean'],
+            'custom_link_label' => ['nullable', 'string'],
+            'custom_link_url' => ['nullable', 'string', 'url'],
+            'tenant_id' => ['string', 'required'],
+        ];
     }
 }
