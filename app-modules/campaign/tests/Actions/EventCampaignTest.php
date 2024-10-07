@@ -50,6 +50,7 @@ use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
 use Illuminate\Support\Facades\Event as FakeEvent;
+use Spatie\LaravelSettings\Events\LoadingSettings;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
 it('will create the event records for segment', function (Collection $educatables) {
@@ -79,7 +80,9 @@ it('will create the event records for segment', function (Collection $educatable
             ],
         ]);
 
-    FakeEvent::fake();
+    FakeEvent::fake()->except([
+        LoadingSettings::class,
+    ]);
 
     $action->execute();
 

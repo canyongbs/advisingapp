@@ -34,48 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Theme\Settings;
+namespace AdvisingApp\Theme\Http\Controllers;
 
-use App\Settings\SettingsWithMedia;
-use AdvisingApp\Theme\Settings\SettingsProperties\ThemeSettingsProperty;
+use App\Models\Tenant;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use AdvisingApp\Theme\Settings\ThemeSettings;
+use AdvisingApp\Theme\Http\Requests\BrandedWebsiteLinksRequest;
 
-class ThemeSettings extends SettingsWithMedia
+class BrandedWebsiteLinksController extends Controller
 {
-    public bool $is_logo_active = false;
-
-    public bool $is_favicon_active = false;
-
-    public array $color_overrides = [];
-
-    public bool $has_dark_mode = true;
-
-    public bool $is_support_url_enabled = false;
-
-    public bool $is_recent_updates_url_enabled = false;
-
-    public bool $is_custom_link_url_enabled = false;
-
-    public ?string $url = null;
-
-    public ?string $support_url = null;
-
-    public ?string $recent_updates_url = null;
-
-    public ?string $custom_link_label = null;
-
-    public ?string $custom_link_url = null;
-
-    public ?string $changelog_url = null;
-
-    public ?string $product_knowledge_base_url = null;
-
-    public static function group(): string
+    public function __invoke(BrandedWebsiteLinksRequest $request): JsonResponse
     {
-        return 'theme';
-    }
+        $data = $request->validated();
 
-    public static function getSettingsPropertyModelClass(): string
-    {
-        return ThemeSettingsProperty::class;
+        $tenant = Tenant::findOrFail($data['tenant_id']);
+
+        $tenant->execute(function () use ($data) {
+            $settings = app(ThemeSettings::class);
+            $settings->is_support_url_enabled = $data['is_support_url_enabled'];
+            $settings->support_url = $data['support_url'];
+            $settings->is_recent_updates_url_enabled = $data['is_recent_updates_url_enabled'];
+            $settings->recent_updates_url = $data['recent_updates_url'];
+            $settings->is_custom_link_url_enabled = $data['is_custom_link_url_enabled'];
+            $settings->custom_link_label = $data['custom_link_label'];
+            $settings->custom_link_url = $data['custom_link_url'];
+            $settings->tenant_id = $data['tenant_id'];
+            $settings->save();
+        });
+
+        return response()->json([
+            'message' => 'Theme updated successfully!',
+        ]);
     }
 }
