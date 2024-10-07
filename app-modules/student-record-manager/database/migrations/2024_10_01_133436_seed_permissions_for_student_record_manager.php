@@ -17,6 +17,7 @@ return new class extends Migration
         'student_record_manager.*.delete' => 'Student Record Manager',
         'student_record_manager.*.restore' => 'Student Record Manager',
         'student_record_manager.*.force-delete' => 'Student Record Manager',
+        'student_record_manager.configuration' => 'Student Record Manager',
     ];
 
     private array $guards = [
