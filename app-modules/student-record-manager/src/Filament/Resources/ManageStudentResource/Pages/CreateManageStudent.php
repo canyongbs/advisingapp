@@ -4,12 +4,10 @@ namespace AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResou
 
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource;
-use Filament\Actions;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
@@ -85,12 +83,12 @@ class CreateManageStudent extends CreateRecord
                 Section::make('Personal Information')
                     ->schema([
                         TextInput::make('sisid')
-                            ->label('sisid')
+                            ->label('Student ID')
+                            ->required()
                             ->numeric(),
                         TextInput::make('otherid')
-                            ->label('otherid')
+                            ->label('Other ID')
                             ->numeric(),
-                        //Question above two
                         TextInput::make('first_name')
                             ->label('First Name')
                             ->string()
@@ -107,7 +105,6 @@ class CreateManageStudent extends CreateRecord
                             ->label('Preferred Name')
                             ->string()
                             ->maxLength(255),
-                        // TODO: Display this based on system configurable data format
                         DatePicker::make('birthdate')
                             ->label('Birthdate')
                             ->native(false)
@@ -175,21 +172,20 @@ class CreateManageStudent extends CreateRecord
                         Radio::make('email_bounce')
                             ->label('Email Bounce')
                             ->boolean(),
-                        //Question below all
                         Radio::make('dual')
                             ->label('Dual')
                             ->boolean(),
                         Radio::make('ferpa')
-                            ->label('Ferpa')
+                            ->label('FERPA')
                             ->boolean(),
                         DatePicker::make('dfw')
-                            ->label('Dfw')
+                            ->label('DFW')
                             ->native(false)
                             ->closeOnDateSelection()
                             ->format('Y-m-d')
                             ->displayFormat('Y-m-d'),
                         Radio::make('sap')
-                            ->label('Sap')
+                            ->label('SAP')
                             ->boolean(),
                         TextInput::make('holds')
                             ->label('Holds')
@@ -201,16 +197,16 @@ class CreateManageStudent extends CreateRecord
                             ->label('Ethnicity')
                             ->string(),
                         DateTimePicker::make('lastlmslogin')
-                            ->label('lastlmslogin')
+                            ->label('Last LMS login')
                             ->native(false)
                             ->closeOnDateSelection()
                             ->format('Y-m-d H:i:s')
                             ->displayFormat('Y-m-d H:i:s'),
                         TextInput::make('f_e_term')
-                            ->label('f_e_term')
+                            ->label('First Enrollement Term')
                             ->numeric(),
                         TextInput::make('mr_e_term')
-                            ->label('mr_e_term')
+                            ->label('Most Recent Enrollement Term')
                             ->numeric(),
 
                     ])

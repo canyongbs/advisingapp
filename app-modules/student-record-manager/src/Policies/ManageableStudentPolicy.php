@@ -34,12 +34,18 @@ class ManageableStudentPolicy
 
     public function update(Authenticatable $authenticatable, ManageableStudent $manageableStudent): Response
     {
-        return Response::deny('Manageable Students cannot be deleted.');
+        return $authenticatable->canOrElse(
+            abilities: "student_record_manager.{$manageableStudent->id}.update",
+            denyResponse: 'You do not have permission to update manageable student.'
+        );
     }
 
     public function delete(Authenticatable $authenticatable, ManageableStudent $manageableStudent): Response
     {
-        return Response::deny('Manageable Students cannot be deleted.');
+        return $authenticatable->canOrElse(
+            abilities: "student_record_manager.{$manageableStudent->id}.delete",
+            denyResponse: 'You do not have permission to delete manageable student.'
+        );
     }
 
     public function restore(Authenticatable $authenticatable, ManageableStudent $manageableStudent): Response
