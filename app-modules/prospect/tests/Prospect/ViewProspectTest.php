@@ -36,12 +36,15 @@
 
 use App\Models\User;
 
+use function Pest\Laravel\seed;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectFiles;
@@ -133,6 +136,10 @@ test('convert prospect to student', function () {
 
     actingAs($user);
 
+    seed([
+        ProspectStatusSeeder::class,
+    ]);
+
     $prospect = Prospect::factory()
         ->create();
 
@@ -149,6 +156,15 @@ test('convert prospect to student', function () {
 
     $prospect->refresh();
 
+    $status = ProspectStatus::query()
+        ->where('classification', 'converted')
+        ->where('name', 'Converted')
+        ->where('is_system_protected', true)
+        ->firstOrFail();
+
+    expect($prospect)
+        ->status->toEqual($status);
+
     expect($prospect->student)
         ->sisid->toBe($student->sisid)
         ->full_name->toBe($student->full_name)
@@ -163,6 +179,10 @@ test('disassociate student from prospect', function () {
 
     actingAs($user);
 
+    seed([
+        ProspectStatusSeeder::class,
+    ]);
+
     $prospect = Prospect::factory()
         ->for(Student::factory(), 'student')
         ->create();
@@ -175,6 +195,15 @@ test('disassociate student from prospect', function () {
         )->assertSuccessful();
 
     $prospect->refresh();
+
+    $status = ProspectStatus::query()
+        ->where('classification', 'new')
+        ->where('name', 'New')
+        ->where('is_system_protected', true)
+        ->firstOrFail();
+
+    expect($prospect)
+        ->status->toEqual($status);
 
     expect($prospect->student()->exists())->toBeFalse();
 });
