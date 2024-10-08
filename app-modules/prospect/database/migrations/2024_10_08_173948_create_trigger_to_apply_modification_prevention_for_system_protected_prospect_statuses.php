@@ -34,46 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Models;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use DateTimeInterface;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-
-/**
- * @mixin IdeHelperProspectStatus
- */
-class ProspectStatus extends BaseModel implements Auditable
-{
-    use SoftDeletes;
-    use AuditableTrait;
-
-    protected $fillable = [
-        'classification',
-        'name',
-        'color',
-        'sort',
-    ];
-
-    protected $casts = [
-        'classification' => SystemProspectClassification::class,
-        'color' => ProspectStatusColorOptions::class,
-        'sort' => 'integer',
-        'is_system_protected' => 'boolean',
-    ];
-
-    public function prospects(): HasMany
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->hasMany(Prospect::class, 'status_id');
+        Schema::table('prospect_statuses', function (Blueprint $table) {
+            $table->trigger(
+                name: 'prevent_modification_of_system_protected_rows',
+                action: 'prevent_modification_of_system_protected_rows()',
+                fire: 'BEFORE UPDATE OR DELETE',
+            )
+                ->forEachRow()
+                ->replace(true);
+        });
     }
 
-    protected function serializeDate(DateTimeInterface $date): string
+    public function down(): void
     {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+        Schema::table('prospect_statuses', function (Blueprint $table) {
+            $table->dropTriggerIfExists('prevent_modification_of_system_protected_rows');
+        });
     }
-}
+};

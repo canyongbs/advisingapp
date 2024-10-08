@@ -40,7 +40,11 @@ use Filament\Actions\Action;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+use App\Features\ProspectStatusSystemProtectionAndAutoAssignment;
 
 class ConvertToStudent extends Action
 {
@@ -60,7 +64,7 @@ class ConvertToStudent extends Action
                     ->label('Select Student')
                     ->searchable(),
             ])
-            ->action(function ($data, $record) {
+            ->action(function ($data, Prospect $record) {
                 /** @var Student $student */
                 $student = Student::find($data['student_id']);
 
@@ -76,6 +80,16 @@ class ConvertToStudent extends Action
                 }
 
                 $record->student()->associate($student);
+
+                if (ProspectStatusSystemProtectionAndAutoAssignment::active()) {
+                    $record->status()->associate(
+                        ProspectStatus::query()
+                            ->where('classification', SystemProspectClassification::Converted)
+                            ->where('name', 'Converted')
+                            ->where('is_system_protected', true)
+                            ->firstOrFail()
+                    );
+                }
 
                 $record->save();
 

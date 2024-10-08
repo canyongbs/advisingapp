@@ -34,46 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Models;
+use Illuminate\Database\Migrations\Migration;
+use App\Features\ProspectStatusSystemProtectionAndAutoAssignment;
 
-use DateTimeInterface;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-
-/**
- * @mixin IdeHelperProspectStatus
- */
-class ProspectStatus extends BaseModel implements Auditable
-{
-    use SoftDeletes;
-    use AuditableTrait;
-
-    protected $fillable = [
-        'classification',
-        'name',
-        'color',
-        'sort',
-    ];
-
-    protected $casts = [
-        'classification' => SystemProspectClassification::class,
-        'color' => ProspectStatusColorOptions::class,
-        'sort' => 'integer',
-        'is_system_protected' => 'boolean',
-    ];
-
-    public function prospects(): HasMany
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->hasMany(Prospect::class, 'status_id');
+        ProspectStatusSystemProtectionAndAutoAssignment::activate();
     }
 
-    protected function serializeDate(DateTimeInterface $date): string
+    public function down(): void
     {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+        ProspectStatusSystemProtectionAndAutoAssignment::deactivate();
     }
-}
+};
