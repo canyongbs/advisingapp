@@ -80,8 +80,9 @@ class Login extends FilamentLogin
     {
         $themeSettings = app(ThemeSettings::class);
 
-        $this->themeChangelogUrl = ! empty($themeSettings->changelog_url) ? $themeSettings->changelog_url : 'https://advising.app/changelog/';
+        $this->themeChangelogUrl = ! empty($themeSettings->changelog_url) ? $themeSettings->changelog_url : 'https://github.com/canyongbs/advisingapp/releases';
 
+        $this->productKnowledgebaseUrl = ! empty($themeSettings->product_knowledge_base_url) ? $themeSettings->product_knowledge_base_url : 'https://canyongbs.aiding.app/portal/categories/9bcc47d1-05be-40d2-bf95-9bd719209b06';
         $this->productKnowledgebaseUrl = ! empty($themeSettings->product_knowledge_base_url) ? $themeSettings->product_knowledge_base_url : 'https://canyongbs.aiding.app/portal/categories/9bcc47d1-05be-40d2-bf95-9bd719209b06';
     }
 
@@ -259,44 +260,44 @@ class Login extends FilamentLogin
                     ->schema([
                         $this->getEmailFormComponent()
                             ->label('Email')
-                            ->hidden(fn (Login $livewire) => $livewire->needsMFA)
+                            ->hidden(fn(Login $livewire) => $livewire->needsMFA)
                             ->dehydratedWhenHidden(),
                         $this->getPasswordFormComponent()
-                            ->hidden(fn (Login $livewire) => $livewire->needsMFA)
+                            ->hidden(fn(Login $livewire) => $livewire->needsMFA)
                             ->dehydratedWhenHidden(),
                         $this->getRememberFormComponent()
-                            ->hidden(fn (Login $livewire) => $livewire->needsMFA)
+                            ->hidden(fn(Login $livewire) => $livewire->needsMFA)
                             ->dehydratedWhenHidden(),
                         TextInput::make('code')
                             ->label(
-                                fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                                fn(Login $livewire) => ! $livewire->usingRecoveryCode
                                     ? 'Multifactor Authentication Code'
                                     : 'Multifactor Recovery Code'
                             )
                             ->placeholder(
-                                fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                                fn(Login $livewire) => ! $livewire->usingRecoveryCode
                                     ? '###-###'
                                     : 'abcdef-98765'
                             )
                             ->mask(
-                                fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                                fn(Login $livewire) => ! $livewire->usingRecoveryCode
                                     ? '999-999'
                                     : null
                             )
                             ->stripCharacters(
-                                fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                                fn(Login $livewire) => ! $livewire->usingRecoveryCode
                                     ? '-'
                                     : null
                             )
                             ->helperText(
-                                fn (Login $livewire) => $livewire->usingRecoveryCode
+                                fn(Login $livewire) => $livewire->usingRecoveryCode
                                     ? 'Enter one of your recovery codes provided when you enabled multifactor authentication. Recovery codes are one-time use only. If you have used all of your recovery codes, you will need to contact your administrator to reset your multifactor authentication.'
                                     : null
                             )
-                            ->numeric(fn (Login $livewire) => ! $livewire->usingRecoveryCode)
-                            ->string(fn (Login $livewire) => $livewire->usingRecoveryCode)
-                            ->required(fn (Login $livewire) => $livewire->needsMFA)
-                            ->hidden(fn (Login $livewire) => ! $livewire->needsMFA)
+                            ->numeric(fn(Login $livewire) => ! $livewire->usingRecoveryCode)
+                            ->string(fn(Login $livewire) => $livewire->usingRecoveryCode)
+                            ->required(fn(Login $livewire) => $livewire->needsMFA)
+                            ->hidden(fn(Login $livewire) => ! $livewire->needsMFA)
                             ->dehydratedWhenHidden(),
                     ])
                     ->statePath('data'),
