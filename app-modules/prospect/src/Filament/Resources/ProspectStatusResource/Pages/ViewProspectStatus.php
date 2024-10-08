@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
-use Filament\Actions;
+use Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
@@ -91,7 +91,7 @@ class ViewProspectStatus extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 }
