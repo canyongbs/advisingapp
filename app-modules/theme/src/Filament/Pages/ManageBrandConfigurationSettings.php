@@ -176,9 +176,9 @@ class ManageBrandConfigurationSettings extends SettingsPage
                                     ->url()
                                     ->visible(fn (Get $get) => $get('is_custom_link_url_enabled'))
                                     ->columnSpanFull(),
-                            ])
-                            ->visible(fn () => AddBrandedWebsitesToThemeSettingsFeature::active()),
-                    ]),
+                            ]),
+                    ])
+                    ->visible(fn () => AddBrandedWebsitesToThemeSettingsFeature::active()),
 
                 Section::make('Changelog URL')
                     ->aside()
