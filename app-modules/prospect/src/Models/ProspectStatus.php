@@ -64,6 +64,7 @@ class ProspectStatus extends BaseModel implements Auditable
         'classification' => SystemProspectClassification::class,
         'color' => ProspectStatusColorOptions::class,
         'sort' => 'integer',
+        'is_system_protected' => 'boolean',
     ];
 
     public function prospects(): HasMany
