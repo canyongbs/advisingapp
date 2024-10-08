@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Prospect\Database\Seeders;
 
+use Illuminate\Database\Seeder;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Features\ProspectStatusSystemProtectionAndAutoAssignment;
-use Illuminate\Database\Seeder;
 
 class ProspectStatusSeeder extends Seeder
 {
@@ -53,7 +53,7 @@ class ProspectStatusSeeder extends Seeder
                         'classification' => SystemProspectClassification::New,
                         'name' => 'New',
                         'color' => ProspectStatusColorOptions::Info->value,
-                        ... ProspectStatusSystemProtectionAndAutoAssignment::active() ? [
+                        ...ProspectStatusSystemProtectionAndAutoAssignment::active() ? [
                             'is_system_protected' => true,
                         ] : [],
                     ],
@@ -71,7 +71,7 @@ class ProspectStatusSeeder extends Seeder
                         'classification' => SystemProspectClassification::Converted,
                         'name' => 'Converted',
                         'color' => ProspectStatusColorOptions::Success->value,
-                        ... ProspectStatusSystemProtectionAndAutoAssignment::active() ? [
+                        ...ProspectStatusSystemProtectionAndAutoAssignment::active() ? [
                             'is_system_protected' => true,
                         ] : [],
                     ],

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
+use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
@@ -46,7 +47,6 @@ use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Features\ProspectStatusSystemProtectionAndAutoAssignment;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
-use Filament\Actions\EditAction;
 
 class ViewProspectStatus extends ViewRecord
 {
