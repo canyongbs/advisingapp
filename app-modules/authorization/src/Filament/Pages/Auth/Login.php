@@ -43,7 +43,6 @@ use Livewire\Attributes\Locked;
 use Filament\Forms\Components\TextInput;
 use Filament\Models\Contracts\FilamentUser;
 use AdvisingApp\Theme\Settings\ThemeSettings;
-use App\Features\AddUrlToThemeSettingsFeature;
 use Illuminate\Validation\ValidationException;
 use Filament\Pages\Auth\Login as FilamentLogin;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
@@ -81,9 +80,9 @@ class Login extends FilamentLogin
     {
         $themeSettings = app(ThemeSettings::class);
 
-        $this->themeChangelogUrl = AddUrlToThemeSettingsFeature::active() && ! empty($themeSettings->changelog_url) ? $themeSettings->changelog_url : 'https://github.com/canyongbs/advisingapp/releases';
+        $this->themeChangelogUrl = ! empty($themeSettings->changelog_url) ? $themeSettings->changelog_url : 'https://github.com/canyongbs/advisingapp/releases';
 
-        $this->productKnowledgebaseUrl = AddUrlToThemeSettingsFeature::active() && ! empty($themeSettings->product_knowledge_base_url) ? $themeSettings->product_knowledge_base_url : 'https://canyongbs.aiding.app/portal/categories/9bcc47d1-05be-40d2-bf95-9bd719209b06';
+        $this->productKnowledgebaseUrl = ! empty($themeSettings->product_knowledge_base_url) ? $themeSettings->product_knowledge_base_url : 'https://canyongbs.aiding.app/portal/categories/9bcc47d1-05be-40d2-bf95-9bd719209b06';
     }
 
     public function authenticate(): ?LoginResponse
