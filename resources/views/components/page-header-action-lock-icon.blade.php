@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,48 +30,16 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
 
-namespace AdvisingApp\Prospect\Models;
+@props(['condition', 'identifier', 'tooltip'])
 
-use DateTimeInterface;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-
-/**
- * @mixin IdeHelperProspectStatus
- */
-class ProspectStatus extends BaseModel implements Auditable
-{
-    use SoftDeletes;
-    use AuditableTrait;
-
-    protected $fillable = [
-        'classification',
-        'name',
-        'color',
-        'sort',
-    ];
-
-    protected $casts = [
-        'classification' => SystemProspectClassification::class,
-        'color' => ProspectStatusColorOptions::class,
-        'sort' => 'integer',
-        'is_system_protected' => 'boolean',
-    ];
-
-    public function prospects(): HasMany
-    {
-        return $this->hasMany(Prospect::class, 'status_id');
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
-    }
-}
+@if ($condition())
+    <x-filament::icon-button
+        data-identifier="{{ $identifier }}"
+        icon="heroicon-m-lock-closed"
+        color="gray"
+        size="lg"
+        tooltip="{{ $tooltip }}"
+    />
+@endif

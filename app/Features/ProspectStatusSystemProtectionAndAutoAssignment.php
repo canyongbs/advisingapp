@@ -34,46 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Models;
+namespace App\Features;
 
-use DateTimeInterface;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @mixin IdeHelperProspectStatus
- */
-class ProspectStatus extends BaseModel implements Auditable
+class ProspectStatusSystemProtectionAndAutoAssignment extends AbstractFeatureFlag
 {
-    use SoftDeletes;
-    use AuditableTrait;
-
-    protected $fillable = [
-        'classification',
-        'name',
-        'color',
-        'sort',
-    ];
-
-    protected $casts = [
-        'classification' => SystemProspectClassification::class,
-        'color' => ProspectStatusColorOptions::class,
-        'sort' => 'integer',
-        'is_system_protected' => 'boolean',
-    ];
-
-    public function prospects(): HasMany
+    public function resolve(mixed $scope): mixed
     {
-        return $this->hasMany(Prospect::class, 'status_id');
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+        return false;
     }
 }

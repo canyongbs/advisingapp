@@ -36,17 +36,36 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
-use Filament\Actions;
+use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
+use Filament\Support\Facades\FilamentView;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Features\ProspectStatusSystemProtectionAndAutoAssignment;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
 
 class ViewProspectStatus extends ViewRecord
 {
     protected static string $resource = ProspectStatusResource::class;
+
+    public function boot(): void
+    {
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER,
+            fn (): View => view('components.page-header-action-lock-icon', [
+                'condition' => function () {
+                    return ProspectStatusSystemProtectionAndAutoAssignment::active() && $this->getRecord()?->is_system_protected;
+                },
+                'identifier' => 'prospect_status_system_protected',
+                'tooltip' => 'This record is protected as it is a system status.',
+            ]),
+            scopes: static::class,
+        );
+    }
 
     public function infolist(Infolist $infolist): Infolist
     {
@@ -72,7 +91,7 @@ class ViewProspectStatus extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 }

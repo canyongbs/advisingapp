@@ -34,46 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Models;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use DateTimeInterface;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-
-/**
- * @mixin IdeHelperProspectStatus
- */
-class ProspectStatus extends BaseModel implements Auditable
-{
-    use SoftDeletes;
-    use AuditableTrait;
-
-    protected $fillable = [
-        'classification',
-        'name',
-        'color',
-        'sort',
-    ];
-
-    protected $casts = [
-        'classification' => SystemProspectClassification::class,
-        'color' => ProspectStatusColorOptions::class,
-        'sort' => 'integer',
-        'is_system_protected' => 'boolean',
-    ];
-
-    public function prospects(): HasMany
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->hasMany(Prospect::class, 'status_id');
+        Schema::createFunctionOrReplace(
+            name: 'prevent_modification_of_system_protected_rows',
+            parameters: [],
+            return: 'TRIGGER',
+            language: 'plpgsql',
+            body: <<<SQL
+                BEGIN
+                    IF OLD.is_system_protected THEN
+                        RAISE EXCEPTION 'Cannot modify system protected rows';
+                    END IF;
+                    RETURN NEW;
+                END;
+            SQL,
+            options: [
+                'security' => 'invoker',
+                'volatility' => 'immutable',
+                'parallel' => 'safe',
+            ]
+        );
     }
 
-    protected function serializeDate(DateTimeInterface $date): string
+    public function down(): void
     {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+        Schema::dropFunctionIfExists('prevent_modification_of_system_protected_rows');
     }
-}
+};
