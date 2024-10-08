@@ -74,7 +74,7 @@ class PortalSettings extends SettingsWithMedia
 
     public ?string $footer_color = null;
 
-    public ?string $footer_copyright_statement = null;
+    public ?array $footer_copyright_statement = null;
 
     /**
     * Knowledge Base Portal
