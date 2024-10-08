@@ -148,3 +148,40 @@ test('EditProspectStatus is gated with proper access control', function () {
     assertEquals($request['name'], $prospectStatus->fresh()->name);
     assertEquals($request['color'], $prospectStatus->fresh()->color);
 });
+
+test('EditProspectStatus is gated with proper system protection access control', function () {
+    $prospectStatus = ProspectStatus::factory()->create(['is_system_protected' => true]);
+
+    asSuperAdmin()
+        ->get(
+            ProspectStatusResource::getUrl('edit', [
+                'record' => $prospectStatus,
+            ])
+        )->assertForbidden();
+
+    livewire(ProspectStatusResource\Pages\EditProspectStatus::class, [
+        'record' => $prospectStatus->getRouteKey(),
+    ])
+        ->assertForbidden();
+
+    $prospectStatus = ProspectStatus::factory()->create();
+
+    asSuperAdmin()
+        ->get(
+            ProspectStatusResource::getUrl('edit', [
+                'record' => $prospectStatus,
+            ])
+        )->assertSuccessful();
+
+    $request = collect(EditProspectStatusRequestFactory::new()->create());
+
+    livewire(ProspectStatusResource\Pages\EditProspectStatus::class, [
+        'record' => $prospectStatus->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    assertEquals($request['name'], $prospectStatus->fresh()->name);
+    assertEquals($request['color'], $prospectStatus->fresh()->color);
+});
