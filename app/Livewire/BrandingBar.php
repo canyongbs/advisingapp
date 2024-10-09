@@ -40,11 +40,11 @@ use App\Models\User;
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
 
-class DismissBrandingBar extends Component
+class BrandingBar extends Component
 {
-    public $isVisible = true;
+    public bool $isVisible = true;
 
-    public function dismiss()
+    public function dismiss(): void
     {
         // Hide the branding bar
         $this->isVisible = false;
@@ -61,6 +61,6 @@ class DismissBrandingBar extends Component
 
     public function render(): View
     {
-        return view('vendor.filament-panels.components.dismiss-branding-bar');
+        return view('vendor.filament-panels.components.branding-bar');
     }
 }

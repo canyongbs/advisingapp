@@ -78,14 +78,7 @@ class ManageCollegeBrandingSettings extends SettingsPage
                     ->label('Enable Branding Bar')
                     ->required()
                     ->live()
-                    ->columnSpanFull()
-                    ->reactive() // Make the toggle reactive to handle changes dynamically
-                    ->afterStateUpdated(function (callable $set, $state) {
-                        // When 'is_enabled' is turned off, set 'dismissible' to false
-                        if (! $state && EnableBrandingBar::active()) {
-                            $set('dismissible', false);
-                        }
-                    }),
+                    ->columnSpanFull(), 
                 Toggle::make('dismissible')
                     ->inline(false)
                     ->label('Dismissible')

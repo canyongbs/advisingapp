@@ -44,7 +44,6 @@ use AdvisingApp\Team\Models\Team;
 use Spatie\MediaLibrary\HasMedia;
 use App\Support\HasAdvancedFilter;
 use AdvisingApp\Ai\Models\AiThread;
-use App\Features\EnableBrandingBar;
 use AdvisingApp\Team\Models\TeamUser;
 use AdvisingApp\Segment\Models\Segment;
 use App\Filament\Resources\UserResource;
@@ -141,7 +140,40 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'last_chat_ping_at' => 'immutable_datetime',
     ];
 
-    protected $fillable = [];
+    protected $fillable = [
+        'emplid',
+        'name',
+        'email',
+        'password',
+        'locale',
+        'type',
+        'is_external',
+        'bio',
+        'is_bio_visible_on_profile',
+        'are_pronouns_visible_on_profile',
+        'default_assistant_chat_folders_created',
+        'avatar_url',
+        'are_teams_visible_on_profile',
+        'timezone',
+        'is_division_visible_on_profile',
+        'has_enabled_public_profile',
+        'public_profile_slug',
+        'office_hours_are_enabled',
+        'appointments_are_restricted_to_existing_students',
+        'office_hours',
+        'out_of_office_is_enabled',
+        'out_of_office_starts_at',
+        'out_of_office_ends_at',
+        'is_email_visible_on_profile',
+        'phone_number',
+        'is_phone_number_visible_on_profile',
+        'working_hours_are_enabled',
+        'are_working_hours_visible_on_profile',
+        'working_hours',
+        'job_title',
+        'last_chat_ping_at',
+        'is_branding_bar_dismissed',
+    ];
 
     public $orderable = [
         'id',
@@ -161,82 +193,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'roles.title',
         'locale',
     ];
-
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-
-        if (EnableBrandingBar::active()) {
-            $this->fillable = [
-                'emplid',
-                'name',
-                'email',
-                'password',
-                'locale',
-                'type',
-                'is_external',
-                'bio',
-                'is_bio_visible_on_profile',
-                'are_pronouns_visible_on_profile',
-                'default_assistant_chat_folders_created',
-                'avatar_url',
-                'are_teams_visible_on_profile',
-                'timezone',
-                'is_division_visible_on_profile',
-                'has_enabled_public_profile',
-                'public_profile_slug',
-                'office_hours_are_enabled',
-                'appointments_are_restricted_to_existing_students',
-                'office_hours',
-                'out_of_office_is_enabled',
-                'out_of_office_starts_at',
-                'out_of_office_ends_at',
-                'is_email_visible_on_profile',
-                'phone_number',
-                'is_phone_number_visible_on_profile',
-                'working_hours_are_enabled',
-                'are_working_hours_visible_on_profile',
-                'working_hours',
-                'job_title',
-                'last_chat_ping_at',
-                'is_branding_bar_dismissed',
-            ];
-        } else {
-            $this->fillable = [
-                'emplid',
-                'name',
-                'email',
-                'password',
-                'locale',
-                'type',
-                'is_external',
-                'bio',
-                'is_bio_visible_on_profile',
-                'are_pronouns_visible_on_profile',
-                'default_assistant_chat_folders_created',
-                'avatar_url',
-                'are_teams_visible_on_profile',
-                'timezone',
-                'is_division_visible_on_profile',
-                'has_enabled_public_profile',
-                'public_profile_slug',
-                'office_hours_are_enabled',
-                'appointments_are_restricted_to_existing_students',
-                'office_hours',
-                'out_of_office_is_enabled',
-                'out_of_office_starts_at',
-                'out_of_office_ends_at',
-                'is_email_visible_on_profile',
-                'phone_number',
-                'is_phone_number_visible_on_profile',
-                'working_hours_are_enabled',
-                'are_working_hours_visible_on_profile',
-                'working_hours',
-                'job_title',
-                'last_chat_ping_at',
-            ];
-        }
-    }
 
     public function defaultAssistantChatFoldersHaveBeenCreated(): bool
     {
