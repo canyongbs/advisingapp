@@ -50,10 +50,12 @@ class StudentManageableImporter extends Importer
     {
         return [
             ImportColumn::make('sisid')
+                ->label('Student ID')
                 ->requiredMapping()
                 ->example('########')
                 ->numeric(),
             ImportColumn::make('otherid')
+                ->label('Other ID')
                 ->example('##########')
                 ->numeric(),
             ImportColumn::make('first_name')
