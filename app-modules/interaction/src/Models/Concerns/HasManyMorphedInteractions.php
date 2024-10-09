@@ -50,4 +50,10 @@ trait HasManyMorphedInteractions
             id: 'interactable_id'
         );
     }
+
+    public function orderedInteractions(): MorphMany
+    {
+        return $this->interactions()
+            ->orderBy('start_datetime', 'asc');
+    }
 }

@@ -34,47 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Observers;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
-
-class InteractionObserver
-{
-    public function creating(Interaction $interaction): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (is_null($interaction->user_id) && ! is_null(auth()->user())) {
-            $interaction->user_id = auth()->user()->id;
-        }
-
-        if (is_null($interaction->start_datetime)) {
-            $interaction->start_datetime = now();
-        }
+        Schema::table('prospect_statuses', function (Blueprint $table) {
+            $table->boolean('is_system_protected')->default(false);
+        });
     }
 
-    public function created(Interaction $interaction): void
+    public function down(): void
     {
-        $user = auth()->user();
-
-        if ($user instanceof User) {
-            TriggeredAutoSubscription::dispatch($user, $interaction);
-        }
-
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordCreated::dispatch($entity, $interaction);
+        Schema::table('prospect_statuses', function (Blueprint $table) {
+            $table->dropColumn('is_system_protected');
+        });
     }
-
-    public function deleted(Interaction $interaction): void
-    {
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordDeleted::dispatch($entity, $interaction);
-    }
-}
+};

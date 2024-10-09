@@ -34,47 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Observers;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
-
-class InteractionObserver
-{
-    public function creating(Interaction $interaction): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (is_null($interaction->user_id) && ! is_null(auth()->user())) {
-            $interaction->user_id = auth()->user()->id;
-        }
-
-        if (is_null($interaction->start_datetime)) {
-            $interaction->start_datetime = now();
-        }
+        Schema::createFunctionOrReplace(
+            name: 'prevent_modification_of_system_protected_rows',
+            parameters: [],
+            return: 'TRIGGER',
+            language: 'plpgsql',
+            body: <<<SQL
+                BEGIN
+                    IF OLD.is_system_protected THEN
+                        RAISE EXCEPTION 'Cannot modify system protected rows';
+                    END IF;
+                    RETURN NEW;
+                END;
+            SQL,
+            options: [
+                'security' => 'invoker',
+                'volatility' => 'immutable',
+                'parallel' => 'safe',
+            ]
+        );
     }
 
-    public function created(Interaction $interaction): void
+    public function down(): void
     {
-        $user = auth()->user();
-
-        if ($user instanceof User) {
-            TriggeredAutoSubscription::dispatch($user, $interaction);
-        }
-
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordCreated::dispatch($entity, $interaction);
+        Schema::dropFunctionIfExists('prevent_modification_of_system_protected_rows');
     }
-
-    public function deleted(Interaction $interaction): void
-    {
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordDeleted::dispatch($entity, $interaction);
-    }
-}
+};

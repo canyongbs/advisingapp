@@ -34,47 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Observers;
+namespace AdvisingApp\Theme\Http\Controllers;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use App\Models\Tenant;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use AdvisingApp\Theme\Settings\ThemeSettings;
+use AdvisingApp\Theme\Http\Requests\BrandedWebsiteLinksRequest;
 
-class InteractionObserver
+class BrandedWebsiteLinksController extends Controller
 {
-    public function creating(Interaction $interaction): void
+    public function __invoke(BrandedWebsiteLinksRequest $request): JsonResponse
     {
-        if (is_null($interaction->user_id) && ! is_null(auth()->user())) {
-            $interaction->user_id = auth()->user()->id;
-        }
+        $data = $request->validated();
 
-        if (is_null($interaction->start_datetime)) {
-            $interaction->start_datetime = now();
-        }
-    }
+        $tenant = Tenant::findOrFail($data['tenant_id']);
 
-    public function created(Interaction $interaction): void
-    {
-        $user = auth()->user();
+        $tenant->execute(function () use ($data) {
+            $settings = app(ThemeSettings::class);
+            $settings->is_support_url_enabled = $data['is_support_url_enabled'];
+            $settings->support_url = $data['support_url'];
+            $settings->is_recent_updates_url_enabled = $data['is_recent_updates_url_enabled'];
+            $settings->recent_updates_url = $data['recent_updates_url'];
+            $settings->is_custom_link_url_enabled = $data['is_custom_link_url_enabled'];
+            $settings->custom_link_label = $data['custom_link_label'];
+            $settings->custom_link_url = $data['custom_link_url'];
+            $settings->tenant_id = $data['tenant_id'];
+            $settings->save();
+        });
 
-        if ($user instanceof User) {
-            TriggeredAutoSubscription::dispatch($user, $interaction);
-        }
-
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordCreated::dispatch($entity, $interaction);
-    }
-
-    public function deleted(Interaction $interaction): void
-    {
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordDeleted::dispatch($entity, $interaction);
+        return response()->json([
+            'message' => 'Theme updated successfully!',
+        ]);
     }
 }

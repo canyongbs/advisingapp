@@ -40,6 +40,7 @@ use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Features\ProspectStatusSystemProtectionAndAutoAssignment;
 
 class ProspectStatusPolicy
 {
@@ -78,6 +79,10 @@ class ProspectStatusPolicy
 
     public function update(Authenticatable $authenticatable, ProspectStatus $prospectStatus): Response
     {
+        if (ProspectStatusSystemProtectionAndAutoAssignment::active() && $prospectStatus->is_system_protected) {
+            return Response::deny('You cannot update this prospect status because it is system protected.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["prospect_status.{$prospectStatus->id}.update"],
             denyResponse: 'You do not have permission to update prospect statuses.'
@@ -86,6 +91,10 @@ class ProspectStatusPolicy
 
     public function delete(Authenticatable $authenticatable, ProspectStatus $prospectStatus): Response
     {
+        if (ProspectStatusSystemProtectionAndAutoAssignment::active() && $prospectStatus->is_system_protected) {
+            return Response::deny('You cannot delete this prospect status because it is system protected.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["prospect_status.{$prospectStatus->id}.delete"],
             denyResponse: 'You do not have permission to delete prospect statuses.'
@@ -102,6 +111,10 @@ class ProspectStatusPolicy
 
     public function forceDelete(Authenticatable $authenticatable, ProspectStatus $prospectStatus): Response
     {
+        if (ProspectStatusSystemProtectionAndAutoAssignment::active() && $prospectStatus->is_system_protected) {
+            return Response::deny('You cannot delete this prospect status because it is system protected.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["prospect_status.{$prospectStatus->id}.force-delete"],
             denyResponse: 'You do not have permission to force delete prospect statuses.'

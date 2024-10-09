@@ -34,47 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Observers;
+namespace AdvisingApp\Theme\Http\Requests;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use Illuminate\Foundation\Http\FormRequest;
 
-class InteractionObserver
+class BrandedWebsiteLinksRequest extends FormRequest
 {
-    public function creating(Interaction $interaction): void
+    public function rules(): array
     {
-        if (is_null($interaction->user_id) && ! is_null(auth()->user())) {
-            $interaction->user_id = auth()->user()->id;
-        }
-
-        if (is_null($interaction->start_datetime)) {
-            $interaction->start_datetime = now();
-        }
-    }
-
-    public function created(Interaction $interaction): void
-    {
-        $user = auth()->user();
-
-        if ($user instanceof User) {
-            TriggeredAutoSubscription::dispatch($user, $interaction);
-        }
-
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordCreated::dispatch($entity, $interaction);
-    }
-
-    public function deleted(Interaction $interaction): void
-    {
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordDeleted::dispatch($entity, $interaction);
+        return [
+            'is_support_url_enabled' => ['nullable', 'boolean'],
+            'support_url' => ['nullable', 'string', 'url'],
+            'is_recent_updates_url_enabled' => ['nullable', 'boolean'],
+            'recent_updates_url' => ['nullable', 'string', 'url'],
+            'is_custom_link_url_enabled' => ['nullable', 'boolean'],
+            'custom_link_label' => ['nullable', 'string'],
+            'custom_link_url' => ['nullable', 'string', 'url'],
+            'tenant_id' => ['string', 'required'],
+        ];
     }
 }

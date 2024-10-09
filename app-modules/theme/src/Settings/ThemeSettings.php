@@ -49,7 +49,21 @@ class ThemeSettings extends SettingsWithMedia
 
     public bool $has_dark_mode = true;
 
+    public bool $is_support_url_enabled = false;
+
+    public bool $is_recent_updates_url_enabled = false;
+
+    public bool $is_custom_link_url_enabled = false;
+
     public ?string $url = null;
+
+    public ?string $support_url = null;
+
+    public ?string $recent_updates_url = null;
+
+    public ?string $custom_link_label = null;
+
+    public ?string $custom_link_url = null;
 
     public ?string $changelog_url = null;
 

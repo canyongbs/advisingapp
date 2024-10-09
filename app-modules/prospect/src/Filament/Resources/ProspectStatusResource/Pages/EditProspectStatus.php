@@ -36,8 +36,9 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
-use Filament\Actions;
 use Filament\Forms\Form;
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
@@ -80,8 +81,8 @@ class EditProspectStatus extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            ViewAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

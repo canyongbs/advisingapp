@@ -123,9 +123,11 @@ class AiThread extends BaseModel
             get: function (): ?CarbonInterface {
                 $timezone = app(DisplaySettings::class)->getTimezone();
 
-                $date = $this->messages_max_created_at ?? $this->messages()
-                    ->latest()
-                    ->value('created_at');
+                $date = array_key_exists('messages_max_created_at', $this->getAttributes())
+                    ? $this->getAttributeValue('messages_max_created_at')
+                    : $this->messages()
+                        ->latest()
+                        ->value('created_at');
 
                 if (! $date) {
                     return null;

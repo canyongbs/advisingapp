@@ -36,14 +36,17 @@
 
 use App\Models\User;
 
+use function Pest\Laravel\seed;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Tables\Actions\AttachAction;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\EditProspect;
 use AdvisingApp\Prospect\Tests\Prospect\RequestFactories\EditProspectRequestFactory;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
@@ -197,6 +200,10 @@ test('convert prospect to student', function () {
 
     actingAs($user);
 
+    seed([
+        ProspectStatusSeeder::class,
+    ]);
+
     $prospect = Prospect::factory()
         ->create();
 
@@ -212,6 +219,15 @@ test('convert prospect to student', function () {
         )->assertSuccessful();
 
     $prospect->refresh();
+
+    $status = ProspectStatus::query()
+        ->where('classification', 'converted')
+        ->where('name', 'Converted')
+        ->where('is_system_protected', true)
+        ->firstOrFail();
+
+    expect($prospect)
+        ->status->toEqual($status);
 
     expect($prospect->student)
         ->sisid->toBe($student->sisid)

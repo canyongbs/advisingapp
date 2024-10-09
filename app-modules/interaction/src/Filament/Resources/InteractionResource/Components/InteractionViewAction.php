@@ -34,47 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Observers;
+namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Components;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 
-class InteractionObserver
+class InteractionViewAction extends ViewAction
 {
-    public function creating(Interaction $interaction): void
+    protected function setUp(): void
     {
-        if (is_null($interaction->user_id) && ! is_null(auth()->user())) {
-            $interaction->user_id = auth()->user()->id;
-        }
+        parent::setUp();
 
-        if (is_null($interaction->start_datetime)) {
-            $interaction->start_datetime = now();
-        }
-    }
-
-    public function created(Interaction $interaction): void
-    {
-        $user = auth()->user();
-
-        if ($user instanceof User) {
-            TriggeredAutoSubscription::dispatch($user, $interaction);
-        }
-
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordCreated::dispatch($entity, $interaction);
-    }
-
-    public function deleted(Interaction $interaction): void
-    {
-        /** @var Model $entity */
-        $entity = $interaction->interactable;
-
-        TimelineableRecordDeleted::dispatch($entity, $interaction);
+        $this->infolist(
+            [
+                TextEntry::make('user.name')
+                    ->label('Created By'),
+                Fieldset::make('Content')
+                    ->schema([
+                        TextEntry::make('subject')
+                            ->hidden(fn ($state): bool => blank($state))
+                            ->columnSpanFull(),
+                        TextEntry::make('description')
+                            ->getStateUsing(fn (Interaction $interaction): string => $interaction->description ?? 'N/A')
+                            ->columnSpanFull(),
+                    ]),
+                Fieldset::make('Interaction Information')
+                    ->schema([
+                        TextEntry::make('type.name')
+                            ->label('Type'),
+                        TextEntry::make('start_datetime')
+                            ->label('Start Date and Time')
+                            ->hidden(fn (Interaction $interaction): bool => is_null($interaction->start_datetime)),
+                        TextEntry::make('end_datetime')
+                            ->label('End Date and Time')
+                            ->hidden(fn (Interaction $interaction): bool => is_null($interaction->end_datetime)),
+                    ]),
+            ]
+        );
     }
 }

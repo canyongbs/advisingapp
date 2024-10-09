@@ -40,6 +40,7 @@ use AdvisingApp\Prospect\Models\ProspectStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+use App\Features\ProspectStatusSystemProtectionAndAutoAssignment;
 
 /**
  * @extends Factory<ProspectStatus>
@@ -52,6 +53,9 @@ class ProspectStatusFactory extends Factory
             'classification' => $this->faker->randomElement(SystemProspectClassification::cases()),
             'name' => $this->faker->word,
             'color' => $this->faker->randomElement(ProspectStatusColorOptions::cases()),
+            ...ProspectStatusSystemProtectionAndAutoAssignment::active() ? [
+                'is_system_protected' => false,
+            ] : [],
         ];
     }
 }

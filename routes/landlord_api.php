@@ -39,6 +39,7 @@ use App\Http\Controllers\Tenants\SyncTenantController;
 use App\Http\Controllers\Tenants\CreateTenantController;
 use App\Http\Controllers\Tenants\DeleteTenantController;
 use AdvisingApp\Theme\Http\Controllers\UpdateThemeController;
+use AdvisingApp\Theme\Http\Controllers\BrandedWebsiteLinksController;
 
 Route::post('tenants', CreateTenantController::class)
     ->name('tenants.create');
@@ -51,6 +52,9 @@ Route::post('tenants/{tenant}/sync', SyncTenantController::class)
 
 Route::post('theme', UpdateThemeController::class)
     ->name('theme.update');
+
+Route::post('branded-website-links', BrandedWebsiteLinksController::class)
+    ->name('brandedWebsiteLinks.update');
 
 Route::post('test', fn () => true)
     ->name('test');

@@ -36,11 +36,15 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
-use Filament\Actions;
 use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
+use Illuminate\Support\Collection;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\QueryException;
+use Filament\Notifications\Notification;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -82,7 +86,49 @@ class ListProspectStatuses extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->action(function (DeleteBulkAction $component): void {
+                            $total = 0;
+                            $totalDeleted = 0;
+
+                            $component->process(static function (Collection $records) use (&$total, &$totalDeleted) {
+                                $total = $records->count();
+
+                                $records->each(function (Model $record) use (&$totalDeleted) {
+                                    try {
+                                        $record->delete();
+
+                                        $totalDeleted++;
+                                    } catch (QueryException $e) {
+                                        if (str_contains($e->getMessage(), 'Cannot modify system protected rows')) {
+                                            Notification::make()
+                                                ->title('Cannot Delete System Protected record')
+                                                ->body('A system protected record cannot be deleted.')
+                                                ->danger()
+                                                ->send();
+                                        }
+                                    }
+                                });
+                            });
+
+                            $notification = Notification::make()
+                                ->title('Service Request Statuses Deleted')
+                                ->body("{$totalDeleted} of {$total} selected service request statuses have been deleted.");
+
+                            if ($totalDeleted > 0) {
+                                $notification->success();
+                            } else {
+                                $notification->danger();
+                            }
+
+                            $notification->send();
+
+                            if ($totalDeleted > 0) {
+                                $component->dispatchSuccessRedirect();
+                            } else {
+                                $component->dispatchFailureRedirect();
+                            }
+                        }),
                 ]),
             ]);
     }
@@ -90,7 +136,7 @@ class ListProspectStatuses extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }
