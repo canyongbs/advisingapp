@@ -50,11 +50,11 @@ class ManageableStudentPolicy
 
     public function restore(Authenticatable $authenticatable, ManageableStudent $manageableStudent): Response
     {
-        return Response::deny('Manageable Students cannot be deleted.');
+        return Response::deny('Manageable Students cannot be restored.');
     }
 
     public function forceDelete(Authenticatable $authenticatable, ManageableStudent $manageableStudent): Response
     {
-        return Response::deny('Manageable Students cannot be deleted.');
+        return Response::deny('Manageable Students cannot be force deleted.');
     }
 }

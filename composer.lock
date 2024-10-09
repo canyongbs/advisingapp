@@ -2875,6 +2875,41 @@
             }
         },
         {
+            "name": "canyon-gbs/program-record-manager",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/program-record-manager",
+                "reference": "dfdc9ae65e7588a0944800cf6972979d5d3c6bb3"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\ProgramRecordManager\\Providers\\ProgramRecordManagerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\ProgramRecordManager\\": "src/",
+                    "AdvisingApp\\ProgramRecordManager\\Tests\\": "tests/",
+                    "AdvisingApp\\ProgramRecordManager\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\ProgramRecordManager\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "canyon-gbs/segment",
             "version": "1.0",
             "dist": {
