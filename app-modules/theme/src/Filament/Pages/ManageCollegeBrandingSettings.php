@@ -78,7 +78,7 @@ class ManageCollegeBrandingSettings extends SettingsPage
                     ->label('Enable Branding Bar')
                     ->required()
                     ->live()
-                    ->columnSpanFull(), 
+                    ->columnSpanFull(),
                 Toggle::make('dismissible')
                     ->inline(false)
                     ->label('Dismissible')
