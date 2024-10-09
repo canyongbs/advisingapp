@@ -257,4 +257,35 @@ class ManagePortalSettings extends SettingsPage
                     ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled')),
             ]);
     }
+
+    public function updateLinks(array $array): array
+    {
+        foreach ($array['content'] as &$paragraph) {
+            foreach ($paragraph['content'] as &$text) {
+                if (isset($text['marks'])) {
+                    foreach ($text['marks'] as &$mark) {
+                        if ($mark['type'] === 'link' && isset($mark['attrs']['href'])) {
+                            if (strpos($mark['attrs']['href'], 'www.') === 0) {
+                                $mark['attrs']['href'] = 'https://' . $mark['attrs']['href'];
+                            } elseif (strpos($mark['attrs']['href'], 'http') !== 0) {
+                                $mark['attrs']['href'] = 'https://' . $mark['attrs']['href'];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $array;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $tiptapContent = $data['gdpr_banner_text'];
+        $tiptapContent = $this->updateLinks($tiptapContent);
+
+        $data['gdpr_banner_text'] = $tiptapContent;
+
+        return $data;
+    }
 }
