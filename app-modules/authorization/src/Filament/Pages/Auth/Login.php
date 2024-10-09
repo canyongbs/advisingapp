@@ -80,7 +80,7 @@ class Login extends FilamentLogin
     {
         $themeSettings = app(ThemeSettings::class);
 
-        $this->themeChangelogUrl = ! empty($themeSettings->changelog_url) ? $themeSettings->changelog_url : 'https://github.com/canyongbs/advisingapp/releases';
+        $this->themeChangelogUrl = ! empty($themeSettings->changelog_url) ? $themeSettings->changelog_url : 'https://advising.app/changelog/';
 
         $this->productKnowledgebaseUrl = ! empty($themeSettings->product_knowledge_base_url) ? $themeSettings->product_knowledge_base_url : 'https://canyongbs.aiding.app/portal/categories/9bcc47d1-05be-40d2-bf95-9bd719209b06';
     }
