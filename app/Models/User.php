@@ -172,6 +172,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'working_hours',
         'job_title',
         'last_chat_ping_at',
+        'is_branding_bar_dismissed',
     ];
 
     public $orderable = [

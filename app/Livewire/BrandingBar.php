@@ -34,22 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace App\Settings;
+namespace App\Livewire;
 
-use Spatie\LaravelSettings\Settings;
+use App\Models\User;
+use Livewire\Component;
+use Illuminate\Contracts\View\View;
 
-class CollegeBrandingSettings extends Settings
+class BrandingBar extends Component
 {
-    public bool $is_enabled = false;
+    public bool $isVisible = true;
 
-    public ?string $college_text = null;
-
-    public ?string $color = null;
-
-    public bool $dismissible = false;
-
-    public static function group(): string
+    public function dismiss(): void
     {
-        return 'college_branding';
+        // Hide the branding bar
+        $this->isVisible = false;
+
+        // Update a field for the user in the database
+        $currentUser = User::find(auth()->user()->id);
+
+        if (! empty($currentUser)) {
+            $currentUser->update([
+                'is_branding_bar_dismissed' => true,
+            ]);
+        }
+    }
+
+    public function render(): View
+    {
+        return view('vendor.filament-panels.components.branding-bar');
     }
 }

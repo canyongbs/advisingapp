@@ -45,6 +45,7 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use App\Settings\DisplaySettings;
 use Filament\Actions\ActionGroup;
+use App\Features\EnableBrandingBar;
 use Filament\Forms\Components\Grid;
 use Illuminate\Support\Facades\Hash;
 use Filament\Forms\Components\Select;
@@ -58,6 +59,7 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use App\Settings\CollegeBrandingSettings;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TimePicker;
 use Illuminate\Validation\Rules\Password;
@@ -87,6 +89,8 @@ class EditProfile extends Page
     protected static bool $shouldRegisterNavigation = false;
 
     public ?array $data = [];
+
+    public $currentUrl;
 
     public function form(Form $form): Form
     {
@@ -262,6 +266,13 @@ class EditProfile extends Page
                                 return "Default: {$timezone}";
                             }),
                     ]),
+                Section::make('Disable Branding Bar')
+                    ->aside()
+                    ->schema([
+                        Toggle::make('is_branding_bar_dismissed')
+                            ->label(''),
+                    ])
+                    ->visible(fn (CollegeBrandingSettings $settings) => EnableBrandingBar::active() && $settings->dismissible),
                 Section::make('Connected Accounts')
                     ->description('Disconnect your external accounts.')
                     ->aside()
@@ -330,6 +341,7 @@ class EditProfile extends Page
 
     public function mount(): void
     {
+        $this->currentUrl = url()->current();
         $this->fillForm();
     }
 
@@ -375,9 +387,7 @@ class EditProfile extends Page
 
         $this->getSavedNotification()?->send();
 
-        if ($redirectUrl = $this->getRedirectUrl()) {
-            $this->redirect($redirectUrl);
-        }
+        $this->redirect($this->currentUrl);
     }
 
     public function getFormActionsAlignment(): string
