@@ -90,12 +90,11 @@ class CreateManageStudent extends CreateRecord
                         TextInput::make('otherid')
                             ->label('otherid')
                             ->numeric(),
-                        //Question above two
-                        TextInput::make('first_name')
+                        TextInput::make(Student::displayFirstNameKey())
                             ->label('First Name')
                             ->string()
                             ->maxLength(255),
-                        TextInput::make('last_name')
+                        TextInput::make(Student::displayLastNameKey())
                             ->label('Last Name')
                             ->string()
                             ->maxLength(255),
@@ -145,11 +144,11 @@ class CreateManageStudent extends CreateRecord
                             ->label('Address')
                             ->string()
                             ->maxLength(255),
-                        TextInput::make('address_2')
+                        TextInput::make('address2')
                             ->label('Apartment/Unit Number')
                             ->string()
                             ->maxLength(255),
-                        TextInput::make('address_3')
+                        TextInput::make('address3')
                             ->label('Additional Address')
                             ->string()
                             ->maxLength(255),
@@ -193,7 +192,7 @@ class CreateManageStudent extends CreateRecord
                             ->boolean(),
                         TextInput::make('holds')
                             ->label('Holds')
-                            ->regex('[A-Z]{5}'),
+                            ->regex('/^[A-Z]{5}$/'),
                         Radio::make('firstgen')
                             ->label('Firstgen')
                             ->boolean(),
