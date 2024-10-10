@@ -36,8 +36,8 @@
 
 namespace App\Infolists\Components;
 
-use Filament\Infolists\Components\Component;
 use Illuminate\Support\Str;
+use Filament\Infolists\Components\Component;
 
 class StudentHeaderSection extends Component
 {

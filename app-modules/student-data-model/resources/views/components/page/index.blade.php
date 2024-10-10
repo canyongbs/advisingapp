@@ -43,22 +43,10 @@
     $widgetData = $this->getWidgetData();
 @endphp
 
-<div
-    {{
-        $attributes->class([
-            'fi-page',
-            'h-full' => $fullHeight,
-        ])
-    }}
->
+<div {{ $attributes->class(['fi-page', 'h-full' => $fullHeight]) }}>
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START, scopes: $this->getRenderHookScopes()) }}
 
-    <section
-        @class([
-            'flex flex-col gap-y-8 py-8',
-            'h-full' => $fullHeight,
-        ])
-    >
+    <section @class(['flex flex-col gap-y-8 py-8', 'h-full' => $fullHeight])>
         @if ($header = $this->getHeader())
             {{ $header }}
         @elseif ($heading = $this->getHeading())
@@ -73,31 +61,27 @@
             </x-student-data-model::header>
         @endif
 
-        <div
-            @class([
-                'flex flex-col gap-8' => $subNavigation,
-                match ($subNavigationPosition) {
-                    SubNavigationPosition::Start, SubNavigationPosition::End => 'md:flex-row md:items-start',
-                    default => null,
-                } => $subNavigation,
-                'h-full' => $fullHeight,
-            ])
-        >
+        <div @class([
+            'flex flex-col gap-8' => $subNavigation,
+            match ($subNavigationPosition) {
+                SubNavigationPosition::Start,
+                SubNavigationPosition::End
+                    => 'md:flex-row md:items-start',
+                default => null,
+            } => $subNavigation,
+            'h-full' => $fullHeight,
+        ])>
             @if ($subNavigation)
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_SELECT_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
-                <x-filament-panels::page.sub-navigation.select
-                    :navigation="$subNavigation"
-                />
+                <x-filament-panels::page.sub-navigation.select :navigation="$subNavigation" />
 
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_SELECT_AFTER, scopes: $this->getRenderHookScopes()) }}
 
                 @if ($subNavigationPosition === SubNavigationPosition::Start)
                     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_START_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
-                    <x-filament-panels::page.sub-navigation.sidebar
-                        :navigation="$subNavigation"
-                    />
+                    <x-filament-panels::page.sub-navigation.sidebar :navigation="$subNavigation" />
 
                     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_START_AFTER, scopes: $this->getRenderHookScopes()) }}
                 @endif
@@ -105,28 +89,21 @@
                 @if ($subNavigationPosition === SubNavigationPosition::Top)
                     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_TOP_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
-                    <x-filament-panels::page.sub-navigation.tabs
-                        :navigation="$subNavigation"
-                    />
+                    <x-filament-panels::page.sub-navigation.tabs :navigation="$subNavigation" />
 
                     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_TOP_AFTER, scopes: $this->getRenderHookScopes()) }}
                 @endif
             @endif
 
-            <div
-                @class([
-                    'grid flex-1 auto-cols-fr gap-y-8',
-                    'h-full' => $fullHeight,
-                ])
-            >
+            <div @class(['grid flex-1 auto-cols-fr gap-y-8', 'h-full' => $fullHeight])>
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_WIDGETS_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
                 @if ($headerWidgets = $this->getVisibleHeaderWidgets())
                     <x-filament-widgets::widgets
+                        class="fi-page-header-widgets"
                         :columns="$this->getHeaderWidgetsColumns()"
                         :data="$widgetData"
                         :widgets="$headerWidgets"
-                        class="fi-page-header-widgets"
                     />
                 @endif
 
@@ -138,10 +115,10 @@
 
                 @if ($footerWidgets = $this->getVisibleFooterWidgets())
                     <x-filament-widgets::widgets
+                        class="fi-page-footer-widgets"
                         :columns="$this->getFooterWidgetsColumns()"
                         :data="$widgetData"
                         :widgets="$footerWidgets"
-                        class="fi-page-footer-widgets"
                     />
                 @endif
 
@@ -151,9 +128,7 @@
             @if ($subNavigation && $subNavigationPosition === SubNavigationPosition::End)
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_END_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
-                <x-filament-panels::page.sub-navigation.sidebar
-                    :navigation="$subNavigation"
-                />
+                <x-filament-panels::page.sub-navigation.sidebar :navigation="$subNavigation" />
 
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_END_AFTER, scopes: $this->getRenderHookScopes()) }}
             @endif
@@ -164,18 +139,25 @@
         @endif
     </section>
 
-    @if (! ($this instanceof \Filament\Tables\Contracts\HasTable))
+    @if (!($this instanceof \Filament\Tables\Contracts\HasTable))
         <x-filament-actions::modals />
     @elseif ($this->isTableLoaded() && filled($this->defaultTableAction))
         <div
-            wire:init="mountTableAction(@js($this->defaultTableAction), @if (filled($this->defaultTableActionRecord)) @js($this->defaultTableActionRecord) @else {{ 'null' }} @endif @if (filled($this->defaultTableActionArguments)) , @js($this->defaultTableActionArguments) @endif)"
-        ></div>
+            wire:init="mountTableAction(@js($this->defaultTableAction), @if (filled($this->defaultTableActionRecord))
+@js($this->defaultTableActionRecord)
+@else
+{{ 'null' }}
+@endif @if (filled($this->defaultTableActionArguments))
+, @js($this->defaultTableActionArguments)
+@endif)">
+        </div>
     @endif
 
     @if (filled($this->defaultAction))
-        <div
-            wire:init="mountAction(@js($this->defaultAction) @if (filled($this->defaultActionArguments)) , @js($this->defaultActionArguments) @endif)"
-        ></div>
+        <div wire:init="mountAction(@js($this->defaultAction) @if (filled($this->defaultActionArguments))
+, @js($this->defaultActionArguments)
+@endif)">
+        </div>
     @endif
 
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_END, scopes: $this->getRenderHookScopes()) }}

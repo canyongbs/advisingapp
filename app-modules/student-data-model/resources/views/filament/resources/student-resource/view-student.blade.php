@@ -31,19 +31,17 @@
 
 </COPYRIGHT>
 --}}
-<x-student-data-model::page
-    @class([
-        'fi-resource-view-record-page',
-        'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
-        'fi-resource-record-' . $record->getKey(),
-    ])
->
+<x-student-data-model::page @class([
+    'fi-resource-view-record-page',
+    'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
+    'fi-resource-record-' . $record->getKey(),
+])>
     @php
         $relationManagers = $this->getRelationManagers();
         $hasCombinedRelationManagerTabsWithContent = $this->hasCombinedRelationManagerTabsWithContent();
     @endphp
 
-    {{-- @if ((! $hasCombinedRelationManagerTabsWithContent) || (! count($relationManagers)))
+    {{-- @if (!$hasCombinedRelationManagerTabsWithContent || !count($relationManagers))
         @if ($this->hasInfolist())
             {{ $this->infolist }}
         @else

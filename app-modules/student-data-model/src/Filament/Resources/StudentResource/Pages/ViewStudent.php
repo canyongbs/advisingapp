@@ -39,9 +39,11 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 use Throwable;
 use App\Models\Tenant;
 use App\Services\Olympus;
+use Illuminate\Support\Str;
 use Filament\Infolists\Infolist;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
+use Filament\Infolists\Components\Split;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
@@ -50,12 +52,10 @@ use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Infolists\Components\StudentHeaderSection;
+use App\Infolists\Components\StudentProfileInformation;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use App\Infolists\Components\StudentProfileInformation;
-use Filament\Infolists\Components\Split;
-use Illuminate\Support\Str;
 
 class ViewStudent extends ViewRecord
 {
@@ -78,7 +78,7 @@ class ViewStudent extends ViewRecord
         ) {
             FilamentView::registerRenderHook(
                 PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE,
-                fn(): View => view('student-data-model::filament.resources.student-resource.sis-sync', [
+                fn (): View => view('student-data-model::filament.resources.student-resource.sis-sync', [
                     'student' => $this->getRecord(),
                 ]),
                 scopes: ViewStudent::class,

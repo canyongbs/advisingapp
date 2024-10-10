@@ -50,7 +50,7 @@ class StudentProfileInformation extends Component
         return app(static::class, ['heading' => $heading]);
     }
 
-    function heading(string | Closure $heading): static
+    public function heading(string | Closure $heading): static
     {
         $this->heading = $heading;
 
@@ -59,6 +59,6 @@ class StudentProfileInformation extends Component
 
     public function getHeading(): string | Closure
     {
-        return  $this->evaluate($this->heading);
+        return $this->evaluate($this->heading);
     }
 }
