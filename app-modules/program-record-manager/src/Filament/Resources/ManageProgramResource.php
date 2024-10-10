@@ -5,8 +5,10 @@ namespace AdvisingApp\ProgramRecordManager\Filament\Resources;
 use AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResource\Pages;
 use AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResource\RelationManagers;
 use AdvisingApp\ProgramRecordManager\Models\ManageableProgram;
+use App\Features\ManageStudentConfigurationFeature;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Models\ManageProgram;
+use App\Settings\ManageStudentConfigurationSettings;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -27,6 +29,18 @@ class ManageProgramResource extends Resource
     protected static ?string $cluster = ConstituentManagement::class;
 
     protected static ?string $navigationGroup = 'Students';
+
+    protected static ?string $label = 'Programs';
+
+    protected static ?int $navigationSort = 3;
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return ManageStudentConfigurationFeature::active() && $user->can('student_record_manager.configuration') && app(ManageStudentConfigurationSettings::class)->is_enabled;
+    }
 
     public static function form(Form $form): Form
     {
