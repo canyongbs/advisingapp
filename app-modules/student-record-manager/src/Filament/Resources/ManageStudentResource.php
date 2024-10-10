@@ -6,7 +6,10 @@ use AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource\Pa
 use AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource\RelationManagers;
 use AdvisingApp\StudentRecordManager\Models\ManageableStudent;
 use App\Features\ManageStudentConfigurationFeature;
+use App\Features\ManageStudentConfigurationFeature;
 use App\Filament\Clusters\ConstituentManagement;
+use App\Settings\ManageStudentConfigurationSettings;
+use Filament\Forms\Components\TextInput;
 use App\Settings\ManageStudentConfigurationSettings;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -29,7 +32,6 @@ class ManageStudentResource extends Resource
     protected static ?string $label = 'Students';
 
     protected static ?int $navigationSort = 2;
-
 
     public static function canAccess(): bool
     {
