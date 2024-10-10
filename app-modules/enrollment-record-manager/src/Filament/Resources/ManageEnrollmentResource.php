@@ -4,7 +4,9 @@ namespace AdvisingApp\EnrollmentRecordManager\Filament\Resources;
 
 use AdvisingApp\EnrollmentRecordManager\Filament\Resources\ManageEnrollmentResource\Pages;
 use AdvisingApp\EnrollmentRecordManager\Models\ManageableEnrollment;
+use App\Features\ManageStudentConfigurationFeature;
 use App\Filament\Clusters\ConstituentManagement;
+use App\Settings\ManageStudentConfigurationSettings;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\DateTimePicker;
@@ -19,6 +21,18 @@ class ManageEnrollmentResource extends Resource
     protected static ?string $cluster = ConstituentManagement::class;
 
     protected static ?string $navigationGroup = 'Students';
+
+    protected static ?string $label = 'Enrollments';
+
+    protected static ?int $navigationSort = 4;
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return ManageStudentConfigurationFeature::active() && $user->can('student_record_manager.configuration') && app(ManageStudentConfigurationSettings::class)->is_enabled;
+    }
 
     public static function form(Form $form): Form
     {

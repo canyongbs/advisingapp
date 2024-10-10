@@ -5,7 +5,9 @@ namespace AdvisingApp\StudentRecordManager\Filament\Resources;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource\Pages;
 use AdvisingApp\StudentRecordManager\Models\ManageableStudent;
+use App\Features\ManageStudentConfigurationFeature;
 use App\Filament\Clusters\ConstituentManagement;
+use App\Settings\ManageStudentConfigurationSettings;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -23,6 +25,18 @@ class ManageStudentResource extends Resource
     protected static ?string $cluster = ConstituentManagement::class;
 
     protected static ?string $navigationGroup = 'Students';
+
+    protected static ?string $label = 'Students';
+
+    protected static ?int $navigationSort = 2;
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return ManageStudentConfigurationFeature::active() && $user->can('student_record_manager.configuration') && app(ManageStudentConfigurationSettings::class)->is_enabled;
+    }
 
     public static function form(Form $form): Form
     {
