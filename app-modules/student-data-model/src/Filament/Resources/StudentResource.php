@@ -73,26 +73,26 @@ class StudentResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
-    public static function getRecordSubNavigation(Page $page): array
-    {
-        return $page->generateNavigationItems([
-            ViewStudent::class,
-            ManageStudentInformation::class,
-            ManageStudentEngagement::class,
-            ManageStudentFiles::class,
-            ManageStudentAlerts::class,
-            ManageStudentTasks::class,
-            ManageStudentSubscriptions::class,
-            ManageStudentInteractions::class,
-            StudentEngagementTimeline::class,
-            ManageStudentCareTeam::class,
-            ManageStudentFormSubmissions::class,
-            ManageStudentApplicationSubmissions::class,
-            StudentServiceManagement::class,
-            ManageStudentEvents::class,
-            ManageStudentPrograms::class,
-        ]);
-    }
+    // public static function getRecordSubNavigation(Page $page): array
+    // {
+    //     return $page->generateNavigationItems([
+    //         ViewStudent::class,
+    //         ManageStudentInformation::class,
+    //         ManageStudentEngagement::class,
+    //         ManageStudentFiles::class,
+    //         ManageStudentAlerts::class,
+    //         ManageStudentTasks::class,
+    //         ManageStudentSubscriptions::class,
+    //         ManageStudentInteractions::class,
+    //         StudentEngagementTimeline::class,
+    //         ManageStudentCareTeam::class,
+    //         ManageStudentFormSubmissions::class,
+    //         ManageStudentApplicationSubmissions::class,
+    //         StudentServiceManagement::class,
+    //         ManageStudentEvents::class,
+    //         ManageStudentPrograms::class,
+    //     ]);
+    // }
 
     public static function modifyGlobalSearchQuery(Builder $query, string $search): void
     {
