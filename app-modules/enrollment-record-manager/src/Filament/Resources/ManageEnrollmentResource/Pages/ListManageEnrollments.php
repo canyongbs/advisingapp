@@ -1,45 +1,44 @@
 <?php
 
-namespace AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResource\Pages;
+namespace AdvisingApp\EnrollmentRecordManager\Filament\Resources\ManageEnrollmentResource\Pages;
 
-use AdvisingApp\ProgramRecordManager\Filament\Imports\ManageableProgramImporter;
-use AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResource;
+use AdvisingApp\EnrollmentRecordManager\Filament\Imports\ManageableEnrollmentImporter;
+use AdvisingApp\EnrollmentRecordManager\Filament\Resources\ManageEnrollmentResource;
 use AdvisingApp\ProgramRecordManager\Models\ManageableProgram;
 use App\Filament\Tables\Columns\OpenSearch\TextColumn;
 use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Table;
 
-class ListManagePrograms extends ListRecords
+class ListManageEnrollments extends ListRecords
 {
-    protected static string $resource = ManageProgramResource::class;
+    protected static string $resource = ManageEnrollmentResource::class;
 
     public function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('otherid')
-                    ->label('STUID'),
                 TextColumn::make('division')
                     ->label('College'),
-                TextColumn::make('descr')
-                    ->label('Program'),
-                TextColumn::make('foi')
-                    ->label('Field of Interest'),
-                TextColumn::make('cum_gpa')
-                    ->label('Cumulative GPA'),
-                TextColumn::make('declare_dt')
-                    ->label('Start Date'),
-            ])->actions([
-                ViewAction::make(),
+                TextColumn::make('class_nbr')
+                    ->label('Course'),
+                TextColumn::make('crse_grade_off')
+                    ->label('Grade'),
+                TextColumn::make('unt_taken')
+                    ->label('Attempted'),
+                TextColumn::make('unt_earned')
+                    ->label('Earned'),
+            ])
+            ->actions([
                 EditAction::make(),
+                ViewAction::make(),
                 DeleteAction::make()
                     ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed')
             ])
@@ -54,9 +53,9 @@ class ListManagePrograms extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
             ImportAction::make()
-                ->importer(ManageableProgramImporter::class)
+                ->importer(ManageableEnrollmentImporter::class)
                 ->authorize('import', ManageableProgram::class),
         ];
     }

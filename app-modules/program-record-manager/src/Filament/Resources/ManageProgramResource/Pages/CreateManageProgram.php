@@ -27,18 +27,13 @@ class CreateManageProgram extends CreateRecord
                     ->required()
                     ->numeric(),
                 Select::make('acad_career')
-                    ->options([
-                        'NC' => 'NC',
-                        'CRED' => 'CRED',
-                    ])
+                    ->string()
+                    ->maxLength(255)
                     ->required()
                     ->label('ACAD career'),
                 Select::make('division')
-                    ->options([
-                        'ABC01' => 'ABC01',
-                        'ABD02' => 'ABD02',
-                        'ABE03' => 'ABE03',
-                    ])
+                    ->string()
+                    ->maxLength(255)
                     ->required()
                     ->label('Division'),
                 TextInput::make('acad_plan')
