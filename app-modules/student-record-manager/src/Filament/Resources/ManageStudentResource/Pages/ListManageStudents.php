@@ -24,7 +24,8 @@ class ListManageStudents extends ListRecords
             ->columns([
                 TextColumn::make(ManageableStudent::displayNameKey())
                     ->label('Name')
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('email'),
                 TextColumn::make('mobile'),
                 TextColumn::make('phone'),
