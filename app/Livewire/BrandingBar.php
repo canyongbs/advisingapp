@@ -40,7 +40,6 @@ use App\Models\User;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Log;
 
 class BrandingBar extends Component
 {
@@ -74,13 +73,17 @@ class BrandingBar extends Component
 
     public function hydrate(): void
     {
-        $currentUserSettings = auth()->user();
-        $this->isVisible = $currentUserSettings->is_branding_bar_dismissed ? false : true;
+        $this->updateVisibility();
     }
 
     public function mount(): void
     {
+        $this->updateVisibility();
+    }
+
+    private function updateVisibility(): void
+    {
         $currentUserSettings = auth()->user();
-        $this->isVisible = $currentUserSettings->is_branding_bar_dismissed ? false : true;
+        $this->isVisible = ! $currentUserSettings->is_branding_bar_dismissed;
     }
 }
