@@ -40,7 +40,6 @@ use App\Models\User;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Log;
 
 class BrandingBar extends Component
 {
