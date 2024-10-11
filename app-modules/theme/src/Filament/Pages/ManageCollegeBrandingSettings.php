@@ -78,11 +78,11 @@ class ManageCollegeBrandingSettings extends SettingsPage
                     ->label('Enable Branding Bar')
                     ->required()
                     ->live()
-                    ->columnSpanFull(), 
+                    ->columnSpanFull(),
                 Toggle::make('dismissible')
                     ->inline(false)
                     ->label('Dismissible')
-                    ->visible(fn (Get $get) => $get('is_enabled') && EnableBrandingBar::active())
+                    ->visible(fn (Get $get) => EnableBrandingBar::active() && $get('is_enabled'))
                     ->columnSpanFull(),
                 TextInput::make('college_text')
                     ->label('College Text')
@@ -107,7 +107,7 @@ class ManageCollegeBrandingSettings extends SettingsPage
         $settings = app(CollegeBrandingSettings::class);
 
         // Check the specific field
-        if (! $settings->dismissible && EnableBrandingBar::active()) {
+        if (EnableBrandingBar::active() && ! $settings->dismissible) {
             User::query()->update(['is_branding_bar_dismissed' => false]);
         }
     }

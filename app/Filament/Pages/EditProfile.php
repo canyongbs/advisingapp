@@ -90,8 +90,6 @@ class EditProfile extends Page
 
     public ?array $data = [];
 
-    public $currentUrl;
-
     public function form(Form $form): Form
     {
         /** @var User $user */
@@ -341,8 +339,12 @@ class EditProfile extends Page
 
     public function mount(): void
     {
-        $this->currentUrl = url()->current();
         $this->fillForm();
+        $this->getSavedNotification()?->send();
+
+        if ($redirectUrl = $this->getRedirectUrl()) {
+            $this->redirect($redirectUrl);
+        }
     }
 
     public function getUser(): Authenticatable|Model
@@ -387,7 +389,7 @@ class EditProfile extends Page
 
         $this->getSavedNotification()?->send();
 
-        $this->redirect($this->currentUrl);
+        $this->dispatch('refresh-branding-bar');
     }
 
     public function getFormActionsAlignment(): string

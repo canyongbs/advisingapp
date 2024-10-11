@@ -38,7 +38,9 @@ namespace App\Livewire;
 
 use App\Models\User;
 use Livewire\Component;
+use Livewire\Attributes\On;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Log;
 
 class BrandingBar extends Component
 {
@@ -59,8 +61,26 @@ class BrandingBar extends Component
         }
     }
 
+    #[On('refresh-branding-bar')]
+    public function refreshBrandingBar()
+    {
+        $this->dispatch('$refresh');
+    }
+
     public function render(): View
     {
         return view('vendor.filament-panels.components.branding-bar');
+    }
+
+    public function hydrate(): void
+    {
+        $currentUserSettings = auth()->user();
+        $this->isVisible = $currentUserSettings->is_branding_bar_dismissed ? false : true;
+    }
+
+    public function mount(): void
+    {
+        $currentUserSettings = auth()->user();
+        $this->isVisible = $currentUserSettings->is_branding_bar_dismissed ? false : true;
     }
 }

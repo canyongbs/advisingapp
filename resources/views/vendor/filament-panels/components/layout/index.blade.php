@@ -55,7 +55,7 @@
             >
                 {{ $collegeBrandingSettings->college_text }}
             </div>
-        @elseif ($collegeBrandingSettings->is_enabled && EnableBrandingBar::active() && ! $currentUser->is_branding_bar_dismissed)
+        @elseif ($collegeBrandingSettings->is_enabled && EnableBrandingBar::active())
             <livewire:branding-bar />
         @endif
 
