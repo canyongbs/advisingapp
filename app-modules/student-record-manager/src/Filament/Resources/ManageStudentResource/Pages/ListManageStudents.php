@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource\Pages;
 
+use AdvisingApp\StudentRecordManager\Actions\CascadeDelete;
 use AdvisingApp\StudentRecordManager\Filament\Imports\StudentManageableImporter;
 use AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource;
 use AdvisingApp\StudentRecordManager\Models\ManageableStudent;
@@ -9,6 +10,7 @@ use Filament\Actions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
 use Filament\Actions\Imports\Models\Import;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Columns\TextColumn;
@@ -45,10 +47,25 @@ class ListManageStudents extends ListRecords
                 EditAction::make(),
                 DeleteAction::make()
                     ->modalDescription('Are you sure you wish to delete the selected record(s)? By deleting a student record, you will remove any related enrollment and program data, along with any related interactions, notes, etc. This action cannot be reversed.')
+                    ->using(function ($record) {
+                        app(CascadeDelete::class)->execute($record);
+
+                        Notification::make()
+                            ->title('Deleted successfully')
+                            ->success()
+                            ->body('The record and related entries have been successfully deleted.')
+                            ->send();
+                    })
             ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
+                        ->modalDescription('Are you sure you wish to delete the selected record(s)? By deleting a student record, you will remove any related enrollment and program data, along with any related interactions, notes, etc. This action cannot be reversed.')
+                        ->using(function ($records) {
+                            foreach ($records as $record) {
+                                app(CascadeDelete::class)->execute($record);
+                            }
+                        })
                 ]),
             ]);
     }

@@ -26,12 +26,12 @@ class CreateManageProgram extends CreateRecord
                     ->label('Other ID')
                     ->required()
                     ->numeric(),
-                Select::make('acad_career')
+                TextInput::make('acad_career')
                     ->string()
                     ->maxLength(255)
                     ->required()
                     ->label('ACAD career'),
-                Select::make('division')
+                TextInput::make('division')
                     ->string()
                     ->maxLength(255)
                     ->required()
@@ -60,12 +60,14 @@ class CreateManageProgram extends CreateRecord
                     ->native(false)
                     ->closeOnDateSelection()
                     ->format('Y-m-d H:i:s')
+                    ->required()
                     ->displayFormat('Y-m-d H:i:s'),
                 DateTimePicker::make('declare_dt')
                     ->label('Declare date')
                     ->native(false)
                     ->closeOnDateSelection()
                     ->format('Y-m-d H:i:s')
+                    ->required()
                     ->displayFormat('Y-m-d H:i:s'),
             ]);
     }

@@ -58,9 +58,9 @@ class StudentManageableImporter extends Importer
                 ->label('Other ID')
                 ->example('##########')
                 ->numeric(),
-            ImportColumn::make('first_name')
+            ImportColumn::make('first')
                 ->example('Jonathan'),
-            ImportColumn::make('last_name')
+            ImportColumn::make('last')
                 ->example('Smith'),
             ImportColumn::make('full_name')
                 ->example('Jonathan Smith'),
@@ -83,9 +83,9 @@ class StudentManageableImporter extends Importer
                 ->example('+1 (555) 555-5555'),
             ImportColumn::make('address')
                 ->example('123 Main St.'),
-            ImportColumn::make('address_2')
+            ImportColumn::make('address2')
                 ->example('Apt. 1'),
-            ImportColumn::make('address_3')
+            ImportColumn::make('address3')
                 ->example('xyz'),
             ImportColumn::make('city')
                 ->example('Los Angeles'),
@@ -126,14 +126,9 @@ class StudentManageableImporter extends Importer
                 ->boolean()
                 ->rules(['boolean'])
                 ->example('yes'),
-            ImportColumn::make('ethnicity')
-                ->string(),
+            ImportColumn::make('ethnicity'),
             ImportColumn::make('lastlmslogin')
-                ->label('Last LMS login')
-                ->native(false)
-                ->closeOnDateSelection()
-                ->format('Y-m-d H:i:s')
-                ->displayFormat('Y-m-d H:i:s'),
+                ->label('Last LMS login'),
             ImportColumn::make('f_e_term')
                 ->label('First Enrollement Term')
                 ->numeric(),

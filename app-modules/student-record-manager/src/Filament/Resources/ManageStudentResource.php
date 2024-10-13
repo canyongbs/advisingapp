@@ -3,7 +3,8 @@
 namespace AdvisingApp\StudentRecordManager\Filament\Resources;
 
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource\Pages;
+use AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource\Pages\CreateManageStudent;
+use AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource\Pages\ListManageStudents;
 use AdvisingApp\StudentRecordManager\Models\ManageableStudent;
 use App\Features\ManageStudentConfigurationFeature;
 use App\Filament\Clusters\ConstituentManagement;
@@ -180,8 +181,8 @@ class ManageStudentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListManageStudents::route('/'),
-            'create' => Pages\CreateManageStudent::route('/create'),
+            'index' => ListManageStudents::route('/'),
+            'create' => CreateManageStudent::route('/create'),
         ];
     }
 }

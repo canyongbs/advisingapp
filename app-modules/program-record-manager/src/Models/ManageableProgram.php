@@ -3,9 +3,12 @@
 namespace AdvisingApp\ProgramRecordManager\Models;
 
 use AdvisingApp\StudentDataModel\Models\Program;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ManageableProgram extends Program
 {
+    use SoftDeletes;
+
     protected $table = 'programs';
 
     protected $fillable = [

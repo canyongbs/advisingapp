@@ -2,10 +2,15 @@
 
 namespace AdvisingApp\StudentRecordManager\Models;
 
+use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ManageableStudent extends Student
 {
+    use SoftDeletes;
+
     protected $table = 'students';
 
     protected $fillable = [
@@ -40,4 +45,9 @@ class ManageableStudent extends Student
         'f_e_term',
         'mr_e_term',
     ];
+
+    public function alerts(): MorphMany
+    {
+        return $this->morphMany(Alert::class, 'concern');
+    }
 }
