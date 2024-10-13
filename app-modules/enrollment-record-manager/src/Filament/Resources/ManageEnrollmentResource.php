@@ -2,7 +2,8 @@
 
 namespace AdvisingApp\EnrollmentRecordManager\Filament\Resources;
 
-use AdvisingApp\EnrollmentRecordManager\Filament\Resources\ManageEnrollmentResource\Pages;
+use AdvisingApp\EnrollmentRecordManager\Filament\Resources\ManageEnrollmentResource\Pages\CreateManageEnrollment;
+use AdvisingApp\EnrollmentRecordManager\Filament\Resources\ManageEnrollmentResource\Pages\ListManageEnrollments;
 use AdvisingApp\EnrollmentRecordManager\Models\ManageableEnrollment;
 use App\Features\ManageStudentConfigurationFeature;
 use App\Filament\Clusters\ConstituentManagement;
@@ -108,8 +109,8 @@ class ManageEnrollmentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListManageEnrollments::route('/'),
-            'create' => Pages\CreateManageEnrollment::route('/create'),
+            'index' => ListManageEnrollments::route('/'),
+            'create' => CreateManageEnrollment::route('/create'),
         ];
     }
 }

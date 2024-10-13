@@ -2,23 +2,16 @@
 
 namespace AdvisingApp\ProgramRecordManager\Filament\Resources;
 
-use AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResource\Pages;
-use AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResource\RelationManagers;
+use AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResource\Pages\CreateManageProgram;
+use AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResource\Pages\ListManagePrograms;
 use AdvisingApp\ProgramRecordManager\Models\ManageableProgram;
 use App\Features\ManageStudentConfigurationFeature;
 use App\Filament\Clusters\ConstituentManagement;
-use App\Models\ManageProgram;
 use App\Settings\ManageStudentConfigurationSettings;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ManageProgramResource extends Resource
 {
@@ -55,12 +48,12 @@ class ManageProgramResource extends Resource
                     ->label('Other ID')
                     ->required()
                     ->numeric(),
-                Select::make('acad_career')
+                TextInput::make('acad_career')
                     ->string()
                     ->maxLength(255)
                     ->required()
                     ->label('ACAD career'),
-                Select::make('division')
+                TextInput::make('division')
                     ->string()
                     ->maxLength(255)
                     ->required()
@@ -102,8 +95,8 @@ class ManageProgramResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListManagePrograms::route('/'),
-            'create' => Pages\CreateManageProgram::route('/create'),
+            'index' => ListManagePrograms::route('/'),
+            'create' => CreateManageProgram::route('/create'),
         ];
     }
 }

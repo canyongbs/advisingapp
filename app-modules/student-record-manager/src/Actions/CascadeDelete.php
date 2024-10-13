@@ -34,41 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+namespace AdvisingApp\StudentRecordManager\Actions;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentRecordManager\Models\ManageableStudent;
+use Illuminate\Support\Facades\Log;
 
-/**
- * @mixin IdeHelperEnrollment
- */
-class Enrollment extends Model
+class CascadeDelete
 {
-  use SoftDeletes;
-  use HasFactory;
-  use UsesTenantConnection;
-
-  protected $table = 'enrollments';
-
-  protected $primaryKey = 'sisid';
-
-  public $incrementing = false;
-
-  protected $keyType = 'string';
-
-  public $timestamps = false;
-
-  protected $casts = [
-    'last_upd_dt_stmp' => 'datetime',
-    'start_date' => 'datetime',
-    'end_date' => 'datetime',
-  ];
-
-  public function student(): BelongsTo
+  public function execute(Student $manageableStudent)
   {
-    return $this->belongsTo(Student::class, 'sisid', 'sisid');
+
+    $manageableStudent->enrollments()->delete();
+
+    $manageableStudent->programs()->delete();
+
+
+    $manageableStudent->alerts()->delete();
+
+
+    $manageableStudent->tasks()->delete();
+
+
+    $manageableStudent->interactions()->delete();
+
+
+    $manageableStudent->timeline()->delete();
+
+
+    $manageableStudent->formSubmissions()->delete();
+
+
+    $manageableStudent->applicationSubmissions()->delete();
+
+
+    $manageableStudent->eventAttendeeRecords()->delete();
+
+
+    $manageableStudent->interactions()->delete();
+    $manageableStudent->delete();
   }
 }
