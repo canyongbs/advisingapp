@@ -34,8 +34,8 @@
 
 <x-filament-panels::layout.base :livewire="$livewire">
     <div class="fi-layout flex h-full w-full flex-row-reverse overflow-x-clip">
-        <div class="fi-main-ctn w-screen flex-1 flex-col">
-            <div class="flex justify-center items-center w-full h-24 border-b border-gray-200 mb-4">
+        <div class="fi-main-ctn w-screen flex flex-col lg:h-screen md:h-auto">
+            <div class="flex justify-center items-center w-full h-32 border-b border-gray-200 mb-4">
                 <x-filament-panels::logo />
             </div>
             <main class="fi-main mx-auto flex justify-center items-center h-full w-full px-4 md:px-6 lg:px-8 max-w-screen-lg">
