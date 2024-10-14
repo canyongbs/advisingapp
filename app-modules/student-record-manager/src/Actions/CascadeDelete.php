@@ -37,41 +37,23 @@
 namespace AdvisingApp\StudentRecordManager\Actions;
 
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentRecordManager\Models\ManageableStudent;
 use Illuminate\Support\Facades\Log;
 
 class CascadeDelete
 {
-  public function execute(Student $manageableStudent)
+  public function execute(Student $student)
   {
 
-    $manageableStudent->enrollments()->delete();
-
-    $manageableStudent->programs()->delete();
-
-
-    $manageableStudent->alerts()->delete();
-
-
-    $manageableStudent->tasks()->delete();
-
-
-    $manageableStudent->interactions()->delete();
-
-
-    $manageableStudent->timeline()->delete();
-
-
-    $manageableStudent->formSubmissions()->delete();
-
-
-    $manageableStudent->applicationSubmissions()->delete();
-
-
-    $manageableStudent->eventAttendeeRecords()->delete();
-
-
-    $manageableStudent->interactions()->delete();
-    $manageableStudent->delete();
+    $student->enrollments()->delete();
+    $student->programs()->delete();
+    $student->alerts()->delete();
+    $student->tasks()->delete();
+    $student->interactions()->delete();
+    $student->timeline()->delete();
+    $student->formSubmissions()->delete();
+    $student->applicationSubmissions()->delete();
+    $student->eventAttendeeRecords()->delete();
+    $student->interactions()->delete();
+    $student->delete();
   }
 }

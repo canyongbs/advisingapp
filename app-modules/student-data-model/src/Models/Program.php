@@ -61,6 +61,21 @@ class Program extends Model
 
   public $timestamps = false;
 
+  protected $fillable = [
+    'sisid',
+    'otherid',
+    'acad_career',
+    'division',
+    'acad_plan',
+    'prog_status',
+    'cum_gpa',
+    'semester',
+    'descr',
+    'foi',
+    'change_dt',
+    'declare_dt',
+  ];
+
   protected $casts = [
     'change_dt' => 'datetime',
     'declare_dt' => 'datetime',

@@ -2,14 +2,14 @@
 
 namespace AdvisingApp\EnrollmentRecordManager\Filament\Imports;
 
-use AdvisingApp\EnrollmentRecordManager\Models\ManageableEnrollment;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 
 class ManageableEnrollmentImporter extends Importer
 {
-    protected static ?string $model = ManageableEnrollment::class;
+    protected static ?string $model = Enrollment::class;
 
     public static function getColumns(): array
     {

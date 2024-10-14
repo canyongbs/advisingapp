@@ -4,11 +4,10 @@ namespace AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResou
 
 use AdvisingApp\ProgramRecordManager\Filament\Imports\ManageableProgramImporter;
 use AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResource;
-use AdvisingApp\ProgramRecordManager\Models\ManageableProgram;
+use AdvisingApp\StudentDataModel\Models\Program;
 use App\Filament\Tables\Columns\OpenSearch\TextColumn;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -26,9 +25,11 @@ class ListManagePrograms extends ListRecords
         return $table
             ->columns([
                 TextColumn::make('otherid')
-                    ->label('STUID'),
+                    ->label('STUID')
+                    ->searchable(),
                 TextColumn::make('division')
-                    ->label('College'),
+                    ->label('College')
+                    ->searchable(),
                 TextColumn::make('descr')
                     ->label('Program'),
                 TextColumn::make('foi')
@@ -54,10 +55,10 @@ class ListManagePrograms extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
             ImportAction::make()
                 ->importer(ManageableProgramImporter::class)
-                ->authorize('import', ManageableProgram::class),
+                ->authorize('import', Program::class),
         ];
     }
 }

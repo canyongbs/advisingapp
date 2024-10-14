@@ -61,6 +61,25 @@ class Enrollment extends Model
 
   public $timestamps = false;
 
+  protected $fillable = [
+    'sisid',
+    'division',
+    'class_nbr',
+    'crse_grade_off',
+    'unt_taken',
+    'unt_earned',
+    'last_upd_dt_stmp',
+    'section',
+    'name',
+    'department',
+    'faculty_name',
+    'faculty_email',
+    'semester_code',
+    'semester_name',
+    'start_date',
+    'end_date'
+  ];
+
   protected $casts = [
     'last_upd_dt_stmp' => 'datetime',
     'start_date' => 'datetime',

@@ -4,7 +4,7 @@ namespace AdvisingApp\ProgramRecordManager\Filament\Resources;
 
 use AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResource\Pages\CreateManageProgram;
 use AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResource\Pages\ListManagePrograms;
-use AdvisingApp\ProgramRecordManager\Models\ManageableProgram;
+use AdvisingApp\StudentDataModel\Models\Program;
 use App\Features\ManageStudentConfigurationFeature;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Settings\ManageStudentConfigurationSettings;
@@ -15,7 +15,7 @@ use Filament\Forms\Components\TextInput;
 
 class ManageProgramResource extends Resource
 {
-    protected static ?string $model = ManageableProgram::class;
+    protected static ?string $model = Program::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 

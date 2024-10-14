@@ -53,33 +53,42 @@ class StudentPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: 'student.view-any',
-            denyResponse: 'You do not have permission to view students.'
-        );
+        if ($authenticatable->canAny('student.view-any', 'student_record_manager.view-any')) {
+            return Response::allow();
+        }
+        return Response::deny('You do not have permission to view students.');
     }
 
     public function view(Authenticatable $authenticatable, Student $student): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: ["student.{$student->getKey()}.view"],
-            denyResponse: 'You do not have permission to view this student.'
-        );
+        if ($authenticatable->canAny("student.{$student->getKey()}.view", "student_record_manager.{$student->id}.view-any")) {
+            return Response::allow();
+        }
+        return Response::deny('You do not have permission to view this student.');
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        return Response::deny('Students cannot be created.');
+        return $authenticatable->canOrElse(
+            abilities: 'student_record_manager.create',
+            denyResponse: 'You do not have permission to create student.'
+        );
     }
 
     public function update(Authenticatable $authenticatable, Student $student): Response
     {
-        return Response::deny('Students cannot be updated.');
+        return $authenticatable->canOrElse(
+            abilities: "student_record_manager.{student->id}.update",
+            denyResponse: 'Students cannot be updated.'
+        );
     }
 
     public function delete(Authenticatable $authenticatable, Student $student): Response
     {
-        return Response::deny('Students cannot be deleted.');
+        return $authenticatable->canOrElse(
+            abilities: "student_record_manager.{$student->id}.delete",
+            denyResponse: 'Students cannot be deleted.'
+        );
     }
 
     public function restore(Authenticatable $authenticatable, Student $student): Response

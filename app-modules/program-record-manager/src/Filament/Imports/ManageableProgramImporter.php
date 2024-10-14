@@ -2,14 +2,14 @@
 
 namespace AdvisingApp\ProgramRecordManager\Filament\Imports;
 
-use AdvisingApp\ProgramRecordManager\Models\ManageableProgram;
+use AdvisingApp\StudentDataModel\Models\Program;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 
 class ManageableProgramImporter extends Importer
 {
-    protected static ?string $model = ManageableProgram::class;
+    protected static ?string $model = Program::class;
 
     public static function getColumns(): array
     {

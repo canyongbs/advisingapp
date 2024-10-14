@@ -4,7 +4,7 @@ namespace AdvisingApp\EnrollmentRecordManager\Filament\Resources;
 
 use AdvisingApp\EnrollmentRecordManager\Filament\Resources\ManageEnrollmentResource\Pages\CreateManageEnrollment;
 use AdvisingApp\EnrollmentRecordManager\Filament\Resources\ManageEnrollmentResource\Pages\ListManageEnrollments;
-use AdvisingApp\EnrollmentRecordManager\Models\ManageableEnrollment;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
 use App\Features\ManageStudentConfigurationFeature;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Settings\ManageStudentConfigurationSettings;
@@ -15,7 +15,7 @@ use Filament\Forms\Components\TextInput;
 
 class ManageEnrollmentResource extends Resource
 {
-    protected static ?string $model = ManageableEnrollment::class;
+    protected static ?string $model = Enrollment::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
