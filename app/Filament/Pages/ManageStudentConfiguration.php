@@ -20,7 +20,7 @@ class ManageStudentConfiguration extends SettingsPage
 {
     protected static string $settings = ManageStudentConfigurationSettings::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-cog-8-tooth';
 
     protected static string $view = 'filament.pages.manage-student-configuration';
 
@@ -29,8 +29,6 @@ class ManageStudentConfiguration extends SettingsPage
     protected static ?string $navigationGroup = 'Students';
 
     protected static ?string $navigationLabel  = 'Configuration';
-
-    // protected static ?int $navigationSort = 1;
 
     public function form(Form $form): Form
     {
