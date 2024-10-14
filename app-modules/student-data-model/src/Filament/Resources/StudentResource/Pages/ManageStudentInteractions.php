@@ -37,12 +37,12 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Forms\Form;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
 
-class ManageStudentInteractions extends ManageRelatedRecords
+class ManageStudentInteractions extends RelationManager
 {
     use HasManyMorphedInteractionsTrait;
 

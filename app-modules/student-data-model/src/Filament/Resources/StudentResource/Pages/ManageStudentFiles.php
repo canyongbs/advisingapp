@@ -37,11 +37,11 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use Illuminate\Database\Eloquent\Model;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\RelationManagers\EngagementFilesRelationManager;
 
-class ManageStudentFiles extends ManageRelatedRecords
+class ManageStudentFiles extends RelationManager
 {
     protected static string $resource = StudentResource::class;
 
@@ -50,7 +50,7 @@ class ManageStudentFiles extends ManageRelatedRecords
 
     protected static ?string $navigationLabel = 'Files and Documents';
 
-    protected static ?string $breadcrumb = 'Files';
+    protected static ?string $title = 'Files';
 
     protected static ?string $navigationIcon = 'heroicon-o-folder';
 
@@ -59,10 +59,10 @@ class ManageStudentFiles extends ManageRelatedRecords
         return (bool) count(static::managers($arguments['record'] ?? null));
     }
 
-    public function getRelationManagers(): array
-    {
-        return static::managers($this->getRecord());
-    }
+    // public function getRelationManagers(): array
+    // {
+    //     return static::managers($this->getRecord());
+    // }
 
     private static function managers(?Model $record = null): array
     {

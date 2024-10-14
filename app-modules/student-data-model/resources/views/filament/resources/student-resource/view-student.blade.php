@@ -55,7 +55,16 @@
 
     {{-- Header Section --}}
     <x-student-data-model::student-header-section :record="$record" />
-    <x-student-data-model::student-profile-section :record="$record" />
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
+        <x-student-data-model::student-profile-section :record="$record" />
+        <livewire:student-data-model::manage-student-information :record="$record->getKey()" />
+    </div>
+
+    {{-- @livewire('filament.pages.your-page-name') --}}
+
+    <livewire:student-data-model::manage-student-alerts :record="$record->getKey()" />
+    {{-- <livewire :page="ManageStudentAlerts::class" /> --}}
+
     {{-- End header section --}}
 
     {{-- @if (count($relationManagers))
