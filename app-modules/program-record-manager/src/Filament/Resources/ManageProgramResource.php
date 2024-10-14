@@ -17,7 +17,7 @@ class ManageProgramResource extends Resource
 {
     protected static ?string $model = Program::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-square-3-stack-3d';
 
     protected static ?string $cluster = ConstituentManagement::class;
 

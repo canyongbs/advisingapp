@@ -98,12 +98,12 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->model(
                                 ThemeSettings::getSettingsPropertyModel('theme.is_favicon_active'),
                             )
-                            ->afterStateUpdated(fn (Set $set) => $set('is_favicon_active', true))
-                            ->deleteUploadedFileUsing(fn (Set $set) => $set('is_favicon_active', false))
+                            ->afterStateUpdated(fn(Set $set) => $set('is_favicon_active', true))
+                            ->deleteUploadedFileUsing(fn(Set $set) => $set('is_favicon_active', false))
                             ->hiddenLabel(),
                         Toggle::make('is_favicon_active')
                             ->label('Active')
-                            ->hidden(fn (Get $get): bool => blank($get('favicon'))),
+                            ->hidden(fn(Get $get): bool => blank($get('favicon'))),
                     ]),
                 Section::make('Partner Logo')
                     ->aside()
@@ -116,8 +116,8 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->model(
                                 ThemeSettings::getSettingsPropertyModel('theme.is_logo_active'),
                             )
-                            ->afterStateUpdated(fn (Set $set) => $set('is_logo_active', true))
-                            ->deleteUploadedFileUsing(fn (Set $set) => $set('is_logo_active', false))
+                            ->afterStateUpdated(fn(Set $set) => $set('is_logo_active', true))
+                            ->deleteUploadedFileUsing(fn(Set $set) => $set('is_logo_active', false))
                             ->hiddenLabel(),
                         SpatieMediaLibraryFileUpload::make('dark_logo')
                             ->disk('s3')
@@ -127,10 +127,10 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->model(
                                 ThemeSettings::getSettingsPropertyModel('theme.is_logo_active'),
                             )
-                            ->hidden(fn (Get $get): bool => blank($get('logo'))),
+                            ->hidden(fn(Get $get): bool => blank($get('logo'))),
                         Toggle::make('is_logo_active')
                             ->label('Active')
-                            ->hidden(fn (Get $get): bool => blank($get('logo'))),
+                            ->hidden(fn(Get $get): bool => blank($get('logo'))),
                     ]),
 
                 Section::make('Changelog URL')
@@ -141,7 +141,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->url()
                             ->maxLength('255'),
                     ])
-                    ->visible(fn () => AddUrlToThemeSettingsFeature::active()),
+                    ->visible(fn() => AddUrlToThemeSettingsFeature::active()),
 
                 Section::make('Product Knowledge Base URL')
                     ->aside()
@@ -151,7 +151,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->url()
                             ->maxLength('255'),
                     ])
-                    ->visible(fn () => AddUrlToThemeSettingsFeature::active()),
+                    ->visible(fn() => AddUrlToThemeSettingsFeature::active()),
             ]);
     }
 
