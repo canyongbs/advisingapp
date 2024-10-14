@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\StudentRecordManager\Filament\Imports;
 
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Str;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Models\Import;
-use AdvisingApp\StudentRecordManager\Models\ManageableStudent;
 
 class StudentManageableImporter extends Importer
 {
-    protected static ?string $model = ManageableStudent::class;
+    protected static ?string $model = Student::class;
 
     public static function getColumns(): array
     {

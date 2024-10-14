@@ -40,8 +40,6 @@ use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\StudentRecordManager\Models\ManageableStudent;
-use AdvisingApp\StudentRecordManager\Observers\ManageStudentObserver;
 use AdvisingApp\StudentRecordManager\StudentRecordManagerPlugin;
 use AdvisingApp\StudentRecordManager\Registries\StudentRecordManagerRbacRegistry;
 
@@ -57,6 +55,5 @@ class StudentRecordManagerServiceProvider extends ServiceProvider
     Relation::morphMap([]);
 
     AuthorizationRoleRegistry::register(StudentRecordManagerRbacRegistry::class);
-    ManageableStudent::observe(ManageStudentObserver::class);
   }
 }

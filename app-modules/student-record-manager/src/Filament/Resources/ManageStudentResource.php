@@ -5,7 +5,6 @@ namespace AdvisingApp\StudentRecordManager\Filament\Resources;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource\Pages\CreateManageStudent;
 use AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource\Pages\ListManageStudents;
-use AdvisingApp\StudentRecordManager\Models\ManageableStudent;
 use App\Features\ManageStudentConfigurationFeature;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Settings\ManageStudentConfigurationSettings;
@@ -19,7 +18,7 @@ use Filament\Forms\Components\Section;
 
 class ManageStudentResource extends Resource
 {
-    protected static ?string $model = ManageableStudent::class;
+    protected static ?string $model = Student::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -36,7 +35,10 @@ class ManageStudentResource extends Resource
         /** @var User $user */
         $user = auth()->user();
 
-        return ManageStudentConfigurationFeature::active() && $user->can('student_record_manager.configuration') && app(ManageStudentConfigurationSettings::class)->is_enabled;
+        return ManageStudentConfigurationFeature::active()
+            && $user->can('student_record_manager.configuration')
+            && app(ManageStudentConfigurationSettings::class)->is_enabled
+            && $user->can('student_record_manager.view-any');
     }
 
     public static function form(Form $form): Form
@@ -53,11 +55,11 @@ class ManageStudentResource extends Resource
                         TextInput::make('otherid')
                             ->label('Other ID')
                             ->numeric(),
-                        TextInput::make('first_name')
+                        TextInput::make('first')
                             ->label('First Name')
                             ->string()
                             ->maxLength(255),
-                        TextInput::make('last_name')
+                        TextInput::make('last')
                             ->label('Last Name')
                             ->string()
                             ->maxLength(255),
@@ -106,11 +108,11 @@ class ManageStudentResource extends Resource
                             ->label('Address')
                             ->string()
                             ->maxLength(255),
-                        TextInput::make('address_2')
+                        TextInput::make('address2')
                             ->label('Apartment/Unit Number')
                             ->string()
                             ->maxLength(255),
-                        TextInput::make('address_3')
+                        TextInput::make('address3')
                             ->label('Additional Address')
                             ->string()
                             ->maxLength(255),

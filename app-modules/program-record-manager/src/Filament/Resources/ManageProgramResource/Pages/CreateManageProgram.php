@@ -44,17 +44,21 @@ class CreateManageProgram extends CreateRecord
                     ->label('PROG status')
                     ->default('AC'),
                 TextInput::make('cum_gpa')
+                    ->required()
                     ->label('Cum GPA')
                     ->numeric(),
                 TextInput::make('semester')
+                    ->required()
                     ->label('Semester')
                     ->rules(['digits_between:1,4'])
                     ->numeric(),
                 TextInput::make('descr')
+                    ->required()
                     ->label('DESCR')
                     ->numeric(),
                 TextInput::make('foi')
-                    ->label('Field of interest'),
+                    ->label('Field of interest')
+                    ->required(),
                 DateTimePicker::make('change_dt')
                     ->label('Change date')
                     ->native(false)

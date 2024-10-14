@@ -4,9 +4,8 @@ namespace AdvisingApp\EnrollmentRecordManager\Filament\Resources\ManageEnrollmen
 
 use AdvisingApp\EnrollmentRecordManager\Filament\Imports\ManageableEnrollmentImporter;
 use AdvisingApp\EnrollmentRecordManager\Filament\Resources\ManageEnrollmentResource;
-use AdvisingApp\ProgramRecordManager\Models\ManageableProgram;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
 use App\Filament\Tables\Columns\OpenSearch\TextColumn;
-use Filament\Actions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -61,7 +60,7 @@ class ListManageEnrollments extends ListRecords
             CreateAction::make(),
             ImportAction::make()
                 ->importer(ManageableEnrollmentImporter::class)
-                ->authorize('import', ManageableProgram::class),
+                ->authorize('import', Enrollment::class),
         ];
     }
 }

@@ -80,6 +80,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
 use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string $display_name
@@ -89,6 +90,7 @@ use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  */
 class Student extends BaseAuthenticatable implements Auditable, Subscribable, Educatable, HasFilamentResource, NotifiableInterface
 {
+    use SoftDeletes;
     use HasApiTokens;
     use AuditableTrait;
     use HasFactory;
@@ -108,6 +110,39 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     public $incrementing = false;
 
     protected $keyType = 'string';
+
+    protected $fillable = [
+        'sisid',
+        'otherid',
+        'first',
+        'last',
+        'full_name',
+        'preferred',
+        'birthdate',
+        'hsgrad',
+        'email',
+        'email_2',
+        'mobile',
+        'phone',
+        'address',
+        'address2',
+        'address3',
+        'city',
+        'state',
+        'postal',
+        'sms_opt_out',
+        'email_bounce',
+        'dual',
+        'ferpa',
+        'dfw',
+        'sap',
+        'holds',
+        'firstgen',
+        'ethnicity',
+        'lastlmslogin',
+        'f_e_term',
+        'mr_e_term',
+    ];
 
     protected $casts = [
         'sisid' => 'string',
@@ -315,7 +350,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     protected function displayName(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value, array $attributes) => $attributes[$this->displayNameKey()],
+            get: fn(?string $value, array $attributes) => $attributes[$this->displayNameKey()],
         );
     }
 }

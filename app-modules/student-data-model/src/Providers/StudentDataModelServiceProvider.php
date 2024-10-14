@@ -49,23 +49,23 @@ use AdvisingApp\StudentDataModel\Registries\StudentDataModelRbacRegistry;
 
 class StudentDataModelServiceProvider extends ServiceProvider
 {
-    use ImplementsGraphQL;
+  use ImplementsGraphQL;
 
-    public function register(): void
-    {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new StudentDataModelPlugin()));
-    }
+  public function register(): void
+  {
+    Panel::configureUsing(fn(Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new StudentDataModelPlugin()));
+  }
 
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'student' => Student::class,
-            'enrollment' => Enrollment::class,
-            'program' => Program::class,
-        ]);
+  public function boot(): void
+  {
+    Relation::morphMap([
+      'student' => Student::class,
+      'enrollment' => Enrollment::class,
+      'program' => Program::class,
+    ]);
 
-        AuthorizationRoleRegistry::register(StudentDataModelRbacRegistry::class);
+    AuthorizationRoleRegistry::register(StudentDataModelRbacRegistry::class);
 
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-    }
+    $this->discoverSchema(__DIR__ . '/../../graphql/*');
+  }
 }

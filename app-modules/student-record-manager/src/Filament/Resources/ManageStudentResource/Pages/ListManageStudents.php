@@ -2,10 +2,10 @@
 
 namespace AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource\Pages;
 
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentRecordManager\Actions\CascadeDelete;
 use AdvisingApp\StudentRecordManager\Filament\Imports\StudentManageableImporter;
 use AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource;
-use AdvisingApp\StudentRecordManager\Models\ManageableStudent;
 use Filament\Actions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
@@ -30,7 +30,7 @@ class ListManageStudents extends ListRecords
     {
         return $table
             ->columns([
-                TextColumn::make(ManageableStudent::displayNameKey())
+                TextColumn::make(Student::displayNameKey())
                     ->label('Name')
                     ->sortable()
                     ->searchable(),
@@ -76,7 +76,7 @@ class ListManageStudents extends ListRecords
             CreateAction::make(),
             ImportAction::make()
                 ->importer(StudentManageableImporter::class)
-                ->authorize('import', ManageableStudent::class),
+                ->authorize('import', Student::class),
         ];
     }
 }
