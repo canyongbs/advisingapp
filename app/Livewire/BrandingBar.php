@@ -40,10 +40,17 @@ use App\Models\User;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use Illuminate\Contracts\View\View;
+use App\Settings\CollegeBrandingSettings;
 
 class BrandingBar extends Component
 {
     public bool $isVisible = true;
+
+    public ?string $brandingBarText;
+
+    public bool $dismissible = false;
+
+    public ?string $color;
 
     public function dismiss(): void
     {
@@ -68,16 +75,17 @@ class BrandingBar extends Component
 
     public function render(): View
     {
-        return view('vendor.filament-panels.components.branding-bar');
-    }
-
-    public function hydrate(): void
-    {
         $this->updateVisibility();
+
+        return view('vendor.filament-panels.components.branding-bar');
     }
 
     public function mount(): void
     {
+        $brandingSettings = app(CollegeBrandingSettings::class);
+        $this->color = $brandingSettings->color;
+        $this->brandingBarText = $brandingSettings->college_text;
+        $this->dismissible = $brandingSettings->dismissible;
         $this->updateVisibility();
     }
 
@@ -85,5 +93,6 @@ class BrandingBar extends Component
     {
         $currentUserSettings = auth()->user();
         $this->isVisible = ! $currentUserSettings->is_branding_bar_dismissed;
+        $this->dispatch('refresh-branding-bar');
     }
 }

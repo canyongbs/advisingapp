@@ -340,11 +340,6 @@ class EditProfile extends Page
     public function mount(): void
     {
         $this->fillForm();
-        $this->getSavedNotification()?->send();
-
-        if ($redirectUrl = $this->getRedirectUrl()) {
-            $this->redirect($redirectUrl);
-        }
     }
 
     public function getUser(): Authenticatable|Model
@@ -390,6 +385,10 @@ class EditProfile extends Page
         $this->getSavedNotification()?->send();
 
         $this->dispatch('refresh-branding-bar');
+
+        if ($redirectUrl = $this->getRedirectUrl()) {
+            $this->redirect($redirectUrl);
+        }
     }
 
     public function getFormActionsAlignment(): string
