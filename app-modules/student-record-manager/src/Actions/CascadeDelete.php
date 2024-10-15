@@ -53,7 +53,6 @@ class CascadeDelete
     $student->formSubmissions()->delete();
     $student->applicationSubmissions()->delete();
     $student->eventAttendeeRecords()->delete();
-    $student->interactions()->delete();
     $student->delete();
   }
 }

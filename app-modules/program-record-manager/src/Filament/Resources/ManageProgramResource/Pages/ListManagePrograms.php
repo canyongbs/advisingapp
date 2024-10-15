@@ -25,11 +25,9 @@ class ListManagePrograms extends ListRecords
         return $table
             ->columns([
                 TextColumn::make('otherid')
-                    ->label('STUID')
-                    ->searchable(),
+                    ->label('STUID'),
                 TextColumn::make('division')
-                    ->label('College')
-                    ->searchable(),
+                    ->label('College'),
                 TextColumn::make('descr')
                     ->label('Program'),
                 TextColumn::make('foi')

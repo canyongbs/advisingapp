@@ -24,11 +24,6 @@ class ListManageEnrollments extends ListRecords
     {
         return $table
             ->columns([
-                // TextColumn::make('sisid')
-                //     ->label('sisid')
-                //     ->searchable(),
-                // TextColumn::make('name')
-                //     ->label('Name'),
                 TextColumn::make('division')
                     ->label('College'),
                 TextColumn::make('class_nbr')
