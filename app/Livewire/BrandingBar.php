@@ -70,13 +70,11 @@ class BrandingBar extends Component
     #[On('refresh-branding-bar')]
     public function refreshBrandingBar()
     {
-        $this->dispatch('$refresh');
+        $this->updateVisibility();
     }
 
     public function render(): View
     {
-        $this->updateVisibility();
-
         return view('vendor.filament-panels.components.branding-bar');
     }
 
@@ -91,8 +89,9 @@ class BrandingBar extends Component
 
     private function updateVisibility(): void
     {
-        $currentUserSettings = auth()->user();
-        $this->isVisible = ! $currentUserSettings->is_branding_bar_dismissed;
-        $this->dispatch('refresh-branding-bar');
+        /** @var User $user */
+        $user = auth()->user();
+
+        $this->isVisible = ! $user->is_branding_bar_dismissed;
     }
 }
