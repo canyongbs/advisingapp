@@ -34,52 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Livewire;
 
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
+use AdvisingApp\Task\Histories\TaskHistory;
+use AdvisingApp\Alert\Histories\AlertHistory;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\MeetingCenter\Filament\Actions\InviteEventAttendeeAction;
-use AdvisingApp\MeetingCenter\Filament\Actions\Table\ViewEventAttendeeAction;
 
-class ManageStudentEvents extends RelationManager
+class StudentEngagementTimeline extends TimelinePage
 {
     protected static string $resource = StudentResource::class;
 
-    protected static string $relationship = 'eventAttendeeRecords';
+    protected static ?string $navigationLabel = 'Timeline';
 
-    protected static ?string $title = 'Events';
+    protected static string $view = 'student-data-model::livewire.student-engagement-timeline';
 
-    public function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('event.title')
-                    ->url(fn (EventAttendee $record) => EventResource::getUrl('view', ['record' => $record->event]))
-                    ->color('primary'),
-                TextColumn::make('status')
-                    ->badge(),
-            ])
-            ->actions([
-                ViewEventAttendeeAction::make(),
-            ])
-            ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('status', [
-                EventAttendeeStatus::Invited,
-                EventAttendeeStatus::Attending,
-            ]));
-    }
+    public string $emptyStateMessage = 'There are no engagements to show for this student.';
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            InviteEventAttendeeAction::make(),
-        ];
-    }
+    public string $noMoreRecordsMessage = "You have reached the end of this student's engagement timeline.";
+
+    public array $modelsToTimeline = [
+        Engagement::class,
+        EngagementResponse::class,
+        AlertHistory::class,
+        TaskHistory::class,
+        Interaction::class,
+    ];
 }

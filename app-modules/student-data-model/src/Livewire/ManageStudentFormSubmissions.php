@@ -36,28 +36,26 @@
 
 namespace AdvisingApp\StudentDataModel\Livewire;
 
+use App\Enums\Feature;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFiles;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInteractions;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentEvents;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFormSubmissionsRelationManager;
 
-class ManageStudentInformation extends ManageRelatedRecords
+class ManageStudentFormSubmissions extends ManageRelatedRecords
 {
-    protected static string $view = 'student-data-model::livewire.manage-student-information';
-
     protected static string $resource = StudentResource::class;
 
-    // TODO: Obsolete when there is no table, remove from Filament
-    protected static string $relationship = 'programs';
+    protected static string $relationship = 'formSubmissions';
 
-    protected static ?string $navigationLabel = 'Information';
+    // TODO: Automatically set from Filament based on relationship name
+    protected static ?string $navigationLabel = 'Form Submissions';
 
-    protected static ?string $breadcrumb = 'Information';
-
-    protected static ?string $navigationIcon = 'heroicon-o-information-circle';
+    protected static string $view = 'student-data-model::livewire.manage-student-form-submissions';
 
     public function mount(int | string $record): void
     {
@@ -70,10 +68,31 @@ class ManageStudentInformation extends ManageRelatedRecords
         $this->loadDefaultActiveTab();
     }
 
-    public static function canAccess(array $arguments = []): bool
+    public static function canAccess(array $parameters = []): bool
     {
-        return (bool) count(static::managers($arguments['record'] ?? null));
+        return parent::canAccess($parameters) && Gate::check(Feature::OnlineForms->getGateName());
     }
+
+    // public static function getNavigationItems(array $urlParameters = []): array
+    // {
+    //     $item = parent::getNavigationItems($urlParameters)[0];
+
+    //     $ownerRecord = $urlParameters['record'];
+
+    //     /** @var Prospect $ownerRecord */
+    //     $formSubmissionsCount = Cache::tags('form-submission-count')
+    //         ->remember(
+    //             "form-submission-count-{$ownerRecord->getKey()}",
+    //             now()->addMinutes(5),
+    //             function () use ($ownerRecord): int {
+    //                 return $ownerRecord->formSubmissions()->count();
+    //             },
+    //         );
+
+    //     $item->badge($formSubmissionsCount > 0 ? $formSubmissionsCount : null);
+
+    //     return [$item];
+    // }
 
     public function getRelationManagers(): array
     {
@@ -83,11 +102,8 @@ class ManageStudentInformation extends ManageRelatedRecords
     private static function managers(?Model $record = null): array
     {
         return collect([
-            ProgramsRelationManager::class,
-            EnrollmentsRelationManager::class,
-            ManageStudentEngagement::class,
-            ManageStudentInteractions::class,
-            ManageStudentFiles::class,
+            StudentFormSubmissionsRelationManager::class,
+            ManageStudentEvents::class,
         ])
             ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
             ->toArray();

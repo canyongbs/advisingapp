@@ -34,52 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Livewire;
 
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\MeetingCenter\Filament\Actions\InviteEventAttendeeAction;
-use AdvisingApp\MeetingCenter\Filament\Actions\Table\ViewEventAttendeeAction;
+use AdvisingApp\Task\Filament\RelationManagers\BaseTaskRelationManager;
 
-class ManageStudentEvents extends RelationManager
+class ManageStudentTasks extends BaseTaskRelationManager
 {
     protected static string $resource = StudentResource::class;
 
-    protected static string $relationship = 'eventAttendeeRecords';
+    protected static string $relationship = 'tasks';
 
-    protected static ?string $title = 'Events';
+    // TODO: Automatically set from Filament based on relationship name
+    protected static ?string $navigationLabel = 'Tasks';
 
-    public function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('event.title')
-                    ->url(fn (EventAttendee $record) => EventResource::getUrl('view', ['record' => $record->event]))
-                    ->color('primary'),
-                TextColumn::make('status')
-                    ->badge(),
-            ])
-            ->actions([
-                ViewEventAttendeeAction::make(),
-            ])
-            ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('status', [
-                EventAttendeeStatus::Invited,
-                EventAttendeeStatus::Attending,
-            ]));
-    }
+    // TODO: Automatically set from Filament based on relationship name
+    public static ?string $breadcrumb = 'Tasks';
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            InviteEventAttendeeAction::make(),
-        ];
-    }
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
+
+    protected static string $view = 'student-data-model::livewire.manage-student-tasks';
 }

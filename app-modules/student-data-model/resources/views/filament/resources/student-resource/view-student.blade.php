@@ -36,57 +36,27 @@
     'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
     'fi-resource-record-' . $record->getKey(),
 ])>
-    @php
-        $relationManagers = $this->getRelationManagers();
-        $hasCombinedRelationManagerTabsWithContent = $this->hasCombinedRelationManagerTabsWithContent();
-    @endphp
-
-    {{-- @if (!$hasCombinedRelationManagerTabsWithContent || !count($relationManagers))
-        @if ($this->hasInfolist())
-            {{ $this->infolist }}
-        @else
-            <div
-                wire:key="{{ $this->getId() }}.forms.{{ $this->getFormStatePath() }}"
-            >
-                {{ $this->form }}
-            </div>
-        @endif
-    @endif --}}
-
-    {{-- Header Section --}}
     <x-student-data-model::student-header-section :record="$record" />
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
-        <x-student-data-model::student-profile-section :record="$record" />
-        <livewire:student-data-model::manage-student-information :record="$record->getKey()" />
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div class="flex flex-col gap-8">
+            <x-student-data-model::student-profile-section :record="$record" />
+            <livewire:student-data-model::student-engagement-timeline :record="$record->getKey()" />
+        </div>
+        <div class="col-auto lg:col-span-2">
+            <div class="flex flex-col gap-8">
+                <livewire:student-data-model::manage-student-information :record="$record->getKey()" />
+                <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                    <livewire:student-data-model::manage-student-alerts
+                        :owner-record="$record"
+                        :page-class="\AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent::class"
+                    />
+                    <livewire:student-data-model::manage-student-tasks :record="$record->getKey()" />
+                    <livewire:student-data-model::manage-student-care-team :record="$record->getKey()" />
+                    <livewire:student-data-model::manage-student-subscriptions :record="$record->getKey()" />
+                </div>
+
+                <livewire:student-data-model::manage-student-form-submissions :record="$record->getKey()" />
+            </div>
+        </div>
     </div>
-
-    {{-- @livewire('filament.pages.your-page-name') --}}
-
-    <livewire:student-data-model::manage-student-alerts :record="$record->getKey()" />
-    {{-- <livewire :page="ManageStudentAlerts::class" /> --}}
-
-    {{-- End header section --}}
-
-    {{-- @if (count($relationManagers))
-        <x-filament-panels::resources.relation-managers
-            :active-locale="isset($activeLocale) ? $activeLocale : null"
-            :active-manager="$this->activeRelationManager ?? ($hasCombinedRelationManagerTabsWithContent ? null : array_key_first($relationManagers))"
-            :content-tab-label="$this->getContentTabLabel()"
-            :content-tab-icon="$this->getContentTabIcon()"
-            :content-tab-position="$this->getContentTabPosition()"
-            :managers="$relationManagers"
-            :owner-record="$record"
-            :page-class="static::class"
-        >
-            @if ($hasCombinedRelationManagerTabsWithContent)
-                <x-slot name="content">
-                    @if ($this->hasInfolist())
-                        {{ $this->infolist }}
-                    @else
-                        {{ $this->form }}
-                    @endif
-                </x-slot>
-            @endif
-        </x-filament-panels::resources.relation-managers>
-    @endif --}}
 </x-student-data-model::page>

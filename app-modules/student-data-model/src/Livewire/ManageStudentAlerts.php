@@ -55,47 +55,41 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
-class ManageStudentAlerts extends ManageRelatedRecords
+class ManageStudentAlerts extends RelationManager
 {
     protected static string $resource = StudentResource::class;
 
     protected static string $relationship = 'alerts';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Alerts';
+    // protected static ?string $title = 'Alerts';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $title = 'Alerts';
+    // protected static ?string $label = 'Alerts';
 
-    protected static ?string $label = 'Files';
+    // protected static string $view = 'student-data-model::livewire.manage-student-alerts';
 
-    protected static ?string $navigationIcon = 'heroicon-o-bell-alert';
+    // public static function getNavigationItems(array $urlParameters = []): array
+    // {
+    //     $item = parent::getNavigationItems($urlParameters)[0];
 
-    protected static string $view = 'student-data-model::livewire.manage-student-alerts';
+    //     $ownerRecord = $urlParameters['record'];
 
-    public static function getNavigationItems(array $urlParameters = []): array
-    {
-        $item = parent::getNavigationItems($urlParameters)[0];
+    //     /** @var Student $ownerRecord */
+    //     $alertsCount = Cache::tags('alert-count')
+    //         ->remember(
+    //             "alert-count-{$ownerRecord->getKey()}",
+    //             now()->addMinutes(5),
+    //             function () use ($ownerRecord): int {
+    //                 return $ownerRecord->alerts()->status(AlertStatus::Active)->count();
+    //             },
+    //         );
 
-        $ownerRecord = $urlParameters['record'];
+    //     $item->badge($alertsCount > 0 ? $alertsCount : null, color: 'danger');
 
-        /** @var Student $ownerRecord */
-        $alertsCount = Cache::tags('alert-count')
-            ->remember(
-                "alert-count-{$ownerRecord->getKey()}",
-                now()->addMinutes(5),
-                function () use ($ownerRecord): int {
-                    return $ownerRecord->alerts()->status(AlertStatus::Active)->count();
-                },
-            );
-
-        $item->badge($alertsCount > 0 ? $alertsCount : null, color: 'danger');
-
-        return [$item];
-    }
+    //     return [$item];
+    // }
 
     public function infolist(Infolist $infolist): Infolist
     {

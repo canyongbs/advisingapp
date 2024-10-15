@@ -89,7 +89,7 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                         fn (Builder $query) => $query->tap(new HasLicense($this->getOwnerRecord()->getLicenseType())),
                     )
                     ->nullable()
-                    ->searchable(['name', 'email'])
+                    // ->searchable(['name', 'email'])
                     ->default(auth()->id()),
             ]);
     }
@@ -121,32 +121,32 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                         default => null,
                     }),
             ])
-            ->filters([
-                Filter::make('my_tasks')
-                    ->label('My Tasks')
-                    ->query(
-                        fn ($query) => $query->where('assigned_to', auth()->id())
-                    ),
-                SelectFilter::make('assignedTo')
-                    ->label('Assigned To')
-                    ->relationship(
-                        'assignedTo',
-                        'name',
-                        fn (Builder $query) => $query->tap(new HasLicense($this->getOwnerRecord()->getLicenseType())),
-                    )
-                    ->searchable()
-                    ->multiple(),
-                SelectFilter::make('status')
-                    ->label('Status')
-                    ->options(collect(TaskStatus::cases())->mapWithKeys(fn (TaskStatus $direction) => [$direction->value => \Livewire\str($direction->name)->title()->headline()]))
-                    ->multiple()
-                    ->default(
-                        [
-                            TaskStatus::Pending->value,
-                            TaskStatus::InProgress->value,
-                        ]
-                    ),
-            ])
+            // ->filters([
+            //     Filter::make('my_tasks')
+            //         ->label('My Tasks')
+            //         ->query(
+            //             fn ($query) => $query->where('assigned_to', auth()->id())
+            //         ),
+            //     SelectFilter::make('assignedTo')
+            //         ->label('Assigned To')
+            //         ->relationship(
+            //             'assignedTo',
+            //             'name',
+            //             fn (Builder $query) => $query->tap(new HasLicense($this->getOwnerRecord()->getLicenseType())),
+            //         )
+            //         ->searchable()
+            //         ->multiple(),
+            //     SelectFilter::make('status')
+            //         ->label('Status')
+            //         ->options(collect(TaskStatus::cases())->mapWithKeys(fn (TaskStatus $direction) => [$direction->value => \Livewire\str($direction->name)->title()->headline()]))
+            //         ->multiple()
+            //         ->default(
+            //             [
+            //                 TaskStatus::Pending->value,
+            //                 TaskStatus::InProgress->value,
+            //             ]
+            //         ),
+            // ])
             ->headerActions([
                 CreateAction::make()
                     ->authorize(function () {
