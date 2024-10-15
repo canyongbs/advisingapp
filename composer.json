@@ -84,7 +84,7 @@
         "league/flysystem-aws-s3-v3": "^3.28",
         "league/html-to-markdown": "^5.1",
         "league/oauth2-client": "^2.7",
-        "livewire/livewire": "^3.5",
+        "livewire/livewire": "^3.5.6",
         "maatwebsite/excel": "^3.1",
         "microsoft/microsoft-graph": "^1.109",
         "mll-lab/graphql-php-scalars": "^6.2",
