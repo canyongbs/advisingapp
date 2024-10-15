@@ -93,11 +93,17 @@ class StudentPolicy
 
     public function restore(Authenticatable $authenticatable, Student $student): Response
     {
-        return Response::deny('Students cannot be restored.');
+        return $authenticatable->canOrElse(
+            abilities: "student_record_manager.{$student->id}.restore",
+            denyResponse: 'Students cannot be restored.'
+        );
     }
 
     public function forceDelete(Authenticatable $authenticatable, Student $student): Response
     {
-        return Response::deny('Students cannot be force deleted.');
+        return $authenticatable->canOrElse(
+            abilities: "student_record_manager.{$student->id}.force-delete",
+            denyResponse: 'Students cannot be force deleted.'
+        );
     }
 }
