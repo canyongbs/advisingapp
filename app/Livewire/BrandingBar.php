@@ -34,22 +34,64 @@
 </COPYRIGHT>
 */
 
-namespace App\Settings;
+namespace App\Livewire;
 
-use Spatie\LaravelSettings\Settings;
+use App\Models\User;
+use Livewire\Component;
+use Livewire\Attributes\On;
+use Illuminate\Contracts\View\View;
+use App\Settings\CollegeBrandingSettings;
 
-class CollegeBrandingSettings extends Settings
+class BrandingBar extends Component
 {
-    public bool $is_enabled = false;
+    public bool $isVisible = true;
 
-    public ?string $college_text = null;
-
-    public ?string $color = null;
+    public ?string $brandingBarText;
 
     public bool $dismissible = false;
 
-    public static function group(): string
+    public ?string $color;
+
+    public function dismiss(): void
     {
-        return 'college_branding';
+        // Hide the branding bar
+        $this->isVisible = false;
+
+        // Update a field for the user in the database
+        $currentUser = User::find(auth()->user()->id);
+
+        if (! empty($currentUser)) {
+            $currentUser->update([
+                'is_branding_bar_dismissed' => true,
+            ]);
+        }
+    }
+
+    #[On('refresh-branding-bar')]
+    public function refreshBrandingBar()
+    {
+        $this->updateVisibility();
+    }
+
+    public function render(): View
+    {
+        return view('vendor.filament-panels.components.branding-bar');
+    }
+
+    public function mount(): void
+    {
+        $brandingSettings = app(CollegeBrandingSettings::class);
+        $this->color = $brandingSettings->color;
+        $this->brandingBarText = $brandingSettings->college_text;
+        $this->dismissible = $brandingSettings->dismissible;
+        $this->updateVisibility();
+    }
+
+    private function updateVisibility(): void
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        $this->isVisible = ! $user->is_branding_bar_dismissed;
     }
 }

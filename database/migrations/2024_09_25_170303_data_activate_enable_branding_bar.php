@@ -34,22 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Settings;
+use App\Features\EnableBrandingBar;
+use Illuminate\Database\Migrations\Migration;
 
-use Spatie\LaravelSettings\Settings;
-
-class CollegeBrandingSettings extends Settings
-{
-    public bool $is_enabled = false;
-
-    public ?string $college_text = null;
-
-    public ?string $color = null;
-
-    public bool $dismissible = false;
-
-    public static function group(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'college_branding';
+        EnableBrandingBar::activate();
     }
-}
+
+    public function down(): void
+    {
+        EnableBrandingBar::deactivate();
+    }
+};

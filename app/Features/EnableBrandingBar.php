@@ -34,22 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Settings;
+namespace App\Features;
 
-use Spatie\LaravelSettings\Settings;
+use App\Support\AbstractFeatureFlag;
 
-class CollegeBrandingSettings extends Settings
+class EnableBrandingBar extends AbstractFeatureFlag
 {
-    public bool $is_enabled = false;
-
-    public ?string $college_text = null;
-
-    public ?string $color = null;
-
-    public bool $dismissible = false;
-
-    public static function group(): string
+    public function resolve(mixed $scope): mixed
     {
-        return 'college_branding';
+        return false;
     }
 }

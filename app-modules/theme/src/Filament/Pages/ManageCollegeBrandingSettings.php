@@ -40,6 +40,7 @@ use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
+use App\Features\EnableBrandingBar;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\GlobalSettings;
@@ -78,6 +79,11 @@ class ManageCollegeBrandingSettings extends SettingsPage
                     ->required()
                     ->live()
                     ->columnSpanFull(),
+                Toggle::make('dismissible')
+                    ->inline(false)
+                    ->label('Dismissible')
+                    ->visible(fn (Get $get) => EnableBrandingBar::active() && $get('is_enabled'))
+                    ->columnSpanFull(),
                 TextInput::make('college_text')
                     ->label('College Text')
                     ->placeholder('@ Canyon Community College - Go Lions!')
@@ -90,6 +96,20 @@ class ManageCollegeBrandingSettings extends SettingsPage
                     ->visible(fn (Get $get) => $get('is_enabled'))
                     ->required(),
             ]);
+    }
+
+    public function save(): void
+    {
+        // Save the settings first
+        parent::save();
+
+        // Retrieve the updated settings
+        $settings = app(CollegeBrandingSettings::class);
+
+        // Check the specific field
+        if (EnableBrandingBar::active() && ! $settings->dismissible) {
+            User::query()->update(['is_branding_bar_dismissed' => false]);
+        }
     }
 
     public function getRedirectUrl(): ?string
