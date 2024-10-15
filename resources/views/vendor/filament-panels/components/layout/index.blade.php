@@ -34,9 +34,11 @@
 @php
     use App\Settings\CollegeBrandingSettings;
     use Filament\Support\Enums\MaxWidth;
+    use App\Features\EnableBrandingBar;
 
     $navigation = filament()->getNavigation();
     $collegeBrandingSettings = app(CollegeBrandingSettings::class);
+    $currentUser = auth()->user();
 @endphp
 
 <x-filament-panels::layout.base :livewire="$livewire">
@@ -46,14 +48,15 @@
         <x-filament-panels::topbar :navigation="$navigation" />
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_AFTER, scopes: $livewire->getRenderHookScopes()) }}
-
-        @if ($collegeBrandingSettings->is_enabled)
+        @if ($collegeBrandingSettings->is_enabled && ! EnableBrandingBar::active())
             <div
                 style="--c-600: {{ \Filament\Support\Colors\Color::all()[$collegeBrandingSettings->color][600] }}"
                 class="sticky top-16 z-10 bg-custom-600 text-sm font-medium text-white px-6 py-2 flex items-center h-10"
             >
                 {{ $collegeBrandingSettings->college_text }}
             </div>
+        @elseif ($collegeBrandingSettings->is_enabled && EnableBrandingBar::active())
+            <livewire:branding-bar />
         @endif
 
         {{-- The sidebar is after the page content in the markup to fix issues with page content overlapping dropdown content from the sidebar. --}}
@@ -137,7 +140,7 @@
 
                 <x-filament-panels::sidebar
                     :navigation="$navigation"
-                    :has-branding-bar="$collegeBrandingSettings->is_enabled"
+                    :has-branding-bar="EnableBrandingBar::active() ? $collegeBrandingSettings->is_enabled && ! $currentUser->is_branding_bar_dismissed : $collegeBrandingSettings->is_enabled"
                     class="fi-main-sidebar"
                 />
 
