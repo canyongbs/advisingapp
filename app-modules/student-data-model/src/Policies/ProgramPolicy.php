@@ -84,11 +84,17 @@ class ProgramPolicy
 
   public function restore(Authenticatable $authenticatable, Program $program): Response
   {
-    return Response::deny('Programs cannot be restored.');
+    return $authenticatable->canOrElse(
+      abilities: "student_record_manager.{$program->id}.restore",
+      denyResponse: 'Programs cannot be restored.'
+    );
   }
 
   public function forceDelete(Authenticatable $authenticatable, Program $program): Response
   {
-    return Response::deny('Programs cannot be force deleted.');
+    return $authenticatable->canOrElse(
+      abilities: "student_record_manager.{$program->id}.force-delete",
+      denyResponse: 'Programs cannot be force deleted.'
+    );
   }
 }

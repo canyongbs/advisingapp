@@ -84,11 +84,17 @@ class EnrollmentPolicy
 
   public function restore(Authenticatable $authenticatable, Enrollment $enrollment): Response
   {
-    return Response::deny('Enrollments cannot be restored.');
+    return $authenticatable->canOrElse(
+      abilities: "student_record_manager.{$enrollment->id}.restore",
+      denyResponse: 'Enrollments cannot be restored.'
+    );
   }
 
   public function forceDelete(Authenticatable $authenticatable, Enrollment $enrollment): Response
   {
-    return Response::deny('Enrollments cannot be force deleted.');
+    return $authenticatable->canOrElse(
+      abilities: "student_record_manager.{$enrollment->id}.force-delete",
+      denyResponse: 'Enrollments cannot be force deleted.'
+    );
   }
 }
