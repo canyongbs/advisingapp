@@ -33,3 +33,17 @@
 
 </COPYRIGHT>
 */
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\CheckOlympusKey;
+use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;
+
+Route::prefix('api')
+    ->middleware([
+        'api',
+        CheckOlympusKey::class,
+    ])
+    ->group(function () {
+        Route::post('/update-sis-settings', UpdateStudentInformationSystemSettingsController::class)
+            ->name('update-sis-settings');
+    });
