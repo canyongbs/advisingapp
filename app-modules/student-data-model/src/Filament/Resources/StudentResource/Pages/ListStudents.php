@@ -49,6 +49,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use Filament\Tables\Actions\BulkActionGroup;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Segment\Actions\BulkSegmentAction;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
@@ -143,6 +144,7 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
                     SubscribeBulkAction::make(),
                     BulkEngagementAction::make(context: 'students'),
                     ToggleCareTeamBulkAction::make(),
+                    BulkSegmentAction::make(context: 'students'),
                 ]),
             ]);
     }

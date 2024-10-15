@@ -63,6 +63,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Imports\ProspectImporter;
+use AdvisingApp\Segment\Actions\BulkSegmentAction;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
@@ -228,6 +229,7 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                                 ->success()
                                 ->send();
                         }),
+                    BulkSegmentAction::make(context: 'prospects'),
                 ]),
             ]);
     }
