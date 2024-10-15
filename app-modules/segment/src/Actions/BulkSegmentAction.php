@@ -82,10 +82,10 @@ class BulkSegmentAction
                 } catch (\Exception $e) {
                     DB::rollBack();
                     Notification::make()
-                    ->title('Could not save segment')
-                    ->body('We failed to create the segment. Please try again later.')
-                    ->danger()
-                    ->send();
+                        ->title('Could not save segment')
+                        ->body('We failed to create the segment. Please try again later.')
+                        ->danger()
+                        ->send();
                 }
             });
     }
