@@ -63,6 +63,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
@@ -72,7 +73,6 @@ use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 use Filament\Infolists\Components\Fieldset as InfolistFieldset;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords\Actions\DraftWithAiAction;
-use AdvisingApp\StudentDataModel\Models\Student;
 
 class ManageStudentEngagement extends RelationManager
 {
@@ -83,19 +83,19 @@ class ManageStudentEngagement extends RelationManager
 
     public function infolist(Infolist $infolist): Infolist
     {
-        return $infolist->schema(fn(Timeline $record) => match ($record->timelineable::class) {
+        return $infolist->schema(fn (Timeline $record) => match ($record->timelineable::class) {
             Engagement::class => [
                 TextEntry::make('user.name')
                     ->label('Created By')
-                    ->getStateUsing(fn(Timeline $record): string => $record->timelineable->user->name),
+                    ->getStateUsing(fn (Timeline $record): string => $record->timelineable->user->name),
                 InfolistFieldset::make('Content')
                     ->schema([
                         TextEntry::make('subject')
-                            ->getStateUsing(fn(Timeline $record): ?string => $record->timelineable->subject)
-                            ->hidden(fn($state): bool => blank($state))
+                            ->getStateUsing(fn (Timeline $record): ?string => $record->timelineable->subject)
+                            ->hidden(fn ($state): bool => blank($state))
                             ->columnSpanFull(),
                         TextEntry::make('body')
-                            ->getStateUsing(fn(Timeline $record): HtmlString => $record->timelineable->getBody())
+                            ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
                             ->columnSpanFull(),
                     ]),
                 InfolistFieldset::make('deliverable')
@@ -111,18 +111,18 @@ class ManageStudentEngagement extends RelationManager
                                 return $timelineable->getDeliveryMethod()->getLabel();
                             }),
                         IconEntry::make('deliverable.delivery_status')
-                            ->getStateUsing(fn(Timeline $record): EngagementDeliveryStatus => $record->timelineable->deliverable->delivery_status)
-                            ->icon(fn(EngagementDeliveryStatus $state): string => $state->getIconClass())
-                            ->color(fn(EngagementDeliveryStatus $state): string => $state->getColor())
+                            ->getStateUsing(fn (Timeline $record): EngagementDeliveryStatus => $record->timelineable->deliverable->delivery_status)
+                            ->icon(fn (EngagementDeliveryStatus $state): string => $state->getIconClass())
+                            ->color(fn (EngagementDeliveryStatus $state): string => $state->getColor())
                             ->label('Status'),
                         TextEntry::make('deliverable.delivered_at')
-                            ->getStateUsing(fn(Timeline $record): string => $record->timelineable->deliverable->delivered_at)
+                            ->getStateUsing(fn (Timeline $record): string => $record->timelineable->deliverable->delivered_at)
                             ->label('Delivered At')
-                            ->hidden(fn(Timeline $record): bool => is_null($record->timelineable->deliverable->delivered_at)),
+                            ->hidden(fn (Timeline $record): bool => is_null($record->timelineable->deliverable->delivered_at)),
                         TextEntry::make('deliverable.delivery_response')
-                            ->getStateUsing(fn(Timeline $record): string => $record->timelineable->deliverable->delivery_response)
+                            ->getStateUsing(fn (Timeline $record): string => $record->timelineable->deliverable->delivery_response)
                             ->label('Error Details')
-                            ->hidden(fn(Timeline $record): bool => is_null($record->timelineable->deliverable->delivery_response)),
+                            ->hidden(fn (Timeline $record): bool => is_null($record->timelineable->deliverable->delivery_response)),
                     ])
                     ->columns(),
             ],
@@ -141,7 +141,7 @@ class ManageStudentEngagement extends RelationManager
                 ->label('What would you like to send?')
                 ->options(EngagementDeliveryMethod::getOptions())
                 ->default(EngagementDeliveryMethod::Email->value)
-                ->disableOptionWhen(fn(string $value): bool => EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
+                ->disableOptionWhen(fn (string $value): bool => EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
                 ->selectablePlaceholder(false)
                 ->live(),
             Fieldset::make('Content')
@@ -150,7 +150,7 @@ class ManageStudentEngagement extends RelationManager
                         ->autofocus()
                         ->required()
                         ->placeholder(__('Subject'))
-                        ->hidden(fn(Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                        ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
                         ->columnSpanFull(),
                     TiptapEditor::make('body')
                         ->disk('s3-public')
@@ -164,7 +164,7 @@ class ManageStudentEngagement extends RelationManager
                         ->showMergeTagsInBlocksPanel(! ($form->getLivewire() instanceof RelationManager))
                         ->profile('email')
                         ->required()
-                        ->hintAction(fn(TiptapEditor $component) => Action::make('loadEmailTemplate')
+                        ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
                             ->form([
                                 Select::make('emailTemplate')
                                     ->searchable()
@@ -172,7 +172,7 @@ class ManageStudentEngagement extends RelationManager
                                         return EmailTemplate::query()
                                             ->when(
                                                 $get('onlyMyTemplates'),
-                                                fn(Builder $query) => $query->whereBelongsTo(auth()->user())
+                                                fn (Builder $query) => $query->whereBelongsTo(auth()->user())
                                             )
                                             ->orderBy('name')
                                             ->limit(50)
@@ -183,11 +183,11 @@ class ManageStudentEngagement extends RelationManager
                                         return EmailTemplate::query()
                                             ->when(
                                                 $get('onlyMyTemplates'),
-                                                fn(Builder $query) => $query->whereBelongsTo(auth()->user())
+                                                fn (Builder $query) => $query->whereBelongsTo(auth()->user())
                                             )
                                             ->when(
                                                 $get('onlyMyTeamTemplates'),
-                                                fn(Builder $query) => $query->whereIn('user_id', auth()->user()->teams->users->pluck('id'))
+                                                fn (Builder $query) => $query->whereIn('user_id', auth()->user()->teams->users->pluck('id'))
                                             )
                                             ->where(new Expression('lower(name)'), 'like', "%{$search}%")
                                             ->orderBy('name')
@@ -198,11 +198,11 @@ class ManageStudentEngagement extends RelationManager
                                 Checkbox::make('onlyMyTemplates')
                                     ->label('Only show my templates')
                                     ->live()
-                                    ->afterStateUpdated(fn(Set $set) => $set('emailTemplate', null)),
+                                    ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
                                 Checkbox::make('onlyMyTeamTemplates')
                                     ->label("Only show my team's templates")
                                     ->live()
-                                    ->afterStateUpdated(fn(Set $set) => $set('emailTemplate', null)),
+                                    ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
                             ])
                             ->action(function (array $data) use ($component) {
                                 $template = EmailTemplate::find($data['emailTemplate']);
@@ -215,7 +215,7 @@ class ManageStudentEngagement extends RelationManager
                                     $component->generateImageUrls($template->content),
                                 );
                             }))
-                        ->hidden(fn(Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                        ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
                         ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                         ->columnSpanFull(),
                     EngagementSmsBodyField::make(context: 'create', form: $form),
@@ -231,7 +231,7 @@ class ManageStudentEngagement extends RelationManager
                         ->helperText('By default, this email or text will send as soon as it is created unless you schedule it to send later.'),
                     DateTimePicker::make('deliver_at')
                         ->required()
-                        ->visible(fn(Get $get) => $get('send_later')),
+                        ->visible(fn (Get $get) => $get('send_later')),
                 ]),
         ]);
     }
@@ -242,17 +242,17 @@ class ManageStudentEngagement extends RelationManager
             ->emptyStateHeading('No email or text messages.')
             ->emptyStateDescription('Create an email or text message to get started.')
             ->defaultSort('record_sortable_date', 'desc')
-            ->modifyQueryUsing(fn(Builder $query) => $query->whereHasMorph('timelineable', [
+            ->modifyQueryUsing(fn (Builder $query) => $query->whereHasMorph('timelineable', [
                 Engagement::class,
                 EngagementResponse::class,
             ]))
             ->columns([
                 TextColumn::make('direction')
-                    ->getStateUsing(fn(Timeline $record) => match ($record->timelineable::class) {
+                    ->getStateUsing(fn (Timeline $record) => match ($record->timelineable::class) {
                         Engagement::class => 'Outbound',
                         EngagementResponse::class => 'Inbound',
                     })
-                    ->icon(fn(string $state) => match ($state) {
+                    ->icon(fn (string $state) => match ($state) {
                         'Outbound' => 'heroicon-o-arrow-up-tray',
                         'Inbound' => 'heroicon-o-arrow-down-tray',
                     }),
@@ -278,7 +278,6 @@ class ManageStudentEngagement extends RelationManager
                     })
                     ->createAnother(false)
                     ->action(function (array $data, Form $form) {
-
                         /** @var Student $record */
                         $record = $this->getRecord();
 
@@ -309,30 +308,30 @@ class ManageStudentEngagement extends RelationManager
                         EngagementResponse::class => 'Inbound',
                     ])
                     ->modifyQueryUsing(
-                        fn(Builder $query, array $data) => $query
-                            ->when($data['value'], fn(Builder $query) => $query->whereHasMorph('timelineable', $data['value']))
+                        fn (Builder $query, array $data) => $query
+                            ->when($data['value'], fn (Builder $query) => $query->whereHasMorph('timelineable', $data['value']))
                     ),
                 SelectFilter::make('type')
                     ->options(EngagementDeliveryMethod::class)
                     ->modifyQueryUsing(
-                        fn(Builder $query, array $data) => $query
+                        fn (Builder $query, array $data) => $query
                             ->when(
                                 $data['value'] === EngagementDeliveryMethod::Email->value,
-                                fn(Builder $query) => $query
+                                fn (Builder $query) => $query
                                     ->whereHasMorph(
                                         'timelineable',
                                         [Engagement::class],
-                                        fn(Builder $query, string $type) => match ($type) {
+                                        fn (Builder $query, string $type) => match ($type) {
                                             Engagement::class => $query->whereRelation('deliverable', 'channel', $data['value']),
                                         }
                                     )
                             )
                             ->when(
                                 $data['value'] === EngagementDeliveryMethod::Sms->value,
-                                fn(Builder $query) => $query->whereHasMorph(
+                                fn (Builder $query) => $query->whereHasMorph(
                                     'timelineable',
                                     [Engagement::class, EngagementResponse::class],
-                                    fn(Builder $query, string $type) => match ($type) {
+                                    fn (Builder $query, string $type) => match ($type) {
                                         Engagement::class => $query->whereRelation('deliverable', 'channel', $data['value']),
                                         EngagementResponse::class => $query,
                                     }
