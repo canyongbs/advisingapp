@@ -41,6 +41,7 @@ use function PHPUnit\Framework\assertTrue;
 
 use Symfony\Component\HttpFoundation\Response;
 use App\Multitenancy\Http\Middleware\NeedsTenant;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 beforeEach(function () {
     Tenant::forgetCurrent();
@@ -50,7 +51,7 @@ beforeEach(function () {
 
 it('returns a 404 without a tenant', function () {
     (new NeedsTenant())->handle(Request::create('/needs-tenant-test-route'), fn () => new Response());
-})->expectException(Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
+})->expectException(NotFoundHttpException::class);
 
 it('continues with a tenant', function () {
     Tenant::first()->makeCurrent();

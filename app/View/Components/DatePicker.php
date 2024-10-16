@@ -37,6 +37,7 @@
 namespace App\View\Components;
 
 use Illuminate\View\Component;
+use Illuminate\Contracts\View\View;
 
 class DatePicker extends Component
 {
@@ -50,7 +51,7 @@ class DatePicker extends Component
     /**
      * Get the view / contents that represent the component.
      *
-     * @return \Illuminate\Contracts\View\View|string
+     * @return View|string
      */
     public function render()
     {

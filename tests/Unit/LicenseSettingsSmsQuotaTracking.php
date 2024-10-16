@@ -41,6 +41,7 @@ use Twilio\Rest\Api\V2010;
 use Twilio\Rest\MessagingBase;
 use App\Models\Authenticatable;
 use App\Settings\LicenseSettings;
+use Tests\Unit\TestSmsNotification;
 use AdvisingApp\Prospect\Models\Prospect;
 
 use function Pest\Laravel\assertDatabaseCount;
@@ -55,7 +56,7 @@ use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 it('An sms is allowed to be sent if there is available quota and its quota usage is tracked', function () {
     $notifiable = Prospect::factory()->create();
 
-    $notification = new Tests\Unit\TestSmsNotification();
+    $notification = new TestSmsNotification();
 
     $settings = app()->make(TwilioSettings::class);
 
@@ -103,7 +104,7 @@ it('An sms is allowed to be sent if there is available quota and its quota usage
 it('An sms is prevented from being sent if there is no available quota', function () {
     $notifiable = Prospect::factory()->create();
 
-    $notification = new Tests\Unit\TestSmsNotification();
+    $notification = new TestSmsNotification();
 
     $settings = app()->make(TwilioSettings::class);
 
@@ -154,7 +155,7 @@ it('An sms is sent to a super admin user even if there is no available quota', f
 
     $notifiable->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
-    $notification = new Tests\Unit\TestSmsNotification();
+    $notification = new TestSmsNotification();
 
     $settings = app()->make(TwilioSettings::class);
 

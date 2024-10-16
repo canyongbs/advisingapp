@@ -36,6 +36,7 @@
 
 use function Pest\Laravel\artisan;
 
+use Illuminate\Console\Scheduling\Event;
 use Illuminate\Console\Scheduling\Schedule;
 
 use function Pest\Laravel\assertModelExists;
@@ -69,7 +70,7 @@ it('correctly prunes EngagementFiles based on retention_date', function () {
 it('is scheduled to prune EngagementFiles daily during scheduler run', function () {
     $schedule = app()->make(Schedule::class);
 
-    $events = collect($schedule->events())->filter(function (Illuminate\Console\Scheduling\Event $event) {
+    $events = collect($schedule->events())->filter(function (Event $event) {
         $engagementFileClass = EngagementFile::class;
 
         return str_contains($event->command, "model:prune --model={$engagementFileClass}")
