@@ -100,4 +100,11 @@
             Open Service Requests
         </span>
     </label>
+
+    <label class="flex items-center">
+        <x-filament::input.checkbox wire:model.live="filterMemberOfCareTeam" />
+        <span class="ml-2">
+            Member of Care team
+        </span>
+    </label>
 </div>

@@ -53,6 +53,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use App\Actions\GetRecordFromMorphAndKey;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Actions\SyncTimelineData;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -117,6 +118,9 @@ class MessageCenter extends Page
     #[Url(as: 'endDate')]
     public ?string $filterEndDate = null;
 
+    #[Url(as: 'hasMemberOfCareTeam')]
+    public bool $filterMemberOfCareTeam = false;
+
     public int $inboxPerPage = 10;
 
     public static function canAccess(): bool
@@ -154,6 +158,7 @@ class MessageCenter extends Page
             'filterOpenServiceRequests',
             'filterStartDate',
             'filterEndDate',
+            'filterMemberOfCareTeam',
         ];
 
         if (in_array($property, $filters)) {
@@ -299,6 +304,12 @@ class MessageCenter extends Page
                     ServiceRequest::query()
                         ->open()
                         ->pluck('respondent_id')
+                );
+            })
+            ->when($this->filterMemberOfCareTeam === true, function (Builder $query) use ($idColumn) {
+                $query->whereIn(
+                    $idColumn,
+                    CareTeam::query()->pluck('educatable_id')
                 );
             });
     }
