@@ -49,16 +49,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
-class ManageStudentCareTeam extends ManageRelatedRecords
+class ManageStudentCareTeam extends RelationManager
 {
     protected static string $resource = StudentResource::class;
 
     protected static string $relationship = 'careTeam';
-
-    protected static string $view = 'student-data-model::livewire.manage-student-care-team';
 
     public function table(Table $table): Table
     {

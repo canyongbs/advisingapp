@@ -42,6 +42,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\Log;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Actions;
@@ -76,7 +77,6 @@ use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagement
 
 class ManageStudentEngagement extends RelationManager
 {
-    // TODO: Obsolete when there is no table, remove from Filament
     protected static string $relationship = 'timeline';
 
     protected static ?string $title = 'Messages';
@@ -278,8 +278,9 @@ class ManageStudentEngagement extends RelationManager
                     })
                     ->createAnother(false)
                     ->action(function (array $data, Form $form) {
+                        Log::info('asdasd', [$this->getOwnerRecord()]);
                         /** @var Student $record */
-                        $record = $this->getRecord();
+                        $record = $this->getOwnerRecord();
 
                         $engagement = new Engagement($data);
                         $engagement->recipient()->associate($record);

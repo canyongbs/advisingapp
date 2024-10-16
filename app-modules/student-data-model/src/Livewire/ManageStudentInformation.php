@@ -53,12 +53,6 @@ class ManageStudentInformation extends ManageRelatedRecords
     // TODO: Obsolete when there is no table, remove from Filament
     protected static string $relationship = 'programs';
 
-    protected static ?string $navigationLabel = 'Information';
-
-    protected static ?string $breadcrumb = 'Information';
-
-    protected static ?string $navigationIcon = 'heroicon-o-information-circle';
-
     public function mount(int | string $record): void
     {
         $this->record = $this->resolveRecord($record);

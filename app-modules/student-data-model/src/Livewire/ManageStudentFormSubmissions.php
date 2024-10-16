@@ -38,9 +38,7 @@ namespace AdvisingApp\StudentDataModel\Livewire;
 
 use App\Enums\Feature;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentEvents;
@@ -51,9 +49,6 @@ class ManageStudentFormSubmissions extends ManageRelatedRecords
     protected static string $resource = StudentResource::class;
 
     protected static string $relationship = 'formSubmissions';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Form Submissions';
 
     protected static string $view = 'student-data-model::livewire.manage-student-form-submissions';
 
@@ -73,27 +68,6 @@ class ManageStudentFormSubmissions extends ManageRelatedRecords
         return parent::canAccess($parameters) && Gate::check(Feature::OnlineForms->getGateName());
     }
 
-    // public static function getNavigationItems(array $urlParameters = []): array
-    // {
-    //     $item = parent::getNavigationItems($urlParameters)[0];
-
-    //     $ownerRecord = $urlParameters['record'];
-
-    //     /** @var Prospect $ownerRecord */
-    //     $formSubmissionsCount = Cache::tags('form-submission-count')
-    //         ->remember(
-    //             "form-submission-count-{$ownerRecord->getKey()}",
-    //             now()->addMinutes(5),
-    //             function () use ($ownerRecord): int {
-    //                 return $ownerRecord->formSubmissions()->count();
-    //             },
-    //         );
-
-    //     $item->badge($formSubmissionsCount > 0 ? $formSubmissionsCount : null);
-
-    //     return [$item];
-    // }
-
     public function getRelationManagers(): array
     {
         return static::managers($this->getRecord());
@@ -104,6 +78,7 @@ class ManageStudentFormSubmissions extends ManageRelatedRecords
         return collect([
             StudentFormSubmissionsRelationManager::class,
             ManageStudentEvents::class,
+            ManageStudentApplicationSubmissions::class,
         ])
             ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
             ->toArray();

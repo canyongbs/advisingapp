@@ -40,7 +40,6 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Forms\Components\Select;
-use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
@@ -54,7 +53,6 @@ use AdvisingApp\Alert\Enums\AlertSeverity;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
@@ -63,33 +61,6 @@ class ManageStudentAlerts extends RelationManager
     protected static string $resource = StudentResource::class;
 
     protected static string $relationship = 'alerts';
-
-    // protected static ?string $title = 'Alerts';
-
-    // protected static ?string $label = 'Alerts';
-
-    // protected static string $view = 'student-data-model::livewire.manage-student-alerts';
-
-    // public static function getNavigationItems(array $urlParameters = []): array
-    // {
-    //     $item = parent::getNavigationItems($urlParameters)[0];
-
-    //     $ownerRecord = $urlParameters['record'];
-
-    //     /** @var Student $ownerRecord */
-    //     $alertsCount = Cache::tags('alert-count')
-    //         ->remember(
-    //             "alert-count-{$ownerRecord->getKey()}",
-    //             now()->addMinutes(5),
-    //             function () use ($ownerRecord): int {
-    //                 return $ownerRecord->alerts()->status(AlertStatus::Active)->count();
-    //             },
-    //         );
-
-    //     $item->badge($alertsCount > 0 ? $alertsCount : null, color: 'danger');
-
-    //     return [$item];
-    // }
 
     public function infolist(Infolist $infolist): Infolist
     {

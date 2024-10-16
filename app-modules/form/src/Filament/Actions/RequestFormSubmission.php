@@ -102,6 +102,6 @@ class RequestFormSubmission extends Action
 
     public static function getDefaultName(): ?string
     {
-        return 'requestFormSubmission';
+        return 'Request';
     }
 }

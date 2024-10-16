@@ -50,9 +50,18 @@
                         :owner-record="$record"
                         :page-class="\AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent::class"
                     />
-                    <livewire:student-data-model::manage-student-tasks :record="$record->getKey()" />
-                    <livewire:student-data-model::manage-student-care-team :record="$record->getKey()" />
-                    <livewire:student-data-model::manage-student-subscriptions :record="$record->getKey()" />
+                    <livewire:student-data-model::manage-student-tasks
+                        :owner-record="$record"
+                        :page-class="\AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent::class"
+                    />
+                    <livewire:student-data-model::manage-student-care-team
+                        :owner-record="$record"
+                        :page-class="\AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent::class"
+                    />
+                    <livewire:student-data-model::manage-student-subscriptions
+                        :owner-record="$record"
+                        :page-class="\AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent::class"
+                    />
                 </div>
 
                 <livewire:student-data-model::manage-student-form-submissions :record="$record->getKey()" />

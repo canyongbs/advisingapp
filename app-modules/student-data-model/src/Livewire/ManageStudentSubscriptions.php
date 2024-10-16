@@ -49,20 +49,16 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
-class ManageStudentSubscriptions extends ManageRelatedRecords
+class ManageStudentSubscriptions extends RelationManager
 {
     protected static string $resource = StudentResource::class;
 
     protected static string $relationship = 'subscribedUsers';
 
     protected static ?string $title = 'Subscriptions';
-
-    protected static string $view = 'student-data-model::livewire.manage-student-subscriptions';
-
-    //TODO: manually override check canAccess for policy
 
     public function table(Table $table): Table
     {
