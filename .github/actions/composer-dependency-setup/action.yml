@@ -12,5 +12,5 @@ runs:
 
     - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
       name: Install Dependencies
-      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --classmap-authoritative
       shell: bash
