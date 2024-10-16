@@ -309,7 +309,7 @@ class MessageCenter extends Page
             ->when($this->filterMemberOfCareTeam === true, function (Builder $query) use ($idColumn) {
                 $query->whereIn(
                     $idColumn,
-                    CareTeam::query()->pluck('educatable_id')
+                    $this->user->careTeams()->pluck('educatable_id')
                 );
             });
     }
