@@ -1,26 +1,26 @@
 {
-  "name": "canyon-gbs/advising-app-campaign",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "AdvisingApp\\Campaign\\": "src/",
-      "AdvisingApp\\Campaign\\Tests\\": "tests/",
-      "AdvisingApp\\Campaign\\Database\\Factories\\": "database/factories/",
-      "AdvisingApp\\Campaign\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/advising-app-campaign",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\Campaign\\": "src/",
+            "AdvisingApp\\Campaign\\Tests\\": "tests/",
+            "AdvisingApp\\Campaign\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\Campaign\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\Campaign\\Providers\\CampaignServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "dev",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "AdvisingApp\\Campaign\\Providers\\CampaignServiceProvider"
-      ]
-    }
-  }
 }

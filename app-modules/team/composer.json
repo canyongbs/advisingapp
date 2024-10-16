@@ -1,26 +1,26 @@
 {
-  "name": "canyon-gbs/advising-app-team",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "AdvisingApp\\Team\\": "src/",
-      "AdvisingApp\\Team\\Tests\\": "tests/",
-      "AdvisingApp\\Team\\Database\\Factories\\": "database/factories/",
-      "AdvisingApp\\Team\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/advising-app-team",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\Team\\": "src/",
+            "AdvisingApp\\Team\\Tests\\": "tests/",
+            "AdvisingApp\\Team\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\Team\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\Team\\Providers\\TeamServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "dev",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "AdvisingApp\\Team\\Providers\\TeamServiceProvider"
-      ]
-    }
-  }
 }

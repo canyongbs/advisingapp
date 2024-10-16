@@ -1,26 +1,26 @@
 {
-  "name": "canyon-gbs/advising-app-assistant",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "AdvisingApp\\Assistant\\": "src/",
-      "AdvisingApp\\Assistant\\Tests\\": "tests/",
-      "AdvisingApp\\Assistant\\Database\\Factories\\": "database/factories/",
-      "AdvisingApp\\Assistant\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/advising-app-assistant",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\Assistant\\": "src/",
+            "AdvisingApp\\Assistant\\Tests\\": "tests/",
+            "AdvisingApp\\Assistant\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\Assistant\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\Assistant\\Providers\\AssistantServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "dev",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "AdvisingApp\\Assistant\\Providers\\AssistantServiceProvider"
-      ]
-    }
-  }
 }

@@ -1,26 +1,26 @@
 {
-  "name": "canyon-gbs/advising-app-interaction",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "AdvisingApp\\Interaction\\": "src/",
-      "AdvisingApp\\Interaction\\Tests\\": "tests/",
-      "AdvisingApp\\Interaction\\Database\\Factories\\": "database/factories/",
-      "AdvisingApp\\Interaction\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/advising-app-interaction",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\Interaction\\": "src/",
+            "AdvisingApp\\Interaction\\Tests\\": "tests/",
+            "AdvisingApp\\Interaction\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\Interaction\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\Interaction\\Providers\\InteractionServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "dev",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "AdvisingApp\\Interaction\\Providers\\InteractionServiceProvider"
-      ]
-    }
-  }
 }

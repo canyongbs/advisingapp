@@ -1,26 +1,26 @@
 {
-  "name": "StubComposerName",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "StubModuleNamespace\\StubClassNamePrefix\\": "src/",
-      "StubModuleNamespace\\StubClassNamePrefix\\Tests\\": "tests/",
-      "StubModuleNamespace\\StubClassNamePrefix\\Database\\Factories\\": "database/factories/",
-      "StubModuleNamespace\\StubClassNamePrefix\\Database\\Seeders\\": "database/seeders/"
+    "name": "StubComposerName",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "StubModuleNamespace\\StubClassNamePrefix\\": "src/",
+            "StubModuleNamespace\\StubClassNamePrefix\\Tests\\": "tests/",
+            "StubModuleNamespace\\StubClassNamePrefix\\Database\\Factories\\": "database/factories/",
+            "StubModuleNamespace\\StubClassNamePrefix\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "StubModuleNamespace\\StubClassNamePrefix\\Providers\\StubClassNamePrefixServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "dev",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "StubModuleNamespace\\StubClassNamePrefix\\Providers\\StubClassNamePrefixServiceProvider"
-      ]
-    }
-  }
 }
