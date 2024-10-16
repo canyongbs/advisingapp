@@ -53,7 +53,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use App\Actions\GetRecordFromMorphAndKey;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Actions\SyncTimelineData;
 use Illuminate\Contracts\Database\Eloquent\Builder;
