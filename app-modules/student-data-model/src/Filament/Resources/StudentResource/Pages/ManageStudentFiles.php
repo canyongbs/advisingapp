@@ -36,10 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
-use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\RelationManagers\EngagementFilesRelationManager;
 
 class ManageStudentFiles extends RelationManager
 {
@@ -48,5 +46,4 @@ class ManageStudentFiles extends RelationManager
     protected static string $relationship = 'engagementFiles';
 
     protected static ?string $title = 'Files';
-
 }
