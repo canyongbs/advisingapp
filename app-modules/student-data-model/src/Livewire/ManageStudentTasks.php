@@ -70,8 +70,6 @@ class ManageStudentTasks extends RelationManager
 
     protected static string $relationship = 'tasks';
 
-    // protected static string $view = 'student-data-model::livewire.manage-student-tasks';
-
     public function form(Form $form): Form
     {
         return $form

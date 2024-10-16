@@ -50,7 +50,6 @@ class ManageStudentInformation extends ManageRelatedRecords
 
     protected static string $resource = StudentResource::class;
 
-    // TODO: Obsolete when there is no table, remove from Filament
     protected static string $relationship = 'programs';
 
     public function mount(int | string $record): void
