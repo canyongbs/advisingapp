@@ -34,58 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Pages;
+namespace AdvisingApp\StudentDataModel\Http\Controllers;
 
-use Filament\Forms\Get;
-use Filament\Forms\Form;
-use Filament\Pages\SettingsPage;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Section;
-use App\Filament\Clusters\GlobalSettings;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use AdvisingApp\StudentDataModel\Enums\SisSystem;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use AdvisingApp\StudentDataModel\Http\Requests\UpdateStudentInformationSystemSettingsRequest;
 
-class ManageStudentInformationSystemSettings extends SettingsPage
+class UpdateStudentInformationSystemSettingsController extends Controller
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
-
-    protected static ?string $title = 'Student Information System';
-
-    protected static string $settings = StudentInformationSystemSettings::class;
-
-    protected static ?string $cluster = GlobalSettings::class;
-
-    protected static ?string $navigationGroup = 'Product Integrations';
-
-    protected static ?int $navigationSort = 110;
-
-    public static function canAccess(): bool
+    /**
+     * Handle the incoming request.
+     */
+    public function __invoke(UpdateStudentInformationSystemSettingsRequest $request)
     {
-        /** @var User $user */
-        $user = auth()->user();
+        $settings = app(StudentInformationSystemSettings::class);
 
-        return $user->can('sis.manage_sis_settings');
-    }
+        $settings->is_enabled = $request->is_enabled;
+        $settings->sis_system = SisSystem::parse($request->sis_system);
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->columns(1)
-            ->schema([
-                Toggle::make('is_enabled')
-                    ->live(),
-                Section::make()
-                    ->schema([
-                        Select::make('sis_system')
-                            ->label('SIS System')
-                            ->options(SisSystem::class)
-                            ->enum(SisSystem::class)
-                            ->required()
-                            ->dehydrateStateUsing(fn (string|SisSystem $state) => SisSystem::parse($state)),
-                    ])
-                    ->visible(fn (Get $get) => $get('is_enabled')),
-            ])
-            ->disabled();
+        $settings->save();
+
+        return response()->json();
     }
 }
