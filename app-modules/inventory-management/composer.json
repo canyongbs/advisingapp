@@ -1,26 +1,26 @@
 {
-  "name": "canyon-gbs/advising-app-inventory-management",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "AdvisingApp\\InventoryManagement\\": "src/",
-      "AdvisingApp\\InventoryManagement\\Tests\\": "tests/",
-      "AdvisingApp\\InventoryManagement\\Database\\Factories\\": "database/factories/",
-      "AdvisingApp\\InventoryManagement\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/advising-app-inventory-management",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\InventoryManagement\\": "src/",
+            "AdvisingApp\\InventoryManagement\\Tests\\": "tests/",
+            "AdvisingApp\\InventoryManagement\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\InventoryManagement\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\InventoryManagement\\Providers\\InventoryManagementServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "dev",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "AdvisingApp\\InventoryManagement\\Providers\\InventoryManagementServiceProvider"
-      ]
-    }
-  }
 }

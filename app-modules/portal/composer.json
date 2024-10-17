@@ -1,26 +1,26 @@
 {
-  "name": "canyon-gbs/advising-app-portal",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "AdvisingApp\\Portal\\": "src/",
-      "AdvisingApp\\Portal\\Tests\\": "tests/",
-      "AdvisingApp\\Portal\\Database\\Factories\\": "database/factories/",
-      "AdvisingApp\\Portal\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/advising-app-portal",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\Portal\\": "src/",
+            "AdvisingApp\\Portal\\Tests\\": "tests/",
+            "AdvisingApp\\Portal\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\Portal\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\Portal\\Providers\\PortalServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "dev",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "AdvisingApp\\Portal\\Providers\\PortalServiceProvider"
-      ]
-    }
-  }
 }

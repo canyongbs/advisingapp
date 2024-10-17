@@ -1,26 +1,26 @@
 {
-  "name": "canyon-gbs/advising-app-integration-aws-ses-event-handling",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "AdvisingApp\\IntegrationAwsSesEventHandling\\": "src/",
-      "AdvisingApp\\IntegrationAwsSesEventHandling\\Tests\\": "tests/",
-      "AdvisingApp\\IntegrationAwsSesEventHandling\\Database\\Factories\\": "database/factories/",
-      "AdvisingApp\\IntegrationAwsSesEventHandling\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/advising-app-integration-aws-ses-event-handling",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\IntegrationAwsSesEventHandling\\": "src/",
+            "AdvisingApp\\IntegrationAwsSesEventHandling\\Tests\\": "tests/",
+            "AdvisingApp\\IntegrationAwsSesEventHandling\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\IntegrationAwsSesEventHandling\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\IntegrationAwsSesEventHandling\\Providers\\IntegrationAwsSesEventHandlingServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "dev",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "AdvisingApp\\IntegrationAwsSesEventHandling\\Providers\\IntegrationAwsSesEventHandlingServiceProvider"
-      ]
-    }
-  }
 }

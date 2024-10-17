@@ -1,26 +1,26 @@
 {
-  "name": "canyon-gbs/basic-needs",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "AdvisingApp\\BasicNeeds\\": "src/",
-      "AdvisingApp\\BasicNeeds\\Tests\\": "tests/",
-      "AdvisingApp\\BasicNeeds\\Database\\Factories\\": "database/factories/",
-      "AdvisingApp\\BasicNeeds\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/basic-needs",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\BasicNeeds\\": "src/",
+            "AdvisingApp\\BasicNeeds\\Tests\\": "tests/",
+            "AdvisingApp\\BasicNeeds\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\BasicNeeds\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\BasicNeeds\\Providers\\BasicNeedsServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "dev",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "AdvisingApp\\BasicNeeds\\Providers\\BasicNeedsServiceProvider"
-      ]
-    }
-  }
 }

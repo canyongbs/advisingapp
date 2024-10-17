@@ -96,7 +96,7 @@ COPY --chown=$PUID:$PGID . /var/www/html
 
 RUN npm ci --ignore-scripts \
     && rm -rf /var/www/html/vendor \
-    && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader \
+    && composer install --no-dev --no-interaction --no-progress --no-suggest --classmap-authoritative \
     && npm run build \
     && npm ci --ignore-scripts --omit=dev
 
