@@ -7,7 +7,7 @@ use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 
-class ManageableEnrollmentImporter extends Importer
+class EnrollmentImporter extends Importer
 {
     protected static ?string $model = Enrollment::class;
 
@@ -17,15 +17,13 @@ class ManageableEnrollmentImporter extends Importer
             ImportColumn::make('sisid')
                 ->label('Student ID')
                 ->requiredMapping()
-                ->example('########')
-                ->numeric(),
+                ->example('########'),
             ImportColumn::make('division')
                 ->example('ABC01')
                 ->label('Division'),
             ImportColumn::make('class_nbr')
                 ->label('Class NBR')
-                ->example('19309')
-                ->numeric(),
+                ->example('19309'),
             ImportColumn::make('crse_grade_off')
                 ->example('A')
                 ->label('CRSE grade off'),
@@ -42,8 +40,7 @@ class ManageableEnrollmentImporter extends Importer
                 ->example('1995-02-11 14:01:12+00'),
             ImportColumn::make('section')
                 ->label('Section')
-                ->example('7661')
-                ->numeric(),
+                ->example('7661'),
             ImportColumn::make('name')
                 ->label('Name')
                 ->example('Introduction to Mathematics'),
@@ -73,7 +70,7 @@ class ManageableEnrollmentImporter extends Importer
 
     public static function getCompletedNotificationBody(Import $import): string
     {
-        $body = 'Your manageable enrollment import has completed and ' . number_format($import->successful_rows) . ' ' . str('row')->plural($import->successful_rows) . ' imported.';
+        $body = 'Your enrollment import has completed and ' . number_format($import->successful_rows) . ' ' . str('row')->plural($import->successful_rows) . ' imported.';
 
         if ($failedRowsCount = $import->getFailedRowsCount()) {
             $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to import.';

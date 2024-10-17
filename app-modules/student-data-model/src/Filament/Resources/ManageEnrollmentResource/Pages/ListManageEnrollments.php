@@ -2,7 +2,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\ManageEnrollmentResource\Pages;
 
-use AdvisingApp\StudentDataModel\Filament\Imports\ManageableEnrollmentImporter;
+use AdvisingApp\StudentDataModel\Filament\Imports\EnrollmentImporter;
 use AdvisingApp\StudentDataModel\Filament\Resources\ManageEnrollmentResource;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use App\Filament\Tables\Columns\OpenSearch\TextColumn;
@@ -54,7 +54,7 @@ class ListManageEnrollments extends ListRecords
         return [
             CreateAction::make(),
             ImportAction::make()
-                ->importer(ManageableEnrollmentImporter::class)
+                ->importer(EnrollmentImporter::class)
                 ->authorize('import', Enrollment::class),
         ];
     }

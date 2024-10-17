@@ -2,7 +2,6 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources;
 
-use AdvisingApp\StudentDataModel\Filament\Resources\ManageEnrollmentResource\Pages\CreateManageEnrollment;
 use AdvisingApp\StudentDataModel\Filament\Resources\ManageEnrollmentResource\Pages\ListManageEnrollments;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use App\Features\ManageStudentConfigurationFeature;
@@ -32,7 +31,9 @@ class ManageEnrollmentResource extends Resource
         /** @var User $user */
         $user = auth()->user();
 
-        return ManageStudentConfigurationFeature::active() && $user->can('student_record_manager.configuration') && app(ManageStudentConfigurationSettings::class)->is_enabled;
+        return ManageStudentConfigurationFeature::active()
+            && $user->can('student_record_manager.view-any')
+            && app(ManageStudentConfigurationSettings::class)->is_enabled;
     }
 
     public static function form(Form $form): Form
@@ -41,15 +42,17 @@ class ManageEnrollmentResource extends Resource
             ->schema([
                 TextInput::make('sisid')
                     ->label('Student ID')
-                    ->required()
-                    ->numeric(),
+                    ->string()
+                    ->maxLength(255)
+                    ->required(),
                 TextInput::make('division')
                     ->string()
                     ->maxLength(255)
                     ->label('Division'),
                 TextInput::make('class_nbr')
                     ->label('Class NBR')
-                    ->numeric(),
+                    ->string()
+                    ->maxLength(255),
                 TextInput::make('crse_grade_off')
                     ->string()
                     ->maxLength(255)
@@ -68,7 +71,8 @@ class ManageEnrollmentResource extends Resource
                     ->displayFormat('Y-m-d H:i:s'),
                 TextInput::make('section')
                     ->label('Section')
-                    ->numeric(),
+                    ->string()
+                    ->maxLength(255),
                 TextInput::make('name')
                     ->label('Name')
                     ->string()
@@ -86,7 +90,8 @@ class ManageEnrollmentResource extends Resource
                     ->email(),
                 TextInput::make('semester_code')
                     ->label('Semester code')
-                    ->numeric(),
+                    ->string()
+                    ->maxLength(255),
                 TextInput::make('semester_name')
                     ->label('Semester name')
                     ->string()
@@ -110,7 +115,6 @@ class ManageEnrollmentResource extends Resource
     {
         return [
             'index' => ListManageEnrollments::route('/'),
-            'create' => CreateManageEnrollment::route('/create'),
         ];
     }
 }
