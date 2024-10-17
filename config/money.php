@@ -44,7 +44,7 @@ return [
     'defaultCurrency' => config('app.currency', 'USD'),
     'defaultFormatter' => null,
     'defaultSerializer' => null,
-    'isoCurrenciesPath' => __DIR__.'/../vendor/moneyphp/money/resources/currency.php',
+    'isoCurrenciesPath' => __DIR__ . '/../vendor/moneyphp/money/resources/currency.php',
     'currencies' => [
         'iso' => 'all',
         'bitcoin' => 'all',
