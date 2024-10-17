@@ -35,9 +35,9 @@ class ManageProspectConversionSettings extends SettingsPage
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    public static function canAccess(array $parameters = []): bool
+    public static function canAccess(): bool
     {
-        return ProspectConversion::active() && parent::canAccess($parameters);
+        return ProspectConversion::active();
     }
 
     public function form(Form $form): Form
