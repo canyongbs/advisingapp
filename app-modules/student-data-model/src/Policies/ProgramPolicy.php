@@ -52,7 +52,7 @@ class ProgramPolicy
 
   public function view(Authenticatable $authenticatable, Program $program): Response
   {
-    if ($authenticatable->canAny("program.{$program->getKey()}.view", "student_record_manager.{$program->id}.view-any")) {
+    if ($authenticatable->canAny("program.*.view", "student_record_manager.{$program->id}.view")) {
       return Response::allow();
     }
     return Response::deny('You do not have permission to view this program.');
@@ -95,6 +95,14 @@ class ProgramPolicy
     return $authenticatable->canOrElse(
       abilities: "student_record_manager.{$program->id}.force-delete",
       denyResponse: 'Programs cannot be force deleted.'
+    );
+  }
+
+  public function import(Authenticatable $authenticatable): Response
+  {
+    return $authenticatable->canOrElse(
+      abilities: 'student_record_manager.create',
+      denyResponse: 'You do not have permission to import programs.',
     );
   }
 }

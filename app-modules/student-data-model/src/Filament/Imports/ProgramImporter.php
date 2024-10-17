@@ -7,7 +7,7 @@ use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 
-class ManageableProgramImporter extends Importer
+class ProgramImporter extends Importer
 {
     protected static ?string $model = Program::class;
 
@@ -18,12 +18,14 @@ class ManageableProgramImporter extends Importer
                 ->label('Student ID')
                 ->requiredMapping()
                 ->example('########')
-                ->numeric(),
+                ->string()
+                ->maxLength(255),
             ImportColumn::make('otherid')
                 ->label('Other ID')
                 ->requiredMapping()
                 ->example('########')
-                ->numeric(),
+                ->string()
+                ->maxLength(255),
             ImportColumn::make('acad_career')
                 ->requiredMapping()
                 ->label('ACAD career')
@@ -50,7 +52,8 @@ class ManageableProgramImporter extends Importer
             ImportColumn::make('descr')
                 ->requiredMapping()
                 ->label('DESCR')
-                ->numeric()
+                ->string()
+                ->maxLength(255)
                 ->example('Loream ipsum'),
             ImportColumn::make('foi')
                 ->requiredMapping()
@@ -68,7 +71,7 @@ class ManageableProgramImporter extends Importer
 
     public static function getCompletedNotificationBody(Import $import): string
     {
-        $body = 'Your manageable program import has completed and ' . number_format($import->successful_rows) . ' ' . str('row')->plural($import->successful_rows) . ' imported.';
+        $body = 'Your program import has completed and ' . number_format($import->successful_rows) . ' ' . str('row')->plural($import->successful_rows) . ' imported.';
 
         if ($failedRowsCount = $import->getFailedRowsCount()) {
             $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to import.';

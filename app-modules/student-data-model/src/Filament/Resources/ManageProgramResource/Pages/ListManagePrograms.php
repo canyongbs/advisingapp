@@ -2,7 +2,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\ManageProgramResource\Pages;
 
-use AdvisingApp\StudentDataModel\Filament\Imports\ManageableProgramImporter;
+use AdvisingApp\StudentDataModel\Filament\Imports\ProgramImporter;
 use AdvisingApp\StudentDataModel\Filament\Resources\ManageProgramResource;
 use AdvisingApp\StudentDataModel\Models\Program;
 use App\Filament\Tables\Columns\OpenSearch\TextColumn;
@@ -55,7 +55,7 @@ class ListManagePrograms extends ListRecords
         return [
             CreateAction::make(),
             ImportAction::make()
-                ->importer(ManageableProgramImporter::class)
+                ->importer(ProgramImporter::class)
                 ->authorize('import', Program::class),
         ];
     }

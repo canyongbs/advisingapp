@@ -39,7 +39,7 @@ namespace AdvisingApp\StudentDataModel\Actions;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Facades\Log;
 
-class CascadeDelete
+class DeleteStudent
 {
   public function execute(Student $student)
   {

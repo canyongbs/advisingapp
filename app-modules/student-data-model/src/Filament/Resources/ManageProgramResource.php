@@ -2,7 +2,6 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources;
 
-use AdvisingApp\StudentDataModel\Filament\Resources\ManageProgramResource\Pages\CreateManageProgram;
 use AdvisingApp\StudentDataModel\Filament\Resources\ManageProgramResource\Pages\ListManagePrograms;
 use AdvisingApp\StudentDataModel\Models\Program;
 use App\Features\ManageStudentConfigurationFeature;
@@ -32,22 +31,23 @@ class ManageProgramResource extends Resource
         /** @var User $user */
         $user = auth()->user();
 
-        return ManageStudentConfigurationFeature::active() && $user->can('student_record_manager.configuration') && app(ManageStudentConfigurationSettings::class)->is_enabled;
+        return ManageStudentConfigurationFeature::active() && $user->can('student_record_manager.view-any') && app(ManageStudentConfigurationSettings::class)->is_enabled;
     }
 
     public static function form(Form $form): Form
     {
         return $form
-            ->disabled(false)
             ->schema([
                 TextInput::make('sisid')
                     ->label('Student ID')
                     ->required()
-                    ->numeric(),
+                    ->string()
+                    ->maxLength(255),
                 TextInput::make('otherid')
                     ->label('Other ID')
                     ->required()
-                    ->numeric(),
+                    ->string()
+                    ->maxLength(255),
                 TextInput::make('acad_career')
                     ->string()
                     ->maxLength(255)
@@ -72,11 +72,13 @@ class ManageProgramResource extends Resource
                 TextInput::make('semester')
                     ->required()
                     ->label('Semester')
-                    ->rules(['digits_between:1,4'])
-                    ->numeric(),
+                    ->string()
+                    ->maxLength(255),
                 TextInput::make('descr')
                     ->required()
-                    ->label('DESCR'),
+                    ->label('DESCR')
+                    ->string()
+                    ->maxLength(255),
                 TextInput::make('foi')
                     ->required()
                     ->label('Field of interest'),
@@ -101,7 +103,6 @@ class ManageProgramResource extends Resource
     {
         return [
             'index' => ListManagePrograms::route('/'),
-            'create' => CreateManageProgram::route('/create'),
         ];
     }
 }
