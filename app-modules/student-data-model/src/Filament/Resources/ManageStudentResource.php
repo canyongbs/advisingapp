@@ -1,24 +1,51 @@
 <?php
 
-namespace AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources;
 
+use AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource\Pages\CreateManageStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource\Pages\ListManageStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Section;
+use App\Features\ManageStudentConfigurationFeature;
+use App\Filament\Clusters\ConstituentManagement;
+use App\Settings\ManageStudentConfigurationSettings;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
 
-class CreateManageStudent extends CreateRecord
+class ManageStudentResource extends Resource
 {
-    protected static string $resource = ManageStudentResource::class;
+    protected static ?string $model = Student::class;
 
-    public function form(Form $form): Form
+    protected static ?string $navigationIcon = 'heroicon-o-user';
+
+    protected static ?string $cluster = ConstituentManagement::class;
+
+    protected static ?string $navigationGroup = 'Students';
+
+    protected static ?string $label = 'Students';
+
+    protected static ?int $navigationSort = 2;
+
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return ManageStudentConfigurationFeature::active()
+            && $user->can('student_record_manager.configuration')
+            && app(ManageStudentConfigurationSettings::class)->is_enabled
+            && $user->can('student_record_manager.view-any');
+    }
+
+    public static function form(Form $form): Form
     {
         return $form
+            ->disabled(false)
             ->schema([
                 Section::make('Personal Information')
                     ->schema([
@@ -106,16 +133,16 @@ class CreateManageStudent extends CreateRecord
                     ->columns(3),
                 Section::make('Engagement Restrictions')
                     ->schema([
-                        Radio::make('sms_opt_out')
+                        Toggle::make('sms_opt_out')
                             ->label('SMS Opt Out')
                             ->boolean(),
-                        Radio::make('email_bounce')
+                        Toggle::make('email_bounce')
                             ->label('Email Bounce')
                             ->boolean(),
-                        Radio::make('dual')
+                        Toggle::make('dual')
                             ->label('Dual')
                             ->boolean(),
-                        Radio::make('ferpa')
+                        Toggle::make('ferpa')
                             ->label('FERPA')
                             ->boolean(),
                         DatePicker::make('dfw')
@@ -124,13 +151,12 @@ class CreateManageStudent extends CreateRecord
                             ->closeOnDateSelection()
                             ->format('Y-m-d')
                             ->displayFormat('Y-m-d'),
-                        Radio::make('sap')
+                        Toggle::make('sap')
                             ->label('SAP')
                             ->boolean(),
                         TextInput::make('holds')
-                            ->label('Holds')
-                            ->regex('/^[A-Z]{5}$/'),
-                        Radio::make('firstgen')
+                            ->label('Holds'),
+                        Toggle::make('firstgen')
                             ->label('Firstgen')
                             ->boolean(),
                         TextInput::make('ethnicity')
@@ -152,5 +178,13 @@ class CreateManageStudent extends CreateRecord
                     ])
                     ->columns(3),
             ]);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListManageStudents::route('/'),
+            'create' => CreateManageStudent::route('/create'),
+        ];
     }
 }

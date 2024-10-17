@@ -1,11 +1,11 @@
 <?php
 
-namespace AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource\Pages;
 
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentRecordManager\Actions\CascadeDelete;
-use AdvisingApp\StudentRecordManager\Filament\Imports\StudentManageableImporter;
-use AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource;
+use AdvisingApp\StudentDataModel\Actions\CascadeDelete;
+use AdvisingApp\StudentDataModel\Filament\Imports\StudentManageableImporter;
+use AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource;
 use Filament\Actions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
