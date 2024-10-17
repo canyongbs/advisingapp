@@ -1,9 +1,9 @@
 <?php
 
-namespace AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\ManageProgramResource\Pages;
 
-use AdvisingApp\ProgramRecordManager\Filament\Imports\ManageableProgramImporter;
-use AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResource;
+use AdvisingApp\StudentDataModel\Filament\Imports\ManageableProgramImporter;
+use AdvisingApp\StudentDataModel\Filament\Resources\ManageProgramResource;
 use AdvisingApp\StudentDataModel\Models\Program;
 use App\Filament\Tables\Columns\OpenSearch\TextColumn;
 use Filament\Actions\CreateAction;

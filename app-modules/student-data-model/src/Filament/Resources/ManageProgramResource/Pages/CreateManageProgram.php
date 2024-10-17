@@ -1,8 +1,8 @@
 <?php
 
-namespace AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\ManageProgramResource\Pages;
 
-use AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResource;
+use AdvisingApp\StudentDataModel\Filament\Resources\ManageProgramResource;
 use Filament\Actions;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -54,8 +54,7 @@ class CreateManageProgram extends CreateRecord
                     ->numeric(),
                 TextInput::make('descr')
                     ->required()
-                    ->label('DESCR')
-                    ->numeric(),
+                    ->label('DESCR'),
                 TextInput::make('foi')
                     ->label('Field of interest')
                     ->required(),

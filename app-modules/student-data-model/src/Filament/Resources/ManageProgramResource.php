@@ -1,9 +1,9 @@
 <?php
 
-namespace AdvisingApp\ProgramRecordManager\Filament\Resources;
+namespace AdvisingApp\StudentDataModel\Filament\Resources;
 
-use AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResource\Pages\CreateManageProgram;
-use AdvisingApp\ProgramRecordManager\Filament\Resources\ManageProgramResource\Pages\ListManagePrograms;
+use AdvisingApp\StudentDataModel\Filament\Resources\ManageProgramResource\Pages\CreateManageProgram;
+use AdvisingApp\StudentDataModel\Filament\Resources\ManageProgramResource\Pages\ListManagePrograms;
 use AdvisingApp\StudentDataModel\Models\Program;
 use App\Features\ManageStudentConfigurationFeature;
 use App\Filament\Clusters\ConstituentManagement;
@@ -66,24 +66,29 @@ class ManageProgramResource extends Resource
                     ->label('PROG status')
                     ->default('AC'),
                 TextInput::make('cum_gpa')
+                    ->required()
                     ->label('Cum GPA')
                     ->numeric(),
                 TextInput::make('semester')
+                    ->required()
                     ->label('Semester')
                     ->rules(['digits_between:1,4'])
                     ->numeric(),
                 TextInput::make('descr')
-                    ->label('DESCR')
-                    ->numeric(),
+                    ->required()
+                    ->label('DESCR'),
                 TextInput::make('foi')
+                    ->required()
                     ->label('Field of interest'),
                 DateTimePicker::make('change_dt')
+                    ->required()
                     ->label('Change date')
                     ->native(false)
                     ->closeOnDateSelection()
                     ->format('Y-m-d H:i:s')
                     ->displayFormat('Y-m-d H:i:s'),
                 DateTimePicker::make('declare_dt')
+                    ->required()
                     ->label('Declare date')
                     ->native(false)
                     ->closeOnDateSelection()
