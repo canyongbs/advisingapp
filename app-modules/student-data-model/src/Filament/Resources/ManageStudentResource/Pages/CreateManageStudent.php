@@ -1,51 +1,24 @@
 <?php
 
-namespace AdvisingApp\StudentRecordManager\Filament\Resources;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource\Pages;
 
+use AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource\Pages\CreateManageStudent;
-use AdvisingApp\StudentRecordManager\Filament\Resources\ManageStudentResource\Pages\ListManageStudents;
-use App\Features\ManageStudentConfigurationFeature;
-use App\Filament\Clusters\ConstituentManagement;
-use App\Settings\ManageStudentConfigurationSettings;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\CreateRecord;
 
-class ManageStudentResource extends Resource
+class CreateManageStudent extends CreateRecord
 {
-    protected static ?string $model = Student::class;
+    protected static string $resource = ManageStudentResource::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user';
-
-    protected static ?string $cluster = ConstituentManagement::class;
-
-    protected static ?string $navigationGroup = 'Students';
-
-    protected static ?string $label = 'Students';
-
-    protected static ?int $navigationSort = 2;
-
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return ManageStudentConfigurationFeature::active()
-            && $user->can('student_record_manager.configuration')
-            && app(ManageStudentConfigurationSettings::class)->is_enabled
-            && $user->can('student_record_manager.view-any');
-    }
-
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
-            ->disabled(false)
             ->schema([
                 Section::make('Personal Information')
                     ->schema([
@@ -56,11 +29,11 @@ class ManageStudentResource extends Resource
                         TextInput::make('otherid')
                             ->label('Other ID')
                             ->numeric(),
-                        TextInput::make('first')
+                        TextInput::make(Student::displayFirstNameKey())
                             ->label('First Name')
                             ->string()
                             ->maxLength(255),
-                        TextInput::make('last')
+                        TextInput::make(Student::displayLastNameKey())
                             ->label('Last Name')
                             ->string()
                             ->maxLength(255),
@@ -156,7 +129,8 @@ class ManageStudentResource extends Resource
                             ->boolean(),
                         TextInput::make('holds')
                             ->label('Holds')
-                            ->regex('[A-Z]{5}'),
+                        // ->regex('/^[A-Z]{5}$/'),
+                        ,
                         Radio::make('firstgen')
                             ->label('Firstgen')
                             ->boolean(),
@@ -179,13 +153,5 @@ class ManageStudentResource extends Resource
                     ])
                     ->columns(3),
             ]);
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListManageStudents::route('/'),
-            'create' => CreateManageStudent::route('/create'),
-        ];
     }
 }

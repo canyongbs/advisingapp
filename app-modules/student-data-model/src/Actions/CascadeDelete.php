@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentRecordManager\Actions;
+namespace AdvisingApp\StudentDataModel\Actions;
 
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Facades\Log;
