@@ -56,6 +56,7 @@
         "canyon-gbs/multifactor-authentication": "*",
         "canyon-gbs/segment": "*",
         "canyongbs/filament-tiptap-editor": "^1.0.2",
+        "cknow/laravel-money": "^8.1",
         "composer/composer": "^2.7",
         "defectivecode/laravel-sqs-extended": "^1.0",
         "fakerphp/faker": "^1.23",
