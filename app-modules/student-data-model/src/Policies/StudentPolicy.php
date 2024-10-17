@@ -61,7 +61,7 @@ class StudentPolicy
 
     public function view(Authenticatable $authenticatable, Student $student): Response
     {
-        if ($authenticatable->canAny("student.{$student->getKey()}.view", "student_record_manager.{$student->id}.view-any")) {
+        if ($authenticatable->canAny("student.{$student->getKey()}.view", "student_record_manager.{$student->getKey()}.view")) {
             return Response::allow();
         }
         return Response::deny('You do not have permission to view this student.');
@@ -78,7 +78,7 @@ class StudentPolicy
     public function update(Authenticatable $authenticatable, Student $student): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "student_record_manager.{student->id}.update",
+            abilities: "student_record_manager.{$student->getKey()}.update",
             denyResponse: 'Students cannot be updated.'
         );
     }
@@ -86,7 +86,7 @@ class StudentPolicy
     public function delete(Authenticatable $authenticatable, Student $student): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "student_record_manager.{$student->id}.delete",
+            abilities: "student_record_manager.{$student->getKey()}.delete",
             denyResponse: 'Students cannot be deleted.'
         );
     }
@@ -94,7 +94,7 @@ class StudentPolicy
     public function restore(Authenticatable $authenticatable, Student $student): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "student_record_manager.{$student->id}.restore",
+            abilities: "student_record_manager.{$student->getKey()}.restore",
             denyResponse: 'Students cannot be restored.'
         );
     }
@@ -102,7 +102,7 @@ class StudentPolicy
     public function forceDelete(Authenticatable $authenticatable, Student $student): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "student_record_manager.{$student->id}.force-delete",
+            abilities: "student_record_manager.{$student->getKey()}.force-delete",
             denyResponse: 'Students cannot be force deleted.'
         );
     }

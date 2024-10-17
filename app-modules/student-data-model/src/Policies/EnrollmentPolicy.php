@@ -52,7 +52,7 @@ class EnrollmentPolicy
 
   public function view(Authenticatable $authenticatable, Enrollment $enrollment): Response
   {
-    if ($authenticatable->canAny("enrollment.{$enrollment->getKey()}.view", "student_record_manager.{$enrollment->id}.view-any")) {
+    if ($authenticatable->canAny("enrollment.*.view", "student_record_manager.{$enrollment->id}.view")) {
       return Response::allow();
     }
     return Response::deny('You do not have permission to view this enrollment.');
