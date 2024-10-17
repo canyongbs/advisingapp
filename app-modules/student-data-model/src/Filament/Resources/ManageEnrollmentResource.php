@@ -1,9 +1,9 @@
 <?php
 
-namespace AdvisingApp\EnrollmentRecordManager\Filament\Resources;
+namespace AdvisingApp\StudentDataModel\Filament\Resources;
 
-use AdvisingApp\EnrollmentRecordManager\Filament\Resources\ManageEnrollmentResource\Pages\CreateManageEnrollment;
-use AdvisingApp\EnrollmentRecordManager\Filament\Resources\ManageEnrollmentResource\Pages\ListManageEnrollments;
+use AdvisingApp\StudentDataModel\Filament\Resources\ManageEnrollmentResource\Pages\CreateManageEnrollment;
+use AdvisingApp\StudentDataModel\Filament\Resources\ManageEnrollmentResource\Pages\ListManageEnrollments;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use App\Features\ManageStudentConfigurationFeature;
 use App\Filament\Clusters\ConstituentManagement;
