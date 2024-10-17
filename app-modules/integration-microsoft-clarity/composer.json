@@ -1,26 +1,26 @@
 {
-  "name": "canyon-gbs/advising-app-integration-microsoft-clarity",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "AdvisingApp\\IntegrationMicrosoftClarity\\": "src/",
-      "AdvisingApp\\IntegrationMicrosoftClarity\\Tests\\": "tests/",
-      "AdvisingApp\\IntegrationMicrosoftClarity\\Database\\Factories\\": "database/factories/",
-      "AdvisingApp\\IntegrationMicrosoftClarity\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/advising-app-integration-microsoft-clarity",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\IntegrationMicrosoftClarity\\": "src/",
+            "AdvisingApp\\IntegrationMicrosoftClarity\\Tests\\": "tests/",
+            "AdvisingApp\\IntegrationMicrosoftClarity\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\IntegrationMicrosoftClarity\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\IntegrationMicrosoftClarity\\Providers\\IntegrationMicrosoftClarityServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "dev",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "AdvisingApp\\IntegrationMicrosoftClarity\\Providers\\IntegrationMicrosoftClarityServiceProvider"
-      ]
-    }
-  }
 }

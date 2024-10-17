@@ -1,26 +1,26 @@
 {
-  "name": "canyon-gbs/advising-app-care-team",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "AdvisingApp\\CareTeam\\": "src/",
-      "AdvisingApp\\CareTeam\\Tests\\": "tests/",
-      "AdvisingApp\\CareTeam\\Database\\Factories\\": "database/factories/",
-      "AdvisingApp\\CareTeam\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/advising-app-care-team",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\CareTeam\\": "src/",
+            "AdvisingApp\\CareTeam\\Tests\\": "tests/",
+            "AdvisingApp\\CareTeam\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\CareTeam\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\CareTeam\\Providers\\CareTeamServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "dev",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "AdvisingApp\\CareTeam\\Providers\\CareTeamServiceProvider"
-      ]
-    }
-  }
 }

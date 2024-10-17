@@ -1,26 +1,26 @@
 {
-  "name": "canyon-gbs/advising-app-consent",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "AdvisingApp\\Consent\\": "src/",
-      "AdvisingApp\\Consent\\Tests\\": "tests/",
-      "AdvisingApp\\Consent\\Database\\Factories\\": "database/factories/",
-      "AdvisingApp\\Consent\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/advising-app-consent",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\Consent\\": "src/",
+            "AdvisingApp\\Consent\\Tests\\": "tests/",
+            "AdvisingApp\\Consent\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\Consent\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\Consent\\Providers\\ConsentServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "dev",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "AdvisingApp\\Consent\\Providers\\ConsentServiceProvider"
-      ]
-    }
-  }
 }
