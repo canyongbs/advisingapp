@@ -1,9 +1,9 @@
 <?php
 
-namespace AdvisingApp\EnrollmentRecordManager\Filament\Resources\ManageEnrollmentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\ManageEnrollmentResource\Pages;
 
-use AdvisingApp\EnrollmentRecordManager\Filament\Imports\ManageableEnrollmentImporter;
-use AdvisingApp\EnrollmentRecordManager\Filament\Resources\ManageEnrollmentResource;
+use AdvisingApp\StudentDataModel\Filament\Imports\ManageableEnrollmentImporter;
+use AdvisingApp\StudentDataModel\Filament\Resources\ManageEnrollmentResource;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use App\Filament\Tables\Columns\OpenSearch\TextColumn;
 use Filament\Actions\CreateAction;

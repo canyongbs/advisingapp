@@ -1,8 +1,8 @@
 <?php
 
-namespace AdvisingApp\EnrollmentRecordManager\Filament\Resources\ManageEnrollmentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\ManageEnrollmentResource\Pages;
 
-use AdvisingApp\EnrollmentRecordManager\Filament\Resources\ManageEnrollmentResource;
+use AdvisingApp\StudentDataModel\Filament\Resources\ManageEnrollmentResource;
 use Filament\Actions;
 use Filament\Forms\Form;
 use Filament\Forms\Components\DateTimePicker;

@@ -1,6 +1,6 @@
 <?php
 
-namespace AdvisingApp\EnrollmentRecordManager\Filament\Imports;
+namespace AdvisingApp\StudentDataModel\Filament\Imports;
 
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use Filament\Actions\Imports\ImportColumn;
