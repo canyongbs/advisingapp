@@ -34,32 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Livewire;
 
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
+use AdvisingApp\Task\Histories\TaskHistory;
+use AdvisingApp\Alert\Histories\AlertHistory;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
 
-class ManageStudentInteractions extends RelationManager
+class StudentEngagementTimeline extends TimelinePage
 {
-    use HasManyMorphedInteractionsTrait;
-
     protected static string $resource = StudentResource::class;
 
-    protected static string $relationship = 'interactions';
+    protected static ?string $navigationLabel = 'Timeline';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Interactions';
+    protected static string $view = 'student-data-model::livewire.student-engagement-timeline';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Interactions';
+    public string $emptyStateMessage = 'There are no engagements to show for this student.';
 
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
+    public string $noMoreRecordsMessage = "You have reached the end of this student's engagement timeline.";
 
-    public function form(Form $form): Form
+    public bool $isShowFullFeed = false;
+
+    public array $modelsToTimeline = [
+        Engagement::class,
+        EngagementResponse::class,
+        AlertHistory::class,
+        TaskHistory::class,
+        Interaction::class,
+    ];
+
+    public function changeFeedView(): void
     {
-        return (resolve(CreateInteraction::class))->form($form);
+        $this->isShowFullFeed = ! $this->isShowFullFeed;
     }
 }
