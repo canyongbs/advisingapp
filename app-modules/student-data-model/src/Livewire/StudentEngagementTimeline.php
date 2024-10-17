@@ -56,6 +56,8 @@ class StudentEngagementTimeline extends TimelinePage
 
     public string $noMoreRecordsMessage = "You have reached the end of this student's engagement timeline.";
 
+    public bool $isShowFullFeed = false;
+
     public array $modelsToTimeline = [
         Engagement::class,
         EngagementResponse::class,
@@ -63,4 +65,9 @@ class StudentEngagementTimeline extends TimelinePage
         TaskHistory::class,
         Interaction::class,
     ];
+
+    public function changeFeedView(): void
+    {
+        $this->isShowFullFeed = ! $this->isShowFullFeed;
+    }
 }

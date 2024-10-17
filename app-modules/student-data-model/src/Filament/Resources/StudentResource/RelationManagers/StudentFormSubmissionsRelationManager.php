@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
+use App\Enums\Feature;
 use Filament\Tables\Table;
 use Carbon\CarbonInterface;
-use Filament\Infolists\Infolist;
+use Illuminate\Support\Facades\Gate;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\DeleteAction;
 use AdvisingApp\Form\Models\FormSubmission;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Form\Enums\FormSubmissionStatus;
@@ -60,27 +60,9 @@ class StudentFormSubmissionsRelationManager extends RelationManager
 
     protected static ?string $title = 'Forms';
 
-    public function infolist(Infolist $infolist): Infolist
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        return $infolist
-            ->schema([
-                TextEntry::make('sisid')
-                    ->label('SISID'),
-                TextEntry::make('otherid')
-                    ->label('STUID'),
-                TextEntry::make('division')
-                    ->label('College'),
-                TextEntry::make('descr')
-                    ->label('Program'),
-                TextEntry::make('foi')
-                    ->label('Field of Interest'),
-                TextEntry::make('cum_gpa')
-                    ->label('Cumulative GPA'),
-                TextEntry::make('declare_dt')
-                    ->label('Start Date'),
-                TextEntry::make('change_dt')
-                    ->label('Last Action Date'),
-            ]);
+        return Gate::check(Feature::OnlineForms->getGateName());
     }
 
     public function table(Table $table): Table

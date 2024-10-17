@@ -36,9 +36,12 @@
 
 namespace AdvisingApp\StudentDataModel\Livewire;
 
+use App\Enums\Feature;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Gate;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
@@ -58,6 +61,11 @@ class ManageStudentApplicationSubmissions extends RelationManager
     protected static string $relationship = 'applicationSubmissions';
 
     protected static ?string $title = 'Applications';
+
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        return Gate::check(Feature::OnlineForms->getGateName());
+    }
 
     public function table(Table $table): Table
     {

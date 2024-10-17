@@ -36,25 +36,30 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
+use App\Enums\Feature;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Gate;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
 use App\Filament\Tables\Columns\IdColumn;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\MeetingCenter\Filament\Actions\InviteEventAttendeeAction;
 use AdvisingApp\MeetingCenter\Filament\Actions\Table\ViewEventAttendeeAction;
 
 class ManageStudentEvents extends RelationManager
 {
-    protected static string $resource = StudentResource::class;
-
     protected static string $relationship = 'eventAttendeeRecords';
 
     protected static ?string $title = 'Events';
+
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        return Gate::check(Feature::OnlineForms->getGateName());
+    }
 
     public function table(Table $table): Table
     {
