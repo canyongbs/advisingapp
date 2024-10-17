@@ -8,7 +8,7 @@ use App\DataTransferObjects\Casts\MoneySettingCast;
 
 class ProspectConversionSettings extends Settings
 {
-    public ?Money $estimated_average_revenue;
+    public ?Money $estimated_average_revenue = null;
 
     public static function group(): string
     {
