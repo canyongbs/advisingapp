@@ -37,22 +37,24 @@
 namespace AdvisingApp\StudentDataModel\Actions;
 
 use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class DeleteStudent
 {
   public function execute(Student $student)
   {
-
-    $student->enrollments()->delete();
-    $student->programs()->delete();
-    $student->alerts()->delete();
-    $student->tasks()->delete();
-    $student->interactions()->delete();
-    $student->timeline()->delete();
-    $student->formSubmissions()->delete();
-    $student->applicationSubmissions()->delete();
-    $student->eventAttendeeRecords()->delete();
-    $student->delete();
+    DB::transaction(function () use ($student) {
+      $student->enrollments()->delete();
+      $student->programs()->delete();
+      $student->alerts()->delete();
+      $student->tasks()->delete();
+      $student->interactions()->delete();
+      $student->timeline()->delete();
+      $student->formSubmissions()->delete();
+      $student->applicationSubmissions()->delete();
+      $student->eventAttendeeRecords()->delete();
+      $student->delete();
+    });
   }
 }

@@ -42,7 +42,7 @@ use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Models\Import;
 
-class StudentManageableImporter extends Importer
+class StudentImporter extends Importer
 {
     protected static ?string $model = Student::class;
 
@@ -53,11 +53,13 @@ class StudentManageableImporter extends Importer
                 ->label('Student ID')
                 ->requiredMapping()
                 ->example('########')
-                ->numeric(),
+                ->string()
+                ->maxLength(255),
             ImportColumn::make('otherid')
                 ->label('Other ID')
                 ->example('##########')
-                ->numeric(),
+                ->string()
+                ->maxLength(255),
             ImportColumn::make('first')
                 ->example('Jonathan'),
             ImportColumn::make('last')
@@ -69,13 +71,13 @@ class StudentManageableImporter extends Importer
             ImportColumn::make('birthdate')
                 ->example('2024-10-21'),
             ImportColumn::make('hsgrad')
-                ->rules(['min:1920', 'max:now()->addYears(25)->year'])
                 ->example('1920'),
             ImportColumn::make('email')
-                ->rules(['required', 'email'])
+                ->email()
+                ->required()
                 ->example('johnsmith@gmail.com'),
             ImportColumn::make('email_2')
-                ->rules(['email'])
+                ->email()
                 ->example('johnsmith@hotmail.com'),
             ImportColumn::make('mobile')
                 ->example('+1 (555) 555-5555'),
@@ -96,45 +98,40 @@ class StudentManageableImporter extends Importer
             ImportColumn::make('sms_opt_out')
                 ->label('SMS opt out')
                 ->boolean()
-                ->rules(['boolean'])
-                ->example('no'),
+                ->example('false'),
             ImportColumn::make('email_bounce')
                 ->boolean()
-                ->rules(['boolean'])
-                ->example('yes'),
+                ->example('true'),
             ImportColumn::make('dual')
                 ->boolean()
-                ->rules(['boolean'])
-                ->example('yes'),
+                ->example('true'),
             ImportColumn::make('ferpa')
                 ->label('FERPA')
                 ->boolean()
-                ->rules(['boolean'])
-                ->example('yes'),
+                ->example('true'),
             ImportColumn::make('dfw')
                 ->label('DFW')
                 ->example('2024-10-21'),
             ImportColumn::make('sap')
                 ->label('SAP')
                 ->boolean()
-                ->rules(['boolean'])
-                ->example('yes'),
+                ->example('true'),
             ImportColumn::make('holds')
-                ->rules(['regex: [A-Z]{5}'])
                 ->example('UHIJN'),
             ImportColumn::make('firstgen')
                 ->boolean()
-                ->rules(['boolean'])
-                ->example('yes'),
+                ->example('true'),
             ImportColumn::make('ethnicity'),
             ImportColumn::make('lastlmslogin')
                 ->label('Last LMS login'),
             ImportColumn::make('f_e_term')
                 ->label('First Enrollement Term')
-                ->numeric(),
+                ->string()
+                ->maxLength(255),
             ImportColumn::make('mr_e_term')
                 ->label('Most Recent Enrollement Term')
-                ->numeric(),
+                ->string()
+                ->maxLength(255),
         ];
     }
 

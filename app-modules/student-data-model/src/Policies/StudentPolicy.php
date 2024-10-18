@@ -106,4 +106,12 @@ class StudentPolicy
             denyResponse: 'Students cannot be force deleted.'
         );
     }
+
+    public function import(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'student_record_manager.create',
+            denyResponse: 'You do not have permission to import students.',
+        );
+    }
 }
