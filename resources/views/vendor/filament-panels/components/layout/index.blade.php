@@ -34,7 +34,6 @@
 @php
     use App\Settings\CollegeBrandingSettings;
     use Filament\Support\Enums\MaxWidth;
-    use App\Features\EnableBrandingBar;
 
     $navigation = filament()->getNavigation();
     $collegeBrandingSettings = app(CollegeBrandingSettings::class);
@@ -48,14 +47,7 @@
         <x-filament-panels::topbar :navigation="$navigation" />
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_AFTER, scopes: $livewire->getRenderHookScopes()) }}
-        @if ($collegeBrandingSettings->is_enabled && ! EnableBrandingBar::active())
-            <div
-                style="--c-600: {{ \Filament\Support\Colors\Color::all()[$collegeBrandingSettings->color][600] }}"
-                class="sticky top-16 z-10 bg-custom-600 text-sm font-medium text-white px-6 py-2 flex items-center h-10"
-            >
-                {{ $collegeBrandingSettings->college_text }}
-            </div>
-        @elseif ($collegeBrandingSettings->is_enabled && EnableBrandingBar::active())
+        @if ($collegeBrandingSettings->is_enabled)
             <livewire:branding-bar />
         @endif
 
@@ -140,7 +132,7 @@
 
                 <x-filament-panels::sidebar
                     :navigation="$navigation"
-                    :has-branding-bar="EnableBrandingBar::active() ? $collegeBrandingSettings->is_enabled && ! $currentUser->is_branding_bar_dismissed : $collegeBrandingSettings->is_enabled"
+                    :has-branding-bar="$collegeBrandingSettings->is_enabled && ! $currentUser->is_branding_bar_dismissed"
                     class="fi-main-sidebar"
                 />
 
