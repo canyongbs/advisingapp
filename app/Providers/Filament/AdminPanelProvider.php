@@ -173,6 +173,16 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Profile Settings')
                     ->url(fn () => EditProfile::getUrl())
                     ->icon('heroicon-s-cog-6-tooth'),
+                MenuItem::make()
+                    ->label('Get Support')
+                    ->url(function (ThemeSettings $themeSettings) {
+                        return $themeSettings->support_url;
+                    })
+                    ->icon('heroicon-s-lifebuoy')
+                    ->openUrlInNewTab()
+                    ->visible(function (ThemeSettings $themeSettings) {
+                        return $themeSettings->is_support_url_enabled && ! empty($themeSettings->support_url);
+                    }),
             ])
             ->colors(fn (ThemeSettings $themeSettings): array => array_merge(config('default-colors'), $themeSettings->color_overrides))
             ->renderHook(
