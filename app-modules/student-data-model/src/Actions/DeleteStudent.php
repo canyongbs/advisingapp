@@ -54,6 +54,8 @@ class DeleteStudent
       $student->formSubmissions()->delete();
       $student->applicationSubmissions()->delete();
       $student->eventAttendeeRecords()->delete();
+      $student->segmentSubjects()->delete();
+      $student->engagements()->delete();
       $student->delete();
     });
   }
