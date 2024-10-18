@@ -59,7 +59,7 @@ class ViewStudent extends ViewRecord
     // TODO: Automatically set from Filament
     protected static ?string $navigationLabel = 'View';
 
-    // protected static string $layout = 'filament-panels::components.layout.index';
+    protected static string $layout = 'filament-panels::components.layout.index';
 
     public function boot()
     {
@@ -77,15 +77,6 @@ class ViewStudent extends ViewRecord
                 scopes: ViewStudent::class,
             );
         }
-    }
-
-    public function getTitle(): string
-    {
-        if (filled(static::$title)) {
-            return static::$title;
-        }
-
-        return __('filament-panels::resources/pages/view-record.title');
     }
 
     public function sisRefresh()

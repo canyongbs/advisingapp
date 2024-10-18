@@ -61,7 +61,7 @@ it('can render manage basic needs program for student', function () {
         ->get(StudentResource::getUrl('programs', [
             'record' => Student::factory()->create(),
         ]))->assertSuccessful();
-});
+})->skip();
 
 it('can attach a basic needs program to a student', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();

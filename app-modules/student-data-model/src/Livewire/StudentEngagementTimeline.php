@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Livewire;
 
+use App\Actions\GetRecordFromMorphAndKey;
 use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -66,8 +67,25 @@ class StudentEngagementTimeline extends TimelinePage
         Interaction::class,
     ];
 
-    public function changeFeedView(): void
+    public function openFullFeedModal(): void
     {
-        $this->isShowFullFeed = ! $this->isShowFullFeed;
+        $this->dispatch('open-modal', id: 'show-full-feed');
+    }
+
+    public function closeFullFeedModal(): void
+    {
+        $this->dispatch('close-modal', id: 'show-full-feed');
+    }
+
+    public function fetchTitle($morphReference, $key): ?string
+    {
+        $record = resolve(GetRecordFromMorphAndKey::class)->via($morphReference, $key);
+
+        return match ($morphReference) {
+            'interaction', 'engagement' => $record?->user?->name,
+            'engagement_response' => $record?->sender?->full_name,
+            'task_history' => 'Task ' . $record?->timeline()?->history?->event,
+            'alert_history' => 'Alert ' . $record?->timeline()?->history?->event,
+        };
     }
 }
