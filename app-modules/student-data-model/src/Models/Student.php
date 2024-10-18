@@ -80,6 +80,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
 use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
+use AdvisingApp\Segment\Models\SegmentSubject;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -281,6 +282,17 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             name: 'checked_out_to',
             type: 'checked_out_to_type',
             id: 'checked_out_to_id',
+            localKey: 'sisid'
+        );
+    }
+
+    public function segmentSubjects(): MorphMany
+    {
+        return $this->morphMany(
+            related: SegmentSubject::class,
+            name: 'subject',
+            type: 'subject_type',
+            id: 'subject_id',
             localKey: 'sisid'
         );
     }
