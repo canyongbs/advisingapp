@@ -45,7 +45,6 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use App\Settings\DisplaySettings;
 use Filament\Actions\ActionGroup;
-use App\Features\EnableBrandingBar;
 use Filament\Forms\Components\Grid;
 use Illuminate\Support\Facades\Hash;
 use Filament\Forms\Components\Select;
@@ -269,7 +268,7 @@ class EditProfile extends Page
                     ->schema([
                         Toggle::make('is_branding_bar_dismissed'),
                     ])
-                    ->visible(fn (CollegeBrandingSettings $settings) => EnableBrandingBar::active() && $settings->dismissible),
+                    ->visible(fn (CollegeBrandingSettings $settings) => $settings->dismissible),
                 Section::make('Connected Accounts')
                     ->description('Disconnect your external accounts.')
                     ->aside()
