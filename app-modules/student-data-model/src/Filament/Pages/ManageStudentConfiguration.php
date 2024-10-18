@@ -84,7 +84,7 @@ class ManageStudentConfiguration extends SettingsPage
       $this->callHook('afterSave');
 
       Notification::make()
-        ->title('Students is enabled!')
+        ->title('Students Configured!')
         ->success()
         ->send();
 
