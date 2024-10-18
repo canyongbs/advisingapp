@@ -50,7 +50,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use App\Filament\Clusters\GlobalSettings;
 use AdvisingApp\Theme\Settings\ThemeSettings;
-use App\Features\AddBrandedWebsitesToThemeSettingsFeature;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class ManageBrandConfigurationSettings extends SettingsPage
@@ -145,7 +144,6 @@ class ManageBrandConfigurationSettings extends SettingsPage
                                     ->label('Support URL')
                                     ->url()
                                     ->visible(fn(Get $get) => $get('is_support_url_enabled'))
-                                    ->visible(fn(Get $get) => $get('is_support_url_enabled'))
                                     ->columnSpanFull(),
                             ]),
                         Section::make('Recent Updates')
@@ -157,7 +155,6 @@ class ManageBrandConfigurationSettings extends SettingsPage
                                 TextInput::make('recent_updates_url')
                                     ->label('Recent Updates URL')
                                     ->url()
-                                    ->visible(fn(Get $get) => $get('is_recent_updates_url_enabled'))
                                     ->visible(fn(Get $get) => $get('is_recent_updates_url_enabled'))
                                     ->columnSpanFull(),
                             ]),
@@ -172,17 +169,14 @@ class ManageBrandConfigurationSettings extends SettingsPage
                                     ->alphaNum()
                                     ->maxLength(16)
                                     ->visible(fn(Get $get) => $get('is_custom_link_url_enabled'))
-                                    ->visible(fn(Get $get) => $get('is_custom_link_url_enabled'))
                                     ->columnSpanFull(),
                                 TextInput::make('custom_link_url')
                                     ->label('Custom Link URL')
                                     ->url()
                                     ->visible(fn(Get $get) => $get('is_custom_link_url_enabled'))
-                                    ->visible(fn(Get $get) => $get('is_custom_link_url_enabled'))
                                     ->columnSpanFull(),
                             ]),
-                    ])
-                    ->visible(fn() => AddBrandedWebsitesToThemeSettingsFeature::active()),
+                    ]),
 
                 Section::make('Changelog URL')
                     ->aside()
@@ -192,7 +186,6 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->url()
                             ->maxLength('255'),
                     ]),
-                    ]),
 
                 Section::make('Product Knowledge Base URL')
                     ->aside()
@@ -201,7 +194,6 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->label('Product Knowledge Base URL')
                             ->url()
                             ->maxLength('255'),
-                    ]),
                     ]),
             ]);
     }
