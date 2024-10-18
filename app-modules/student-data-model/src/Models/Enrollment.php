@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
@@ -46,6 +47,7 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
  */
 class Enrollment extends Model
 {
+    use SoftDeletes;
     use HasFactory;
     use UsesTenantConnection;
 
@@ -58,6 +60,25 @@ class Enrollment extends Model
     protected $keyType = 'string';
 
     public $timestamps = false;
+
+    protected $fillable = [
+        'sisid',
+        'division',
+        'class_nbr',
+        'crse_grade_off',
+        'unt_taken',
+        'unt_earned',
+        'last_upd_dt_stmp',
+        'section',
+        'name',
+        'department',
+        'faculty_name',
+        'faculty_email',
+        'semester_code',
+        'semester_name',
+        'start_date',
+        'end_date',
+    ];
 
     protected $casts = [
         'last_upd_dt_stmp' => 'datetime',

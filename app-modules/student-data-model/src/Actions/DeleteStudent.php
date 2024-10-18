@@ -34,55 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+namespace AdvisingApp\StudentDataModel\Actions;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+use Illuminate\Support\Facades\DB;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-/**
- * @mixin IdeHelperProgram
- */
-class Program extends Model
+class DeleteStudent
 {
-    use SoftDeletes;
-    use HasFactory;
-    use UsesTenantConnection;
-
-    protected $table = 'programs';
-
-    protected $primaryKey = 'sisid';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'sisid',
-        'otherid',
-        'acad_career',
-        'division',
-        'acad_plan',
-        'prog_status',
-        'cum_gpa',
-        'semester',
-        'descr',
-        'foi',
-        'change_dt',
-        'declare_dt',
-    ];
-
-    protected $casts = [
-        'change_dt' => 'datetime',
-        'declare_dt' => 'datetime',
-    ];
-
-    public function student(): BelongsTo
+    public function execute(Student $student)
     {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+        DB::transaction(function () use ($student) {
+            $student->enrollments()->delete();
+            $student->programs()->delete();
+            $student->alerts()->delete();
+            $student->tasks()->delete();
+            $student->interactions()->delete();
+            $student->timeline()->delete();
+            $student->formSubmissions()->delete();
+            $student->applicationSubmissions()->delete();
+            $student->eventAttendeeRecords()->delete();
+            $student->segmentSubjects()->delete();
+            $student->engagements()->delete();
+            $student->delete();
+        });
     }
 }

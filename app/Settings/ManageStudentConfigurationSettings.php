@@ -34,17 +34,16 @@
 </COPYRIGHT>
 */
 
-use App\Features\EnableBrandingBar;
-use Illuminate\Database\Migrations\Migration;
+namespace App\Settings;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        EnableBrandingBar::activate();
-    }
+use Spatie\LaravelSettings\Settings;
 
-    public function down(): void
+class ManageStudentConfigurationSettings extends Settings
+{
+    public bool $is_enabled = false;
+
+    public static function group(): string
     {
-        EnableBrandingBar::deactivate();
+        return 'manageable-student';
     }
-};
+}

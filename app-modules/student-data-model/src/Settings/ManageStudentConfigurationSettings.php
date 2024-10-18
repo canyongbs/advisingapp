@@ -1,5 +1,4 @@
 <?php
-
 /*
 <COPYRIGHT>
 
@@ -34,55 +33,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+namespace AdvisingApp\StudentDataModel\Settings;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+use Spatie\LaravelSettings\Settings;
 
-/**
- * @mixin IdeHelperProgram
- */
-class Program extends Model
+class ManageStudentConfigurationSettings extends Settings
 {
-    use SoftDeletes;
-    use HasFactory;
-    use UsesTenantConnection;
+    public bool $is_enabled = false;
 
-    protected $table = 'programs';
-
-    protected $primaryKey = 'sisid';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'sisid',
-        'otherid',
-        'acad_career',
-        'division',
-        'acad_plan',
-        'prog_status',
-        'cum_gpa',
-        'semester',
-        'descr',
-        'foi',
-        'change_dt',
-        'declare_dt',
-    ];
-
-    protected $casts = [
-        'change_dt' => 'datetime',
-        'declare_dt' => 'datetime',
-    ];
-
-    public function student(): BelongsTo
+    public static function group(): string
     {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+        return 'manageable-student';
     }
 }
