@@ -36,40 +36,14 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
-use Illuminate\Database\Eloquent\Model;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\RelationManagers\EngagementFilesRelationManager;
 
-class ManageStudentFiles extends ManageRelatedRecords
+class ManageStudentFiles extends RelationManager
 {
     protected static string $resource = StudentResource::class;
 
-    // TODO: Obsolete when there is no table, remove from Filament
     protected static string $relationship = 'engagementFiles';
 
-    protected static ?string $navigationLabel = 'Files and Documents';
-
-    protected static ?string $breadcrumb = 'Files';
-
-    protected static ?string $navigationIcon = 'heroicon-o-folder';
-
-    public static function canAccess(array $arguments = []): bool
-    {
-        return (bool) count(static::managers($arguments['record'] ?? null));
-    }
-
-    public function getRelationManagers(): array
-    {
-        return static::managers($this->getRecord());
-    }
-
-    private static function managers(?Model $record = null): array
-    {
-        return collect([
-            EngagementFilesRelationManager::class,
-        ])
-            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
-            ->toArray();
-    }
+    protected static ?string $title = 'Files';
 }

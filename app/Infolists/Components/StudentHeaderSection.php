@@ -34,32 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace App\Infolists\Components;
 
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
+use Illuminate\Support\Str;
+use Filament\Infolists\Components\Component;
 
-class ManageStudentInteractions extends RelationManager
+class StudentHeaderSection extends Component
 {
-    use HasManyMorphedInteractionsTrait;
+    protected string $view = 'infolists.components.student-header-section';
 
-    protected static string $resource = StudentResource::class;
+    public string $name = '';
 
-    protected static string $relationship = 'interactions';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Interactions';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Interactions';
-
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
-
-    public function form(Form $form): Form
+    public static function make(): static
     {
-        return (resolve(CreateInteraction::class))->form($form);
+        return app(static::class);
+    }
+
+    public function nameWords(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getNameWords(): string
+    {
+        $name = collect(Str::of($this->getState()?->full_name)->explode(' '))
+            ->map(function ($word) {
+                return Str::substr($word, 0, 1);
+            })->implode('');
+
+        return $this->evaluate($name);
     }
 }

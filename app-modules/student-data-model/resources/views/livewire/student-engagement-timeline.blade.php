@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,34 +30,11 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
-
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
-
-class ManageStudentInteractions extends RelationManager
-{
-    use HasManyMorphedInteractionsTrait;
-
-    protected static string $resource = StudentResource::class;
-
-    protected static string $relationship = 'interactions';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Interactions';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Interactions';
-
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
-
-    public function form(Form $form): Form
-    {
-        return (resolve(CreateInteraction::class))->form($form);
-    }
-}
+--}}
+<x-student-data-model::timeline
+    :timelineRecords="$timelineRecords"
+    :hasMorePages="$hasMorePages"
+    :emptyStateMessage="$emptyStateMessage"
+    :noMoreRecordsMessage="$noMoreRecordsMessage"
+    :isShowFullFeed="$isShowFullFeed"
+/>
