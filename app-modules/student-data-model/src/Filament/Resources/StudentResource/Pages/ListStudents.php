@@ -144,7 +144,7 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
                     SubscribeBulkAction::make(),
                     BulkEngagementAction::make(context: 'students'),
                     ToggleCareTeamBulkAction::make(),
-                    BulkSegmentAction::make(context: 'students'),
+                    BulkSegmentAction::make(segmentModel: SegmentModel::Student),
                 ]),
             ]);
     }

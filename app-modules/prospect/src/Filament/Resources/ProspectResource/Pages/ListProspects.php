@@ -229,7 +229,7 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                                 ->success()
                                 ->send();
                         }),
-                    BulkSegmentAction::make(context: 'prospects'),
+                    BulkSegmentAction::make(segmentModel: SegmentModel::Prospect),
                 ]),
             ]);
     }

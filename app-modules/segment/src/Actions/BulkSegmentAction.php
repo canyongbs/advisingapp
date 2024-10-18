@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Segment\Actions;
 
+use Exception;
 use Filament\Forms\Form;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -46,14 +47,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use AdvisingApp\Segment\Enums\SegmentType;
 use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Jobs\BulkSegmentActionJob;
 
 class BulkSegmentAction
 {
-    public static function make(string $context)
+    public static function make(SegmentModel $segmentModel)
     {
         return BulkAction::make('segment')
-            ->icon('heroicon-o-chat-bubble-bottom-center-text')
+            ->icon('heroicon-o-rectangle-group')
             ->label('Create Segment')
             ->form(fn (Form $form) => $form->schema([
                 TextInput::make('name')
@@ -63,30 +63,39 @@ class BulkSegmentAction
 
                 Textarea::make('description')
                     ->label('Description')
-                    ->maxLength(500),
+                    ->maxLength(65535),
             ]))
-            ->action(function (Collection $records, array $data) use ($context) {
+            ->action(function (Collection $records, array $data) use ($segmentModel) {
                 try {
+                    DB::beginTransaction();
                     $data['type'] = SegmentType::Static;
                     $data['filters'] = [];
-                    $data['model'] = $context == 'students' ? SegmentModel::Student : SegmentModel::Prospect;
+                    $data['model'] = $segmentModel;
                     $segment = Segment::create($data);
-                    $user = auth()->user();
-                    BulkSegmentActionJob::dispatch($records, $data, $context, $user, $segment);
+                    $id = $segmentModel->getLabel() == 'Student' ? 'sisid' : 'id';
+                    $records->pluck($id)->chunk(100)->each(function ($idChunk) use ($segment, $segmentModel) {
+                        $subjectData = $idChunk->map(fn ($id) => [
+                            'subject_id' => $id,
+                            'subject_type' => $segmentModel,
+                        ])->toArray();
+                        $segment->subjects()->createMany($subjectData);
+                    });
                     DB::commit();
-                    Notification::make()
-                        ->title('Segment created')
-                        ->body('The segment has been successfully created and is being processed.')
-                        ->success()
-                        ->send();
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     DB::rollBack();
                     Notification::make()
                         ->title('Could not save segment')
                         ->body('We failed to create the segment. Please try again later.')
                         ->danger()
                         ->send();
+
+                    return;
                 }
+                Notification::make()
+                    ->title('Segment created')
+                    ->body('The segment has been created and is being populated with your selections.')
+                    ->success()
+                    ->send();
             });
     }
 }
