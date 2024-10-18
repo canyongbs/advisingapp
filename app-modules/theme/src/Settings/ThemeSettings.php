@@ -78,5 +78,4 @@ class ThemeSettings extends SettingsWithMedia
     {
         return ThemeSettingsProperty::class;
     }
-    
 }
