@@ -4,9 +4,9 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources;
 
 use AdvisingApp\StudentDataModel\Filament\Resources\ManageEnrollmentResource\Pages\ListManageEnrollments;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Features\ManageStudentConfigurationFeature;
 use App\Filament\Clusters\ConstituentManagement;
-use App\Settings\ManageStudentConfigurationSettings;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\DateTimePicker;

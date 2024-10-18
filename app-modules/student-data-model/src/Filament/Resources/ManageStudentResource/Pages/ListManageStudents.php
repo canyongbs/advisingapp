@@ -4,7 +4,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource\
 
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
-use AdvisingApp\StudentDataModel\Filament\Imports\StudentManageableImporter;
+use AdvisingApp\StudentDataModel\Filament\Imports\StudentImporter;
 use AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
@@ -71,7 +71,7 @@ class ListManageStudents extends ListRecords
         return [
             CreateAction::make(),
             ImportAction::make()
-                ->importer(StudentManageableImporter::class)
+                ->importer(StudentImporter::class)
                 ->authorize('import', Student::class),
         ];
     }

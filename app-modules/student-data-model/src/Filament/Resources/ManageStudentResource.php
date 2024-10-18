@@ -2,12 +2,11 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources;
 
-use AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource\Pages\CreateManageStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource\Pages\ListManageStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Features\ManageStudentConfigurationFeature;
 use App\Filament\Clusters\ConstituentManagement;
-use App\Settings\ManageStudentConfigurationSettings;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -37,7 +36,6 @@ class ManageStudentResource extends Resource
         $user = auth()->user();
 
         return ManageStudentConfigurationFeature::active()
-            && $user->can('student_record_manager.configuration')
             && app(ManageStudentConfigurationSettings::class)->is_enabled
             && $user->can('student_record_manager.view-any');
     }
@@ -45,17 +43,18 @@ class ManageStudentResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->disabled(false)
             ->schema([
                 Section::make('Personal Information')
                     ->schema([
                         TextInput::make('sisid')
                             ->label('Student ID')
                             ->required()
-                            ->numeric(),
+                            ->string()
+                            ->maxLength(255),
                         TextInput::make('otherid')
                             ->label('Other ID')
-                            ->numeric(),
+                            ->string()
+                            ->maxLength(255),
                         TextInput::make(Student::displayFirstNameKey())
                             ->label('First Name')
                             ->string()
@@ -82,9 +81,7 @@ class ManageStudentResource extends Resource
                         TextInput::make('hsgrad')
                             ->label('High School Graduation Date')
                             ->nullable()
-                            ->numeric()
-                            ->minValue(1920)
-                            ->maxValue(now()->addYears(25)->year),
+                            ->numeric(),
                     ])
                     ->columns(3),
                 Section::make('Contact Information')
@@ -92,11 +89,10 @@ class ManageStudentResource extends Resource
                         TextInput::make('email')
                             ->label('Primary Email')
                             ->email()
-                            ->maxLength(255),
+                            ->required(),
                         TextInput::make('email_2')
                             ->label('Other Email')
-                            ->email()
-                            ->maxLength(255),
+                            ->email(),
                         TextInput::make('mobile')
                             ->label('Mobile')
                             ->string()
@@ -134,31 +130,25 @@ class ManageStudentResource extends Resource
                 Section::make('Engagement Restrictions')
                     ->schema([
                         Toggle::make('sms_opt_out')
-                            ->label('SMS Opt Out')
-                            ->boolean(),
+                            ->label('SMS Opt Out'),
                         Toggle::make('email_bounce')
-                            ->label('Email Bounce')
-                            ->boolean(),
+                            ->label('Email Bounce'),
                         Toggle::make('dual')
-                            ->label('Dual')
-                            ->boolean(),
+                            ->label('Dual'),
                         Toggle::make('ferpa')
-                            ->label('FERPA')
-                            ->boolean(),
+                            ->label('FERPA'),
+                        Toggle::make('firstgen')
+                            ->label('Firstgen'),
+                        Toggle::make('sap')
+                            ->label('SAP'),
+                        TextInput::make('holds')
+                            ->label('Holds'),
                         DatePicker::make('dfw')
                             ->label('DFW')
                             ->native(false)
                             ->closeOnDateSelection()
                             ->format('Y-m-d')
                             ->displayFormat('Y-m-d'),
-                        Toggle::make('sap')
-                            ->label('SAP')
-                            ->boolean(),
-                        TextInput::make('holds')
-                            ->label('Holds'),
-                        Toggle::make('firstgen')
-                            ->label('Firstgen')
-                            ->boolean(),
                         TextInput::make('ethnicity')
                             ->label('Ethnicity')
                             ->string(),
@@ -170,10 +160,12 @@ class ManageStudentResource extends Resource
                             ->displayFormat('Y-m-d H:i:s'),
                         TextInput::make('f_e_term')
                             ->label('First Enrollement Term')
-                            ->numeric(),
+                            ->string()
+                            ->maxLength(255),
                         TextInput::make('mr_e_term')
                             ->label('Most Recent Enrollement Term')
-                            ->numeric(),
+                            ->string()
+                            ->maxLength(255),
 
                     ])
                     ->columns(3),
@@ -184,7 +176,6 @@ class ManageStudentResource extends Resource
     {
         return [
             'index' => ListManageStudents::route('/'),
-            'create' => CreateManageStudent::route('/create'),
         ];
     }
 }

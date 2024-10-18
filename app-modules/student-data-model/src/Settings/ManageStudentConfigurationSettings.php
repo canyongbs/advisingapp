@@ -1,4 +1,5 @@
-{{--
+<?php
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,14 +31,18 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
+*/
 
-<x-filament-panels::page>
-    <x-filament-panels::form wire:submit="save">
-        {{ $this->form }}
-        <x-filament-panels::form.actions
-            :actions="$this->getCachedFormActions()"
-            :full-width="$this->hasFullWidthFormActions()"
-        />
-    </x-filament-panels::form>
-</x-filament-panels::page>
+namespace AdvisingApp\StudentDataModel\Settings;
+
+use Spatie\LaravelSettings\Settings;
+
+class ManageStudentConfigurationSettings extends Settings
+{
+    public bool $is_enabled = false;
+
+    public static function group(): string
+    {
+        return 'manageable-student';
+    }
+}
