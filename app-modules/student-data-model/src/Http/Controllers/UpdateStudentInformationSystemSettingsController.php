@@ -34,17 +34,28 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
-use App\Features\AddBrandedWebsitesToThemeSettingsFeature;
+namespace AdvisingApp\StudentDataModel\Http\Controllers;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        AddBrandedWebsitesToThemeSettingsFeature::activate();
-    }
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use AdvisingApp\StudentDataModel\Enums\SisSystem;
+use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use AdvisingApp\StudentDataModel\Http\Requests\UpdateStudentInformationSystemSettingsRequest;
 
-    public function down(): void
+class UpdateStudentInformationSystemSettingsController extends Controller
+{
+    /**
+     * Handle the incoming request.
+     */
+    public function __invoke(UpdateStudentInformationSystemSettingsRequest $request)
     {
-        AddBrandedWebsitesToThemeSettingsFeature::deactivate();
+        $settings = app(StudentInformationSystemSettings::class);
+
+        $settings->is_enabled = $request->is_enabled;
+        $settings->sis_system = SisSystem::parse($request->sis_system);
+
+        $settings->save();
+
+        return response()->json();
     }
-};
+}

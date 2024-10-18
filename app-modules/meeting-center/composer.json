@@ -18,7 +18,7 @@
             "AdvisingApp\\MeetingCenter\\Database\\Seeders\\": "database/seeders/"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "extra": {
         "laravel": {
             "providers": [

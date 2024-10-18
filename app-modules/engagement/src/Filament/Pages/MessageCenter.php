@@ -117,6 +117,9 @@ class MessageCenter extends Page
     #[Url(as: 'endDate')]
     public ?string $filterEndDate = null;
 
+    #[Url(as: 'hasMemberOfCareTeam')]
+    public bool $filterMemberOfCareTeam = false;
+
     public int $inboxPerPage = 10;
 
     public static function canAccess(): bool
@@ -154,6 +157,7 @@ class MessageCenter extends Page
             'filterOpenServiceRequests',
             'filterStartDate',
             'filterEndDate',
+            'filterMemberOfCareTeam',
         ];
 
         if (in_array($property, $filters)) {
@@ -299,6 +303,12 @@ class MessageCenter extends Page
                     ServiceRequest::query()
                         ->open()
                         ->pluck('respondent_id')
+                );
+            })
+            ->when($this->filterMemberOfCareTeam === true, function (Builder $query) use ($idColumn) {
+                $query->whereIn(
+                    $idColumn,
+                    $this->user->careTeams()->pluck('educatable_id')
                 );
             });
     }

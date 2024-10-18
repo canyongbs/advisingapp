@@ -46,6 +46,12 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable;
 
+    public int $tries = 3;
+
+    public int $timeout = 600;
+
+    public int $uniqueFor = 600 * 3;
+
     public function __construct(
         public CampaignAction $action
     ) {}

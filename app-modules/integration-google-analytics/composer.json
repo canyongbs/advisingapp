@@ -1,26 +1,26 @@
 {
-  "name": "canyon-gbs/advising-app-integration-google-analytics",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "AdvisingApp\\IntegrationGoogleAnalytics\\": "src/",
-      "AdvisingApp\\IntegrationGoogleAnalytics\\Tests\\": "tests/",
-      "AdvisingApp\\IntegrationGoogleAnalytics\\Database\\Factories\\": "database/factories/",
-      "AdvisingApp\\IntegrationGoogleAnalytics\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/advising-app-integration-google-analytics",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\IntegrationGoogleAnalytics\\": "src/",
+            "AdvisingApp\\IntegrationGoogleAnalytics\\Tests\\": "tests/",
+            "AdvisingApp\\IntegrationGoogleAnalytics\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\IntegrationGoogleAnalytics\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\IntegrationGoogleAnalytics\\Providers\\IntegrationGoogleAnalyticsServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "dev",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "AdvisingApp\\IntegrationGoogleAnalytics\\Providers\\IntegrationGoogleAnalyticsServiceProvider"
-      ]
-    }
-  }
 }

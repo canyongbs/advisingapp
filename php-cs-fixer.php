@@ -152,8 +152,17 @@ $rules = [
     'whitespace_after_comma_in_array' => true,
     'trim_array_spaces' => true,
     'single_space_around_construct' => true,
-    'fully_qualified_strict_types' => true,
+    'fully_qualified_strict_types' => [
+        'import_symbols' => true,
+        'leading_backslash_in_global_namespace' => false,
+    ],
+    'global_namespace_import' => [
+        'import_classes' => true,
+        'import_constants' => true,
+        'import_functions' => true,
+    ],
     'single_line_empty_body' => true,
+    'no_useless_nullsafe_operator' => true,
 ];
 
 $finder = Finder::create()

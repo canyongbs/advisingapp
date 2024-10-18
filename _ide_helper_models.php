@@ -463,6 +463,7 @@ namespace App\Models{
  * @property string|null $multifactor_secret
  * @property-read string|null $multifactor_recovery_codes
  * @property string|null $multifactor_confirmed_at
+ * @property bool $is_branding_bar_dismissed
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiAssistantUpvote> $aiAssistantUpvotes
  * @property-read int|null $ai_assistant_upvotes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiThreadFolder> $aiThreadFolders
@@ -552,6 +553,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereHasEnabledPublicProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsBioVisibleOnProfile($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereIsBrandingBarDismissed($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsDivisionVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsEmailVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsExternal($value)

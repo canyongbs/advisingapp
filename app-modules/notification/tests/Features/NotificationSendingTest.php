@@ -36,6 +36,7 @@
 
 use App\Models\User;
 use App\Models\Authenticatable;
+use Tests\Unit\TestEmailNotification;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
@@ -49,12 +50,12 @@ use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 it('will create an outbound deliverable for the outbound notification', function () {
     $notifiable = User::factory()->create();
 
-    $notification = new Tests\Unit\TestEmailNotification();
+    $notification = new TestEmailNotification();
 
     $notifiable->notify($notification);
 
     expect(OutboundDeliverable::count())->toBe(1);
-    expect(OutboundDeliverable::first()->notification_class)->toBe(Tests\Unit\TestEmailNotification::class);
+    expect(OutboundDeliverable::first()->notification_class)->toBe(TestEmailNotification::class);
 });
 
 it('will create an outbound deliverable for each of the channels that the notification specifies', function () {

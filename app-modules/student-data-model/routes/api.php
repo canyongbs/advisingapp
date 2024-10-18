@@ -34,14 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\CheckOlympusKey;
+use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;
 
-use App\Support\AbstractFeatureFlag;
-
-class AddBrandedWebsitesToThemeSettingsFeature extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
-    {
-        return false;
-    }
-}
+Route::prefix('api')
+    ->middleware([
+        'api',
+        CheckOlympusKey::class,
+    ])
+    ->group(function () {
+        Route::post('/update-sis-settings', UpdateStudentInformationSystemSettingsController::class)
+            ->name('update-sis-settings');
+    });
