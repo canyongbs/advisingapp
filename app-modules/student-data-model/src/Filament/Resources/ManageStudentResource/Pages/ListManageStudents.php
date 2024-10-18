@@ -36,21 +36,21 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource\Pages;
 
+use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
+use Filament\Actions\ImportAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentImporter;
 use AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource;
-use Filament\Actions\CreateAction;
-use Filament\Actions\ImportAction;
-use Filament\Notifications\Notification;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 
 class ListManageStudents extends ListRecords
 {
@@ -85,7 +85,7 @@ class ListManageStudents extends ListRecords
                             ->success()
                             ->body('The record and related entries have been successfully deleted.')
                             ->send();
-                    })
+                    }),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
@@ -95,7 +95,7 @@ class ListManageStudents extends ListRecords
                             foreach ($records as $record) {
                                 app(DeleteStudent::class)->execute($record);
                             }
-                        })
+                        }),
                 ]),
             ]);
     }

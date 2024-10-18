@@ -37,9 +37,9 @@
 namespace AdvisingApp\StudentDataModel\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
@@ -47,47 +47,47 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
  */
 class Enrollment extends Model
 {
-  use SoftDeletes;
-  use HasFactory;
-  use UsesTenantConnection;
+    use SoftDeletes;
+    use HasFactory;
+    use UsesTenantConnection;
 
-  protected $table = 'enrollments';
+    protected $table = 'enrollments';
 
-  protected $primaryKey = 'sisid';
+    protected $primaryKey = 'sisid';
 
-  public $incrementing = false;
+    public $incrementing = false;
 
-  protected $keyType = 'string';
+    protected $keyType = 'string';
 
-  public $timestamps = false;
+    public $timestamps = false;
 
-  protected $fillable = [
-    'sisid',
-    'division',
-    'class_nbr',
-    'crse_grade_off',
-    'unt_taken',
-    'unt_earned',
-    'last_upd_dt_stmp',
-    'section',
-    'name',
-    'department',
-    'faculty_name',
-    'faculty_email',
-    'semester_code',
-    'semester_name',
-    'start_date',
-    'end_date'
-  ];
+    protected $fillable = [
+        'sisid',
+        'division',
+        'class_nbr',
+        'crse_grade_off',
+        'unt_taken',
+        'unt_earned',
+        'last_upd_dt_stmp',
+        'section',
+        'name',
+        'department',
+        'faculty_name',
+        'faculty_email',
+        'semester_code',
+        'semester_name',
+        'start_date',
+        'end_date',
+    ];
 
-  protected $casts = [
-    'last_upd_dt_stmp' => 'datetime',
-    'start_date' => 'datetime',
-    'end_date' => 'datetime',
-  ];
+    protected $casts = [
+        'last_upd_dt_stmp' => 'datetime',
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+    ];
 
-  public function student(): BelongsTo
-  {
-    return $this->belongsTo(Student::class, 'sisid', 'sisid');
-  }
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+    }
 }

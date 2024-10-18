@@ -42,67 +42,69 @@ use AdvisingApp\StudentDataModel\Models\Program;
 
 class ProgramPolicy
 {
-  public function viewAny(Authenticatable $authenticatable): Response
-  {
-    if ($authenticatable->canAny('program.view-any', 'student_record_manager.view-any')) {
-      return Response::allow();
+    public function viewAny(Authenticatable $authenticatable): Response
+    {
+        if ($authenticatable->canAny('program.view-any', 'student_record_manager.view-any')) {
+            return Response::allow();
+        }
+
+        return Response::deny('You do not have permission to view programs.');
     }
-    return Response::deny('You do not have permission to view programs.');
-  }
 
-  public function view(Authenticatable $authenticatable, Program $program): Response
-  {
-    if ($authenticatable->canAny("program.*.view", "student_record_manager.{$program->id}.view")) {
-      return Response::allow();
+    public function view(Authenticatable $authenticatable, Program $program): Response
+    {
+        if ($authenticatable->canAny('program.*.view', "student_record_manager.{$program->id}.view")) {
+            return Response::allow();
+        }
+
+        return Response::deny('You do not have permission to view this program.');
     }
-    return Response::deny('You do not have permission to view this program.');
-  }
 
-  public function create(Authenticatable $authenticatable): Response
-  {
-    return $authenticatable->canOrElse(
-      abilities: 'student_record_manager.create',
-      denyResponse: 'Programs cannot be created.'
-    );
-  }
+    public function create(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'student_record_manager.create',
+            denyResponse: 'Programs cannot be created.'
+        );
+    }
 
-  public function update(Authenticatable $authenticatable, Program $program): Response
-  {
-    return $authenticatable->canOrElse(
-      abilities: "student_record_manager.{$program->id}.update",
-      denyResponse: 'Programs cannot be updated.'
-    );
-  }
+    public function update(Authenticatable $authenticatable, Program $program): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: "student_record_manager.{$program->id}.update",
+            denyResponse: 'Programs cannot be updated.'
+        );
+    }
 
-  public function delete(Authenticatable $authenticatable, Program $program): Response
-  {
-    return $authenticatable->canOrElse(
-      abilities: "student_record_manager.{$program->id}.delete",
-      denyResponse: 'Programs cannot be deleted.'
-    );
-  }
+    public function delete(Authenticatable $authenticatable, Program $program): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: "student_record_manager.{$program->id}.delete",
+            denyResponse: 'Programs cannot be deleted.'
+        );
+    }
 
-  public function restore(Authenticatable $authenticatable, Program $program): Response
-  {
-    return $authenticatable->canOrElse(
-      abilities: "student_record_manager.{$program->id}.restore",
-      denyResponse: 'Programs cannot be restored.'
-    );
-  }
+    public function restore(Authenticatable $authenticatable, Program $program): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: "student_record_manager.{$program->id}.restore",
+            denyResponse: 'Programs cannot be restored.'
+        );
+    }
 
-  public function forceDelete(Authenticatable $authenticatable, Program $program): Response
-  {
-    return $authenticatable->canOrElse(
-      abilities: "student_record_manager.{$program->id}.force-delete",
-      denyResponse: 'Programs cannot be force deleted.'
-    );
-  }
+    public function forceDelete(Authenticatable $authenticatable, Program $program): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: "student_record_manager.{$program->id}.force-delete",
+            denyResponse: 'Programs cannot be force deleted.'
+        );
+    }
 
-  public function import(Authenticatable $authenticatable): Response
-  {
-    return $authenticatable->canOrElse(
-      abilities: 'student_record_manager.create',
-      denyResponse: 'You do not have permission to import programs.',
-    );
-  }
+    public function import(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'student_record_manager.create',
+            denyResponse: 'You do not have permission to import programs.',
+        );
+    }
 }

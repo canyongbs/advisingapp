@@ -36,73 +36,74 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
-use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use App\Filament\Clusters\ConstituentManagement;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Notifications\Notification;
-use Filament\Pages\SettingsPage;
-use Filament\Support\Facades\FilamentView;
 use Throwable;
+use Filament\Forms\Form;
+use Filament\Pages\SettingsPage;
+use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 
 use function Filament\Support\is_app_url;
 
+use Filament\Support\Facades\FilamentView;
+use App\Filament\Clusters\ConstituentManagement;
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+
 class ManageStudentConfiguration extends SettingsPage
 {
-  protected static string $settings = ManageStudentConfigurationSettings::class;
+    protected static string $settings = ManageStudentConfigurationSettings::class;
 
-  protected static ?string $navigationIcon = 'heroicon-o-cog-8-tooth';
+    protected static ?string $navigationIcon = 'heroicon-o-cog-8-tooth';
 
-  protected static ?string $cluster = ConstituentManagement::class;
+    protected static ?string $cluster = ConstituentManagement::class;
 
-  protected static ?string $navigationGroup = 'Students';
+    protected static ?string $navigationGroup = 'Students';
 
-  protected static ?string $navigationLabel  = 'Configuration';
+    protected static ?string $navigationLabel = 'Configuration';
 
-  public function form(Form $form): Form
-  {
-    return $form
-      ->schema([
-        Toggle::make('is_enabled')
-          ->label('Enable')
-          ->default(false),
-      ]);
-  }
-
-  public function save(): void
-  {
-    try {
-      $this->callHook('beforeValidate');
-      $data = $this->form->getState();
-
-      $this->callHook('afterValidate');
-      $settings = app(static::getSettings());
-      $this->callHook('beforeSave');
-      $settings->fill($data);
-      $settings->save();
-
-      $this->callHook('afterSave');
-
-      Notification::make()
-        ->title('Students Configured!')
-        ->success()
-        ->send();
-
-      if ($redirectUrl = $this->getRedirectUrl()) {
-        $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
-      }
-    } catch (Throwable $exception) {
-      report($exception);
-
-      Notification::make()
-        ->title('Something went wrong, if this continues please contact support.')
-        ->danger()
-        ->send();
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Toggle::make('is_enabled')
+                    ->label('Enable')
+                    ->default(false),
+            ]);
     }
-  }
 
-  public function getRedirectUrl(): ?string
-  {
-    return ManageStudentConfiguration::getUrl();
-  }
+    public function save(): void
+    {
+        try {
+            $this->callHook('beforeValidate');
+            $data = $this->form->getState();
+
+            $this->callHook('afterValidate');
+            $settings = app(static::getSettings());
+            $this->callHook('beforeSave');
+            $settings->fill($data);
+            $settings->save();
+
+            $this->callHook('afterSave');
+
+            Notification::make()
+                ->title('Students Configured!')
+                ->success()
+                ->send();
+
+            if ($redirectUrl = $this->getRedirectUrl()) {
+                $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
+            }
+        } catch (Throwable $exception) {
+            report($exception);
+
+            Notification::make()
+                ->title('Something went wrong, if this continues please contact support.')
+                ->danger()
+                ->send();
+        }
+    }
+
+    public function getRedirectUrl(): ?string
+    {
+        return ManageStudentConfiguration::getUrl();
+    }
 }

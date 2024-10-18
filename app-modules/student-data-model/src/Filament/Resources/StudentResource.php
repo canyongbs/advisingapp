@@ -61,91 +61,91 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Manage
 
 class StudentResource extends Resource
 {
-  use HasGlobalSearchResultScoring;
+    use HasGlobalSearchResultScoring;
 
-  protected static ?string $model = Student::class;
+    protected static ?string $model = Student::class;
 
-  protected static ?string $navigationIcon = 'heroicon-m-users';
+    protected static ?string $navigationIcon = 'heroicon-m-users';
 
-  protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 20;
 
-  protected static ?string $navigationGroup = 'Retention CRM';
+    protected static ?string $navigationGroup = 'Retention CRM';
 
-  protected static ?string $recordTitleAttribute = 'full_name';
+    protected static ?string $recordTitleAttribute = 'full_name';
 
-  public static function canAccess(): bool
-  {
-    /** @var User $user */
-    $user = auth()->user();
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
 
-    return $user->can('student.view-any');
-  }
+        return $user->can('student.view-any');
+    }
 
-  public static function getRecordSubNavigation(Page $page): array
-  {
-    return $page->generateNavigationItems([
-      ViewStudent::class,
-      ManageStudentInformation::class,
-      ManageStudentEngagement::class,
-      ManageStudentFiles::class,
-      ManageStudentAlerts::class,
-      ManageStudentTasks::class,
-      ManageStudentSubscriptions::class,
-      ManageStudentInteractions::class,
-      StudentEngagementTimeline::class,
-      ManageStudentCareTeam::class,
-      ManageStudentFormSubmissions::class,
-      ManageStudentApplicationSubmissions::class,
-      StudentServiceManagement::class,
-      ManageStudentEvents::class,
-      ManageStudentPrograms::class,
-    ]);
-  }
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            ViewStudent::class,
+            ManageStudentInformation::class,
+            ManageStudentEngagement::class,
+            ManageStudentFiles::class,
+            ManageStudentAlerts::class,
+            ManageStudentTasks::class,
+            ManageStudentSubscriptions::class,
+            ManageStudentInteractions::class,
+            StudentEngagementTimeline::class,
+            ManageStudentCareTeam::class,
+            ManageStudentFormSubmissions::class,
+            ManageStudentApplicationSubmissions::class,
+            StudentServiceManagement::class,
+            ManageStudentEvents::class,
+            ManageStudentPrograms::class,
+        ]);
+    }
 
-  public static function modifyGlobalSearchQuery(Builder $query, string $search): void
-  {
-    static::scoreGlobalSearchResults($query, $search, [
-      'full_name' => 100,
-      'email' => 75,
-      'email_2' => 75,
-    ]);
-  }
+    public static function modifyGlobalSearchQuery(Builder $query, string $search): void
+    {
+        static::scoreGlobalSearchResults($query, $search, [
+            'full_name' => 100,
+            'email' => 75,
+            'email_2' => 75,
+        ]);
+    }
 
-  public static function getGloballySearchableAttributes(): array
-  {
-    return ['sisid', 'otherid', 'full_name', 'email', 'email_2', 'mobile', 'phone'];
-  }
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['sisid', 'otherid', 'full_name', 'email', 'email_2', 'mobile', 'phone'];
+    }
 
-  public static function getGlobalSearchResultDetails(Model $record): array
-  {
-    return array_filter([
-      'Student ID' => $record->sisid,
-      'Other ID' => $record->otherid,
-      'Email Address' => collect([$record->email, $record->email_id])->filter()->implode(', '),
-      'Mobile' => $record->mobile,
-      'Phone' => collect([$record->mobile, $record->phone])->filter()->implode(', '),
-    ], fn(mixed $value): bool => filled($value));
-  }
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return array_filter([
+            'Student ID' => $record->sisid,
+            'Other ID' => $record->otherid,
+            'Email Address' => collect([$record->email, $record->email_id])->filter()->implode(', '),
+            'Mobile' => $record->mobile,
+            'Phone' => collect([$record->mobile, $record->phone])->filter()->implode(', '),
+        ], fn (mixed $value): bool => filled($value));
+    }
 
-  public static function getPages(): array
-  {
-    return [
-      'index' => ListStudents::route('/'),
-      'manage-alerts' => ManageStudentAlerts::route('/{record}/alerts'),
-      'manage-engagement' => ManageStudentEngagement::route('/{record}/engagement'),
-      'manage-files' => ManageStudentFiles::route('/{record}/files'),
-      'manage-form-submissions' => ManageStudentFormSubmissions::route('/{record}/form-submissions'),
-      'manage-application-submissions' => ManageStudentApplicationSubmissions::route('/{record}/application-submissions'),
-      'manage-information' => ManageStudentInformation::route('/{record}/information'),
-      'manage-interactions' => ManageStudentInteractions::route('/{record}/interactions'),
-      'manage-subscriptions' => ManageStudentSubscriptions::route('/{record}/subscriptions'),
-      'manage-tasks' => ManageStudentTasks::route('/{record}/tasks'),
-      'view' => ViewStudent::route('/{record}'),
-      'timeline' => StudentEngagementTimeline::route('/{record}/timeline'),
-      'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
-      'service-management' => StudentServiceManagement::route('/{record}/service-management'),
-      'events' => ManageStudentEvents::route('/{record}/events'),
-      'programs' => ManageStudentPrograms::route('/{record}/programs'),
-    ];
-  }
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListStudents::route('/'),
+            'manage-alerts' => ManageStudentAlerts::route('/{record}/alerts'),
+            'manage-engagement' => ManageStudentEngagement::route('/{record}/engagement'),
+            'manage-files' => ManageStudentFiles::route('/{record}/files'),
+            'manage-form-submissions' => ManageStudentFormSubmissions::route('/{record}/form-submissions'),
+            'manage-application-submissions' => ManageStudentApplicationSubmissions::route('/{record}/application-submissions'),
+            'manage-information' => ManageStudentInformation::route('/{record}/information'),
+            'manage-interactions' => ManageStudentInteractions::route('/{record}/interactions'),
+            'manage-subscriptions' => ManageStudentSubscriptions::route('/{record}/subscriptions'),
+            'manage-tasks' => ManageStudentTasks::route('/{record}/tasks'),
+            'view' => ViewStudent::route('/{record}'),
+            'timeline' => StudentEngagementTimeline::route('/{record}/timeline'),
+            'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
+            'service-management' => StudentServiceManagement::route('/{record}/service-management'),
+            'events' => ManageStudentEvents::route('/{record}/events'),
+            'programs' => ManageStudentPrograms::route('/{record}/programs'),
+        ];
+    }
 }

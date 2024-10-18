@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources;
 
-use AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource\Pages\ListManageStudents;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use App\Features\ManageStudentConfigurationFeature;
-use App\Filament\Clusters\ConstituentManagement;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Toggle;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Clusters\ConstituentManagement;
+use App\Features\ManageStudentConfigurationFeature;
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource\Pages\ListManageStudents;
 
 class ManageStudentResource extends Resource
 {
@@ -62,7 +62,6 @@ class ManageStudentResource extends Resource
     protected static ?string $label = 'Students';
 
     protected static ?int $navigationSort = 2;
-
 
     public static function canAccess(): bool
     {
@@ -200,7 +199,6 @@ class ManageStudentResource extends Resource
                             ->label('Most Recent Enrollement Term')
                             ->string()
                             ->maxLength(255),
-
                     ])
                     ->columns(3),
             ]);

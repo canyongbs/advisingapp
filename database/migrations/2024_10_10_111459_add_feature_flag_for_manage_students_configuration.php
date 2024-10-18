@@ -34,11 +34,10 @@
 </COPYRIGHT>
 */
 
-use App\Features\ManageStudentConfigurationFeature;
 use Illuminate\Database\Migrations\Migration;
+use App\Features\ManageStudentConfigurationFeature;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         ManageStudentConfigurationFeature::activate();

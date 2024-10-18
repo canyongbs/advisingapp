@@ -56,6 +56,7 @@ class StudentPolicy
         if ($authenticatable->canAny('student.view-any', 'student_record_manager.view-any')) {
             return Response::allow();
         }
+
         return Response::deny('You do not have permission to view students.');
     }
 
@@ -64,6 +65,7 @@ class StudentPolicy
         if ($authenticatable->canAny("student.{$student->getKey()}.view", "student_record_manager.{$student->getKey()}.view")) {
             return Response::allow();
         }
+
         return Response::deny('You do not have permission to view this student.');
     }
 

@@ -49,6 +49,8 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Form\Models\FormSubmission;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\Segment\Models\SegmentSubject;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use AdvisingApp\Engagement\Models\EngagementFile;
@@ -80,8 +82,6 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
 use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
-use AdvisingApp\Segment\Models\SegmentSubject;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string $display_name
@@ -362,7 +362,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     protected function displayName(): Attribute
     {
         return Attribute::make(
-            get: fn(?string $value, array $attributes) => $attributes[$this->displayNameKey()],
+            get: fn (?string $value, array $attributes) => $attributes[$this->displayNameKey()],
         );
     }
 }
