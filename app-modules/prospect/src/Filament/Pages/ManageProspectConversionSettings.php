@@ -37,7 +37,10 @@ class ManageProspectConversionSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
-        return ProspectConversion::active();
+        /** @var User $user */
+        $user = auth()->user();
+
+        return ProspectConversion::active() && $user->can('prospect_conversion.manage');
     }
 
     public function form(Form $form): Form
