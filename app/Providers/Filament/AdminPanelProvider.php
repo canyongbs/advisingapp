@@ -73,12 +73,12 @@ class AdminPanelProvider extends PanelProvider
     {
         parent::register();
 
-        Field::configureUsing(fn ($field) => $field->translateLabel());
-        Entry::configureUsing(fn ($entry) => $entry->translateLabel());
-        Column::configureUsing(fn ($column) => $column->translateLabel());
-        ExportAction::configureUsing(fn (ExportAction $action) => $action->maxRows(100000));
-        ImportAction::configureUsing(fn (ImportAction $action) => $action->maxRows(100000));
-        TiptapEditor::configureUsing(fn (TiptapEditor $editor) => $editor->gridLayouts([
+        Field::configureUsing(fn($field) => $field->translateLabel());
+        Entry::configureUsing(fn($entry) => $entry->translateLabel());
+        Column::configureUsing(fn($column) => $column->translateLabel());
+        ExportAction::configureUsing(fn(ExportAction $action) => $action->maxRows(100000));
+        ImportAction::configureUsing(fn(ImportAction $action) => $action->maxRows(100000));
+        TiptapEditor::configureUsing(fn(TiptapEditor $editor) => $editor->gridLayouts([
             'two-columns',
             'three-columns',
             'four-columns',
@@ -97,13 +97,13 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->favicon(function () {
                 if (! Tenant::checkCurrent()) {
-                    return asset('/images/default-favicon.png');
+                    return asset('/images/default-favicon-211024.png');
                 }
 
                 $themeSettings = app(ThemeSettings::class);
                 $favicon = $themeSettings::getSettingsPropertyModel('theme.is_favicon_active')->getFirstMedia('favicon');
 
-                return $themeSettings->is_favicon_active && $favicon ? $favicon->getTemporaryUrl(now()->addMinutes(5)) : asset('/images/default-favicon.png');
+                return $themeSettings->is_favicon_active && $favicon ? $favicon->getTemporaryUrl(now()->addMinutes(5)) : asset('/images/default-favicon-211024.png');
             })
             ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
             ->maxContentWidth('full')
@@ -171,17 +171,17 @@ class AdminPanelProvider extends PanelProvider
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Profile Settings')
-                    ->url(fn () => EditProfile::getUrl())
+                    ->url(fn() => EditProfile::getUrl())
                     ->icon('heroicon-s-cog-6-tooth'),
             ])
-            ->colors(fn (ThemeSettings $themeSettings): array => array_merge(config('default-colors'), $themeSettings->color_overrides))
+            ->colors(fn(ThemeSettings $themeSettings): array => array_merge(config('default-colors'), $themeSettings->color_overrides))
             ->renderHook(
                 'panels::scripts.before',
-                fn () => view('filament.scripts.scroll-sidebar-to-active-menu-item'),
+                fn() => view('filament.scripts.scroll-sidebar-to-active-menu-item'),
             )
             ->renderHook(
                 'panels::head.end',
-                fn (ThemeSettings $themeSettings) => ($themeSettings->url) ? view('filament.layout.theme', ['url' => $themeSettings->url]) : null,
+                fn(ThemeSettings $themeSettings) => ($themeSettings->url) ? view('filament.layout.theme', ['url' => $themeSettings->url]) : null,
             )
             ->bootUsing(function (Panel $panel) {
                 if (! Tenant::current()) {
