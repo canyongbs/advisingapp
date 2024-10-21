@@ -44,42 +44,67 @@ class EnrollmentPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: 'enrollment.view-any',
-            denyResponse: 'You do not have permission to view enrollments.'
-        );
+        if ($authenticatable->canAny(['enrollment.view-any', 'student_record_manager.view-any'])) {
+            return Response::allow();
+        }
+
+        return Response::deny('You do not have permission to view enrollments.');
     }
 
     public function view(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: ["enrollment.{$enrollment->id}.view"],
-            denyResponse: 'You do not have permission to view this enrollment.'
-        );
+        if ($authenticatable->canAny(["enrollment.{$enrollment->getKey()}.view", 'student_record_manager.*.view'])) {
+            return Response::allow();
+        }
+
+        return Response::deny('You do not have permission to view this enrollment.');
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        return Response::deny('Enrollments cannot be created.');
+        return $authenticatable->canOrElse(
+            abilities: 'student_record_manager.create',
+            denyResponse: 'Enrollment cannot be created.'
+        );
     }
 
     public function update(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
-        return Response::deny('Enrollments cannot be updated.');
+        return $authenticatable->canOrElse(
+            abilities: 'student_record_manager.*.update',
+            denyResponse: 'Enrollments cannot be updated.'
+        );
     }
 
     public function delete(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
-        return Response::deny('Enrollments cannot be deleted.');
+        return $authenticatable->canOrElse(
+            abilities: 'student_record_manager.*.delete',
+            denyResponse: 'Enrollments cannot be deleted.'
+        );
     }
 
     public function restore(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
-        return Response::deny('Enrollments cannot be restored.');
+        return $authenticatable->canOrElse(
+            abilities: 'student_record_manager.*.restore',
+            denyResponse: 'Enrollments cannot be restored.'
+        );
     }
 
     public function forceDelete(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
-        return Response::deny('Enrollments cannot be force deleted.');
+        return $authenticatable->canOrElse(
+            abilities: 'student_record_manager.*.force-delete',
+            denyResponse: 'Enrollments cannot be force deleted.'
+        );
+    }
+
+    public function import(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'student_record_manager.create',
+            denyResponse: 'You do not have permission to import enrollments.',
+        );
     }
 }

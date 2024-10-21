@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
@@ -46,18 +47,43 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
  */
 class Enrollment extends Model
 {
+    use SoftDeletes;
     use HasFactory;
     use UsesTenantConnection;
 
     protected $table = 'enrollments';
 
-    protected $primaryKey = 'sisid';
+    /**
+     * This Model has a primary key that is auto generated as a v4 UUID by Postgres.
+     * We do so so that we can do things like view, edit, and delete a specific record in the UI / API.
+     * This ID should NEVER be used for relationships as these records do not belong to our system, our reset during syncs, and are not truly unique.
+     */
+    protected $primaryKey = 'id';
 
     public $incrementing = false;
 
     protected $keyType = 'string';
 
     public $timestamps = false;
+
+    protected $fillable = [
+        'sisid',
+        'division',
+        'class_nbr',
+        'crse_grade_off',
+        'unt_taken',
+        'unt_earned',
+        'last_upd_dt_stmp',
+        'section',
+        'name',
+        'department',
+        'faculty_name',
+        'faculty_email',
+        'semester_code',
+        'semester_name',
+        'start_date',
+        'end_date',
+    ];
 
     protected $casts = [
         'last_upd_dt_stmp' => 'datetime',
