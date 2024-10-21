@@ -53,85 +53,194 @@ class StudentImporter extends Importer
                 ->label('Student ID')
                 ->requiredMapping()
                 ->example('########')
-                ->string()
-                ->maxLength(255),
+                ->rules([
+                    'required',
+                    'unique:students,sisid',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('otherid')
                 ->label('Other ID')
                 ->example('##########')
-                ->string()
-                ->maxLength(255),
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('first')
-                ->example('Jonathan'),
+                ->example('Jonathan')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('last')
-                ->example('Smith'),
+                ->example('Smith')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('full_name')
-                ->example('Jonathan Smith'),
+                ->example('Jonathan Smith')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('preferred')
-                ->example('John'),
+                ->example('John')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('birthdate')
-                ->example('2024-10-21'),
+                ->example('2024-10-21')
+                ->rules([
+                    'nullable',
+                    'date',
+                ]),
             ImportColumn::make('hsgrad')
-                ->example('1920'),
+                ->example('1920')
+                ->rules([
+                    'nullable',
+                    'integer',
+                ]),
             ImportColumn::make('email')
-                ->email()
-                ->required()
-                ->example('johnsmith@gmail.com'),
+                ->example('johnsmith@gmail.com')
+                ->rules([
+                    'nullable',
+                    'email',
+                    'max:255',
+                ]),
             ImportColumn::make('email_2')
-                ->email()
-                ->example('johnsmith@hotmail.com'),
+                ->example('johnsmith@hotmail.com')
+                ->rules([
+                    'nullable',
+                    'email',
+                    'max:255',
+                ]),
             ImportColumn::make('mobile')
-                ->example('+1 (555) 555-5555'),
+                ->example('+1 (555) 555-5555')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('phone')
-                ->example('+1 (555) 555-5555'),
+                ->example('+1 (555) 555-5555')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('address')
-                ->example('123 Main St.'),
+                ->example('123 Main St.')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('address2')
-                ->example('Apt. 1'),
+                ->example('Apt. 1')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('address3')
-                ->example('xyz'),
+                ->example('xyz')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('city')
-                ->example('Los Angeles'),
+                ->example('Los Angeles')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('state')
-                ->example('california'),
+                ->example('california')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('postal')
-                ->example('83412'),
+                ->example('83412')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('sms_opt_out')
                 ->label('SMS opt out')
-                ->boolean()
-                ->example('false'),
+                ->example('false')
+                ->boolean(),
             ImportColumn::make('email_bounce')
-                ->boolean()
-                ->example('true'),
+                ->example('true')
+                ->boolean(),
             ImportColumn::make('dual')
-                ->boolean()
-                ->example('true'),
+                ->example('true')
+                ->boolean(),
             ImportColumn::make('ferpa')
                 ->label('FERPA')
-                ->boolean()
-                ->example('true'),
+                ->example('true')
+                ->boolean(),
             ImportColumn::make('dfw')
                 ->label('DFW')
-                ->example('2024-10-21'),
+                ->example('2024-10-21')
+                ->rules([
+                    'nullable',
+                    'date',
+                ]),
             ImportColumn::make('sap')
                 ->label('SAP')
-                ->boolean()
-                ->example('true'),
+                ->example('true')
+                ->boolean(),
             ImportColumn::make('holds')
-                ->example('UHIJN'),
+                ->example('UHIJN')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('firstgen')
-                ->boolean()
-                ->example('true'),
-            ImportColumn::make('ethnicity'),
+                ->example('true')
+                ->boolean(),
+            ImportColumn::make('ethnicity')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('lastlmslogin')
-                ->label('Last LMS login'),
+                ->label('Last LMS login')
+                ->example('2024-10-21 12:00:00')
+                ->rules([
+                    'nullable',
+                    'date',
+                ]),
             ImportColumn::make('f_e_term')
                 ->label('First Enrollement Term')
-                ->string()
-                ->maxLength(255),
+                ->example('1234')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('mr_e_term')
                 ->label('Most Recent Enrollement Term')
-                ->string()
-                ->maxLength(255),
+                ->example('1234')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
         ];
     }
 
