@@ -78,7 +78,7 @@ class StudentResource extends Resource
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('student.view-any');
+        return parent::canAccess() && $user->can('student.view-any');
     }
 
     public static function getRecordSubNavigation(Page $page): array
