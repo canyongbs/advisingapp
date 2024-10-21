@@ -50,7 +50,7 @@ use AdvisingApp\Segment\Enums\SegmentModel;
 
 class BulkSegmentAction
 {
-    public static function make(SegmentModel $segmentModel)
+    public static function make(SegmentModel $segmentModel): BulkAction
     {
         return BulkAction::make('segment')
             ->icon('heroicon-o-rectangle-group')
@@ -73,10 +73,10 @@ class BulkSegmentAction
                     $data['model'] = $segmentModel;
                     $segment = Segment::create($data);
                     $id = $segmentModel->getLabel() == 'Student' ? 'sisid' : 'id';
-                    $records->pluck($id)->chunk(100)->each(function ($idChunk) use ($segment, $segmentModel) {
-                        $subjectData = $idChunk->map(fn ($id) => [
-                            'subject_id' => $id,
-                            'subject_type' => $segmentModel,
+                    $records->chunk(100)->each(function ($chunkRecord) use ($segment) {
+                        $subjectData = $chunkRecord->map(fn ($record) => [
+                            'subject_id' => $record->getKey(),
+                            'subject_type' => $record->getMorphClass(),
                         ])->toArray();
                         $segment->subjects()->createMany($subjectData);
                     });
