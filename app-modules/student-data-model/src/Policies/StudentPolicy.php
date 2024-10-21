@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Policies;
 
 use App\Models\Authenticatable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Auth\Access\Response;
 use AdvisingApp\StudentDataModel\Models\Student;
 
@@ -53,7 +54,7 @@ class StudentPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if ($authenticatable->canAny('student.view-any', 'student_record_manager.view-any')) {
+        if ($authenticatable->canAny(['student.view-any', 'student_record_manager.view-any'])) {
             return Response::allow();
         }
 
@@ -62,7 +63,7 @@ class StudentPolicy
 
     public function view(Authenticatable $authenticatable, Student $student): Response
     {
-        if ($authenticatable->canAny("student.{$student->getKey()}.view", 'student_record_manager.*.view')) {
+        if ($authenticatable->canAny(["student.{$student->getKey()}.view", 'student_record_manager.*.view'])) {
             return Response::allow();
         }
 

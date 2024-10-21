@@ -44,7 +44,7 @@ class EnrollmentPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if ($authenticatable->canAny('enrollment.view-any', 'student_record_manager.view-any')) {
+        if ($authenticatable->canAny(['enrollment.view-any', 'student_record_manager.view-any'])) {
             return Response::allow();
         }
 
@@ -53,7 +53,7 @@ class EnrollmentPolicy
 
     public function view(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
-        if ($authenticatable->canAny("enrollment.{$enrollment->getKey()}.view", 'student_record_manager.*.view')) {
+        if ($authenticatable->canAny(["enrollment.{$enrollment->getKey()}.view", 'student_record_manager.*.view'])) {
             return Response::allow();
         }
 
