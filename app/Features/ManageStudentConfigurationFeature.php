@@ -34,60 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+namespace App\Features;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @mixin IdeHelperProgram
- */
-class Program extends Model
+class ManageStudentConfigurationFeature extends AbstractFeatureFlag
 {
-    use SoftDeletes;
-    use HasFactory;
-    use UsesTenantConnection;
-
-    protected $table = 'programs';
-
-    /**
-     * This Model has a primary key that is auto generated as a v4 UUID by Postgres.
-     * We do so so that we can do things like view, edit, and delete a specific record in the UI / API.
-     * This ID should NEVER be used for relationships as these records do not belong to our system, our reset during syncs, and are not truly unique.
-     */
-    protected $primaryKey = 'id';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'sisid',
-        'otherid',
-        'acad_career',
-        'division',
-        'acad_plan',
-        'prog_status',
-        'cum_gpa',
-        'semester',
-        'descr',
-        'foi',
-        'change_dt',
-        'declare_dt',
-    ];
-
-    protected $casts = [
-        'change_dt' => 'datetime',
-        'declare_dt' => 'datetime',
-    ];
-
-    public function student(): BelongsTo
+    public function resolve(mixed $scope): mixed
     {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+        return false;
     }
 }

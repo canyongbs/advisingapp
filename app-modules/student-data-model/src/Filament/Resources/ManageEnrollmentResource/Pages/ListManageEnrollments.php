@@ -34,62 +34,62 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\ManageEnrollmentResource\Pages;
 
 use Filament\Tables\Table;
-use Filament\Infolists\Infolist;
+use Filament\Actions\CreateAction;
+use Filament\Actions\ImportAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
+use App\Filament\Tables\Columns\OpenSearch\TextColumn;
+use AdvisingApp\StudentDataModel\Filament\Imports\EnrollmentImporter;
+use AdvisingApp\StudentDataModel\Filament\Resources\ManageEnrollmentResource;
 
-class ProgramsRelationManager extends RelationManager
+class ListManageEnrollments extends ListRecords
 {
-    protected static string $relationship = 'programs';
-
-    public function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist
-            ->schema([
-                TextEntry::make('sisid')
-                    ->label('SISID'),
-                TextEntry::make('otherid')
-                    ->label('STUID'),
-                TextEntry::make('division')
-                    ->label('College'),
-                TextEntry::make('descr')
-                    ->label('Program'),
-                TextEntry::make('foi')
-                    ->label('Field of Interest'),
-                TextEntry::make('cum_gpa')
-                    ->label('Cumulative GPA'),
-                TextEntry::make('declare_dt')
-                    ->label('Start Date'),
-                TextEntry::make('change_dt')
-                    ->label('Last Action Date'),
-            ]);
-    }
+    protected static string $resource = ManageEnrollmentResource::class;
 
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('descr')
             ->columns([
-                TextColumn::make('otherid')
-                    ->label('STUID'),
                 TextColumn::make('division')
                     ->label('College'),
-                TextColumn::make('descr')
-                    ->label('Program'),
-                TextColumn::make('foi')
-                    ->label('Field of Interest'),
-                TextColumn::make('cum_gpa')
-                    ->label('Cumulative GPA'),
-                TextColumn::make('declare_dt')
-                    ->label('Start Date'),
+                TextColumn::make('class_nbr')
+                    ->label('Course'),
+                TextColumn::make('crse_grade_off')
+                    ->label('Grade'),
+                TextColumn::make('unt_taken')
+                    ->label('Attempted'),
+                TextColumn::make('unt_earned')
+                    ->label('Earned'),
             ])
             ->actions([
+                EditAction::make(),
                 ViewAction::make(),
+                DeleteAction::make()
+                    ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed'),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
+                        ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed'),
+                ]),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+            ImportAction::make()
+                ->importer(EnrollmentImporter::class)
+                ->authorize('import', Enrollment::class),
+        ];
     }
 }

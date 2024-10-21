@@ -34,60 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
+use Database\Migrations\Concerns\CanModifyPermissions;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-/**
- * @mixin IdeHelperProgram
- */
-class Program extends Model
-{
-    use SoftDeletes;
-    use HasFactory;
-    use UsesTenantConnection;
-
-    protected $table = 'programs';
-
-    /**
-     * This Model has a primary key that is auto generated as a v4 UUID by Postgres.
-     * We do so so that we can do things like view, edit, and delete a specific record in the UI / API.
-     * This ID should NEVER be used for relationships as these records do not belong to our system, our reset during syncs, and are not truly unique.
-     */
-    protected $primaryKey = 'id';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'sisid',
-        'otherid',
-        'acad_career',
-        'division',
-        'acad_plan',
-        'prog_status',
-        'cum_gpa',
-        'semester',
-        'descr',
-        'foi',
-        'change_dt',
-        'declare_dt',
+    private array $permissions = [
+        'student_record_manager.view-any' => 'Student Record Manager',
+        'student_record_manager.create' => 'Student Record Manager',
+        'student_record_manager.*.view' => 'Student Record Manager',
+        'student_record_manager.*.update' => 'Student Record Manager',
+        'student_record_manager.*.delete' => 'Student Record Manager',
+        'student_record_manager.*.restore' => 'Student Record Manager',
+        'student_record_manager.*.force-delete' => 'Student Record Manager',
+        'student_record_manager.configuration' => 'Student Record Manager',
     ];
 
-    protected $casts = [
-        'change_dt' => 'datetime',
-        'declare_dt' => 'datetime',
+    private array $guards = [
+        'web',
+        'api',
     ];
 
-    public function student(): BelongsTo
+    public function up(): void
     {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $permissions = Arr::except($this->permissions, keys: DB::table('permissions')
+                    ->where('guard_name', $guard)
+                    ->pluck('name')
+                    ->all());
+
+                $this->createPermissions($permissions, $guard);
+            });
     }
-}
+
+    public function down(): void
+    {
+        collect($this->guards)
+            ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
+    }
+};
