@@ -210,27 +210,24 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
 
             $builder
                 ->where(fn (Builder $query) => $query
-                    ->tap(new LicensedToEducatable('interactable'))
-                    ->when(
-                        (! $user->hasLicense(Student::getLicenseType()) && ! $user->hasLicense(Prospect::getLicenseType())),
-                        fn (Builder $query) => $query
-                            ->when(
-                                ! $user->hasLicense(Student::getLicenseType()),
-                                fn (Builder $query) => $query->whereHasMorph(
-                                    'interactable',
-                                    ServiceRequest::class,
-                                    fn (Builder $query) => $query->where($serviceRequestRespondentTypeColumn, '!=', app(Student::class)->getMorphClass()),
-                                ),
-                            )
-                            ->when(
-                                ! $user->hasLicense(Prospect::getLicenseType()),
-                                fn (Builder $query) => $query->whereHasMorph(
-                                    'interactable',
-                                    ServiceRequest::class,
-                                    fn (Builder $query) => $query->where($serviceRequestRespondentTypeColumn, '!=', app(Prospect::class)->getMorphClass()),
-                                ),
-                            )
-                    ));
+                    ->tap(new LicensedToEducatable('interactable')));
+            // TODO: This needs to be fixed seperatlely but is preventing users without each license from seeing interactions
+            // ->when(
+            //     ! $user->hasLicense(Student::getLicenseType()),
+            //     fn (Builder $query) => $query->whereHasMorph(
+            //         'interactable',
+            //         ServiceRequest::class,
+            //         fn (Builder $query) => $query->where($serviceRequestRespondentTypeColumn, '!=', app(Student::class)->getMorphClass()),
+            //     ),
+            // )
+            // ->when(
+            //     ! $user->hasLicense(Prospect::getLicenseType()),
+            //     fn (Builder $query) => $query->whereDoesntHaveMorph(
+            //         'interactable',
+            //         ServiceRequest::class,
+            //         fn (Builder $query) => $query->where($serviceRequestRespondentTypeColumn, '=', app(Prospect::class)->getMorphClass()),
+            //     ),
+            // ));
         });
     }
 }
