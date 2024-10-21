@@ -52,55 +52,112 @@ class ProgramImporter extends Importer
                 ->label('Student ID')
                 ->requiredMapping()
                 ->example('########')
-                ->string()
-                ->maxLength(255),
+                ->rules([
+                    'required',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('otherid')
                 ->label('Other ID')
                 ->requiredMapping()
                 ->example('########')
-                ->string()
-                ->maxLength(255),
+                ->rules([
+                    'required',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('acad_career')
                 ->requiredMapping()
                 ->label('ACAD career')
-                ->example('0804'),
+                ->example('CRED')
+                ->rules([
+                    'required',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('division')
                 ->example('ABC01')
-                ->requiredMapping(),
+                ->requiredMapping()
+                ->example('ABC01')
+                ->rules([
+                    'required',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('acad_plan')
                 ->requiredMapping()
-                ->label('ACAD plan'),
+                ->label('ACAD plan')
+                ->example('1076N')
+                ->rules([
+                    'required',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('prog_status')
                 ->requiredMapping()
                 ->label('PROG status')
-                ->example('AC'),
+                ->example('AC')
+                ->rules([
+                    'required',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('cum_gpa')
                 ->requiredMapping()
                 ->label('Cum GPA')
                 ->numeric()
-                ->example('3.284'),
+                ->example('3.284')
+                ->rules([
+                    'required',
+                    'numeric',
+                ]),
             ImportColumn::make('semester')
                 ->requiredMapping()
-                ->numeric()
-                ->example('1234'),
+                ->example('1234')
+                ->rules([
+                    'required',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('descr')
                 ->requiredMapping()
                 ->label('DESCR')
-                ->string()
-                ->maxLength(255)
-                ->example('Loream ipsum'),
+                ->example('Loream ipsum')
+                ->rules([
+                    'required',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('foi')
                 ->requiredMapping()
-                ->label('Field of interest'),
+                ->label('Field of interest')
+                ->rules([
+                    'required',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('change_dt')
                 ->requiredMapping()
                 ->label('Change date')
-                ->example('1986-06-13 08:11:35+00'),
+                ->example('1986-06-13 08:11:35+00')
+                ->rules([
+                    'required',
+                    'date',
+                ]),
             ImportColumn::make('declare_dt')
                 ->requiredMapping()
                 ->label('Declare date')
-                ->example('1986-06-13 08:11:35+00'),
+                ->example('1986-06-13 08:11:35+00')
+                ->rules([
+                    'required',
+                    'date',
+                ]),
         ];
+    }
+
+    public function resolveRecord(): ?Program
+    {
+        return new Program();
     }
 
     public static function getCompletedNotificationBody(Import $import): string
