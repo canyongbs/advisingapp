@@ -53,7 +53,7 @@ class EnrollmentPolicy
 
     public function view(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
-        if ($authenticatable->canAny('enrollment.*.view', "student_record_manager.{$enrollment->id}.view")) {
+        if ($authenticatable->canAny("enrollment.{$enrollment->id}.view", 'student_record_manager.*.view')) {
             return Response::allow();
         }
 
@@ -71,7 +71,7 @@ class EnrollmentPolicy
     public function update(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "student_record_manager.{$enrollment->id}.update",
+            abilities: 'student_record_manager.*.update',
             denyResponse: 'Enrollments cannot be updated.'
         );
     }
@@ -79,7 +79,7 @@ class EnrollmentPolicy
     public function delete(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "student_record_manager.{$enrollment->id}.delete",
+            abilities: 'student_record_manager.*.delete',
             denyResponse: 'Enrollments cannot be deleted.'
         );
     }
@@ -87,7 +87,7 @@ class EnrollmentPolicy
     public function restore(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "student_record_manager.{$enrollment->id}.restore",
+            abilities: 'student_record_manager.*.restore',
             denyResponse: 'Enrollments cannot be restored.'
         );
     }
@@ -95,7 +95,7 @@ class EnrollmentPolicy
     public function forceDelete(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "student_record_manager.{$enrollment->id}.force-delete",
+            abilities: 'student_record_manager.*.force-delete',
             denyResponse: 'Enrollments cannot be force deleted.'
         );
     }
