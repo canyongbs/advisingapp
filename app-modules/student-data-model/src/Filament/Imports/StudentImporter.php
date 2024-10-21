@@ -55,7 +55,6 @@ class StudentImporter extends Importer
                 ->example('########')
                 ->rules([
                     'required',
-                    'unique:students,sisid',
                     'string',
                     'max:255',
                 ]),
@@ -242,6 +241,13 @@ class StudentImporter extends Importer
                     'max:255',
                 ]),
         ];
+    }
+
+    public function resolveRecord(): ?Student
+    {
+        return Student::firstOrNew([
+            'sisid' => $this->data['sisid'],
+        ]);
     }
 
     public static function getCompletedNotificationBody(Import $import): string
