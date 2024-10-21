@@ -73,26 +73,26 @@ class StudentResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
-    public static function getRecordSubNavigation(Page $page): array
-    {
-        return $page->generateNavigationItems([
-            ViewStudent::class,
-            ManageStudentInformation::class,
-            ManageStudentEngagement::class,
-            ManageStudentFiles::class,
-            ManageStudentAlerts::class,
-            ManageStudentTasks::class,
-            ManageStudentSubscriptions::class,
-            ManageStudentInteractions::class,
-            StudentEngagementTimeline::class,
-            ManageStudentCareTeam::class,
-            ManageStudentFormSubmissions::class,
-            ManageStudentApplicationSubmissions::class,
-            StudentServiceManagement::class,
-            ManageStudentEvents::class,
-            ManageStudentPrograms::class,
-        ]);
-    }
+    // public static function getRecordSubNavigation(Page $page): array
+    // {
+    //     return $page->generateNavigationItems([
+    //         ViewStudent::class,
+    //         ManageStudentInformation::class,
+    //         ManageStudentEngagement::class,
+    //         ManageStudentFiles::class,
+    //         ManageStudentAlerts::class,
+    //         ManageStudentTasks::class,
+    //         ManageStudentSubscriptions::class,
+    //         ManageStudentInteractions::class,
+    //         StudentEngagementTimeline::class,
+    //         ManageStudentCareTeam::class,
+    //         ManageStudentFormSubmissions::class,
+    //         ManageStudentApplicationSubmissions::class,
+    //         StudentServiceManagement::class,
+    //         ManageStudentEvents::class,
+    //         ManageStudentPrograms::class,
+    //     ]);
+    // }
 
     public static function modifyGlobalSearchQuery(Builder $query, string $search): void
     {
@@ -123,21 +123,21 @@ class StudentResource extends Resource
     {
         return [
             'index' => ListStudents::route('/'),
-            'manage-alerts' => ManageStudentAlerts::route('/{record}/alerts'),
-            'manage-engagement' => ManageStudentEngagement::route('/{record}/engagement'),
-            'manage-files' => ManageStudentFiles::route('/{record}/files'),
-            'manage-form-submissions' => ManageStudentFormSubmissions::route('/{record}/form-submissions'),
-            'manage-application-submissions' => ManageStudentApplicationSubmissions::route('/{record}/application-submissions'),
-            'manage-information' => ManageStudentInformation::route('/{record}/information'),
-            'manage-interactions' => ManageStudentInteractions::route('/{record}/interactions'),
-            'manage-subscriptions' => ManageStudentSubscriptions::route('/{record}/subscriptions'),
-            'manage-tasks' => ManageStudentTasks::route('/{record}/tasks'),
+            // 'manage-alerts' => ManageStudentAlerts::route('/{record}/alerts'),
+            // 'manage-engagement' => ManageStudentEngagement::route('/{record}/engagement'),
+            // 'manage-files' => ManageStudentFiles::route('/{record}/files'),
+            // 'manage-form-submissions' => ManageStudentFormSubmissions::route('/{record}/form-submissions'),
+            // 'manage-application-submissions' => ManageStudentApplicationSubmissions::route('/{record}/application-submissions'),
+            // 'manage-information' => ManageStudentInformation::route('/{record}/information'),
+            // 'manage-interactions' => ManageStudentInteractions::route('/{record}/interactions'),
+            // 'manage-subscriptions' => ManageStudentSubscriptions::route('/{record}/subscriptions'),
+            // 'manage-tasks' => ManageStudentTasks::route('/{record}/tasks'),
             'view' => ViewStudent::route('/{record}'),
-            'timeline' => StudentEngagementTimeline::route('/{record}/timeline'),
-            'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
-            'service-management' => StudentServiceManagement::route('/{record}/service-management'),
-            'events' => ManageStudentEvents::route('/{record}/events'),
-            'programs' => ManageStudentPrograms::route('/{record}/programs'),
+            // 'timeline' => StudentEngagementTimeline::route('/{record}/timeline'),
+            // 'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
+            // 'service-management' => StudentServiceManagement::route('/{record}/service-management'),
+            // 'events' => ManageStudentEvents::route('/{record}/events'),
+            // 'programs' => ManageStudentPrograms::route('/{record}/programs'),
         ];
     }
 }

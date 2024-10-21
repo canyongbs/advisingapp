@@ -34,32 +34,55 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Livewire;
 
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFiles;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInteractions;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
 
-class ManageStudentInteractions extends RelationManager
+class ManageStudentInformation extends ManageRelatedRecords
 {
-    use HasManyMorphedInteractionsTrait;
+    protected static string $view = 'student-data-model::livewire.manage-student-information';
 
     protected static string $resource = StudentResource::class;
 
-    protected static string $relationship = 'interactions';
+    protected static string $relationship = 'programs';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Interactions';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Interactions';
-
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
-
-    public function form(Form $form): Form
+    public function mount(int | string $record): void
     {
-        return (resolve(CreateInteraction::class))->form($form);
+        $this->record = $this->resolveRecord($record);
+
+        $this->authorizeAccess();
+
+        $this->previousUrl = url()->previous();
+
+        $this->loadDefaultActiveTab();
+    }
+
+    public static function canAccess(array $arguments = []): bool
+    {
+        return (bool) count(static::managers($arguments['record'] ?? null));
+    }
+
+    public function getRelationManagers(): array
+    {
+        return static::managers($this->getRecord());
+    }
+
+    private static function managers(?Model $record = null): array
+    {
+        return collect([
+            ProgramsRelationManager::class,
+            EnrollmentsRelationManager::class,
+            ManageStudentEngagement::class,
+            ManageStudentInteractions::class,
+            ManageStudentFiles::class,
+        ])
+            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
+            ->toArray();
     }
 }
