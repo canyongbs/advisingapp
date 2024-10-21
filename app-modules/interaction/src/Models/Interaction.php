@@ -212,20 +212,24 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
                 ->where(fn (Builder $query) => $query
                     ->tap(new LicensedToEducatable('interactable'))
                     ->when(
-                        ! $user->hasLicense(Student::getLicenseType()),
-                        fn (Builder $query) => $query->whereHasMorph(
-                            'interactable',
-                            ServiceRequest::class,
-                            fn (Builder $query) => $query->where($serviceRequestRespondentTypeColumn, '!=', app(Student::class)->getMorphClass()),
-                        ),
-                    )
-                    ->when(
-                        ! $user->hasLicense(Prospect::getLicenseType()),
-                        fn (Builder $query) => $query->whereHasMorph(
-                            'interactable',
-                            ServiceRequest::class,
-                            fn (Builder $query) => $query->where($serviceRequestRespondentTypeColumn, '!=', app(Prospect::class)->getMorphClass()),
-                        ),
+                        (! $user->hasLicense(Student::getLicenseType()) && ! $user->hasLicense(Prospect::getLicenseType())),
+                        fn (Builder $query) => $query
+                            ->when(
+                                ! $user->hasLicense(Student::getLicenseType()),
+                                fn (Builder $query) => $query->whereHasMorph(
+                                    'interactable',
+                                    ServiceRequest::class,
+                                    fn (Builder $query) => $query->where($serviceRequestRespondentTypeColumn, '!=', app(Student::class)->getMorphClass()),
+                                ),
+                            )
+                            ->when(
+                                ! $user->hasLicense(Prospect::getLicenseType()),
+                                fn (Builder $query) => $query->whereHasMorph(
+                                    'interactable',
+                                    ServiceRequest::class,
+                                    fn (Builder $query) => $query->where($serviceRequestRespondentTypeColumn, '!=', app(Prospect::class)->getMorphClass()),
+                                ),
+                            )
                     ));
         });
     }
