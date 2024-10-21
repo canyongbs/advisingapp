@@ -72,7 +72,6 @@ class BulkSegmentAction
                     $data['filters'] = [];
                     $data['model'] = $segmentModel;
                     $segment = Segment::create($data);
-                    $id = $segmentModel->getLabel() == 'Student' ? 'sisid' : 'id';
                     $records->chunk(100)->each(function ($chunkRecord) use ($segment) {
                         $subjectData = $chunkRecord->map(fn ($record) => [
                             'subject_id' => $record->getKey(),
