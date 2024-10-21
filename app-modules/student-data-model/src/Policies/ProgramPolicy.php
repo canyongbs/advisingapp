@@ -53,7 +53,7 @@ class ProgramPolicy
 
     public function view(Authenticatable $authenticatable, Program $program): Response
     {
-        if ($authenticatable->canAny("program.{$program->id}.view", 'student_record_manager.*.view')) {
+        if ($authenticatable->canAny("program.{$program->getKey()}.view", 'student_record_manager.*.view')) {
             return Response::allow();
         }
 

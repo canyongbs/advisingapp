@@ -53,7 +53,7 @@ class EnrollmentPolicy
 
     public function view(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
-        if ($authenticatable->canAny("enrollment.{$enrollment->id}.view", 'student_record_manager.*.view')) {
+        if ($authenticatable->canAny("enrollment.{$enrollment->getKey()}.view", 'student_record_manager.*.view')) {
             return Response::allow();
         }
 

@@ -62,7 +62,7 @@ class StudentPolicy
 
     public function view(Authenticatable $authenticatable, Student $student): Response
     {
-        if ($authenticatable->canAny("student.{$student->getKey()}.view", "student_record_manager.{$student->getKey()}.view")) {
+        if ($authenticatable->canAny("student.{$student->getKey()}.view", 'student_record_manager.*.view')) {
             return Response::allow();
         }
 
@@ -80,7 +80,7 @@ class StudentPolicy
     public function update(Authenticatable $authenticatable, Student $student): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "student_record_manager.{$student->getKey()}.update",
+            abilities: 'student_record_manager.*.update',
             denyResponse: 'Students cannot be updated.'
         );
     }
@@ -88,7 +88,7 @@ class StudentPolicy
     public function delete(Authenticatable $authenticatable, Student $student): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "student_record_manager.{$student->getKey()}.delete",
+            abilities: 'student_record_manager.*.delete',
             denyResponse: 'Students cannot be deleted.'
         );
     }
@@ -96,7 +96,7 @@ class StudentPolicy
     public function restore(Authenticatable $authenticatable, Student $student): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "student_record_manager.{$student->getKey()}.restore",
+            abilities: 'student_record_manager.*.restore',
             denyResponse: 'Students cannot be restored.'
         );
     }
@@ -104,7 +104,7 @@ class StudentPolicy
     public function forceDelete(Authenticatable $authenticatable, Student $student): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "student_record_manager.{$student->getKey()}.force-delete",
+            abilities: 'student_record_manager.*.force-delete',
             denyResponse: 'Students cannot be force deleted.'
         );
     }
