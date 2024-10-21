@@ -213,19 +213,27 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
                     ->tap(new LicensedToEducatable('interactable'))
                     ->when(
                         ! $user->hasLicense(Student::getLicenseType()),
-                        fn (Builder $query) => $query->whereHasMorph(
+                        fn (Builder $query) => $query->where(fn (Builder $query) => $query->whereHasMorph(
                             'interactable',
                             ServiceRequest::class,
                             fn (Builder $query) => $query->where($serviceRequestRespondentTypeColumn, '!=', app(Student::class)->getMorphClass()),
-                        ),
+                        )->orWhere(
+                            'interactable_type',
+                            '!=',
+                            app(ServiceRequest::class)->getMorphClass(),
+                        )),
                     )
                     ->when(
                         ! $user->hasLicense(Prospect::getLicenseType()),
-                        fn (Builder $query) => $query->whereHasMorph(
+                        fn (Builder $query) => $query->where(fn (Builder $query) => $query->whereHasMorph(
                             'interactable',
                             ServiceRequest::class,
                             fn (Builder $query) => $query->where($serviceRequestRespondentTypeColumn, '!=', app(Prospect::class)->getMorphClass()),
-                        ),
+                        )->orWhere(
+                            'interactable_type',
+                            '!=',
+                            app(ServiceRequest::class)->getMorphClass(),
+                        )),
                     ));
         });
     }
