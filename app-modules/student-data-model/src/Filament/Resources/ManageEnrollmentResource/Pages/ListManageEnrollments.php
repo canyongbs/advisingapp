@@ -70,16 +70,16 @@ class ListManageEnrollments extends ListRecords
                     ->label('Earned'),
             ])
             ->actions([
-                // EditAction::make(),
-                // ViewAction::make(),
-                // DeleteAction::make()
-                //     ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed')
+                EditAction::make(),
+                ViewAction::make(),
+                DeleteAction::make()
+                    ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed'),
             ])
             ->bulkActions([
-                // BulkActionGroup::make([
-                //     DeleteBulkAction::make()
-                //         ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed')
-                // ]),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
+                        ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed'),
+                ]),
             ]);
     }
 
