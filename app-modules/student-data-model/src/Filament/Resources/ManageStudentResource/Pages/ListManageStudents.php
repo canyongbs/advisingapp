@@ -112,6 +112,7 @@ class ListManageStudents extends ListRecords
         return [
             CreateAction::make(),
             ImportAction::make()
+                ->modalDescription('Import student records from a CSV file. Records with matched SIS IDs will be updated, while new records will be created.')
                 ->importer(StudentImporter::class)
                 ->authorize('import', Student::class),
         ];
