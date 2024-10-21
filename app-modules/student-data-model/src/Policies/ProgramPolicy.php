@@ -53,7 +53,7 @@ class ProgramPolicy
 
     public function view(Authenticatable $authenticatable, Program $program): Response
     {
-        if ($authenticatable->canAny('program.*.view', "student_record_manager.{$program->id}.view")) {
+        if ($authenticatable->canAny("program.{$program->id}.view", 'student_record_manager.*.view')) {
             return Response::allow();
         }
 
@@ -71,7 +71,7 @@ class ProgramPolicy
     public function update(Authenticatable $authenticatable, Program $program): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "student_record_manager.{$program->id}.update",
+            abilities: 'student_record_manager.*.update',
             denyResponse: 'Programs cannot be updated.'
         );
     }
@@ -79,7 +79,7 @@ class ProgramPolicy
     public function delete(Authenticatable $authenticatable, Program $program): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "student_record_manager.{$program->id}.delete",
+            abilities: 'student_record_manager.*.delete',
             denyResponse: 'Programs cannot be deleted.'
         );
     }
@@ -87,7 +87,7 @@ class ProgramPolicy
     public function restore(Authenticatable $authenticatable, Program $program): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "student_record_manager.{$program->id}.restore",
+            abilities: 'student_record_manager.*.restore',
             denyResponse: 'Programs cannot be restored.'
         );
     }
@@ -95,7 +95,7 @@ class ProgramPolicy
     public function forceDelete(Authenticatable $authenticatable, Program $program): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "student_record_manager.{$program->id}.force-delete",
+            abilities: 'student_record_manager.*.force-delete',
             denyResponse: 'Programs cannot be force deleted.'
         );
     }
