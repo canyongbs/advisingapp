@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
+use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
@@ -53,6 +54,14 @@ class ManageStudentConfiguration extends SettingsPage
     protected static ?string $navigationGroup = 'Students';
 
     protected static ?string $navigationLabel = 'Configuration';
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return parent::canAccess() && $user->can('student_record_manager.configuration');
+    }
 
     public function form(Form $form): Form
     {
