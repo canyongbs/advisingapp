@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource\Pages;
 
+use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
@@ -73,7 +74,13 @@ class ListManageStudents extends ListRecords
                     ->label('Other ID'),
             ])
             ->actions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->visible(function (Student $record) {
+                        /** @var User $user */
+                        $user = auth()->user();
+
+                        return $user->can('student_record_manager.*.view');
+                    }),
                 EditAction::make(),
                 DeleteAction::make()
                     ->modalDescription('Are you sure you wish to delete the selected record(s)? By deleting a student record, you will remove any related enrollment and program data, along with any related interactions, notes, etc. This action cannot be reversed.')
