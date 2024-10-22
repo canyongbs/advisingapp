@@ -2,19 +2,13 @@
 
 namespace AdvisingApp\Prospect\Filament\Pages;
 
-use Throwable;
 use Cknow\Money\Money;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use App\Features\ProspectConversion;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-
-use function Filament\Support\is_app_url;
-
 use App\Filament\Forms\Components\Heading;
-use Filament\Support\Facades\FilamentView;
 use App\Filament\Forms\Components\Paragraph;
 use App\Settings\ProspectConversionSettings;
 use App\Filament\Clusters\ConstituentManagement;
@@ -25,7 +19,7 @@ class ManageProspectConversionSettings extends SettingsPage
 
     protected static string $settings = ProspectConversionSettings::class;
 
-    public $currency = 'USD';
+    public string $currency = 'USD';
 
     protected static ?string $title = 'Conversion';
 
@@ -40,7 +34,7 @@ class ManageProspectConversionSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return ProspectConversion::active() && $user->can('prospect_conversion.manage');
+        return ProspectConversion::active() && parent::canAccess() && $user->can('prospect_conversion.manage');
     }
 
     public function form(Form $form): Form
@@ -68,36 +62,11 @@ class ManageProspectConversionSettings extends SettingsPage
             ]);
     }
 
-    public function save(): void
+    protected function mutateFormDataBeforeSave(array $data): array
     {
-        try {
-            $this->callHook('beforeValidate');
-            $data = $this->form->getState();
+        $data['estimated_average_revenue'] = Money::parseByDecimal($data['estimated_average_revenue'], $this->currency);
 
-            $this->callHook('afterValidate');
-            $settings = app(static::getSettings());
-            $this->callHook('beforeSave');
-            $settings->estimated_average_revenue = Money::parseByDecimal($data['estimated_average_revenue'], $this->currency);
-            $settings->save();
-
-            $this->callHook('afterSave');
-
-            Notification::make()
-                ->title('Conversion value saved successfully!')
-                ->success()
-                ->send();
-
-            if ($redirectUrl = $this->getRedirectUrl()) {
-                $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
-            }
-        } catch (Throwable $exception) {
-            report($exception);
-
-            Notification::make()
-                ->title('Something went wrong, if this continues please contact support.')
-                ->danger()
-                ->send();
-        }
+        return $data;
     }
 
     protected function mutateFormDataBeforeFill(array $data): array

@@ -35,6 +35,20 @@ class Heading extends Component
         return $this;
     }
 
+    public function two(): static
+    {
+        $this->view = 'filament.forms.components.heading-two';
+
+        return $this;
+    }
+
+    public function three(): static
+    {
+        $this->view = 'filament.forms.components.heading-three';
+
+        return $this;
+    }
+
     public function content(mixed $content): static
     {
         $this->content = $content;
