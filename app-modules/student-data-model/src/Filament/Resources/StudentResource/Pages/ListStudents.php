@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
+use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\Filter;
 use AdvisingApp\Segment\Models\Segment;
@@ -135,7 +136,13 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
                     ),
             ])
             ->actions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->visible(function (Student $record) {
+                        /** @var User $user */
+                        $user = auth()->user();
+
+                        return $user->can('student_record_manager.*.view');
+                    }),
                 SubscribeTableAction::make(),
             ])
             ->bulkActions([

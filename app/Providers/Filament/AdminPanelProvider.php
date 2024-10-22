@@ -183,6 +183,16 @@ class AdminPanelProvider extends PanelProvider
                     ->visible(function (ThemeSettings $themeSettings) {
                         return $themeSettings->is_recent_updates_url_enabled && ! empty($themeSettings->recent_updates_url);
                     }),
+                MenuItem::make()
+                    ->label('Get Support')
+                    ->url(function (ThemeSettings $themeSettings) {
+                        return $themeSettings->support_url;
+                    })
+                    ->icon('heroicon-s-lifebuoy')
+                    ->openUrlInNewTab()
+                    ->visible(function (ThemeSettings $themeSettings) {
+                        return $themeSettings->is_support_url_enabled && ! empty($themeSettings->support_url);
+                    }),
             ])
             ->colors(fn (ThemeSettings $themeSettings): array => array_merge(config('default-colors'), $themeSettings->color_overrides))
             ->renderHook(

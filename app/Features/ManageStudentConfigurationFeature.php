@@ -38,7 +38,7 @@ namespace App\Features;
 
 use App\Support\AbstractFeatureFlag;
 
-class EnableBrandingBar extends AbstractFeatureFlag
+class ManageStudentConfigurationFeature extends AbstractFeatureFlag
 {
     public function resolve(mixed $scope): mixed
     {

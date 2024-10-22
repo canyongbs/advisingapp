@@ -49,6 +49,8 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Form\Models\FormSubmission;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\Segment\Models\SegmentSubject;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use AdvisingApp\Engagement\Models\EngagementFile;
@@ -89,6 +91,7 @@ use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  */
 class Student extends BaseAuthenticatable implements Auditable, Subscribable, Educatable, HasFilamentResource, NotifiableInterface
 {
+    use SoftDeletes;
     use HasApiTokens;
     use AuditableTrait;
     use HasFactory;
@@ -108,6 +111,39 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     public $incrementing = false;
 
     protected $keyType = 'string';
+
+    protected $fillable = [
+        'sisid',
+        'otherid',
+        'first',
+        'last',
+        'full_name',
+        'preferred',
+        'birthdate',
+        'hsgrad',
+        'email',
+        'email_2',
+        'mobile',
+        'phone',
+        'address',
+        'address2',
+        'address3',
+        'city',
+        'state',
+        'postal',
+        'sms_opt_out',
+        'email_bounce',
+        'dual',
+        'ferpa',
+        'dfw',
+        'sap',
+        'holds',
+        'firstgen',
+        'ethnicity',
+        'lastlmslogin',
+        'f_e_term',
+        'mr_e_term',
+    ];
 
     protected $casts = [
         'sisid' => 'string',
@@ -246,6 +282,17 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             name: 'checked_out_to',
             type: 'checked_out_to_type',
             id: 'checked_out_to_id',
+            localKey: 'sisid'
+        );
+    }
+
+    public function segmentSubjects(): MorphMany
+    {
+        return $this->morphMany(
+            related: SegmentSubject::class,
+            name: 'subject',
+            type: 'subject_type',
+            id: 'subject_id',
             localKey: 'sisid'
         );
     }

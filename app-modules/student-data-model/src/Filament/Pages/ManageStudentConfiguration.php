@@ -34,46 +34,47 @@
 </COPYRIGHT>
 */
 
-/*
-|--------------------------------------------------------------------------
-| Test Case
-|--------------------------------------------------------------------------
-|
-| The closure you provide to your test functions is always bound to a specific PHPUnit test
-| case class. By default, that class is "PHPUnit\Framework\TestCase". Of course, you may
-| need to change it using the "uses()" function to bind a different classes or traits.
-|
-*/
+namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
-// uses(Tests\TestCase::class)->in('Feature');
+use App\Models\User;
+use Filament\Forms\Form;
+use Filament\Pages\SettingsPage;
+use Filament\Forms\Components\Toggle;
+use App\Filament\Clusters\ConstituentManagement;
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 
-/*
-|--------------------------------------------------------------------------
-| Expectations
-|--------------------------------------------------------------------------
-|
-| When you're writing tests, you often need to check that values meet certain conditions. The
-| "expect()" function gives you access to a set of "expectations" methods that you can use
-| to assert different things. Of course, you may extend the Expectation API at any time.
-|
-*/
-
-// expect()->extend('toBeOne', function () {
-//     return $this->toBe(1);
-// });
-
-/*
-|--------------------------------------------------------------------------
-| Functions
-|--------------------------------------------------------------------------
-|
-| While Pest is very powerful out-of-the-box, you may have some testing code specific to your
-| project that you don't want to repeat in every file. Here you can also expose helpers as
-| global functions to help you to reduce the number of lines of code in your test files.
-|
-*/
-
-function something()
+class ManageStudentConfiguration extends SettingsPage
 {
-    // ..
+    protected static string $settings = ManageStudentConfigurationSettings::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-cog-8-tooth';
+
+    protected static ?string $cluster = ConstituentManagement::class;
+
+    protected static ?string $navigationGroup = 'Students';
+
+    protected static ?string $navigationLabel = 'Configuration';
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return parent::canAccess() && $user->can('student_record_manager.configuration');
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Toggle::make('is_enabled')
+                    ->label('Enable')
+                    ->default(false),
+            ]);
+    }
+
+    public function getRedirectUrl(): ?string
+    {
+        return ManageStudentConfiguration::getUrl();
+    }
 }
