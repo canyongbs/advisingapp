@@ -97,13 +97,13 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->favicon(function () {
                 if (! Tenant::checkCurrent()) {
-                    return asset('/images/default-favicon.png');
+                    return asset('/images/default-favicon-211024.png');
                 }
 
                 $themeSettings = app(ThemeSettings::class);
                 $favicon = $themeSettings::getSettingsPropertyModel('theme.is_favicon_active')->getFirstMedia('favicon');
 
-                return $themeSettings->is_favicon_active && $favicon ? $favicon->getTemporaryUrl(now()->addMinutes(5)) : asset('/images/default-favicon.png');
+                return $themeSettings->is_favicon_active && $favicon ? $favicon->getTemporaryUrl(now()->addMinutes(5)) : asset('/images/default-favicon-211024.png');
             })
             ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
             ->maxContentWidth('full')
@@ -173,6 +173,26 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Profile Settings')
                     ->url(fn () => EditProfile::getUrl())
                     ->icon('heroicon-s-cog-6-tooth'),
+                MenuItem::make()
+                    ->label('Recent Updates')
+                    ->url(function (ThemeSettings $themeSettings) {
+                        return $themeSettings->recent_updates_url;
+                    })
+                    ->icon('heroicon-s-megaphone')
+                    ->openUrlInNewTab()
+                    ->visible(function (ThemeSettings $themeSettings) {
+                        return $themeSettings->is_recent_updates_url_enabled && ! empty($themeSettings->recent_updates_url);
+                    }),
+                MenuItem::make()
+                    ->label('Get Support')
+                    ->url(function (ThemeSettings $themeSettings) {
+                        return $themeSettings->support_url;
+                    })
+                    ->icon('heroicon-s-lifebuoy')
+                    ->openUrlInNewTab()
+                    ->visible(function (ThemeSettings $themeSettings) {
+                        return $themeSettings->is_support_url_enabled && ! empty($themeSettings->support_url);
+                    }),
             ])
             ->colors(fn (ThemeSettings $themeSettings): array => array_merge(config('default-colors'), $themeSettings->color_overrides))
             ->renderHook(
