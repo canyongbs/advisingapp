@@ -47,10 +47,10 @@ class MoneySettingCast implements SettingsCast
             return null;
         }
 
-        $value = intval($payload['value']) ?? null;
+        $value = $payload['value'] ?? null;
         $currency = $payload['currency'] ?? null;
 
-        if (blank($value) || blank($currency) || ! is_int($value) || ! is_string($currency)) {
+        if (blank($value) || blank($currency)) {
             return null;
         }
 

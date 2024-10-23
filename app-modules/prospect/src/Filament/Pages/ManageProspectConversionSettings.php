@@ -107,7 +107,7 @@ class ManageProspectConversionSettings extends SettingsPage
     {
         $settings = app(static::getSettings());
 
-        $data['estimated_average_revenue'] = $settings->estimated_average_revenue->formatByDecimal();
+        $data['estimated_average_revenue'] = $settings->estimated_average_revenue?->formatByDecimal();
 
         return $data;
     }
