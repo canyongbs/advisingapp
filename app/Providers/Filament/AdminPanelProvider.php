@@ -174,6 +174,16 @@ class AdminPanelProvider extends PanelProvider
                     ->url(fn () => EditProfile::getUrl())
                     ->icon('heroicon-s-cog-6-tooth'),
                 MenuItem::make()
+                    ->label('Recent Updates')
+                    ->url(function (ThemeSettings $themeSettings) {
+                        return $themeSettings->recent_updates_url;
+                    })
+                    ->icon('heroicon-s-megaphone')
+                    ->openUrlInNewTab()
+                    ->visible(function (ThemeSettings $themeSettings) {
+                        return $themeSettings->is_recent_updates_url_enabled && ! empty($themeSettings->recent_updates_url);
+                    }),
+                MenuItem::make()
                     ->label('Get Support')
                     ->url(function (ThemeSettings $themeSettings) {
                         return $themeSettings->support_url;
