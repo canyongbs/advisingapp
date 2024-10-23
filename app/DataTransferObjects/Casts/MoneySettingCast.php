@@ -13,7 +13,7 @@ class MoneySettingCast implements SettingsCast
             return null;
         }
 
-        $value = $payload['value'] ?? null;
+        $value = intval($payload['value']) ?? null;
         $currency = $payload['currency'] ?? null;
 
         if (blank($value) || blank($currency) || ! is_int($value) || ! is_string($currency)) {
@@ -30,7 +30,7 @@ class MoneySettingCast implements SettingsCast
         }
 
         return [
-            'value' => intval($payload->getAmount()),
+            'value' => $payload->getAmount(),
             'currency' => $payload->getCurrency()->getCode(),
         ];
     }
