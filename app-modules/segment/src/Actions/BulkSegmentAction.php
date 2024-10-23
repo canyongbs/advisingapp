@@ -68,17 +68,22 @@ class BulkSegmentAction
             ->action(function (Collection $records, array $data) use ($segmentModel) {
                 try {
                     DB::beginTransaction();
-                    $data['type'] = SegmentType::Static;
-                    $data['filters'] = [];
-                    $data['model'] = $segmentModel;
-                    $segment = Segment::create($data);
-                    $records->chunk(100)->each(function ($chunkRecord) use ($segment) {
-                        $subjectData = $chunkRecord->map(fn ($record) => [
-                            'subject_id' => $record->getKey(),
-                            'subject_type' => $record->getMorphClass(),
-                        ])->toArray();
-                        $segment->subjects()->createMany($subjectData);
-                    });
+                    $segment = Segment::create([
+                        ...$data,
+                        'type' => SegmentType::Static,
+                        'filters' => [],
+                        'model' => $segmentModel,
+                    ]);
+                    $records->chunk(100)->each(
+                        fn ($chunkRecord) => $segment
+                            ->subjects()
+                            ->createMany(
+                                $chunkRecord->map(fn ($record) => [
+                                    'subject_id' => $record->getKey(),
+                                    'subject_type' => $record->getMorphClass(),
+                                ])->toArray()
+                            )
+                    );
                     DB::commit();
                 } catch (Exception $e) {
                     DB::rollBack();
@@ -92,7 +97,7 @@ class BulkSegmentAction
                 }
                 Notification::make()
                     ->title('Segment created')
-                    ->body('The segment has been created and is being populated with your selections.')
+                    ->body('The segment has been created and populated with your selections.')
                     ->success()
                     ->send();
             });
