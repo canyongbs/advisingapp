@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,43 +30,11 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace AdvisingApp\StudentDataModel\Providers;
-
-use Filament\Panel;
-use Livewire\Livewire;
-use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\StudentDataModel\Models\Program;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
-use AdvisingApp\StudentDataModel\Registries\StudentDataModelRbacRegistry;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentAlertsRelationManager;
-
-class StudentDataModelServiceProvider extends ServiceProvider
-{
-    use ImplementsGraphQL;
-
-    public function register(): void
-    {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new StudentDataModelPlugin()));
-    }
-
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'student' => Student::class,
-            'enrollment' => Enrollment::class,
-            'program' => Program::class,
-        ]);
-
-        AuthorizationRoleRegistry::register(StudentDataModelRbacRegistry::class);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        Livewire::component('manage-student-alerts', StudentAlertsRelationManager::class);
-    }
-}
+--}}
+<x-student-data-model::timeline
+    :timelineRecords="$timelineRecords"
+    :hasMorePages="$hasMorePages"
+    :emptyStateMessage="$emptyStateMessage"
+    :noMoreRecordsMessage="$noMoreRecordsMessage"
+    :isShowFullFeed="$isShowFullFeed"
+/>

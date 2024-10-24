@@ -34,49 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Notifications;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
-use Illuminate\Support\HtmlString;
-use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Notification\Notifications\DatabaseNotification;
-use Filament\Notifications\Notification as FilamentNotification;
+use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
+use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
 
-class AlertCreatedNotification extends BaseNotification implements DatabaseNotification
+class StudentInteractionsRelationManager extends RelationManager
 {
-    use DatabaseChannelTrait;
+    use HasManyMorphedInteractionsTrait;
 
-    public function __construct(public Alert $alert) {}
+    protected static string $resource = StudentResource::class;
 
-    public function toDatabase(object $notifiable): array
+    protected static string $relationship = 'interactions';
+
+    // TODO: Automatically set from Filament based on relationship name
+    protected static ?string $breadcrumb = 'Interactions';
+
+    // TODO: Automatically set from Filament based on relationship name
+    protected static ?string $navigationLabel = 'Interactions';
+
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
+
+    public function form(Form $form): Form
     {
-        $concern = $this->alert->concern;
-
-        $name = $concern->{$concern->displayNameKey()};
-
-        $target = match ($concern::class) {
-            Prospect::class => ProspectResource::class,
-            Student::class => StudentResource::class,
-        };
-
-        $alertUrl = $target::getUrl('students', ['record' => $concern]);
-
-        $alertLink = new HtmlString("<a href='{$alertUrl}' target='_blank' class='underline'>alert</a>");
-
-        $morph = str($concern->getMorphClass());
-
-        $morphUrl = $target::getUrl('view', ['record' => $concern]);
-
-        $morphLink = new HtmlString("<a href='{$morphUrl}' target='_blank' class='underline'>{$name}</a>");
-
-        return FilamentNotification::make()
-            ->warning()
-            ->title("A {$this->alert->severity->value} severity {$alertLink} has been created for {$morph} {$morphLink}")
-            ->getDatabaseMessage();
+        return (resolve(CreateInteraction::class))->form($form);
     }
 }

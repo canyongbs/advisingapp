@@ -34,29 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Livewire;
 
+use App\Enums\Feature;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\RelationManagers\EngagementFilesRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEventsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFormSubmissionsRelationManager;
 
-class ManageStudentFiles extends ManageRelatedRecords
+class ManageStudentPremiumFeatures extends ManageRelatedRecords
 {
     protected static string $resource = StudentResource::class;
 
-    // TODO: Obsolete when there is no table, remove from Filament
-    protected static string $relationship = 'engagementFiles';
+    protected static string $relationship = 'formSubmissions';
 
-    protected static ?string $navigationLabel = 'Files and Documents';
+    protected static string $view = 'student-data-model::livewire.manage-student-premium-features';
 
-    protected static ?string $breadcrumb = 'Files';
-
-    protected static ?string $navigationIcon = 'heroicon-o-folder';
-
-    public static function canAccess(array $arguments = []): bool
+    public function mount(int | string $record): void
     {
-        return (bool) count(static::managers($arguments['record'] ?? null));
+        $this->record = $this->resolveRecord($record);
+
+        $this->authorizeAccess();
+
+        $this->previousUrl = url()->previous();
+
+        $this->loadDefaultActiveTab();
+    }
+
+    public static function canAccess(array $parameters = []): bool
+    {
+        return parent::canAccess($parameters) && Gate::check(Feature::OnlineForms->getGateName());
     }
 
     public function getRelationManagers(): array
@@ -67,7 +76,9 @@ class ManageStudentFiles extends ManageRelatedRecords
     private static function managers(?Model $record = null): array
     {
         return collect([
-            EngagementFilesRelationManager::class,
+            StudentFormSubmissionsRelationManager::class,
+            StudentEventsRelationManager::class,
+            ManageStudentApplicationSubmissions::class,
         ])
             ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
             ->toArray();

@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,43 +30,34 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@props([
+    'actions' => [],
+    'breadcrumbs' => [],
+    'heading',
+    'subheading' => null,
+])
 
-namespace AdvisingApp\StudentDataModel\Providers;
+<header {{ $attributes->class(['fi-header flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between']) }}>
+    <div>
+        @if ($breadcrumbs)
+            <x-filament::breadcrumbs
+                class="mb-2 hidden sm:block"
+                :breadcrumbs="$breadcrumbs"
+            />
+        @endif
+    </div>
 
-use Filament\Panel;
-use Livewire\Livewire;
-use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\StudentDataModel\Models\Program;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
-use AdvisingApp\StudentDataModel\Registries\StudentDataModelRbacRegistry;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentAlertsRelationManager;
+    <div @class([
+        'flex shrink-0 items-center gap-3',
+        'sm:mt-7' => $breadcrumbs,
+    ])>
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
-class StudentDataModelServiceProvider extends ServiceProvider
-{
-    use ImplementsGraphQL;
+        @if ($actions)
+            <x-filament::actions :actions="$actions" />
+        @endif
 
-    public function register(): void
-    {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new StudentDataModelPlugin()));
-    }
-
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'student' => Student::class,
-            'enrollment' => Enrollment::class,
-            'program' => Program::class,
-        ]);
-
-        AuthorizationRoleRegistry::register(StudentDataModelRbacRegistry::class);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        Livewire::component('manage-student-alerts', StudentAlertsRelationManager::class);
-    }
-}
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER, scopes: $this->getRenderHookScopes()) }}
+    </div>
+</header>
