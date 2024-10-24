@@ -34,32 +34,53 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Livewire;
 
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
+use App\Enums\Feature;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEventsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFormSubmissionsRelationManager;
 
-class ManageStudentInteractions extends RelationManager
+class ManageStudentPremiumFeatures extends ManageRelatedRecords
 {
-    use HasManyMorphedInteractionsTrait;
-
     protected static string $resource = StudentResource::class;
 
-    protected static string $relationship = 'interactions';
+    protected static string $relationship = 'formSubmissions';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Interactions';
+    protected static string $view = 'student-data-model::livewire.manage-student-premium-features';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Interactions';
-
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
-
-    public function form(Form $form): Form
+    public function mount(int | string $record): void
     {
-        return (resolve(CreateInteraction::class))->form($form);
+        $this->record = $this->resolveRecord($record);
+
+        $this->authorizeAccess();
+
+        $this->previousUrl = url()->previous();
+
+        $this->loadDefaultActiveTab();
+    }
+
+    public static function canAccess(array $parameters = []): bool
+    {
+        return parent::canAccess($parameters) && Gate::check(Feature::OnlineForms->getGateName());
+    }
+
+    public function getRelationManagers(): array
+    {
+        return static::managers($this->getRecord());
+    }
+
+    private static function managers(?Model $record = null): array
+    {
+        return collect([
+            StudentFormSubmissionsRelationManager::class,
+            StudentEventsRelationManager::class,
+            ManageStudentApplicationSubmissions::class,
+        ])
+            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
+            ->toArray();
     }
 }

@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Providers;
 
 use Filament\Panel;
+use Livewire\Livewire;
 use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\StudentDataModel\Models\Program;
@@ -46,6 +47,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
 use AdvisingApp\StudentDataModel\Registries\StudentDataModelRbacRegistry;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentAlertsRelationManager;
 
 class StudentDataModelServiceProvider extends ServiceProvider
 {
@@ -67,5 +69,6 @@ class StudentDataModelServiceProvider extends ServiceProvider
         AuthorizationRoleRegistry::register(StudentDataModelRbacRegistry::class);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
+        Livewire::component('manage-student-alerts', StudentAlertsRelationManager::class);
     }
 }

@@ -31,6 +31,9 @@
 
 </COPYRIGHT>
 --}}
+@php
+    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+@endphp
 <x-student-data-model::page @class([
     'fi-resource-view-record-page',
     'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
@@ -46,25 +49,26 @@
             <div class="flex flex-col gap-8">
                 <livewire:student-data-model::manage-student-information :record="$record->getKey()" />
                 <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                    <livewire:student-data-model::manage-student-alerts
+                    <livewire:manage-student-alerts
                         :owner-record="$record"
-                        :page-class="\AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent::class"
+                        :page-class="ViewStudent::class"
                     />
+
                     <livewire:student-data-model::manage-student-tasks
                         :owner-record="$record"
-                        :page-class="\AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent::class"
+                        :page-class="ViewStudent::class"
                     />
                     <livewire:student-data-model::manage-student-care-team
                         :owner-record="$record"
-                        :page-class="\AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent::class"
+                        :page-class="ViewStudent::class"
                     />
                     <livewire:student-data-model::manage-student-subscriptions
                         :owner-record="$record"
-                        :page-class="\AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent::class"
+                        :page-class="ViewStudent::class"
                     />
                 </div>
 
-                <livewire:student-data-model::manage-student-form-submissions :record="$record->getKey()" />
+                <livewire:student-data-model::manage-student-premium-features :record="$record->getKey()" />
             </div>
         </div>
     </div>

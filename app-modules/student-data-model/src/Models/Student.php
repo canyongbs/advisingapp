@@ -148,6 +148,8 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     protected $casts = [
         'sisid' => 'string',
         'updated_at_source' => 'datetime',
+        'birthdate' => 'date',
+        'dfw' => 'date',
     ];
 
     public function identifier(): string
@@ -363,6 +365,20 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     {
         return Attribute::make(
             get: fn (?string $value, array $attributes) => $attributes[$this->displayNameKey()],
+        );
+    }
+
+    protected function fullAddress(): Attribute
+    {
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes) => trim(implode(' ', array_filter([
+                $attributes['address'] ?? '',
+                $attributes['address2'] ?? '',
+                $attributes['address3'] ?? '',
+                $attributes['city'] ? $attributes['city'] . ',' : '',
+                $attributes['state'] ? $attributes['state'] . ',' : '',
+                $attributes['postal'] ?? '',
+            ]))),
         );
     }
 }

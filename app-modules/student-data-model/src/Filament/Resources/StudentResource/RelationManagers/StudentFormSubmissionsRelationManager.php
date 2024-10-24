@@ -104,16 +104,4 @@ class StudentFormSubmissionsRelationManager extends RelationManager
                 ]),
             ]);
     }
-
-    public function getTableRecordKey(Model $record): string
-    {
-        return base64_encode(json_encode($record->attributesToArray()));
-    }
-
-    protected function resolveTableRecord(?string $key): ?Model
-    {
-        return $this->getTable()->getQuery()
-            ->where(json_decode(base64_decode($key), associative: true))
-            ->first();
-    }
 }

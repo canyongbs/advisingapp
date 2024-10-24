@@ -39,10 +39,10 @@ namespace AdvisingApp\StudentDataModel\Livewire;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFiles;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInteractions;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFilesRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentInteractionsRelationManager;
 
 class ManageStudentInformation extends ManageRelatedRecords
 {
@@ -79,8 +79,8 @@ class ManageStudentInformation extends ManageRelatedRecords
             ProgramsRelationManager::class,
             EnrollmentsRelationManager::class,
             ManageStudentEngagement::class,
-            ManageStudentInteractions::class,
-            ManageStudentFiles::class,
+            StudentInteractionsRelationManager::class,
+            StudentFilesRelationManager::class,
         ])
             ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
             ->toArray();

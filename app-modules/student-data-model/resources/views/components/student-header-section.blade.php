@@ -32,14 +32,16 @@
 </COPYRIGHT>
 --}}
 <div class="flex w-full flex-col items-start justify-start gap-4 sm:flex-row md:gap-8">
-    @if ($this->getNameWords())
-        <div class="">
-            <span
-                class="flex h-16 w-16 items-center justify-center rounded-full bg-blue-500 text-2xl text-white">{{ $this->getNameWords() }}</span>
+    @if ($this->getAbbreviatedName())
+        <div>
+            <span class="flex h-16 w-16 items-center justify-center rounded-full bg-blue-500 text-2xl text-white">
+                {{ $this->getAbbreviatedName() }}
+            </span>
         </div>
     @endif
     <div class="gap-4">
-        <h2 class="mb-3 text-3xl font-semibold text-black">{{ $record?->full_name }}</h2>
+        <h2 class="mb-3 text-3xl font-semibold text-black dark:text-white">
+            {{ $record?->full_name ?? $record?->first . ' ' . $record?->last }}</h2>
         <div class="mb-3 flex flex-wrap items-center gap-3 lg:gap-6">
             <div class="flex items-center gap-2">
                 <x-icon
@@ -48,54 +50,62 @@
                 ></x-icon>
                 <span class="font-medium">Student</span>
             </div>
-            <div class="flex items-center gap-2">
-                <x-icon
-                    class="w-5"
-                    name="heroicon-m-heart"
-                ></x-icon>
-                <span class="font-medium">Goes by "{{ $record?->preferred }}"</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <x-icon
-                    class="w-5"
-                    name="heroicon-m-phone"
-                ></x-icon>
-                <span class="font-medium">{{ $record?->phone }}</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <x-icon
-                    class="w-5"
-                    name="heroicon-m-envelope"
-                ></x-icon>
-                <span class="font-medium">{{ $record?->email }}</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <x-icon
-                    class="w-5"
-                    name="heroicon-m-building-library"
-                ></x-icon>
-                <span class="font-medium">{{ $record?->hsgrad }}</span>
-            </div>
+            @if (!empty($record->preferred))
+                <div class="flex items-center gap-2">
+                    <x-icon
+                        class="w-5"
+                        name="heroicon-m-heart"
+                    ></x-icon>
+                    <span class="font-medium">Goes by "{{ $record->preferred }}"</span>
+                </div>
+            @endif
+            @if (!empty($record->phone))
+                <div class="flex items-center gap-2">
+                    <x-icon
+                        class="w-5"
+                        name="heroicon-m-phone"
+                    ></x-icon>
+                    <span class="font-medium">{{ $record->phone }}</span>
+                </div>
+            @endif
+            @if (!empty($record->email))
+                <div class="flex items-center gap-2">
+                    <x-icon
+                        class="w-5"
+                        name="heroicon-m-envelope"
+                    ></x-icon>
+                    <span class="font-medium">{{ $record->email }}</span>
+                </div>
+            @endif
+            @if (!empty($record->hsgrad))
+                <div class="flex items-center gap-2">
+                    <x-icon
+                        class="w-5"
+                        name="heroicon-m-building-library"
+                    ></x-icon>
+                    <span class="font-medium">{{ $record->hsgrad }}</span>
+                </div>
+            @endif
         </div>
         <div class="flex items-center gap-6">
-            @if ($record?->firstgen)
+            @if (!empty($record->firstgen))
                 <span class="border border-blue-500 px-6 py-1 text-sm font-medium text-blue-500">
                     First Gen
                 </span>
             @endif
-            @if ($record?->dual)
+            @if (!empty($record->dual))
                 <span class="border border-blue-500 px-6 py-1 text-sm font-medium text-blue-500">
                     Dual
                 </span>
             @endif
-            @if ($record?->sap)
+            @if (!empty($record->sap))
                 <span class="border border-blue-500 px-6 py-1 text-sm font-medium text-blue-500">
                     SAP
                 </span>
             @endif
-            @if ($record?->dfw)
+            @if (!empty($record->dfw))
                 <span class="border border-blue-500 px-6 py-1 text-sm font-medium text-blue-500">
-                    DFW {{ $record?->dfw }}
+                    DFW {{ $record?->dfw?->format('m/d/Y') }}
                 </span>
             @endif
         </div>

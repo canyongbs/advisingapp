@@ -32,51 +32,53 @@
 </COPYRIGHT>
 --}}
 
-<div class="rounded-xl border bg-white">
-    <div class="border-b px-6 py-4 text-lg font-medium text-black">
+<div
+    class="rounded-xl bg-white ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-gray-900 dark:text-white dark:ring-white/10">
+    <div class="border-b px-6 py-4 text-lg font-medium text-black dark:border-white/10 dark:text-white">
         Profile Information
     </div>
-    <div class="text-lg font-medium text-black">
-        <div class="border-b p-6">
+    <div class="text-lg font-medium text-black dark:text-white">
+        <div class="border-b p-6 dark:border-white/10">
             <div>
-                <p class="mb-3 text-base font-medium text-black">Alternate Email</p>
-                <p class="mb-3 text-base text-gray-600">{{ $record?->email_2 }}</p>
+                <p class="mb-3 text-base font-medium text-black dark:text-white">Alternate Email</p>
+                <p class="mb-3 text-base text-gray-600 dark:text-gray-400">{{ $record?->email_2 }}</p>
             </div>
             <div>
-                <p class="mb-3 text-base font-medium text-black">Phone</p>
-                <p class="mb-3 text-base text-gray-600">{{ $record?->phone }}</p>
+                <p class="mb-3 text-base font-medium text-black dark:text-white">Phone</p>
+                <p class="mb-3 text-base text-gray-600 dark:text-gray-400">{{ $record?->phone }}</p>
             </div>
             <div>
-                <p class="mb-3 text-base font-medium text-black">Address</p>
-                <p class="mb-3 text-base text-gray-600">{{ $record?->address }}</p>
-            </div>
-        </div>
-        <div class="border-b p-6">
-            <div>
-                <p class="mb-3 text-base font-medium text-black">Ethnicity</p>
-                <p class="mb-3 text-base text-gray-600">{{ $record?->ethnicity }}</p>
-            </div>
-            <div>
-                <p class="mb-3 text-base font-medium text-black">Birthdate</p>
-                <p class="mb-3 text-base text-gray-600">{{ $record?->birthdate }}</p>
-            </div>
-            <div>
-                <p class="mb-3 text-base font-medium text-black">High School Graduation</p>
-                <p class="mb-3 text-base text-gray-600">{{ $record?->hsgrad }}</p>
+                <p class="mb-3 text-base font-medium text-black dark:text-white">Address</p>
+                <p class="mb-3 text-base text-gray-600 dark:text-gray-400">{{ $record->full_address }}</p>
             </div>
         </div>
-        <div class="border-b p-6">
+        <div class="border-b p-6 dark:border-white/10">
             <div>
-                <p class="mb-3 text-base font-medium text-black">First Term</p>
-                <p class="mb-3 text-base text-gray-600">{{ $record?->f_e_term }}</p>
+                <p class="mb-3 text-base font-medium text-black dark:text-white">Ethnicity</p>
+                <p class="mb-3 text-base text-gray-600 dark:text-gray-400">{{ $record?->ethnicity }}</p>
             </div>
             <div>
-                <p class="mb-3 text-base font-medium text-black">Recent Term</p>
-                <p class="mb-3 text-base text-gray-600">{{ $record?->mr_e_term }}</p>
+                <p class="mb-3 text-base font-medium text-black dark:text-white">Birthdate</p>
+                <p class="mb-3 text-base text-gray-600 dark:text-gray-400">{{ $record?->birthdate?->format('F d, Y') }}
+                </p>
             </div>
             <div>
-                <p class="mb-3 text-base font-medium text-black">SIS Holds</p>
-                <p class="mb-3 text-base text-gray-600">{{ $record?->holds }}</p>
+                <p class="mb-3 text-base font-medium text-black dark:text-white">High School Graduation</p>
+                <p class="mb-3 text-base text-gray-600 dark:text-gray-400">{{ $record?->hsgrad }}</p>
+            </div>
+        </div>
+        <div class="border-b p-6 dark:border-white/10">
+            <div>
+                <p class="mb-3 text-base font-medium text-black dark:text-white">First Term</p>
+                <p class="mb-3 text-base text-gray-600 dark:text-gray-400">{{ $record?->f_e_term }}</p>
+            </div>
+            <div>
+                <p class="mb-3 text-base font-medium text-black dark:text-white">Recent Term</p>
+                <p class="mb-3 text-base text-gray-600 dark:text-gray-400">{{ $record?->mr_e_term }}</p>
+            </div>
+            <div>
+                <p class="mb-3 text-base font-medium text-black dark:text-white">SIS Holds</p>
+                <p class="mb-3 text-base text-gray-600 dark:text-gray-400">{{ $record?->holds }}</p>
             </div>
         </div>
     </div>

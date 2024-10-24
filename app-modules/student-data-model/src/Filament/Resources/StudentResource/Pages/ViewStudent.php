@@ -114,9 +114,15 @@ class ViewStudent extends ViewRecord
             ->send();
     }
 
-    public function getNameWords(): string
+    public function getAbbreviatedName(): string
     {
-        return collect(Str::of($this->record?->full_name)->explode(' '))
+        $name = $this->record?->full_name;
+
+        if (empty($name)) {
+            $name = $this->record?->first . ' ' . $this->record?->last;
+        }
+
+        return collect(Str::of($name)->explode(' '))
             ->map(function ($word) {
                 return Str::substr($word, 0, 1);
             })->implode('');

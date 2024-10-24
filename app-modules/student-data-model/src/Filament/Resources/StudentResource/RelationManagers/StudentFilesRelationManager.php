@@ -34,49 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Notifications;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
-use Illuminate\Support\HtmlString;
-use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Notification\Notifications\DatabaseNotification;
-use Filament\Notifications\Notification as FilamentNotification;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 
-class AlertCreatedNotification extends BaseNotification implements DatabaseNotification
+class StudentFilesRelationManager extends RelationManager
 {
-    use DatabaseChannelTrait;
+    protected static string $resource = StudentResource::class;
 
-    public function __construct(public Alert $alert) {}
+    protected static string $relationship = 'engagementFiles';
 
-    public function toDatabase(object $notifiable): array
-    {
-        $concern = $this->alert->concern;
-
-        $name = $concern->{$concern->displayNameKey()};
-
-        $target = match ($concern::class) {
-            Prospect::class => ProspectResource::class,
-            Student::class => StudentResource::class,
-        };
-
-        $alertUrl = $target::getUrl('students', ['record' => $concern]);
-
-        $alertLink = new HtmlString("<a href='{$alertUrl}' target='_blank' class='underline'>alert</a>");
-
-        $morph = str($concern->getMorphClass());
-
-        $morphUrl = $target::getUrl('view', ['record' => $concern]);
-
-        $morphLink = new HtmlString("<a href='{$morphUrl}' target='_blank' class='underline'>{$name}</a>");
-
-        return FilamentNotification::make()
-            ->warning()
-            ->title("A {$this->alert->severity->value} severity {$alertLink} has been created for {$morph} {$morphLink}")
-            ->getDatabaseMessage();
-    }
+    protected static ?string $title = 'Files';
 }

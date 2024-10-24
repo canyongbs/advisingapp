@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Livewire;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -54,12 +54,9 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
-class ManageStudentAlerts extends RelationManager
+class StudentAlertsRelationManager extends RelationManager
 {
-    protected static string $resource = StudentResource::class;
-
     protected static string $relationship = 'alerts';
 
     public function infolist(Infolist $infolist): Infolist

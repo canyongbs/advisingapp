@@ -36,14 +36,15 @@
     @if ($timelineRecords->count() < 1)
         <x-timeline::empty-state :message="$emptyStateMessage" />
     @else
-        <div class="rounded-xl border bg-white">
-            <div class="flex justify-between border-b px-6 py-4 text-lg font-medium text-black">
+        <div
+            class="rounded-xl bg-white ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-gray-900 dark:text-white dark:ring-white/10">
+            <div class="flex justify-between border-b px-6 py-4 text-lg font-medium text-black dark:text-white">
                 Activity Feed
                 <x-filament::button wire:click="openFullFeedModal">
                     Full Feed
                 </x-filament::button>
             </div>
-            <div class="text-lg font-medium text-black">
+            <div class="text-lg font-medium text-black dark:text-white">
                 <ol class="px-2 pl-8 pt-5">
                     @foreach ($timelineRecords as $record)
                         <li

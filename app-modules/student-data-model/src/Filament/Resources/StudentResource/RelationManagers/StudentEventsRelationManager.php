@@ -34,53 +34,60 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Livewire;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use App\Enums\Feature;
+use Filament\Tables\Table;
 use Illuminate\Support\Facades\Gate;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use App\Filament\Tables\Columns\IdColumn;
+use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use Filament\Resources\RelationManagers\RelationManager;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentEvents;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFormSubmissionsRelationManager;
+use AdvisingApp\MeetingCenter\Filament\Actions\InviteEventAttendeeAction;
+use AdvisingApp\MeetingCenter\Filament\Actions\Table\ViewEventAttendeeAction;
 
-class ManageStudentFormSubmissions extends ManageRelatedRecords
+class StudentEventsRelationManager extends RelationManager
 {
     protected static string $resource = StudentResource::class;
 
-    protected static string $relationship = 'formSubmissions';
+    protected static string $relationship = 'eventAttendeeRecords';
 
-    protected static string $view = 'student-data-model::livewire.manage-student-form-submissions';
+    protected static ?string $title = 'Events';
 
-    public function mount(int | string $record): void
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        $this->record = $this->resolveRecord($record);
-
-        $this->authorizeAccess();
-
-        $this->previousUrl = url()->previous();
-
-        $this->loadDefaultActiveTab();
+        return Gate::check(Feature::OnlineForms->getGateName());
     }
 
-    public static function canAccess(array $parameters = []): bool
+    public function table(Table $table): Table
     {
-        return parent::canAccess($parameters) && Gate::check(Feature::OnlineForms->getGateName());
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('event.title')
+                    ->url(fn (EventAttendee $record) => EventResource::getUrl('view', ['record' => $record->event]))
+                    ->color('primary'),
+                TextColumn::make('status')
+                    ->badge(),
+            ])
+            ->actions([
+                ViewEventAttendeeAction::make(),
+            ])
+            ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('status', [
+                EventAttendeeStatus::Invited,
+                EventAttendeeStatus::Attending,
+            ]));
     }
 
-    public function getRelationManagers(): array
+    protected function getHeaderActions(): array
     {
-        return static::managers($this->getRecord());
-    }
-
-    private static function managers(?Model $record = null): array
-    {
-        return collect([
-            StudentFormSubmissionsRelationManager::class,
-            ManageStudentEvents::class,
-            ManageStudentApplicationSubmissions::class,
-        ])
-            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
-            ->toArray();
+        return [
+            InviteEventAttendeeAction::make(),
+        ];
     }
 }
