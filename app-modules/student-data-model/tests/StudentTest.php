@@ -42,26 +42,8 @@ use function Pest\Livewire\livewire;
 use Filament\Tables\Actions\AttachAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentPrograms;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProgramRelationManager;
-
-it('can render manage basic needs program for student', function () {
-    $user = User::factory()->licensed(Student::getLicenseType())->create();
-
-    actingAs($user)
-        ->get(StudentResource::getUrl('programs', [
-            'record' => Student::factory()->create(),
-        ]))->assertForbidden();
-
-    $user->givePermissionTo('basic_needs_program.view-any');
-    $user->givePermissionTo('student.view-any');
-
-    actingAs($user)
-        ->get(StudentResource::getUrl('programs', [
-            'record' => Student::factory()->create(),
-        ]))->assertSuccessful();
-})->skip();
 
 it('can attach a basic needs program to a student', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();

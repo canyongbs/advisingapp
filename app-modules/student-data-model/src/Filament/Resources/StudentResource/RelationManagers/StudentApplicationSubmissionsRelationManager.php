@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Livewire;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use App\Enums\Feature;
 use Filament\Tables\Table;
@@ -52,12 +52,9 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
-class ManageStudentApplicationSubmissions extends RelationManager
+class StudentApplicationSubmissionsRelationManager extends RelationManager
 {
-    protected static string $resource = StudentResource::class;
-
     protected static string $relationship = 'applicationSubmissions';
 
     protected static ?string $title = 'Applications';

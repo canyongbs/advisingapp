@@ -49,20 +49,20 @@
             <div class="flex flex-col gap-8">
                 <livewire:student-data-model::manage-student-information :record="$record->getKey()" />
                 <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                    <livewire:manage-student-alerts
+                    <livewire:student-alert-relation-manager
                         :owner-record="$record"
                         :page-class="ViewStudent::class"
                     />
 
-                    <livewire:student-data-model::manage-student-tasks
+                    <livewire:student-data-model::student-tasks-relation-manager
                         :owner-record="$record"
                         :page-class="ViewStudent::class"
                     />
-                    <livewire:student-data-model::manage-student-care-team
+                    <livewire:student-care-team-relation-manager
                         :owner-record="$record"
                         :page-class="ViewStudent::class"
                     />
-                    <livewire:student-data-model::manage-student-subscriptions
+                    <livewire:student-subscriptions-relation-manager
                         :owner-record="$record"
                         :page-class="ViewStudent::class"
                     />

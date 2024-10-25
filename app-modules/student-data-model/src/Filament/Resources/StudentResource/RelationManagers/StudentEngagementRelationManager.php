@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Livewire;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -42,7 +42,6 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Facades\Log;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Actions;
@@ -75,7 +74,7 @@ use Filament\Infolists\Components\Fieldset as InfolistFieldset;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords\Actions\DraftWithAiAction;
 
-class ManageStudentEngagement extends RelationManager
+class StudentEngagementRelationManager extends RelationManager
 {
     protected static string $relationship = 'timeline';
 
@@ -278,7 +277,6 @@ class ManageStudentEngagement extends RelationManager
                     })
                     ->createAnother(false)
                     ->action(function (array $data, Form $form) {
-                        Log::info('asdasd', [$this->getOwnerRecord()]);
                         /** @var Student $record */
                         $record = $this->getOwnerRecord();
 

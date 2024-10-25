@@ -47,7 +47,10 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
 use AdvisingApp\StudentDataModel\Registries\StudentDataModelRbacRegistry;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentTasksRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentAlertsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentCareTeamRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentSubscriptionsRelationManager;
 
 class StudentDataModelServiceProvider extends ServiceProvider
 {
@@ -69,6 +72,10 @@ class StudentDataModelServiceProvider extends ServiceProvider
         AuthorizationRoleRegistry::register(StudentDataModelRbacRegistry::class);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        Livewire::component('manage-student-alerts', StudentAlertsRelationManager::class);
+
+        Livewire::component('student-alert-relation-manager', StudentAlertsRelationManager::class);
+        Livewire::component('student-care-team-relation-manager', StudentCareTeamRelationManager::class);
+        Livewire::component('student-subscriptions-relation-manager', StudentSubscriptionsRelationManager::class);
+        Livewire::component('student-tasks-relation-manager', StudentTasksRelationManager::class);
     }
 }

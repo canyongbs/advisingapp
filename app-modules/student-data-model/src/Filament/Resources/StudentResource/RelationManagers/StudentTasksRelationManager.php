@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Livewire;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -64,10 +64,8 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 
-class ManageStudentTasks extends RelationManager
+class StudentTasksRelationManager extends RelationManager
 {
-    protected static string $resource = StudentResource::class;
-
     protected static string $relationship = 'tasks';
 
     public function form(Form $form): Form
@@ -93,7 +91,7 @@ class ManageStudentTasks extends RelationManager
                         fn (Builder $query) => $query->tap(new HasLicense($this->getOwnerRecord()->getLicenseType())),
                     )
                     ->nullable()
-                    // ->searchable(['name', 'email'])
+                    ->searchable(['name', 'email'])
                     ->default(auth()->id()),
             ]);
     }

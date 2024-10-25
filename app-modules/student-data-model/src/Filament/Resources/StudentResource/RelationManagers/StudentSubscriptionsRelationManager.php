@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Livewire;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use App\Models\User;
 use Filament\Tables\Table;
@@ -50,12 +50,9 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
-class ManageStudentSubscriptions extends RelationManager
+class StudentSubscriptionsRelationManager extends RelationManager
 {
-    protected static string $resource = StudentResource::class;
-
     protected static string $relationship = 'subscribedUsers';
 
     protected static ?string $title = 'Subscriptions';

@@ -50,14 +50,6 @@ class StudentInteractionsRelationManager extends RelationManager
 
     protected static string $relationship = 'interactions';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Interactions';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Interactions';
-
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
-
     public function form(Form $form): Form
     {
         return (resolve(CreateInteraction::class))->form($form);

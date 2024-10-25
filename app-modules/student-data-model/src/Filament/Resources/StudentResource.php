@@ -122,7 +122,7 @@ class StudentResource extends Resource
     {
         return [
             'index' => ListStudents::route('/'),
-            'manage-alerts' => ManageStudentAlerts::route('/{record}/alerts'),
+            // 'manage-alerts' => ManageStudentAlerts::route('/{record}/alerts'),
             // 'manage-engagement' => ManageStudentEngagement::route('/{record}/engagement'),
             // 'manage-files' => ManageStudentFiles::route('/{record}/files'),
             // 'manage-form-submissions' => ManageStudentFormSubmissions::route('/{record}/form-submissions'),

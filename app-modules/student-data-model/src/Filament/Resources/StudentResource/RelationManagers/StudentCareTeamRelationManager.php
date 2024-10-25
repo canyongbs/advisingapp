@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use App\Models\User;
 use Filament\Tables\Table;
@@ -49,24 +49,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use Filament\Resources\RelationManagers\RelationManager;
 
-class ManageStudentCareTeam extends ManageRelatedRecords
+class StudentCareTeamRelationManager extends RelationManager
 {
-    protected static string $resource = StudentResource::class;
-
     protected static string $relationship = 'careTeam';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Care Team';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Care Team';
-
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
-
-    //TODO: manually override check canAccess for policy
 
     public function table(Table $table): Table
     {
@@ -81,7 +68,7 @@ class ManageStudentCareTeam extends ManageRelatedRecords
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->label('Add to Care Team')
+                    ->label('Manage')
                     ->modalHeading(function () {
                         /** @var Student $student */
                         $student = $this->getOwnerRecord();

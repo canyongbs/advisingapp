@@ -42,6 +42,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFilesRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEngagementRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentInteractionsRelationManager;
 
 class ManageStudentInformation extends ManageRelatedRecords
@@ -78,7 +79,7 @@ class ManageStudentInformation extends ManageRelatedRecords
         return collect([
             ProgramsRelationManager::class,
             EnrollmentsRelationManager::class,
-            ManageStudentEngagement::class,
+            StudentEngagementRelationManager::class,
             StudentInteractionsRelationManager::class,
             StudentFilesRelationManager::class,
         ])
