@@ -64,7 +64,12 @@ class AlertCreatedNotification extends BaseNotification implements DatabaseNotif
             Student::class => StudentResource::class,
         };
 
-        $alertUrl = $target::getUrl('students', ['record' => $concern]);
+        $targetRoute = match ($concern::class) {
+            Prospect::class => 'manage-alerts',
+            Student::class => 'view',
+        };
+
+        $alertUrl = $target::getUrl($targetRoute, ['record' => $concern]);
 
         $alertLink = new HtmlString("<a href='{$alertUrl}' target='_blank' class='underline'>alert</a>");
 
