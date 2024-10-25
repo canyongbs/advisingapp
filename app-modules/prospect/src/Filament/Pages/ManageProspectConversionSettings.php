@@ -39,7 +39,6 @@ namespace AdvisingApp\Prospect\Filament\Pages;
 use Cknow\Money\Money;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
-use App\Features\ProspectConversion;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Forms\Components\Heading;
@@ -68,7 +67,7 @@ class ManageProspectConversionSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return ProspectConversion::active() && parent::canAccess() && $user->can('prospect_conversion.manage');
+        return parent::canAccess() && $user->can('prospect_conversion.manage');
     }
 
     public function form(Form $form): Form

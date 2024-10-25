@@ -42,7 +42,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\StudentDataModel\Models\Program;
 use App\Filament\Clusters\ConstituentManagement;
-use App\Features\ManageStudentConfigurationFeature;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Filament\Resources\ManageProgramResource\Pages\ListManagePrograms;
 
@@ -65,7 +64,7 @@ class ManageProgramResource extends Resource
         /** @var User $user */
         $user = auth()->user();
 
-        return ManageStudentConfigurationFeature::active() && $user->can('student_record_manager.view-any') && app(ManageStudentConfigurationSettings::class)->is_enabled;
+        return $user->can('student_record_manager.view-any') && app(ManageStudentConfigurationSettings::class)->is_enabled;
     }
 
     public static function form(Form $form): Form
