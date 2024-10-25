@@ -50,9 +50,9 @@ use AdvisingApp\Ai\Actions\CompletePrompt;
 use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
+use AdvisingApp\Engagement\Filament\Pages\MessageCenter;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
-use AdvisingApp\Engagement\Filament\Pages\MessageCenter;
 
 class MessageCenterDraftWithAiAction extends Action
 {
@@ -66,7 +66,7 @@ class MessageCenterDraftWithAiAction extends Action
             ->label('Draft with AI Assistant')
             ->link()
             ->icon('heroicon-m-pencil')
-            ->modalContent(fn(MessageCenter $livewire) => view('engagement::filament.manage-related-records.manage-related-engagement-records.draft-with-ai-modal-content', [
+            ->modalContent(fn (MessageCenter $livewire) => view('engagement::filament.manage-related-records.manage-related-engagement-records.draft-with-ai-modal-content', [
                 'recordTitle' => $livewire->recordModel->full_name,
                 'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
                     ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
@@ -88,9 +88,8 @@ class MessageCenterDraftWithAiAction extends Action
                 $clientName = app(LicenseSettings::class)->data->subscription->clientName;
                 $educatableLabel = $livewire->recordModel::getLabel();
 
-
                 $mergeTagsList = collect($this->getMergeTags())
-                    ->map(fn(string $tag): string => <<<HTML
+                    ->map(fn (string $tag): string => <<<HTML
                         <span data-type="mergeTag" data-id="{$tag}" contenteditable="false">{$tag}</span>
                     HTML)
                     ->join(', ', ' and ');

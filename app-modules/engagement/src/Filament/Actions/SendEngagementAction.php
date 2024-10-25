@@ -42,6 +42,7 @@ use Filament\Forms\Form;
 use Filament\Actions\Action;
 use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Actions;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
@@ -54,7 +55,6 @@ use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
-use Filament\Forms\Components\Actions;
 
 class SendEngagementAction extends Action
 {
@@ -66,14 +66,14 @@ class SendEngagementAction extends Action
 
         $this->icon('heroicon-o-chat-bubble-bottom-center-text')
             ->modalHeading('Send Engagement')
-            ->modalDescription(fn() => "Send an engagement to {$this->getEducatable()->display_name}.")
+            ->modalDescription(fn () => "Send an engagement to {$this->getEducatable()->display_name}.")
             ->model(Engagement::class)
             ->form([
                 Select::make('delivery_method')
                     ->label('What would you like to send?')
                     ->options(EngagementDeliveryMethod::getOptions())
                     ->default(EngagementDeliveryMethod::Email->value)
-                    ->disableOptionWhen(fn(string $value): bool => EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
+                    ->disableOptionWhen(fn (string $value): bool => EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
                     ->selectablePlaceholder(false)
                     ->live(),
                 Fieldset::make('Content')
@@ -82,7 +82,7 @@ class SendEngagementAction extends Action
                             ->autofocus()
                             ->required()
                             ->placeholder(__('Subject'))
-                            ->hidden(fn(Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                            ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
                             ->columnSpanFull(),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
@@ -95,7 +95,7 @@ class SendEngagementAction extends Action
                             ])
                             ->profile('email')
                             ->required()
-                            ->hintAction(fn(TiptapEditor $component) => FormAction::make('loadEmailTemplate')
+                            ->hintAction(fn (TiptapEditor $component) => FormAction::make('loadEmailTemplate')
                                 ->form([
                                     Select::make('emailTemplate')
                                         ->searchable()
@@ -103,7 +103,7 @@ class SendEngagementAction extends Action
                                             return EmailTemplate::query()
                                                 ->when(
                                                     $get('onlyMyTemplates'),
-                                                    fn(Builder $query) => $query->whereBelongsTo(auth()->user())
+                                                    fn (Builder $query) => $query->whereBelongsTo(auth()->user())
                                                 )
                                                 ->orderBy('name')
                                                 ->limit(50)
@@ -114,11 +114,11 @@ class SendEngagementAction extends Action
                                             return EmailTemplate::query()
                                                 ->when(
                                                     $get('onlyMyTemplates'),
-                                                    fn(Builder $query) => $query->whereBelongsTo(auth()->user())
+                                                    fn (Builder $query) => $query->whereBelongsTo(auth()->user())
                                                 )
                                                 ->when(
                                                     $get('onlyMyTeamTemplates'),
-                                                    fn(Builder $query) => $query->whereIn('user_id', auth()->user()->teams->users->pluck('id'))
+                                                    fn (Builder $query) => $query->whereIn('user_id', auth()->user()->teams->users->pluck('id'))
                                                 )
                                                 ->where(new Expression('lower(name)'), 'like', "%{$search}%")
                                                 ->orderBy('name')
@@ -129,11 +129,11 @@ class SendEngagementAction extends Action
                                     Checkbox::make('onlyMyTemplates')
                                         ->label('Only show my templates')
                                         ->live()
-                                        ->afterStateUpdated(fn(Set $set) => $set('emailTemplate', null)),
+                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
                                     Checkbox::make('onlyMyTeamTemplates')
                                         ->label("Only show my team's templates")
                                         ->live()
-                                        ->afterStateUpdated(fn(Set $set) => $set('emailTemplate', null)),
+                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
                                 ])
                                 ->action(function (array $data) use ($component) {
                                     $template = EmailTemplate::find($data['emailTemplate']);
@@ -146,7 +146,7 @@ class SendEngagementAction extends Action
                                         $component->generateImageUrls($template->content),
                                     );
                                 }))
-                            ->hidden(fn(Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                            ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
                             ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
                         EngagementSmsBodyField::make(context: 'create'),
@@ -162,7 +162,7 @@ class SendEngagementAction extends Action
                 $createOnDemandEngagement(
                     $this->getEducatable(),
                     $data,
-                    afterCreation: fn(Engagement $engagement) => $form->model($engagement)->saveRelationships(),
+                    afterCreation: fn (Engagement $engagement) => $form->model($engagement)->saveRelationships(),
                 );
             })
             ->modalSubmitActionLabel('Send')
@@ -175,8 +175,8 @@ class SendEngagementAction extends Action
                     ->color('gray')
                     ->cancelParentActions()
                     ->requiresConfirmation()
-                    ->action(fn() => null)
-                    ->modalSubmitAction(fn(StaticAction $action) => $action->color('danger')),
+                    ->action(fn () => null)
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('danger')),
             ]);
     }
 
