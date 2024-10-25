@@ -266,7 +266,8 @@ class EditProfile extends Page
                 Section::make('Disable Branding Bar')
                     ->aside()
                     ->schema([
-                        Toggle::make('is_branding_bar_dismissed'),
+                        Toggle::make('is_branding_bar_dismissed')
+                        ->label(''),
                     ])
                     ->visible(fn (CollegeBrandingSettings $settings) => $settings->dismissible),
                 Section::make('Connected Accounts')
