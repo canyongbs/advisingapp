@@ -43,20 +43,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFiles;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentTasks;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentEvents;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentCareTeam;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentPrograms;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentEngagement;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInformation;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\StudentServiceManagement;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInteractions;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\StudentEngagementTimeline;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentSubscriptions;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFormSubmissions;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentApplicationSubmissions;
 
 class StudentResource extends Resource
 {
@@ -122,21 +108,7 @@ class StudentResource extends Resource
     {
         return [
             'index' => ListStudents::route('/'),
-            // 'manage-alerts' => ManageStudentAlerts::route('/{record}/alerts'),
-            // 'manage-engagement' => ManageStudentEngagement::route('/{record}/engagement'),
-            // 'manage-files' => ManageStudentFiles::route('/{record}/files'),
-            // 'manage-form-submissions' => ManageStudentFormSubmissions::route('/{record}/form-submissions'),
-            // 'manage-application-submissions' => ManageStudentApplicationSubmissions::route('/{record}/application-submissions'),
-            // 'manage-information' => ManageStudentInformation::route('/{record}/information'),
-            // 'manage-interactions' => ManageStudentInteractions::route('/{record}/interactions'),
-            // 'manage-subscriptions' => ManageStudentSubscriptions::route('/{record}/subscriptions'),
-            // 'manage-tasks' => ManageStudentTasks::route('/{record}/tasks'),
             'view' => ViewStudent::route('/{record}'),
-            // 'timeline' => StudentEngagementTimeline::route('/{record}/timeline'),
-            // 'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
-            // 'service-management' => StudentServiceManagement::route('/{record}/service-management'),
-            // 'events' => ManageStudentEvents::route('/{record}/events'),
-            // 'programs' => ManageStudentPrograms::route('/{record}/programs'),
         ];
     }
 }

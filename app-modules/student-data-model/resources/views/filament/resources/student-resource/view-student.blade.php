@@ -54,7 +54,7 @@
                         :page-class="ViewStudent::class"
                     />
 
-                    <livewire:student-data-model::student-tasks-relation-manager
+                    <livewire:student-tasks-relation-manager
                         :owner-record="$record"
                         :page-class="ViewStudent::class"
                     />

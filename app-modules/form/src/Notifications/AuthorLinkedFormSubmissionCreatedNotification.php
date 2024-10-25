@@ -59,12 +59,12 @@ class AuthorLinkedFormSubmissionCreatedNotification extends BaseNotification imp
 
         $name = $author->{$author->displayNameKey()};
 
-        $target = match ($author::class) {
-            Prospect::class => ProspectResource::class,
-            Student::class => StudentResource::class,
+        [$target, $targetRoute] = match ($author::class) {
+            Prospect::class => [ProspectResource::class, 'manage-form-submissions'],
+            Student::class => [StudentResource::class, 'view'],
         };
 
-        $formSubmissionUrl = $target::getUrl('manage-form-submissions', ['record' => $author]);
+        $formSubmissionUrl = $target::getUrl($targetRoute, ['record' => $author]);
 
         $formSubmissionLink = new HtmlString("<a href='{$formSubmissionUrl}' target='_blank' class='underline'>form submission</a>");
 

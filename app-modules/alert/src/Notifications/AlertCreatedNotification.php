@@ -59,14 +59,9 @@ class AlertCreatedNotification extends BaseNotification implements DatabaseNotif
 
         $name = $concern->{$concern->displayNameKey()};
 
-        $target = match ($concern::class) {
-            Prospect::class => ProspectResource::class,
-            Student::class => StudentResource::class,
-        };
-
-        $targetRoute = match ($concern::class) {
-            Prospect::class => 'manage-alerts',
-            Student::class => 'view',
+        [$target, $targetRoute] = match ($concern::class) {
+            Prospect::class => [ProspectResource::class, 'manage-alerts'],
+            Student::class => [StudentResource::class, 'view'],
         };
 
         $alertUrl = $target::getUrl($targetRoute, ['record' => $concern]);
