@@ -20,7 +20,6 @@
     "extra": {
         "laravel": {
             "providers": [
-                "AdvisingApp\\StudentDataModel\\Providers\\StudentDataModelServiceProvider",
                 "AdvisingApp\\StudentDataModel\\Providers\\StudentDataModelServiceProvider"
             ]
         }
