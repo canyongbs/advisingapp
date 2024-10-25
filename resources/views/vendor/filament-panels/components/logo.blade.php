@@ -81,13 +81,13 @@
     @endif
 @else
     <img
-        src="{{ Vite::asset('resources/images/default-logo-light.svg') }}"
-        class="h-full max-h-9 max-w-full dark:hidden block"
+        src="{{ Vite::asset('resources/images/default-logo-light-251024.svg') }}"
+        class="h-full max-h-9 max-w-full min-h-8 dark:hidden block"
 
     />
 
     <img
-        src="{{ Vite::asset('resources/images/default-logo-dark.svg') }}"
-        class="h-full max-h-9 max-w-full hidden dark:block"
+        src="{{ Vite::asset('resources/images/default-logo-dark-251024.svg') }}"
+        class="h-full max-h-9 max-w-full min-h-8 hidden dark:block"
     />
 @endif
