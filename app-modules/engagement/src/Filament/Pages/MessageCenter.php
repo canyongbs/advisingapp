@@ -322,7 +322,7 @@ class MessageCenter extends Page
     {
         return SendEngagementAction::make()
             ->educatable($this->recordModel)
-            ->after(fn () => $this->refreshSelectedEducatable());
+            ->after(fn() => $this->refreshSelectedEducatable());
     }
 
     protected function getViewData(): array

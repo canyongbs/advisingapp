@@ -42,10 +42,10 @@ use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagement
 
 class ManageStudentEngagement extends ManageRelatedEngagementRecords
 {
-    protected static string $resource = StudentResource::class;
+  protected static string $resource = StudentResource::class;
 
-    public function getTitle(): string | Htmlable
-    {
-        return 'Manage Student Email and Texts';
-    }
+  public function getTitle(): string | Htmlable
+  {
+    return 'Manage Student Email and Texts';
+  }
 }
