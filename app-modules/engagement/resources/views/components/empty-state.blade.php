@@ -39,5 +39,6 @@
         icon="heroicon-o-rectangle-group"
     />
 
-    <span class="mt-2 block text-sm font-semibold text-gray-800 dark:text-gray-200">Select a record to see related emails and text messages</span>
+    <span class="mt-2 block text-sm font-semibold text-gray-800 dark:text-gray-200">Select a record to see related emails
+        and text messages</span>
 </div>
