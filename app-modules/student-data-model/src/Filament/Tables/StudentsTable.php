@@ -102,6 +102,9 @@ class StudentsTable
                             ->label('SAP')
                             ->icon('heroicon-m-academic-cap'),
                         BooleanConstraint::make('dual'),
+                        BooleanConstraint::make('firstgen')
+                            ->label('First Generation')
+                            ->icon('heroicon-m-academic-cap'),
                         BooleanConstraint::make('ferpa')
                             ->label('FERPA')
                             ->icon('heroicon-m-lock-open'),
