@@ -45,7 +45,6 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\ConstituentManagement;
-use App\Features\ManageStudentConfigurationFeature;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource\Pages\ListManageStudents;
 
@@ -68,8 +67,7 @@ class ManageStudentResource extends Resource
         /** @var User $user */
         $user = auth()->user();
 
-        return ManageStudentConfigurationFeature::active()
-            && app(ManageStudentConfigurationSettings::class)->is_enabled
+        return app(ManageStudentConfigurationSettings::class)->is_enabled
             && $user->can('student_record_manager.view-any');
     }
 
