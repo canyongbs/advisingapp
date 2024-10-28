@@ -42,6 +42,7 @@ use Filament\Forms\Form;
 use Filament\Actions\Action;
 use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Actions;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
@@ -86,7 +87,7 @@ class SendEngagementAction extends Action
                         TiptapEditor::make('body')
                             ->disk('s3-public')
                             ->label('Body')
-                            ->mergeTags([
+                            ->mergeTags($mergeTags = [
                                 'student first name',
                                 'student last name',
                                 'student full name',
@@ -146,8 +147,13 @@ class SendEngagementAction extends Action
                                     );
                                 }))
                             ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                            ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
                         EngagementSmsBodyField::make(context: 'create'),
+                        Actions::make([
+                            MessageCenterDraftWithAiAction::make()
+                                ->mergeTags($mergeTags),
+                        ]),
                     ]),
             ])
             ->action(function (array $data, Form $form) {
