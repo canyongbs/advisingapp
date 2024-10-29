@@ -53,7 +53,7 @@ class StudentEngagementTimeline extends TimelinePage
 
     protected static string $view = 'student-data-model::livewire.student-engagement-timeline';
 
-    public string $emptyStateMessage = 'There are no engagements to show for this student.';
+    public string $emptyStateMessage = 'There are no activities to show for this student.';
 
     public string $noMoreRecordsMessage = "You have reached the end of this student's engagement timeline.";
 

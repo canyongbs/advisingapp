@@ -67,7 +67,7 @@
                 <p class="mb-3 text-base text-gray-600 dark:text-gray-400">{{ $record?->hsgrad }}</p>
             </div>
         </div>
-        <div class="border-b p-6 dark:border-white/10">
+        <div class="p-6 dark:border-white/10">
             <div>
                 <p class="mb-3 text-base font-medium text-black dark:text-white">First Term</p>
                 <p class="mb-3 text-base text-gray-600 dark:text-gray-400">{{ $record?->f_e_term }}</p>
