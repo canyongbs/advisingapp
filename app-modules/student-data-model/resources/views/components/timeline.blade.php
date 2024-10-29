@@ -66,16 +66,16 @@
                                 <div class="flex flex-row justify-between">
                                     <h3
                                         class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
-                                        <a
-                                            class="font-medium underline"
-                                            href=""
+                                        <span
+                                            class="cursor-pointer font-medium underline"
+                                            wire:click="viewRecord('{{ $record->timelineable->getKey() }}', '{{ $record->timelineable->getMorphClass() }}')"
                                         >
                                             @if ($record->timelineable()->timeline()->providesCustomView())
                                                 {{ $this->fetchTitle($record->timelineable->getMorphClass(), $record->timelineable->getKey()) }}
                                             @else
                                                 {{ $record->timelineable?->timelineRecordTitle() }}
                                             @endif
-                                        </a>
+                                        </span>
                                     </h3>
                                 </div>
                                 <time
@@ -156,7 +156,6 @@
                                         }, {
                                             root: null
                                         })
-                                
                                         observer.observe(this.$el)
                                     }
                                 }"

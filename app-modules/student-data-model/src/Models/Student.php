@@ -374,7 +374,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             get: fn (mixed $value, array $attributes) => trim(implode(' ', array_filter([
                 $attributes['address'] ?? '',
                 $attributes['address2'] ?? '',
-                $attributes['address3'] ?? '',
+                $attributes['address3'] . ',' ?? '',
                 $attributes['city'] ? $attributes['city'] . ',' : '',
                 $attributes['state'] ? $attributes['state'] . ',' : '',
                 $attributes['postal'] ?? '',

@@ -61,7 +61,7 @@ class StudentApplicationSubmissionsRelationManager extends RelationManager
 
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        return Gate::check(Feature::OnlineForms->getGateName());
+        return parent::canViewForRecord($ownerRecord, $pageClass) && Gate::check(Feature::OnlineAdmissions->getGateName());
     }
 
     public function table(Table $table): Table
