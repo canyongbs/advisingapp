@@ -34,21 +34,21 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
-
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEventsRelationManager;
-
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFormSubmissionsRelationManager;
-
-use AdvisingApp\StudentDataModel\Livewire\ManageStudentPremiumFeatures;
-use AdvisingApp\StudentDataModel\Models\Student;
-
 use App\Models\User;
-use App\Settings\LicenseSettings;
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
+
 use function Tests\asSuperAdmin;
 
+use App\Settings\LicenseSettings;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Livewire\ManageStudentPremiumFeatures;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEventsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFormSubmissionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentApplicationSubmissionsRelationManager;
 
 it('requires proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -142,6 +142,48 @@ it('renders the StudentEventsRelationManager based on Feature access', function 
         ->assertDontSeeLivewire($relationManager);
 
     $licenseSettings->data->addons->eventManagement = true;
+
+    $licenseSettings->save();
+
+    livewire(ManageStudentPremiumFeatures::class, [
+        'record' => $student->getKey(),
+        'activeRelationManager' => array_search(
+            $relationManager,
+            (new ManageStudentPremiumFeatures())
+                ->tap(fn (ManageStudentPremiumFeatures $manager) => $manager->mount($student->getKey()))
+                ->getRelationManagers()
+        ),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($relationManager);
+});
+
+it('renders the StudentApplicationSubmissionsRelationManager based on Feature access', function () {
+    $student = Student::factory()->create();
+
+    $licenseSettings = app(LicenseSettings::class);
+
+    $licenseSettings->data->addons->onlineAdmissions = false;
+
+    $licenseSettings->save();
+
+    asSuperAdmin();
+
+    $relationManager = StudentApplicationSubmissionsRelationManager::class;
+
+    livewire(ManageStudentPremiumFeatures::class, [
+        'record' => $student->getKey(),
+        'activeRelationManager' => array_search(
+            $relationManager,
+            (new ManageStudentPremiumFeatures())
+                ->tap(fn (ManageStudentPremiumFeatures $manager) => $manager->mount($student->getKey()))
+                ->getRelationManagers()
+        ),
+    ])
+        ->assertOk()
+        ->assertDontSeeLivewire($relationManager);
+
+    $licenseSettings->data->addons->onlineAdmissions = true;
 
     $licenseSettings->save();
 
