@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\StudentDataModel\Livewire;
 
-use App\Enums\Feature;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
@@ -62,11 +60,6 @@ class ManageStudentPremiumFeatures extends ManageRelatedRecords
         $this->previousUrl = url()->previous();
 
         $this->loadDefaultActiveTab();
-    }
-
-    public static function canAccess(array $parameters = []): bool
-    {
-        return parent::canAccess($parameters) && Gate::check(Feature::OnlineForms->getGateName());
     }
 
     public function getRelationManagers(): array

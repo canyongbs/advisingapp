@@ -88,4 +88,9 @@ class StudentEngagementTimeline extends TimelinePage
             'alert_history' => 'Alert ' . $record?->timeline()?->history?->event,
         };
     }
+
+    public static function canAccess(array $parameters = []): bool
+    {
+        return auth()->user()->can('student.*.view');
+    }
 }

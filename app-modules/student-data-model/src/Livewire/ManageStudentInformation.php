@@ -66,7 +66,7 @@ class ManageStudentInformation extends ManageRelatedRecords
 
     public static function canAccess(array $arguments = []): bool
     {
-        return (bool) count(static::managers($arguments['record'] ?? null));
+        return auth()->user()->can('student.*.view');
     }
 
     public function getRelationManagers(): array
