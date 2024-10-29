@@ -137,4 +137,9 @@ class StudentAlertsRelationManager extends RelationManager
                 ]),
             ]);
     }
+
+    protected function getTableScrollable(): bool
+    {
+        return true;
+    }
 }

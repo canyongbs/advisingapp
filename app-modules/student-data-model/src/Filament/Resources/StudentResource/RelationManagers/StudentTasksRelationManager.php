@@ -188,4 +188,9 @@ class StudentTasksRelationManager extends RelationManager
                 ]),
             ]);
     }
+
+    protected function getTableScrollable(): bool
+    {
+        return true;
+    }
 }

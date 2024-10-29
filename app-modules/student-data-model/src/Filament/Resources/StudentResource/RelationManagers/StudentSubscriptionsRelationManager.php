@@ -133,4 +133,9 @@ class StudentSubscriptionsRelationManager extends RelationManager
             ->emptyStateHeading('No Subscriptions')
             ->inverseRelationship('studentSubscriptions');
     }
+
+    protected function getTableScrollable(): bool
+    {
+        return true;
+    }
 }

@@ -49,23 +49,30 @@
             <div class="flex flex-col gap-8">
                 <livewire:student-data-model::manage-student-information :record="$record->getKey()" />
                 <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                    <livewire:student-alert-relation-manager
-                        :owner-record="$record"
-                        :page-class="ViewStudent::class"
-                    />
-
-                    <livewire:student-tasks-relation-manager
-                        :owner-record="$record"
-                        :page-class="ViewStudent::class"
-                    />
-                    <livewire:student-care-team-relation-manager
-                        :owner-record="$record"
-                        :page-class="ViewStudent::class"
-                    />
-                    <livewire:student-subscriptions-relation-manager
-                        :owner-record="$record"
-                        :page-class="ViewStudent::class"
-                    />
+                    <div class="view_student_relation_manager">
+                        <livewire:student-alert-relation-manager
+                            :owner-record="$record"
+                            :page-class="ViewStudent::class"
+                        />
+                    </div>
+                    <div class="view_student_relation_manager">
+                        <livewire:student-tasks-relation-manager
+                            :owner-record="$record"
+                            :page-class="ViewStudent::class"
+                        />
+                    </div>
+                    <div class="view_student_relation_manager">
+                        <livewire:student-care-team-relation-manager
+                            :owner-record="$record"
+                            :page-class="ViewStudent::class"
+                        />
+                    </div>
+                    <div class="view_student_relation_manager">
+                        <livewire:student-subscriptions-relation-manager
+                            :owner-record="$record"
+                            :page-class="ViewStudent::class"
+                        />
+                    </div>
                 </div>
 
                 <livewire:student-data-model::manage-student-premium-features :record="$record->getKey()" />

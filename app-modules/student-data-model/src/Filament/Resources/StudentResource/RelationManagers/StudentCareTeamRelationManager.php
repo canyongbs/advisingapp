@@ -136,4 +136,9 @@ class StudentCareTeamRelationManager extends RelationManager
             ->emptyStateHeading('No Users')
             ->inverseRelationship('studentCareTeams');
     }
+
+    protected function getTableScrollable(): bool
+    {
+        return true;
+    }
 }
