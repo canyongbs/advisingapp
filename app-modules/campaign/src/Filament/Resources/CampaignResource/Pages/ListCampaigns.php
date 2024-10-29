@@ -40,6 +40,7 @@ use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use AdvisingApp\Campaign\Models\Campaign;
 use App\Filament\Tables\Columns\IdColumn;
@@ -59,6 +60,15 @@ class ListCampaigns extends ListRecords
                 TextColumn::make('name'),
                 TextColumn::make('segment.name')
                     ->label('Population Segment'),
+                IconColumn::make('enabled')
+                    ->label('Enabled')
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                IconColumn::make('execution_status')
+                    ->label('Complete')
+                    ->getStateUsing(fn (Campaign $record) => $record->hasBeenExecuted())
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
                 ViewAction::make(),
