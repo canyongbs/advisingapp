@@ -371,14 +371,17 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     protected function fullAddress(): Attribute
     {
         return Attribute::make(
-            get: fn (mixed $value, array $attributes) => trim(implode(' ', array_filter([
-                $attributes['address'] ?? '',
-                $attributes['address2'] ?? '',
-                $attributes['address3'] . ',' ?? '',
-                $attributes['city'] ? $attributes['city'] . ',' : '',
-                $attributes['state'] ? $attributes['state'] . ',' : '',
-                $attributes['postal'] ?? '',
-            ]))),
+            get: function (mixed $value, array $attributes) {
+                $addressLine = trim("{$attributes['address']} {$attributes['address2']} {$attributes['address3']}");
+
+                return trim(sprintf(
+                    '%s %s %s %s',
+                    ! empty($addressLine) ? $addressLine . ',' : '',
+                    ! empty($attributes['city']) ? $attributes['city'] . ',' : '',
+                    ! empty($attributes['state']) ? $attributes['state'] : '',
+                    ! empty($attributes['postal']) ? $attributes['postal'] : '',
+                ));
+            }
         );
     }
 }
