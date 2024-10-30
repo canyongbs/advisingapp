@@ -47,6 +47,8 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
 class StudentEngagementTimeline extends TimelinePage
 {
+    public int $recordsPerPage = 10;
+
     protected static string $resource = StudentResource::class;
 
     protected static ?string $navigationLabel = 'Timeline';
