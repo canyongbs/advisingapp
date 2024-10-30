@@ -34,25 +34,27 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 
-use function Tests\asSuperAdmin;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
 
-use App\Settings\LicenseSettings;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentApplicationSubmissionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEventsRelationManager;
 
-use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFilesRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFormSubmissionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentInteractionsRelationManager;
 use AdvisingApp\StudentDataModel\Livewire\ManageStudentInformation;
 use AdvisingApp\StudentDataModel\Livewire\ManageStudentPremiumFeatures;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEventsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentInteractionsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFormSubmissionsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentApplicationSubmissionsRelationManager;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
+use App\Settings\LicenseSettings;
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
+
 
 it('requires proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -193,6 +195,49 @@ it('renders the StudentInteractionsRelationManager based on proper access', func
         ->assertDontSeeLivewire($relationManager);
 
     $user->givePermissionTo('interaction.view-any');
+
+    $user->refresh();
+
+    livewire(ManageStudentInformation::class, [
+        'record' => $student->getKey(),
+        'activeRelationManager' => array_search(
+            $relationManager,
+            (new ManageStudentInformation())
+                ->tap(fn (ManageStudentInformation $manager) => $manager->mount($student->getKey()))
+                ->getRelationManagers()
+        ),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($relationManager);
+});
+
+it('renders the StudentFilesRelationManager based on proper access', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    $student = Student::factory()->create();
+
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+
+    $user->refresh();
+
+    actingAs($user);
+
+    $relationManager = StudentFilesRelationManager::class;
+
+    livewire(ManageStudentInformation::class, [
+        'record' => $student->getKey(),
+        'activeRelationManager' => array_search(
+            $relationManager,
+            (new ManageStudentInformation())
+                ->tap(fn (ManageStudentInformation $manager) => $manager->mount($student->getKey()))
+                ->getRelationManagers()
+        ),
+    ])
+        ->assertOk()
+        ->assertDontSeeLivewire($relationManager);
+
+    $user->givePermissionTo('engagement_file.view-any');
 
     $user->refresh();
 
