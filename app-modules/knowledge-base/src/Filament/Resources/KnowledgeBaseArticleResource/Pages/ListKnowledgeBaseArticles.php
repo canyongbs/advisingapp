@@ -183,7 +183,7 @@ class ListKnowledgeBaseArticles extends ListRecords
 
                         $replica->article_details = tiptap_converter()
                             ->record($record, 'article_details')
-                            ->copyImagesToNewRecord($replica->article_details, $replica, disk: 's3-public');
+                            ->copyImagesToNewRecord($replica?->article_details, $replica, disk: 's3-public');
                         $replica->save();
                     })
                     ->excludeAttributes(['views_count', 'upvotes_count', 'my_upvotes_count'])

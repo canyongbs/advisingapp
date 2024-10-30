@@ -1,0 +1,4 @@
+_HiStOrY_V2_
+clear
+AdvisingApp\134Prospect\134Models\134Prospect::factory(100)->create();
+exit
