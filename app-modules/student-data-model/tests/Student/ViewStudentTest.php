@@ -44,8 +44,10 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Livewire\ManageStudentInformation;
 use AdvisingApp\StudentDataModel\Livewire\ManageStudentPremiumFeatures;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEventsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFormSubmissionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentApplicationSubmissionsRelationManager;
@@ -72,6 +74,50 @@ it('requires proper access', function () {
         'record' => $student->getKey(),
     ])
         ->assertOk();
+});
+
+it('renders the ProgramsRelationManager based on Feature access', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    $student = Student::factory()->create();
+
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+
+    $user->refresh();
+
+    actingAs($user);
+
+    $relationManager = ProgramsRelationManager::class;
+
+    livewire(ManageStudentInformation::class, [
+        'record' => $student->getKey(),
+        'activeRelationManager' => array_search(
+            $relationManager,
+            (new ManageStudentInformation())
+                ->tap(fn (ManageStudentInformation $manager) => $manager->mount($student->getKey()))
+                ->getRelationManagers()
+        ),
+    ])
+        ->assertOk()
+        ->assertDontSeeLivewire($relationManager);
+
+    $user->givePermissionTo('program.view-any');
+    $user->givePermissionTo('program.*.view');
+
+    $user->refresh();
+
+    livewire(ManageStudentInformation::class, [
+        'record' => $student->getKey(),
+        'activeRelationManager' => array_search(
+            $relationManager,
+            (new ManageStudentInformation())
+                ->tap(fn (ManageStudentInformation $manager) => $manager->mount($student->getKey()))
+                ->getRelationManagers()
+        ),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($relationManager);
 });
 
 it('renders the StudentFormSubmissionsRelationManager based on Feature access', function () {
