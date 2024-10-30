@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Livewire;
 
+use Filament\Support\Concerns\CanBeLazy;
 use App\Actions\GetRecordFromMorphAndKey;
 use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Alert\Histories\AlertHistory;
@@ -47,6 +48,8 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
 class StudentEngagementTimeline extends TimelinePage
 {
+    use CanBeLazy;
+
     public int $recordsPerPage = 10;
 
     protected static string $resource = StudentResource::class;
