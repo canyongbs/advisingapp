@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,46 +30,27 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<div>
+    @if ($this->table->getColumns())
+        <div class="flex flex-col gap-y-6">
+            <x-filament-panels::resources.tabs />
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::RESOURCE_PAGES_MANAGE_RELATED_RECORDS_TABLE_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
-use Illuminate\Database\Eloquent\Model;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
+            {{ $this->table }}
 
-class ManageStudentInformation extends ManageRelatedRecords
-{
-    protected static string $resource = StudentResource::class;
+            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::RESOURCE_PAGES_MANAGE_RELATED_RECORDS_TABLE_AFTER, scopes: $this->getRenderHookScopes()) }}
+        </div>
+    @endif
 
-    // TODO: Obsolete when there is no table, remove from Filament
-    protected static string $relationship = 'programs';
-
-    protected static ?string $navigationLabel = 'Information';
-
-    protected static ?string $breadcrumb = 'Information';
-
-    protected static ?string $navigationIcon = 'heroicon-o-information-circle';
-
-    public static function canAccess(array $arguments = []): bool
-    {
-        return (bool) count(static::managers($arguments['record'] ?? null));
-    }
-
-    public function getRelationManagers(): array
-    {
-        return static::managers($this->getRecord());
-    }
-
-    private static function managers(?Model $record = null): array
-    {
-        return collect([
-            ProgramsRelationManager::class,
-            EnrollmentsRelationManager::class,
-        ])
-            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
-            ->toArray();
-    }
-}
+    @if (count($relationManagers = $this->getRelationManagers()))
+        <x-filament-panels::resources.relation-managers
+            :active-locale="isset($activeLocale) ? $activeLocale : null"
+            :active-manager="$this->activeRelationManager ?? array_key_first($relationManagers)"
+            :managers="$relationManagers"
+            :owner-record="$record"
+            :page-class="static::class"
+        />
+    @endif
+</div>

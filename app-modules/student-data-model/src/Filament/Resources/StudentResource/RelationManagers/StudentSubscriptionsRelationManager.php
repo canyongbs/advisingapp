@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use App\Models\User;
 use Filament\Tables\Table;
@@ -49,24 +49,13 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use Filament\Resources\RelationManagers\RelationManager;
 
-class ManageStudentCareTeam extends ManageRelatedRecords
+class StudentSubscriptionsRelationManager extends RelationManager
 {
-    protected static string $resource = StudentResource::class;
+    protected static string $relationship = 'subscribedUsers';
 
-    protected static string $relationship = 'careTeam';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Care Team';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Care Team';
-
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
-
-    //TODO: manually override check canAccess for policy
+    protected static ?string $title = 'Subscriptions';
 
     public function table(Table $table): Table
     {
@@ -77,76 +66,76 @@ class ManageStudentCareTeam extends ManageRelatedRecords
                 TextColumn::make('name')
                     ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
                     ->color('primary'),
-                TextColumn::make('job_title'),
+                TextColumn::make('pivot.created_at')
+                    ->label('Subscribed At'),
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->label('Add to Care Team')
+                    ->label('Manage')
                     ->modalHeading(function () {
                         /** @var Student $student */
                         $student = $this->getOwnerRecord();
 
-                        return "Add a User to {$student->display_name}'s Care Team";
+                        return 'Subscribe a User to ' . $student->display_name;
                     })
-                    ->modalSubmitActionLabel('Add')
+                    ->modalSubmitActionLabel('Subscribe')
                     ->attachAnother(false)
                     ->color('primary')
                     ->recordSelect(
-                        fn (Select $select) => $select->placeholder('Select Users'),
+                        fn (Select $select) => $select->placeholder('Select a User'),
                     )
-                    ->multiple()
                     ->recordSelectOptionsQuery(
                         fn (Builder $query) => $query->tap(new HasLicense(Student::getLicenseType())),
                     )
-                    ->successNotificationTitle(function (array $data) {
-                        /** @var Student $student */
-                        $student = $this->getOwnerRecord();
-
-                        if (count($data['recordId']) > 1) {
-                            return count($data['recordId']) . " users were added to {$student->display_name}'s Care Team";
-                        }
-                        $record = User::find($data['recordId'][0]);
-
-                        return "{$record->name} was added to {$student->display_name}'s Care Team";
-                    }),
-            ])
-            ->actions([
-                DetachAction::make()
-                    ->label('Remove')
-                    ->modalHeading(function (User $record) {
-                        /** @var Student $student */
-                        $student = $this->getOwnerRecord();
-
-                        return "Remove {$record->name} from {$student->display_name}'s Care Team";
-                    })
-                    ->modalSubmitActionLabel('Remove')
                     ->successNotificationTitle(function (User $record) {
                         /** @var Student $student */
                         $student = $this->getOwnerRecord();
 
-                        return "{$record->name} was removed from {$student->display_name}'s Care Team";
+                        return "{$record->name} was subscribed to {$student->display_name}";
+                    }),
+            ])
+            ->actions([
+                DetachAction::make()
+                    ->label('Unsubscribe')
+                    ->modalHeading(function (User $record) {
+                        /** @var Student $student */
+                        $student = $this->getOwnerRecord();
+
+                        return "Unsubscribe {$record->name} from {$student->display_name}";
+                    })
+                    ->modalSubmitActionLabel('Unsubscribe')
+                    ->successNotificationTitle(function (User $record) {
+                        /** @var Student $student */
+                        $student = $this->getOwnerRecord();
+
+                        return "{$record->name} was unsubscribed from {$student->display_name}";
                     }),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make()
-                        ->label('Remove selected')
+                        ->label('Unsubscribe selected')
                         ->modalHeading(function () {
                             /** @var Student $student */
                             $student = $this->getOwnerRecord();
 
-                            return "Remove selected users from {$student->display_name}'s Care Team";
+                            return "Unsubscribe selected from {$student->display_name}";
                         })
-                        ->modalSubmitActionLabel('Remove')
+                        ->modalSubmitActionLabel('Unsubscribe')
                         ->successNotificationTitle(function () {
                             /** @var Student $student */
                             $student = $this->getOwnerRecord();
 
-                            return "All selected users were removed from {$student->display_name}'s Care Team";
+                            return "All selected were unsubscribed from {$student->display_name}";
                         }),
                 ]),
             ])
-            ->emptyStateHeading('No Users')
-            ->inverseRelationship('studentCareTeams');
+            ->emptyStateHeading('No Subscriptions')
+            ->inverseRelationship('studentSubscriptions');
+    }
+
+    protected function getTableScrollable(): bool
+    {
+        return true;
     }
 }

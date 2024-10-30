@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,24 +30,27 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<div>
+    @if ($this->table->getColumns())
+        <div class="flex flex-col gap-y-6">
+            <x-filament-panels::resources.tabs />
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::RESOURCE_PAGES_MANAGE_RELATED_RECORDS_TABLE_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Task\Filament\RelationManagers\BaseTaskRelationManager;
+            {{ $this->table }}
 
-class ManageStudentTasks extends BaseTaskRelationManager
-{
-    protected static string $resource = StudentResource::class;
+            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::RESOURCE_PAGES_MANAGE_RELATED_RECORDS_TABLE_AFTER, scopes: $this->getRenderHookScopes()) }}
+        </div>
+    @endif
 
-    protected static string $relationship = 'tasks';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Tasks';
-
-    // TODO: Automatically set from Filament based on relationship name
-    public static ?string $breadcrumb = 'Tasks';
-
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-}
+    @if (count($relationManagers = $this->getRelationManagers()))
+        <x-filament-panels::resources.relation-managers
+            :active-locale="isset($activeLocale) ? $activeLocale : null"
+            :active-manager="$this->activeRelationManager ?? array_key_first($relationManagers)"
+            :managers="$relationManagers"
+            :owner-record="$record"
+            :page-class="static::class"
+        />
+    @endif
+</div>

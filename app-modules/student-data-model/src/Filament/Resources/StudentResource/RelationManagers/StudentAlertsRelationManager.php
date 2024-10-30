@@ -34,13 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Forms\Components\Select;
-use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
@@ -54,44 +53,11 @@ use AdvisingApp\Alert\Enums\AlertSeverity;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use Filament\Resources\RelationManagers\RelationManager;
 
-class ManageStudentAlerts extends ManageRelatedRecords
+class StudentAlertsRelationManager extends RelationManager
 {
-    protected static string $resource = StudentResource::class;
-
     protected static string $relationship = 'alerts';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Alerts';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Alerts';
-
-    protected static ?string $navigationIcon = 'heroicon-o-bell-alert';
-
-    public static function getNavigationItems(array $urlParameters = []): array
-    {
-        $item = parent::getNavigationItems($urlParameters)[0];
-
-        $ownerRecord = $urlParameters['record'];
-
-        /** @var Student $ownerRecord */
-        $alertsCount = Cache::tags('alert-count')
-            ->remember(
-                "alert-count-{$ownerRecord->getKey()}",
-                now()->addMinutes(5),
-                function () use ($ownerRecord): int {
-                    return $ownerRecord->alerts()->status(AlertStatus::Active)->count();
-                },
-            );
-
-        $item->badge($alertsCount > 0 ? $alertsCount : null, color: 'danger');
-
-        return [$item];
-    }
 
     public function infolist(Infolist $infolist): Infolist
     {
@@ -140,11 +106,17 @@ class ManageStudentAlerts extends ManageRelatedRecords
                 TextColumn::make('description')
                     ->limit(),
                 TextColumn::make('severity')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(
+                        isToggledHiddenByDefault: true,
+                    ),
                 TextColumn::make('status')
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(
+                        isToggledHiddenByDefault: true,
+                    ),
             ])
             ->filters([
                 SelectFilter::make('severity')
@@ -170,5 +142,10 @@ class ManageStudentAlerts extends ManageRelatedRecords
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    protected function getTableScrollable(): bool
+    {
+        return true;
     }
 }

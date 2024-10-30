@@ -34,33 +34,16 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
+use Filament\Resources\RelationManagers\RelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
-use Filament\Tables\Actions\AttachAction;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentPrograms;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProgramRelationManager;
+class StudentFilesRelationManager extends RelationManager
+{
+    protected static string $resource = StudentResource::class;
 
-it('can attach a basic needs program to a student', function () {
-    $user = User::factory()->licensed(Student::getLicenseType())->create();
-    $basicNeedsProgram = BasicNeedsProgram::factory()->create();
-    $student = Student::factory()->create();
+    protected static string $relationship = 'engagementFiles';
 
-    $user->givePermissionTo('basic_needs_program.view-any');
-    $user->givePermissionTo('student.view-any');
-
-    actingAs($user);
-
-    livewire(ProgramRelationManager::class, [
-        'ownerRecord' => $student,
-        'pageClass' => ManageStudentPrograms::class,
-    ])
-        ->callTableAction(
-            AttachAction::class,
-            data: ['recordId' => $basicNeedsProgram->getKey()]
-        )->assertSuccessful();
-});
+    protected static ?string $title = 'Files';
+}

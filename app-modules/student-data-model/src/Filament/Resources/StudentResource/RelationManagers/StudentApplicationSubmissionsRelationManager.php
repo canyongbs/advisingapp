@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use App\Enums\Feature;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Cache;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
@@ -49,29 +49,19 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
-class ManageStudentApplicationSubmissions extends ManageRelatedRecords
+class StudentApplicationSubmissionsRelationManager extends RelationManager
 {
-    protected static string $resource = StudentResource::class;
-
     protected static string $relationship = 'applicationSubmissions';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Application Submissions';
+    protected static ?string $title = 'Applications';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Application Submissions';
-
-    protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
-
-    public static function canAccess(array $parameters = []): bool
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        return parent::canAccess($parameters) && Gate::check(Feature::OnlineAdmissions->getGateName());
+        return parent::canViewForRecord($ownerRecord, $pageClass) && Gate::check(Feature::OnlineAdmissions->getGateName());
     }
 
     public function table(Table $table): Table
@@ -130,26 +120,5 @@ class ManageStudentApplicationSubmissions extends ManageRelatedRecords
                     DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getNavigationItems(array $urlParameters = []): array
-    {
-        $item = parent::getNavigationItems($urlParameters)[0];
-
-        $ownerRecord = $urlParameters['record'];
-
-        /** @var Student $ownerRecord */
-        $applicationSubmissionsCount = Cache::tags('application-submission-count')
-            ->remember(
-                "application-submission-count-{$ownerRecord->getKey()}",
-                now()->addMinutes(5),
-                function () use ($ownerRecord): int {
-                    return $ownerRecord->applicationSubmissions()->count();
-                },
-            );
-
-        $item->badge($applicationSubmissionsCount > 0 ? $applicationSubmissionsCount : null);
-
-        return [$item];
     }
 }

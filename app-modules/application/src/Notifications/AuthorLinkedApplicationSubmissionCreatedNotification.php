@@ -59,12 +59,12 @@ class AuthorLinkedApplicationSubmissionCreatedNotification extends BaseNotificat
 
         $name = $author->{$author->displayNameKey()};
 
-        $target = match ($author::class) {
-            Prospect::class => ProspectResource::class,
-            Student::class => StudentResource::class,
+        [$target, $targetRoute] = match ($author::class) {
+            Prospect::class => [ProspectResource::class, 'manage-application-submissions'],
+            Student::class => [StudentResource::class, 'view'],
         };
 
-        $applicationSubmissionUrl = $target::getUrl('manage-application-submissions', ['record' => $author]);
+        $applicationSubmissionUrl = $target::getUrl($targetRoute, ['record' => $author]);
 
         $applicationSubmissionLink = new HtmlString("<a href='{$applicationSubmissionUrl}' target='_blank' class='underline'>application submission</a>");
 

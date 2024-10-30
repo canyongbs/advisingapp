@@ -34,18 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
-use Illuminate\Contracts\Support\Htmlable;
+use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords;
+use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
 
-class ManageStudentEngagement extends ManageRelatedEngagementRecords
+class StudentInteractionsRelationManager extends RelationManager
 {
+    use HasManyMorphedInteractionsTrait;
+
     protected static string $resource = StudentResource::class;
 
-    public function getTitle(): string | Htmlable
+    protected static string $relationship = 'interactions';
+
+    public function form(Form $form): Form
     {
-        return 'Manage Student Email and Texts';
+        return (resolve(CreateInteraction::class))->form($form);
     }
 }

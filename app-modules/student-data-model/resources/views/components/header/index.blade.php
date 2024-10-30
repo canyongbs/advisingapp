@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,34 +30,34 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@props([
+    'actions' => [],
+    'breadcrumbs' => [],
+    'heading',
+    'subheading' => null,
+])
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+<header {{ $attributes->class(['fi-header flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between']) }}>
+    <div>
+        @if ($breadcrumbs)
+            <x-filament::breadcrumbs
+                class="mb-2 hidden sm:block"
+                :breadcrumbs="$breadcrumbs"
+            />
+        @endif
+    </div>
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
+    <div @class([
+        'flex shrink-0 items-center gap-3',
+        'sm:mt-7' => $breadcrumbs,
+    ])>
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
-class ManageStudentInteractions extends ManageRelatedRecords
-{
-    use HasManyMorphedInteractionsTrait;
+        @if ($actions)
+            <x-filament::actions :actions="$actions" />
+        @endif
 
-    protected static string $resource = StudentResource::class;
-
-    protected static string $relationship = 'interactions';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Interactions';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Interactions';
-
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
-
-    public function form(Form $form): Form
-    {
-        return (resolve(CreateInteraction::class))->form($form);
-    }
-}
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER, scopes: $this->getRenderHookScopes()) }}
+    </div>
+</header>
