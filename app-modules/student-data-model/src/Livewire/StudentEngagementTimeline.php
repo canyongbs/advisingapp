@@ -50,7 +50,7 @@ class StudentEngagementTimeline extends TimelinePage
 {
     use CanBeLazy;
 
-    public int $recordsPerPage = 10;
+    public int $recordsPerPage = 5;
 
     protected static string $resource = StudentResource::class;
 
