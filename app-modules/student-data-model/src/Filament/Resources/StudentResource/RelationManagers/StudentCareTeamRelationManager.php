@@ -68,7 +68,7 @@ class StudentCareTeamRelationManager extends RelationManager
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->label('Manage')
+                    ->label('New')
                     ->modalHeading(function () {
                         /** @var Student $student */
                         $student = $this->getOwnerRecord();
