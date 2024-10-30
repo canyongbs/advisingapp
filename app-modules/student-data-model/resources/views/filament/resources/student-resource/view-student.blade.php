@@ -44,7 +44,10 @@
     <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         <div class="flex flex-col gap-8">
             <x-student-data-model::student-profile-section :record="$record" />
-            <livewire:student-data-model::student-engagement-timeline :record="$record->getKey()" lazy />
+            <livewire:student-data-model::student-engagement-timeline
+                :record="$record->getKey()"
+                lazy
+            />
         </div>
         <div class="col-auto lg:col-span-2">
             <div class="flex flex-col gap-8">
