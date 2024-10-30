@@ -107,7 +107,6 @@ it('renders the ProgramsRelationManager based on proper access', function () {
         ->assertDontSeeLivewire($relationManager);
 
     $user->givePermissionTo('program.view-any');
-    $user->givePermissionTo('program.*.view');
 
     $user->refresh();
 
@@ -151,7 +150,6 @@ it('renders the EnrollmentsRelationManager based on proper access', function () 
         ->assertDontSeeLivewire($relationManager);
 
     $user->givePermissionTo('enrollment.view-any');
-    $user->givePermissionTo('enrollment.*.view');
 
     $user->refresh();
 
