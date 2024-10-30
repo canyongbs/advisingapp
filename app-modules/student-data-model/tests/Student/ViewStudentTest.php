@@ -70,10 +70,6 @@ it('requires proper access', function () {
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
 
-    $user->refresh();
-
-    actingAs($user);
-
     livewire(ViewStudent::class, [
         'record' => $student->getKey(),
     ])
@@ -87,8 +83,6 @@ it('renders the ProgramsRelationManager based on proper access', function () {
 
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
-
-    $user->refresh();
 
     actingAs($user);
 
@@ -107,8 +101,6 @@ it('renders the ProgramsRelationManager based on proper access', function () {
         ->assertDontSeeLivewire($relationManager);
 
     $user->givePermissionTo('program.view-any');
-
-    $user->refresh();
 
     livewire(ManageStudentInformation::class, [
         'record' => $student->getKey(),
@@ -131,8 +123,6 @@ it('renders the EnrollmentsRelationManager based on proper access', function () 
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
 
-    $user->refresh();
-
     actingAs($user);
 
     $relationManager = EnrollmentsRelationManager::class;
@@ -150,8 +140,6 @@ it('renders the EnrollmentsRelationManager based on proper access', function () 
         ->assertDontSeeLivewire($relationManager);
 
     $user->givePermissionTo('enrollment.view-any');
-
-    $user->refresh();
 
     livewire(ManageStudentInformation::class, [
         'record' => $student->getKey(),
@@ -174,8 +162,6 @@ it('renders the StudentEngagementRelationManager based on proper access', functi
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
 
-    $user->refresh();
-
     actingAs($user);
 
     $relationManager = StudentEngagementRelationManager::class;
@@ -193,8 +179,6 @@ it('renders the StudentEngagementRelationManager based on proper access', functi
         ->assertDontSeeLivewire($relationManager);
 
     $user->givePermissionTo('engagement.view-any');
-
-    $user->refresh();
 
     livewire(ManageStudentInformation::class, [
         'record' => $student->getKey(),
@@ -217,8 +201,6 @@ it('renders the StudentInteractionsRelationManager based on proper access', func
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
 
-    $user->refresh();
-
     actingAs($user);
 
     $relationManager = StudentInteractionsRelationManager::class;
@@ -236,8 +218,6 @@ it('renders the StudentInteractionsRelationManager based on proper access', func
         ->assertDontSeeLivewire($relationManager);
 
     $user->givePermissionTo('interaction.view-any');
-
-    $user->refresh();
 
     livewire(ManageStudentInformation::class, [
         'record' => $student->getKey(),
@@ -260,8 +240,6 @@ it('renders the StudentFilesRelationManager based on proper access', function ()
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
 
-    $user->refresh();
-
     actingAs($user);
 
     $relationManager = StudentFilesRelationManager::class;
@@ -279,8 +257,6 @@ it('renders the StudentFilesRelationManager based on proper access', function ()
         ->assertDontSeeLivewire($relationManager);
 
     $user->givePermissionTo('engagement_file.view-any');
-
-    $user->refresh();
 
     livewire(ManageStudentInformation::class, [
         'record' => $student->getKey(),
