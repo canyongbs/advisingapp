@@ -51,6 +51,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationMana
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFilesRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEventsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEngagementRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentInteractionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFormSubmissionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentApplicationSubmissionsRelationManager;
@@ -151,6 +152,49 @@ it('renders the EnrollmentsRelationManager based on proper access', function () 
 
     $user->givePermissionTo('enrollment.view-any');
     $user->givePermissionTo('enrollment.*.view');
+
+    $user->refresh();
+
+    livewire(ManageStudentInformation::class, [
+        'record' => $student->getKey(),
+        'activeRelationManager' => array_search(
+            $relationManager,
+            (new ManageStudentInformation())
+                ->tap(fn (ManageStudentInformation $manager) => $manager->mount($student->getKey()))
+                ->getRelationManagers()
+        ),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($relationManager);
+});
+
+it('renders the StudentEngagementRelationManager based on proper access', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    $student = Student::factory()->create();
+
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+
+    $user->refresh();
+
+    actingAs($user);
+
+    $relationManager = StudentEngagementRelationManager::class;
+
+    livewire(ManageStudentInformation::class, [
+        'record' => $student->getKey(),
+        'activeRelationManager' => array_search(
+            $relationManager,
+            (new ManageStudentInformation())
+                ->tap(fn (ManageStudentInformation $manager) => $manager->mount($student->getKey()))
+                ->getRelationManagers()
+        ),
+    ])
+        ->assertOk()
+        ->assertDontSeeLivewire($relationManager);
+
+    $user->givePermissionTo('engagement.view-any');
 
     $user->refresh();
 

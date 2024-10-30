@@ -41,6 +41,9 @@ use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+
+use function Filament\authorize;
+
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -50,6 +53,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Timeline\Models\Timeline;
@@ -64,6 +68,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Auth\Access\AuthorizationException;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
@@ -338,5 +343,20 @@ class StudentEngagementRelationManager extends RelationManager
                             )
                     ),
             ]);
+    }
+
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        if (static::shouldSkipAuthorization()) {
+            return true;
+        }
+
+        $model = Engagement::class;
+
+        try {
+            return authorize('viewAny', $model, static::shouldCheckPolicyExistence())->allowed();
+        } catch (AuthorizationException $exception) {
+            return $exception->toResponse()->allowed();
+        }
     }
 }
