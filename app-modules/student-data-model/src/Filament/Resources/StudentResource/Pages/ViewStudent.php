@@ -46,9 +46,15 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Facades\FilamentView;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Resources\RelationManagers\RelationGroup;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use Filament\Resources\RelationManagers\RelationManagerConfiguration;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentTasksRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentAlertsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentCareTeamRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentSubscriptionsRelationManager;
 
 class ViewStudent extends ViewRecord
 {
@@ -126,6 +132,30 @@ class ViewStudent extends ViewRecord
             ->map(function ($word) {
                 return Str::substr($word, 0, 1);
             })->implode('');
+    }
+
+    /**
+     * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
+     */
+    public function getRelationManagers(): array
+    {
+        $managers = [
+            StudentAlertsRelationManager::class,
+            StudentTasksRelationManager::class,
+            StudentCareTeamRelationManager::class,
+            StudentSubscriptionsRelationManager::class,
+        ];
+
+        return array_filter(
+            $managers,
+            function (string | RelationGroup | RelationManagerConfiguration $manager): bool {
+                if ($manager instanceof RelationGroup) {
+                    return (bool) count($manager->ownerRecord($this->getRecord())->pageClass(static::class)->getManagers());
+                }
+
+                return $this->normalizeRelationManagerClass($manager)::canViewForRecord($this->getRecord(), static::class);
+            },
+        );
     }
 
     protected function getHeaderActions(): array

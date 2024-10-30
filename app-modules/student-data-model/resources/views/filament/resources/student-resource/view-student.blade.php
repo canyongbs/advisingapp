@@ -33,6 +33,7 @@
 --}}
 @php
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentAlertsRelationManager;
 @endphp
 <x-student-data-model::page @class([
     'fi-resource-view-record-page',
@@ -48,31 +49,13 @@
         <div class="col-auto lg:col-span-2">
             <div class="flex flex-col gap-8">
                 <livewire:student-data-model::manage-student-information :record="$record->getKey()" />
-                <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                    <div class="view_student_relation_manager">
-                        <livewire:student-alert-relation-manager
-                            :owner-record="$record"
-                            :page-class="ViewStudent::class"
-                        />
-                    </div>
-                    <div class="view_student_relation_manager">
-                        <livewire:student-tasks-relation-manager
-                            :owner-record="$record"
-                            :page-class="ViewStudent::class"
-                        />
-                    </div>
-                    <div class="view_student_relation_manager">
-                        <livewire:student-care-team-relation-manager
-                            :owner-record="$record"
-                            :page-class="ViewStudent::class"
-                        />
-                    </div>
-                    <div class="view_student_relation_manager">
-                        <livewire:student-subscriptions-relation-manager
-                            :owner-record="$record"
-                            :page-class="ViewStudent::class"
-                        />
-                    </div>
+                <div class="view_student_relation_manager grid grid-cols-1 gap-8 lg:grid-cols-2">
+                    @foreach ($this->getRelationManagers() as $relationManager)
+                        @livewire($relationManager, [
+                            'ownerRecord' => $record,
+                            'pageClass' => ViewStudent::class,
+                        ])
+                    @endforeach
                 </div>
 
                 <livewire:student-data-model::manage-student-premium-features :record="$record->getKey()" />
