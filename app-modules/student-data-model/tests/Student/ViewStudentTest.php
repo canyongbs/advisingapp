@@ -50,6 +50,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewSt
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFilesRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentAlertsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEventsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEngagementRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentInteractionsRelationManager;
@@ -264,6 +265,45 @@ it('renders the StudentFilesRelationManager based on proper access', function ()
             $relationManager,
             (new ManageStudentInformation())
                 ->tap(fn (ManageStudentInformation $manager) => $manager->mount($student->getKey()))
+                ->getRelationManagers()
+        ),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($relationManager);
+});
+
+it('renders the StudentAlertsRelationManager based on proper access', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    $student = Student::factory()->create();
+
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+
+    actingAs($user);
+
+    $relationManager = StudentAlertsRelationManager::class;
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+        'activeRelationManager' => array_search(
+            $relationManager,
+            (new ViewStudent())
+                ->tap(fn (ViewStudent $manager) => $manager->mount($student->getKey()))
+                ->getRelationManagers()
+        ),
+    ])
+        ->assertOk()
+        ->assertDontSeeLivewire($relationManager);
+
+    $user->givePermissionTo('alert.view-any');
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+        'activeRelationManager' => array_search(
+            $relationManager,
+            (new ViewStudent())
+                ->tap(fn (ViewStudent $manager) => $manager->mount($student->getKey()))
                 ->getRelationManagers()
         ),
     ])
