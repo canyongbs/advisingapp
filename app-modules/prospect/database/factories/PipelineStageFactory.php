@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\Prospect\Database\Factories;
 
+use AdvisingApp\Prospect\Models\Pipeline;
 use AdvisingApp\Prospect\Models\PipelineStage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -19,6 +20,8 @@ class PipelineStageFactory extends Factory
     {
         return [
             'name' => fake()->word(),
+            'pipeline_id' => Pipeline::factory(),
+            'is_default' => fake()->boolean(),
             'order' => rand(1, 5),
         ];
     }
