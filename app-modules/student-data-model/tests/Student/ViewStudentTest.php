@@ -76,7 +76,7 @@ it('requires proper access', function () {
         ->assertOk();
 });
 
-it('renders the ProgramsRelationManager based on Feature access', function () {
+it('renders the ProgramsRelationManager based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
