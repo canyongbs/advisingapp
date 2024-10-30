@@ -106,11 +106,17 @@ class StudentAlertsRelationManager extends RelationManager
                 TextColumn::make('description')
                     ->limit(),
                 TextColumn::make('severity')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(
+                        isToggledHiddenByDefault: true,
+                    ),
                 TextColumn::make('status')
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(
+                        isToggledHiddenByDefault: true,
+                    ),
             ])
             ->filters([
                 SelectFilter::make('severity')
