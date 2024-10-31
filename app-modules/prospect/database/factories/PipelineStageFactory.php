@@ -22,7 +22,7 @@ class PipelineStageFactory extends Factory
             'name' => fake()->word(),
             'pipeline_id' => Pipeline::factory(),
             'is_default' => fake()->boolean(),
-            'order' => rand(1, 5),
+            'order' => mt_rand(0, 5),
         ];
     }
 }
