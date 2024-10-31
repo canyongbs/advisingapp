@@ -239,8 +239,22 @@
                                         </div>
 
                                         <div class="flex items-center gap-1">
-                                            {{ ($this->renameFolderAction)(['folder' => $folder->id]) }}
-                                            {{ ($this->deleteFolderAction)(['folder' => $folder->id]) }}
+                                            <x-filament::icon-button
+                                                icon="heroicon-m-pencil"
+                                                wire:click="mountAction('renameFolderAction', { folder: '{{ $folder->id }}'})"
+                                                label="Rename Folder"
+                                                color="warning"
+                                                size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                                class="relative inline-flex w-5 h-5 hidden group-hover:inline-flex"
+                                            />
+                                            <x-filament::icon-button
+                                                icon="heroicon-m-trash"
+                                                wire:click="mountAction('deleteFolderAction', { folder: '{{ $folder->id }}'})"
+                                                label="Delete Folder"
+                                                color="danger"
+                                                size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                                class="relative inline-flex w-5 h-5 hidden group-hover:inline-flex"
+                                            />
                                         </div>
                                     </div>
                                 </span>
