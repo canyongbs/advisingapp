@@ -307,9 +307,30 @@
                                         </div>
 
                                         <div class="flex items-center gap-1">
-                                            {{ ($this->moveThreadAction)(['thread' => $threadItem->id]) }}
-                                            {{ ($this->editThreadAction)(['thread' => $threadItem->id]) }}
-                                            {{ ($this->deleteThreadAction)(['thread' => $threadItem->id]) }}
+                                            <x-filament::icon-button
+                                                icon="heroicon-m-arrow-down-on-square"
+                                                wire:click="mountAction('moveThread', { thread: '{{ $threadItem->id }}'})"
+                                                label="Move chat to a different folder"
+                                                color="warning"
+                                                size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                                class="relative inline-flex w-5 h-5 hidden group-hover:inline-flex"
+                                            />
+                                            <x-filament::icon-button
+                                                icon="heroicon-m-pencil"
+                                                wire:click="mountAction('editThreadAction', { thread: '{{ $threadItem->id }}'})"
+                                                label="Edit name of the chat"
+                                                color="warning"
+                                                size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                                class="relative inline-flex w-5 h-5 hidden group-hover:inline-flex"
+                                            />
+                                            <x-filament::icon-button
+                                                icon="heroicon-m-trash"
+                                                wire:click="mountAction('deleteThreadAction', { thread: '{{ $threadItem->id }}'})"
+                                                label="Delete the chat"
+                                                color="danger"
+                                                size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                                class="relative inline-flex w-5 h-5 hidden group-hover:inline-flex"
+                                            />
                                         </div>
                                     </li>
                                 @endforeach
