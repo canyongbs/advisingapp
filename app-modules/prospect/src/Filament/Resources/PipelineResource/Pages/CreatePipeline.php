@@ -12,6 +12,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
+use AdvisingApp\Prospect\Jobs\PipelineEducatablesMoveIntoStages;
 
 class CreatePipeline extends CreateRecord
 {
@@ -77,5 +78,10 @@ class CreatePipeline extends CreateRecord
         return $data;
     }
 
-    protected function afterCreate(): void {}
+    protected function afterCreate(): void
+    {
+        dispatch(new PipelineEducatablesMoveIntoStages(
+            pipeline: $this->getRecord()
+        ));
+    }
 }

@@ -24,7 +24,7 @@ class ManageEductables extends ManageRelatedRecords
 
     protected static ?string $title = 'Manage Pipeline Subjects';
 
-    protected static ?string $navigationLabel = 'Pipeline Subjects';
+    protected static ?string $navigationLabel = 'Pipeline Educatables';
 
     protected static string $view = 'prospect::filament.pages.manage-pipeline-subjects';
 
@@ -61,14 +61,6 @@ class ManageEductables extends ManageRelatedRecords
                 TextColumn::make('pipeline_stage_id')
                     ->formatStateUsing(fn ($state) => PipelineStage::find($state)?->name)
                     ->label('Stage'),
-            ])
-            ->headerActions([
-                AttachAction::make()
-                    ->form(fn (AttachAction $action): array => [
-                        $action->getRecordSelect(),
-                        Select::make('pipeline_stage_id')
-                            ->options(PipelineStage::pluck('name', 'id')->toArray()),
-                    ]),
             ]);
     }
 }
