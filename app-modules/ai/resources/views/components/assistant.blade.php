@@ -149,7 +149,7 @@
                                     </button>
                                 </div>
 
-                                <div class="flex items-center gap-1">
+                                {{-- <div class="flex items-center gap-1">
                                     <x-filament::icon-button
                                         icon="heroicon-m-arrow-down-on-square"
                                         wire:click="mountAction('moveThread', { thread: '{{ $threadItem->id }}'})"
@@ -174,7 +174,7 @@
                                         size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
                                         class="relative inline-flex w-5 h-5 hidden group-hover:inline-flex"
                                     />
-                                </div>
+                                </div> --}}
                             </li>
                         @endforeach
                     </ul>
@@ -320,7 +320,7 @@
                                             </button>
                                         </div>
 
-                                        <div class="flex items-center gap-1">
+                                        {{-- <div class="flex items-center gap-1">
                                             <x-filament::icon-button
                                                 icon="heroicon-m-arrow-down-on-square"
                                                 wire:click="mountAction('moveThread', { thread: '{{ $threadItem->id }}'})"
@@ -345,7 +345,7 @@
                                                 size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
                                                 class="relative inline-flex w-5 h-5 hidden group-hover:inline-flex"
                                             />
-                                        </div>
+                                        </div> --}}
                                     </li>
                                 @endforeach
                             </ul>
@@ -404,6 +404,33 @@
                                     {{ $this->thread->assistant->name }}
                                 </h1>
                             </x-filament::badge>
+                        @endif
+
+                        @if ($this->thread)
+                            <x-filament::icon-button
+                                icon="heroicon-m-arrow-down-on-square"
+                                wire:click="mountAction('moveThread', { thread: '{{ $this->thread->getKey() }}'})"
+                                label="Move chat to a different folder"
+                                color="warning"
+                                size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                class="relative inline-flex w-5 h-5"
+                            />
+                            <x-filament::icon-button
+                                icon="heroicon-m-pencil"
+                                wire:click="mountAction('editThreadAction', { thread: '{{ $this->thread->getKey() }}'})"
+                                label="Edit name of the chat"
+                                color="warning"
+                                size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                class="relative inline-flex w-5 h-5"
+                            />
+                            <x-filament::icon-button
+                                icon="heroicon-m-trash"
+                                wire:click="mountAction('deleteThreadAction', { thread: '{{ $this->thread->getKey() }}'})"
+                                label="Delete the chat"
+                                color="danger"
+                                size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                class="relative inline-flex w-5 h-5"
+                            />
                         @endif
                     </div>
 
