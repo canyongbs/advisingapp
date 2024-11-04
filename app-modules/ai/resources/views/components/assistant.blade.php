@@ -86,13 +86,17 @@
                         x-on:dragenter.prevent
                         x-on:dragover.prevent
                     >
-                        @foreach ($this->threadsWithoutAFolder as $threadItem)
+                        <template x-for="(thread, index) in threadsWithoutAFolder" :key="thread.id">
                             <li
-                                id="chat-{{ $threadItem->id }}"
-                                x-on:message-sent-{{ $threadItem->id }}.window="updateTitle"
-                                x-tooltip="`Last Engaged: ${(typeof lastUpdated === 'undefined') || lastUpdated}`"
+                                :id="`chat-${thread.id}`"
+                                {{-- x-on:message-sent-{{ $threadItem->id }}.window="updateTitle" --}}
+                                x-tooltip="`Last Engaged: ${lastUpdated}`"
                                 x-data="{
-                                    lastUpdated: @js($threadItem?->last_engaged_at?->toFormattedDateString()),
+                                    lastUpdated: new Date(thread.last_engaged_at).toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric'
+                                    }),
                                     updateTitle: function() {
                                         this.lastUpdated = new Date().toLocaleDateString('en-US', {
                                             year: 'numeric',
@@ -101,58 +105,59 @@
                                         });
                                     }
                                 }"
-                                wire:key="chat-{{ $threadItem->id }}"
-                                @class([
-                                    'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
-                                    'bg-gray-100 dark:bg-white/5' => $this->thread->is($threadItem),
-                                ])
+                                :class="{
+                                    'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1': true,
+                                    'bg-gray-100 dark:bg-white/5': thread.id === selectedThreadId
+                                }"
                             >
                                 <div class="flex flex-1 items-center gap-3">
                                     @if (count($this->folders))
                                         <button
                                             type="button"
                                             draggable="true"
-                                            x-on:dragstart="start('{{ $threadItem->id }}', '{{ null }}')"
+                                            x-on:dragstart="start(thread.id, null)"
                                             x-on:dragend="end"
-                                            @class([
-                                                'flex items-center cursor-move',
-                                                'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
-                                                'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
-                                            ])
+                                            :class="{
+                                                'flex items-center cursor-move': true,
+                                                'text-gray-700 dark:text-gray-200': thread.id !== selectedThreadId,
+                                                'text-primary-600 dark:text-primary-400': thread.id === selectedThreadId
+                                            }"
                                         >
                                             <x-heroicon-m-bars-2
                                                 class="h-5 w-5"
-                                                wire:target="selectThread('{{ $threadItem->id }}')"
-                                                wire:loading.remove.delay.none
+                                                {{-- wire:target="selectThread(thread?.id)"
+                                                wire:loading.remove.delay.none --}}
                                             />
 
-                                            <x-filament::loading-indicator
+                                            {{-- <x-filament::loading-indicator
                                                 class="h-5 w-5"
-                                                wire:target="selectThread('{{ $threadItem->id }}')"
+                                                wire:target="selectThread(thread?.id)"
                                                 wire:loading.delay.none
-                                            />
+                                            /> --}}
                                         </button>
                                     @endif
 
                                     <button
                                         class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
                                         type="button"
-                                        wire:click="selectThread('{{ $threadItem->id }}')"
+                                        x-on:click="$wire.selectThread(thread)"
                                     >
-                                        <span @class([
-                                            'flex-1 truncate',
-                                            'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
-                                            'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
-                                        ])>
-                                            {{ $threadItem->name }}
+                                        <span
+                                            x-text="thread.name"
+                                            :class="{
+                                                'flex-1 truncate': true,
+                                                'text-gray-700 dark:text-gray-200': thread.id !== selectedThreadId,
+                                                'text-primary-600 dark:text-primary-400': thread.id === selectedThreadId
+                                            }"
+                                        >
                                         </span>
                                     </button>
                                 </div>
 
-                                {{-- <div class="flex items-center gap-1">
+                                <div class="flex items-center gap-1">
                                     <x-filament::icon-button
                                         icon="heroicon-m-arrow-down-on-square"
-                                        wire:click="mountAction('moveThread', { thread: '{{ $threadItem->id }}'})"
+                                        x-on:click="$wire.mountAction('moveThread', { thread: thread.id })"
                                         label="Move chat to a different folder"
                                         color="warning"
                                         size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
@@ -160,7 +165,7 @@
                                     />
                                     <x-filament::icon-button
                                         icon="heroicon-m-pencil"
-                                        wire:click="mountAction('editThreadAction', { thread: '{{ $threadItem->id }}'})"
+                                        x-on:click="$wire.mountAction('editThread', { thread: thread.id })"
                                         label="Edit name of the chat"
                                         color="warning"
                                         size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
@@ -168,15 +173,15 @@
                                     />
                                     <x-filament::icon-button
                                         icon="heroicon-m-trash"
-                                        wire:click="mountAction('deleteThreadAction', { thread: '{{ $threadItem->id }}'})"
+                                        x-on:click="$wire.mountAction('deleteThread', { thread: thread.id })"
                                         label="Delete the chat"
                                         color="danger"
                                         size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
                                         class="relative inline-flex w-5 h-5 hidden group-hover:inline-flex"
                                     />
-                                </div> --}}
+                                </div>
                             </li>
-                        @endforeach
+                        </template>
                     </ul>
                 @else
                     <div
@@ -320,10 +325,10 @@
                                             </button>
                                         </div>
 
-                                        {{-- <div class="flex items-center gap-1">
+                                        <div class="flex items-center gap-1">
                                             <x-filament::icon-button
                                                 icon="heroicon-m-arrow-down-on-square"
-                                                wire:click="mountAction('moveThread', { thread: '{{ $threadItem->id }}'})"
+                                                x-on:click="$wire.mountAction('moveThread', { thread: thread.id })"
                                                 label="Move chat to a different folder"
                                                 color="warning"
                                                 size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
@@ -331,7 +336,7 @@
                                             />
                                             <x-filament::icon-button
                                                 icon="heroicon-m-pencil"
-                                                wire:click="mountAction('editThreadAction', { thread: '{{ $threadItem->id }}'})"
+                                                x-on:click="$wire.mountAction('editThread', { thread: thread.id })"
                                                 label="Edit name of the chat"
                                                 color="warning"
                                                 size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
@@ -339,13 +344,13 @@
                                             />
                                             <x-filament::icon-button
                                                 icon="heroicon-m-trash"
-                                                wire:click="mountAction('deleteThreadAction', { thread: '{{ $threadItem->id }}'})"
+                                                x-on:click="$wire.mountAction('deleteThread', { thread: thread.id })"
                                                 label="Delete the chat"
                                                 color="danger"
                                                 size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
                                                 class="relative inline-flex w-5 h-5 hidden group-hover:inline-flex"
                                             />
-                                        </div> --}}
+                                        </div>
                                     </li>
                                 @endforeach
                             </ul>
@@ -357,7 +362,7 @@
 
         <div
             class="grid h-full flex-1 grid-cols-1 grid-rows-[1fr_auto] gap-2 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-4 2xl:grid-cols-4"
-            x-data="chats"
+            x-data="chats($wire, @js($this->getThreadsWithoutAFolder()))"
         >
             <div class="col-span-1 hidden overflow-y-auto px-px pt-3 lg:block lg:pt-6">
                 {{ $sidebarContent($this->assistantSwitcherForm) }}
@@ -404,33 +409,6 @@
                                     {{ $this->thread->assistant->name }}
                                 </h1>
                             </x-filament::badge>
-                        @endif
-
-                        @if ($this->thread)
-                            <x-filament::icon-button
-                                icon="heroicon-m-arrow-down-on-square"
-                                wire:click="mountAction('moveThread', { thread: '{{ $this->thread->getKey() }}'})"
-                                label="Move chat to a different folder"
-                                color="warning"
-                                size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
-                                class="relative inline-flex w-5 h-5"
-                            />
-                            <x-filament::icon-button
-                                icon="heroicon-m-pencil"
-                                wire:click="mountAction('editThreadAction', { thread: '{{ $this->thread->getKey() }}'})"
-                                label="Edit name of the chat"
-                                color="warning"
-                                size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
-                                class="relative inline-flex w-5 h-5"
-                            />
-                            <x-filament::icon-button
-                                icon="heroicon-m-trash"
-                                wire:click="mountAction('deleteThreadAction', { thread: '{{ $this->thread->getKey() }}'})"
-                                label="Delete the chat"
-                                color="danger"
-                                size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
-                                class="relative inline-flex w-5 h-5"
-                            />
                         @endif
                     </div>
 
