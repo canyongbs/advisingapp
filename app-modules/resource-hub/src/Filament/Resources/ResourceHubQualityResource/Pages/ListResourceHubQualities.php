@@ -34,36 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages;
 
-use App\Settings\DisplaySettings;
-use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
-use AdvisingApp\Portal\DataTransferObjects\ResourceHubCategoryData;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
+use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource;
 
-class KnowledgeManagementPortalArticleController extends Controller
+class ListResourceHubQualities extends ListRecords
 {
-    public function show(ResourceHubCategory $category, KnowledgeBaseArticle $article): JsonResponse
-    {
-        $article->increment('portal_view_count');
+    protected static string $resource = ResourceHubQualityResource::class;
 
-        return response()->json([
-            'category' => ResourceHubCategoryData::from([
-                'id' => $category->getKey(),
-                'name' => $category->name,
-                'description' => $category->description,
-            ]),
-            'article' => KnowledgeBaseArticleData::from([
-                'id' => $article->getKey(),
-                'categoryId' => $article->category_id,
-                'name' => $article->title,
-                'lastUpdated' => $article->updated_at->setTimezone(app(DisplaySettings::class)->timezone)->format('M d Y, h:m a'),
-                'content' => tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details),
-            ]),
-            'portal_view_count' => $article->portal_view_count,
-        ]);
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name')
+                    ->label('Name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('knowledge_base_articles_count')
+                    ->label('# of Resource Hub Articles')
+                    ->counts('knowledgeBaseArticles')
+                    ->sortable(),
+            ])
+            ->actions([
+                ViewAction::make(),
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
     }
 }

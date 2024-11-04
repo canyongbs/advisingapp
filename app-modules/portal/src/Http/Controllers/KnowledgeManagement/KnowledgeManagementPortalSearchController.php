@@ -40,10 +40,10 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Scopes\SearchBy;
 use App\Http\Controllers\Controller;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
+use AdvisingApp\Portal\DataTransferObjects\ResourceHubCategoryData;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
 use AdvisingApp\Portal\DataTransferObjects\KnowledgeManagementSearchData;
 
 class KnowledgeManagementPortalSearchController extends Controller
@@ -65,8 +65,8 @@ class KnowledgeManagementPortalSearchController extends Controller
                 ->toArray()
         );
 
-        $categoryData = KnowledgeBaseCategoryData::collection(
-            KnowledgeBaseCategory::query()
+        $categoryData = ResourceHubCategoryData::collection(
+            ResourceHubCategory::query()
                 ->tap(new SearchBy('name', Str::lower($request->get('search'))))
                 ->get()
                 ->map(function ($category) {

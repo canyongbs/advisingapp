@@ -34,36 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
+namespace AdvisingApp\ResourceHub\Filament\Resources;
 
-use App\Settings\DisplaySettings;
-use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
-use AdvisingApp\Portal\DataTransferObjects\ResourceHubCategoryData;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
+use Filament\Resources\Resource;
+use App\Filament\Clusters\ResourceHub;
+use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\EditResourceHubStatus;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\ViewResourceHubStatus;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\CreateResourceHubStatus;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\ListResourceHubStatuses;
 
-class KnowledgeManagementPortalArticleController extends Controller
+class ResourceHubStatusResource extends Resource
 {
-    public function show(ResourceHubCategory $category, KnowledgeBaseArticle $article): JsonResponse
-    {
-        $article->increment('portal_view_count');
+    protected static ?string $model = ResourceHubStatus::class;
 
-        return response()->json([
-            'category' => ResourceHubCategoryData::from([
-                'id' => $category->getKey(),
-                'name' => $category->name,
-                'description' => $category->description,
-            ]),
-            'article' => KnowledgeBaseArticleData::from([
-                'id' => $article->getKey(),
-                'categoryId' => $article->category_id,
-                'name' => $article->title,
-                'lastUpdated' => $article->updated_at->setTimezone(app(DisplaySettings::class)->timezone)->format('M d Y, h:m a'),
-                'content' => tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details),
-            ]),
-            'portal_view_count' => $article->portal_view_count,
-        ]);
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
+
+    protected static ?string $navigationLabel = 'Statuses';
+
+    protected static ?string $modelLabel = 'resource hub status';
+
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $cluster = ResourceHub::class;
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListResourceHubStatuses::route('/'),
+            'create' => CreateResourceHubStatus::route('/create'),
+            'view' => ViewResourceHubStatus::route('/{record}'),
+            'edit' => EditResourceHubStatus::route('/{record}/edit'),
+        ];
     }
 }

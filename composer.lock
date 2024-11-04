@@ -4,6 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+    "content-hash": "65a8ef9558347347f3b24ba815b7c3e8",
     "content-hash": "0c5a616bbaadd164768d8004a6b10b76",
     "packages": [
         {
@@ -2236,41 +2237,6 @@
             }
         },
         {
-            "name": "canyon-gbs/advising-app-knowledge-base",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/knowledge-base",
-                "reference": "1d3c4d035c81d3fc282c2944d71aa75e80605eb6"
-            },
-            "require": {
-                "filament/filament": "^3.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\KnowledgeBase\\Providers\\KnowledgeBaseServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\KnowledgeBase\\": "src/",
-                    "AdvisingApp\\KnowledgeBase\\Tests\\": "tests/",
-                    "AdvisingApp\\KnowledgeBase\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\KnowledgeBase\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
             "name": "canyon-gbs/advising-app-meeting-center",
             "version": "1.0",
             "dist": {
@@ -2438,6 +2404,41 @@
                     "AdvisingApp\\Report\\Tests\\": "tests/",
                     "AdvisingApp\\Report\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\Report\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/advising-app-resource-hub",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/resource-hub",
+                "reference": "673d2c259ecb558eaf34bc390a2566dcacaf7ea2"
+            },
+            "require": {
+                "filament/filament": "^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\ResourceHub\\Providers\\ResourceHubServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\ResourceHub\\": "src/",
+                    "AdvisingApp\\ResourceHub\\Tests\\": "tests/",
+                    "AdvisingApp\\ResourceHub\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\ResourceHub\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

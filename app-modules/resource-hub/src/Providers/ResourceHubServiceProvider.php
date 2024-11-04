@@ -34,36 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
+namespace AdvisingApp\ResourceHub\Providers;
 
-use App\Settings\DisplaySettings;
-use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
+use Filament\Panel;
+use App\Concerns\ImplementsGraphQL;
+use Illuminate\Support\ServiceProvider;
+use AdvisingApp\ResourceHub\ResourceHubPlugin;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
+use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
-use AdvisingApp\Portal\DataTransferObjects\ResourceHubCategoryData;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
 
-class KnowledgeManagementPortalArticleController extends Controller
+class ResourceHubServiceProvider extends ServiceProvider
 {
-    public function show(ResourceHubCategory $category, KnowledgeBaseArticle $article): JsonResponse
-    {
-        $article->increment('portal_view_count');
+    use ImplementsGraphQL;
 
-        return response()->json([
-            'category' => ResourceHubCategoryData::from([
-                'id' => $category->getKey(),
-                'name' => $category->name,
-                'description' => $category->description,
-            ]),
-            'article' => KnowledgeBaseArticleData::from([
-                'id' => $article->getKey(),
-                'categoryId' => $article->category_id,
-                'name' => $article->title,
-                'lastUpdated' => $article->updated_at->setTimezone(app(DisplaySettings::class)->timezone)->format('M d Y, h:m a'),
-                'content' => tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details),
-            ]),
-            'portal_view_count' => $article->portal_view_count,
+    public function register(): void
+    {
+        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ResourceHubPlugin()));
+    }
+
+    public function boot(): void
+    {
+        Relation::morphMap([
+            'knowledge_base_article' => KnowledgeBaseArticle::class,
+            'resource_hub_category' => ResourceHubCategory::class,
+            'resource_hub_quality' => ResourceHubQuality::class,
+            'resource_hub_status' => ResourceHubStatus::class,
         ]);
+
+        $this->discoverSchema(__DIR__ . '/../../graphql/knowledge-base-article.graphql');
     }
 }

@@ -34,36 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
+namespace AdvisingApp\ResourceHub\Filament\Resources;
 
-use App\Settings\DisplaySettings;
-use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
+use Filament\Resources\Resource;
+use App\Filament\Clusters\ResourceHub;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
-use AdvisingApp\Portal\DataTransferObjects\ResourceHubCategoryData;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\EditResourceHubCategory;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\ViewResourceHubCategory;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\CreateResourceHubCategory;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\ListResourceHubCategories;
 
-class KnowledgeManagementPortalArticleController extends Controller
+class ResourceHubCategoryResource extends Resource
 {
-    public function show(ResourceHubCategory $category, KnowledgeBaseArticle $article): JsonResponse
-    {
-        $article->increment('portal_view_count');
+    protected static ?string $model = ResourceHubCategory::class;
 
-        return response()->json([
-            'category' => ResourceHubCategoryData::from([
-                'id' => $category->getKey(),
-                'name' => $category->name,
-                'description' => $category->description,
-            ]),
-            'article' => KnowledgeBaseArticleData::from([
-                'id' => $article->getKey(),
-                'categoryId' => $article->category_id,
-                'name' => $article->title,
-                'lastUpdated' => $article->updated_at->setTimezone(app(DisplaySettings::class)->timezone)->format('M d Y, h:m a'),
-                'content' => tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details),
-            ]),
-            'portal_view_count' => $article->portal_view_count,
-        ]);
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationLabel = 'Categories';
+
+    protected static ?string $modelLabel = 'resource hub category';
+
+    protected static ?int $navigationSort = 1;
+
+    protected static ?string $cluster = ResourceHub::class;
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListResourceHubCategories::route('/'),
+            'create' => CreateResourceHubCategory::route('/create'),
+            'view' => ViewResourceHubCategory::route('/{record}'),
+            'edit' => EditResourceHubCategory::route('/{record}/edit'),
+        ];
     }
 }

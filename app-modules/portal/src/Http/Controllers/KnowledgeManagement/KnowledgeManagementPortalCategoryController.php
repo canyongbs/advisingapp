@@ -38,18 +38,18 @@ namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
 
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseCategoryData;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use AdvisingApp\Portal\DataTransferObjects\ResourceHubCategoryData;
 
 class KnowledgeManagementPortalCategoryController extends Controller
 {
     public function index(): JsonResponse
     {
         return response()->json(
-            KnowledgeBaseCategoryData::collection(
-                KnowledgeBaseCategory::query()
+            ResourceHubCategoryData::collection(
+                ResourceHubCategory::query()
                     ->get()
-                    ->map(function (KnowledgeBaseCategory $category) {
+                    ->map(function (ResourceHubCategory $category) {
                         return [
                             'id' => $category->getKey(),
                             'name' => $category->name,
@@ -62,10 +62,10 @@ class KnowledgeManagementPortalCategoryController extends Controller
         );
     }
 
-    public function show(KnowledgeBaseCategory $category): JsonResponse
+    public function show(ResourceHubCategory $category): JsonResponse
     {
         return response()->json([
-            'category' => KnowledgeBaseCategoryData::from([
+            'category' => ResourceHubCategoryData::from([
                 'id' => $category->getKey(),
                 'name' => $category->name,
                 'description' => $category->description,

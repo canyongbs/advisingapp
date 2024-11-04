@@ -34,36 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
+namespace AdvisingApp\ResourceHub;
 
-use App\Settings\DisplaySettings;
-use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
-use AdvisingApp\Portal\DataTransferObjects\ResourceHubCategoryData;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
+use Filament\Panel;
+use Filament\Contracts\Plugin;
 
-class KnowledgeManagementPortalArticleController extends Controller
+class ResourceHubPlugin implements Plugin
 {
-    public function show(ResourceHubCategory $category, KnowledgeBaseArticle $article): JsonResponse
+    public function getId(): string
     {
-        $article->increment('portal_view_count');
-
-        return response()->json([
-            'category' => ResourceHubCategoryData::from([
-                'id' => $category->getKey(),
-                'name' => $category->name,
-                'description' => $category->description,
-            ]),
-            'article' => KnowledgeBaseArticleData::from([
-                'id' => $article->getKey(),
-                'categoryId' => $article->category_id,
-                'name' => $article->title,
-                'lastUpdated' => $article->updated_at->setTimezone(app(DisplaySettings::class)->timezone)->format('M d Y, h:m a'),
-                'content' => tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details),
-            ]),
-            'portal_view_count' => $article->portal_view_count,
-        ]);
+        return 'resource-hub';
     }
+
+    public function register(Panel $panel): void
+    {
+        $panel->discoverResources(
+            in: __DIR__ . '/Filament/Resources',
+            for: 'AdvisingApp\\ResourceHub\\Filament\\Resources'
+        );
+    }
+
+    public function boot(Panel $panel): void {}
 }

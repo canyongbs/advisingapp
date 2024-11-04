@@ -45,6 +45,6 @@ class KnowledgeManagementSearchData extends Data
     #[DataCollectionOf(KnowledgeBaseArticleData::class)]
     public DataCollection $articles;
 
-    #[DataCollectionOf(KnowledgeBaseCategoryData::class)]
+    #[DataCollectionOf(ResourceHubCategoryData::class)]
     public DataCollection $categories;
 }

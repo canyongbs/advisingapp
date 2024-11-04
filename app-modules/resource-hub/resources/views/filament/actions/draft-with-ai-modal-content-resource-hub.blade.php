@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,38 +30,31 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<div class="mb-3 flex gap-4 text-base md:gap-6">
+    <div class="flex flex-shrink-0 flex-col items-end">
+        <img
+            class="h-8 w-8 rounded-full object-cover object-center"
+            src="{{ $avatarUrl }}"
+            alt="Assistant avatar"
+        >
+    </div>
 
-namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
-
-use App\Settings\DisplaySettings;
-use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
-use AdvisingApp\Portal\DataTransferObjects\ResourceHubCategoryData;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
-
-class KnowledgeManagementPortalArticleController extends Controller
-{
-    public function show(ResourceHubCategory $category, KnowledgeBaseArticle $article): JsonResponse
-    {
-        $article->increment('portal_view_count');
-
-        return response()->json([
-            'category' => ResourceHubCategoryData::from([
-                'id' => $category->getKey(),
-                'name' => $category->name,
-                'description' => $category->description,
-            ]),
-            'article' => KnowledgeBaseArticleData::from([
-                'id' => $article->getKey(),
-                'categoryId' => $article->category_id,
-                'name' => $article->title,
-                'lastUpdated' => $article->updated_at->setTimezone(app(DisplaySettings::class)->timezone)->format('M d Y, h:m a'),
-                'content' => tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details),
-            ]),
-            'portal_view_count' => $article->portal_view_count,
-        ]);
-    }
-}
+    <div class="prose h-36 flex-1 dark:prose-invert sm:h-20">
+        <p
+            x-data="{ content: '' }"
+            x-init="const message = @js('Hi ' . auth()->user()->name . ", I am happy to help you draft your resource hub article for {$recordTitle}. Please describe what information you would like in the article and I will take it from there:");
+            
+            const typeWord = async (word, delay) => {
+                content += word + ' ';
+            
+                await new Promise(resolve => setTimeout(resolve, delay));
+            };
+            
+            for (const word of message.split(' ')) {
+                await typeWord(word, Math.floor(Math.random() * 100));
+            }"
+            x-text="content"
+        ></p>
+    </div>
+</div>
