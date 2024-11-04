@@ -43,7 +43,7 @@ use Illuminate\Auth\Access\Response;
 use App\Concerns\PerformsFeatureChecks;
 use App\Concerns\PerformsLicenseChecks;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 
 class ResourceHubArticlePolicy implements PerformsChecksBeforeAuthorization
@@ -79,7 +79,7 @@ class ResourceHubArticlePolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
-    public function view(Authenticatable $authenticatable, KnowledgeBaseArticle $resourceHubArticle): Response
+    public function view(Authenticatable $authenticatable, ResourceHubArticle $resourceHubArticle): Response
     {
         if (ResourceHub::active()) {
             return $authenticatable->canOrElse(
@@ -109,7 +109,7 @@ class ResourceHubArticlePolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
-    public function update(Authenticatable $authenticatable, KnowledgeBaseArticle $resourceHubArticle): Response
+    public function update(Authenticatable $authenticatable, ResourceHubArticle $resourceHubArticle): Response
     {
         if (ResourceHub::active()) {
             return $authenticatable->canOrElse(
@@ -124,7 +124,7 @@ class ResourceHubArticlePolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
-    public function delete(Authenticatable $authenticatable, KnowledgeBaseArticle $resourceHubArticle): Response
+    public function delete(Authenticatable $authenticatable, ResourceHubArticle $resourceHubArticle): Response
     {
         if (ResourceHub::active()) {
             return $authenticatable->canOrElse(
@@ -139,7 +139,7 @@ class ResourceHubArticlePolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
-    public function restore(Authenticatable $authenticatable, KnowledgeBaseArticle $resourceHubArticle): Response
+    public function restore(Authenticatable $authenticatable, ResourceHubArticle $resourceHubArticle): Response
     {
         if (ResourceHub::active()) {
             return $authenticatable->canOrElse(
@@ -154,7 +154,7 @@ class ResourceHubArticlePolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
-    public function forceDelete(Authenticatable $authenticatable, KnowledgeBaseArticle $resourceHubArticle): Response
+    public function forceDelete(Authenticatable $authenticatable, ResourceHubArticle $resourceHubArticle): Response
     {
         if (ResourceHub::active()) {
             return $authenticatable->canOrElse(

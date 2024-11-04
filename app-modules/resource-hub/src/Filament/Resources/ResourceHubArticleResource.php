@@ -40,7 +40,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\EditResourceHubArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\ViewResourceHubArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\ListResourceHubArticles;
@@ -48,7 +48,7 @@ use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\
 
 class ResourceHubArticleResource extends Resource
 {
-    protected static ?string $model = KnowledgeBaseArticle::class;
+    protected static ?string $model = ResourceHubArticle::class;
 
     protected static ?string $navigationLabel = 'Resource Hub';
 

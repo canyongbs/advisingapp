@@ -63,9 +63,9 @@ onMounted(async () => {
         userIsAuthenticated.value = response;
     });
 
-    await getKnowledgeManagementPortal().then(async () => {
+    await getResourceHubPortal().then(async () => {
         if (userIsAuthenticated.value || !portalRequiresAuthentication.value) {
-            await getKnowledgeManagementPortalCategories().then(() => {
+            await getResourceHubPortalCategories().then(() => {
                 loading.value = false;
             });
 
@@ -125,7 +125,7 @@ const authentication = ref({
     url: null,
 });
 
-async function getKnowledgeManagementPortal() {
+async function getResourceHubPortal() {
     await axios
         .get(props.url)
         .then((response) => {
@@ -189,7 +189,7 @@ async function getKnowledgeManagementPortal() {
         });
 }
 
-async function getKnowledgeManagementPortalCategories() {
+async function getResourceHubPortalCategories() {
     const { get } = consumer();
 
     get(`${props.apiUrl}/categories`)
@@ -245,7 +245,7 @@ async function authenticate(formData, node) {
 
                     userIsAuthenticated.value = true;
 
-                    getKnowledgeManagementPortalCategories();
+                    getResourceHubPortalCategories();
                 }
             })
             .catch((error) => {
@@ -310,7 +310,7 @@ watch(route, () => {
         }"
     >
         <div>
-            <link rel="stylesheet" v-bind:href="hostUrl + '/js/portals/knowledge-management/style.css'" />
+            <link rel="stylesheet" v-bind:href="hostUrl + '/js/portals/resource-hub/style.css'" />
         </div>
 
         <div v-if="loading">

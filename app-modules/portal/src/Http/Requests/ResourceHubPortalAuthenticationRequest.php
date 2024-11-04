@@ -34,42 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Database\Factories;
+namespace AdvisingApp\Portal\Http\Requests;
 
-use AdvisingApp\Division\Models\Division;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
+use Illuminate\Foundation\Http\FormRequest;
 
-/**
- * @extends Factory<KnowledgeBaseArticle>
- */
-class KnowledgeBaseArticleFactory extends Factory
+class ResourceHubPortalAuthenticationRequest extends FormRequest
 {
-    public function definition(): array
+    public function rules(): array
     {
         return [
-            'public' => fake()->boolean(),
-            'title' => fake()->sentence(),
-            'article_details' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph()]]]]],
-            'notes' => fake()->paragraph(),
-            'quality_id' => ResourceHubQuality::inRandomOrder()->first() ?? ResourceHubQuality::factory(),
-            'status_id' => ResourceHubStatus::inRandomOrder()->first() ?? ResourceHubStatus::factory(),
-            'category_id' => ResourceHubCategory::inRandomOrder()->first() ?? ResourceHubCategory::factory(),
+            'email' => ['required', 'email'],
+            'isSpa' => ['required', 'boolean'],
         ];
-    }
-
-    public function configure(): static
-    {
-        return $this->afterMaking(function (KnowledgeBaseArticle $knowledgeBaseArticle) {
-            // ...
-        })->afterCreating(function (KnowledgeBaseArticle $knowledgeBaseArticle) {
-            if ($knowledgeBaseArticle->division->isEmpty()) {
-                $knowledgeBaseArticle->division()->attach(Division::first()?->id ?? Division::factory()->create()->id);
-                $knowledgeBaseArticle->save();
-            }
-        });
     }
 }

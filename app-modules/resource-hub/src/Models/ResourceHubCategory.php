@@ -61,9 +61,9 @@ class ResourceHubCategory extends BaseModel implements Auditable
         'icon',
     ];
 
-    public function knowledgeBaseArticles(): HasMany
+    public function resourceHubArticles(): HasMany
     {
-        return $this->hasMany(KnowledgeBaseArticle::class, 'category_id');
+        return $this->hasMany(ResourceHubArticle::class, 'category_id');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

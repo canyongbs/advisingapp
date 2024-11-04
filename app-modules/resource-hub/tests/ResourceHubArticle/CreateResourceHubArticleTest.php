@@ -43,7 +43,7 @@ use function PHPUnit\Framework\assertCount;
 use function Pest\Laravel\assertDatabaseHas;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\ListResourceHubArticles;
 use AdvisingApp\ResourceHub\Tests\ResourceHubArticle\RequestFactories\CreateResourceHubArticleRequestFactory;
 
@@ -76,13 +76,13 @@ test('CreateResourceHubArticle is gated with proper access control', function ()
         ->callAction('create', $request->toArray())
         ->assertHasNoActionErrors();
 
-    assertCount(1, KnowledgeBaseArticle::all());
+    assertCount(1, ResourceHubArticle::all());
 
     $data = $request->except('division')->toArray();
 
-    assertDatabaseHas(KnowledgeBaseArticle::class, $data);
+    assertDatabaseHas(ResourceHubArticle::class, $data);
 
-    $resourceHubArticle = KnowledgeBaseArticle::first();
+    $resourceHubArticle = ResourceHubArticle::first();
 
     expect($resourceHubArticle->division->pluck('id')->toArray())->toEqual($request['division']);
 });
@@ -117,13 +117,13 @@ test('CreateResourceHubArticle is gated with proper feature access control', fun
         ->callAction('create', $request->toArray())
         ->assertHasNoActionErrors();
 
-    assertCount(1, KnowledgeBaseArticle::all());
+    assertCount(1, ResourceHubArticle::all());
 
     $data = $request->except('division')->toArray();
 
-    assertDatabaseHas(KnowledgeBaseArticle::class, $data);
+    assertDatabaseHas(ResourceHubArticle::class, $data);
 
-    $resourceHubArticle = KnowledgeBaseArticle::first();
+    $resourceHubArticle = ResourceHubArticle::first();
 
     expect($resourceHubArticle->division->pluck('id')->toArray())->toEqual($request['division']);
 });

@@ -13,6 +13,27 @@ return new class () extends Migration {
                 'updated_at' => now(),
             ]);
 
+        DB::table('roles')
+            ->where('name', 'knowledge-base.knowledge_base_management')
+            ->update([
+                'name' => 'resource-hub.resource_hub_management',
+                'updated_at' => now(),
+            ]);
+
+        DB::table('permissions')
+            ->where('name', 'LIKE', 'knowledge_base_article.%')
+            ->update([
+                'name' => DB::raw("REPLACE(name, 'knowledge_base_article.', 'resource_hub_article.')"),
+                'updated_at' => now(),
+            ]);
+
+        DB::table('permission_groups')
+            ->where('name', 'Knowledge Base Article')
+            ->update([
+                'name' => 'Resource Hub Article',
+                'updated_at' => now(),
+            ]);
+
         DB::table('permissions')
             ->where('name', 'LIKE', 'knowledge_base_category.%')
             ->update([
@@ -62,6 +83,27 @@ return new class () extends Migration {
             ->where('name', 'resource-hub.resource_hub_field_settings_management')
             ->update([
                 'name' => 'knowledge-base.knowledge_base_field_settings_management',
+                'updated_at' => now(),
+            ]);
+
+        DB::table('roles')
+            ->where('name', 'resource-hub.resource_hub_management')
+            ->update([
+                'name' => 'knowledge-base.knowledge_base_management',
+                'updated_at' => now(),
+            ]);
+
+        DB::table('permissions')
+            ->where('name', 'LIKE', 'resource_hub_article.%')
+            ->update([
+                'name' => DB::raw("REPLACE(name, 'resource_hub_article.', 'knowledge_base_article.')"),
+                'updated_at' => now(),
+            ]);
+
+        DB::table('permission_groups')
+            ->where('name', 'Resource Hub Article')
+            ->update([
+                'name' => 'Knowledge Base Article',
                 'updated_at' => now(),
             ]);
 

@@ -34,17 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Database\Seeders;
+namespace AdvisingApp\Portal\Livewire;
 
-use Illuminate\Database\Seeder;
-use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
+use Livewire\Component;
+use Illuminate\Contracts\View\View;
 
-class KnowledgeBaseArticleSeeder extends Seeder
+class RenderResourceHubPortal extends Component
 {
-    public function run(): void
+    public function render(): View
     {
-        KnowledgeBaseArticle::factory()
-            ->count(25)
-            ->create();
+        return view('portal::livewire.render-resource-hub-portal')
+            ->title('Resource Hub Portal');
     }
 }

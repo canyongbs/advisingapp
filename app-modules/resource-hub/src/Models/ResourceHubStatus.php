@@ -59,9 +59,9 @@ class ResourceHubStatus extends BaseModel implements Auditable
         'name',
     ];
 
-    public function knowledgeBaseArticles(): HasMany
+    public function resourceHubArticles(): HasMany
     {
-        return $this->hasMany(KnowledgeBaseArticle::class, 'status_id');
+        return $this->hasMany(ResourceHubArticle::class, 'status_id');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

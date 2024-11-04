@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
+namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
@@ -46,11 +46,11 @@ use Illuminate\Validation\ValidationException;
 use AdvisingApp\Portal\Models\PortalAuthentication;
 use AdvisingApp\Portal\Notifications\AuthenticatePortalNotification;
 use AdvisingApp\StudentDataModel\Actions\ResolveEducatableFromEmail;
-use AdvisingApp\Portal\Http\Requests\KnowledgeManagementPortalAuthenticationRequest;
+use AdvisingApp\Portal\Http\Requests\ResourceHubPortalAuthenticationRequest;
 
-class KnowledgeManagementPortalRequestAuthenticationController extends Controller
+class ResourceHubPortalRequestAuthenticationController extends Controller
 {
-    public function __invoke(KnowledgeManagementPortalAuthenticationRequest $request, ResolveEducatableFromEmail $resolveEducatableFromEmail): JsonResponse
+    public function __invoke(ResourceHubPortalAuthenticationRequest $request, ResolveEducatableFromEmail $resolveEducatableFromEmail): JsonResponse
     {
         $email = $request->safe()->email;
 
@@ -66,7 +66,7 @@ class KnowledgeManagementPortalRequestAuthenticationController extends Controlle
 
         $authentication = new PortalAuthentication();
         $authentication->educatable()->associate($educatable);
-        $authentication->portal_type = PortalType::KnowledgeManagement;
+        $authentication->portal_type = PortalType::ResourceHub;
         $authentication->code = Hash::make($code);
         $authentication->save();
 
@@ -77,7 +77,7 @@ class KnowledgeManagementPortalRequestAuthenticationController extends Controlle
         $authenticationUrl = match ($request->safe()->isSpa) {
             true => URL::to(
                 URL::signedRoute(
-                    name: 'portal.knowledge-management.authenticate',
+                    name: 'portal.resource-hub.authenticate',
                     parameters: [
                         'authentication' => $authentication,
                     ],
@@ -86,7 +86,7 @@ class KnowledgeManagementPortalRequestAuthenticationController extends Controlle
             ),
             default => URL::to(
                 URL::signedRoute(
-                    name: 'api.portal.knowledge-management.authenticate.embedded',
+                    name: 'api.portal.resource-hub.authenticate.embedded',
                     parameters: [
                         'authentication' => $authentication,
                     ],

@@ -34,37 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Middleware;
+namespace AdvisingApp\ResourceHub\Models;
 
-use Closure;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use AdvisingApp\Portal\Settings\PortalSettings;
+use App\Models\User;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized
+/**
+ * @mixin IdeHelperResourceHubArticleUpvote
+ */
+class ResourceHubArticleUpvote extends BaseModel
 {
-    public function handle(Request $request, Closure $next): Response
+    protected $table = 'knowledge_base_item_upvotes';
+
+    protected $fillable = [
+        'user_id',
+    ];
+
+    public function resourceHubArticle(): BelongsTo
     {
-        $referer = $request->headers->get('referer');
+        return $this->belongsTo(ResourceHubArticle::class, 'knowledge_base_item_id');
+    }
 
-        if (parse_url($request->url())['host'] === parse_url(config('app.url'))['host']) {
-            return $next($request);
-        }
-
-        if (! $referer) {
-            return response()->json(['error' => 'Missing referer header.'], 400);
-        }
-
-        $referer = parse_url($referer)['host'];
-
-        $settings = resolve(PortalSettings::class);
-
-        if ($referer != parse_url(config('app.url'))['host']) {
-            if (parse_url($settings->knowledge_management_portal_authorized_domain)['host'] !== $referer) {
-                return response()->json(['error' => 'Referer not allowed. Domain must be added to allowed domains list'], 403);
-            }
-        }
-
-        return $next($request);
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

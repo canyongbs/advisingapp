@@ -44,7 +44,7 @@ import getAppContext from '@/Services/GetAppContext.js';
 import { createPinia } from 'pinia';
 
 customElements.define(
-    'knowledge-management-portal-embed',
+    'resource-hub-portal-embed',
     defineCustomElement({
         setup(props) {
             const app = createApp();

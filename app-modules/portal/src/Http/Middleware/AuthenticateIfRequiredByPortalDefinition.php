@@ -58,7 +58,7 @@ class AuthenticateIfRequiredByPortalDefinition
             abort(Response::HTTP_FORBIDDEN);
         }
 
-        if (! $user->tokenCan('knowledge-management-portal')) {
+        if (! $user->tokenCan('resource-hub-portal')) {
             abort(Response::HTTP_FORBIDDEN);
         }
 

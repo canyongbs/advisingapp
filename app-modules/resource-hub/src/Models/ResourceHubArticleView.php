@@ -34,16 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Livewire;
+namespace AdvisingApp\ResourceHub\Models;
 
-use Livewire\Component;
-use Illuminate\Contracts\View\View;
+use App\Models\User;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class RenderKnowledgeManagementPortal extends Component
+/**
+ * @mixin IdeHelperResourceHubArticleView
+ */
+class ResourceHubArticleView extends BaseModel
 {
-    public function render(): View
+    protected $table = 'knowledge_base_item_views';
+
+    protected $fillable = [
+        'user_id',
+    ];
+
+    public function resourceHubArticle(): BelongsTo
     {
-        return view('portal::livewire.render-knowledge-management-portal')
-            ->title('Knowledge Management Portal');
+        return $this->belongsTo(ResourceHubArticle::class, 'knowledge_base_item_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

@@ -50,14 +50,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
- * @mixin IdeHelperKnowledgeBaseArticle
+ * @mixin IdeHelperResourceHubArticle
  */
-class KnowledgeBaseArticle extends BaseModel implements Auditable, HasMedia
+class ResourceHubArticle extends BaseModel implements Auditable, HasMedia
 {
     use AuditableTrait;
     use HasUuids;
     use InteractsWithMedia;
     use SoftDeletes;
+
+    protected $table = 'knowledge_base_articles';
 
     protected $casts = [
         'public' => 'boolean',
@@ -109,12 +111,12 @@ class KnowledgeBaseArticle extends BaseModel implements Auditable, HasMedia
 
     public function views(): HasMany
     {
-        return $this->hasMany(KnowledgeBaseArticleView::class, 'knowledge_base_item_id');
+        return $this->hasMany(ResourceHubArticleView::class, 'knowledge_base_item_id');
     }
 
     public function upvotes(): HasMany
     {
-        return $this->hasMany(KnowledgeBaseArticleUpvote::class, 'knowledge_base_item_id');
+        return $this->hasMany(ResourceHubArticleUpvote::class, 'knowledge_base_item_id');
     }
 
     public function isUpvoted(): bool

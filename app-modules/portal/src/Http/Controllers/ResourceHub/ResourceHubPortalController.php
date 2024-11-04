@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,14 +32,32 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use AdvisingApp\Portal\Enums\PortalType;
-    use AdvisingApp\Portal\Actions\GeneratePortalEmbedCode;
-@endphp
+*/
 
-<div class="flex items-center justify-center">
-    <div class="w-full max-w-full">
-        {!! resolve(GeneratePortalEmbedCode::class)->handle(PortalType::KnowledgeManagement) !!}
-    </div>
-</div>
+namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
+
+use Illuminate\Http\JsonResponse;
+use Filament\Support\Colors\Color;
+use Illuminate\Support\Facades\URL;
+use App\Http\Controllers\Controller;
+use AdvisingApp\Portal\Settings\PortalSettings;
+
+class ResourceHubPortalController extends Controller
+{
+    public function show(): JsonResponse
+    {
+        $settings = resolve(PortalSettings::class);
+
+        return response()->json([
+            'primary_color' => Color::all()[$settings->knowledge_management_portal_primary_color ?? 'blue'],
+            'rounding' => $settings->knowledge_management_portal_rounding,
+            'requires_authentication' => $settings->knowledge_management_portal_requires_authentication,
+            'authentication_url' => URL::to(
+                URL::signedRoute(
+                    name: 'api.portal.resource-hub.request-authentication',
+                    absolute: false,
+                )
+            ),
+        ]);
+    }
+}

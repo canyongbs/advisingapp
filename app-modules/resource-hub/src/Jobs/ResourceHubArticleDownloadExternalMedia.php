@@ -45,7 +45,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Exceptions\ResourceHubExternalMediaFileAccessException;
 use AdvisingApp\ResourceHub\Exceptions\ResourceHubExternalMediaValidationException;
 
@@ -56,7 +56,7 @@ class ResourceHubArticleDownloadExternalMedia implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(public KnowledgeBaseArticle $resourceHubArticle) {}
+    public function __construct(public ResourceHubArticle $resourceHubArticle) {}
 
     public function handle(): void
     {

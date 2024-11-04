@@ -34,36 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Providers;
+namespace AdvisingApp\ResourceHub\Database\Factories;
 
-use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\ResourceHub\ResourceHubPlugin;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Division\Models\Division;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 
-class ResourceHubServiceProvider extends ServiceProvider
+/**
+ * @extends Factory<ResourceHubArticle>
+ */
+class ResourceHubArticleFactory extends Factory
 {
-    use ImplementsGraphQL;
-
-    public function register(): void
+    public function definition(): array
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ResourceHubPlugin()));
+        return [
+            'public' => fake()->boolean(),
+            'title' => fake()->sentence(),
+            'article_details' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph()]]]]],
+            'notes' => fake()->paragraph(),
+            'quality_id' => ResourceHubQuality::inRandomOrder()->first() ?? ResourceHubQuality::factory(),
+            'status_id' => ResourceHubStatus::inRandomOrder()->first() ?? ResourceHubStatus::factory(),
+            'category_id' => ResourceHubCategory::inRandomOrder()->first() ?? ResourceHubCategory::factory(),
+        ];
     }
 
-    public function boot(): void
+    public function configure(): static
     {
-        Relation::morphMap([
-            'resource_hub_article' => ResourceHubArticle::class,
-            'resource_hub_category' => ResourceHubCategory::class,
-            'resource_hub_quality' => ResourceHubQuality::class,
-            'resource_hub_status' => ResourceHubStatus::class,
-        ]);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/resource-hub-article.graphql');
+        return $this->afterMaking(function (ResourceHubArticle $resourceHubArticle) {
+            // ...
+        })->afterCreating(function (ResourceHubArticle $resourceHubArticle) {
+            if ($resourceHubArticle->division->isEmpty()) {
+                $resourceHubArticle->division()->attach(Division::first()?->id ?? Division::factory()->create()->id);
+                $resourceHubArticle->save();
+            }
+        });
     }
 }

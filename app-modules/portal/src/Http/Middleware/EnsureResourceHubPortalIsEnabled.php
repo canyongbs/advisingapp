@@ -34,30 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Models;
+namespace AdvisingApp\Portal\Http\Middleware;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use AdvisingApp\Portal\Settings\PortalSettings;
 
-/**
- * @mixin IdeHelperKnowledgeBaseArticleUpvote
- */
-class KnowledgeBaseArticleUpvote extends BaseModel
+class EnsureResourceHubPortalIsEnabled
 {
-    protected $table = 'knowledge_base_item_upvotes';
-
-    protected $fillable = [
-        'user_id',
-    ];
-
-    public function knowledgeBaseArticle(): BelongsTo
+    public function handle(Request $request, Closure $next): Response
     {
-        return $this->belongsTo(KnowledgeBaseArticle::class, 'knowledge_base_item_id');
-    }
+        if (! app(PortalSettings::class)->knowledge_management_portal_enabled) {
+            if ($request->wantsJson() || $request->fullUrlIs('*/api/portal/resource-hub/*')) {
+                return response()->json(['error' => 'The Resource Hub Portal is not enabled.'], Response::HTTP_FORBIDDEN);
+            }
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
+        return $next($request);
     }
 }

@@ -34,30 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
+namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
+use Closure;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Filament\Support\Colors\Color;
-use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
-use AdvisingApp\Portal\Settings\PortalSettings;
+use Illuminate\Support\Facades\Hash;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Portal\Models\PortalAuthentication;
 
-class KnowledgeManagementPortalController extends Controller
+class ResourceHubPortalAuthenticateController extends Controller
 {
-    public function show(): JsonResponse
+    public function __invoke(Request $request, PortalAuthentication $authentication): JsonResponse
     {
-        $settings = resolve(PortalSettings::class);
+        if ($authentication->isExpired()) {
+            return response()->json([
+                'is_expired' => true,
+            ]);
+        }
+
+        $request->validate([
+            'code' => ['required', 'integer', 'digits:6', function (string $attribute, int $value, Closure $fail) use ($authentication) {
+                if (Hash::check($value, $authentication->code)) {
+                    return;
+                }
+
+                $fail('The provided code is invalid.');
+            }],
+        ]);
+
+        /** @var Student|Prospect $educatable */
+        $educatable = $authentication->educatable;
+
+        $token = $educatable->createToken('resource-hub-portal-access-token', [
+            'resource-hub-portal',
+        ]);
 
         return response()->json([
-            'primary_color' => Color::all()[$settings->knowledge_management_portal_primary_color ?? 'blue'],
-            'rounding' => $settings->knowledge_management_portal_rounding,
-            'requires_authentication' => $settings->knowledge_management_portal_requires_authentication,
-            'authentication_url' => URL::to(
-                URL::signedRoute(
-                    name: 'api.portal.knowledge-management.request-authentication',
-                    absolute: false,
-                )
-            ),
+            'success' => true,
+            'token' => str($token->plainTextToken)->after('|')->toString(),
         ]);
     }
 }

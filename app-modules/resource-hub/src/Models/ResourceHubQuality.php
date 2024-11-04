@@ -59,9 +59,9 @@ class ResourceHubQuality extends BaseModel implements Auditable
         'name',
     ];
 
-    public function knowledgeBaseArticles(): HasMany
+    public function resourceHubArticles(): HasMany
     {
-        return $this->hasMany(KnowledgeBaseArticle::class, 'quality_id');
+        return $this->hasMany(ResourceHubArticle::class, 'quality_id');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

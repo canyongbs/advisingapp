@@ -60,9 +60,9 @@ class ListResourceHubQualities extends ListRecords
                     ->label('Name')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('knowledge_base_articles_count')
+                TextColumn::make('resource_hub_articles_count')
                     ->label('# of Resource Hub Articles')
-                    ->counts('knowledgeBaseArticles')
+                    ->counts('resourceHubArticles')
                     ->sortable(),
             ])
             ->actions([

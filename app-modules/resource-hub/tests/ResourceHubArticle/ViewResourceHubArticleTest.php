@@ -43,7 +43,7 @@ use App\Settings\LicenseSettings;
 use function Pest\Laravel\actingAs;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
 
 // TODO: Write ViewResourceHubArticle tests
@@ -54,7 +54,7 @@ use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
 test('ViewResourceHubArticle is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $resourceHubArticle = KnowledgeBaseArticle::factory()->create();
+    $resourceHubArticle = ResourceHubArticle::factory()->create();
 
     actingAs($user);
 
@@ -86,7 +86,7 @@ test('ViewResourceHubArticle is gated with proper feature access control', funct
     $user->givePermissionTo('resource_hub_article.view-any');
     $user->givePermissionTo('resource_hub_article.*.view');
 
-    $resourceHubArticle = KnowledgeBaseArticle::factory()->create();
+    $resourceHubArticle = ResourceHubArticle::factory()->create();
 
     actingAs($user);
 

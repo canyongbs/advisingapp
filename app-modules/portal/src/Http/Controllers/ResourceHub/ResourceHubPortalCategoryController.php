@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
+namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\Portal\DataTransferObjects\ResourceHubCategoryData;
 
-class KnowledgeManagementPortalCategoryController extends Controller
+class ResourceHubPortalCategoryController extends Controller
 {
     public function index(): JsonResponse
     {
@@ -70,7 +70,7 @@ class KnowledgeManagementPortalCategoryController extends Controller
                 'name' => $category->name,
                 'description' => $category->description,
             ]),
-            'articles' => $category->knowledgeBaseArticles()
+            'articles' => $category->resourceHubArticles()
                 ->select(['title', 'category_id', 'id'])
                 ->public()
                 ->paginate(10)

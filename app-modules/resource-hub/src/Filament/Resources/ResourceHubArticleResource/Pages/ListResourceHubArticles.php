@@ -37,6 +37,7 @@
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages;
 
 use Filament\Tables\Table;
+use App\Features\ResourceHub;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -56,9 +57,9 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
 
 class ListResourceHubArticles extends ListRecords
@@ -100,10 +101,10 @@ class ListResourceHubArticles extends ListRecords
                         'upvotes as my_upvotes_count' => fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
                     ])
                     ->sortable()
-                    ->action(fn (KnowledgeBaseArticle $record) => $record->toggleUpvote())
-                    ->color(fn (KnowledgeBaseArticle $record): string => $record->my_upvotes_count ? 'success' : 'gray')
-                    ->tooltip(fn (KnowledgeBaseArticle $record): string => $record->my_upvotes_count ? 'Click to remove upvote' : 'Click to upvote')
-                    ->formatStateUsing(fn (KnowledgeBaseArticle $record, int $state): string => ($record->my_upvotes_count ? 'Upvoted ' : 'Upvote ') . "({$state})"),
+                    ->action(fn (ResourceHubArticle $record) => $record->toggleUpvote())
+                    ->color(fn (ResourceHubArticle $record): string => $record->my_upvotes_count ? 'success' : 'gray')
+                    ->tooltip(fn (ResourceHubArticle $record): string => $record->my_upvotes_count ? 'Click to remove upvote' : 'Click to upvote')
+                    ->formatStateUsing(fn (ResourceHubArticle $record, int $state): string => ($record->my_upvotes_count ? 'Upvoted ' : 'Upvote ') . "({$state})"),
             ])
             ->filters([
                 SelectFilter::make('quality')
@@ -174,7 +175,7 @@ class ListResourceHubArticles extends ListRecords
                         $record->public = $data['public'];
                         $record->notes = $data['notes'];
                     })
-                    ->after(function (KnowledgeBaseArticle $replica, KnowledgeBaseArticle $record): void {
+                    ->after(function (ResourceHubArticle $replica, ResourceHubArticle $record): void {
                         $record->load('division');
 
                         foreach ($record->division as $divison) {
@@ -201,7 +202,7 @@ class ListResourceHubArticles extends ListRecords
     {
         return [
             CreateAction::make()
-                ->disabled(fn (): bool => ! auth()->user()->can('knowledge_base_article.create'))
+                ->disabled(fn (): bool => ! ResourceHub::active() ? ! auth()->user()->can('knowledge_base_article.create') : ! auth()->user()->can('resource_hub_article.create'))
                 ->label('New Article')
                 ->createAnother(false)
                 ->successRedirectUrl(fn (Model $record): string => ResourceHubArticleResource::getUrl('edit', ['record' => $record])),

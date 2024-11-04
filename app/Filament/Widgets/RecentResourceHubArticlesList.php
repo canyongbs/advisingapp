@@ -41,7 +41,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Widgets\TableWidget as BaseWidget;
-use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
 
 class RecentResourceHubArticlesList extends BaseWidget
@@ -57,7 +57,7 @@ class RecentResourceHubArticlesList extends BaseWidget
         return $table
             ->heading('Latest KB Articles (5)')
             ->query(
-                KnowledgeBaseArticle::latest()->limit(5)
+                ResourceHubArticle::latest()->limit(5)
             )
             ->columns([
                 IdColumn::make(),
@@ -86,10 +86,10 @@ class RecentResourceHubArticlesList extends BaseWidget
             ])
             ->actions([
                 ViewAction::make()
-                    ->url(fn (KnowledgeBaseArticle $record): string => ResourceHubArticleResource::getUrl(name: 'view', parameters: ['record' => $record])),
+                    ->url(fn (ResourceHubArticle $record): string => ResourceHubArticleResource::getUrl(name: 'view', parameters: ['record' => $record])),
             ])
             ->recordUrl(
-                fn (KnowledgeBaseArticle $record): string => ResourceHubArticleResource::getUrl(name: 'view', parameters: ['record' => $record]),
+                fn (ResourceHubArticle $record): string => ResourceHubArticleResource::getUrl(name: 'view', parameters: ['record' => $record]),
             )
             ->paginated(false);
     }

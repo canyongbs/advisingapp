@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,49 +30,14 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\Portal\Enums\PortalType;
+    use AdvisingApp\Portal\Actions\GeneratePortalEmbedCode;
+@endphp
 
-namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
-
-use Closure;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Portal\Models\PortalAuthentication;
-
-class KnowledgeManagementPortalAuthenticateController extends Controller
-{
-    public function __invoke(Request $request, PortalAuthentication $authentication): JsonResponse
-    {
-        if ($authentication->isExpired()) {
-            return response()->json([
-                'is_expired' => true,
-            ]);
-        }
-
-        $request->validate([
-            'code' => ['required', 'integer', 'digits:6', function (string $attribute, int $value, Closure $fail) use ($authentication) {
-                if (Hash::check($value, $authentication->code)) {
-                    return;
-                }
-
-                $fail('The provided code is invalid.');
-            }],
-        ]);
-
-        /** @var Student|Prospect $educatable */
-        $educatable = $authentication->educatable;
-
-        $token = $educatable->createToken('knowledge-management-portal-access-token', [
-            'knowledge-management-portal',
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'token' => str($token->plainTextToken)->after('|')->toString(),
-        ]);
-    }
-}
+<div class="flex items-center justify-center">
+    <div class="w-full max-w-full">
+        {!! resolve(GeneratePortalEmbedCode::class)->handle(PortalType::ResourceHub) !!}
+    </div>
+</div>

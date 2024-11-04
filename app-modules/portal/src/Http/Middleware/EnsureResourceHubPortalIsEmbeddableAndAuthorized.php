@@ -34,17 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Requests;
+namespace AdvisingApp\Portal\Http\Middleware;
 
-use Illuminate\Foundation\Http\FormRequest;
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use AdvisingApp\Portal\Settings\PortalSettings;
 
-class KnowledgeManagementPortalAuthenticationRequest extends FormRequest
+class EnsureResourceHubPortalIsEmbeddableAndAuthorized
 {
-    public function rules(): array
+    public function handle(Request $request, Closure $next): Response
     {
-        return [
-            'email' => ['required', 'email'],
-            'isSpa' => ['required', 'boolean'],
-        ];
+        $referer = $request->headers->get('referer');
+
+        if (parse_url($request->url())['host'] === parse_url(config('app.url'))['host']) {
+            return $next($request);
+        }
+
+        if (! $referer) {
+            return response()->json(['error' => 'Missing referer header.'], 400);
+        }
+
+        $referer = parse_url($referer)['host'];
+
+        $settings = resolve(PortalSettings::class);
+
+        if ($referer != parse_url(config('app.url'))['host']) {
+            if (parse_url($settings->knowledge_management_portal_authorized_domain)['host'] !== $referer) {
+                return response()->json(['error' => 'Referer not allowed. Domain must be added to allowed domains list'], 403);
+            }
+        }
+
+        return $next($request);
     }
 }

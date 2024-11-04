@@ -105,7 +105,7 @@ function debounce(func, delay) {
             <div class="max-w-screen-xl flex flex-col gap-y-6 mx-auto py-8">
                 <div class="flex flex-col gap-y-1 text-left">
                     <h3 class="text-3xl font-semibold text-white">Need help?</h3>
-                    <p class="text-primary-100">Search our knowledge base for advice and answers</p>
+                    <p class="text-primary-100">Search our resource hub for advice and answers</p>
                 </div>
 
                 <form action="#" method="GET">

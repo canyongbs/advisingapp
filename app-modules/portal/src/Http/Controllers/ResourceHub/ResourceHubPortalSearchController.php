@@ -34,24 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
+namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Scopes\SearchBy;
 use App\Http\Controllers\Controller;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
+use AdvisingApp\Portal\DataTransferObjects\ResourceHubSearchData;
+use AdvisingApp\Portal\DataTransferObjects\ResourceHubArticleData;
 use AdvisingApp\Portal\DataTransferObjects\ResourceHubCategoryData;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeBaseArticleData;
-use AdvisingApp\Portal\DataTransferObjects\KnowledgeManagementSearchData;
 
-class KnowledgeManagementPortalSearchController extends Controller
+class ResourceHubPortalSearchController extends Controller
 {
-    public function get(Request $request): KnowledgeManagementSearchData
+    public function get(Request $request): ResourceHubSearchData
     {
-        $itemData = KnowledgeBaseArticleData::collection(
-            KnowledgeBaseArticle::query()
+        $itemData = ResourceHubArticleData::collection(
+            ResourceHubArticle::query()
                 ->public()
                 ->tap(new SearchBy('title', Str::lower($request->get('search'))))
                 ->get()
@@ -79,7 +79,7 @@ class KnowledgeManagementPortalSearchController extends Controller
                 ->toArray()
         );
 
-        $searchResults = KnowledgeManagementSearchData::from([
+        $searchResults = ResourceHubSearchData::from([
             'articles' => $itemData,
             'categories' => $categoryData,
         ]);

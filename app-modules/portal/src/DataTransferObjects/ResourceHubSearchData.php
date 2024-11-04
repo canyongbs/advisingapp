@@ -37,14 +37,14 @@
 namespace AdvisingApp\Portal\DataTransferObjects;
 
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 
-class KnowledgeBaseArticleData extends Data
+class ResourceHubSearchData extends Data
 {
-    public function __construct(
-        public string $id,
-        public ?string $categoryId,
-        public string $name,
-        public ?string $lastUpdated,
-        public ?string $content
-    ) {}
+    #[DataCollectionOf(ResourceHubArticleData::class)]
+    public DataCollection $articles;
+
+    #[DataCollectionOf(ResourceHubCategoryData::class)]
+    public DataCollection $categories;
 }

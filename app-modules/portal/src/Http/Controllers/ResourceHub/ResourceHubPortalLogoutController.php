@@ -34,25 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Middleware;
+namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
-use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use AdvisingApp\Portal\Settings\PortalSettings;
+use App\Http\Controllers\Controller;
 
-class EnsureKnowledgeManagementPortalIsEnabled
+class ResourceHubPortalLogoutController extends Controller
 {
-    public function handle(Request $request, Closure $next): Response
+    public function __invoke(Request $request)
     {
-        if (! app(PortalSettings::class)->knowledge_management_portal_enabled) {
-            if ($request->wantsJson() || $request->fullUrlIs('*/api/portal/knowledge-management/*')) {
-                return response()->json(['error' => 'The Knowledge Management Portal is not enabled.'], Response::HTTP_FORBIDDEN);
-            }
+        $user = auth('sanctum')->user();
 
-            abort(Response::HTTP_FORBIDDEN);
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+            ]);
         }
 
-        return $next($request);
+        $user->tokens()->where('name', 'resource-hub-portal-access-token')->delete();
+
+        return response()->json([
+            'success' => true,
+            'redirect_url' => route('portal.resource-hub.show'),
+        ]);
     }
 }

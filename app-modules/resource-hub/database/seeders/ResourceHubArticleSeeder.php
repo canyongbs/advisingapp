@@ -34,28 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Controllers\KnowledgeManagement;
+namespace AdvisingApp\ResourceHub\Database\Seeders;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use Illuminate\Database\Seeder;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 
-class KnowledgeManagementPortalLogoutController extends Controller
+class ResourceHubArticleSeeder extends Seeder
 {
-    public function __invoke(Request $request)
+    public function run(): void
     {
-        $user = auth('sanctum')->user();
-
-        if (! $user) {
-            return response()->json([
-                'success' => false,
-            ]);
-        }
-
-        $user->tokens()->where('name', 'knowledge-management-portal-access-token')->delete();
-
-        return response()->json([
-            'success' => true,
-            'redirect_url' => route('portal.knowledge-management.show'),
-        ]);
+        ResourceHubArticle::factory()
+            ->count(25)
+            ->create();
     }
 }

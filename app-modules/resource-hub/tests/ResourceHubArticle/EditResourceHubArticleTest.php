@@ -44,7 +44,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\EditResourceHubArticle;
 
@@ -60,7 +60,7 @@ test('EditResourceHubArticle is gated with proper access control', function () {
 
     actingAs($user);
 
-    $resourceHubArticle = KnowledgeBaseArticle::factory()->create();
+    $resourceHubArticle = ResourceHubArticle::factory()->create();
 
     get(
         ResourceHubArticleResource::getUrl('edit', [
@@ -99,7 +99,7 @@ test('EditResourceHubArticle is gated with proper feature access control', funct
     $user->givePermissionTo('resource_hub_article.view-any');
     $user->givePermissionTo('resource_hub_article.*.update');
 
-    $resourceHubArticle = KnowledgeBaseArticle::factory()->create();
+    $resourceHubArticle = ResourceHubArticle::factory()->create();
 
     get(
         ResourceHubArticleResource::getUrl('edit', [

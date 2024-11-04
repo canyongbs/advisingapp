@@ -34,30 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Models;
+namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Settings\DisplaySettings;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use AdvisingApp\Portal\DataTransferObjects\ResourceHubArticleData;
+use AdvisingApp\Portal\DataTransferObjects\ResourceHubCategoryData;
 
-/**
- * @mixin IdeHelperKnowledgeBaseArticleView
- */
-class KnowledgeBaseArticleView extends BaseModel
+class ResourceHubPortalArticleController extends Controller
 {
-    protected $table = 'knowledge_base_item_views';
-
-    protected $fillable = [
-        'user_id',
-    ];
-
-    public function knowledgeBaseArticle(): BelongsTo
+    public function show(ResourceHubCategory $category, ResourceHubArticle $article): JsonResponse
     {
-        return $this->belongsTo(KnowledgeBaseArticle::class, 'knowledge_base_item_id');
-    }
+        $article->increment('portal_view_count');
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
+        return response()->json([
+            'category' => ResourceHubCategoryData::from([
+                'id' => $category->getKey(),
+                'name' => $category->name,
+                'description' => $category->description,
+            ]),
+            'article' => ResourceHubArticleData::from([
+                'id' => $article->getKey(),
+                'categoryId' => $article->category_id,
+                'name' => $article->title,
+                'lastUpdated' => $article->updated_at->setTimezone(app(DisplaySettings::class)->timezone)->format('M d Y, h:m a'),
+                'content' => tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details),
+            ]),
+            'portal_view_count' => $article->portal_view_count,
+        ]);
     }
 }

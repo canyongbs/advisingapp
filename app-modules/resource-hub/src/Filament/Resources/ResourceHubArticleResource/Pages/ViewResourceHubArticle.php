@@ -46,7 +46,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\RateLimiter;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
-use AdvisingApp\ResourceHub\Models\KnowledgeBaseArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
 
 class ViewResourceHubArticle extends ViewRecord
@@ -89,7 +89,7 @@ class ViewResourceHubArticle extends ViewRecord
                             ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No'),
                         TextEntry::make('views_count')
                             ->label('Views')
-                            ->state(fn (KnowledgeBaseArticle $record): int => $record->views()->count()),
+                            ->state(fn (ResourceHubArticle $record): int => $record->views()->count()),
                     ])
                     ->columns(2),
                 Section::make()

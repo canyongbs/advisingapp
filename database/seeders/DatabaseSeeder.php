@@ -56,9 +56,9 @@ use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
 use AdvisingApp\InventoryManagement\Database\Seeders\AssetSeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubStatusSeeder;
+use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubArticleSeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubQualitySeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubCategorySeeder;
-use AdvisingApp\ResourceHub\Database\Seeders\KnowledgeBaseArticleSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ChangeRequestTypeSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
@@ -103,7 +103,7 @@ class DatabaseSeeder extends Seeder
             ServiceRequestSeeder::class,
             ServiceRequestUpdateSeeder::class,
             ProspectSeeder::class,
-            KnowledgeBaseArticleSeeder::class,
+            ResourceHubArticleSeeder::class,
             TaskSeeder::class,
             FormSeeder::class,
             AlertSeeder::class,
