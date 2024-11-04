@@ -78,7 +78,7 @@
                     @endif
                 </div>
 
-                @if (count($this->threadsWithoutAFolder))
+                <template x-if="threadsWithoutAFolder.length">
                     <ul
                         class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
                         id="folder-{{ null }}"
@@ -183,7 +183,8 @@
                             </li>
                         </template>
                     </ul>
-                @else
+                </template>
+                <template x-if="!threadsWithoutAFolder.length">
                     <div
                         class="flex flex-col gap-y-1 rounded-xl border border-dashed border-gray-950/5 bg-white px-3 py-2 text-gray-500 shadow-sm dark:border-white/10 dark:bg-gray-900"
                         x-show="dragging"
@@ -195,16 +196,17 @@
                             Drag chats here to move them out of a folder
                         </div>
                     </div>
-                @endif
+                </template>
 
-                @if (count($this->folders))
+                <template x-if="folders.length">
                     <div
-                        class="flex flex-col gap-y-3 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
-                        @foreach ($this->folders as $folder)
+                        class="flex flex-col gap-y-3 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
+                    >
+                        <template x-for="folder in folders" :key="folder.id">
                             <ul
                                 class="flex flex-col gap-y-1"
-                                id="folder-{{ $folder->id }}"
-                                x-on:drop.prevent="drop('{{ $folder->id }}')"
+                                :id="`folder-${folder.id}`"
+                                x-on:drop.prevent="drop(folder.id)"
                                 x-on:dragenter.prevent
                                 x-on:dragover.prevent
                             >
@@ -213,40 +215,34 @@
                                 >
                                     <x-filament::icon-button
                                         icon="heroicon-o-folder-open"
-                                        x-show="expanded('{{ $folder->id }}')"
-                                        x-on:click="expand('{{ $folder->id }}')"
+                                        x-show="expanded(folder.id)"
+                                        x-on:click="expand(folder.id)"
                                     />
                                     <x-filament::icon-button
                                         icon="heroicon-o-folder"
-                                        x-show="! expanded('{{ $folder->id }}')"
-                                        x-on:click="expand('{{ $folder->id }}')"
+                                        x-show="! expanded(folder.id)"
+                                        x-on:click="expand(folder.id)"
                                     />
 
                                     <div
                                         class="group flex w-full cursor-pointer items-center space-x-1 rounded-lg px-2 outline-none transition duration-75 focus:bg-gray-100 dark:focus:bg-white/5">
                                         <div
                                             class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm"
-                                            x-on:click="expand('{{ $folder->id }}')"
+                                            x-on:click="expand(folder.id)"
                                         >
                                             <div
                                                 class="flex-1 truncate"
                                                 x-bind:class="{
-                                                    'text-primary-600 dark:text-primary-400': expanded(
-                                                        '{{ $folder->id }}')
+                                                    'text-primary-600 dark:text-primary-400': expanded(folder.id)
                                                 }"
-                                            >
-                                                @if ($folder->threads->count())
-                                                    {{ $folder->name }} ({{ $folder->threads->count() }})
-                                                @else
-                                                    {{ $folder->name }}
-                                                @endif
-                                            </div>
+                                                x-text="`${folder.name} ${folder.threads.length ? folder.threads.length : ''}`"
+                                            ></div>
                                         </div>
 
                                         <div class="flex items-center gap-1">
                                             <x-filament::icon-button
                                                 icon="heroicon-m-pencil"
-                                                wire:click="mountAction('renameFolderAction', { folder: '{{ $folder->id }}'})"
+                                                x-on:click="$wire.mountAction('renameFolderAction', { folder: folder.id })"
                                                 label="Rename Folder"
                                                 color="warning"
                                                 size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
@@ -254,7 +250,7 @@
                                             />
                                             <x-filament::icon-button
                                                 icon="heroicon-m-trash"
-                                                wire:click="mountAction('deleteFolderAction', { folder: '{{ $folder->id }}'})"
+                                                x-on:click="$wire.mountAction('deleteFolderAction', { folder: folder.id })"
                                                 label="Delete Folder"
                                                 color="danger"
                                                 size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
@@ -263,7 +259,7 @@
                                         </div>
                                     </div>
                                 </span>
-                                @foreach ($folder->threads as $threadItem)
+                                {{-- @foreach ($folder->threads as $threadItem)
                                     <li
                                         id="chat-{{ $threadItem->id }}"
                                         x-on:message-sent-{{ $threadItem->id }}.window="updateTitle"
@@ -352,17 +348,17 @@
                                             />
                                         </div>
                                     </li>
-                                @endforeach
+                                @endforeach --}}
                             </ul>
-                        @endforeach
+                        </template>
                     </div>
-                @endif
+                </template>
             </div>
         @endcapture
 
         <div
             class="grid h-full flex-1 grid-cols-1 grid-rows-[1fr_auto] gap-2 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-4 2xl:grid-cols-4"
-            x-data="chats($wire, @js($this->getThreadsWithoutAFolder()))"
+            x-data="chats($wire, @js($this->getThreadsWithoutAFolder()), @js($this->getFolders()))"
         >
             <div class="col-span-1 hidden overflow-y-auto px-px pt-3 lg:block lg:pt-6">
                 {{ $sidebarContent($this->assistantSwitcherForm) }}

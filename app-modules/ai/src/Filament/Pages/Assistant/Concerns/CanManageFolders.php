@@ -39,7 +39,6 @@ namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 use Exception;
 use Filament\Actions\Action;
 use Illuminate\Http\JsonResponse;
-use Livewire\Attributes\Computed;
 use Filament\Actions\StaticAction;
 use AdvisingApp\Ai\Models\AiThread;
 use Filament\Forms\Components\Select;
@@ -49,12 +48,17 @@ use Filament\Forms\Components\TextInput;
 use AdvisingApp\Ai\Models\AiThreadFolder;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 trait CanManageFolders
 {
-    #[Computed]
-    public function folders(): EloquentCollection
+    public array $folders = [];
+
+    public function mountCanManageFolders(): void
+    {
+        $this->folders = $this->getFolders();
+    }
+
+    public function getFolders(): array
     {
         return auth()->user()
             ->aiThreadFolders()
@@ -65,7 +69,8 @@ trait CanManageFolders
                     ->withMax('messages', 'created_at'),
             ])
             ->orderBy('name')
-            ->get();
+            ->get()
+            ->toArray();
     }
 
     public function newFolderAction(): Action
@@ -126,7 +131,7 @@ trait CanManageFolders
                     ->find($arguments['folder'])
                     ?->update(['name' => $data['name']]);
 
-                unset($this->folders);
+                $this->folders = $this->getFolders();
             })
             ->icon('heroicon-m-pencil')
             ->color('warning')
@@ -149,7 +154,7 @@ trait CanManageFolders
                     ->find($arguments['folder'])
                     ?->delete();
 
-                unset($this->folders);
+                $this->folders = $this->getFolders();
             })
             ->icon('heroicon-m-trash')
             ->color('danger')
@@ -257,6 +262,7 @@ trait CanManageFolders
                 ->save();
         }
 
-        unset($this->threadsWithoutAFolder, $this->folders);
+        $this->threadsWithoutAFolder = $this->getThreadsWithoutAFolder();
+        $this->folders = $this->getFolders();
     }
 }

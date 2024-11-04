@@ -287,7 +287,7 @@ trait CanManageThreads
                 }
 
                 $this->moveThread($this->thread, $folder);
-                unset($this->folders);
+                $this->folders = $this->getFolders();
             });
     }
 
@@ -312,7 +312,7 @@ trait CanManageThreads
                 }
 
                 $this->threadsWithoutAFolder = $this->getThreadsWithoutAFolder();
-                unset($this->folders);
+                $this->folders = $this->getFolders();
             })
             ->icon('heroicon-m-trash')
             ->color('danger')
@@ -354,7 +354,7 @@ trait CanManageThreads
                 $thread->save();
 
                 $this->threadsWithoutAFolder = $this->getThreadsWithoutAFolder();
-                unset($this->folders);
+                $this->folders = $this->getFolders();
             })
             ->icon('heroicon-m-pencil')
             ->color('warning')

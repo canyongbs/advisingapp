@@ -32,9 +32,10 @@
 </COPYRIGHT>
 */
 document.addEventListener('alpine:init', () => {
-    Alpine.data('chats', ($wire, threadsWithoutAFolder) => ({
+    Alpine.data('chats', ($wire, threadsWithoutAFolder, folders) => ({
         selectedThreadId: $wire.entangle('selectedThreadId').live,
         threadsWithoutAFolder,
+        folders,
         threadId: null,
         startFolder: null,
         dragging: false,
