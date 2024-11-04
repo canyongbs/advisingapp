@@ -259,13 +259,17 @@
                                         </div>
                                     </div>
                                 </span>
-                                {{-- @foreach ($folder->threads as $threadItem)
+                                <template x-for="thread in folder.threads" :key="thread.id">
                                     <li
-                                        id="chat-{{ $threadItem->id }}"
-                                        x-on:message-sent-{{ $threadItem->id }}.window="updateTitle"
-                                        x-tooltip="`Last Engaged: ${(typeof lastUpdated === 'undefined') || lastUpdated}`"
+                                        :id="`chat-${thread.id}`"
+                                        {{-- x-on:message-sent-{{ $threadItem->id }}.window="updateTitle" --}}
+                                        x-tooltip="`Last Engaged: ${lastUpdated}`"
                                         x-data="{
-                                            lastUpdated: @js($threadItem?->last_engaged_at?->toFormattedDateString()),
+                                            lastUpdated: new Date(thread.last_engaged_at).toLocaleDateString('en-US', {
+                                                year: 'numeric',
+                                                month: 'short',
+                                                day: 'numeric'
+                                            }),
                                             updateTitle: function() {
                                                 this.lastUpdated = new Date().toLocaleDateString('en-US', {
                                                     year: 'numeric',
@@ -274,49 +278,50 @@
                                                 });
                                             }
                                         }"
-                                        wire:key="chat-{{ $threadItem->id }}"
-                                        x-show="expanded('{{ $folder->id }}')"
-                                        @class([
+                                        x-show="expanded(folder.id)"
+                                        :class="{
                                             'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
-                                            'bg-gray-100 dark:bg-white/5' => $this->thread->is($threadItem),
-                                        ])
+                                            'bg-gray-100 dark:bg-white/5': thread.id === selectedThreadId
+                                        }"
                                     >
                                         <div class="flex flex-1 items-center gap-3">
                                             <button
                                                 type="button"
                                                 draggable="true"
-                                                x-on:dragstart="start('{{ $threadItem->id }}', '{{ $folder->id }}')"
+                                                x-on:dragstart="start(thread.id, folder.id)"
                                                 x-on:dragend="end"
-                                                @class([
+                                                :class="{
                                                     'flex items-center cursor-move',
-                                                    'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
-                                                    'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
-                                                ])
+                                                    'text-gray-700 dark:text-gray-200': thread.id !== selectedThreadId,
+                                                    'text-primary-600 dark:text-primary-400': thread.id === selectedThreadId
+                                                }"
                                             >
                                                 <x-heroicon-m-bars-2
                                                     class="h-5 w-5"
-                                                    wire:target="selectThread('{{ $threadItem->id }}')"
-                                                    wire:loading.remove.delay.none
+                                                    {{-- wire:target="selectThread('{{ $threadItem->id }}')"
+                                                    wire:loading.remove.delay.none --}}
                                                 />
 
-                                                <x-filament::loading-indicator
+                                                {{-- <x-filament::loading-indicator
                                                     class="h-5 w-5"
                                                     wire:target="selectThread('{{ $threadItem->id }}')"
                                                     wire:loading.delay.none
-                                                />
+                                                /> --}}
                                             </button>
 
                                             <button
                                                 class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
                                                 type="button"
-                                                wire:click="selectThread('{{ $threadItem->id }}')"
+                                                wire:click="selectThread(thread.id)"
                                             >
-                                                <span @class([
-                                                    'flex-1 truncate',
-                                                    'text-gray-700 dark:text-gray-200' => !$this->thread->is($threadItem),
-                                                    'text-primary-600 dark:text-primary-400' => $this->thread->is($threadItem),
-                                                ])>
-                                                    {{ $threadItem->name }}
+                                                <span
+                                                    x-text="thread.name"
+                                                    :class="{
+                                                        'flex-1 truncate',
+                                                        'text-gray-700 dark:text-gray-200': thread.id !== selectedThreadId,
+                                                        'text-primary-600 dark:text-primary-400': thread.id === selectedThreadId
+                                                    }"
+                                                >
                                                 </span>
                                             </button>
                                         </div>
@@ -348,7 +353,7 @@
                                             />
                                         </div>
                                     </li>
-                                @endforeach --}}
+                                </template>
                             </ul>
                         </template>
                     </div>
