@@ -178,6 +178,7 @@ trait CanManageThreads
         }
 
         $this->thread = app(CreateThread::class)(static::APPLICATION, $assistant);
+        $this->selectedThreadId = $this->thread->getKey();
     }
 
     public function getThreadsWithoutAFolder(): array
