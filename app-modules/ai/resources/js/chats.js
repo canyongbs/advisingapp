@@ -41,13 +41,6 @@ document.addEventListener('alpine:init', () => {
         startFolder: null,
         dragging: false,
         expandedFolder: null,
-        init() {
-            $wire.on('loading', (data) => {
-                console.log('loading', data);
-                this.loading.type = data.type;
-                this.loading.identifier = data.identifier;
-            });
-        },
         async drop(folderId) {
             try {
                 if (this.startFolder === folderId) {
