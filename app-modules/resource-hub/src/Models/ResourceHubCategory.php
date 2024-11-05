@@ -38,6 +38,7 @@ namespace AdvisingApp\ResourceHub\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
+use App\Features\ResourceHub;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -53,13 +54,16 @@ class ResourceHubCategory extends BaseModel implements Auditable
     use AuditableTrait;
     use HasUuids;
 
-    protected $table = 'knowledge_base_categories';
-
     protected $fillable = [
         'name',
         'description',
         'icon',
     ];
+
+    public function getTable()
+    {
+        return ResourceHub::active() ? 'resource_hub_categories' : 'knowledge_base_categories';
+    }
 
     public function resourceHubArticles(): HasMany
     {

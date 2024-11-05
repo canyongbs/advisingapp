@@ -38,6 +38,7 @@ namespace AdvisingApp\ResourceHub\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use App\Features\ResourceHub;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -45,14 +46,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class ResourceHubArticleUpvote extends BaseModel
 {
-    protected $table = 'knowledge_base_item_upvotes';
-
     protected $fillable = [
         'user_id',
     ];
 
+    public function getTable()
+    {
+        return ResourceHub::active() ? 'resource_hub_item_upvotes' : 'knowledge_base_item_upvotes';
+    }
+
     public function resourceHubArticle(): BelongsTo
     {
+        if (ResourceHub::active()) {
+            return $this->belongsTo(ResourceHubArticle::class, 'resource_hub_item_id');
+        }
+
         return $this->belongsTo(ResourceHubArticle::class, 'knowledge_base_item_id');
     }
 

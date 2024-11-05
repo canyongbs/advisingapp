@@ -38,6 +38,7 @@ namespace AdvisingApp\ResourceHub\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
+use App\Features\ResourceHub;
 use Spatie\MediaLibrary\HasMedia;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Division\Models\Division;
@@ -59,8 +60,6 @@ class ResourceHubArticle extends BaseModel implements Auditable, HasMedia
     use InteractsWithMedia;
     use SoftDeletes;
 
-    protected $table = 'knowledge_base_articles';
-
     protected $casts = [
         'public' => 'boolean',
         'article_details' => 'array',
@@ -77,6 +76,11 @@ class ResourceHubArticle extends BaseModel implements Auditable, HasMedia
     ];
 
     protected ?bool $isUpvoted = null;
+
+    public function getTable()
+    {
+        return ResourceHub::active() ? 'resource_hub_articles' : 'knowledge_base_articles';
+    }
 
     public function quality(): BelongsTo
     {
@@ -95,6 +99,10 @@ class ResourceHubArticle extends BaseModel implements Auditable, HasMedia
 
     public function division(): BelongsToMany
     {
+        if (ResourceHub::active()) {
+            return $this->belongsToMany(Division::class, 'division_resource_hub_item', 'resource_hub_item_id', 'division_id');
+        }
+
         return $this->belongsToMany(Division::class, 'division_knowledge_base_item', 'knowledge_base_item_id', 'division_id');
     }
 
@@ -111,11 +119,19 @@ class ResourceHubArticle extends BaseModel implements Auditable, HasMedia
 
     public function views(): HasMany
     {
+        if (ResourceHub::active()) {
+            return $this->hasMany(ResourceHubArticleView::class, 'resource_hub_item_id');
+        }
+
         return $this->hasMany(ResourceHubArticleView::class, 'knowledge_base_item_id');
     }
 
     public function upvotes(): HasMany
     {
+        if (ResourceHub::active()) {
+            return $this->hasMany(ResourceHubArticleUpvote::class, 'resource_hub_item_id');
+        }
+
         return $this->hasMany(ResourceHubArticleUpvote::class, 'knowledge_base_item_id');
     }
 

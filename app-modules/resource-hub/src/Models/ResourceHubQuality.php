@@ -38,6 +38,7 @@ namespace AdvisingApp\ResourceHub\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
+use App\Features\ResourceHub;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -53,11 +54,14 @@ class ResourceHubQuality extends BaseModel implements Auditable
     use AuditableTrait;
     use HasUuids;
 
-    protected $table = 'knowledge_base_qualities';
-
     protected $fillable = [
         'name',
     ];
+
+    public function getTable()
+    {
+        return ResourceHub::active() ? 'resource_hub_qualities' : 'knowledge_base_qualities';
+    }
 
     public function resourceHubArticles(): HasMany
     {
