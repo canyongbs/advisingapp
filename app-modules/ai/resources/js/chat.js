@@ -155,9 +155,9 @@ document.addEventListener('alpine:init', () => {
                                             body: JSON.stringify(
                                                 !isCompletingPreviousResponse
                                                     ? {
-                                                          content: this.latestMessage,
-                                                          files: this.$wire.files,
-                                                      }
+                                                        content: this.latestMessage,
+                                                        files: this.$wire.files,
+                                                    }
                                                     : {},
                                             ),
                                         },
@@ -197,7 +197,7 @@ document.addEventListener('alpine:init', () => {
                 this.isIncomplete = false;
                 this.error = null;
 
-                this.$dispatch(`message-sent-${threadId}`);
+                this.$dispatch('message-sent', { threadId: threadId });
 
                 this.latestMessage = this.message;
 
@@ -235,7 +235,7 @@ document.addEventListener('alpine:init', () => {
                 this.isIncomplete = false;
                 this.error = null;
 
-                this.$dispatch(`message-sent-${threadId}`);
+                this.$dispatch('message-sent', { threadId: threadId });
 
                 this.$nextTick(async () => {
                     await this.handleMessageResponse({
@@ -261,7 +261,7 @@ document.addEventListener('alpine:init', () => {
                 this.isIncomplete = false;
                 this.error = null;
 
-                this.$dispatch(`message-sent-${threadId}`);
+                this.$dispatch('message-sent', { threadId: threadId });
 
                 this.$nextTick(async () => {
                     await this.handleMessageResponse({
