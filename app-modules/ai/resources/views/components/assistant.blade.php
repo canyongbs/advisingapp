@@ -124,10 +124,8 @@
                                             x-on:dragend="end"
                                             :class="{
                                                 'flex items-center cursor-move': true,
-                                                'text-gray-700 dark:text-gray-200': thread.id !== $wire
-                                                    .selectedThreadId,
-                                                'text-primary-600 dark:text-primary-400': thread.id === $wire
-                                                    .selectedThreadId
+                                                'text-gray-700 dark:text-gray-200': thread.id !== $wire.selectedThreadId,
+                                                'text-primary-600 dark:text-primary-400': thread.id === $wire.selectedThreadId
                                             }"
                                         >
                                             <template x-if="loading.type !== 'thread' || loading.identifier !== thread.id">
@@ -358,10 +356,8 @@
                                                 x-on:dragend="end"
                                                 :class="{
                                                     'flex items-center cursor-move': true,
-                                                    'text-gray-700 dark:text-gray-200': thread.id !== $wire
-                                                        .selectedThreadId,
-                                                    'text-primary-600 dark:text-primary-400': thread.id === $wire
-                                                        .selectedThreadId
+                                                    'text-gray-700 dark:text-gray-200': thread.id !== $wire.selectedThreadId,
+                                                    'text-primary-600 dark:text-primary-400': thread.id === $wire.selectedThreadId
                                                 }"
                                             >
                                                 <template
