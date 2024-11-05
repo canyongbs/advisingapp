@@ -235,7 +235,7 @@
                                                 x-bind:class="{
                                                     'text-primary-600 dark:text-primary-400': expanded(folder.id)
                                                 }"
-                                                x-text="`${folder.name} ${folder.threads.length ? folder.threads.length : ''}`"
+                                                x-text="`${folder.name} ${folder.threads.length ? '(' + folder.threads.length + ')' : ''}`"
                                             ></div>
                                         </div>
 
@@ -291,7 +291,7 @@
                                                 x-on:dragstart="start(thread.id, folder.id)"
                                                 x-on:dragend="end"
                                                 :class="{
-                                                    'flex items-center cursor-move',
+                                                    'flex items-center cursor-move': true,
                                                     'text-gray-700 dark:text-gray-200': thread.id !== selectedThreadId,
                                                     'text-primary-600 dark:text-primary-400': thread.id === selectedThreadId
                                                 }"
@@ -317,7 +317,7 @@
                                                 <span
                                                     x-text="thread.name"
                                                     :class="{
-                                                        'flex-1 truncate',
+                                                        'flex-1 truncate': true,
                                                         'text-gray-700 dark:text-gray-200': thread.id !== selectedThreadId,
                                                         'text-primary-600 dark:text-primary-400': thread.id === selectedThreadId
                                                     }"
@@ -363,7 +363,7 @@
 
         <div
             class="grid h-full flex-1 grid-cols-1 grid-rows-[1fr_auto] gap-2 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-4 2xl:grid-cols-4"
-            x-data="chats($wire, @js($this->getThreadsWithoutAFolder()), @js($this->getFolders()))"
+            x-data="chats($wire, @js($this->threadsWithoutAFolder), @js($this->folders))"
         >
             <div class="col-span-1 hidden overflow-y-auto px-px pt-3 lg:block lg:pt-6">
                 {{ $sidebarContent($this->assistantSwitcherForm) }}
