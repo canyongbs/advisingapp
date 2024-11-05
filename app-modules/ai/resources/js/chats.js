@@ -113,5 +113,32 @@ document.addEventListener('alpine:init', () => {
             this.loading.type = null;
             this.loading.identifier = null;
         },
+        async moveThread(threadId) {
+            this.loading.type = 'moveThreadAction';
+            this.loading.identifier = threadId;
+
+            await $wire.mountAction('moveThread', { thread: threadId });
+
+            this.loading.type = null;
+            this.loading.identifier = null;
+        },
+        async editThread(threadId) {
+            this.loading.type = 'editThreadAction';
+            this.loading.identifier = threadId;
+
+            await $wire.mountAction('editThread', { thread: threadId });
+
+            this.loading.type = null;
+            this.loading.identifier = null;
+        },
+        async deleteThread(threadId) {
+            this.loading.type = 'deleteThreadAction';
+            this.loading.identifier = threadId;
+
+            await $wire.mountAction('deleteThread', { thread: threadId });
+
+            this.loading.type = null;
+            this.loading.identifier = null;
+        }
     }));
 });

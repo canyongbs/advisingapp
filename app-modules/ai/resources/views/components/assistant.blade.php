@@ -327,30 +327,53 @@
                                         </div>
 
                                         <div class="flex items-center gap-1">
-                                            <x-filament::icon-button
-                                                icon="heroicon-m-arrow-down-on-square"
-                                                x-on:click="$wire.mountAction('moveThread', { thread: thread.id })"
-                                                label="Move chat to a different folder"
-                                                color="warning"
-                                                size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
-                                                class="relative inline-flex w-5 h-5 hidden group-hover:inline-flex"
-                                            />
-                                            <x-filament::icon-button
-                                                icon="heroicon-m-pencil"
-                                                x-on:click="$wire.mountAction('editThread', { thread: thread.id })"
-                                                label="Edit name of the chat"
-                                                color="warning"
-                                                size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
-                                                class="relative inline-flex w-5 h-5 hidden group-hover:inline-flex"
-                                            />
-                                            <x-filament::icon-button
-                                                icon="heroicon-m-trash"
-                                                x-on:click="$wire.mountAction('deleteThread', { thread: thread.id })"
-                                                label="Delete the chat"
-                                                color="danger"
-                                                size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
-                                                class="relative inline-flex w-5 h-5 hidden group-hover:inline-flex"
-                                            />
+                                            <template x-if="loading.type !== 'moveThreadAction' || loading.identifier !== thread.id">
+                                                <x-filament::icon-button
+                                                    icon="heroicon-m-arrow-down-on-square"
+                                                    x-on:click="moveThread(thread.id)"
+                                                    label="Move chat to a different folder"
+                                                    color="warning"
+                                                    size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                                />
+                                            </template>
+                                            <template x-if="loading.type === 'moveThreadAction' && loading.identifier === thread.id">
+                                                <x-filament::loading-indicator
+                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                                />
+                                            </template>
+
+                                            <template x-if="loading.type !== 'editThreadAction' || loading.identifier !== thread.id">
+                                                <x-filament::icon-button
+                                                    icon="heroicon-m-pencil"
+                                                    x-on:click="editThread(thread.id)"
+                                                    label="Edit name of the chat"
+                                                    color="warning"
+                                                    size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                                />
+                                            </template>
+                                            <template x-if="loading.type === 'editThreadAction' && loading.identifier === thread.id">
+                                                <x-filament::loading-indicator
+                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                                />
+                                            </template>
+
+                                            <template x-if="loading.type !== 'deleteThreadAction' || loading.identifier !== thread.id">
+                                                <x-filament::icon-button
+                                                    icon="heroicon-m-trash"
+                                                    x-on:click="deleteThread(thread.id)"
+                                                    label="Delete the chat"
+                                                    color="danger"
+                                                    size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                                />
+                                            </template>
+                                            <template x-if="loading.type === 'deleteThreadAction' && loading.identifier === thread.id">
+                                                <x-filament::loading-indicator
+                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                                />
+                                            </template>
                                         </div>
                                     </li>
                                 </template>
