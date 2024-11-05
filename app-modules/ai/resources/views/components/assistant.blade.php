@@ -86,7 +86,7 @@
                         x-on:dragenter.prevent
                         x-on:dragover.prevent
                     >
-                        <template x-for="(thread, index) in $wire.threadsWithoutAFolder" :key="thread.id">
+                        <template x-for="thread in $wire.threadsWithoutAFolder" :key="thread.id">
                             <li
                                 :id="`chat-${thread.id}`"
                                 x-on:message-sent.window="updateTitle"
