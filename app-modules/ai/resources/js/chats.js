@@ -1,5 +1,3 @@
-import { select } from "@formkit/icons/index.cjs";
-
 /*
 <COPYRIGHT>
 
