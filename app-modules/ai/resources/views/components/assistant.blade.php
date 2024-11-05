@@ -86,7 +86,10 @@
                         x-on:dragenter.prevent
                         x-on:dragover.prevent
                     >
-                        <template x-for="thread in $wire.threadsWithoutAFolder" :key="thread.id">
+                        <template
+                            x-for="thread in $wire.threadsWithoutAFolder"
+                            :key="thread.id"
+                        >
                             <li
                                 :id="`chat-${thread.id}`"
                                 x-on:message-sent.window="updateTitle"
@@ -121,20 +124,18 @@
                                             x-on:dragend="end"
                                             :class="{
                                                 'flex items-center cursor-move': true,
-                                                'text-gray-700 dark:text-gray-200': thread.id !== $wire.selectedThreadId,
-                                                'text-primary-600 dark:text-primary-400': thread.id === $wire.selectedThreadId
+                                                'text-gray-700 dark:text-gray-200': thread.id !== $wire
+                                                    .selectedThreadId,
+                                                'text-primary-600 dark:text-primary-400': thread.id === $wire
+                                                    .selectedThreadId
                                             }"
                                         >
                                             <template x-if="loading.type !== 'thread' || loading.identifier !== thread.id">
-                                                <x-heroicon-m-bars-2
-                                                    class="h-5 w-5"
-                                                />
+                                                <x-heroicon-m-bars-2 class="h-5 w-5" />
                                             </template>
 
                                             <template x-if="loading.type === 'thread' && loading.identifier === thread.id">
-                                                <x-filament::loading-indicator
-                                                    class="h-5 w-5"
-                                                />
+                                                <x-filament::loading-indicator class="h-5 w-5" />
                                             </template>
                                         </button>
                                     </template>
@@ -148,8 +149,10 @@
                                             x-text="thread.name"
                                             :class="{
                                                 'flex-1 truncate': true,
-                                                'text-gray-700 dark:text-gray-200': thread.id !== $wire.selectedThreadId,
-                                                'text-primary-600 dark:text-primary-400': thread.id === $wire.selectedThreadId
+                                                'text-gray-700 dark:text-gray-200': thread.id !== $wire
+                                                    .selectedThreadId,
+                                                'text-primary-600 dark:text-primary-400': thread.id === $wire
+                                                    .selectedThreadId
                                             }"
                                         >
                                         </span>
@@ -157,51 +160,59 @@
                                 </div>
 
                                 <div class="flex items-center gap-1">
-                                    <template x-if="loading.type !== 'moveThreadAction' || loading.identifier !== thread.id">
+                                    <template
+                                        x-if="loading.type !== 'moveThreadAction' || loading.identifier !== thread.id">
                                         <x-filament::icon-button
+                                            class="relative hidden h-5 w-5 group-hover:inline-flex"
                                             icon="heroicon-m-arrow-down-on-square"
                                             x-on:click="moveThread(thread.id)"
                                             label="Move chat to a different folder"
                                             color="warning"
                                             size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
-                                            class="relative w-5 h-5 hidden group-hover:inline-flex"
                                         />
                                     </template>
-                                    <template x-if="loading.type === 'moveThreadAction' && loading.identifier === thread.id">
+                                    <template
+                                        x-if="loading.type === 'moveThreadAction' && loading.identifier === thread.id">
                                         <x-filament::loading-indicator
-                                            class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                            class="relative hidden h-5 w-5 group-hover:inline-flex"
                                         />
                                     </template>
 
-                                    <template x-if="loading.type !== 'editThreadAction' || loading.identifier !== thread.id">
+                                    <template
+                                        x-if="loading.type !== 'editThreadAction' || loading.identifier !== thread.id">
                                         <x-filament::icon-button
+                                            class="relative hidden h-5 w-5 group-hover:inline-flex"
                                             icon="heroicon-m-pencil"
                                             x-on:click="editThread(thread.id)"
                                             label="Edit name of the chat"
                                             color="warning"
                                             size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
-                                            class="relative w-5 h-5 hidden group-hover:inline-flex"
                                         />
                                     </template>
-                                    <template x-if="loading.type === 'editThreadAction' && loading.identifier === thread.id">
+                                    <template
+                                        x-if="loading.type === 'editThreadAction' && loading.identifier === thread.id">
                                         <x-filament::loading-indicator
-                                            class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                            class="relative hidden h-5 w-5 group-hover:inline-flex"
                                         />
                                     </template>
 
-                                    <template x-if="loading.type !== 'deleteThreadAction' || loading.identifier !== thread.id">
+                                    <template
+                                        x-if="loading.type !== 'deleteThreadAction' || loading.identifier !== thread.id"
+                                    >
                                         <x-filament::icon-button
+                                            class="relative hidden h-5 w-5 group-hover:inline-flex"
                                             icon="heroicon-m-trash"
                                             x-on:click="deleteThread(thread.id)"
                                             label="Delete the chat"
                                             color="danger"
                                             size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
-                                            class="relative w-5 h-5 hidden group-hover:inline-flex"
                                         />
                                     </template>
-                                    <template x-if="loading.type === 'deleteThreadAction' && loading.identifier === thread.id">
+                                    <template
+                                        x-if="loading.type === 'deleteThreadAction' && loading.identifier === thread.id"
+                                    >
                                         <x-filament::loading-indicator
-                                            class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                            class="relative hidden h-5 w-5 group-hover:inline-flex"
                                         />
                                     </template>
                                 </div>
@@ -225,9 +236,11 @@
 
                 <template x-if="$wire.folders.length">
                     <div
-                        class="flex flex-col gap-y-3 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
-                    >
-                        <template x-for="folder in $wire.folders" :key="folder.id">
+                        class="flex flex-col gap-y-3 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
+                        <template
+                            x-for="folder in $wire.folders"
+                            :key="folder.id"
+                        >
                             <ul
                                 class="flex flex-col gap-y-1"
                                 :id="`folder-${folder.id}`"
@@ -265,41 +278,52 @@
                                         </div>
 
                                         <div class="flex items-center gap-1">
-                                            <template x-if="loading.type !== 'renameFolderAction' || loading.identifier !== folder.id">
+                                            <template
+                                                x-if="loading.type !== 'renameFolderAction' || loading.identifier !== folder.id"
+                                            >
                                                 <x-filament::icon-button
+                                                    class="relative hidden h-5 w-5 group-hover:inline-flex"
                                                     icon="heroicon-m-pencil"
                                                     x-on:click="renameFolder(folder.id)"
                                                     label="Rename Folder"
                                                     color="warning"
                                                     size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
-                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
                                                 />
                                             </template>
-                                            <template x-if="loading.type === 'renameFolderAction' && loading.identifier === folder.id">
+                                            <template
+                                                x-if="loading.type === 'renameFolderAction' && loading.identifier === folder.id"
+                                            >
                                                 <x-filament::loading-indicator
-                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                                    class="relative hidden h-5 w-5 group-hover:inline-flex"
                                                 />
                                             </template>
 
-                                            <template x-if="loading.type !== 'deleteFolderAction' || loading.identifier !== folder.id">
+                                            <template
+                                                x-if="loading.type !== 'deleteFolderAction' || loading.identifier !== folder.id"
+                                            >
                                                 <x-filament::icon-button
+                                                    class="relative hidden h-5 w-5 group-hover:inline-flex"
                                                     icon="heroicon-m-trash"
                                                     x-on:click="deleteFolder(folder.id)"
                                                     label="Delete Folder"
                                                     color="danger"
                                                     size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
-                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
                                                 />
                                             </template>
-                                            <template x-if="loading.type === 'deleteFolderAction' && loading.identifier === folder.id">
+                                            <template
+                                                x-if="loading.type === 'deleteFolderAction' && loading.identifier === folder.id"
+                                            >
                                                 <x-filament::loading-indicator
-                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                                    class="relative hidden h-5 w-5 group-hover:inline-flex"
                                                 />
                                             </template>
                                         </div>
                                     </div>
                                 </span>
-                                <template x-for="thread in folder.threads" :key="thread.id">
+                                <template
+                                    x-for="thread in folder.threads"
+                                    :key="thread.id"
+                                >
                                     <li
                                         :id="`chat-${thread.id}`"
                                         x-on:message-sent.window="updateTitle"
@@ -334,20 +358,22 @@
                                                 x-on:dragend="end"
                                                 :class="{
                                                     'flex items-center cursor-move': true,
-                                                    'text-gray-700 dark:text-gray-200': thread.id !== $wire.selectedThreadId,
-                                                    'text-primary-600 dark:text-primary-400': thread.id === $wire.selectedThreadId
+                                                    'text-gray-700 dark:text-gray-200': thread.id !== $wire
+                                                        .selectedThreadId,
+                                                    'text-primary-600 dark:text-primary-400': thread.id === $wire
+                                                        .selectedThreadId
                                                 }"
                                             >
-                                                <template x-if="loading.type !== 'thread' || loading.identifier !== thread.id">
-                                                    <x-heroicon-m-bars-2
-                                                        class="h-5 w-5"
-                                                    />
+                                                <template
+                                                    x-if="loading.type !== 'thread' || loading.identifier !== thread.id"
+                                                >
+                                                    <x-heroicon-m-bars-2 class="h-5 w-5" />
                                                 </template>
 
-                                                <template x-if="loading.type === 'thread' && loading.identifier === thread.id">
-                                                    <x-filament::loading-indicator
-                                                        class="h-5 w-5"
-                                                    />
+                                                <template
+                                                    x-if="loading.type === 'thread' && loading.identifier === thread.id"
+                                                >
+                                                    <x-filament::loading-indicator class="h-5 w-5" />
                                                 </template>
                                             </button>
 
@@ -360,8 +386,10 @@
                                                     x-text="thread.name"
                                                     :class="{
                                                         'flex-1 truncate': true,
-                                                        'text-gray-700 dark:text-gray-200': thread.id !== $wire.selectedThreadId,
-                                                        'text-primary-600 dark:text-primary-400': thread.id === $wire.selectedThreadId
+                                                        'text-gray-700 dark:text-gray-200': thread.id !== $wire
+                                                            .selectedThreadId,
+                                                        'text-primary-600 dark:text-primary-400': thread.id === $wire
+                                                            .selectedThreadId
                                                     }"
                                                 >
                                                 </span>
@@ -369,51 +397,63 @@
                                         </div>
 
                                         <div class="flex items-center gap-1">
-                                            <template x-if="loading.type !== 'moveThreadAction' || loading.identifier !== thread.id">
+                                            <template
+                                                x-if="loading.type !== 'moveThreadAction' || loading.identifier !== thread.id"
+                                            >
                                                 <x-filament::icon-button
+                                                    class="relative hidden h-5 w-5 group-hover:inline-flex"
                                                     icon="heroicon-m-arrow-down-on-square"
                                                     x-on:click="moveThread(thread.id)"
                                                     label="Move chat to a different folder"
                                                     color="warning"
                                                     size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
-                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
                                                 />
                                             </template>
-                                            <template x-if="loading.type === 'moveThreadAction' && loading.identifier === thread.id">
+                                            <template
+                                                x-if="loading.type === 'moveThreadAction' && loading.identifier === thread.id"
+                                            >
                                                 <x-filament::loading-indicator
-                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                                    class="relative hidden h-5 w-5 group-hover:inline-flex"
                                                 />
                                             </template>
 
-                                            <template x-if="loading.type !== 'editThreadAction' || loading.identifier !== thread.id">
+                                            <template
+                                                x-if="loading.type !== 'editThreadAction' || loading.identifier !== thread.id"
+                                            >
                                                 <x-filament::icon-button
+                                                    class="relative hidden h-5 w-5 group-hover:inline-flex"
                                                     icon="heroicon-m-pencil"
                                                     x-on:click="editThread(thread.id)"
                                                     label="Edit name of the chat"
                                                     color="warning"
                                                     size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
-                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
                                                 />
                                             </template>
-                                            <template x-if="loading.type === 'editThreadAction' && loading.identifier === thread.id">
+                                            <template
+                                                x-if="loading.type === 'editThreadAction' && loading.identifier === thread.id"
+                                            >
                                                 <x-filament::loading-indicator
-                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                                    class="relative hidden h-5 w-5 group-hover:inline-flex"
                                                 />
                                             </template>
 
-                                            <template x-if="loading.type !== 'deleteThreadAction' || loading.identifier !== thread.id">
+                                            <template
+                                                x-if="loading.type !== 'deleteThreadAction' || loading.identifier !== thread.id"
+                                            >
                                                 <x-filament::icon-button
+                                                    class="relative hidden h-5 w-5 group-hover:inline-flex"
                                                     icon="heroicon-m-trash"
                                                     x-on:click="deleteThread(thread.id)"
                                                     label="Delete the chat"
                                                     color="danger"
                                                     size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
-                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
                                                 />
                                             </template>
-                                            <template x-if="loading.type === 'deleteThreadAction' && loading.identifier === thread.id">
+                                            <template
+                                                x-if="loading.type === 'deleteThreadAction' && loading.identifier === thread.id"
+                                            >
                                                 <x-filament::loading-indicator
-                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                                    class="relative hidden h-5 w-5 group-hover:inline-flex"
                                                 />
                                             </template>
                                         </div>

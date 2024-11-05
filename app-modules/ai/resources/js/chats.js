@@ -148,6 +148,6 @@ document.addEventListener('alpine:init', () => {
 
             this.loading.type = null;
             this.loading.identifier = null;
-        }
+        },
     }));
 });

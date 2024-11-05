@@ -155,9 +155,9 @@ document.addEventListener('alpine:init', () => {
                                             body: JSON.stringify(
                                                 !isCompletingPreviousResponse
                                                     ? {
-                                                        content: this.latestMessage,
-                                                        files: this.$wire.files,
-                                                    }
+                                                          content: this.latestMessage,
+                                                          files: this.$wire.files,
+                                                      }
                                                     : {},
                                             ),
                                         },
