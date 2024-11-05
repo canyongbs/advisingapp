@@ -166,7 +166,7 @@
                                             x-on:click="moveThread(thread.id)"
                                             label="Move chat to a different folder"
                                             color="warning"
-                                            size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                            size="{{ ActionSize::ExtraSmall }}"
                                         />
                                     </template>
                                     <template
@@ -184,7 +184,7 @@
                                             x-on:click="editThread(thread.id)"
                                             label="Edit name of the chat"
                                             color="warning"
-                                            size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                            size="{{ ActionSize::ExtraSmall }}"
                                         />
                                     </template>
                                     <template
@@ -203,7 +203,7 @@
                                             x-on:click="deleteThread(thread.id)"
                                             label="Delete the chat"
                                             color="danger"
-                                            size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                            size="{{ ActionSize::ExtraSmall }}"
                                         />
                                     </template>
                                     <template
@@ -285,7 +285,7 @@
                                                     x-on:click="renameFolder(folder.id)"
                                                     label="Rename Folder"
                                                     color="warning"
-                                                    size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                                    size="{{ ActionSize::ExtraSmall }}"
                                                 />
                                             </template>
                                             <template
@@ -305,7 +305,7 @@
                                                     x-on:click="deleteFolder(folder.id)"
                                                     label="Delete Folder"
                                                     color="danger"
-                                                    size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                                    size="{{ ActionSize::ExtraSmall }}"
                                                 />
                                             </template>
                                             <template
@@ -402,7 +402,7 @@
                                                     x-on:click="moveThread(thread.id)"
                                                     label="Move chat to a different folder"
                                                     color="warning"
-                                                    size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                                    size="{{ ActionSize::ExtraSmall }}"
                                                 />
                                             </template>
                                             <template
@@ -422,7 +422,7 @@
                                                     x-on:click="editThread(thread.id)"
                                                     label="Edit name of the chat"
                                                     color="warning"
-                                                    size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                                    size="{{ ActionSize::ExtraSmall }}"
                                                 />
                                             </template>
                                             <template
@@ -442,7 +442,7 @@
                                                     x-on:click="deleteThread(thread.id)"
                                                     label="Delete the chat"
                                                     color="danger"
-                                                    size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                                    size="{{ ActionSize::ExtraSmall }}"
                                                 />
                                             </template>
                                             <template
