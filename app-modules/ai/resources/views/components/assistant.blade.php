@@ -123,24 +123,24 @@
                                                 'text-primary-600 dark:text-primary-400': thread.id === $wire.selectedThreadId
                                             }"
                                         >
-                                            <x-heroicon-m-bars-2
-                                                class="h-5 w-5"
-                                                {{-- wire:target="selectThread(thread?.id)"
-                                                wire:loading.remove.delay.none --}}
-                                            />
+                                            <template x-if="loading.type !== 'thread' || loading.identifier !== thread.id">
+                                                <x-heroicon-m-bars-2
+                                                    class="h-5 w-5"
+                                                />
+                                            </template>
 
-                                            {{-- <x-filament::loading-indicator
-                                                class="h-5 w-5"
-                                                wire:target="selectThread(thread?.id)"
-                                                wire:loading.delay.none
-                                            /> --}}
+                                            <template x-if="loading.type === 'thread' && loading.identifier === thread.id">
+                                                <x-filament::loading-indicator
+                                                    class="h-5 w-5"
+                                                />
+                                            </template>
                                         </button>
                                     </template>
 
                                     <button
                                         class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
                                         type="button"
-                                        x-on:click="$wire.selectThread(thread)"
+                                        x-on:click="selectThread(thread)"
                                     >
                                         <span
                                             x-text="thread.name"
@@ -296,23 +296,23 @@
                                                     'text-primary-600 dark:text-primary-400': thread.id === $wire.selectedThreadId
                                                 }"
                                             >
-                                                <x-heroicon-m-bars-2
-                                                    class="h-5 w-5"
-                                                    {{-- wire:target="selectThread('{{ $threadItem->id }}')"
-                                                    wire:loading.remove.delay.none --}}
-                                                />
+                                                <template x-if="loading.type !== 'thread' || loading.identifier !== thread.id">
+                                                    <x-heroicon-m-bars-2
+                                                        class="h-5 w-5"
+                                                    />
+                                                </template>
 
-                                                {{-- <x-filament::loading-indicator
-                                                    class="h-5 w-5"
-                                                    wire:target="selectThread('{{ $threadItem->id }}')"
-                                                    wire:loading.delay.none
-                                                /> --}}
+                                                <template x-if="loading.type === 'thread' && loading.identifier === thread.id">
+                                                    <x-filament::loading-indicator
+                                                        class="h-5 w-5"
+                                                    />
+                                                </template>
                                             </button>
 
                                             <button
                                                 class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
                                                 type="button"
-                                                x-on:click="$wire.selectThread(thread)"
+                                                x-on:click="selectThread(thread)"
                                             >
                                                 <span
                                                     x-text="thread.name"

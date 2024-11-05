@@ -1,3 +1,5 @@
+import { select } from "@formkit/icons/index.cjs";
+
 /*
 <COPYRIGHT>
 
@@ -33,10 +35,21 @@
 */
 document.addEventListener('alpine:init', () => {
     Alpine.data('chats', ($wire) => ({
+        loading: {
+            type: null,
+            identifier: null,
+        },
         threadId: null,
         startFolder: null,
         dragging: false,
         expandedFolder: null,
+        init() {
+            $wire.on('loading', (data) => {
+                console.log('loading', data);
+                this.loading.type = data.type;
+                this.loading.identifier = data.identifier;
+            });
+        },
         async drop(folderId) {
             try {
                 if (this.startFolder === folderId) {
@@ -90,6 +103,15 @@ document.addEventListener('alpine:init', () => {
         },
         expanded(folderId) {
             return this.expandedFolder === folderId;
+        },
+        async selectThread(thread) {
+            this.loading.type = 'thread';
+            this.loading.identifier = thread.id;
+
+            await $wire.selectThread(thread);
+
+            this.loading.type = null;
+            this.loading.identifier = null;
         },
     }));
 });

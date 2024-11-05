@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
 use Exception;
 use Filament\Actions\Action;
+use Livewire\Attributes\Locked;
 use Illuminate\Http\JsonResponse;
 use Filament\Actions\StaticAction;
 use AdvisingApp\Ai\Models\AiThread;
@@ -51,6 +52,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait CanManageFolders
 {
+    #[Locked]
     public array $folders = [];
 
     public function mountCanManageFolders(): void
