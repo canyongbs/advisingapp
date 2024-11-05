@@ -111,7 +111,7 @@
                                 }"
                             >
                                 <div class="flex flex-1 items-center gap-3">
-                                    @if (count($this->folders))
+                                    <template x-if="folders.length">
                                         <button
                                             type="button"
                                             draggable="true"
@@ -135,7 +135,7 @@
                                                 wire:loading.delay.none
                                             /> --}}
                                         </button>
-                                    @endif
+                                    </template>
 
                                     <button
                                         class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
