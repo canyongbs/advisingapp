@@ -124,6 +124,7 @@ trait HasManyMorphedInteractionsTrait
                 ViewAction::make()
                     ->modalHeading('Interaction Details'),
                 EditAction::make(),
-            ]);
+            ])
+            ->emptyStateDescription('Create an interaction to get started');
     }
 }
