@@ -78,7 +78,7 @@
                     @endif
                 </div>
 
-                <template x-if="threadsWithoutAFolder.length">
+                <template x-if="$wire.threadsWithoutAFolder.length">
                     <ul
                         class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
                         id="folder-{{ null }}"
@@ -86,7 +86,7 @@
                         x-on:dragenter.prevent
                         x-on:dragover.prevent
                     >
-                        <template x-for="(thread, index) in threadsWithoutAFolder" :key="thread.id">
+                        <template x-for="(thread, index) in $wire.threadsWithoutAFolder" :key="thread.id">
                             <li
                                 :id="`chat-${thread.id}`"
                                 {{-- x-on:message-sent-{{ $threadItem->id }}.window="updateTitle" --}}
@@ -107,11 +107,11 @@
                                 }"
                                 :class="{
                                     'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1': true,
-                                    'bg-gray-100 dark:bg-white/5': thread.id === selectedThreadId
+                                    'bg-gray-100 dark:bg-white/5': thread.id === $wire.selectedThreadId
                                 }"
                             >
                                 <div class="flex flex-1 items-center gap-3">
-                                    <template x-if="folders.length">
+                                    <template x-if="$wire.folders.length">
                                         <button
                                             type="button"
                                             draggable="true"
@@ -119,8 +119,8 @@
                                             x-on:dragend="end"
                                             :class="{
                                                 'flex items-center cursor-move': true,
-                                                'text-gray-700 dark:text-gray-200': thread.id !== selectedThreadId,
-                                                'text-primary-600 dark:text-primary-400': thread.id === selectedThreadId
+                                                'text-gray-700 dark:text-gray-200': thread.id !== $wire.selectedThreadId,
+                                                'text-primary-600 dark:text-primary-400': thread.id === $wire.selectedThreadId
                                             }"
                                         >
                                             <x-heroicon-m-bars-2
@@ -146,8 +146,8 @@
                                             x-text="thread.name"
                                             :class="{
                                                 'flex-1 truncate': true,
-                                                'text-gray-700 dark:text-gray-200': thread.id !== selectedThreadId,
-                                                'text-primary-600 dark:text-primary-400': thread.id === selectedThreadId
+                                                'text-gray-700 dark:text-gray-200': thread.id !== $wire.selectedThreadId,
+                                                'text-primary-600 dark:text-primary-400': thread.id === $wire.selectedThreadId
                                             }"
                                         >
                                         </span>
@@ -184,7 +184,7 @@
                         </template>
                     </ul>
                 </template>
-                <template x-if="!threadsWithoutAFolder.length">
+                <template x-if="!$wire.threadsWithoutAFolder.length">
                     <div
                         class="flex flex-col gap-y-1 rounded-xl border border-dashed border-gray-950/5 bg-white px-3 py-2 text-gray-500 shadow-sm dark:border-white/10 dark:bg-gray-900"
                         x-show="dragging"
@@ -198,11 +198,11 @@
                     </div>
                 </template>
 
-                <template x-if="folders.length">
+                <template x-if="$wire.folders.length">
                     <div
                         class="flex flex-col gap-y-3 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
                     >
-                        <template x-for="folder in folders" :key="folder.id">
+                        <template x-for="folder in $wire.folders" :key="folder.id">
                             <ul
                                 class="flex flex-col gap-y-1"
                                 :id="`folder-${folder.id}`"
@@ -281,7 +281,7 @@
                                         x-show="expanded(folder.id)"
                                         :class="{
                                             'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1': true,
-                                            'bg-gray-100 dark:bg-white/5': thread.id === selectedThreadId
+                                            'bg-gray-100 dark:bg-white/5': thread.id === $wire.selectedThreadId
                                         }"
                                     >
                                         <div class="flex flex-1 items-center gap-3">
@@ -292,8 +292,8 @@
                                                 x-on:dragend="end"
                                                 :class="{
                                                     'flex items-center cursor-move': true,
-                                                    'text-gray-700 dark:text-gray-200': thread.id !== selectedThreadId,
-                                                    'text-primary-600 dark:text-primary-400': thread.id === selectedThreadId
+                                                    'text-gray-700 dark:text-gray-200': thread.id !== $wire.selectedThreadId,
+                                                    'text-primary-600 dark:text-primary-400': thread.id === $wire.selectedThreadId
                                                 }"
                                             >
                                                 <x-heroicon-m-bars-2
@@ -318,8 +318,8 @@
                                                     x-text="thread.name"
                                                     :class="{
                                                         'flex-1 truncate': true,
-                                                        'text-gray-700 dark:text-gray-200': thread.id !== selectedThreadId,
-                                                        'text-primary-600 dark:text-primary-400': thread.id === selectedThreadId
+                                                        'text-gray-700 dark:text-gray-200': thread.id !== $wire.selectedThreadId,
+                                                        'text-primary-600 dark:text-primary-400': thread.id === $wire.selectedThreadId
                                                     }"
                                                 >
                                                 </span>
@@ -363,7 +363,7 @@
 
         <div
             class="grid h-full flex-1 grid-cols-1 grid-rows-[1fr_auto] gap-2 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-4 2xl:grid-cols-4"
-            x-data="chats($wire, @js($this->threadsWithoutAFolder), @js($this->folders))"
+            x-data="chats($wire)"
         >
             <div class="col-span-1 hidden overflow-y-auto px-px pt-3 lg:block lg:pt-6">
                 {{ $sidebarContent($this->assistantSwitcherForm) }}

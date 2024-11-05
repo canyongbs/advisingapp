@@ -63,11 +63,9 @@ use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
 use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 /**
  * @property-read array $customAssistants
- * @property-read EloquentCollection $threadsWithoutAFolder
  */
 trait CanManageThreads
 {
@@ -78,6 +76,7 @@ trait CanManageThreads
 
     public $assistantSwitcherMobile = null;
 
+    #[Locked]
     public array $threadsWithoutAFolder = [];
 
     public string $selectedThreadId = '';
