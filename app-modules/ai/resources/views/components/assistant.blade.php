@@ -280,7 +280,7 @@
                                         }"
                                         x-show="expanded(folder.id)"
                                         :class="{
-                                            'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
+                                            'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1': true,
                                             'bg-gray-100 dark:bg-white/5': thread.id === selectedThreadId
                                         }"
                                     >
@@ -312,7 +312,7 @@
                                             <button
                                                 class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
                                                 type="button"
-                                                wire:click="selectThread(thread.id)"
+                                                x-on:click="$wire.selectThread(thread)"
                                             >
                                                 <span
                                                     x-text="thread.name"
