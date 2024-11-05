@@ -302,20 +302,22 @@
                                 <template x-for="thread in folder.threads" :key="thread.id">
                                     <li
                                         :id="`chat-${thread.id}`"
-                                        {{-- x-on:message-sent-{{ $threadItem->id }}.window="updateTitle" --}}
+                                        x-on:message-sent.window="updateTitle"
                                         x-tooltip="`Last Engaged: ${lastUpdated}`"
                                         x-data="{
-                                            lastUpdated: new Date(thread.last_engaged_at).toLocaleDateString('en-US', {
+                                            lastUpdated: new Date(thread.messages_max_created_at).toLocaleDateString('en-US', {
                                                 year: 'numeric',
                                                 month: 'short',
                                                 day: 'numeric'
                                             }),
-                                            updateTitle: function() {
-                                                this.lastUpdated = new Date().toLocaleDateString('en-US', {
-                                                    year: 'numeric',
-                                                    month: 'short',
-                                                    day: 'numeric'
-                                                });
+                                            updateTitle: function(event) {
+                                                if (event.detail.threadId === thread.id) {
+                                                    this.lastUpdated = new Date().toLocaleDateString('en-US', {
+                                                        year: 'numeric',
+                                                        month: 'short',
+                                                        day: 'numeric'
+                                                    });
+                                                }
                                             }
                                         }"
                                         x-show="expanded(folder.id)"
