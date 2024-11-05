@@ -139,6 +139,24 @@ document.addEventListener('alpine:init', () => {
 
             this.loading.type = null;
             this.loading.identifier = null;
+        },
+        async renameFolder(folderId) {
+            this.loading.type = 'renameFolderAction';
+            this.loading.identifier = folderId;
+
+            await $wire.mountAction('renameFolder', { folder: folderId });
+
+            this.loading.type = null;
+            this.loading.identifier = null;
+        },
+        async deleteFolder(folderId) {
+            this.loading.type = 'deleteFolderAction';
+            this.loading.identifier = folderId;
+
+            await $wire.mountAction('deleteFolder', { folder: folderId });
+
+            this.loading.type = null;
+            this.loading.identifier = null;
         }
     }));
 });

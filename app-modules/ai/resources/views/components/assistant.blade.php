@@ -263,22 +263,37 @@
                                         </div>
 
                                         <div class="flex items-center gap-1">
-                                            <x-filament::icon-button
-                                                icon="heroicon-m-pencil"
-                                                x-on:click="$wire.mountAction('renameFolderAction', { folder: folder.id })"
-                                                label="Rename Folder"
-                                                color="warning"
-                                                size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
-                                                class="relative inline-flex w-5 h-5 hidden group-hover:inline-flex"
-                                            />
-                                            <x-filament::icon-button
-                                                icon="heroicon-m-trash"
-                                                x-on:click="$wire.mountAction('deleteFolderAction', { folder: folder.id })"
-                                                label="Delete Folder"
-                                                color="danger"
-                                                size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
-                                                class="relative inline-flex w-5 h-5 hidden group-hover:inline-flex"
-                                            />
+                                            <template x-if="loading.type !== 'renameFolderAction' || loading.identifier !== folder.id">
+                                                <x-filament::icon-button
+                                                    icon="heroicon-m-pencil"
+                                                    x-on:click="renameFolder(folder.id)"
+                                                    label="Rename Folder"
+                                                    color="warning"
+                                                    size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                                />
+                                            </template>
+                                            <template x-if="loading.type === 'renameFolderAction' && loading.identifier === folder.id">
+                                                <x-filament::loading-indicator
+                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                                />
+                                            </template>
+
+                                            <template x-if="loading.type !== 'deleteFolderAction' || loading.identifier !== folder.id">
+                                                <x-filament::icon-button
+                                                    icon="heroicon-m-trash"
+                                                    x-on:click="deleteFolder(folder.id)"
+                                                    label="Delete Folder"
+                                                    color="danger"
+                                                    size="{{ Filament\Support\Enums\ActionSize::ExtraSmall }}"
+                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                                />
+                                            </template>
+                                            <template x-if="loading.type === 'deleteFolderAction' && loading.identifier === folder.id">
+                                                <x-filament::loading-indicator
+                                                    class="relative w-5 h-5 hidden group-hover:inline-flex"
+                                                />
+                                            </template>
                                         </div>
                                     </div>
                                 </span>
