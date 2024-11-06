@@ -86,7 +86,7 @@ class FormEmailAutoReply extends BaseModel implements HasMedia
             'student last name' => $author->getAttribute($author->displayLastNameKey()),
             'student full name' => $author->getAttribute($author->displayNameKey()),
             'student email' => $author->getAttribute($author->displayEmailKey()),
-            'student preferred name' => $this->getAttribute($author->displayPreferredNameKey()),
+            'student preferred name' => $author->getAttribute($author->displayPreferredNameKey()),
         ];
     }
 }
