@@ -176,6 +176,10 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     {
         return 'email';
     }
+    public static function displayPreferredNameKey(): string
+    {
+        return 'preferred';
+    }
 
     public function serviceRequests(): MorphMany
     {

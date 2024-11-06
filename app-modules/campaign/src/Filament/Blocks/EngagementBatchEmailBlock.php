@@ -83,6 +83,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                     'student last name',
                     'student full name',
                     'student email',
+                    'student preferred name',
                 ])
                 ->profile('email')
                 ->required()

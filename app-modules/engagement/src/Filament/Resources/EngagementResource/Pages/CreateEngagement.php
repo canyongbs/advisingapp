@@ -90,6 +90,7 @@ class CreateEngagement extends CreateRecord
                                 'student last name',
                                 'student full name',
                                 'student email',
+                                'student preferred name',
                             ])
                             ->showMergeTagsInBlocksPanel(! ($form->getLivewire() instanceof RelationManager))
                             ->profile('email')
