@@ -49,15 +49,19 @@
     </div>
 
     <div @class([
-        'flex shrink-0 items-center gap-3',
+        'flex shrink-0 items-center gap-3 justify-end',
         'sm:mt-7' => $breadcrumbs,
     ])>
-        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE, scopes: $this->getRenderHookScopes()) }}
+        <div class="flex flex-col justify-end gap-1">
+            <div class="flex flex-row items-center justify-end gap-3">
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
-        @if ($actions)
-            <x-filament::actions :actions="$actions" />
-        @endif
+                @if ($actions)
+                    <x-filament::actions :actions="$actions" />
+                @endif
+            </div>
+            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER, scopes: $this->getRenderHookScopes()) }}
+        </div>
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER, scopes: $this->getRenderHookScopes()) }}
     </div>
 </header>
