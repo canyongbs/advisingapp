@@ -85,8 +85,8 @@ class ListCampaigns extends ListRecords
                     ->query(fn (Builder $query) => $query->where('enabled', true)),
                 Filter::make('Completed')
                     ->query(function (Builder $query) {
-                        $query->whereHas('actions', function (Builder $query) {
-                            $query->whereNotNull('successfully_executed_at');
+                        $query->whereDoesntHave('actions', function (Builder $query) {
+                            $query->whereNull('successfully_executed_at');
                         });
                     }),
             ]);

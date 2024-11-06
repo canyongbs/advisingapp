@@ -42,7 +42,6 @@ use function Tests\asSuperAdmin;
 use function Pest\Livewire\livewire;
 
 use AdvisingApp\Campaign\Models\Campaign;
-use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\ListCampaigns;
@@ -86,18 +85,36 @@ it('can filter campaigns by `Enabled`', function () {
 
 it('can filter campaigns by `Completed`', function () {
     asSuperAdmin();
-    $campaign = Campaign::factory()->create();
-    CampaignAction::factory()->for($campaign)->successfulExecution()->create();
-    $completedCampaigns = Campaign::whereHas('actions', function (Builder $query) {
-        $query->whereNotNull('successfully_executed_at');
-    })->get();
-    $incompleteCampaigns = Campaign::whereDoesntHave('actions', function (Builder $query) {
-        $query->whereNotNull('successfully_executed_at');
-    })->get();
+
+    $completeCampaign = Campaign::factory()
+        ->has(CampaignAction::factory()->successfulExecution(), 'actions')
+        ->create();
+
+    $partiallyCompleteCampaign = Campaign::factory()
+        ->has(CampaignAction::factory()->successfulExecution(), 'actions')
+        ->has(CampaignAction::factory(), 'actions')
+        ->create();
+
+    $incompleteCampaign = Campaign::factory()
+        ->has(CampaignAction::factory(), 'actions')
+        ->create();
+
+    $failedCampaign = Campaign::factory()
+        ->has(CampaignAction::factory()->failedExecution(), 'actions')
+        ->create();
 
     livewire(ListCampaigns::class)
-        ->assertCanSeeTableRecords($completedCampaigns)
+        ->assertCanSeeTableRecords([
+            $completeCampaign,
+            $partiallyCompleteCampaign,
+            $incompleteCampaign,
+            $failedCampaign,
+        ])
         ->filterTable('Completed')
-        ->assertCanSeeTableRecords($completedCampaigns)
-        ->assertCanNotSeeTableRecords($incompleteCampaigns);
+        ->assertCanSeeTableRecords([$completeCampaign])
+        ->assertCanNotSeeTableRecords([
+            $partiallyCompleteCampaign,
+            $incompleteCampaign,
+            $failedCampaign,
+        ]);
 });
