@@ -38,6 +38,7 @@ namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
@@ -46,6 +47,7 @@ use AdvisingApp\Campaign\Models\Campaign;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
 
 class ListCampaigns extends ListRecords
@@ -76,8 +78,17 @@ class ListCampaigns extends ListRecords
                     ->hidden(fn (Campaign $record) => $record->hasBeenExecuted() === true),
                 DeleteAction::make()
                     ->hidden(fn (Campaign $record) => $record->hasBeenExecuted() === true),
-            ])
-            ->bulkActions([
+            ])->filters([
+                Filter::make('My Campaigns')
+                    ->query(fn (Builder $query) => $query->where('user_id', auth()->id())),
+                Filter::make('Enabled')
+                    ->query(fn (Builder $query) => $query->where('enabled', true)),
+                Filter::make('Completed')
+                    ->query(function (Builder $query) {
+                        $query->whereDoesntHave('actions', function (Builder $query) {
+                            $query->whereNull('successfully_executed_at');
+                        });
+                    }),
             ]);
     }
 
