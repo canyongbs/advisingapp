@@ -55,6 +55,13 @@ class CampaignFactory extends Factory
         ];
     }
 
+    public function enabled(): self
+    {
+        return $this->state([
+            'enabled' => true,
+        ]);
+    }
+
     public function disabled(): self
     {
         return $this->state([
