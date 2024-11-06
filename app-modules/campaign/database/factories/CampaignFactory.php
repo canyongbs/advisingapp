@@ -51,7 +51,7 @@ class CampaignFactory extends Factory
             'user_id' => User::factory(),
             'segment_id' => Segment::factory(),
             'name' => fake()->catchPhrase(),
-            'enabled' => true,
+            'enabled' => fake()->boolean(),
         ];
     }
 
