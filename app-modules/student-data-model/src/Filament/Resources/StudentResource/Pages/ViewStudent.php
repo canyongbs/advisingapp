@@ -39,26 +39,33 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 use Throwable;
 use App\Models\Tenant;
 use App\Services\Olympus;
-use Filament\Infolists\Infolist;
+use Illuminate\Support\Str;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Components\Section;
 use Filament\Support\Facades\FilamentView;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Resources\RelationManagers\RelationGroup;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use Filament\Resources\RelationManagers\RelationManagerConfiguration;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentTasksRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentAlertsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentCareTeamRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentSubscriptionsRelationManager;
 
 class ViewStudent extends ViewRecord
 {
     protected static string $resource = StudentResource::class;
 
+    protected static string $view = 'student-data-model::filament.resources.student-resource.view-student';
+
     // TODO: Automatically set from Filament
     protected static ?string $navigationLabel = 'View';
+
+    protected static string $layout = 'filament-panels::components.layout.index';
 
     public function boot()
     {
@@ -75,96 +82,14 @@ class ViewStudent extends ViewRecord
                 ]),
                 scopes: ViewStudent::class,
             );
+            FilamentView::registerRenderHook(
+                PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER,
+                fn (): View => view('student-data-model::filament.resources.student-resource.sis-last-updated', [
+                    'student' => $this->getRecord(),
+                ]),
+                scopes: ViewStudent::class,
+            );
         }
-    }
-
-    public function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist
-            ->schema([
-                Section::make('Characteristics')
-                    ->schema([
-                        TextEntry::make('sisid')
-                            ->label('Student ID'),
-                        TextEntry::make('otherid')
-                            ->label('Other ID'),
-                        TextEntry::make('f_e_term')
-                            ->label('First Enrollment Term')
-                            ->default('N/A'),
-                        TextEntry::make('mr_e_term')
-                            ->label('Most Recent Enrollment Term')
-                            ->default('N/A'),
-                    ])
-                    ->columns(2),
-                Section::make('Demographics')
-                    ->schema([
-                        TextEntry::make('first')
-                            ->label('First Name'),
-                        TextEntry::make('last')
-                            ->label('Last Name'),
-                        TextEntry::make('full_name')
-                            ->label('Full Name'),
-                        TextEntry::make('preferred')
-                            ->label('Preferred Name')
-                            ->default('N/A'),
-                        TextEntry::make('birthdate'),
-                        TextEntry::make('hsgrad')
-                            ->label('High School Graduation')
-                            ->default('N/A'),
-                        IconEntry::make('firstgen')
-                            ->label('First Generation')
-                            ->boolean(),
-                        TextEntry::make('ethnicity'),
-                        IconEntry::make('dual')
-                            ->label('Dual')
-                            ->boolean(),
-                    ])
-                    ->columns(2),
-                Section::make('Contact Information')
-                    ->schema([
-                        TextEntry::make('email')
-                            ->label('Email Address'),
-                        TextEntry::make('email_2')
-                            ->label('Alternate Email')
-                            ->default('N/A'),
-                        TextEntry::make('mobile'),
-                        TextEntry::make('phone'),
-                        TextEntry::make('address'),
-                        TextEntry::make('address2')
-                            ->label('Apartment/Unit Number')
-                            ->default('N/A'),
-                        TextEntry::make('address3')
-                            ->label('Additional Address')
-                            ->default('N/A'),
-                        TextEntry::make('city'),
-                        TextEntry::make('state'),
-                        TextEntry::make('postal'),
-                    ])
-                    ->columns(2),
-                Section::make('Engagement Restrictions')
-                    ->schema([
-                        IconEntry::make('sms_opt_out')
-                            ->label('SMS Opt Out')
-                            ->boolean(),
-                        IconEntry::make('email_bounce')
-                            ->label('Email Bounce')
-                            ->boolean(),
-                        IconEntry::make('ferpa')
-                            ->label('FERPA')
-                            ->boolean(),
-                    ])
-                    ->columns(2),
-                Section::make('Impediments')
-                    ->schema([
-                        TextEntry::make('dfw')
-                            ->label('DFW'),
-                        IconEntry::make('sap')
-                            ->label('SAP')
-                            ->boolean(),
-                        TextEntry::make('holds'),
-                    ])
-                    ->columns(2),
-            ]);
     }
 
     public function sisRefresh()
@@ -200,6 +125,44 @@ class ViewStudent extends ViewRecord
             ->title('Failed to initiate Student data sync.')
             ->danger()
             ->send();
+    }
+
+    public function getAbbreviatedName(): string
+    {
+        $name = $this->record?->full_name;
+
+        if (empty($name)) {
+            $name = $this->record?->first . ' ' . $this->record?->last;
+        }
+
+        return collect(Str::of($name)->explode(' '))
+            ->map(function ($word) {
+                return Str::substr($word, 0, 1);
+            })->implode('');
+    }
+
+    /**
+     * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
+     */
+    public function getRelationManagers(): array
+    {
+        $managers = [
+            StudentAlertsRelationManager::class,
+            StudentTasksRelationManager::class,
+            StudentCareTeamRelationManager::class,
+            StudentSubscriptionsRelationManager::class,
+        ];
+
+        return array_filter(
+            $managers,
+            function (string | RelationGroup | RelationManagerConfiguration $manager): bool {
+                if ($manager instanceof RelationGroup) {
+                    return (bool) count($manager->ownerRecord($this->getRecord())->pageClass(static::class)->getManagers());
+                }
+
+                return $this->normalizeRelationManagerClass($manager)::canViewForRecord($this->getRecord(), static::class);
+            },
+        );
     }
 
     protected function getHeaderActions(): array

@@ -34,30 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Livewire;
 
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFilesRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEngagementRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentInteractionsRelationManager;
 
 class ManageStudentInformation extends ManageRelatedRecords
 {
+    protected static string $view = 'student-data-model::livewire.manage-student-information';
+
     protected static string $resource = StudentResource::class;
 
-    // TODO: Obsolete when there is no table, remove from Filament
     protected static string $relationship = 'programs';
 
-    protected static ?string $navigationLabel = 'Information';
+    public function mount(int | string $record): void
+    {
+        $this->record = $this->resolveRecord($record);
 
-    protected static ?string $breadcrumb = 'Information';
+        $this->authorizeAccess();
 
-    protected static ?string $navigationIcon = 'heroicon-o-information-circle';
+        $this->previousUrl = url()->previous();
+
+        $this->loadDefaultActiveTab();
+    }
 
     public static function canAccess(array $arguments = []): bool
     {
-        return (bool) count(static::managers($arguments['record'] ?? null));
+        return auth()->user()->can('student.*.view');
     }
 
     public function getRelationManagers(): array
@@ -70,6 +79,9 @@ class ManageStudentInformation extends ManageRelatedRecords
         return collect([
             ProgramsRelationManager::class,
             EnrollmentsRelationManager::class,
+            StudentEngagementRelationManager::class,
+            StudentInteractionsRelationManager::class,
+            StudentFilesRelationManager::class,
         ])
             ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
             ->toArray();

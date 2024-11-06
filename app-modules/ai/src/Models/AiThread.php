@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Models;
 
 use Carbon\Carbon;
 use App\Models\User;
+use Livewire\Wireable;
 use App\Models\BaseModel;
 use Carbon\CarbonInterface;
 use App\Settings\DisplaySettings;
@@ -55,7 +56,7 @@ use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 /**
  * @mixin IdeHelperAiThread
  */
-class AiThread extends BaseModel
+class AiThread extends BaseModel implements Wireable
 {
     use CanAddAssistantLicenseGlobalScope;
     use SoftDeletes;
@@ -115,6 +116,19 @@ class AiThread extends BaseModel
             ->whereNotNull('deleted_at')
             ->where('deleted_at', '<=', now()->subDays(7))
             ->whereDoesntHave('messages', fn (Builder $query) => $query->withTrashed());
+    }
+
+    public function toLivewire()
+    {
+        return [
+            'id' => $this->getKey(),
+            'name' => $this->name,
+        ];
+    }
+
+    public static function fromLivewire($value)
+    {
+        return AiThread::query()->find($value['id']);
     }
 
     protected function lastEngagedAt(): Attribute

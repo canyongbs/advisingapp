@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,35 +30,38 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@props([
+    'actions' => [],
+    'breadcrumbs' => [],
+    'heading',
+    'subheading' => null,
+])
 
-use App\Models\User;
+<header {{ $attributes->class(['fi-header flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between']) }}>
+    <div>
+        @if ($breadcrumbs)
+            <x-filament::breadcrumbs
+                class="mb-2 hidden sm:block"
+                :breadcrumbs="$breadcrumbs"
+            />
+        @endif
+    </div>
 
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
+    <div @class([
+        'flex shrink-0 items-center gap-3 justify-end',
+        'sm:mt-7' => $breadcrumbs,
+    ])>
+        <div class="flex flex-col justify-end gap-1">
+            <div class="flex flex-row items-center justify-end gap-3">
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
-use Filament\Tables\Actions\AttachAction;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentPrograms;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProgramRelationManager;
+                @if ($actions)
+                    <x-filament::actions :actions="$actions" />
+                @endif
+            </div>
+            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER, scopes: $this->getRenderHookScopes()) }}
+        </div>
 
-it('can attach a basic needs program to a student', function () {
-    $user = User::factory()->licensed(Student::getLicenseType())->create();
-    $basicNeedsProgram = BasicNeedsProgram::factory()->create();
-    $student = Student::factory()->create();
-
-    $user->givePermissionTo('basic_needs_program.view-any');
-    $user->givePermissionTo('student.view-any');
-
-    actingAs($user);
-
-    livewire(ProgramRelationManager::class, [
-        'ownerRecord' => $student,
-        'pageClass' => ManageStudentPrograms::class,
-    ])
-        ->callTableAction(
-            AttachAction::class,
-            data: ['recordId' => $basicNeedsProgram->getKey()]
-        )->assertSuccessful();
-});
+    </div>
+</header>

@@ -31,37 +31,16 @@
 
 </COPYRIGHT>
 --}}
-<?php
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Support\Carbon;
-use App\Settings\DisplaySettings;
 
-/** @var Student $student */
-
-$timezone = app(DisplaySettings::class)->getTimezone();
-?>
-<div class="flex flex-col items-center gap-3 md:flex-row">
-    @if ($student->updated_at)
-        <div class="flex-1">
-            <p class="text-xs">
-                This record was last updated in the SIS on
-                {{ $student->updated_at->setTimezone($timezone)->format('F j, Y g:i A') }}.
-            </p>
-        </div>
-    @endif
-
-    <div class="flex-shrink-0">
-
-        <x-filament::button
-            type="button"
-            color="gray"
-            icon="heroicon-m-arrow-path"
-            labeled-from="sm"
-            tag="button"
-            wire:click="sisRefresh()"
-        >
-            {{ 'Sync' }}
-        </x-filament::button>
-
-    </div>
+<div class="flex-shrink-0">
+    <x-filament::button
+        type="button"
+        color="gray"
+        icon="heroicon-m-arrow-path"
+        labeled-from="sm"
+        tag="button"
+        wire:click="sisRefresh()"
+    >
+        {{ 'Sync' }}
+    </x-filament::button>
 </div>

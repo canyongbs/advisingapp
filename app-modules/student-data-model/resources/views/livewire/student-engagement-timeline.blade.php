@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,35 +30,11 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-use App\Models\User;
-
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
-use Filament\Tables\Actions\AttachAction;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentPrograms;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProgramRelationManager;
-
-it('can attach a basic needs program to a student', function () {
-    $user = User::factory()->licensed(Student::getLicenseType())->create();
-    $basicNeedsProgram = BasicNeedsProgram::factory()->create();
-    $student = Student::factory()->create();
-
-    $user->givePermissionTo('basic_needs_program.view-any');
-    $user->givePermissionTo('student.view-any');
-
-    actingAs($user);
-
-    livewire(ProgramRelationManager::class, [
-        'ownerRecord' => $student,
-        'pageClass' => ManageStudentPrograms::class,
-    ])
-        ->callTableAction(
-            AttachAction::class,
-            data: ['recordId' => $basicNeedsProgram->getKey()]
-        )->assertSuccessful();
-});
+--}}
+<x-student-data-model::timeline
+    :timelineRecords="$timelineRecords"
+    :hasMorePages="$hasMorePages"
+    :emptyStateMessage="$emptyStateMessage"
+    :noMoreRecordsMessage="$noMoreRecordsMessage"
+    :isShowFullFeed="$isShowFullFeed"
+/>

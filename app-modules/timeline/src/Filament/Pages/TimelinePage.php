@@ -78,7 +78,7 @@ abstract class TimelinePage extends Page
     {
         $this->currentRecordToView = resolve(GetRecordFromMorphAndKey::class)->via($morphReference, $key);
 
-        $this->mountAction('view');
+        $this->replaceMountedAction('view');
     }
 
     public function viewAction(): ViewAction

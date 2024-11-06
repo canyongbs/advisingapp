@@ -34,33 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
+use App\Enums\Feature;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Gate;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
 use App\Filament\Tables\Columns\IdColumn;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\MeetingCenter\Filament\Actions\InviteEventAttendeeAction;
 use AdvisingApp\MeetingCenter\Filament\Actions\Table\ViewEventAttendeeAction;
 
-class ManageStudentEvents extends ManageRelatedRecords
+class StudentEventsRelationManager extends RelationManager
 {
     protected static string $resource = StudentResource::class;
 
     protected static string $relationship = 'eventAttendeeRecords';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Events';
+    protected static ?string $title = 'Events';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Events';
-
-    protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        return parent::canViewForRecord($ownerRecord, $pageClass) && Gate::check(Feature::EventManagement->getGateName());
+    }
 
     public function table(Table $table): Table
     {

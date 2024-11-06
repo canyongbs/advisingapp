@@ -156,3 +156,13 @@
 .dark_button_border {
     @apply dark:border dark:border-white dark:hover:border-white !important;
 }
+
+.view_student_relation_manager .fi-ta-ctn {
+    min-height: 500px;
+    overflow-y: auto;
+}
+
+.view_student_relation_manager .fi-ta-ctn .fi-ta-content {
+    height: 300px;
+    overflow-y: auto;
+}

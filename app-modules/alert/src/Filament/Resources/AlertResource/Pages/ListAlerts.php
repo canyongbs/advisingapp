@@ -63,8 +63,8 @@ use App\Filament\Forms\Components\EducatableSelect;
 use AdvisingApp\Alert\Filament\Resources\AlertResource;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
 
 class ListAlerts extends ListRecords
 {
@@ -79,7 +79,7 @@ class ListAlerts extends ListRecords
                     ->label('Related To')
                     ->getStateUsing(fn (Alert $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
                     ->url(fn (Alert $record) => match ($record->concern ? $record->concern::class : null) {
-                        Student::class => ManageStudentAlerts::getUrl(['record' => $record->concern]),
+                        Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ManageProspectAlerts::getUrl(['record' => $record->concern]),
                         default => null,
                     }),
@@ -99,7 +99,7 @@ class ListAlerts extends ListRecords
                     ->label('Related To')
                     ->getStateUsing(fn (Alert $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
                     ->url(fn (Alert $record) => match ($record->concern ? $record->concern::class : null) {
-                        Student::class => ManageStudentAlerts::getUrl(['record' => $record->concern]),
+                        Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ManageProspectAlerts::getUrl(['record' => $record->concern]),
                         default => null,
                     })

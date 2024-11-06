@@ -34,45 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use App\Enums\Feature;
 use Filament\Tables\Table;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Cache;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\Model;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\DeleteAction;
 use AdvisingApp\Form\Models\FormSubmission;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Form\Enums\FormSubmissionStatus;
-use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Form\Filament\Resources\FormResource;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Form\Filament\Actions\RequestFormSubmission;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Form\Filament\Tables\Filters\FormSubmissionStatusFilter;
 
-class ManageStudentFormSubmissions extends ManageRelatedRecords
+class StudentFormSubmissionsRelationManager extends RelationManager
 {
-    protected static string $resource = StudentResource::class;
-
     protected static string $relationship = 'formSubmissions';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Form Submissions';
+    protected static ?string $title = 'Forms';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Form Submissions';
-
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
-    public static function canAccess(array $parameters = []): bool
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        return parent::canAccess($parameters) && Gate::check(Feature::OnlineForms->getGateName());
+        return parent::canViewForRecord($ownerRecord, $pageClass) && Gate::check(Feature::OnlineForms->getGateName());
     }
 
     public function table(Table $table): Table
@@ -113,26 +103,5 @@ class ManageStudentFormSubmissions extends ManageRelatedRecords
                     DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getNavigationItems(array $urlParameters = []): array
-    {
-        $item = parent::getNavigationItems($urlParameters)[0];
-
-        $ownerRecord = $urlParameters['record'];
-
-        /** @var Prospect $ownerRecord */
-        $formSubmissionsCount = Cache::tags('form-submission-count')
-            ->remember(
-                "form-submission-count-{$ownerRecord->getKey()}",
-                now()->addMinutes(5),
-                function () use ($ownerRecord): int {
-                    return $ownerRecord->formSubmissions()->count();
-                },
-            );
-
-        $item->badge($formSubmissionsCount > 0 ? $formSubmissionsCount : null);
-
-        return [$item];
     }
 }
