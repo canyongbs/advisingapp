@@ -18,13 +18,13 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Bvtterfly\ModelStateMachine\Exceptions\InvalidTransition;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
-use AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages\ListPipelines;
+use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
 
 class ProspectPipelineKanban extends Component implements HasForms, HasActions
 {
     use InteractsWithActions;
     use InteractsWithForms;
-    use InteractsWithPageTable;
 
     public ?Collection $stages;
 
@@ -48,6 +48,8 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
             ->whereHas('pipeline', function (Builder $query) use ($currentPipeline) {
                 return $query->where('id', $currentPipeline->getKey());
             })
+            ->whereHas('educatable')
+            ->orderBy('updated_at','DESC')
             ->get()
             ->groupBy('pipeline_stage_id');
 
@@ -59,6 +61,7 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
 
     public function render()
     {
+        dd(PipelineEductable::with(['educatable'])->get());
         return view('livewire.prospect-pipeline-kanban', [
             'pipelineEducatables' => $this->getPipelineSubjects(),
         ]);
@@ -91,10 +94,5 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
             'success' => true,
             'message' => 'Prospect stage updated successfully.',
         ], ResponseAlias::HTTP_OK);
-    }
-
-    protected function getTablePage(): string
-    {
-        return ListPipelines::class;
     }
 }

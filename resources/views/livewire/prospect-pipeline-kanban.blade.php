@@ -1,3 +1,4 @@
+@use('AdvisingApp\Prospect\Filament\Resources\ProspectResource')
 <div>
     <div class="mt-2 flex flex-col">
         <div class="overflow-x-auto">
@@ -16,14 +17,6 @@
                                     <div class="py-4 text-base font-semibold text-gray-900 dark:text-gray-300">
                                         {{ $stage->name }}
                                     </div>
-
-                                    {{-- <x-filament::link
-                                        tag="button"
-                                        icon="heroicon-m-plus"
-                                        :wire:click="'mountAction(\'createPipeline\', { stage_id:\'' . $stage->getKey() . '\' })'"
-                                    >
-                                        New
-                                    </x-filament::link> --}}
                                 </div>
 
                                 <div
@@ -46,29 +39,24 @@
                                                     {{ $educatable?->educatable?->full_name }}
                                                     <br>
                                                     <small>
-                                                        {{ __('Pipeline: :name', ['name' => str($educatable?->pipeline?->name)->limit(50)]) }}
+                                                        {{ str($educatable?->pipeline?->name)->limit(50) }}
                                                     </small>
                                                     <br>
                                                     <small>
-                                                        {{ __('Segment: :name', ['name' => str($educatable?->pipeline?->segment?->name)->limit(50)]) }}
+                                                        {{ str($educatable?->pipeline?->segment?->name)->limit(50) }}
                                                     </small>
                                                 </div>
-                                                {{-- <x-filament::icon-button
-                                                    class="fi-primary-color"
-                                                    wire:click="viewProspect('{{ $educatable->pipeline_id }}')"
-                                                    icon="heroicon-o-eye"
-                                                /> --}}
-                                            </div>
+                                                
 
-                                            <div class="flex flex-col">
-                                                <!-- TODO: Need to discuss with product as to whether or not Tasks should have a title AND description? -->
-                                                <div class="pb-4 text-sm font-normal text-gray-700 dark:text-gray-400">
-                                                    {{-- {{ str($task->description)->limit(50) }} --}}
-                                                </div>
-
-                                                <div class="flex justify-end">
-                                                    <!-- Todo to add stage name -->
-                                                </div>
+                                                <x-filament::icon-button
+                                                    icon="heroicon-m-arrow-top-right-on-square"
+                                                    href="{{ ProspectResource::getUrl('view',[
+                                                    'record' => $educatable?->educatable->getKey() ]) }}"
+                                                    tag="a"
+                                                    target="_blank"
+                                                    label="View Prospect"
+                                                />
+                                                
                                             </div>
                                         </div>
                                     @endforeach
@@ -78,14 +66,6 @@
                                         <div>
                                             Drag pipeline segment here
                                         </div>
-
-                                        {{-- <button
-                                            class="hover:underline"
-                                            tag="button"
-                                            wire:click="mountAction('createPipeline', { stage_id: '{{ $stage->getKey() }}' })"
-                                        >
-                                            or add a new one
-                                        </button> --}}
                                     </div>
                                 </div>
                             </div>

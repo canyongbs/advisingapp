@@ -10,7 +10,7 @@ use AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages\EditPipeline;
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages\ViewPipeline;
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages\ListPipelines;
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages\CreatePipeline;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageEductables;
+use AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages\ManageEductables;
 use AdvisingApp\Prospect\Models\Prospect;
 
 class PipelineResource extends Resource

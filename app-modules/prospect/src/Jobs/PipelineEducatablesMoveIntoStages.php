@@ -3,11 +3,15 @@
 namespace AdvisingApp\Prospect\Jobs;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Queue\SerializesModels;
+use Filament\Notifications\Notification;
 use Illuminate\Queue\InteractsWithQueue;
+use AdvisingApp\Prospect\Models\Pipeline;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class PipelineEducatablesMoveIntoStages implements ShouldQueue
 {
@@ -16,37 +20,66 @@ class PipelineEducatablesMoveIntoStages implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public $pipeline;
-
     /**
      * Create a new job instance.
      *
      * @param mixed $pipeline
      */
-    public function __construct($pipeline)
-    {
-        $this->pipeline = $pipeline;
-    }
+    public function __construct(
+        public Pipeline $pipeline
+    ) {}
 
     /**
      * Execute the job.
      */
     public function handle(): void
     {
-        $stage = $this?->pipeline?->stages()->where('is_default',true)->first();
+        $defaultStage = $this->pipeline?->stages()->where('is_default', true)->first();
 
-        $educatableBatch = $this->pipeline?->segment
-                                ?->retrieveRecords()
-                                ?->chunk(100);
+        $this->pipeline?->segment
+            ->retrieveEducatablesRecords()
+            ->chunk(100, function ($educatables) use ($defaultStage) {
+                DB::transaction(function () use ($educatables, $defaultStage) {
+                    $attachData = $educatables->mapWithKeys(fn ($educatable) => [
+                        $educatable->getKey() => ['pipeline_stage_id' => $defaultStage->getKey()],
+                    ])->toArray();
 
+                    $this->pipeline?->prospects()->attach($attachData);
+                });
+            });
 
-        foreach ($educatableBatch as $key => $educatables) {
-           foreach($educatables as $educatable){
-                $this->pipeline?->prospects()->attach($educatable->getKey(), ['pipeline_stage_id' => $stage->getKey()]);
-           }
+        $this->pipeline->refresh();
+
+        $passedRecords = $this->pipeline?->prospects()->count();
+        $failedRecords = $this->pipeline?->segment->retrieveEducatablesRecords()->count() - $passedRecords;
+
+        if ($this->pipeline->createdBy) {
+            $this->pipeline->createdBy->notify(
+                Notification::make()
+                    ->title('Pipeline Creation Completed')
+                    ->body("Your pipeline creation has completed successful and {$passedRecords} records is processed in the background and {$failedRecords} failed.")
+                    ->success()
+                    ->toDatabase(),
+            );
+        }
+    }
+
+    public function failed(?Throwable $exception): void
+    {
+        if ($this->pipeline->createdBy) {
+            $this->pipeline->createdBy->notify(
+                Notification::make()
+                    ->title('Pipeline Creation Unsuccessful')
+                    ->body("Your pipeline creation has been failed.")
+                    ->success()
+                    ->toDatabase(),
+            );
         }
 
-        //TODO: need to create logic for edit pipeline. 
-        //TODO: Nightly sync pipeline job
+        Log::debug(__('Failed to insert prospect into the pipeline :pipeline',[
+            'pipeline' => $this->pipeline->name
+        ]));
+
+        report($exception); 
     }
 }

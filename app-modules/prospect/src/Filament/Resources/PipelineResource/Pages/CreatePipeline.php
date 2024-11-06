@@ -13,6 +13,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
 use AdvisingApp\Prospect\Jobs\PipelineEducatablesMoveIntoStages;
+use AdvisingApp\Prospect\Models\Prospect;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class CreatePipeline extends CreateRecord
 {
@@ -28,7 +32,7 @@ class CreatePipeline extends CreateRecord
                 Select::make('segment_id')
                     ->label('Segment')
                     ->required()
-                    ->relationship('segment', 'name')
+                    ->relationship('segment', 'name',fn(Builder $query) => $query->where('model',app(Prospect::class)->getMorphClass()))
                     ->searchable()
                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                     ->preload(),
@@ -78,10 +82,52 @@ class CreatePipeline extends CreateRecord
         return $data;
     }
 
+    protected function getCreatedNotification(): ?Notification
+    {
+        return null;
+    }
+
     protected function afterCreate(): void
     {
-        dispatch(new PipelineEducatablesMoveIntoStages(
-            pipeline: $this->getRecord()
-        ));
+        $pipeline = $this->getRecord();
+
+        $defaultStage = $pipeline?->stages()->where('is_default', true)->first();
+
+        $x = $pipeline?->segment    
+        ->retrieveEducatablesRecords()
+        ->get();
+
+        \Log::debug($x);
+
+        // ->chunk(100, function ($educatables) use ($defaultStage,$pipeline) {
+        //     DB::transaction(function () use ($educatables, $defaultStage,$pipeline) {
+        //         $attachData = $educatables->mapWithKeys(fn ($educatable) => [
+        //             $educatable->getKey() => ['pipeline_stage_id' => $defaultStage->getKey()],
+        //         ])->toArray();
+
+        //         dd($attachData);
+
+        //         $pipeline?->prospects()->attach($attachData);
+        //     });
+        // });
+        
+        // dispatch(new PipelineEducatablesMoveIntoStages(
+        //     pipeline: $this->getRecord()
+        // ));
+
+        // $totalRecords = $pipeline?->segment?->retrieveEducatablesRecords()->count();
+
+        // $user = $pipeline->createdBy;
+
+        // if($user){
+        //     $user->notify(
+        //         Notification::make()
+        //                 ->title('Pipeline Creation Started')
+        //                 ->body("Your pipeline creation has begun and {$totalRecords} records will be processed in the background.")
+        //                 ->success()
+        //                 ->toDatabase(),
+        //     );
+        // }
+        
     }
 }

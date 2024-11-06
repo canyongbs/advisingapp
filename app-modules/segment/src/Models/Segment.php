@@ -48,6 +48,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 /**
  * @mixin IdeHelperSegment
@@ -99,6 +100,8 @@ class Segment extends BaseModel
             });
         }
 
+        //todo
+
         /** @var Builder $modelQueryBuilder */
         $modelQueryBuilder = $this->model->query();
 
@@ -111,6 +114,26 @@ class Segment extends BaseModel
                     ->pluck(resolve($class)->getKeyName()),
             )
             ->get();
+    }
+
+    public function retrieveEducatablesRecords(): Builder
+    {
+        if (count($this->subjects) > 0) {
+            return $this->subjects()
+                    ->with('subject');
+        }
+
+        /** @var Builder $modelQueryBuilder */
+        $modelQueryBuilder = $this->model->query();
+
+        $class = $this->model->class();
+
+        return $modelQueryBuilder
+            ->whereKey(
+                resolve(TranslateSegmentFilters::class)
+                    ->handle($this)
+                    ->pluck(resolve($class)->getKeyName()),
+            );
     }
 
     protected static function booted(): void

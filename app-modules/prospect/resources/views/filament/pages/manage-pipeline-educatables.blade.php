@@ -32,10 +32,12 @@
                     'text-gray-900 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700' =>
                         $viewType !== 'kanban',
                 ])
+                title="{{ $this->getOwnerRecord()?->segment?->retrieveRecords()->count() >= 100 ? "The Kanban view is disabled because the pipeline contains more than 100 prospects" : "" }}"
                 wire:click="setViewType('kanban')"
             >
                 <x-filament::icon
                     class="h-6 w-6"
+                   
                     icon="heroicon-m-view-columns"
                 />
             </button>

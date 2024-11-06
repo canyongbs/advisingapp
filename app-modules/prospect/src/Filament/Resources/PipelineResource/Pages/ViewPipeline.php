@@ -11,6 +11,8 @@ use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
+use AdvisingApp\Prospect\Models\Pipeline;
+use Illuminate\Support\Str;
 
 class ViewPipeline extends ViewRecord
 {
@@ -42,5 +44,28 @@ class ViewPipeline extends ViewRecord
             EditAction::make(),
             DeleteAction::make(),
         ];
+    }
+
+    /**
+     * @return array<int|string, string|null>
+     */
+    public function getBreadcrumbs(): array
+    {
+        $resource = static::getResource();
+        /** @var Pipeline $record */
+        $record = $this->getRecord();
+
+        /** @var array<string, string> $breadcrumbs */
+        $breadcrumbs = [
+            $resource::getUrl() => $resource::getBreadcrumb(),
+            $resource::getUrl('view', ['record' => $record]) => Str::limit($record->name, 16),
+            ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
+        ];
+
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
+        }
+
+        return $breadcrumbs;
     }
 }
