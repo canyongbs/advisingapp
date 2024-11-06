@@ -244,7 +244,7 @@ it('can save threads', function () use ($setUp) {
         ]);
 
     Livewire::test(PersonalAssistant::class)
-        ->call('selectThread', $thread)
+        ->call('selectThread', $thread->toArray())
         ->callAction('saveThread', [
             'name' => $name = Str::random(),
         ])
@@ -274,7 +274,7 @@ it('can save threads into a folder', function () use ($setUp) {
         ]);
 
     Livewire::test(PersonalAssistant::class)
-        ->call('selectThread', $thread)
+        ->call('selectThread', $thread->toArray())
         ->callAction('saveThread', [
             'name' => $name = Str::random(),
             'folder' => $folder->getKey(),
@@ -319,7 +319,7 @@ it('can select a thread', function () use ($setUp) {
     Livewire::test(PersonalAssistant::class)
         ->call('loadFirstThread')
         ->assertSet('thread.id', $thread->id)
-        ->call('selectThread', $newThread)
+        ->call('selectThread', $newThread->toArray())
         ->assertSet('thread.id', $newThread->id);
 });
 
@@ -338,7 +338,7 @@ it('can not select a thread belonging to a different user', function () use ($se
     Livewire::test(PersonalAssistant::class)
         ->call('loadFirstThread')
         ->assertSet('thread.id', $thread->id)
-        ->call('selectThread', $newThread)
+        ->call('selectThread', $newThread->toArray())
         ->assertNotFound();
 });
 
