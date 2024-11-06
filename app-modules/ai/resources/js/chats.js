@@ -32,7 +32,11 @@
 </COPYRIGHT>
 */
 document.addEventListener('alpine:init', () => {
-    Alpine.data('chats', () => ({
+    Alpine.data('chats', ($wire) => ({
+        loading: {
+            type: null,
+            identifier: null,
+        },
         threadId: null,
         startFolder: null,
         dragging: false,
@@ -90,6 +94,60 @@ document.addEventListener('alpine:init', () => {
         },
         expanded(folderId) {
             return this.expandedFolder === folderId;
+        },
+        async selectThread(thread) {
+            this.loading.type = 'thread';
+            this.loading.identifier = thread.id;
+
+            await $wire.selectThread(thread);
+
+            this.loading.type = null;
+            this.loading.identifier = null;
+        },
+        async moveThread(threadId) {
+            this.loading.type = 'moveThreadAction';
+            this.loading.identifier = threadId;
+
+            await $wire.mountAction('moveThread', { thread: threadId });
+
+            this.loading.type = null;
+            this.loading.identifier = null;
+        },
+        async editThread(threadId) {
+            this.loading.type = 'editThreadAction';
+            this.loading.identifier = threadId;
+
+            await $wire.mountAction('editThread', { thread: threadId });
+
+            this.loading.type = null;
+            this.loading.identifier = null;
+        },
+        async deleteThread(threadId) {
+            this.loading.type = 'deleteThreadAction';
+            this.loading.identifier = threadId;
+
+            await $wire.mountAction('deleteThread', { thread: threadId });
+
+            this.loading.type = null;
+            this.loading.identifier = null;
+        },
+        async renameFolder(folderId) {
+            this.loading.type = 'renameFolderAction';
+            this.loading.identifier = folderId;
+
+            await $wire.mountAction('renameFolder', { folder: folderId });
+
+            this.loading.type = null;
+            this.loading.identifier = null;
+        },
+        async deleteFolder(folderId) {
+            this.loading.type = 'deleteFolderAction';
+            this.loading.identifier = folderId;
+
+            await $wire.mountAction('deleteFolder', { folder: folderId });
+
+            this.loading.type = null;
+            this.loading.identifier = null;
         },
     }));
 });
