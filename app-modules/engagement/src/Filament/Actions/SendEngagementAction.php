@@ -92,7 +92,7 @@ class SendEngagementAction extends Action
                                 'student last name',
                                 'student full name',
                                 'student email',
-                                'student preferred name'
+                                'student preferred name',
                             ])
                             ->profile('email')
                             ->required()
