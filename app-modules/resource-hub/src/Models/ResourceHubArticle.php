@@ -75,12 +75,14 @@ class ResourceHubArticle extends BaseModel implements Auditable, HasMedia
         'title',
     ];
 
+    protected $table = 'knowledge_base_articles';
+
     protected ?bool $isUpvoted = null;
 
-    public function getTable()
-    {
-        return ResourceHub::active() ? 'resource_hub_articles' : 'knowledge_base_articles';
-    }
+    // public function getTable()
+    // {
+    //     return ResourceHub::active() ? 'resource_hub_articles' : 'knowledge_base_articles';
+    // }
 
     public function quality(): BelongsTo
     {
@@ -99,9 +101,9 @@ class ResourceHubArticle extends BaseModel implements Auditable, HasMedia
 
     public function division(): BelongsToMany
     {
-        if (ResourceHub::active()) {
-            return $this->belongsToMany(Division::class, 'division_resource_hub_item', 'resource_hub_item_id', 'division_id');
-        }
+        // if (ResourceHub::active()) {
+        //     return $this->belongsToMany(Division::class, 'division_resource_hub_item', 'resource_hub_item_id', 'division_id');
+        // }
 
         return $this->belongsToMany(Division::class, 'division_knowledge_base_item', 'knowledge_base_item_id', 'division_id');
     }
@@ -119,18 +121,18 @@ class ResourceHubArticle extends BaseModel implements Auditable, HasMedia
 
     public function views(): HasMany
     {
-        if (ResourceHub::active()) {
-            return $this->hasMany(ResourceHubArticleView::class, 'resource_hub_item_id');
-        }
+        // if (ResourceHub::active()) {
+        //     return $this->hasMany(ResourceHubArticleView::class, 'resource_hub_item_id');
+        // }
 
         return $this->hasMany(ResourceHubArticleView::class, 'knowledge_base_item_id');
     }
 
     public function upvotes(): HasMany
     {
-        if (ResourceHub::active()) {
-            return $this->hasMany(ResourceHubArticleUpvote::class, 'resource_hub_item_id');
-        }
+        // if (ResourceHub::active()) {
+        //     return $this->hasMany(ResourceHubArticleUpvote::class, 'resource_hub_item_id');
+        // }
 
         return $this->hasMany(ResourceHubArticleUpvote::class, 'knowledge_base_item_id');
     }
