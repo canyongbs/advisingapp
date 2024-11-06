@@ -189,7 +189,6 @@ trait CanManageThreads
             ->whereNotNull('name')
             ->doesntHave('folder')
             ->latest('updated_at')
-            ->with('assistant')
             ->get()
             ->each->append('last_engaged_at')
             ->toArray();
