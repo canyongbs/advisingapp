@@ -75,14 +75,12 @@ class ResourceHubArticle extends BaseModel implements Auditable, HasMedia
         'title',
     ];
 
-    protected $table = 'knowledge_base_articles';
-
     protected ?bool $isUpvoted = null;
 
-    // public function getTable()
-    // {
-    //     return ResourceHub::active() ? 'resource_hub_articles' : 'knowledge_base_articles';
-    // }
+    public function getTable()
+    {
+        return ResourceHub::active() ? 'resource_hub_articles' : 'knowledge_base_articles';
+    }
 
     public function quality(): BelongsTo
     {

@@ -50,12 +50,10 @@ class ResourceHubArticleUpvote extends BaseModel
         'user_id',
     ];
 
-    protected $table = 'knowledge_base_item_upvotes';
-
-    // public function getTable()
-    // {
-    //     return ResourceHub::active() ? 'resource_hub_item_upvotes' : 'knowledge_base_item_upvotes';
-    // }
+    public function getTable()
+    {
+        return ResourceHub::active() ? 'resource_hub_item_upvotes' : 'knowledge_base_item_upvotes';
+    }
 
     public function resourceHubArticle(): BelongsTo
     {
