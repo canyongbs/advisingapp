@@ -64,6 +64,7 @@ class EngagementSmsBodyField
                 'student last name',
                 'student full name',
                 'student email',
+                'student preferred name',
             ])
             ->showMergeTagsInBlocksPanel(is_null($form) ? false : ! ($form->getLivewire() instanceof RelationManager))
             ->profile('sms')

@@ -99,6 +99,7 @@ class ManageFormEmailAutoReply extends EditRecord
                                 'student last name',
                                 'student full name',
                                 'student email',
+                                'student preferred name',
                             ])
                             ->profile('email')
                             ->required(fn (Get $get) => $get('is_enabled'))

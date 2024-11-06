@@ -164,6 +164,7 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                             'student last name',
                             'student full name',
                             'student email',
+                            'student preferred name',
                         ])
                         ->showMergeTagsInBlocksPanel(! ($form->getLivewire() instanceof RelationManager))
                         ->profile('email')

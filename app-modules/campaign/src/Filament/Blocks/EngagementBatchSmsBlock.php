@@ -70,6 +70,7 @@ class EngagementBatchSmsBlock extends CampaignActionBlock
                         'student last name',
                         'student full name',
                         'student email',
+                        'student preferred name',
                     ]),
             ]),
             DateTimePicker::make('execute_at')

@@ -164,6 +164,7 @@ class StudentEngagementRelationManager extends RelationManager
                             'student last name',
                             'student full name',
                             'student email',
+                            'student preferred name',
                         ])
                         ->showMergeTagsInBlocksPanel(! ($form->getLivewire() instanceof RelationManager))
                         ->profile('email')

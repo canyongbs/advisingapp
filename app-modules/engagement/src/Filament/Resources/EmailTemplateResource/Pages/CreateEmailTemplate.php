@@ -69,6 +69,7 @@ class CreateEmailTemplate extends CreateRecord
                         'student last name',
                         'student full name',
                         'student email',
+                        'student preferred name',
                     ])
                     ->profile('email')
                     ->columnSpanFull()
