@@ -79,8 +79,6 @@ trait CanManageThreads
     #[Locked]
     public array $threadsWithoutAFolder = [];
 
-    public string $selectedThreadId = '';
-
     public function mountCanManageThreads(): void
     {
         $this->threadsWithoutAFolder = $this->getThreadsWithoutAFolder();
@@ -177,7 +175,6 @@ trait CanManageThreads
         }
 
         $this->thread = app(CreateThread::class)(static::APPLICATION, $assistant);
-        $this->selectedThreadId = $this->thread->getKey();
     }
 
     public function getThreadsWithoutAFolder(): array
@@ -217,11 +214,11 @@ trait CanManageThreads
 
     public function selectThread(?array $thread): void
     {
-        $thread = AiThread::find($thread['id']);
-
         if (! $thread) {
             return;
         }
+
+        $thread = AiThread::find($thread['id']);
 
         if (
             $this->thread &&
@@ -236,8 +233,6 @@ trait CanManageThreads
         }
 
         $this->thread = $thread;
-
-        $this->selectedThreadId = $thread->getKey();
 
         $service = $this->thread->assistant->model->getService();
 

@@ -112,7 +112,7 @@
                                 }"
                                 :class="{
                                     'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1': true,
-                                    'bg-gray-100 dark:bg-white/5': thread.id === $wire.selectedThreadId
+                                    'bg-gray-100 dark:bg-white/5': thread.id === $wire.thread?.id
                                 }"
                             >
                                 <div class="flex flex-1 items-center gap-3">
@@ -124,10 +124,8 @@
                                             x-on:dragend="end"
                                             :class="{
                                                 'flex items-center cursor-move': true,
-                                                'text-gray-700 dark:text-gray-200': thread.id !== $wire
-                                                    .selectedThreadId,
-                                                'text-primary-600 dark:text-primary-400': thread.id === $wire
-                                                    .selectedThreadId
+                                                'text-gray-700 dark:text-gray-200': thread.id !== $wire.thread?.id,
+                                                'text-primary-600 dark:text-primary-400': thread.id === $wire.thread?.id
                                             }"
                                         >
                                             <template x-if="loading.type !== 'thread' || loading.identifier !== thread.id">
@@ -233,7 +231,6 @@
                         </div>
                     </div>
                 </template>
-
                 <template x-if="$wire.folders.length">
                     <div
                         class="flex flex-col gap-y-3 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
@@ -347,7 +344,7 @@
                                         x-show="expanded(folder.id)"
                                         :class="{
                                             'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1': true,
-                                            'bg-gray-100 dark:bg-white/5': thread.id === $wire.selectedThreadId
+                                            'bg-gray-100 dark:bg-white/5': thread.id === $wire.thread?.id
                                         }"
                                     >
                                         <div class="flex flex-1 items-center gap-3">
@@ -358,10 +355,8 @@
                                                 x-on:dragend="end"
                                                 :class="{
                                                     'flex items-center cursor-move': true,
-                                                    'text-gray-700 dark:text-gray-200': thread.id !== $wire
-                                                        .selectedThreadId,
-                                                    'text-primary-600 dark:text-primary-400': thread.id === $wire
-                                                        .selectedThreadId
+                                                    'text-gray-700 dark:text-gray-200': thread.id !== $wire.thread?.id,
+                                                    'text-primary-600 dark:text-primary-400': thread.id === $wire.thread?.id
                                                 }"
                                             >
                                                 <template
