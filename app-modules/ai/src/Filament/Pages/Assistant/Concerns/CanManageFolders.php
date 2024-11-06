@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
 use Exception;
+use App\Models\User;
 use Filament\Actions\Action;
 use Livewire\Attributes\Locked;
 use Illuminate\Http\JsonResponse;
@@ -62,7 +63,10 @@ trait CanManageFolders
 
     public function getFolders(): array
     {
-        return auth()->user()
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user
             ->aiThreadFolders()
             ->where('application', static::APPLICATION)
             ->with([
