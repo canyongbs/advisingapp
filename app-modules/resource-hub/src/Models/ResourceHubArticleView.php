@@ -50,12 +50,10 @@ class ResourceHubArticleView extends BaseModel
         'user_id',
     ];
 
-    protected $table = 'resource_hub_item_views';
-
-    // public function getTable()
-    // {
-    //     return ResourceHub::active() ? 'resource_hub_item_views' : 'knowledge_base_item_views';
-    // }
+    public function getTable()
+    {
+        return ResourceHub::active() ? 'resource_hub_item_views' : 'knowledge_base_item_views';
+    }
 
     public function resourceHubArticle(): BelongsTo
     {
