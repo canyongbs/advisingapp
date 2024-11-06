@@ -49,15 +49,23 @@ use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\ListCampaigns
 
 it('can filter campaigns by `My Campaigns`', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
-    asSuperAdmin();
-    Campaign::factory()->create(['user_id' => $user->getKey()]);
-    Campaign::factory()->count(2)->create(['user_id' => User::factory()->create()->getKey()]);
 
-    $query = Campaign::query();
-    $filterQuery = $query->where('user_id', $user->getKey());
-    $filteredCampaigns = $filterQuery->get();
-    expect($filteredCampaigns)->toHaveCount(1);
-    expect($filteredCampaigns->first()->user_id)->toBe($user->getKey());
+    asSuperAdmin($user);
+
+    $expectedCampaign = Campaign::factory()
+        ->for($user, 'user')
+        ->create();
+
+    $filteredOutCampaigns = Campaign::factory()->count(2)->create();
+
+    livewire(ListCampaigns::class)
+        ->assertCanSeeTableRecords([
+            $expectedCampaign,
+            ...$filteredOutCampaigns,
+        ])
+        ->filterTable('My Campaigns')
+        ->assertCanSeeTableRecords([$expectedCampaign])
+        ->assertCanNotSeeTableRecords($filteredOutCampaigns);
 });
 
 it('can filter campaigns by `enabled`', function () {
