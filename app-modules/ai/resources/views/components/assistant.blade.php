@@ -356,7 +356,8 @@
                                                 :class="{
                                                     'flex items-center cursor-move': true,
                                                     'text-gray-700 dark:text-gray-200': thread.id !== $wire.thread?.id,
-                                                    'text-primary-600 dark:text-primary-400': thread.id === $wire.thread?.id
+                                                    'text-primary-600 dark:text-primary-400': thread.id === $wire.thread
+                                                        ?.id
                                                 }"
                                             >
                                                 <template
