@@ -219,7 +219,6 @@ it('will not automatically set the current thread to one with a folder', functio
 
     Livewire::test(PersonalAssistant::class)
         ->call('loadFirstThread')
-
         ->assertNotSet('thread.id', $thread->id);
 });
 
