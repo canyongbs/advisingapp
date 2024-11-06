@@ -50,16 +50,18 @@ class ResourceHubArticleUpvote extends BaseModel
         'user_id',
     ];
 
-    public function getTable()
-    {
-        return ResourceHub::active() ? 'resource_hub_item_upvotes' : 'knowledge_base_item_upvotes';
-    }
+    protected $table = 'resource_hub_item_upvotes';
+
+    // public function getTable()
+    // {
+    //     return ResourceHub::active() ? 'resource_hub_item_upvotes' : 'knowledge_base_item_upvotes';
+    // }
 
     public function resourceHubArticle(): BelongsTo
     {
-        // if (ResourceHub::active()) {
-        //     return $this->belongsTo(ResourceHubArticle::class, 'resource_hub_item_id');
-        // }
+        if (ResourceHub::active()) {
+            return $this->belongsTo(ResourceHubArticle::class, 'resource_hub_item_id');
+        }
 
         return $this->belongsTo(ResourceHubArticle::class, 'knowledge_base_item_id');
     }
