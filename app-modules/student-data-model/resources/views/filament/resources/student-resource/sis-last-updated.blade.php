@@ -40,7 +40,7 @@
 
     $timezone = app(DisplaySettings::class)->getTimezone();
 @endphp
-<div class="flex-1">
+<div class="flex-1 mt-2">
     <p class="text-xs">
         Last Updated
         {{ $student->updated_at->setTimezone($timezone)->format('m/d/Y \a\t g:i A') }}
