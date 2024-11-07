@@ -59,6 +59,7 @@ use Illuminate\Encryption\EncryptionServiceProvider;
 use Illuminate\Filesystem\FilesystemServiceProvider;
 use Illuminate\Pagination\PaginationServiceProvider;
 use Illuminate\Validation\ValidationServiceProvider;
+use Spatie\Multitenancy\MultitenancyServiceProvider;
 use Illuminate\Broadcasting\BroadcastServiceProvider;
 use Nuwave\Lighthouse\Pennant\PennantServiceProvider;
 use Illuminate\Translation\TranslationServiceProvider;
@@ -68,6 +69,7 @@ use Illuminate\Foundation\Providers\FoundationServiceProvider;
 use App\Providers\MultiConnectionParallelTestingServiceProvider;
 use Illuminate\Foundation\Providers\ConsoleSupportServiceProvider;
 use Nuwave\Lighthouse\WhereConditions\WhereConditionsServiceProvider;
+use App\Providers\QueueServiceProvider as ProvidersQueueServiceProvider;
 
 return [
     /*
@@ -243,6 +245,8 @@ return [
         PaginationServiceProvider::class,
         PipelineServiceProvider::class,
         QueueServiceProvider::class,
+        ProvidersQueueServiceProvider::class,
+        MultitenancyServiceProvider::class,
         RedisServiceProvider::class,
         PasswordResetServiceProvider::class,
         SessionServiceProvider::class,

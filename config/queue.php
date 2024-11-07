@@ -99,7 +99,7 @@ return [
         |
         */
         'sqs' => [
-            'driver' => 'sqs-disk',
+            'driver' => 'canyongbs-sqs-disk',
             'key' => env('AWS_SQS_ACCESS_KEY_ID'),
             'secret' => env('AWS_SQS_SECRET_ACCESS_KEY'),
             'prefix' => env('SQS_PREFIX', 'https://sqs.us-east-1.amazonaws.com/your-account-id'),
@@ -108,7 +108,7 @@ return [
             'region' => env('AWS_SQS_DEFAULT_REGION', 'us-east-1'),
             'after_commit' => false,
             'disk_options' => [
-                'always_store' => false,
+                'always_store' => true,
                 'cleanup' => true,
                 'disk' => env('FILESYSTEM_DISK', 'local'),
                 'prefix' => 'sqs-payloads',
