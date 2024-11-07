@@ -44,13 +44,13 @@ class PipelineEducatablesMoveIntoStages implements ShouldQueue
                         $educatable->getKey() => ['pipeline_stage_id' => $defaultStage->getKey()],
                     ])->toArray();
 
-                    $this->pipeline?->prospects()->attach($attachData);
+                    $this->pipeline?->educatables()->attach($attachData);
                 });
             });
 
         $this->pipeline->refresh();
 
-        $passedRecords = $this->pipeline?->prospects()->count();
+        $passedRecords = $this->pipeline?->educatables()->count();
         $failedRecords = $this->pipeline?->segment->retrieveEducatablesRecords()->count() - $passedRecords;
 
         if ($this->pipeline->createdBy) {
@@ -69,9 +69,9 @@ class PipelineEducatablesMoveIntoStages implements ShouldQueue
         if ($this->pipeline->createdBy) {
             $this->pipeline->createdBy->notify(
                 Notification::make()
-                    ->title('Pipeline Creation Unsuccessful')
+                    ->title('Pipeline creation unsuccessful')
                     ->body("Your pipeline creation has been failed.")
-                    ->success()
+                    ->danger()
                     ->toDatabase(),
             );
         }

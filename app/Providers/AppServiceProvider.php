@@ -36,6 +36,7 @@
 
 namespace App\Providers;
 
+use AdvisingApp\Prospect\Models\Pipeline;
 use App\Models\Tenant;
 use Sentry\State\Scope;
 use App\Models\SystemUser;
@@ -106,6 +107,7 @@ class AppServiceProvider extends ServiceProvider
         Relation::morphMap([
             'system_user' => SystemUser::class,
             'tenant' => Tenant::class,
+            'pipeline' => Pipeline::class,
             'pipeline_stage' => PipelineStage::class,
         ]);
 

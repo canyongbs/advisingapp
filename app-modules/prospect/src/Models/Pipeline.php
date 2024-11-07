@@ -10,11 +10,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
-class Pipeline extends Model
+class Pipeline extends Model implements Auditable
 {
     use HasFactory;
     use HasUuids;
+    use AuditableTrait;
 
     protected $fillable = [
         'name',
@@ -41,7 +44,7 @@ class Pipeline extends Model
     /**
      * @return MorphToMany<Prospect>
      */
-    public function prospects(): MorphToMany
+    public function educatables(): MorphToMany
     {
         return $this->morphedByMany(
             related: Prospect::class,

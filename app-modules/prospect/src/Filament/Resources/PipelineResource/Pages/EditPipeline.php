@@ -12,15 +12,14 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\Prospect\Models\Pipeline;
-use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
-use AdvisingApp\Prospect\Models\PipelineEductable;
-use AdvisingApp\Prospect\Models\PipelineStage;
 use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\Actions\Action;
+use AdvisingApp\Prospect\Models\PipelineStage;
+use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
 use Illuminate\Support\Facades\DB;
 
 class EditPipeline extends EditRecord
@@ -39,7 +38,7 @@ class EditPipeline extends EditRecord
                 Select::make('segment_id')
                     ->label('Segment')
                     ->required()
-                    ->relationship('segment', 'name',fn(Builder $query) => $query->where('model',app(Prospect::class)->getMorphClass()))
+                    ->relationship('segment', 'name', fn (Builder $query) => $query->where('model', app(Prospect::class)->getMorphClass()))
                     ->searchable()
                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                     ->preload(),
@@ -74,32 +73,25 @@ class EditPipeline extends EditRecord
                             ->columns(2),
                     ])
                     ->deleteAction(
-
-                        function(Action $action){
-
-                            $action->before(function (array $arguments,Repeater $component,Action $action) {
-
+                        function (Action $action) {
+                            $action->before(function (array $arguments, Repeater $component, Action $action) {
                                 $currentStage = $component->getRawItemState($arguments['item']);
-                               
-                                if(isset($currentStage['id'])){
+
+                                if (isset($currentStage['id'])) {
                                     $currentStage = PipelineStage::whereHas('educatables')
-                                                ->find($currentStage['id']);
+                                        ->find($currentStage['id']);
                                 }
 
-                                if(isset($currentStage['id'])){
+                                if (isset($currentStage['id'])) {
                                     Notification::make()
-                                                ->title('Error !')
-                                                ->body('This stage cannot be deleted because it contains educatables!')
-                                                ->danger()
-                                                ->send();
+                                        ->title('Error !')
+                                        ->body('This stage cannot be deleted because it contains educatables!')
+                                        ->danger()
+                                        ->send();
 
                                     $action->cancel();
                                 }
-
-                               
-
                             });
-
                         }
                     )
                     ->orderColumn('order')

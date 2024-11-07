@@ -14,6 +14,7 @@ use Filament\Actions\Contracts\HasActions;
 use AdvisingApp\Prospect\Models\PipelineStage;
 use Filament\Forms\Concerns\InteractsWithForms;
 use AdvisingApp\Prospect\Models\PipelineEductable;
+use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\ListTasks;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Bvtterfly\ModelStateMachine\Exceptions\InvalidTransition;
@@ -61,7 +62,6 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
 
     public function render()
     {
-        dd(PipelineEductable::with(['educatable'])->get());
         return view('livewire.prospect-pipeline-kanban', [
             'pipelineEducatables' => $this->getPipelineSubjects(),
         ]);

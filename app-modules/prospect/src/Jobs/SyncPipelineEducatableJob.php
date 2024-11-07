@@ -44,7 +44,7 @@ class SyncPipelineEducatableJob implements ShouldQueue
                     $educatable->getKey() => ['pipeline_stage_id' => $defaultStage->getKey()],
                 ])->toArray();
 
-                $this->pipeline?->prospects()->attach($attachData);
+                $this->pipeline?->educatables()->attach($attachData);
             });
         });
     }

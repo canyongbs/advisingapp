@@ -9,6 +9,7 @@ use App\Filament\Clusters\GlobalSettings;
 use AdvisingApp\Prospect\Settings\ProspectPipelineSettings;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Features\PipelineFlag;
 
 class ManageProspectPipelineSettings extends SettingsPage
 {
@@ -24,8 +25,7 @@ class ManageProspectPipelineSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
-        //todo remove licesne check from here and move it to policies.
-        return auth()->user()->hasLicense(Prospect::getLicenseType());
+        return PipelineFlag::active() && auth()->user()->can('manage_prospect_pipeline_settings');
     }
 
     public function form(Form $form): Form

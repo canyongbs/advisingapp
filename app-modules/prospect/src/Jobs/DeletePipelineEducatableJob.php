@@ -41,7 +41,7 @@ class DeletePipelineEducatableJob implements ShouldQueue
                 })
                 ->chunk(100,function($educatables) {
                     $educatables->each(function($educatable) {
-                        $this->pipeline?->prospects()->detach($educatable->educatable_id);
+                        $this->pipeline?->educatables()->detach($educatable->educatable_id);
                     });
                 });
     }

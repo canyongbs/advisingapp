@@ -101,7 +101,7 @@ class CreatePipeline extends CreateRecord
         if($user){
             $user->notify(
                 Notification::make()
-                        ->title('Pipeline Creation Started')
+                        ->title('Pipeline creation started')
                         ->body("Your pipeline creation has begun and {$totalRecords} records will be processed in the background.")
                         ->success()
                         ->toDatabase(),

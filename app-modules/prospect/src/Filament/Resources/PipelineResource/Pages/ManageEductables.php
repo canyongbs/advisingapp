@@ -17,11 +17,11 @@ class ManageEductables extends ManageRelatedRecords
 
     public ?string $viewType = 'null';
 
-    protected static string $relationship = 'prospects';
+    protected static string $relationship = 'educatables';
 
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-vertical';
 
-    protected static ?string $title = 'Manage Pipeline Subjects';
+    protected static ?string $title = 'Manage Pipeline Educatables';
 
     protected static ?string $navigationLabel = 'Pipeline Educatables';
 
@@ -77,12 +77,14 @@ class ManageEductables extends ManageRelatedRecords
     public function table(Table $table): Table
     {
         return $table
+            ->heading('Pipeline Educatables')
             ->recordTitleAttribute('full_name')
             ->columns([
                 TextColumn::make('full_name'),
                 TextColumn::make('pipeline_stage_id')
                     ->formatStateUsing(fn ($state) => PipelineStage::find($state)?->name)
                     ->label('Stage'),
-            ]);
+            ])
+            ->defaultSort('pivot_updated_at','DESC');
     }
 }

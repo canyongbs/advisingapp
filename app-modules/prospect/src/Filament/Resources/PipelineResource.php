@@ -12,6 +12,7 @@ use AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages\ListPipelines
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages\CreatePipeline;
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages\ManageEductables;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Features\PipelineFlag;
 
 class PipelineResource extends Resource
 {
@@ -25,14 +26,7 @@ class PipelineResource extends Resource
 
     public static function canAccess(): bool
     {
-        //todo remove licesne check from here and move it to policies.
-        return app(ProspectPipelineSettings::class)->is_enabled && auth()->user()->hasLicense(Prospect::getLicenseType());
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-        ];
+        return parent::canAccess() && PipelineFlag::active() && app(ProspectPipelineSettings::class)->is_enabled;
     }
 
     public static function getRecordSubNavigation(Page $page): array
