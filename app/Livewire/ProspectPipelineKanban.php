@@ -45,11 +45,12 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
     {
         $currentPipeline = $this->pipeline;
 
-        $pipelineEducatables = PipelineEductable::with(['educatable', 'pipeline:id,name,segment_id', 'pipeline.segment:id,name'])
+        $pipelineEducatables = PipelineEductable::with(['pipeline:id,name,segment_id', 'pipeline.segment:id,name'])
             ->whereHas('pipeline', function (Builder $query) use ($currentPipeline) {
                 return $query->where('id', $currentPipeline->getKey());
             })
-            ->whereHas('educatable')
+            ->whereNotNull('educatable_id')
+            ->whereNotNull('educatable_type')
             ->orderBy('updated_at','DESC')
             ->get()
             ->groupBy('pipeline_stage_id');

@@ -20,6 +20,8 @@ class PipelineEducatablesMoveIntoStages implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public int $timeout = 1200;
+
     /**
      * Create a new job instance.
      *

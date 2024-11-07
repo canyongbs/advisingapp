@@ -24,6 +24,7 @@ class ListPipelines extends ListRecords
         return $table
             ->columns([
                 TextColumn::make('name'),
+                TextColumn::make('segment.name'),
                 TextColumn::make('createdBy.name')->label('Created By'),
             ])
             ->filters([

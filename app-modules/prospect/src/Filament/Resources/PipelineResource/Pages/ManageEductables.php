@@ -84,6 +84,7 @@ class ManageEductables extends ManageRelatedRecords
                 TextColumn::make('pipeline_stage_id')
                     ->formatStateUsing(fn ($state) => PipelineStage::find($state)?->name)
                     ->label('Stage'),
+                
             ])
             ->defaultSort('pivot_updated_at','DESC');
     }
