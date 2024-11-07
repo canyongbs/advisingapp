@@ -108,7 +108,7 @@ return [
             'region' => env('AWS_SQS_DEFAULT_REGION', 'us-east-1'),
             'after_commit' => false,
             'disk_options' => [
-                'always_store' => true,
+                'always_store' => false,
                 'cleanup' => true,
                 'disk' => env('FILESYSTEM_DISK', 'local'),
                 'prefix' => 'sqs-payloads',
