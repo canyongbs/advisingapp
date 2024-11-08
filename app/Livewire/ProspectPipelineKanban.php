@@ -48,13 +48,9 @@ use Filament\Actions\Contracts\HasActions;
 use AdvisingApp\Prospect\Models\PipelineStage;
 use Filament\Forms\Concerns\InteractsWithForms;
 use AdvisingApp\Prospect\Models\PipelineEductable;
-use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\ListTasks;
 use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Bvtterfly\ModelStateMachine\Exceptions\InvalidTransition;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
-use Filament\Actions\Action;
-use Filament\Actions\ViewAction;
 
 class ProspectPipelineKanban extends Component implements HasForms, HasActions
 {
@@ -85,7 +81,7 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
             })
             ->whereNotNull('educatable_id')
             ->whereNotNull('educatable_type')
-            ->orderBy('updated_at','DESC')
+            ->orderBy('updated_at', 'DESC')
             ->get()
             ->groupBy('pipeline_stage_id');
 

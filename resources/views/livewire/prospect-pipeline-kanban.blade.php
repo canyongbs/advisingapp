@@ -79,17 +79,17 @@
                                                         {{ str($educatable?->pipeline?->segment?->name)->limit(50) }}
                                                     </small>
                                                 </div>
-                                                
 
                                                 <x-filament::icon-button
+                                                    href="{{ ProspectResource::getUrl('view', [
+                                                        'record' => $educatable?->educatable->getKey(),
+                                                    ]) }}"
                                                     icon="heroicon-m-arrow-top-right-on-square"
-                                                    href="{{ ProspectResource::getUrl('view',[
-                                                    'record' => $educatable?->educatable->getKey() ]) }}"
                                                     tag="a"
                                                     target="_blank"
                                                     label="View Prospect"
                                                 />
-                                                
+
                                             </div>
                                         </div>
                                     @endforeach

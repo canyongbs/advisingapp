@@ -36,14 +36,12 @@
 
 namespace AdvisingApp\Prospect\Console\Commands;
 
-use AdvisingApp\Prospect\Jobs\DeletePipelineEducatableJob;
-use AdvisingApp\Prospect\Jobs\SyncPipelineEducatableJob;
-use AdvisingApp\Prospect\Jobs\SyncPipelineEducatables as JobsSyncPipelineEducatables;
-use AdvisingApp\Prospect\Jobs\SyncPipelineEducatablesJob;
-use AdvisingApp\Prospect\Models\Pipeline;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Bus;
+use AdvisingApp\Prospect\Models\Pipeline;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use AdvisingApp\Prospect\Jobs\SyncPipelineEducatableJob;
+use AdvisingApp\Prospect\Jobs\DeletePipelineEducatableJob;
 
 class SyncPipelineEducatables extends Command
 {
@@ -63,15 +61,15 @@ class SyncPipelineEducatables extends Command
     {
         $pipelines = Pipeline::get();
 
-        foreach($pipelines as $pipeline){
+        foreach ($pipelines as $pipeline) {
             Bus::chain([
                 new SyncPipelineEducatableJob($pipeline),
-                new DeletePipelineEducatableJob($pipeline)
+                new DeletePipelineEducatableJob($pipeline),
             ])
-            ->catch(function ($exception){
-                report($exception);
-            })
-            ->dispatch();
+                ->catch(function ($exception) {
+                    report($exception);
+                })
+                ->dispatch();
         }
     }
 }

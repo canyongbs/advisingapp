@@ -44,12 +44,12 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
 use AdvisingApp\Prospect\Jobs\PipelineEducatablesMoveIntoStages;
-use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Notifications\Notification;
-use Illuminate\Database\Eloquent\Builder;
 
 class CreatePipeline extends CreateRecord
 {
@@ -65,7 +65,7 @@ class CreatePipeline extends CreateRecord
                 Select::make('segment_id')
                     ->label('Segment')
                     ->required()
-                    ->relationship('segment', 'name',fn(Builder $query) => $query->where('model',app(Prospect::class)->getMorphClass()))
+                    ->relationship('segment', 'name', fn (Builder $query) => $query->where('model', app(Prospect::class)->getMorphClass()))
                     ->searchable()
                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                     ->preload(),
@@ -123,7 +123,7 @@ class CreatePipeline extends CreateRecord
     protected function afterCreate(): void
     {
         $pipeline = $this->getRecord();
-        
+
         dispatch(new PipelineEducatablesMoveIntoStages(
             pipeline: $this->getRecord()
         ));
@@ -132,15 +132,14 @@ class CreatePipeline extends CreateRecord
 
         $user = $pipeline->createdBy;
 
-        if($user){
+        if ($user) {
             $user->notify(
                 Notification::make()
-                        ->title('Pipeline creation started')
-                        ->body("Your pipeline creation has begun and {$totalRecords} records will be processed in the background.")
-                        ->success()
-                        ->toDatabase(),
+                    ->title('Pipeline creation started')
+                    ->body("Your pipeline creation has begun and {$totalRecords} records will be processed in the background.")
+                    ->success()
+                    ->toDatabase(),
             );
         }
-        
     }
 }

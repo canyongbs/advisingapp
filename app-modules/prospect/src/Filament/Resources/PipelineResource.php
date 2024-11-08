@@ -37,6 +37,7 @@
 namespace AdvisingApp\Prospect\Filament\Resources;
 
 use Filament\Pages\Page;
+use App\Features\PipelineFlag;
 use Filament\Resources\Resource;
 use AdvisingApp\Prospect\Models\Pipeline;
 use AdvisingApp\Prospect\Settings\ProspectPipelineSettings;
@@ -45,8 +46,6 @@ use AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages\ViewPipeline;
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages\ListPipelines;
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages\CreatePipeline;
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages\ManageEductables;
-use AdvisingApp\Prospect\Models\Prospect;
-use App\Features\PipelineFlag;
 
 class PipelineResource extends Resource
 {

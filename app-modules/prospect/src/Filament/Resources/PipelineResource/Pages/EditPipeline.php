@@ -54,7 +54,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Prospect\Models\PipelineStage;
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
-use Illuminate\Support\Facades\DB;
 
 class EditPipeline extends EditRecord
 {

@@ -38,12 +38,12 @@ namespace AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\Prospect\Models\PipelineStage;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
-use Illuminate\Support\Str;
 
 class ManageEductables extends ManageRelatedRecords
 {
@@ -118,8 +118,7 @@ class ManageEductables extends ManageRelatedRecords
                 TextColumn::make('pipeline_stage_id')
                     ->formatStateUsing(fn ($state) => PipelineStage::find($state)?->name)
                     ->label('Stage'),
-                
             ])
-            ->defaultSort('pivot_updated_at','DESC');
+            ->defaultSort('pivot_updated_at', 'DESC');
     }
 }

@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages;
 
+use Illuminate\Support\Str;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\ViewRecord;
+use AdvisingApp\Prospect\Models\Pipeline;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
-use AdvisingApp\Prospect\Models\Pipeline;
-use Illuminate\Support\Str;
 
 class ViewPipeline extends ViewRecord
 {
@@ -72,14 +72,6 @@ class ViewPipeline extends ViewRecord
         ]);
     }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            EditAction::make(),
-            DeleteAction::make(),
-        ];
-    }
-
     /**
      * @return array<int|string, string|null>
      */
@@ -101,5 +93,13 @@ class ViewPipeline extends ViewRecord
         }
 
         return $breadcrumbs;
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            EditAction::make(),
+            DeleteAction::make(),
+        ];
     }
 }

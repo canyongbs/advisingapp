@@ -36,7 +36,6 @@
 
 namespace App\Providers;
 
-use AdvisingApp\Prospect\Models\Pipeline;
 use App\Models\Tenant;
 use Sentry\State\Scope;
 use App\Models\SystemUser;
@@ -50,6 +49,7 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Prospect\Models\Pipeline;
 use Laravel\Octane\Commands\ReloadCommand;
 use Filament\Actions\Imports\Jobs\ImportCsv;
 use AdvisingApp\Prospect\Models\PipelineStage;
