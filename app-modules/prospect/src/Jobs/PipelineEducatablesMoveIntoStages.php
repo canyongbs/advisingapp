@@ -70,7 +70,6 @@ class PipelineEducatablesMoveIntoStages implements ShouldQueue
      */
     public function handle(): void
     {
-        \Log::info('xx');
         $defaultStage = $this->pipeline?->stages()->where('is_default', true)->first();
 
         $this->pipeline?->segment

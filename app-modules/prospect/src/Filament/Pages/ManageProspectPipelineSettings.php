@@ -58,7 +58,7 @@ class ManageProspectPipelineSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
-        return PipelineFlag::active() && auth()->user()->can('manage_prospect_pipeline_settings');
+        return parent::canAccess() && PipelineFlag::active() && auth()->user()->can('manage_prospect_pipeline_settings');
     }
 
     public function form(Form $form): Form
