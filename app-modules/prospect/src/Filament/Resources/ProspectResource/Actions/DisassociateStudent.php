@@ -40,7 +40,6 @@ use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use App\Features\ProspectStatusSystemProtectionAndAutoAssignment;
 
 class DisassociateStudent extends Action
 {
@@ -57,16 +56,14 @@ class DisassociateStudent extends Action
                 /** @var Prospect $record */
                 $record->student()->dissociate();
 
-                if (ProspectStatusSystemProtectionAndAutoAssignment::active()) {
-                    $record->status()->associate(
-                        ProspectStatus::query()
-                            ->where('classification', SystemProspectClassification::New)
-                            ->where('name', 'New')
-                            ->where('is_system_protected', true)
-                            ->firstOrFail()
-                    );
-                }
-
+                $record->status()->associate(
+                    ProspectStatus::query()
+                        ->where('classification', SystemProspectClassification::New)
+                        ->where('name', 'New')
+                        ->where('is_system_protected', true)
+                        ->firstOrFail()
+                );
+                
                 $record->save();
 
                 $this->dispatch('reload-prospect');
