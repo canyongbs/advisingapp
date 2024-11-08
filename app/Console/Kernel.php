@@ -84,7 +84,7 @@ class Kernel extends ConsoleKernel
                         ->withoutOverlapping();
 
                     $schedule->command("sync:pipeline-educatables --tenant={$tenant->id}")
-                        ->everyMinute() //daily()
+                        ->daily()
                         ->onOneServer()
                         ->withoutOverlapping();
 
