@@ -2,16 +2,16 @@
 
 namespace AdvisingApp\Prospect\Jobs;
 
+use Throwable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\SerializesModels;
 use Filament\Notifications\Notification;
 use Illuminate\Queue\InteractsWithQueue;
 use AdvisingApp\Prospect\Models\Pipeline;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Support\Facades\Log;
-use Throwable;
 
 class PipelineEducatablesMoveIntoStages implements ShouldQueue
 {
@@ -36,6 +36,7 @@ class PipelineEducatablesMoveIntoStages implements ShouldQueue
      */
     public function handle(): void
     {
+        \Log::info('xx');
         $defaultStage = $this->pipeline?->stages()->where('is_default', true)->first();
 
         $this->pipeline?->segment
@@ -72,16 +73,16 @@ class PipelineEducatablesMoveIntoStages implements ShouldQueue
             $this->pipeline->createdBy->notify(
                 Notification::make()
                     ->title('Pipeline creation unsuccessful')
-                    ->body("Your pipeline creation has been failed.")
+                    ->body('Your pipeline creation has been failed.')
                     ->danger()
                     ->toDatabase(),
             );
         }
 
-        Log::debug(__('Failed to insert prospect into the pipeline :pipeline',[
-            'pipeline' => $this->pipeline->name
+        Log::debug(__('Failed to insert prospect into the pipeline :pipeline', [
+            'pipeline' => $this->pipeline->name,
         ]));
 
-        report($exception); 
+        report($exception);
     }
 }

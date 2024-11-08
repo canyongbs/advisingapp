@@ -3,6 +3,7 @@
 namespace AdvisingApp\Prospect\Database\Factories;
 
 use AdvisingApp\Prospect\Models\Pipeline;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,6 +21,7 @@ class PipelineFactory extends Factory
         return [
             'name' => fake()->word(),
             'description' => fake()->paragraph(),
+            'user_id' => User::factory()
         ];
     }
 }
