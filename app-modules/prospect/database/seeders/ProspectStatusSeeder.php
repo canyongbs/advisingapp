@@ -52,9 +52,7 @@ class ProspectStatusSeeder extends Seeder
                         'classification' => SystemProspectClassification::New,
                         'name' => 'New',
                         'color' => ProspectStatusColorOptions::Info->value,
-                        ...[
-                            'is_system_protected' => true,
-                        ],
+                        'is_system_protected' => true,
                     ],
                     [
                         'classification' => SystemProspectClassification::Assigned,
@@ -70,9 +68,7 @@ class ProspectStatusSeeder extends Seeder
                         'classification' => SystemProspectClassification::Converted,
                         'name' => 'Converted',
                         'color' => ProspectStatusColorOptions::Success->value,
-                        ...[
-                            'is_system_protected' => true,
-                        ],
+                        'is_system_protected' => true,
                     ],
                     [
                         'classification' => SystemProspectClassification::Recycled,
