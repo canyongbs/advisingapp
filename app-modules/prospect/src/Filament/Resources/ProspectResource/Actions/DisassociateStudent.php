@@ -63,7 +63,7 @@ class DisassociateStudent extends Action
                         ->where('is_system_protected', true)
                         ->firstOrFail()
                 );
-                
+
                 $record->save();
 
                 $this->dispatch('reload-prospect');

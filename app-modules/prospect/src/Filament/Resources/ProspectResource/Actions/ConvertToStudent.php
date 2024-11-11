@@ -87,7 +87,7 @@ class ConvertToStudent extends Action
                         ->where('is_system_protected', true)
                         ->firstOrFail()
                 );
-                
+
                 $record->save();
 
                 Notification::make()
