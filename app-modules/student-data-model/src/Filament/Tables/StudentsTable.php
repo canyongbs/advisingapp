@@ -121,6 +121,7 @@ class StudentsTable
                             ]),
                         RelationshipConstraint::make('programs')
                             ->multiple()
+                            ->label('Number of Programs')
                             ->attributeLabel(fn (array $settings): string => Str::plural('program', $settings['count']))
                             ->icon('heroicon-m-academic-cap'),
                         TextConstraint::make('programSisid')
