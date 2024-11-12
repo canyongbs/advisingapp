@@ -57,6 +57,7 @@ use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\Form\Actions\ProcessSubmissionField;
+use AdvisingApp\Prospect\Http\Requests\ProspectRequest;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidator;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
@@ -271,36 +272,24 @@ class FormWidgetController extends Controller
         ]);
     }
 
-    public function registerProspect(Request $request, Form $form): JsonResponse
+    public function registerProspect(ProspectRequest $request, Form $form): JsonResponse
     {
-        $this->validate($request, [
-            'email' => 'email|required|unique:prospects,email',
-            'first_name' => 'required|max:255',
-            'last_name' => 'required|max:255',
-            'preferred' => 'required|max:255',
-            'mobile' => 'required|max:255',
-            'bitrhdate' => 'required|date',
-            'address' => 'required|max:255',
-            'address_2' => 'required|max:255',
-            'city' => 'required|max:255',
-            'state' => 'required|max:255',
-            'postal' => 'required|max:255',
-        ]);
+        $data = $request->validated();
 
         $prospect = Prospect::query()
             ->make([
-                'email' => $request->get('email'),
-                'first_name' => $request->get('first_name'),
-                'last_name' => $request->get('last_name'),
-                'full_name' => "{$request->get('first_name')} {$request->get('last_name')}",
-                'preferred' => $request->get('preferred') ?? null,
-                'bitrhdate' => $request->get('bitrhdate'),
-                'mobile' => $request->get('mobile'),
-                'address' => $request->get('address'),
-                'address_2' => $request->get('address_2'),
-                'city' => $request->get('city'),
-                'state' => $request->get('state'),
-                'postal' => $request->get('postal'),
+                'email' => $data['email'],
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'full_name' => "{$data['first_name']} {$data['last_name']}",
+                'preferred' => $data['preferred'] ?? null,
+                'bitrhdate' => $data['bitrhdate'],
+                'mobile' => $data['mobile'],
+                'address' => $data['address'],
+                'address_2' => $data['address_2'],
+                'city' => $data['city'],
+                'state' => $data['state'],
+                'postal' => $data['postal'],
             ]);
 
         $status = ProspectStatus::query()
