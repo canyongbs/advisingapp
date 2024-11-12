@@ -46,14 +46,19 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use AdvisingApp\Prospect\Models\Prospect;
+use App\Features\GenerateProspectFeature;
 use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\Form\Models\FormAuthentication;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\Form\Actions\ProcessSubmissionField;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidator;
+use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
@@ -99,9 +104,20 @@ class FormWidgetController extends Controller
         $author = $resolveSubmissionAuthorFromEmail($data['email']);
 
         if (! $author) {
-            throw ValidationException::withMessages([
-                'email' => 'A student with that email address could not be found. Please contact your system administrator.',
-            ]);
+            if (! GenerateProspectFeature::active() || ! $form->generate_prospects) {
+                throw ValidationException::withMessages([
+                    'email' => 'A student with that email address could not be found. Please contact your system administrator.',
+                ]);
+            }
+
+            return response()->json([
+                'registrationAllowed' => true,
+                'authentication_url' => URL::signedRoute(
+                    name: 'forms.register-prospect',
+                    parameters: ['form' => $form],
+                    absolute: false,
+                ),
+            ], 404);
         }
 
         $code = random_int(100000, 999999);
@@ -252,6 +268,81 @@ class FormWidgetController extends Controller
 
         return response()->json([
             'message' => 'Form submitted successfully.',
+        ]);
+    }
+
+    public function registerProspect(Request $request, Form $form): JsonResponse
+    {
+        $this->validate($request, [
+            'email' => 'email|required|unique:prospects,email',
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255',
+            'preferred' => 'required|max:255',
+            'mobile' => 'required|max:255',
+            'bitrhdate' => 'required|date',
+            'address' => 'required|max:255',
+            'address_2' => 'required|max:255',
+            'city' => 'required|max:255',
+            'state' => 'required|max:255',
+            'postal' => 'required|max:255',
+        ]);
+
+        $prospect = Prospect::query()
+            ->make([
+                'email' => $request->get('email'),
+                'first_name' => $request->get('first_name'),
+                'last_name' => $request->get('last_name'),
+                'full_name' => "{$request->get('first_name')} {$request->get('last_name')}",
+                'preferred' => $request->get('preferred') ?? null,
+                'bitrhdate' => $request->get('bitrhdate'),
+                'mobile' => $request->get('mobile'),
+                'address' => $request->get('address'),
+                'address_2' => $request->get('address_2'),
+                'city' => $request->get('city'),
+                'state' => $request->get('state'),
+                'postal' => $request->get('postal'),
+            ]);
+
+        $status = ProspectStatus::query()
+            ->where('classification', SystemProspectClassification::New)
+            ->first();
+
+        if ($status) {
+            $prospect->status()->associate($status);
+        }
+
+        $source = ProspectSource::query()
+            ->where('name', 'Advising App')
+            ->first();
+
+        if ($source) {
+            $prospect->source()->associate($source);
+        }
+
+        $prospect->save();
+
+        $code = random_int(100000, 999999);
+
+        $authentication = new FormAuthentication();
+        $authentication->author()->associate($prospect);
+        $authentication->submissible()->associate($form);
+        $authentication->code = Hash::make($code);
+        $authentication->save();
+
+        Notification::route('mail', [
+            $request->get('email') => $prospect->getAttributeValue($prospect::displayNameKey()),
+        ])->notify(new AuthenticateFormNotification($authentication, $code));
+
+        return response()->json([
+            'message' => "We've sent an authentication code to {$request->get('email')}.",
+            'authentication_url' => URL::signedRoute(
+                name: 'forms.authenticate',
+                parameters: [
+                    'form' => $form,
+                    'authentication' => $authentication,
+                ],
+                absolute: false,
+            ),
         ]);
     }
 }
