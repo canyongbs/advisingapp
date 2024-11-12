@@ -100,7 +100,7 @@ class CreateTenant extends Command
                     endpoint: config('filesystems.disks.s3.endpoint'),
                     usePathStyleEndpoint: config('filesystems.disks.s3.use_path_style_endpoint'),
                     throw: config('filesystems.disks.s3.throw'),
-                    root: config('filesystems.disks.s3.root') ?? $rootName,
+                    root: trim(rtrim(config('filesystems.disks.s3.root'), '/') . "/{$rootName}", '/'),
                 ),
                 s3PublicFilesystem: new TenantS3FilesystemConfig(
                     key: config('filesystems.disks.s3-public.key'),
@@ -111,7 +111,7 @@ class CreateTenant extends Command
                     endpoint: config('filesystems.disks.s3-public.endpoint'),
                     usePathStyleEndpoint: config('filesystems.disks.s3-public.use_path_style_endpoint'),
                     throw: config('filesystems.disks.s3-public.throw'),
-                    root: config('filesystems.disks.s3-public.root') ?? $rootName . '/PUBLIC',
+                    root: trim(rtrim(config('filesystems.disks.s3.root'), '/') . "/{$rootName}/PUBLIC", '/'),
                 ),
                 mail: new TenantMailConfig(
                     isDemoModeEnabled: false,

@@ -34,38 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Database\Factories;
+namespace App\Providers;
 
-use App\Models\User;
-use AdvisingApp\Segment\Models\Segment;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\ServiceProvider;
+use App\Overrides\LaravelSqsExtended\SqsDiskConnector;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Campaign\Models\Campaign>
- */
-class CampaignFactory extends Factory
+class QueueServiceProvider extends ServiceProvider
 {
-    public function definition(): array
+    public function boot(): void
     {
-        return [
-            'user_id' => User::factory(),
-            'segment_id' => Segment::factory(),
-            'name' => fake()->catchPhrase(),
-            'enabled' => true,
-        ];
-    }
-
-    public function enabled(): self
-    {
-        return $this->state([
-            'enabled' => true,
-        ]);
-    }
-
-    public function disabled(): self
-    {
-        return $this->state([
-            'enabled' => false,
-        ]);
+        $manager = $this->app->make('queue');
+        $manager->addConnector('canyongbs-sqs-disk', fn () => new SqsDiskConnector());
     }
 }

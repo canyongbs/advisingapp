@@ -69,6 +69,7 @@
         "google/apiclient": "^2.17",
         "guzzlehttp/guzzle": "^7.2",
         "internachi/modular": "^2.2",
+        "itsgoingd/clockwork": "^5.2",
         "kirschbaum-development/eloquent-power-joins": "^3.5",
         "laravel/framework": "^10.48",
         "laravel/octane": "^2.5",
@@ -224,7 +225,8 @@
         },
         "laravel": {
             "dont-discover": [
-                "nesbot/carbon"
+                "nesbot/carbon",
+                "spatie/laravel-multitenancy"
             ]
         },
         "google/apiclient-services": [

@@ -95,6 +95,7 @@ class BulkEngagementAction
                                 'student last name',
                                 'student full name',
                                 'student email',
+                                'student preferred name',
                             ])
                             ->showMergeTagsInBlocksPanel(false)
                             ->profile('email')

@@ -34,38 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Database\Factories;
+declare(strict_types = 1);
 
-use App\Models\User;
-use AdvisingApp\Segment\Models\Segment;
-use Illuminate\Database\Eloquent\Factories\Factory;
+namespace App\Overrides\LaravelSqsExtended;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Campaign\Models\Campaign>
- */
-class CampaignFactory extends Factory
+use Aws\Sqs\SqsClient;
+use Illuminate\Support\Arr;
+use Illuminate\Contracts\Queue\Queue;
+use DefectiveCode\LaravelSqsExtended\SqsDiskConnector as BaseSqsDiskConnector;
+
+class SqsDiskConnector extends BaseSqsDiskConnector
 {
-    public function definition(): array
+    /**
+     * Establish a queue connection.
+     *
+     *
+     * @return Queue
+     */
+    public function connect(array $config)
     {
-        return [
-            'user_id' => User::factory(),
-            'segment_id' => Segment::factory(),
-            'name' => fake()->catchPhrase(),
-            'enabled' => true,
-        ];
-    }
+        $config = $this->getDefaultConfiguration($config);
 
-    public function enabled(): self
-    {
-        return $this->state([
-            'enabled' => true,
-        ]);
-    }
+        if (! empty($config['key']) && ! empty($config['secret'])) {
+            $config['credentials'] = Arr::only($config, ['key', 'secret', 'token']);
+        }
 
-    public function disabled(): self
-    {
-        return $this->state([
-            'enabled' => false,
-        ]);
+        return new SqsDiskQueue(
+            new SqsClient(
+                Arr::except($config, ['token'])
+            ),
+            $config['queue'],
+            $config['disk_options'],
+            $config['prefix'] ?? '',
+            $config['suffix'] ?? '',
+            $config['after_commit'] ?? null,
+        );
     }
 }

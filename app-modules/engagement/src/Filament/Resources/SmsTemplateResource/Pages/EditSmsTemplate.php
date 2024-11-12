@@ -68,6 +68,7 @@ class EditSmsTemplate extends EditRecord
                         'student last name',
                         'student full name',
                         'student email',
+                        'student preferred name',
                     ])
                     ->profile('sms')
                     ->columnSpanFull()

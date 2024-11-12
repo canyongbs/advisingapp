@@ -63,11 +63,9 @@ use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
 use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 /**
  * @property-read array $customAssistants
- * @property-read EloquentCollection $threadsWithoutAFolder
  */
 trait CanManageThreads
 {
@@ -77,6 +75,14 @@ trait CanManageThreads
     public $assistantSwitcher = null;
 
     public $assistantSwitcherMobile = null;
+
+    #[Locked]
+    public array $threadsWithoutAFolder = [];
+
+    public function mountCanManageThreads(): void
+    {
+        $this->threadsWithoutAFolder = $this->getThreadsWithoutAFolder();
+    }
 
     #[Computed]
     public function customAssistants(): array
@@ -171,23 +177,26 @@ trait CanManageThreads
         $this->thread = app(CreateThread::class)(static::APPLICATION, $assistant);
     }
 
-    #[Computed]
-    public function threadsWithoutAFolder(): EloquentCollection
+    public function getThreadsWithoutAFolder(): array
     {
-        return auth()->user()
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user
             ->aiThreads()
             ->withMax('messages', 'created_at')
             ->whereRelation('assistant', 'application', static::APPLICATION)
             ->whereNotNull('name')
             ->doesntHave('folder')
             ->latest('updated_at')
-            ->with('assistant')
-            ->get();
+            ->get()
+            ->each->append('last_engaged_at')
+            ->toArray();
     }
 
     public function loadFirstThread(): void
     {
-        $this->selectThread($this->threadsWithoutAFolder->whereNull('assistant.archived_at')->first());
+        $this->selectThread(collect($this->threadsWithoutAFolder)->whereNull('assistant.archived_at')->first());
 
         if ($this->thread) {
             $service = $this->thread->assistant->model->getService();
@@ -202,11 +211,13 @@ trait CanManageThreads
         $this->createThread();
     }
 
-    public function selectThread(?AiThread $thread): void
+    public function selectThread(?array $thread): void
     {
         if (! $thread) {
             return;
         }
+
+        $thread = AiThread::find($thread['id']);
 
         if (
             $this->thread &&
@@ -264,13 +275,13 @@ trait CanManageThreads
                     ->find($data['folder']);
 
                 if (! $folder) {
-                    unset($this->threadsWithoutAFolder);
+                    $this->threadsWithoutAFolder = $this->getThreadsWithoutAFolder();
 
                     return;
                 }
 
                 $this->moveThread($this->thread, $folder);
-                unset($this->folders);
+                $this->folders = $this->getFolders();
             });
     }
 
@@ -294,7 +305,8 @@ trait CanManageThreads
                     $this->createThread();
                 }
 
-                unset($this->threadsWithoutAFolder, $this->folders);
+                $this->threadsWithoutAFolder = $this->getThreadsWithoutAFolder();
+                $this->folders = $this->getFolders();
             })
             ->icon('heroicon-m-trash')
             ->color('danger')
@@ -335,7 +347,8 @@ trait CanManageThreads
                 $thread->name = $data['name'];
                 $thread->save();
 
-                unset($this->threadsWithoutAFolder, $this->folders);
+                $this->threadsWithoutAFolder = $this->getThreadsWithoutAFolder();
+                $this->folders = $this->getFolders();
             })
             ->icon('heroicon-m-pencil')
             ->color('warning')

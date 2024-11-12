@@ -82,6 +82,13 @@ class ViewStudent extends ViewRecord
                 ]),
                 scopes: ViewStudent::class,
             );
+            FilamentView::registerRenderHook(
+                PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER,
+                fn (): View => view('student-data-model::filament.resources.student-resource.sis-last-updated', [
+                    'student' => $this->getRecord(),
+                ]),
+                scopes: ViewStudent::class,
+            );
         }
     }
 

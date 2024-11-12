@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,40 +30,19 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\StudentDataModel\Models\Student;
+    use Illuminate\Support\Carbon;
+    use App\Settings\DisplaySettings;
 
-namespace AdvisingApp\Campaign\Database\Factories;
+    /** @var Student $student */
 
-use App\Models\User;
-use AdvisingApp\Segment\Models\Segment;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Campaign\Models\Campaign>
- */
-class CampaignFactory extends Factory
-{
-    public function definition(): array
-    {
-        return [
-            'user_id' => User::factory(),
-            'segment_id' => Segment::factory(),
-            'name' => fake()->catchPhrase(),
-            'enabled' => true,
-        ];
-    }
-
-    public function enabled(): self
-    {
-        return $this->state([
-            'enabled' => true,
-        ]);
-    }
-
-    public function disabled(): self
-    {
-        return $this->state([
-            'enabled' => false,
-        ]);
-    }
-}
+    $timezone = app(DisplaySettings::class)->getTimezone();
+@endphp
+<div class="mt-2 flex-1">
+    <p class="text-xs">
+        Last Updated
+        {{ $student->updated_at->setTimezone($timezone)->format('m/d/Y \a\t g:i A') }}
+    </p>
+</div>
