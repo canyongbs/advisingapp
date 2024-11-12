@@ -79,21 +79,25 @@ class TaskAssignedToUserNotification extends BaseNotification implements Databas
     {
         $url = EditTask::getUrl(['record' => $this->task]);
 
-        $student_prospect_url = ! empty($this->task->concern)
-          ? (
-              $this->task->concern instanceof Student
-            ? ViewStudent::getUrl(['record' => $this->task->concern])
-            : ViewProspect::getUrl(['record' => $this->task->concern])
-          )
-          : null;
+        $studentProspectUrl = match (true) {
+            ! empty($this->task->concern) && $this->task->concern instanceof Student => ViewStudent::getUrl(['record' => $this->task->concern]),
+            ! empty($this->task->concern) && $this->task->concern instanceof Prospect => ViewProspect::getUrl(['record' => $this->task->concern]),
+            default => null,
+        };
 
         $title = str($this->task->title)->limit();
 
         $link = new HtmlString("<a href='{$url}' target='_blank' class='underline'>{$title}</a>");
 
-        $student_prospect_link = ! empty($this->task->concern) ? new HtmlString("<a href='{$student_prospect_url}' target='_blank' class='underline'>{$this->task->concern->full_name}</a>") : null;
+        $studentProspectLink = match (true) {
+            ! empty($this->task->concern) => new HtmlString("<a href='{$studentProspectUrl}' target='_blank' class='underline'>{$this->task->concern->full_name}</a>"),
+            default => null,
+        };
 
-        $message = ! empty($this->task->concern) && ($this->task->concern instanceof Student || $this->task->concern instanceof Prospect) ? "You have been assigned a new Task: {$link} related to {$this->task->concern_type} {$student_prospect_link}" : "You have been assigned a new Task: {$link}";
+        $message = match (true) {
+            ! empty($this->task->concern) && ($this->task->concern instanceof Student || $this->task->concern instanceof Prospect) => "You have been assigned a new Task: {$link} related to {$this->task->concern_type} {$studentProspectLink}",
+            default => "You have been assigned a new Task: {$link}",
+        };
 
         return FilamentNotification::make()
             ->success()
