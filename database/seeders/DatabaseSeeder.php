@@ -54,7 +54,6 @@ use AdvisingApp\Interaction\Database\Seeders\InteractionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSourceSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
-use AdvisingApp\InventoryManagement\Database\Seeders\AssetSeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubStatusSeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubArticleSeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubQualitySeeder;
@@ -66,7 +65,6 @@ use AdvisingApp\ServiceManagement\Database\Seeders\ChangeRequestStatusSeeder;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestUpdateSeeder;
-use AdvisingApp\InventoryManagement\Database\Seeders\MaintenanceProviderSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -112,12 +110,6 @@ class DatabaseSeeder extends Seeder
             TwilioStudentSeeder::class,
             ApplicationSubmissionStateSeeder::class,
             EventSeeder::class,
-
-            // InventoryManagement
-            ...AssetSeeder::metadataSeeders(),
-            AssetSeeder::class,
-
-            MaintenanceProviderSeeder::class,
 
             // Change Request
             ChangeRequestTypeSeeder::class,

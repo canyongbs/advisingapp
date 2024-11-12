@@ -162,12 +162,6 @@ class StudentExporter extends Exporter
                 ->counts([
                     "serviceRequests as service_requests_{$status->getKey()}_count" => fn (Builder $query) => $query->whereBelongsTo($status, 'status'),
                 ]))),
-            static::notDefault($type::make('asset_check_ins_count')
-                ->label('Count of Returned Assets')
-                ->counts('assetCheckIns')),
-            static::notDefault($type::make('asset_check_outs_count')
-                ->label('Count of Checked Out Assets')
-                ->counts('assetCheckOuts')),
             static::notDefault($type::make('event_attendee_records_count')
                 ->label('Count of Events')
                 ->counts('eventAttendeeRecords')),

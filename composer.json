@@ -35,7 +35,6 @@
         "canyon-gbs/advising-app-integration-microsoft-clarity": "*",
         "canyon-gbs/advising-app-integration-twilio": "*",
         "canyon-gbs/advising-app-interaction": "*",
-        "canyon-gbs/advising-app-inventory-management": "*",
         "canyon-gbs/advising-app-resource-hub": "*",
         "canyon-gbs/advising-app-meeting-center": "*",
         "canyon-gbs/advising-app-notification": "*",
