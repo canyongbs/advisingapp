@@ -110,7 +110,8 @@ trait HasSharedFormConfiguration
             Toggle::make('is_wizard')
                 ->label('Multi-step form')
                 ->live()
-                ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists()),
+                ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists())
+                ->columnStart(1),
             Toggle::make('recaptcha_enabled')
                 ->label('Enable reCAPTCHA')
                 ->live()
