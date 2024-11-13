@@ -278,18 +278,8 @@ class FormWidgetController extends Controller
 
         $prospect = Prospect::query()
             ->make([
-                'email' => $data['email'],
-                'first_name' => $data['first_name'],
-                'last_name' => $data['last_name'],
+                ...$data,
                 'full_name' => "{$data['first_name']} {$data['last_name']}",
-                'preferred' => $data['preferred'] ?? null,
-                'bitrhdate' => $data['bitrhdate'],
-                'mobile' => $data['mobile'],
-                'address' => $data['address'],
-                'address_2' => $data['address_2'],
-                'city' => $data['city'],
-                'state' => $data['state'],
-                'postal' => $data['postal'],
             ]);
 
         $status = ProspectStatus::query()

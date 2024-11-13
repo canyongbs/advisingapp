@@ -62,7 +62,7 @@ class RegisterProspectRequest extends FormRequest
             'last_name' => ['required', 'string', 'max:255'],
             'preferred' => ['required', 'string', 'max:255'],
             'mobile' => ['required', 'max:255'],
-            'bitrhdate' => ['required', 'date'],
+            'birthdate' => ['required', 'date'],
             'address' => ['required', 'string', 'max:255'],
             'address_2' => ['required', 'string', 'max:255'],
             'city' => ['required', 'string', 'max:255'],

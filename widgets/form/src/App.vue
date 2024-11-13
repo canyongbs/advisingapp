@@ -272,7 +272,7 @@ async function authenticate(formData, node) {
                 last_name: formData.last_name,
                 preferred: formData.preferred,
                 mobile: formData.mobile,
-                bitrhdate: formData.bitrhdate,
+                birthdate: formData.birthdate,
                 address: formData.address,
                 address_2: formData.address_2,
                 city: formData.city,
@@ -396,7 +396,7 @@ async function authenticate(formData, node) {
                                     validation="required|alpha|length:0,255" validation-visibility="submit" />
                             </div>
                             <div class="w-full md:w-1/2 px-3">
-                                <FormKit type="date" label="Birth Date" name="bitrhdate" validation="required"
+                                <FormKit type="date" label="Birth Date" name="birthdate" validation="required"
                                     validation-visibility="submit" />
                             </div>
                         </div>
