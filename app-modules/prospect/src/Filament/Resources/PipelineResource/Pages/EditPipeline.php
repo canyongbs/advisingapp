@@ -59,8 +59,6 @@ class EditPipeline extends EditRecord
 {
     protected static string $resource = PipelineResource::class;
 
-    public $pipeline = null;
-
     public function form(Form $form): Form
     {
         return $form
