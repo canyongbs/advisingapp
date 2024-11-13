@@ -63,9 +63,9 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
 
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-vertical';
 
-    protected static ?string $title = 'Manage Pipeline Educatables';
+    protected static ?string $title = 'Manage Prospects';
 
-    protected static ?string $navigationLabel = 'Pipeline Educatables';
+    protected static ?string $navigationLabel = 'Prospects';
 
     protected static string $view = 'prospect::filament.pages.manage-pipeline-educatables';
 
