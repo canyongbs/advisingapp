@@ -122,24 +122,6 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
 
             }
             
-            
-        } catch (InvalidTransition $e) {
-
-            $defaultStage = $pipeline->default_stage;
-
-            if(blank($fromStage)){
-                $fromStage = $defaultStage;
-            }elseif(blank($toStage)){
-                $toStage = $defaultStage;
-            }else{
-                $fromStage = PipelineStage::find($fromStage)->name;
-                $toStage = PipelineStage::find($toStage)->name;
-            }
-
-            return response()->json([
-                'success' => false,
-                'message' => "Cannot transition from \"{$fromStage}\" to \"{$toStage}\".",
-            ], ResponseAlias::HTTP_BAD_REQUEST);
         } catch (Exception $e) {
             report($e);
 
