@@ -38,9 +38,10 @@ namespace AdvisingApp\Task\Notifications;
 
 use App\Models\User;
 use AdvisingApp\Task\Models\Task;
-use Illuminate\Support\HtmlString;
 use App\Models\NotificationSetting;
 use Illuminate\Queue\SerializesModels;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\DatabaseNotification;
@@ -49,6 +50,8 @@ use Filament\Notifications\Notification as FilamentNotification;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\EditTask;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 
 class TaskAssignedToUserNotification extends BaseNotification implements DatabaseNotification, EmailNotification
 {
@@ -77,11 +80,17 @@ class TaskAssignedToUserNotification extends BaseNotification implements Databas
 
         $title = str($this->task->title)->limit();
 
-        $link = new HtmlString("<a href='{$url}' target='_blank' class='underline'>{$title}</a>");
+        $message = match (true) {
+            $this->task->concern instanceof Student => "You have been assigned a new Task: <a href='{$url}' target='_blank' class='underline'>{$title}</a> related to Student <a href='" . ViewStudent::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>",
+
+            $this->task->concern instanceof Prospect => "You have been assigned a new Task: <a href='{$url}' target='_blank' class='underline'>{$title}</a> related to Prospect <a href='" . ViewProspect::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>",
+
+            default => "You have been assigned a new Task: <a href='{$url}' target='_blank' class='underline'>{$title}</a>",
+        };
 
         return FilamentNotification::make()
             ->success()
-            ->title("You have been assigned a new Task: {$link}")
+            ->title($message)
             ->getDatabaseMessage();
     }
 
