@@ -37,6 +37,7 @@
 namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages\Concerns;
 
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use AdvisingApp\Form\Models\Form;
 use Filament\Forms\Components\Grid;
 use AdvisingApp\Form\Enums\Rounding;
@@ -51,7 +52,9 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use App\Features\GenerateProspectFeature;
 use App\Filament\Forms\Components\ColorSelect;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
@@ -93,11 +96,22 @@ trait HasSharedFormConfiguration
                 ->columnSpanFull(),
             Toggle::make('is_authenticated')
                 ->label('Requires authentication')
-                ->helperText('If enabled, only students and prospects can submit this form, and they must verify their email address first.'),
+                ->helperText('If enabled, only students and prospects can submit this form, and they must verify their email address first.')
+                ->live()
+                ->afterStateUpdated(fn (Set $set, $state) => GenerateProspectFeature::active() && ! $state ? $set('generate_prospects', false) : null),
+            Toggle::make('generate_prospects')
+                ->label('Generate Prospects')
+                ->helperText('If enabled, a request to submit by an unknown prospect will result prospect generation.')
+                ->hidden(fn (Get $get) => ! $get('is_authenticated'))
+                ->disabled(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm))
+                ->hintIcon(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm) ? 'heroicon-m-lock-closed' : null)
+                ->dehydratedWhenHidden()
+                ->visible(GenerateProspectFeature::active()),
             Toggle::make('is_wizard')
                 ->label('Multi-step form')
                 ->live()
-                ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists()),
+                ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists())
+                ->columnStart(1),
             Toggle::make('recaptcha_enabled')
                 ->label('Enable reCAPTCHA')
                 ->live()

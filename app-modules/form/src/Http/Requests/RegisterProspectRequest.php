@@ -34,34 +34,40 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Form\Http\Controllers\FormWidgetController;
-use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
-use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
+namespace AdvisingApp\Form\Http\Requests;
 
-Route::prefix('api')
-    ->middleware([
-        'api',
-        EnsureFormsFeatureIsActive::class,
-        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':form',
-    ])
-    ->group(function () {
-        Route::prefix('forms')
-            ->name('forms.')
-            ->group(function () {
-                Route::get('/{form}', [FormWidgetController::class, 'view'])
-                    ->middleware(['signed:relative'])
-                    ->name('define');
-                Route::post('/{form}/authenticate/request', [FormWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed:relative'])
-                    ->name('request-authentication');
-                Route::post('/{form}/authenticate/{authentication}', [FormWidgetController::class, 'authenticate'])
-                    ->middleware(['signed:relative'])
-                    ->name('authenticate');
-                Route::post('/{form}/submit', [FormWidgetController::class, 'store'])
-                    ->middleware(['signed:relative'])
-                    ->name('submit');
-                Route::post('/{form}/register', [FormWidgetController::class, 'registerProspect'])
-                    ->middleware(['signed:relative'])
-                    ->name('register-prospect');
-            });
-    });
+use Illuminate\Validation\Rule;
+use Illuminate\Foundation\Http\FormRequest;
+
+class RegisterProspectRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'email' => ['email', 'string', 'required', Rule::unique('prospects', 'email')],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'preferred' => ['required', 'string', 'max:255'],
+            'mobile' => ['required', 'max:255'],
+            'birthdate' => ['required', 'date'],
+            'address' => ['required', 'string', 'max:255'],
+            'address_2' => ['required', 'string', 'max:255'],
+            'city' => ['required', 'string', 'max:255'],
+            'state' => ['required', 'string', 'max:255'],
+            'postal' => ['required', 'max:255'],
+        ];
+    }
+}

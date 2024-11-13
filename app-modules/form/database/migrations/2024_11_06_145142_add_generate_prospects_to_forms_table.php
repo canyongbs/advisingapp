@@ -34,34 +34,22 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Form\Http\Controllers\FormWidgetController;
-use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
-use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-Route::prefix('api')
-    ->middleware([
-        'api',
-        EnsureFormsFeatureIsActive::class,
-        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':form',
-    ])
-    ->group(function () {
-        Route::prefix('forms')
-            ->name('forms.')
-            ->group(function () {
-                Route::get('/{form}', [FormWidgetController::class, 'view'])
-                    ->middleware(['signed:relative'])
-                    ->name('define');
-                Route::post('/{form}/authenticate/request', [FormWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed:relative'])
-                    ->name('request-authentication');
-                Route::post('/{form}/authenticate/{authentication}', [FormWidgetController::class, 'authenticate'])
-                    ->middleware(['signed:relative'])
-                    ->name('authenticate');
-                Route::post('/{form}/submit', [FormWidgetController::class, 'store'])
-                    ->middleware(['signed:relative'])
-                    ->name('submit');
-                Route::post('/{form}/register', [FormWidgetController::class, 'registerProspect'])
-                    ->middleware(['signed:relative'])
-                    ->name('register-prospect');
-            });
-    });
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('forms', function (Blueprint $table) {
+            $table->boolean('generate_prospects')->after('is_authenticated')->default(false);
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('forms', function (Blueprint $table) {
+            $table->dropColumn('generate_prospects');
+        });
+    }
+};
