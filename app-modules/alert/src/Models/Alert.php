@@ -45,6 +45,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Histories\AlertHistory;
+use AdvisingApp\Alert\Models\AlertStatus as ModelsAlertStatus;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -60,6 +61,7 @@ use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property-read Student|Prospect $concern
