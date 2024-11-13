@@ -38,21 +38,16 @@ namespace AdvisingApp\Alert\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 
-enum AlertStatus: string implements HasLabel
+enum SystemAlertStatusClassification: string implements HasLabel
 {
-    case Active = 'active';
+  case Active = 'active';
 
-    case Resolved = 'resolved';
+  case Resolved = 'resolved';
 
-    case Canceled = 'canceled';
+  case Canceled = 'canceled';
 
-    public function getLabel(): ?string
-    {
-        return $this->name;
-    }
-
-    public static function default(): AlertStatus
-    {
-        return AlertStatus::Active;
-    }
+  public function getLabel(): ?string
+  {
+    return $this->name;
+  }
 }
