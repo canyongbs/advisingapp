@@ -38,7 +38,6 @@ namespace AdvisingApp\Task\Notifications;
 
 use App\Models\User;
 use AdvisingApp\Task\Models\Task;
-use Illuminate\Support\HtmlString;
 use App\Models\NotificationSetting;
 use Illuminate\Queue\SerializesModels;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -83,17 +82,17 @@ class TaskAssignedToUserNotification extends BaseNotification implements Databas
 
         $message = match (true) {
             $this->task->concern instanceof Student => 'You have been assigned a new Task: ' .
-                new HtmlString("<a href='{$url}' target='_blank' class='underline'>{$title}</a>") .
+                "<a href='{$url}' target='_blank' class='underline'>{$title}</a>" .
                 ' related to Student ' .
-                new HtmlString("<a href='" . ViewStudent::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>"),
+                "<a href='" . ViewStudent::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>",
 
             $this->task->concern instanceof Prospect => 'You have been assigned a new Task: ' .
-                new HtmlString("<a href='{$url}' target='_blank' class='underline'>{$title}</a>") .
+                "<a href='{$url}' target='_blank' class='underline'>{$title}</a>" .
                 ' related to Prospect ' .
-                new HtmlString("<a href='" . ViewProspect::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>"),
+                "<a href='" . ViewProspect::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>",
 
             default => 'You have been assigned a new Task: ' .
-                new HtmlString("<a href='{$url}' target='_blank' class='underline'>{$title}</a>"),
+                "<a href='{$url}' target='_blank' class='underline'>{$title}</a>",
         };
 
         return FilamentNotification::make()
