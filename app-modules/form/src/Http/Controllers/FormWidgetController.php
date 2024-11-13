@@ -57,8 +57,8 @@ use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\Form\Actions\ProcessSubmissionField;
-use AdvisingApp\Prospect\Http\Requests\ProspectRequest;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidator;
+use AdvisingApp\Form\Http\Requests\RegisterProspectRequest;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
@@ -272,7 +272,7 @@ class FormWidgetController extends Controller
         ]);
     }
 
-    public function registerProspect(ProspectRequest $request, Form $form): JsonResponse
+    public function registerProspect(RegisterProspectRequest $request, Form $form): JsonResponse
     {
         $data = $request->validated();
 
