@@ -343,7 +343,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
             foreignPivotKey: 'educatable_id',
             relatedPivotKey: 'pipeline_id',
         )
-            ->using(EducatablePipelineStages::class)
+            ->using(EducatablePipelineStage::class)
             ->withPivot(['pipeline_stage_id'])
             ->withTimestamps();
     }

@@ -93,16 +93,16 @@ class Segment extends BaseModel
 
     public function retrieveRecords(): Collection
     {
-        /** @var Builder $modelQueryBuilder */
-        $modelQueryBuilder = $this->model->query();
-
-        $class = $this->model->class();
-
         if (count($this->subjects) > 0) {
             return $this->subjects->map(function (SegmentSubject $subject) {
                 return $subject->subject;
             });
         }
+
+        /** @var Builder $modelQueryBuilder */
+        $modelQueryBuilder = $this->model->query();
+
+        $class = $this->model->class();
 
         return $modelQueryBuilder
             ->whereKey(

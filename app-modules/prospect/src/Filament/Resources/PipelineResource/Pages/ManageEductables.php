@@ -127,18 +127,4 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
 
         return $table;
     }
-
-    // public function table(Table $table): Table
-    // {
-    //     return $table
-    //         ->heading('Pipeline Educatables')
-    //         ->recordTitleAttribute('full_name')
-    //         ->columns([
-    //             TextColumn::make('full_name'),
-    //             TextColumn::make('pipeline_stage_id')
-    //                 ->formatStateUsing(fn ($state) => PipelineStage::find($state)?->name)
-    //                 ->label('Stage'),
-    //         ])
-    //         ->defaultSort('pivot_updated_at', 'DESC');
-    // }
 }

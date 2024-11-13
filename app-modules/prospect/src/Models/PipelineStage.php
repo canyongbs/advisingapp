@@ -61,6 +61,6 @@ class PipelineStage extends Model
 
     public function educatables(): HasMany
     {
-        return $this->hasMany(PipelineEductable::class, 'pipeline_stage_id');
+        return $this->hasMany(EducatablePipelineStage::class, 'pipeline_stage_id');
     }
 }

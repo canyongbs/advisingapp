@@ -88,7 +88,7 @@ class Pipeline extends Model implements Auditable
             foreignPivotKey: 'pipeline_id',
             relatedPivotKey: 'educatable_id',
         )
-            ->using(EducatablePipelineStages::class)
+            ->using(EducatablePipelineStage::class)
             ->withPivot(['pipeline_stage_id'])
             ->withTimestamps();
     }

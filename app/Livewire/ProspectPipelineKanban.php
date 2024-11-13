@@ -50,7 +50,7 @@ use AdvisingApp\Prospect\Models\PipelineStage;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Actions\Concerns\InteractsWithActions;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
-use AdvisingApp\Prospect\Models\EducatablePipelineStages;
+use AdvisingApp\Prospect\Models\EducatablePipelineStage;
 use Bvtterfly\ModelStateMachine\Exceptions\InvalidTransition;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
@@ -113,7 +113,7 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
 
             }else{
 
-                EducatablePipelineStages::where('pipeline_id', $pipeline->getKey())
+                EducatablePipelineStage::where('pipeline_id', $pipeline->getKey())
                 ->where('pipeline_stage_id', $fromStage)
                 ->where('educatable_id', $educatable->getKey())
                 ->update([
