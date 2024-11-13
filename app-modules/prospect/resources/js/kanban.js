@@ -49,8 +49,8 @@ document.addEventListener('alpine:init', () => {
                             const result = await $wire.moveProspect(
                                 evt.item.dataset.pipeline,
                                 evt.item.dataset.educatable,
-                                evt.from.dataset.status,
-                                evt.to.dataset.status,
+                                evt.from.dataset.stage,
+                                evt.to.dataset.stage,
                             );
 
                             if (result.original.success) {

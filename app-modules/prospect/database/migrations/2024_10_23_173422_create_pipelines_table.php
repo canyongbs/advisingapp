@@ -47,6 +47,7 @@ return new class () extends Migration {
             $table->text('description');
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignUuid('segment_id')->constrained()->onDelete('cascade');
+            $table->string('default_stage')->nullable();
             $table->timestamps();
         });
     }

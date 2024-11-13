@@ -44,14 +44,22 @@ use Filament\Forms\Components\TextInput;
 use AdvisingApp\Prospect\Models\PipelineStage;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
+use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Illuminate\Database\Eloquent\Builder;
 
-class ManageEductables extends ManageRelatedRecords
+class ManageEductables extends ManageRelatedRecords implements HasTable
 {
+    use InteractsWithTable {
+        bootedInteractsWithTable as baseBootedInteractsWithTable;
+    }
+
     protected static string $resource = PipelineResource::class;
 
     public ?string $viewType = 'null';
 
-    protected static string $relationship = 'educatables';
+    protected static string $relationship = 'educatablePipelineStages';
 
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-vertical';
 
@@ -110,15 +118,27 @@ class ManageEductables extends ManageRelatedRecords
 
     public function table(Table $table): Table
     {
-        return $table
-            ->heading('Pipeline Educatables')
-            ->recordTitleAttribute('full_name')
-            ->columns([
-                TextColumn::make('full_name'),
-                TextColumn::make('pipeline_stage_id')
-                    ->formatStateUsing(fn ($state) => PipelineStage::find($state)?->name)
-                    ->label('Stage'),
-            ])
-            ->defaultSort('pivot_updated_at', 'DESC');
+        $pipeline = $this->getOwnerRecord();
+
+        $table = $pipeline->segment->model
+                ->table($table);
+
+        $table->query(fn() => app(TranslateSegmentFilters::class)->handle($pipeline->segment));
+
+        return $table;
     }
+
+    // public function table(Table $table): Table
+    // {
+    //     return $table
+    //         ->heading('Pipeline Educatables')
+    //         ->recordTitleAttribute('full_name')
+    //         ->columns([
+    //             TextColumn::make('full_name'),
+    //             TextColumn::make('pipeline_stage_id')
+    //                 ->formatStateUsing(fn ($state) => PipelineStage::find($state)?->name)
+    //                 ->label('Stage'),
+    //         ])
+    //         ->defaultSort('pivot_updated_at', 'DESC');
+    // }
 }

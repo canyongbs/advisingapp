@@ -58,6 +58,7 @@ class Pipeline extends Model implements Auditable
         'description',
         'segment_id',
         'user_id',
+        'default_stage'
     ];
 
     public function createdBy(): BelongsTo
@@ -78,16 +79,16 @@ class Pipeline extends Model implements Auditable
     /**
      * @return MorphToMany<Prospect>
      */
-    public function educatables(): MorphToMany
+    public function educatablePipelineStages(): MorphToMany
     {
         return $this->morphedByMany(
             related: Prospect::class,
             name: 'educatable',
-            table: 'pipeline_educatable',
+            table: 'educatable_pipeline_stages',
             foreignPivotKey: 'pipeline_id',
             relatedPivotKey: 'educatable_id',
         )
-            ->using(PipelineEductable::class)
+            ->using(EducatablePipelineStages::class)
             ->withPivot(['pipeline_stage_id'])
             ->withTimestamps();
     }

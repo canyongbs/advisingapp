@@ -334,16 +334,16 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     /**
      * @return MorphToMany<Pipeline>
      */
-    public function pipelines(): MorphToMany
+    public function educatablePipelineStages(): MorphToMany
     {
         return $this->morphToMany(
             related: Pipeline::class,
             name: 'educatable',
-            table: 'pipeline_educatable',
+            table: 'educatable_pipeline_stages',
             foreignPivotKey: 'educatable_id',
             relatedPivotKey: 'pipeline_id',
         )
-            ->using(PipelineEductable::class)
+            ->using(EducatablePipelineStages::class)
             ->withPivot(['pipeline_stage_id'])
             ->withTimestamps();
     }

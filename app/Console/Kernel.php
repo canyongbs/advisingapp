@@ -83,11 +83,6 @@ class Kernel extends ConsoleKernel
                         ->onOneServer()
                         ->withoutOverlapping();
 
-                    $schedule->command("sync:pipeline-educatables --tenant={$tenant->id}")
-                        ->daily()
-                        ->onOneServer()
-                        ->withoutOverlapping();
-
                     collect([
                         AiMessageFile::class,
                         AiMessage::class,

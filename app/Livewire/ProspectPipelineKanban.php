@@ -45,10 +45,12 @@ use AdvisingApp\Prospect\Models\Pipeline;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Contracts\HasActions;
+use AdvisingApp\Audit\Overrides\MorphToMany;
 use AdvisingApp\Prospect\Models\PipelineStage;
 use Filament\Forms\Concerns\InteractsWithForms;
-use AdvisingApp\Prospect\Models\PipelineEductable;
 use Filament\Actions\Concerns\InteractsWithActions;
+use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
+use AdvisingApp\Prospect\Models\EducatablePipelineStages;
 use Bvtterfly\ModelStateMachine\Exceptions\InvalidTransition;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
@@ -57,60 +59,86 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
     use InteractsWithActions;
     use InteractsWithForms;
 
-    public ?Collection $stages;
-
     public ?Pipeline $pipeline = null;
 
     public function mount(?Pipeline $pipeline): void
     {
         $this->pipeline = $pipeline;
-        $this->stages = PipelineStage::orderBy('order', 'ASC')
-            ->whereHas('pipeline', function (Builder $query) use ($pipeline) {
-                return $query->where('id', $pipeline->getKey());
-            })
-            ->get();
     }
 
     public function getPipelineSubjects(): Collection
     {
         $currentPipeline = $this->pipeline;
 
-        $pipelineEducatables = PipelineEductable::with(['pipeline:id,name,segment_id', 'pipeline.segment:id,name'])
-            ->whereHas('pipeline', function (Builder $query) use ($currentPipeline) {
-                return $query->where('id', $currentPipeline->getKey());
-            })
-            ->whereNotNull('educatable_id')
-            ->whereNotNull('educatable_type')
-            ->orderBy('updated_at', 'DESC')
+        $pipelineEducatables = app(TranslateSegmentFilters::class)->handle($currentPipeline->segment)
+            ->with(['educatablePipelineStages' => fn (MorphToMany $query) => $query->where('pipelines.id', $currentPipeline->getKey())])
             ->get()
-            ->groupBy('pipeline_stage_id');
+            ->groupBy(fn (Prospect $prospect) => $prospect->educatablePipelineStages->first()?->pivot->pipeline_stage_id);
 
-        return collect($this->stages)
-            ->mapWithKeys(fn ($stage) => [
-                $stage['id'] => $pipelineEducatables[$stage['id']] ?? collect(),
-            ]);
+
+        return $pipelineEducatables;
+    }
+
+    public function getStages()
+    {
+        return PipelineStage::orderBy('order', 'ASC')
+            ->whereHas('pipeline', function (Builder $query) {
+                return $query->where('id', $this->pipeline->getKey());
+            })
+            ->pluck('name', 'id')
+            ->prepend($this->pipeline->default_stage, '');
     }
 
     public function render()
     {
         return view('livewire.prospect-pipeline-kanban', [
             'pipelineEducatables' => $this->getPipelineSubjects(),
+            'stages' => $this->getStages(),
         ]);
     }
 
-    public function moveProspect(Pipeline $pipeline, Prospect $educatable, PipelineStage $fromStage, PipelineStage $toStage): JsonResponse
+    public function moveProspect(Pipeline $pipeline,Prospect $educatable,$fromStage = '',$toStage = ''): JsonResponse
     {
         try {
-            PipelineEductable::where('pipeline_id', $pipeline->getKey())
-                ->where('pipeline_stage_id', $fromStage->getKey())
+            
+            if(blank($fromStage))
+            {
+                $pipeline?->educatablePipelineStages()->attach($educatable,[
+                    'pipeline_stage_id' => PipelineStage::find($toStage)->getKey(),
+                ]);
+
+            }elseif(blank($toStage)){
+
+                $pipeline?->educatablePipelineStages()->detach($educatable);
+
+            }else{
+
+                EducatablePipelineStages::where('pipeline_id', $pipeline->getKey())
+                ->where('pipeline_stage_id', $fromStage)
                 ->where('educatable_id', $educatable->getKey())
                 ->update([
-                    'pipeline_stage_id' => $toStage->getKey(),
+                    'pipeline_stage_id' => $toStage,
                 ]);
+
+            }
+            
+            
         } catch (InvalidTransition $e) {
+
+            $defaultStage = $pipeline->default_stage;
+
+            if(blank($fromStage)){
+                $fromStage = $defaultStage;
+            }elseif(blank($toStage)){
+                $toStage = $defaultStage;
+            }else{
+                $fromStage = PipelineStage::find($fromStage)->name;
+                $toStage = PipelineStage::find($toStage)->name;
+            }
+
             return response()->json([
                 'success' => false,
-                'message' => "Cannot transition from \"{$fromStage->name}\" to \"{$toStage->name}\".",
+                'message' => "Cannot transition from \"{$fromStage}\" to \"{$toStage}\".",
             ], ResponseAlias::HTTP_BAD_REQUEST);
         } catch (Exception $e) {
             report($e);

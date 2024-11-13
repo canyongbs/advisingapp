@@ -40,11 +40,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
-class PipelineEductable extends MorphPivot
+class EducatablePipelineStages extends MorphPivot
 {
     use HasFactory;
 
-    protected $table = 'pipeline_educatable';
+    protected $table = 'educatable_pipeline_stages';
 
     public function educatable()
     {

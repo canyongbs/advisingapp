@@ -34,42 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Console\Commands;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Bus;
-use AdvisingApp\Prospect\Models\Pipeline;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
-use AdvisingApp\Prospect\Jobs\SyncPipelineEducatableJob;
-use AdvisingApp\Prospect\Jobs\DeletePipelineEducatableJob;
-
-class SyncPipelineEducatables extends Command
-{
-    use TenantAware;
-
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'sync:pipeline-educatables {--tenant=*}';
-
-    /**
-     * Execute the console command.
-     */
-    public function handle()
+return new class () extends Migration {
+    public function up(): void
     {
-        $pipelines = Pipeline::get();
-
-        foreach ($pipelines as $pipeline) {
-            Bus::chain([
-                new SyncPipelineEducatableJob($pipeline),
-                new DeletePipelineEducatableJob($pipeline),
-            ])
-                ->catch(function ($exception) {
-                    report($exception);
-                })
-                ->dispatch();
-        }
+        Schema::create('educatable_pipeline_stages', function (Blueprint $table) {
+            $table->foreignUuid('pipeline_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('pipeline_stage_id')->constrained()->onDelete('cascade');
+            $table->string('educatable_type');
+            $table->string('educatable_id');
+            $table->timestamps();
+            $table->index(['educatable_type', 'educatable_id', 'pipeline_id', 'pipeline_stage_id']);
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::dropIfExists('educatable_pipeline_stages');
+    }
+};

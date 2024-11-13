@@ -113,30 +113,6 @@ class Segment extends BaseModel
             ->get();
     }
 
-    public function retrieveEducatablesRecords(): Builder
-    {
-        /** @var Builder $modelQueryBuilder */
-        $modelQueryBuilder = $this->model->query();
-
-        $class = $this->model->class();
-
-        if (count($this->subjects) > 0) {
-            return $modelQueryBuilder->whereIn('id', function ($query) use ($class) {
-                $query->select('subject_id')
-                    ->from((new SegmentSubject())->getTable())
-                    ->where('subject_type', resolve($class)->getMorphClass())
-                    ->where('segment_id', $this->getKey());
-            });
-        }
-
-        return $modelQueryBuilder
-            ->whereKey(
-                resolve(TranslateSegmentFilters::class)
-                    ->handle($this)
-                    ->pluck(resolve($class)->getKeyName()),
-            );
-    }
-
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {

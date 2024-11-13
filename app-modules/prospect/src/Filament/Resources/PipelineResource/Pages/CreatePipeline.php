@@ -74,30 +74,17 @@ class CreatePipeline extends CreateRecord
                     ->columnSpanFull()
                     ->label('Description'),
 
+                TextInput::make('default_stage')
+                    ->required()
+                    ->label('Default Pipeline Stage name'),
+
                 Repeater::make('pipeline_stages')
                     ->relationship('stages')
                     ->schema([
-                        Grid::make()
-                            ->schema([
-                                TextInput::make('name')
+                        TextInput::make('name')
                                     ->label('Stage')
                                     ->distinct()
                                     ->required(),
-                                Checkbox::make('is_default')
-                                    ->label('Is Default?')
-                                    ->inline(false)
-                                    ->required(function (Get $get) {
-                                        $stages = array_values($get('../'));
-                                        $stages = collect($stages);
-                                        $hasDefault = collect($stages)->contains('is_default', true);
-
-                                        if (! $hasDefault) {
-                                            return true;
-                                        }
-                                    })
-                                    ->fixIndistinctState(),
-                            ])
-                            ->columns(2),
                     ])
                     ->orderColumn('order')
                     ->reorderable()
@@ -113,33 +100,5 @@ class CreatePipeline extends CreateRecord
         $data['user_id'] = auth()->id();
 
         return $data;
-    }
-
-    protected function getCreatedNotification(): ?Notification
-    {
-        return null;
-    }
-
-    protected function afterCreate(): void
-    {
-        $pipeline = $this->getRecord();
-
-        dispatch(new PipelineEducatablesMoveIntoStages(
-            pipeline: $this->getRecord()
-        ));
-
-        $totalRecords = $pipeline?->segment?->retrieveEducatablesRecords()->count();
-
-        $user = $pipeline->createdBy;
-
-        if ($user) {
-            $user->notify(
-                Notification::make()
-                    ->title('Pipeline creation started')
-                    ->body("Your pipeline creation has begun and {$totalRecords} records will be processed in the background.")
-                    ->success()
-                    ->toDatabase(),
-            );
-        }
     }
 }
