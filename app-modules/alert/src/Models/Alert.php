@@ -46,6 +46,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Histories\AlertHistory;
+use AdvisingApp\Alert\Models\AlertStatus as ModelsAlertStatus;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -60,6 +61,7 @@ use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property-read Student|Prospect $concern
@@ -84,7 +86,7 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
 
     protected $casts = [
         'severity' => AlertSeverity::class,
-        'status' => AlertStatus::class,
+        // 'status' => AlertStatus::class,
     ];
 
     public function processCustomHistories(string $event, Collection $old, Collection $new, Collection $pending): void
@@ -114,9 +116,14 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
         return $this->concern instanceof Subscribable ? $this->concern : null;
     }
 
-    public function scopeStatus(Builder $query, AlertStatus $status): void
+    // public function scopeStatus(Builder $query, AlertStatus $status): void
+    // {
+    //     $query->where('status', $status);
+    // }
+
+    public function status(): BelongsTo
     {
-        $query->where('status', $status);
+        return $this->belongsTo(ModelsAlertStatus::class, 'status');
     }
 
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
