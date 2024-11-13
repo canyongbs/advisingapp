@@ -79,24 +79,21 @@ class TaskAssignedToUserNotification extends BaseNotification implements Databas
     {
         $url = EditTask::getUrl(['record' => $this->task]);
 
-        $studentProspectUrl = match (true) {
-            ! empty($this->task->concern) && $this->task->concern instanceof Student => ViewStudent::getUrl(['record' => $this->task->concern]),
-            ! empty($this->task->concern) && $this->task->concern instanceof Prospect => ViewProspect::getUrl(['record' => $this->task->concern]),
-            default => null,
-        };
-
         $title = str($this->task->title)->limit();
 
-        $link = new HtmlString("<a href='{$url}' target='_blank' class='underline'>{$title}</a>");
-
-        $studentProspectLink = match (true) {
-            ! empty($this->task->concern) => new HtmlString("<a href='{$studentProspectUrl}' target='_blank' class='underline'>{$this->task->concern->full_name}</a>"),
-            default => null,
-        };
-
         $message = match (true) {
-            ! empty($this->task->concern) && ($this->task->concern instanceof Student || $this->task->concern instanceof Prospect) => "You have been assigned a new Task: {$link} related to {$this->task->concern_type} {$studentProspectLink}",
-            default => "You have been assigned a new Task: {$link}",
+            $this->task->concern instanceof Student => 'You have been assigned a new Task: ' .
+                new HtmlString("<a href='{$url}' target='_blank' class='underline'>{$title}</a>") .
+                ' related to Student ' .
+                new HtmlString("<a href='" . ViewStudent::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>"),
+
+            $this->task->concern instanceof Prospect => 'You have been assigned a new Task: ' .
+                new HtmlString("<a href='{$url}' target='_blank' class='underline'>{$title}</a>") .
+                ' related to Prospect ' .
+                new HtmlString("<a href='" . ViewProspect::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>"),
+
+            default => 'You have been assigned a new Task: ' .
+                new HtmlString("<a href='{$url}' target='_blank' class='underline'>{$title}</a>"),
         };
 
         return FilamentNotification::make()
