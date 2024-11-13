@@ -58,7 +58,7 @@ class Pipeline extends Model implements Auditable
         'description',
         'segment_id',
         'user_id',
-        'default_stage'
+        'default_stage',
     ];
 
     public function createdBy(): BelongsTo

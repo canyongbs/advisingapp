@@ -49,9 +49,8 @@ use AdvisingApp\Audit\Overrides\MorphToMany;
 use AdvisingApp\Prospect\Models\PipelineStage;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Actions\Concerns\InteractsWithActions;
-use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Prospect\Models\EducatablePipelineStage;
-use Bvtterfly\ModelStateMachine\Exceptions\InvalidTransition;
+use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class ProspectPipelineKanban extends Component implements HasForms, HasActions
@@ -75,7 +74,6 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
             ->get()
             ->groupBy(fn (Prospect $prospect) => $prospect->educatablePipelineStages->first()?->pivot->pipeline_stage_id);
 
-
         return $pipelineEducatables;
     }
 
@@ -97,31 +95,23 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
         ]);
     }
 
-    public function moveProspect(Pipeline $pipeline,Prospect $educatable,$fromStage = '',$toStage = ''): JsonResponse
+    public function moveProspect(Pipeline $pipeline, Prospect $educatable, $fromStage = '', $toStage = ''): JsonResponse
     {
         try {
-            
-            if(blank($fromStage))
-            {
-                $pipeline?->educatablePipelineStages()->attach($educatable,[
+            if (blank($fromStage)) {
+                $pipeline?->educatablePipelineStages()->attach($educatable, [
                     'pipeline_stage_id' => PipelineStage::find($toStage)->getKey(),
                 ]);
-
-            }elseif(blank($toStage)){
-
+            } elseif (blank($toStage)) {
                 $pipeline?->educatablePipelineStages()->detach($educatable);
-
-            }else{
-
+            } else {
                 EducatablePipelineStage::where('pipeline_id', $pipeline->getKey())
-                ->where('pipeline_stage_id', $fromStage)
-                ->where('educatable_id', $educatable->getKey())
-                ->update([
-                    'pipeline_stage_id' => $toStage,
-                ]);
-
+                    ->where('pipeline_stage_id', $fromStage)
+                    ->where('educatable_id', $educatable->getKey())
+                    ->update([
+                        'pipeline_stage_id' => $toStage,
+                    ]);
             }
-            
         } catch (Exception $e) {
             report($e);
 

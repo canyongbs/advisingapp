@@ -43,7 +43,6 @@ use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\ViewRecord;
 use AdvisingApp\Prospect\Models\Pipeline;
 use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
@@ -60,10 +59,9 @@ class ViewPipeline extends ViewRecord
                 TextEntry::make('description'),
                 TextEntry::make('segment.name'),
                 TextEntry::make('default_stage')
-                            ->label('Default Stage'),
+                    ->label('Default Stage'),
                 RepeatableEntry::make('stages')
                     ->schema([
-                      
                         TextEntry::make('name')
                             ->label('Stage'),
                     ])

@@ -36,13 +36,10 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages;
 
-use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Illuminate\Support\Str;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -86,9 +83,9 @@ class EditPipeline extends EditRecord
                     ->relationship('stages')
                     ->schema([
                         TextInput::make('name')
-                                    ->label('Stage')
-                                    ->distinct()
-                                    ->required(),
+                            ->label('Stage')
+                            ->distinct()
+                            ->required(),
                     ])
                     ->deleteAction(
                         function (Action $action) {

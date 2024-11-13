@@ -36,20 +36,15 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages;
 
-use Filament\Forms\Get;
 use Filament\Forms\Form;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
-use AdvisingApp\Prospect\Jobs\PipelineEducatablesMoveIntoStages;
 
 class CreatePipeline extends CreateRecord
 {
@@ -82,9 +77,9 @@ class CreatePipeline extends CreateRecord
                     ->relationship('stages')
                     ->schema([
                         TextInput::make('name')
-                                    ->label('Stage')
-                                    ->distinct()
-                                    ->required(),
+                            ->label('Stage')
+                            ->distinct()
+                            ->required(),
                     ])
                     ->orderColumn('order')
                     ->reorderable()

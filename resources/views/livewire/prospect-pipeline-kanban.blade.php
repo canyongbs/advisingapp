@@ -56,10 +56,11 @@
                                         'pb-20' => !count($pipelineEducatables[$stageKey] ?? []),
                                     ])
                                 >
-                                    @foreach($pipelineEducatables[$stageKey] ?? [] as $educatable)
-                                            
-                                            <x-educatable-card :pipeline="$pipeline" :educatable="$educatable"></x-educatable-card>
-                                        
+                                    @foreach ($pipelineEducatables[$stageKey] ?? [] as $educatable)
+                                        <x-educatable-card
+                                            :pipeline="$pipeline"
+                                            :educatable="$educatable"
+                                        ></x-educatable-card>
                                     @endforeach
 
                                     <div

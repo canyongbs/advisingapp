@@ -39,15 +39,12 @@ namespace AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use AdvisingApp\Prospect\Models\PipelineStage;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
-use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
-use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
+use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
 
 class ManageEductables extends ManageRelatedRecords implements HasTable
 {
@@ -121,9 +118,9 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
         $pipeline = $this->getOwnerRecord();
 
         $table = $pipeline->segment->model
-                ->table($table);
+            ->table($table);
 
-        $table->query(fn() => app(TranslateSegmentFilters::class)->handle($pipeline->segment));
+        $table->query(fn () => app(TranslateSegmentFilters::class)->handle($pipeline->segment));
 
         return $table;
     }
