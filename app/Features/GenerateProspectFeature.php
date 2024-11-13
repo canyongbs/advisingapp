@@ -34,25 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Database\Factories;
+namespace App\Features;
 
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @extends Factory<ProspectStatus>
- */
-class ProspectStatusFactory extends Factory
+class GenerateProspectFeature extends AbstractFeatureFlag
 {
-    public function definition(): array
+    public function resolve(mixed $scope): mixed
     {
-        return [
-            'classification' => $this->faker->randomElement(SystemProspectClassification::cases()),
-            'name' => $this->faker->word,
-            'color' => $this->faker->randomElement(ProspectStatusColorOptions::cases()),
-            'is_system_protected' => false,
-        ];
+        return false;
     }
 }

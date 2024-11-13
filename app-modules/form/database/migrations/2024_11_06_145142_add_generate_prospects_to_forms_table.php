@@ -34,25 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Database\Factories;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-
-/**
- * @extends Factory<ProspectStatus>
- */
-class ProspectStatusFactory extends Factory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'classification' => $this->faker->randomElement(SystemProspectClassification::cases()),
-            'name' => $this->faker->word,
-            'color' => $this->faker->randomElement(ProspectStatusColorOptions::cases()),
-            'is_system_protected' => false,
-        ];
+        Schema::table('forms', function (Blueprint $table) {
+            $table->boolean('generate_prospects')->after('is_authenticated')->default(false);
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('forms', function (Blueprint $table) {
+            $table->dropColumn('generate_prospects');
+        });
+    }
+};

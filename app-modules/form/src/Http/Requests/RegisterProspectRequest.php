@@ -34,17 +34,40 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
-use App\Features\ProspectStatusSystemProtectionAndAutoAssignment;
+namespace AdvisingApp\Form\Http\Requests;
 
-return new class () extends Migration {
-    public function up(): void
+use Illuminate\Validation\Rule;
+use Illuminate\Foundation\Http\FormRequest;
+
+class RegisterProspectRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
     {
-        ProspectStatusSystemProtectionAndAutoAssignment::activate();
+        return true;
     }
 
-    public function down(): void
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
     {
-        ProspectStatusSystemProtectionAndAutoAssignment::deactivate();
+        return [
+            'email' => ['email', 'string', 'required', Rule::unique('prospects', 'email')],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'preferred' => ['required', 'string', 'max:255'],
+            'mobile' => ['required', 'max:255'],
+            'birthdate' => ['required', 'date'],
+            'address' => ['required', 'string', 'max:255'],
+            'address_2' => ['required', 'string', 'max:255'],
+            'city' => ['required', 'string', 'max:255'],
+            'state' => ['required', 'string', 'max:255'],
+            'postal' => ['required', 'max:255'],
+        ];
     }
-};
+}

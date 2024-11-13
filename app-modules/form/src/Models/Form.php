@@ -57,6 +57,7 @@ class Form extends Submissible
         'rounding',
         'content',
         'on_screen_response',
+        'generate_prospects',
     ];
 
     protected $casts = [
@@ -67,6 +68,7 @@ class Form extends Submissible
         'is_wizard' => 'boolean',
         'recaptcha_enabled' => 'boolean',
         'rounding' => Rounding::class,
+        'generate_prospects' => 'boolean',
     ];
 
     public function fields(): HasMany

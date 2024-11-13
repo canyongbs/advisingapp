@@ -34,14 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use App\Features\GenerateProspectFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Support\AbstractFeatureFlag;
-
-class ProspectStatusSystemProtectionAndAutoAssignment extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
+return new class () extends Migration {
+    public function up(): void
     {
-        return false;
+        GenerateProspectFeature::activate();
     }
-}
+
+    public function down(): void
+    {
+        GenerateProspectFeature::deactivate();
+    }
+};
