@@ -45,7 +45,6 @@ use Filament\Infolists\Components\Section;
 use Filament\Support\Facades\FilamentView;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Features\ProspectStatusSystemProtectionAndAutoAssignment;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
 
 class ViewProspectStatus extends ViewRecord
@@ -58,7 +57,7 @@ class ViewProspectStatus extends ViewRecord
             PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER,
             fn (): View => view('components.page-header-action-lock-icon', [
                 'condition' => function () {
-                    return ProspectStatusSystemProtectionAndAutoAssignment::active() && $this->getRecord()?->is_system_protected;
+                    return $this->getRecord()?->is_system_protected;
                 },
                 'identifier' => 'prospect_status_system_protected',
                 'tooltip' => 'This record is protected as it is a system status.',
