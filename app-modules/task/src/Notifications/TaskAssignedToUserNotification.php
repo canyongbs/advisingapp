@@ -81,18 +81,11 @@ class TaskAssignedToUserNotification extends BaseNotification implements Databas
         $title = str($this->task->title)->limit();
 
         $message = match (true) {
-            $this->task->concern instanceof Student => 'You have been assigned a new Task: ' .
-                "<a href='{$url}' target='_blank' class='underline'>{$title}</a>" .
-                ' related to Student ' .
-                "<a href='" . ViewStudent::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>",
+            $this->task->concern instanceof Student => "You have been assigned a new Task: <a href='{$url}' target='_blank' class='underline'>{$title}</a> related to Student <a href='" . ViewStudent::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>",
 
-            $this->task->concern instanceof Prospect => 'You have been assigned a new Task: ' .
-                "<a href='{$url}' target='_blank' class='underline'>{$title}</a>" .
-                ' related to Prospect ' .
-                "<a href='" . ViewProspect::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>",
+            $this->task->concern instanceof Prospect => "You have been assigned a new Task: <a href='{$url}' target='_blank' class='underline'>{$title}</a> related to Prospect <a href='" . ViewProspect::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>",
 
-            default => 'You have been assigned a new Task: ' .
-                "<a href='{$url}' target='_blank' class='underline'>{$title}</a>",
+            default => "You have been assigned a new Task: <a href='{$url}' target='_blank' class='underline'>{$title}</a>",
         };
 
         return FilamentNotification::make()
