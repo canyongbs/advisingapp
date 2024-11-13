@@ -49,8 +49,10 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Prospect\Models\Pipeline;
 use Laravel\Octane\Commands\ReloadCommand;
 use Filament\Actions\Imports\Jobs\ImportCsv;
+use AdvisingApp\Prospect\Models\PipelineStage;
 use Illuminate\Session\Middleware\StartSession;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -105,6 +107,8 @@ class AppServiceProvider extends ServiceProvider
         Relation::morphMap([
             'system_user' => SystemUser::class,
             'tenant' => Tenant::class,
+            'pipeline' => Pipeline::class,
+            'pipeline_stage' => PipelineStage::class,
         ]);
 
         Feature::resolveScopeUsing(fn ($driver) => null);
