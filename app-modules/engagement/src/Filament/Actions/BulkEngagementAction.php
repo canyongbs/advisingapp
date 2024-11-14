@@ -164,7 +164,9 @@ class BulkEngagementAction
             ->action(function (Collection $records, array $data, Form $form) {
                 CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
                     'user' => auth()->user(),
-                    'records' => $records,
+                    'records' => $records->filter(function ($record) {
+                        return ! empty($record->mobile);
+                    }),
                     'deliveryMethod' => $data['delivery_method'],
                     'subject' => $data['subject'] ?? null,
                     'body' => $data['body'] ?? null,

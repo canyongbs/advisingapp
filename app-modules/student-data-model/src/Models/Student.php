@@ -350,6 +350,11 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return 'student';
     }
 
+    public static function mobile(): string
+    {
+        return 'mobile';
+    }
+
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {

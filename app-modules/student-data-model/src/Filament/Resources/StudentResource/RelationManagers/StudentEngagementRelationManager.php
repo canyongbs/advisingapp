@@ -55,6 +55,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Timeline\Models\Timeline;
 use Filament\Tables\Actions\CreateAction;
@@ -145,7 +146,7 @@ class StudentEngagementRelationManager extends RelationManager
                 ->label('What would you like to send?')
                 ->options(EngagementDeliveryMethod::getOptions())
                 ->default(EngagementDeliveryMethod::Email->value)
-                ->disableOptionWhen(fn (string $value): bool => EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
+                ->disableOptionWhen(fn (string $value): bool => (($value == (EngagementDeliveryMethod::Sms->value) && ! $this->getOwnerRecord()->mobile)) || EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
                 ->selectablePlaceholder(false)
                 ->live(),
             Fieldset::make('Content')
@@ -282,7 +283,16 @@ class StudentEngagementRelationManager extends RelationManager
                         return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
                     })
                     ->createAnother(false)
-                    ->action(function (array $data, Form $form) {
+                    ->action(function (CreateAction $action, array $data, Form $form) {
+                        if ($data['delivery_method'] == EngagementDeliveryMethod::Sms->value && ! $this->getOwnerRecord()->mobile) {
+                            Notification::make()
+                                ->title('Student does not have mobile number.')
+                                ->danger()
+                                ->send();
+
+                            $action->halt();
+                        }
+
                         /** @var Student $record */
                         $record = $this->getOwnerRecord();
 

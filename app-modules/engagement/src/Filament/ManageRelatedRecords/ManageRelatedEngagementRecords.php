@@ -51,6 +51,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Timeline\Models\Timeline;
 use Filament\Tables\Actions\CreateAction;
@@ -145,7 +146,7 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                 ->label('What would you like to send?')
                 ->options(EngagementDeliveryMethod::getOptions())
                 ->default(EngagementDeliveryMethod::Email->value)
-                ->disableOptionWhen(fn (string $value): bool => EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
+                ->disableOptionWhen(fn (string $value): bool => (($value == (EngagementDeliveryMethod::Sms->value) && ! $this->getOwnerRecord()->mobile)) || EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
                 ->selectablePlaceholder(false)
                 ->live(),
             Fieldset::make('Content')
@@ -283,6 +284,14 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                     })
                     ->createAnother(false)
                     ->action(function (array $data, Form $form) {
+                        if ($data['delivery_method'] == EngagementDeliveryMethod::Sms->value && ! $this->getOwnerRecord()->mobile) {
+                            Notification::make()
+                                ->title('Prospect does not have mobile number.')
+                                ->danger()
+                                ->send();
+
+                            $this->halt();
+                        }
                         $engagement = new Engagement($data);
                         $engagement->recipient()->associate($this->getRecord());
                         $engagement->save();

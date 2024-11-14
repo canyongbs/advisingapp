@@ -348,6 +348,11 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
             ->withTimestamps();
     }
 
+    public static function mobile(): string
+    {
+        return 'mobile';
+    }
+
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {

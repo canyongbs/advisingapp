@@ -45,12 +45,15 @@ use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Forms\Components\EducatableSelect;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -165,6 +168,26 @@ class CreateEngagement extends CreateRecord
                             ->visible(fn (callable $get) => $get('send_later')),
                     ]),
             ]);
+    }
+
+    public function beforeCreate(): void
+    {
+        $data = $this->form->getState();
+
+        if ($data['recipient_type'] == app(Prospect::class)->getMorphClass()) {
+            $record = Prospect::find($data['recipient_id']);
+        } elseif ($data['recipient_type'] == app(Student::class)->getMorphClass()) {
+            $record = Student::find($data['recipient_id']);
+        }
+
+        if ($record && ! $record->mobile) {
+            Notification::make()
+                ->title(ucfirst($data['recipient_type']) . ' does not have mobile number.')
+                ->danger()
+                ->send();
+
+            $this->halt();
+        }
     }
 
     public function afterCreate(): void
