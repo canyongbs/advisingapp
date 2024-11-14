@@ -348,9 +348,9 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
             ->withTimestamps();
     }
 
-    public static function mobile(): string
+    public function canRecieveSms(): bool
     {
-        return 'mobile';
+        return filled($this->mobile);
     }
 
     protected static function booted(): void

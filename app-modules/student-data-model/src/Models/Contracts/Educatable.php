@@ -58,6 +58,4 @@ interface Educatable extends Identifiable
     public static function getLicenseType(): LicenseType;
 
     public function eventAttendeeRecords(): HasMany;
-
-    public static function mobile(): string;
 }

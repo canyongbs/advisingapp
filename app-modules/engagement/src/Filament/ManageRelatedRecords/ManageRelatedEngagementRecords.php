@@ -146,7 +146,7 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                 ->label('What would you like to send?')
                 ->options(EngagementDeliveryMethod::getOptions())
                 ->default(EngagementDeliveryMethod::Email->value)
-                ->disableOptionWhen(fn (string $value): bool => (($value == (EngagementDeliveryMethod::Sms->value) && ! $this->getOwnerRecord()->mobile)) || EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
+                ->disableOptionWhen(fn (string $value): bool => (($value == (EngagementDeliveryMethod::Sms->value) && ! $this->getOwnerRecord()->canRecieveSms())) || EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
                 ->selectablePlaceholder(false)
                 ->live(),
             Fieldset::make('Content')
@@ -284,7 +284,7 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                     })
                     ->createAnother(false)
                     ->action(function (array $data, Form $form) {
-                        if ($data['delivery_method'] == EngagementDeliveryMethod::Sms->value && ! $this->getOwnerRecord()->mobile) {
+                        if ($data['delivery_method'] == EngagementDeliveryMethod::Sms->value && ! $this->getOwnerRecord()->canRecieveSms()) {
                             Notification::make()
                                 ->title('Prospect does not have mobile number.')
                                 ->danger()

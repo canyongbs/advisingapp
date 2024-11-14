@@ -165,7 +165,7 @@ class BulkEngagementAction
                 CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
                     'user' => auth()->user(),
                     'records' => $records->filter(function ($record) {
-                        return ! empty($record->mobile);
+                        return $record->canRecieveSms();
                     }),
                     'deliveryMethod' => $data['delivery_method'],
                     'subject' => $data['subject'] ?? null,

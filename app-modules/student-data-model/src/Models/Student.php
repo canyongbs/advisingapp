@@ -350,9 +350,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return 'student';
     }
 
-    public static function mobile(): string
+    public function canRecieveSms(): bool
     {
-        return 'mobile';
+        return filled($this->mobile);
     }
 
     protected static function booted(): void

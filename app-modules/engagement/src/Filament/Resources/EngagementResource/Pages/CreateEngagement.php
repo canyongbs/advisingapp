@@ -182,7 +182,7 @@ class CreateEngagement extends CreateRecord
             $record = Student::find($data['recipient_id']);
         }
 
-        if ($record && ! $record->mobile) {
+        if ($record && ! $record->canRecieveSms()) {
             Notification::make()
                 ->title(ucfirst($data['recipient_type']) . ' does not have mobile number.')
                 ->danger()

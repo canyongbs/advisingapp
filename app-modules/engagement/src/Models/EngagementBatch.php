@@ -73,7 +73,7 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
             CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
                 'user' => $action->campaign->user,
                 'records' => $action->campaign->segment->retrieveRecords()->filter(function ($record) {
-                    return ! empty($record->mobile);
+                    return $record->canRecieveSms();
                 }),
                 'deliveryMethod' => $action->data['delivery_method'],
                 'subject' => $action->data['subject'] ?? null,
