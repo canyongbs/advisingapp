@@ -172,6 +172,8 @@ class CreateEngagement extends CreateRecord
 
     public function beforeCreate(): void
     {
+        $record = null;
+
         $data = $this->form->getState();
 
         if ($data['recipient_type'] == app(Prospect::class)->getMorphClass()) {

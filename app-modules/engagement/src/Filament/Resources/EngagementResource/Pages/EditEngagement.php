@@ -159,6 +159,8 @@ class EditEngagement extends EditRecord
 
     protected function beforeSave(): void
     {
+        $record = null;
+
         $data = $this->form->getState();
 
         if ($data['recipient_type'] == app(Prospect::class)->getMorphClass()) {
