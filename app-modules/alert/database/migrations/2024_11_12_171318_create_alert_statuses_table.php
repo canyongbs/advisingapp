@@ -13,7 +13,7 @@ return new class extends Migration
 
             $table->string('classification');
             $table->string('name');
-            $table->integer('order')->nullable();
+            $table->integer('sort')->default(0);
             $table->boolean('is_default')->default(false);
 
             $table->timestamps();

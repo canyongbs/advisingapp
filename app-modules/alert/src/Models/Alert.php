@@ -82,6 +82,7 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
         'severity',
         'status',
         'suggested_intervention',
+        'status_id'
     ];
 
     protected $casts = [
