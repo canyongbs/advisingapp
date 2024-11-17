@@ -19,19 +19,19 @@ class AlertStatusSeeder extends Seeder
                     [
                         'name' => 'Active',
                         'classification' => SystemAlertStatusClassification::Active,
-                        'order' => 1,
+                        'sort' => 1,
                         'is_default' => true
                     ],
                     [
                         'name' => 'Resolved',
                         'classification' => SystemAlertStatusClassification::Resolved,
-                        'order' => 2,
+                        'sort' => 2,
                         'is_default' => false
                     ],
                     [
                         'name' => 'Canceled',
                         'classification' => SystemAlertStatusClassification::Canceled,
-                        'order' => 3,
+                        'sort' => 3,
                         'is_default' => false
                     ],
                 ]
