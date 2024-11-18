@@ -48,13 +48,13 @@ use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Alert\Enums\AlertStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Alert\Enums\AlertSeverity;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -77,8 +77,8 @@ class ListAlerts extends ListRecords
             ->schema([
                 TextEntry::make('concern.display_name')
                     ->label('Related To')
-                    ->getStateUsing(fn (Alert $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
-                    ->url(fn (Alert $record) => match ($record->concern ? $record->concern::class : null) {
+                    ->getStateUsing(fn(Alert $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
+                    ->url(fn(Alert $record) => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ManageProspectAlerts::getUrl(['record' => $record->concern]),
                         default => null,
@@ -86,7 +86,7 @@ class ListAlerts extends ListRecords
                 TextEntry::make('description'),
                 TextEntry::make('severity'),
                 TextEntry::make('suggested_intervention'),
-                TextEntry::make('status'),
+                TextEntry::make('status_id'),
             ]);
     }
 
@@ -97,13 +97,13 @@ class ListAlerts extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('concern.display_name')
                     ->label('Related To')
-                    ->getStateUsing(fn (Alert $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
-                    ->url(fn (Alert $record) => match ($record->concern ? $record->concern::class : null) {
+                    ->getStateUsing(fn(Alert $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
+                    ->url(fn(Alert $record) => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ManageProspectAlerts::getUrl(['record' => $record->concern]),
                         default => null,
                     })
-                    ->searchable(query: fn (Builder $query, $search) => $query->tap(new EducatableSearch(relationship: 'concern', search: $search)))
+                    ->searchable(query: fn(Builder $query, $search) => $query->tap(new EducatableSearch(relationship: 'concern', search: $search)))
                     ->forceSearchCaseInsensitive()
                     ->sortable(),
                 TextColumn::make('description')
@@ -111,7 +111,7 @@ class ListAlerts extends ListRecords
                     ->limit(),
                 TextColumn::make('severity')
                     ->sortable(),
-                TextColumn::make('status')
+                TextColumn::make('status_id')
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->sortable(),
@@ -119,17 +119,17 @@ class ListAlerts extends ListRecords
             ->filters([
                 Filter::make('subscribed')
                     ->query(
-                        fn (Builder $query): Builder => $query->whereHas(
+                        fn(Builder $query): Builder => $query->whereHas(
                             relation: 'concern',
-                            callback: fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', auth()->id())
+                            callback: fn(Builder $query) => $query->whereRelation('subscriptions', 'user_id', auth()->id())
                         )
                     ),
                 Filter::make('care_team')
                     ->label('Care Team')
                     ->query(
-                        fn (Builder $query): Builder => $query->whereHas(
+                        fn(Builder $query): Builder => $query->whereHas(
                             relation: 'concern',
-                            callback: fn (Builder $query) => $query->whereRelation('careTeam', 'user_id', auth()->id())
+                            callback: fn(Builder $query) => $query->whereRelation('careTeam', 'user_id', auth()->id())
                         )
                     ),
                 SelectFilter::make('my_segments')
@@ -140,7 +140,7 @@ class ListAlerts extends ListRecords
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
+                    ->query(fn(Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 SelectFilter::make('all_segments')
                     ->label('All Population Segments')
                     ->options(
@@ -149,13 +149,14 @@ class ListAlerts extends ListRecords
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
+                    ->query(fn(Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
-                SelectFilter::make('status')
-                    ->options(AlertStatus::class)
+                SelectFilter::make('status_id')
+                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('sort'))
                     ->multiple()
-                    ->default([AlertStatus::Active->value]),
+                    ->preload()
+                    ->default([SystemAlertStatusClassification::default()]),
             ])
             ->actions([
                 ViewAction::make(),
@@ -190,12 +191,12 @@ class ListAlerts extends ListRecords
                             Textarea::make('suggested_intervention')
                                 ->required()
                                 ->string(),
-                            Select::make('status')
-                                ->options(AlertStatus::class)
+                            Select::make('status_id')
+                                ->options(SystemAlertStatusClassification::class)
                                 ->selectablePlaceholder(false)
-                                ->default(AlertStatus::default())
+                                ->default(SystemAlertStatusClassification::default())
                                 ->required()
-                                ->enum(AlertStatus::class),
+                                ->enum(SystemAlertStatusClassification::class),
                         ])
                         ->columns(),
                 ]),
