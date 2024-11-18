@@ -64,6 +64,7 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use Illuminate\Database\Eloquent\Builder;
 
 class ManageProspectAlerts extends ManageRelatedRecords
 {
