@@ -97,10 +97,7 @@ trait CanManageEducatableAlerts
                     ->string(),
                 Select::make('status_id')
                     ->label('status')
-                    ->options(function () {
-                        return AlertStatus::orderBy('sort')
-                            ->pluck('name', 'id');
-                    })
+                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('sort'))
                     ->selectablePlaceholder(false)
                     ->default(SystemAlertStatusClassification::default())
                     ->required()
