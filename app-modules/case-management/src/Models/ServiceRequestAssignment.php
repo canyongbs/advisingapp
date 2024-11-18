@@ -43,10 +43,10 @@ use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\CaseManagement\Enums\ServiceRequestAssignmentStatus;
 use AdvisingApp\Timeline\Timelines\ServiceRequestAssignmentTimeline;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 
@@ -60,7 +60,7 @@ class ServiceRequestAssignment extends BaseModel implements Auditable, CanTrigge
 
     protected $casts = [
         'assigned_at' => 'datetime',
-        'status' => ServiceRequestAssignmentStatus::class,
+        'status' => CaseAssignmentStatus::class,
     ];
 
     protected $fillable = [

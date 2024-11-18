@@ -38,8 +38,8 @@ namespace AdvisingApp\Timeline\Timelines;
 
 use Filament\Actions\ViewAction;
 use AdvisingApp\Timeline\Models\CustomTimeline;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Components\ServiceRequestUpdateViewAction;
+use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestUpdateResource\Components\ServiceRequestUpdateViewAction;
 
 // TODO Decide where these belong - might want to keep these in the context of the original module
 class ServiceRequestUpdateTimeline extends CustomTimeline
@@ -65,7 +65,7 @@ class ServiceRequestUpdateTimeline extends CustomTimeline
 
     public function renderCustomView(): string
     {
-        return 'service-management::service-request-update-timeline-item';
+        return 'case-management::case-update-timeline-item';
     }
 
     public function modalViewAction(): ViewAction

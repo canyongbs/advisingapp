@@ -41,11 +41,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use AdvisingApp\CaseManagement\Models\ServiceRequestType;
 use App\Filament\Clusters\ServiceManagementAdministration;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestTypeResource\Pages\EditServiceRequestType;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestTypeResource\Pages\ViewServiceRequestType;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestTypeResource\Pages\ListServiceRequestTypes;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestTypeResource\Pages\CreateServiceRequestType;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestTypeResource\RelationManagers\ServiceRequestPrioritiesRelationManager;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ViewCaseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ListCaseTypes;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\CreateCaseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\RelationManagers\CasePrioritiesRelationManager;
 
 class ServiceRequestTypeResource extends Resource
 {
@@ -68,17 +68,17 @@ class ServiceRequestTypeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            ServiceRequestPrioritiesRelationManager::class,
+            CasePrioritiesRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListServiceRequestTypes::route('/'),
-            'create' => CreateServiceRequestType::route('/create'),
-            'view' => ViewServiceRequestType::route('/{record}'),
-            'edit' => EditServiceRequestType::route('/{record}/edit'),
+            'index' => ListCaseTypes::route('/'),
+            'create' => CreateCaseType::route('/create'),
+            'view' => ViewCaseType::route('/{record}'),
+            'edit' => EditCaseType::route('/{record}/edit'),
         ];
     }
 }

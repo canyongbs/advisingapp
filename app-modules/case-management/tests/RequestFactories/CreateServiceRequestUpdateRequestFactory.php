@@ -38,7 +38,7 @@ namespace AdvisingApp\CaseManagement\Tests\RequestFactories;
 
 use Worksome\RequestFactories\RequestFactory;
 use AdvisingApp\CaseManagement\Models\ServiceRequest;
-use AdvisingApp\CaseManagement\Enums\ServiceRequestUpdateDirection;
+use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 
 class CreateServiceRequestUpdateRequestFactory extends RequestFactory
 {
@@ -47,7 +47,7 @@ class CreateServiceRequestUpdateRequestFactory extends RequestFactory
         return [
             'service_request_id' => ServiceRequest::factory()->create()->id,
             'update' => $this->faker->sentence(),
-            'direction' => $this->faker->randomElement(ServiceRequestUpdateDirection::cases())->value,
+            'direction' => $this->faker->randomElement(CaseUpdateDirection::cases())->value,
             'internal' => $this->faker->boolean(),
         ];
     }

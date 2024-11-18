@@ -48,8 +48,9 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestStatusResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\ListCaseStatuses;
 
-test('The correct details are displayed on the ListServiceRequestStatuses page', function () {
+test('The correct details are displayed on the ListCaseStatuses page', function () {
     $serviceRequestStatuses = ServiceRequestStatus::factory()
         ->has(ServiceRequest::factory()->count(fake()->randomNumber(1)), 'serviceRequests')
         ->count(10)
@@ -57,7 +58,7 @@ test('The correct details are displayed on the ListServiceRequestStatuses page',
 
     asSuperAdmin();
 
-    $component = livewire(ServiceRequestStatusResource\Pages\ListServiceRequestStatuses::class);
+    $component = livewire(ListCaseStatuses::class);
 
     $component
         ->assertSuccessful()
@@ -95,7 +96,7 @@ test('The correct details are displayed on the ListServiceRequestStatuses page',
 
 // Permission Tests
 
-test('ListServiceRequestStatuses is gated with proper access control', function () {
+test('ListCaseStatuses is gated with proper access control', function () {
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
     actingAs($user)
@@ -111,7 +112,7 @@ test('ListServiceRequestStatuses is gated with proper access control', function 
         )->assertSuccessful();
 });
 
-test('ListServiceRequestStatuses is gated with proper feature access control', function () {
+test('ListCaseStatuses is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->serviceManagement = false;

@@ -48,6 +48,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\CaseManagement\Models\ServiceRequestType;
 use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestTypeResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ListCaseTypes;
 
 test('The correct details are displayed on the ListServiceRequestType page', function () {
     $serviceRequestTypes = ServiceRequestType::factory()
@@ -57,7 +58,7 @@ test('The correct details are displayed on the ListServiceRequestType page', fun
 
     asSuperAdmin();
 
-    $component = livewire(ServiceRequestTypeResource\Pages\ListServiceRequestTypes::class);
+    $component = livewire(ListCaseTypes::class);
 
     $component
         ->assertSuccessful()
@@ -85,7 +86,7 @@ test('The correct details are displayed on the ListServiceRequestType page', fun
 
 // Permission Tests
 
-test('ListServiceRequestTypes is gated with proper access control', function () {
+test('ListCaseTypes is gated with proper access control', function () {
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
     actingAs($user)
@@ -101,7 +102,7 @@ test('ListServiceRequestTypes is gated with proper access control', function () 
         )->assertSuccessful();
 });
 
-test('ListServiceRequestTypes is gated with proper feature access control', function () {
+test('ListCaseTypes is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->serviceManagement = false;

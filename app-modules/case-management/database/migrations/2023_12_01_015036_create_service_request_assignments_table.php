@@ -37,7 +37,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
+use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 
 return new class () extends Migration {
     public function up(): void
@@ -49,7 +49,7 @@ return new class () extends Migration {
             $table->foreignUuid('user_id')->constrained('users');
             $table->foreignUuid('assigned_by_id')->nullable()->constrained('users');
             $table->timestamp('assigned_at');
-            $table->string('status')->default(ServiceRequestAssignmentStatus::Active);
+            $table->string('status')->default(CaseAssignmentStatus::Active);
 
             $table->timestamps();
             $table->softDeletes();

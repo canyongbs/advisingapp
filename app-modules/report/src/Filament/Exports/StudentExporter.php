@@ -46,7 +46,7 @@ use Filament\Actions\Exports\Models\Export;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Models\InteractionStatus;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
+use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
 
 class StudentExporter extends Exporter
 {

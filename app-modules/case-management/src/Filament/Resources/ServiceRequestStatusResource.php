@@ -41,10 +41,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Clusters\ServiceManagementAdministration;
 use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestStatusResource\Pages\EditServiceRequestStatus;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ViewServiceRequestStatus;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestStatusResource\Pages\CreateServiceRequestStatus;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ListServiceRequestStatuses;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\EditCaseStatus;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\ViewCaseStatus;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\CreateCaseStatus;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\ListCaseStatuses;
 
 class ServiceRequestStatusResource extends Resource
 {
@@ -67,10 +67,10 @@ class ServiceRequestStatusResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListServiceRequestStatuses::route('/'),
-            'create' => CreateServiceRequestStatus::route('/create'),
-            'view' => ViewServiceRequestStatus::route('/{record}'),
-            'edit' => EditServiceRequestStatus::route('/{record}/edit'),
+            'index' => ListCaseStatuses::route('/'),
+            'create' => CreateCaseStatus::route('/create'),
+            'view' => ViewCaseStatus::route('/{record}'),
+            'edit' => EditCaseStatus::route('/{record}/edit'),
         ];
     }
 }

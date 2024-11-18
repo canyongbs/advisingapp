@@ -47,7 +47,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseManagement\Models\ServiceRequestType;
 use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestTypeResource;
 
-test('The correct details are displayed on the ViewServiceRequestType page', function () {
+test('The correct details are displayed on the ViewCaseType page', function () {
     $serviceRequestType = ServiceRequestType::factory()->create();
 
     asSuperAdmin()
@@ -67,7 +67,7 @@ test('The correct details are displayed on the ViewServiceRequestType page', fun
 
 // Permission Tests
 
-test('ViewServiceRequestType is gated with proper access control', function () {
+test('ViewCaseType is gated with proper access control', function () {
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
     $serviceRequestType = ServiceRequestType::factory()->create();
@@ -90,7 +90,7 @@ test('ViewServiceRequestType is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-test('ViewServiceRequestType is gated with proper feature access control', function () {
+test('ViewCaseType is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->serviceManagement = false;

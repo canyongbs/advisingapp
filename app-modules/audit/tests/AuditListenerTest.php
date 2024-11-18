@@ -37,7 +37,7 @@
 use function Tests\asSuperAdmin;
 
 use AdvisingApp\Audit\Settings\AuditSettings;
-use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\CaseManagement\Models\ServiceRequest;
 
 test('Audit logs are only created if the Model is not set to be excluded from Auditing by audit settings', function () {
     asSuperAdmin();

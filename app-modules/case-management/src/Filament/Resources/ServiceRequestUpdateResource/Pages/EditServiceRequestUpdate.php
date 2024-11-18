@@ -38,12 +38,12 @@ namespace AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestUpdateReso
 
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\CaseManagement\Filament\Concerns\CaseUpdateBreadcrumbs;
 use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestUpdateResource;
-use AdvisingApp\CaseManagement\Filament\Concerns\ServiceRequestUpdateBreadcrumbs;
 
 class EditServiceRequestUpdate extends EditRecord
 {
-    use ServiceRequestUpdateBreadcrumbs;
+    use CaseUpdateBreadcrumbs;
 
     protected static ?string $breadcrumb = 'Edit';
 

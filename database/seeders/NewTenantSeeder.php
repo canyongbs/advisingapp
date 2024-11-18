@@ -41,18 +41,18 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Authorization\Console\Commands\SetupRoles;
+use AdvisingApp\CaseManagement\Database\Seeders\CaseTypeSeeder;
 use AdvisingApp\Interaction\Database\Seeders\InteractionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSourceSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
+use AdvisingApp\CaseManagement\Database\Seeders\CaseStatusSeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubStatusSeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubQualitySeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubCategorySeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ChangeRequestTypeSeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ChangeRequestStatusSeeder;
+use AdvisingApp\CaseManagement\Database\Seeders\ChangeRequestTypeSeeder;
+use AdvisingApp\CaseManagement\Database\Seeders\ChangeRequestStatusSeeder;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
 
 class NewTenantSeeder extends Seeder
 {
@@ -70,8 +70,8 @@ class NewTenantSeeder extends Seeder
 
         $this->call([
             DivisionSeeder::class,
-            ServiceRequestStatusSeeder::class,
-            ServiceRequestTypeSeeder::class,
+            CaseStatusSeeder::class,
+            CaseTypeSeeder::class,
             ProspectStatusSeeder::class,
             ProspectSourceSeeder::class,
             ResourceHubCategorySeeder::class,

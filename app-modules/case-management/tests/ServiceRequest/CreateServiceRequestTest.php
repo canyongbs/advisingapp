@@ -54,10 +54,10 @@ use function Pest\Laravel\assertDatabaseMissing;
 
 use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CreateCase;
 use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateServiceRequestRequestFactory;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource\Pages\CreateServiceRequest;
 
-test('A successful action on the CreateServiceRequest page', function () {
+test('A successful action on the CreateCase page', function () {
     asSuperAdmin()
         ->get(
             ServiceRequestResource::getUrl('create')
@@ -66,7 +66,7 @@ test('A successful action on the CreateServiceRequest page', function () {
 
     $request = collect(CreateServiceRequestRequestFactory::new()->create());
 
-    livewire(CreateServiceRequest::class)
+    livewire(CreateCase::class)
         ->fillForm($request->toArray())
         ->fillForm([
             'respondent_id' => Prospect::factory()->create()->getKey(),
@@ -99,7 +99,7 @@ test('A successful action on the CreateServiceRequest page', function () {
         ->toEqual($request->get('priority_id'));
 });
 
-test('CreateServiceRequest requires valid data', function ($data, $errors, $setup = null) {
+test('CreateCase requires valid data', function ($data, $errors, $setup = null) {
     if ($setup) {
         $setup();
     }
@@ -108,7 +108,7 @@ test('CreateServiceRequest requires valid data', function ($data, $errors, $setu
 
     $request = collect(CreateServiceRequestRequestFactory::new($data)->create());
 
-    livewire(CreateServiceRequest::class)
+    livewire(CreateCase::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasFormErrors($errors);
@@ -138,7 +138,7 @@ test('CreateServiceRequest requires valid data', function ($data, $errors, $setu
 
 // Permission Tests
 
-test('CreateServiceRequest is gated with proper access control', function () {
+test('CreateCase is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
@@ -146,7 +146,7 @@ test('CreateServiceRequest is gated with proper access control', function () {
             ServiceRequestResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateServiceRequest::class)
+    livewire(CreateCase::class)
         ->assertForbidden();
 
     $user->givePermissionTo('service_request.view-any');
@@ -159,7 +159,7 @@ test('CreateServiceRequest is gated with proper access control', function () {
 
     $request = collect(CreateServiceRequestRequestFactory::new()->create());
 
-    livewire(CreateServiceRequest::class)
+    livewire(CreateCase::class)
         ->fillForm($request->toArray())
         ->fillForm([
             'respondent_id' => Prospect::factory()->create()->getKey(),
@@ -192,7 +192,7 @@ test('CreateServiceRequest is gated with proper access control', function () {
         ->toEqual($request->get('priority_id'));
 });
 
-test('CreateServiceRequest is gated with proper feature access control', function () {
+test('CreateCase is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->serviceManagement = false;
@@ -209,7 +209,7 @@ test('CreateServiceRequest is gated with proper feature access control', functio
     $user->givePermissionTo('service_request.view-any');
     $user->givePermissionTo('service_request.create');
 
-    livewire(CreateServiceRequest::class)
+    livewire(CreateCase::class)
         ->assertForbidden();
 
     $settings->data->addons->serviceManagement = true;
@@ -223,7 +223,7 @@ test('CreateServiceRequest is gated with proper feature access control', functio
 
     $request = collect(CreateServiceRequestRequestFactory::new()->create());
 
-    livewire(CreateServiceRequest::class)
+    livewire(CreateCase::class)
         ->fillForm($request->toArray())
         ->fillForm([
             'respondent_id' => Prospect::factory()->create()->getKey(),

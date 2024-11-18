@@ -53,10 +53,10 @@ use function Pest\Laravel\assertDatabaseHas;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestStatusResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\CreateCaseStatus;
 use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateServiceRequestStatusRequestFactory;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestStatusResource\Pages\CreateServiceRequestStatus;
 
-test('A successful action on the CreateServiceRequestStatus page', function () {
+test('A successful action on the CreateCaseStatus page', function () {
     asSuperAdmin()
         ->get(
             ServiceRequestStatusResource::getUrl('create')
@@ -65,7 +65,7 @@ test('A successful action on the CreateServiceRequestStatus page', function () {
 
     $request = CreateServiceRequestStatusRequestFactory::new()->create();
 
-    livewire(CreateServiceRequestStatus::class)
+    livewire(CreateCaseStatus::class)
         ->fillForm($request)
         ->call('create')
         ->assertHasNoFormErrors();
@@ -75,10 +75,10 @@ test('A successful action on the CreateServiceRequestStatus page', function () {
     assertDatabaseHas(ServiceRequestStatus::class, $request);
 });
 
-test('CreateServiceRequestStatus requires valid data', function ($data, $errors) {
+test('CreateCaseStatus requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    livewire(CreateServiceRequestStatus::class)
+    livewire(CreateCaseStatus::class)
         ->fillForm(CreateServiceRequestStatusRequestFactory::new($data)->create())
         ->call('create')
         ->assertHasFormErrors($errors);
@@ -95,7 +95,7 @@ test('CreateServiceRequestStatus requires valid data', function ($data, $errors)
 
 // Permission Tests
 
-test('CreateServiceRequestStatus is gated with proper access control', function () {
+test('CreateCaseStatus is gated with proper access control', function () {
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
     actingAs($user)
@@ -103,7 +103,7 @@ test('CreateServiceRequestStatus is gated with proper access control', function 
             ServiceRequestStatusResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateServiceRequestStatus::class)
+    livewire(CreateCaseStatus::class)
         ->assertForbidden();
 
     $user->givePermissionTo('service_request_status.view-any');
@@ -116,7 +116,7 @@ test('CreateServiceRequestStatus is gated with proper access control', function 
 
     $request = collect(CreateServiceRequestStatusRequestFactory::new()->create());
 
-    livewire(CreateServiceRequestStatus::class)
+    livewire(CreateCaseStatus::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
@@ -126,7 +126,7 @@ test('CreateServiceRequestStatus is gated with proper access control', function 
     assertDatabaseHas(ServiceRequestStatus::class, $request->toArray());
 });
 
-test('CreateServiceRequestStatus is gated with proper feature access control', function () {
+test('CreateCaseStatus is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->serviceManagement = false;
@@ -143,7 +143,7 @@ test('CreateServiceRequestStatus is gated with proper feature access control', f
             ServiceRequestStatusResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateServiceRequestStatus::class)
+    livewire(CreateCaseStatus::class)
         ->assertForbidden();
 
     $settings->data->addons->serviceManagement = true;
@@ -157,7 +157,7 @@ test('CreateServiceRequestStatus is gated with proper feature access control', f
 
     $request = collect(CreateServiceRequestStatusRequestFactory::new()->create());
 
-    livewire(CreateServiceRequestStatus::class)
+    livewire(CreateCaseStatus::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();

@@ -38,14 +38,14 @@ namespace AdvisingApp\CaseManagement\Tests\RequestFactories;
 
 use Worksome\RequestFactories\RequestFactory;
 use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
-use AdvisingApp\CaseManagement\Enums\SystemServiceRequestClassification;
+use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 
 class CreateServiceRequestStatusRequestFactory extends RequestFactory
 {
     public function definition(): array
     {
         return [
-            'classification' => fake()->randomElement(SystemServiceRequestClassification::cases()),
+            'classification' => fake()->randomElement(SystemCaseClassification::cases()),
             'name' => fake()->name(),
             'color' => fake()->randomElement(ColumnColorOptions::cases()),
         ];

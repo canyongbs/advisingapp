@@ -40,15 +40,15 @@ use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use App\Filament\Clusters\ServiceManagement;
 use AdvisingApp\CaseManagement\Models\ServiceRequest;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource\Pages\EditServiceRequest;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource\Pages\ViewServiceRequest;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource\Pages\ListServiceRequests;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource\Pages\CreateServiceRequest;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource\Pages\ServiceRequestTimeline;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestUpdate;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestAssignment;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestInteraction;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestFormSubmission;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\EditCase;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ViewCase;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ListCases;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CreateCase;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CaseTimeline;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ManageCaseUpdate;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ManageCaseAssignment;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ManageCaseInteraction;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ManageCaseFormSubmission;
 
 class ServiceRequestResource extends Resource
 {
@@ -72,16 +72,16 @@ class ServiceRequestResource extends Resource
     public static function getRecordSubNavigation(Page $page): array
     {
         $navigationItems = [
-            ViewServiceRequest::class,
-            EditServiceRequest::class,
-            ManageServiceRequestAssignment::class,
-            ManageServiceRequestUpdate::class,
-            ManageServiceRequestInteraction::class,
-            ServiceRequestTimeline::class,
+            ViewCase::class,
+            EditCase::class,
+            ManageCaseAssignment::class,
+            ManageCaseUpdate::class,
+            ManageCaseInteraction::class,
+            CaseTimeline::class,
         ];
 
         if (static::shouldShowFormSubmission($page)) {
-            array_splice($navigationItems, 1, 0, ManageServiceRequestFormSubmission::class);
+            array_splice($navigationItems, 1, 0, ManageCaseFormSubmission::class);
         }
 
         return $page->generateNavigationItems($navigationItems);
@@ -90,15 +90,15 @@ class ServiceRequestResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListServiceRequests::route('/'),
-            'manage-assignments' => ManageServiceRequestAssignment::route('/{record}/users'),
-            'manage-service-request-updates' => ManageServiceRequestUpdate::route('/{record}/updates'),
-            'manage-interactions' => ManageServiceRequestInteraction::route('/{record}/interactions'),
-            'manage-service-request-form-submission' => ManageServiceRequestFormSubmission::route('/{record}/form-submission'),
-            'create' => CreateServiceRequest::route('/create'),
-            'view' => ViewServiceRequest::route('/{record}'),
-            'edit' => EditServiceRequest::route('/{record}/edit'),
-            'timeline' => ServiceRequestTimeline::route('/{record}/timeline'),
+            'index' => ListCases::route('/'),
+            'manage-assignments' => ManageCaseAssignment::route('/{record}/users'),
+            'manage-service-request-updates' => ManageCaseUpdate::route('/{record}/updates'),
+            'manage-interactions' => ManageCaseInteraction::route('/{record}/interactions'),
+            'manage-service-request-form-submission' => ManageCaseFormSubmission::route('/{record}/form-submission'),
+            'create' => CreateCase::route('/create'),
+            'view' => ViewCase::route('/{record}'),
+            'edit' => EditCase::route('/{record}/edit'),
+            'timeline' => CaseTimeline::route('/{record}/timeline'),
         ];
     }
 }

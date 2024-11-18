@@ -47,10 +47,10 @@ use function Pest\Laravel\assertDatabaseHas;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\EditCase;
 use AdvisingApp\CaseManagement\Tests\RequestFactories\EditServiceRequestRequestFactory;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource\Pages\EditServiceRequest;
 
-test('A successful action on the EditServiceRequest page', function () {
+test('A successful action on the EditCase page', function () {
     $serviceRequest = ServiceRequest::factory()->create();
 
     asSuperAdmin()
@@ -63,7 +63,7 @@ test('A successful action on the EditServiceRequest page', function () {
 
     $request = collect(EditServiceRequestRequestFactory::new()->create());
 
-    livewire(EditServiceRequest::class, [
+    livewire(EditCase::class, [
         'record' => $serviceRequest->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -91,14 +91,14 @@ test('A successful action on the EditServiceRequest page', function () {
         ->toEqual($request->get('priority_id'));
 });
 
-test('EditServiceRequest requires valid data', function ($data, $errors) {
+test('EditCase requires valid data', function ($data, $errors) {
     $serviceRequest = ServiceRequest::factory()->create();
 
     asSuperAdmin();
 
     $request = collect(EditServiceRequestRequestFactory::new($data)->create());
 
-    livewire(EditServiceRequest::class, [
+    livewire(EditCase::class, [
         'record' => $serviceRequest->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -137,7 +137,7 @@ test('EditServiceRequest requires valid data', function ($data, $errors) {
 
 // Permission Tests
 
-test('EditServiceRequest is gated with proper access control', function () {
+test('EditCase is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $serviceRequest = ServiceRequest::factory()->create();
@@ -149,7 +149,7 @@ test('EditServiceRequest is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    livewire(EditServiceRequest::class, [
+    livewire(EditCase::class, [
         'record' => $serviceRequest->getRouteKey(),
     ])
         ->assertForbidden();
@@ -166,7 +166,7 @@ test('EditServiceRequest is gated with proper access control', function () {
 
     $request = collect(EditServiceRequestRequestFactory::new()->create());
 
-    livewire(EditServiceRequest::class, [
+    livewire(EditCase::class, [
         'record' => $serviceRequest->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -194,7 +194,7 @@ test('EditServiceRequest is gated with proper access control', function () {
         ->toEqual($request->get('priority_id'));
 });
 
-test('EditServiceRequest is gated with proper feature access control', function () {
+test('EditCase is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->serviceManagement = false;
@@ -215,7 +215,7 @@ test('EditServiceRequest is gated with proper feature access control', function 
             ])
         )->assertForbidden();
 
-    livewire(EditServiceRequest::class, [
+    livewire(EditCase::class, [
         'record' => $serviceRequest->getRouteKey(),
     ])
         ->assertForbidden();
@@ -233,7 +233,7 @@ test('EditServiceRequest is gated with proper feature access control', function 
 
     $request = collect(EditServiceRequestRequestFactory::new()->create());
 
-    livewire(EditServiceRequest::class, [
+    livewire(EditCase::class, [
         'record' => $serviceRequest->getRouteKey(),
     ])
         ->fillForm($request->toArray())

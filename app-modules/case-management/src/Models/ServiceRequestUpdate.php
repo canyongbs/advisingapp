@@ -44,11 +44,11 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Timelines\ServiceRequestUpdateTimeline;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\CaseManagement\Enums\ServiceRequestUpdateDirection;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
@@ -69,7 +69,7 @@ class ServiceRequestUpdate extends BaseModel implements Auditable, CanTriggerAut
 
     protected $casts = [
         'internal' => 'boolean',
-        'direction' => ServiceRequestUpdateDirection::class,
+        'direction' => CaseUpdateDirection::class,
     ];
 
     public function serviceRequest(): BelongsTo

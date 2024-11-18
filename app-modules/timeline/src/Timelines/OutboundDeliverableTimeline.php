@@ -38,9 +38,9 @@ namespace AdvisingApp\Timeline\Timelines;
 
 use Filament\Actions\ViewAction;
 use AdvisingApp\Timeline\Models\CustomTimeline;
+use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Notification\Filament\Actions\OutboundDeliverableViewAction;
 
 class OutboundDeliverableTimeline extends CustomTimeline

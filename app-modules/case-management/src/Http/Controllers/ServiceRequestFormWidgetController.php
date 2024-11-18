@@ -52,15 +52,15 @@ use AdvisingApp\CaseManagement\Models\ServiceRequestForm;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
+use AdvisingApp\CaseManagement\Actions\GenerateCaseFormKitSchema;
 use AdvisingApp\CaseManagement\Models\ServiceRequestFormSubmission;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 use AdvisingApp\CaseManagement\Models\ServiceRequestFormAuthentication;
-use AdvisingApp\CaseManagement\Actions\GenerateServiceRequestFormKitSchema;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
 class ServiceRequestFormWidgetController extends Controller
 {
-    public function view(GenerateServiceRequestFormKitSchema $generateSchema, ServiceRequestForm $serviceRequestForm): JsonResponse
+    public function view(GenerateCaseFormKitSchema $generateSchema, ServiceRequestForm $serviceRequestForm): JsonResponse
     {
         return response()->json(
             [

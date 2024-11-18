@@ -42,8 +42,8 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
+use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\CaseManagement\Enums\SystemServiceRequestClassification;
 
 /**
  * @mixin IdeHelperServiceRequestStatus
@@ -60,7 +60,7 @@ class ServiceRequestStatus extends BaseModel implements Auditable
     ];
 
     protected $casts = [
-        'classification' => SystemServiceRequestClassification::class,
+        'classification' => SystemCaseClassification::class,
         'color' => ColumnColorOptions::class,
     ];
 

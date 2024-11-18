@@ -1,5 +1,5 @@
 {
-	"name": "canyon-gbs/advising-app-service-management",
+	"name": "canyon-gbs/advising-app-case-management",
 	"description": "",
 	"type": "library",
 	"version": "1.0",
@@ -9,17 +9,17 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"AdvisingApp\\ServiceManagement\\": "src/",
-			"AdvisingApp\\ServiceManagement\\Tests\\": "tests/",
-			"AdvisingApp\\ServiceManagement\\Database\\Factories\\": "database/factories/",
-			"AdvisingApp\\ServiceManagement\\Database\\Seeders\\": "database/seeders/"
+			"AdvisingApp\\CaseManagement\\": "src/",
+			"AdvisingApp\\CaseManagement\\Tests\\": "tests/",
+			"AdvisingApp\\CaseManagement\\Database\\Factories\\": "database/factories/",
+			"AdvisingApp\\CaseManagement\\Database\\Seeders\\": "database/seeders/"
 		}
 	},
 	"minimum-stability": "stable",
 	"extra": {
 		"laravel": {
 			"providers": [
-				"AdvisingApp\\ServiceManagement\\Providers\\ServiceManagementServiceProvider"
+				"AdvisingApp\\CaseManagement\\Providers\\ServiceManagementServiceProvider"
 			]
 		}
 	},

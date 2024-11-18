@@ -46,9 +46,9 @@ use AdvisingApp\Division\Models\Division;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use AdvisingApp\ServiceManagement\Models\ServiceRequest;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
+use AdvisingApp\CaseManagement\Models\ServiceRequest;
+use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
+use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
 
 class ServiceRequestBlock extends CampaignActionBlock
 {

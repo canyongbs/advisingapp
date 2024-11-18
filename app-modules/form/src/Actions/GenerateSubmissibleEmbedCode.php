@@ -42,8 +42,8 @@ use Illuminate\Support\Facades\URL;
 use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Application\Models\Application;
+use AdvisingApp\CaseManagement\Models\ServiceRequestForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestForm;
 
 class GenerateSubmissibleEmbedCode
 {

@@ -39,9 +39,9 @@ namespace AdvisingApp\CaseManagement\Filament\Resources;
 use Filament\Resources\Resource;
 use AdvisingApp\CaseManagement\Models\ServiceRequestForm;
 use App\Filament\Clusters\ServiceManagementAdministration;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestFormResource\Pages\EditServiceRequestForm;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestFormResource\Pages\ListServiceRequestForms;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestFormResource\Pages\CreateServiceRequestForm;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages\EditCaseForm;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages\ListCaseForms;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages\CreateCaseForm;
 
 class ServiceRequestFormResource extends Resource
 {
@@ -56,9 +56,9 @@ class ServiceRequestFormResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListServiceRequestForms::route('/'),
-            'create' => CreateServiceRequestForm::route('/create'),
-            'edit' => EditServiceRequestForm::route('/{record}/edit'),
+            'index' => ListCaseForms::route('/'),
+            'create' => CreateCaseForm::route('/create'),
+            'edit' => EditCaseForm::route('/{record}/edit'),
         ];
     }
 }

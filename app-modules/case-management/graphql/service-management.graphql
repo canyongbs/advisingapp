@@ -31,7 +31,7 @@ type ServiceRequestAssignment
     #    role: ServiceRequestAssignmentRole @belongsTo
 
     #    "The status of the assignment."
-    #    status: ServiceRequestAssignmentStatus @belongsTo
+    #    status: CaseAssignmentStatus @belongsTo
 
     "The created datetime of the assignment."
     created_at: DateTime

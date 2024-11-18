@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "006d9a55c75a7f08e13b8ede0417e89b",
+    "content-hash": "fb6be3466be2d0b69410340053c4807f",
     "packages": [
         {
             "name": "amphp/amp",
@@ -1813,6 +1813,41 @@
             }
         },
         {
+            "name": "canyon-gbs/advising-app-case-management",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/case-management",
+                "reference": "32241d2695126f5fffc8ea0da019fc9c4e66fdd6"
+            },
+            "require": {
+                "filament/filament": "^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\CaseManagement\\Providers\\ServiceManagementServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\CaseManagement\\": "src/",
+                    "AdvisingApp\\CaseManagement\\Tests\\": "tests/",
+                    "AdvisingApp\\CaseManagement\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\CaseManagement\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "canyon-gbs/advising-app-consent",
             "version": "1.0",
             "dist": {
@@ -2403,41 +2438,6 @@
                     "AdvisingApp\\ResourceHub\\Tests\\": "tests/",
                     "AdvisingApp\\ResourceHub\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\ResourceHub\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "canyon-gbs/advising-app-service-management",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/service-management",
-                "reference": "a1161f8e2f12c52ce999f4c31c71730a924471ce"
-            },
-            "require": {
-                "filament/filament": "^3.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\ServiceManagement\\Providers\\ServiceManagementServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\ServiceManagement\\": "src/",
-                    "AdvisingApp\\ServiceManagement\\Tests\\": "tests/",
-                    "AdvisingApp\\ServiceManagement\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\ServiceManagement\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

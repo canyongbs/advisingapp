@@ -37,16 +37,16 @@
 namespace AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestUpdateResource\Components;
 
 use Filament\Actions\ViewAction;
-use AdvisingApp\CaseManagement\Filament\Concerns\ServiceRequestAssignmentInfolist;
+use AdvisingApp\CaseManagement\Filament\Concerns\CaseAssignmentInfolist;
 
 class ServiceRequestAssignmentViewAction extends ViewAction
 {
-    use ServiceRequestAssignmentInfolist;
+    use CaseAssignmentInfolist;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->infolist($this->serviceRequestAssignmentInfolist());
+        $this->infolist($this->caseAssignmentInfolist());
     }
 }

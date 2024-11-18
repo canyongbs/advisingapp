@@ -47,8 +47,8 @@ use Filament\Forms\Components\Textarea;
 use App\Filament\Tables\Columns\IdColumn;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\CaseManagement\Models\ServiceRequest;
+use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
-use AdvisingApp\CaseManagement\Enums\ServiceRequestUpdateDirection;
 use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestUpdateResource\Pages\EditServiceRequestUpdate;
 use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestUpdateResource\Pages\ViewServiceRequestUpdate;
 use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestUpdateResource\Pages\ListServiceRequestUpdates;
@@ -92,11 +92,11 @@ class ServiceRequestUpdateResource extends Resource
                     ->required()
                     ->string(),
                 Select::make('direction')
-                    ->options(ServiceRequestUpdateDirection::class)
+                    ->options(CaseUpdateDirection::class)
                     ->label('Direction')
                     ->required()
-                    ->enum(ServiceRequestUpdateDirection::class)
-                    ->default(ServiceRequestUpdateDirection::default()),
+                    ->enum(CaseUpdateDirection::class)
+                    ->default(CaseUpdateDirection::default()),
                 Toggle::make('internal')
                     ->label('Internal')
                     ->rule(['boolean']),
@@ -153,15 +153,15 @@ class ServiceRequestUpdateResource extends Resource
                     ->label('Internal'),
                 Tables\Columns\TextColumn::make('direction')
                     ->label('Direction')
-                    ->formatStateUsing(fn (ServiceRequestUpdateDirection $state): string => $state->getLabel())
-                    ->icon(fn (ServiceRequestUpdateDirection $state): string => $state->getIcon()),
+                    ->formatStateUsing(fn (CaseUpdateDirection $state): string => $state->getLabel())
+                    ->icon(fn (CaseUpdateDirection $state): string => $state->getIcon()),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('internal')
                     ->label('Internal'),
                 Tables\Filters\SelectFilter::make('direction')
                     ->label('Direction')
-                    ->options(ServiceRequestUpdateDirection::class),
+                    ->options(CaseUpdateDirection::class),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

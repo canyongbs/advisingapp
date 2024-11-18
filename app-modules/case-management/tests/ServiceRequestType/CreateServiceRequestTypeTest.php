@@ -52,10 +52,10 @@ use function Pest\Laravel\assertDatabaseHas;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseManagement\Models\ServiceRequestType;
 use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestTypeResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\CreateCaseType;
 use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateServiceRequestTypeRequestFactory;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestTypeResource\Pages\CreateServiceRequestType;
 
-test('A successful action on the CreateServiceRequestType page', function () {
+test('A successful action on the CreateCaseType page', function () {
     asSuperAdmin()
         ->get(
             ServiceRequestTypeResource::getUrl('create')
@@ -64,7 +64,7 @@ test('A successful action on the CreateServiceRequestType page', function () {
 
     $editRequest = CreateServiceRequestTypeRequestFactory::new()->create();
 
-    livewire(CreateServiceRequestType::class)
+    livewire(CreateCaseType::class)
         ->fillForm($editRequest)
         ->call('create')
         ->assertHasNoFormErrors();
@@ -74,10 +74,10 @@ test('A successful action on the CreateServiceRequestType page', function () {
     assertDatabaseHas(ServiceRequestType::class, $editRequest);
 });
 
-test('CreateServiceRequestType requires valid data', function ($data, $errors) {
+test('CreateCaseType requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    livewire(CreateServiceRequestType::class)
+    livewire(CreateCaseType::class)
         ->fillForm(CreateServiceRequestTypeRequestFactory::new($data)->create())
         ->call('create')
         ->assertHasFormErrors($errors);
@@ -92,7 +92,7 @@ test('CreateServiceRequestType requires valid data', function ($data, $errors) {
 
 // Permission Tests
 
-test('CreateServiceRequestType is gated with proper access control', function () {
+test('CreateCaseType is gated with proper access control', function () {
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
     actingAs($user)
@@ -100,7 +100,7 @@ test('CreateServiceRequestType is gated with proper access control', function ()
             ServiceRequestTypeResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateServiceRequestType::class)
+    livewire(CreateCaseType::class)
         ->assertForbidden();
 
     $user->givePermissionTo('service_request_type.view-any');
@@ -113,7 +113,7 @@ test('CreateServiceRequestType is gated with proper access control', function ()
 
     $request = collect(CreateServiceRequestTypeRequestFactory::new()->create());
 
-    livewire(CreateServiceRequestType::class)
+    livewire(CreateCaseType::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
@@ -123,7 +123,7 @@ test('CreateServiceRequestType is gated with proper access control', function ()
     assertDatabaseHas(ServiceRequestType::class, $request->toArray());
 });
 
-test('CreateServiceRequestType is gated with proper feature access control', function () {
+test('CreateCaseType is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->serviceManagement = false;
@@ -140,7 +140,7 @@ test('CreateServiceRequestType is gated with proper feature access control', fun
             ServiceRequestTypeResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateServiceRequestType::class)
+    livewire(CreateCaseType::class)
         ->assertForbidden();
 
     $settings->data->addons->serviceManagement = true;
@@ -154,7 +154,7 @@ test('CreateServiceRequestType is gated with proper feature access control', fun
 
     $request = collect(CreateServiceRequestTypeRequestFactory::new()->create());
 
-    livewire(CreateServiceRequestType::class)
+    livewire(CreateCaseType::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();

@@ -37,12 +37,12 @@
 namespace AdvisingApp\CaseManagement\Observers;
 
 use AdvisingApp\CaseManagement\Models\ServiceRequestFormSubmission;
-use AdvisingApp\CaseManagement\Actions\ServiceRequest\CreateServiceRequestFromSubmission;
+use AdvisingApp\CaseManagement\Actions\Case\CreateCaseFromSubmission;
 
 class ServiceRequestFormSubmissionObserver
 {
     public function created(ServiceRequestFormSubmission $serviceRequestFormSubmission): void
     {
-        resolve(CreateServiceRequestFromSubmission::class)->handle($serviceRequestFormSubmission);
+        resolve(CreateCaseFromSubmission::class)->handle($serviceRequestFormSubmission);
     }
 }

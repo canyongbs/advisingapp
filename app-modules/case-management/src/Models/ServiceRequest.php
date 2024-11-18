@@ -58,21 +58,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 use AdvisingApp\CaseManagement\Enums\SlaComplianceStatus;
+use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use Illuminate\Database\UniqueConstraintViolationException;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\StudentDataModel\Models\Contracts\Identifiable;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\CaseManagement\Enums\ServiceRequestUpdateDirection;
-use AdvisingApp\CaseManagement\Enums\ServiceRequestAssignmentStatus;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
-use AdvisingApp\CaseManagement\Enums\SystemServiceRequestClassification;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
-use AdvisingApp\CaseManagement\Exceptions\ServiceRequestNumberExceededReRollsException;
+use AdvisingApp\CaseManagement\Exceptions\CaseNumberExceededReRollsException;
 use AdvisingApp\CaseManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
 
 /**
@@ -126,7 +126,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
                 DB::rollBack();
 
                 if ($attempts >= 3) {
-                    throw new ServiceRequestNumberExceededReRollsException(
+                    throw new CaseNumberExceededReRollsException(
                         previous: $e,
                     );
                 }
@@ -196,7 +196,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     {
         return $this->hasOne(ServiceRequestAssignment::class)
             ->latest('assigned_at')
-            ->where('status', ServiceRequestAssignmentStatus::Active);
+            ->where('status', CaseAssignmentStatus::Active);
     }
 
     public function initialAssignment(): HasOne
@@ -219,7 +219,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     {
         $query->whereIn(
             'status_id',
-            ServiceRequestStatus::where('classification', SystemServiceRequestClassification::Open)->pluck('id')
+            ServiceRequestStatus::where('classification', SystemCaseClassification::Open)->pluck('id')
         );
     }
 
@@ -248,7 +248,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
                                 'user_id' => $action->data['assigned_to_id'],
                                 'assigned_by_id' => $action->campaign->user->id,
                                 'assigned_at' => now(),
-                                'status' => ServiceRequestAssignmentStatus::Active,
+                                'status' => CaseAssignmentStatus::Active,
                             ]);
                         }
                     });
@@ -269,7 +269,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
                 'created_at' => 'max',
             ], function (Builder $query) {
                 $query
-                    ->where('direction', ServiceRequestUpdateDirection::Inbound)
+                    ->where('direction', CaseUpdateDirection::Inbound)
                     ->where('internal', false);
             });
     }
@@ -281,7 +281,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
                 'created_at' => 'max',
             ], function (Builder $query) {
                 $query
-                    ->where('direction', ServiceRequestUpdateDirection::Outbound)
+                    ->where('direction', CaseUpdateDirection::Outbound)
                     ->where('internal', false);
             });
     }
@@ -374,7 +374,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
 
     public function isResolved(): bool
     {
-        return $this->status->classification === SystemServiceRequestClassification::Closed;
+        return $this->status->classification === SystemCaseClassification::Closed;
     }
 
     protected static function booted(): void

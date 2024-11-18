@@ -37,11 +37,11 @@
 namespace AdvisingApp\CaseManagement\Observers;
 
 use App\Models\User;
+use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\CaseManagement\Models\ServiceRequestAssignment;
-use AdvisingApp\CaseManagement\Enums\ServiceRequestAssignmentStatus;
 
 class ServiceRequestAssignmentObserver
 {
@@ -54,7 +54,7 @@ class ServiceRequestAssignmentObserver
         }
 
         $serviceRequestAssignment->serviceRequest->assignments()->where('id', '!=', $serviceRequestAssignment->id)->update([
-            'status' => ServiceRequestAssignmentStatus::Inactive,
+            'status' => CaseAssignmentStatus::Inactive,
         ]);
 
         TimelineableRecordCreated::dispatch($serviceRequestAssignment->serviceRequest, $serviceRequestAssignment);

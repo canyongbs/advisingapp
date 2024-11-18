@@ -52,10 +52,10 @@ use function PHPUnit\Framework\assertEquals;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestStatusResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\EditCaseStatus;
 use AdvisingApp\CaseManagement\Tests\RequestFactories\EditServiceRequestStatusRequestFactory;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestStatusResource\Pages\EditServiceRequestStatus;
 
-test('A successful action on the EditServiceRequestStatus page', function () {
+test('A successful action on the EditCaseStatus page', function () {
     $serviceRequestStatus = ServiceRequestStatus::factory()->create();
 
     asSuperAdmin()
@@ -68,7 +68,7 @@ test('A successful action on the EditServiceRequestStatus page', function () {
 
     $editRequest = EditServiceRequestStatusRequestFactory::new()->create();
 
-    livewire(EditServiceRequestStatus::class, [
+    livewire(EditCaseStatus::class, [
         'record' => $serviceRequestStatus->getRouteKey(),
     ])
         ->assertFormSet([
@@ -85,12 +85,12 @@ test('A successful action on the EditServiceRequestStatus page', function () {
     assertEquals($editRequest['color'], $serviceRequestStatus->fresh()->color);
 });
 
-test('EditServiceRequestStatus requires valid data', function ($data, $errors) {
+test('EditCaseStatus requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
     $serviceRequestStatus = ServiceRequestStatus::factory()->create();
 
-    livewire(EditServiceRequestStatus::class, [
+    livewire(EditCaseStatus::class, [
         'record' => $serviceRequestStatus->getRouteKey(),
     ])
         ->assertFormSet([
@@ -114,7 +114,7 @@ test('EditServiceRequestStatus requires valid data', function ($data, $errors) {
 
 // Permission Tests
 
-test('EditServiceRequestStatus is gated with proper access control', function () {
+test('EditCaseStatus is gated with proper access control', function () {
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
     $serviceRequestStatus = ServiceRequestStatus::factory()->create();
@@ -126,7 +126,7 @@ test('EditServiceRequestStatus is gated with proper access control', function ()
             ])
         )->assertForbidden();
 
-    livewire(EditServiceRequestStatus::class, [
+    livewire(EditCaseStatus::class, [
         'record' => $serviceRequestStatus->getRouteKey(),
     ])
         ->assertForbidden();
@@ -143,7 +143,7 @@ test('EditServiceRequestStatus is gated with proper access control', function ()
 
     $request = collect(EditServiceRequestStatusRequestFactory::new()->create());
 
-    livewire(EditServiceRequestStatus::class, [
+    livewire(EditCaseStatus::class, [
         'record' => $serviceRequestStatus->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -153,7 +153,7 @@ test('EditServiceRequestStatus is gated with proper access control', function ()
     assertEquals($request['name'], $serviceRequestStatus->fresh()->name);
 });
 
-test('EditServiceRequestStatus is gated with proper feature access control', function () {
+test('EditCaseStatus is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->serviceManagement = false;
@@ -174,7 +174,7 @@ test('EditServiceRequestStatus is gated with proper feature access control', fun
             ])
         )->assertForbidden();
 
-    livewire(EditServiceRequestStatus::class, [
+    livewire(EditCaseStatus::class, [
         'record' => $serviceRequestStatus->getRouteKey(),
     ])
         ->assertForbidden();
@@ -192,7 +192,7 @@ test('EditServiceRequestStatus is gated with proper feature access control', fun
 
     $request = collect(EditServiceRequestStatusRequestFactory::new()->create());
 
-    livewire(EditServiceRequestStatus::class, [
+    livewire(EditCaseStatus::class, [
         'record' => $serviceRequestStatus->getRouteKey(),
     ])
         ->fillForm($request->toArray())

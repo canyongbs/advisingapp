@@ -37,16 +37,16 @@
 namespace AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestUpdateResource\Components;
 
 use Filament\Actions\ViewAction;
-use AdvisingApp\CaseManagement\Filament\Concerns\ServiceRequestHistoryInfolist;
+use AdvisingApp\CaseManagement\Filament\Concerns\CaseHistoryInfolist;
 
 class ServiceRequestHistoryViewAction extends ViewAction
 {
-    use ServiceRequestHistoryInfolist;
+    use CaseHistoryInfolist;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->infolist($this->serviceRequestHistoryInfolist());
+        $this->infolist($this->caseHistoryInfolist());
     }
 }

@@ -36,9 +36,9 @@
     use App\Models\User;
     use AdvisingApp\Division\Models\Division;
     use AdvisingApp\Campaign\Settings\CampaignSettings;
-    use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
-    use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
-    use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
+    use AdvisingApp\CaseManagement\Models\ServiceRequestType;
+    use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
+    use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
 @endphp
 
 <x-filament::fieldset>

@@ -38,10 +38,10 @@ namespace AdvisingApp\CaseManagement\Observers;
 
 use App\Models\User;
 use AdvisingApp\CaseManagement\Models\ServiceRequest;
+use AdvisingApp\CaseManagement\Actions\CreateCaseHistory;
+use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
-use AdvisingApp\CaseManagement\Actions\CreateServiceRequestHistory;
-use AdvisingApp\CaseManagement\Enums\SystemServiceRequestClassification;
-use AdvisingApp\CaseManagement\Exceptions\ServiceRequestNumberUpdateAttemptException;
+use AdvisingApp\CaseManagement\Exceptions\CaseNumberUpdateAttemptException;
 use AdvisingApp\CaseManagement\Notifications\SendEducatableServiceRequestClosedNotification;
 use AdvisingApp\CaseManagement\Notifications\SendEducatableServiceRequestOpenedNotification;
 use AdvisingApp\CaseManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
@@ -61,14 +61,14 @@ class ServiceRequestObserver
             TriggeredAutoSubscription::dispatch($user, $serviceRequest);
         }
 
-        if ($serviceRequest->status->classification === SystemServiceRequestClassification::Open) {
+        if ($serviceRequest->status->classification === SystemCaseClassification::Open) {
             $serviceRequest->respondent->notify(new SendEducatableServiceRequestOpenedNotification($serviceRequest));
         }
     }
 
     public function updating(ServiceRequest $serviceRequest): void
     {
-        throw_if($serviceRequest->isDirty('service_request_number'), new ServiceRequestNumberUpdateAttemptException());
+        throw_if($serviceRequest->isDirty('service_request_number'), new CaseNumberUpdateAttemptException());
     }
 
     public function saving(ServiceRequest $serviceRequest): void
@@ -80,11 +80,11 @@ class ServiceRequestObserver
 
     public function saved(ServiceRequest $serviceRequest): void
     {
-        CreateServiceRequestHistory::dispatch($serviceRequest, $serviceRequest->getChanges(), $serviceRequest->getOriginal());
+        CreateCaseHistory::dispatch($serviceRequest, $serviceRequest->getChanges(), $serviceRequest->getOriginal());
 
         if (
             $serviceRequest->wasChanged('status_id')
-            && $serviceRequest->status->classification === SystemServiceRequestClassification::Closed
+            && $serviceRequest->status->classification === SystemCaseClassification::Closed
         ) {
             $serviceRequest->respondent->notify(new SendEducatableServiceRequestClosedNotification($serviceRequest));
         }

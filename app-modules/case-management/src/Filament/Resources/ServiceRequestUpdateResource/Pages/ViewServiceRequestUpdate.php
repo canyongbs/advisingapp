@@ -41,15 +41,15 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
-use AdvisingApp\CaseManagement\Enums\ServiceRequestUpdateDirection;
+use AdvisingApp\CaseManagement\Filament\Concerns\CaseUpdateBreadcrumbs;
 use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource;
 use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestUpdateResource;
-use AdvisingApp\CaseManagement\Filament\Concerns\ServiceRequestUpdateBreadcrumbs;
 
 class ViewServiceRequestUpdate extends ViewRecord
 {
-    use ServiceRequestUpdateBreadcrumbs;
+    use CaseUpdateBreadcrumbs;
 
     protected static string $resource = ServiceRequestUpdateResource::class;
 
@@ -70,8 +70,8 @@ class ViewServiceRequestUpdate extends ViewRecord
                         IconEntry::make('internal')
                             ->boolean(),
                         TextEntry::make('direction')
-                            ->icon(fn (ServiceRequestUpdateDirection $state): string => $state->getIcon())
-                            ->formatStateUsing(fn (ServiceRequestUpdateDirection $state): string => $state->getLabel()),
+                            ->icon(fn (CaseUpdateDirection $state): string => $state->getIcon())
+                            ->formatStateUsing(fn (CaseUpdateDirection $state): string => $state->getLabel()),
                         TextEntry::make('update')
                             ->columnSpanFull(),
                     ])

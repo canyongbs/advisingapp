@@ -47,9 +47,9 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ViewServiceRequest;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\CreateServiceRequest;
+use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ViewCase;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CreateCase;
 
 class ServiceRequestsRelationManager extends RelationManager
 {
@@ -57,12 +57,12 @@ class ServiceRequestsRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        return (resolve(CreateServiceRequest::class))->form($form);
+        return (resolve(CreateCase::class))->form($form);
     }
 
     public function infolist(Infolist $infolist): Infolist
     {
-        return (resolve(ViewServiceRequest::class))->infolist($infolist);
+        return (resolve(ViewCase::class))->infolist($infolist);
     }
 
     public function table(Table $table): Table

@@ -46,7 +46,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource;
 
-test('The correct details are displayed on the ViewServiceRequest page', function () {
+test('The correct details are displayed on the ViewCase page', function () {
     $serviceRequest = ServiceRequest::factory()->create();
 
     asSuperAdmin()
@@ -78,7 +78,7 @@ test('The correct details are displayed on the ViewServiceRequest page', functio
 
 // Permission Tests
 
-test('ViewServiceRequest is gated with proper access control', function () {
+test('ViewCase is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $serviceRequest = ServiceRequest::factory()->create();
@@ -101,7 +101,7 @@ test('ViewServiceRequest is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-test('ViewServiceRequest is gated with proper feature access control', function () {
+test('ViewCase is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->serviceManagement = false;
