@@ -45,7 +45,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Alert\Models\AlertStatus as ModelsAlertStatus;
+use AdvisingApp\Alert\Models\AlertStatus;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
