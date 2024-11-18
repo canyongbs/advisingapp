@@ -54,7 +54,7 @@
     </x-timeline::timeline.time>
 
     <x-timeline::timeline.history.content>
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['status']" />
+        {{-- <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['status']" /> --}}
         <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['severity']" />
         <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['description']" />
         <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['suggested_intervention']" />

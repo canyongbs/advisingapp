@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Alert\Enums;
 
+use AdvisingApp\Alert\Models\AlertStatus;
 use Filament\Support\Contracts\HasLabel;
 
 enum SystemAlertStatusClassification: string implements HasLabel
@@ -49,5 +50,11 @@ enum SystemAlertStatusClassification: string implements HasLabel
   public function getLabel(): ?string
   {
     return $this->name;
+  }
+
+  public static function default(): String
+  {
+    $alertStatus = AlertStatus::where('is_default', true)->first();
+    return $alertStatus->getKey();
   }
 }

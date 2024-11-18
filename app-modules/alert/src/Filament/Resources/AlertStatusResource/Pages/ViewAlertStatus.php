@@ -3,8 +3,12 @@
 namespace AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages;
 
 use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
+use AdvisingApp\Alert\Models\AlertStatus;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Components\Section;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
@@ -13,17 +17,17 @@ class ViewAlertStatus extends ViewRecord
 {
     protected static string $resource = AlertStatusResource::class;
 
-    public function infolist(Infolist $infolist): Infolist
+    public function form(Form $form): Form
     {
-        return $infolist
+        return $form
             ->schema([
                 Section::make()
                     ->schema([
-                        TextEntry::make('name')
+                        TextInput::make('name')
                             ->label('Name'),
-                        TextEntry::make('classification')
+                        TextInput::make('classification')
                             ->label('Classification'),
-                        TextEntry::make('sort')
+                        TextInput::make('sort')
                             ->numeric(),
                     ])
                     ->columns(),

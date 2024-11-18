@@ -24,6 +24,6 @@ class AlertStatus extends BaseModel
 
     public function alerts(): HasMany
     {
-        return $this->hasMany(Alert::class, 'status');
+        return $this->hasMany(Alert::class, 'status_id');
     }
 }

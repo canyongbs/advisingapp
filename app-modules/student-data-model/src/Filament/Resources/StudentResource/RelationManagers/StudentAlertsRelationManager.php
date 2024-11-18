@@ -44,12 +44,13 @@ use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use AdvisingApp\Alert\Enums\AlertStatus;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
 use AdvisingApp\Alert\Enums\AlertSeverity;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\AlertStatus;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -66,7 +67,7 @@ class StudentAlertsRelationManager extends RelationManager
                 TextEntry::make('description'),
                 TextEntry::make('severity'),
                 TextEntry::make('suggested_intervention'),
-                TextEntry::make('status'),
+                TextEntry::make('status.name'),
                 TextEntry::make('createdBy.name')->label('Created By')->default('N/A'),
                 TextEntry::make('created_at')->label('Created Date'),
             ]);
@@ -88,12 +89,15 @@ class StudentAlertsRelationManager extends RelationManager
                 Textarea::make('suggested_intervention')
                     ->required()
                     ->string(),
-                Select::make('status')
-                    ->options(AlertStatus::class)
+                Select::make('status_id')
+                    ->label('status')
+                    ->options(function () {
+                        return AlertStatus::orderBy('sort')
+                            ->pluck('name', 'id');
+                    })
                     ->selectablePlaceholder(false)
-                    ->default(AlertStatus::default())
+                    ->default(SystemAlertStatusClassification::default())
                     ->required()
-                    ->enum(AlertStatus::class),
             ]);
     }
 
@@ -110,7 +114,7 @@ class StudentAlertsRelationManager extends RelationManager
                     ->toggleable(
                         isToggledHiddenByDefault: true,
                     ),
-                TextColumn::make('status')
+                TextColumn::make('status.name')
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->sortable()
@@ -121,8 +125,8 @@ class StudentAlertsRelationManager extends RelationManager
             ->filters([
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
-                SelectFilter::make('status')
-                    ->options(AlertStatus::class),
+                SelectFilter::make('status_id')
+                    ->relationship('status', 'name'),
             ])
             ->headerActions([
                 CreateAction::make()
