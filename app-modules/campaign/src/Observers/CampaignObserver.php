@@ -44,6 +44,8 @@ class CampaignObserver
     {
         if (is_null($campaign->user_id) && ! is_null(auth()->user())) {
             $campaign->user_id = auth()->user()->id;
+            $campaign->created_by_type = 'user';
+            $campaign->created_by_id = auth()->user()->id;
         }
     }
 }

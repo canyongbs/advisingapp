@@ -43,6 +43,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
@@ -89,6 +90,11 @@ class Campaign extends BaseModel implements Auditable
     public function hasBeenExecuted(): bool
     {
         return $this->actions->contains(fn (CampaignAction $action) => $action->hasBeenExecuted());
+    }
+
+    public function createdBy(): MorphTo
+    {
+        return $this->morphTo();
     }
 
     protected static function booted(): void
