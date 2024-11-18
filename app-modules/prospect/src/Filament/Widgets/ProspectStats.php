@@ -48,37 +48,37 @@ use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 
 class ProspectStats extends StatsOverviewWidget
 {
-    protected function getStats(): array
-    {
-        /** @var User $user */
-        $user = auth()->user();
+  protected function getStats(): array
+  {
+    /** @var User $user */
+    $user = auth()->user();
 
-        return [
-            Stat::make('Total Prospects', Number::abbreviate(
-                Cache::tags(['prospects'])
-                    ->remember('prospects-count', now()->addHour(), function (): int {
-                        return Prospect::count();
-                    }),
-                maxPrecision: 2,
-            )),
-            Stat::make('My Subscriptions', Cache::tags(['prospects', "user-{$user->getKey()}-prospect-subscriptions"])
-                ->remember("user-{$user->getKey()}-prospect-subscriptions-count", now()->addHour(), function () use ($user): int {
-                    return $user->prospectSubscriptions()->count();
-                })),
-            Stat::make('My Alerts', Cache::tags(['prospects', "user-{$user->getKey()}-prospect-alerts"])
-                ->remember("user-{$user->getKey()}-prospect-alerts-count", now()->addHour(), function () use ($user): int {
-                    if (AlertStatusId::active()) {
-                        return $user->prospectAlerts()->whereHas('status', function ($query) {
-                            $query->where('classification', SystemAlertStatusClassification::Active); // Replace `status_column` with your actual column name
-                        })->count();
-                    } else {
-                        return $user->prospectAlerts()->status(SystemAlertStatusClassification::Active)->count();
-                    }
-                })),
-            Stat::make('My Population Segments', Cache::tags(["user-{$user->getKey()}-prospect-segments"])
-                ->remember("user-{$user->getKey()}-prospect-segments-count", now()->addHour(), function () use ($user): int {
-                    return $user->segments()->model(SegmentModel::Prospect)->count();
-                })),
-        ];
-    }
+    return [
+      Stat::make('Total Prospects', Number::abbreviate(
+        Cache::tags(['prospects'])
+          ->remember('prospects-count', now()->addHour(), function (): int {
+            return Prospect::count();
+          }),
+        maxPrecision: 2,
+      )),
+      Stat::make('My Subscriptions', Cache::tags(['prospects', "user-{$user->getKey()}-prospect-subscriptions"])
+        ->remember("user-{$user->getKey()}-prospect-subscriptions-count", now()->addHour(), function () use ($user): int {
+          return $user->prospectSubscriptions()->count();
+        })),
+      Stat::make('My Alerts', Cache::tags(['prospects', "user-{$user->getKey()}-prospect-alerts"])
+        ->remember("user-{$user->getKey()}-prospect-alerts-count", now()->addHour(), function () use ($user): int {
+          if (AlertStatusId::active()) {
+            return $user->prospectAlerts()->whereHas('status', function ($query) {
+              $query->where('classification', SystemAlertStatusClassification::Active); // Replace `status_column` with your actual column name
+            })->count();
+          } else {
+            return $user->prospectAlerts()->status(SystemAlertStatusClassification::Active)->count();
+          }
+        })),
+      Stat::make('My Population Segments', Cache::tags(["user-{$user->getKey()}-prospect-segments"])
+        ->remember("user-{$user->getKey()}-prospect-segments-count", now()->addHour(), function () use ($user): int {
+          return $user->segments()->model(SegmentModel::Prospect)->count();
+        })),
+    ];
+  }
 }
