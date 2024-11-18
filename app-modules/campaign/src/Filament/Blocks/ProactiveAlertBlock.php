@@ -44,6 +44,7 @@ use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Models\AlertStatus;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProactiveAlertBlock extends CampaignActionBlock
 {
@@ -73,10 +74,7 @@ class ProactiveAlertBlock extends CampaignActionBlock
         ->string(),
       Select::make($fieldPrefix . 'status_id')
         ->label('Status')
-        ->options(function () {
-          return AlertStatus::orderBy('sort')
-            ->pluck('name', 'id');
-        })
+        ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('sort'))
         ->selectablePlaceholder(false)
         ->default(SystemAlertStatusClassification::default())
         ->required(),

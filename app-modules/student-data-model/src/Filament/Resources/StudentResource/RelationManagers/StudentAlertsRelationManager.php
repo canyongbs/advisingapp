@@ -54,6 +54,7 @@ use AdvisingApp\Alert\Models\AlertStatus;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class StudentAlertsRelationManager extends RelationManager
@@ -91,10 +92,7 @@ class StudentAlertsRelationManager extends RelationManager
                     ->string(),
                 Select::make('status_id')
                     ->label('status')
-                    ->options(function () {
-                        return AlertStatus::orderBy('sort')
-                            ->pluck('name', 'id');
-                    })
+                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('sort'))
                     ->selectablePlaceholder(false)
                     ->default(SystemAlertStatusClassification::default())
                     ->required()
