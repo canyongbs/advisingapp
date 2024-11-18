@@ -86,7 +86,7 @@ class ListAlerts extends ListRecords
                 TextEntry::make('description'),
                 TextEntry::make('severity'),
                 TextEntry::make('suggested_intervention'),
-                TextEntry::make('status_id'),
+                TextEntry::make('status.name'),
             ]);
     }
 
@@ -111,7 +111,7 @@ class ListAlerts extends ListRecords
                     ->limit(),
                 TextColumn::make('severity')
                     ->sortable(),
-                TextColumn::make('status_id')
+                TextColumn::make('status.name')
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->sortable(),

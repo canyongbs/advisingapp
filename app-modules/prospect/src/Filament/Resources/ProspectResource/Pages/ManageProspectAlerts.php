@@ -60,6 +60,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use Illuminate\Database\Eloquent\Builder;
 
 class ManageProspectAlerts extends ManageRelatedRecords
 {
@@ -129,10 +130,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
                     ->string(),
                 Select::make('status_id')
                     ->label('Status')
-                    ->options(function () {
-                        return AlertStatus::orderBy('sort')
-                            ->pluck('name', 'id');
-                    })
+                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('sort'))
                     ->default(SystemAlertStatusClassification::default())
                     ->selectablePlaceholder(false)
                     ->required()

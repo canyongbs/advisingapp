@@ -54,17 +54,12 @@ use AdvisingApp\Alert\Models\AlertStatus;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Resources\RelationManagers\RelationManager;
 
-trait CanManageEducatableAlerts
+class StudentAlertsRelationManager extends RelationManager
 {
-    public static function canAccess(array $parameters = []): bool
-    {
-        if (! static::getResource()::canView($parameters['record'])) {
-            return false;
-        }
-
-        return parent::canAccess($parameters);
-    }
+    protected static string $relationship = 'alerts';
 
     public function infolist(Infolist $infolist): Infolist
     {
@@ -97,10 +92,7 @@ trait CanManageEducatableAlerts
                     ->string(),
                 Select::make('status_id')
                     ->label('status')
-                    ->options(function () {
-                        return AlertStatus::orderBy('sort')
-                            ->pluck('name', 'id');
-                    })
+                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('sort'))
                     ->selectablePlaceholder(false)
                     ->default(SystemAlertStatusClassification::default())
                     ->required()
