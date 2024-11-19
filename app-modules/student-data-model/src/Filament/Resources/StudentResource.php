@@ -46,48 +46,48 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListSt
 
 class StudentResource extends Resource
 {
-  use HasGlobalSearchResultScoring;
+    use HasGlobalSearchResultScoring;
 
-  protected static ?string $model = Student::class;
+    protected static ?string $model = Student::class;
 
-  protected static ?string $navigationIcon = 'heroicon-m-users';
+    protected static ?string $navigationIcon = 'heroicon-m-users';
 
-  protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 20;
 
-  protected static ?string $navigationGroup = 'Retention CRM';
+    protected static ?string $navigationGroup = 'Retention CRM';
 
-  protected static ?string $recordTitleAttribute = 'full_name';
+    protected static ?string $recordTitleAttribute = 'full_name';
 
-  public static function modifyGlobalSearchQuery(Builder $query, string $search): void
-  {
-    static::scoreGlobalSearchResults($query, $search, [
-      'full_name' => 100,
-      'email' => 75,
-      'email_2' => 75,
-    ]);
-  }
+    public static function modifyGlobalSearchQuery(Builder $query, string $search): void
+    {
+        static::scoreGlobalSearchResults($query, $search, [
+            'full_name' => 100,
+            'email' => 75,
+            'email_2' => 75,
+        ]);
+    }
 
-  public static function getGloballySearchableAttributes(): array
-  {
-    return ['sisid', 'otherid', 'full_name', 'email', 'email_2', 'mobile', 'phone'];
-  }
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['sisid', 'otherid', 'full_name', 'email', 'email_2', 'mobile', 'phone'];
+    }
 
-  public static function getGlobalSearchResultDetails(Model $record): array
-  {
-    return array_filter([
-      'Student ID' => $record->sisid,
-      'Other ID' => $record->otherid,
-      'Email Address' => collect([$record->email, $record->email_id])->filter()->implode(', '),
-      'Mobile' => $record->mobile,
-      'Phone' => $record->phone,
-    ], fn(mixed $value): bool => filled($value));
-  }
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return array_filter([
+            'Student ID' => $record->sisid,
+            'Other ID' => $record->otherid,
+            'Email Address' => collect([$record->email, $record->email_id])->filter()->implode(', '),
+            'Mobile' => $record->mobile,
+            'Phone' => $record->phone,
+        ], fn (mixed $value): bool => filled($value));
+    }
 
-  public static function getPages(): array
-  {
-    return [
-      'index' => ListStudents::route('/'),
-      'view' => ViewStudent::route('/{record}'),
-    ];
-  }
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListStudents::route('/'),
+            'view' => ViewStudent::route('/{record}'),
+        ];
+    }
 }
