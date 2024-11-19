@@ -79,7 +79,7 @@ class CaseFormSubmissionRelationManager extends RelationManager
                             ])
                             ->columns(2),
                     ] : null)
-                    ->modalContent(fn (ServiceRequestFormSubmission $record) => view('service-management::submission', ['submission' => $record]))
+                    ->modalContent(fn (ServiceRequestFormSubmission $record) => view('case-management::submission', ['submission' => $record]))
                     ->visible(fn (ServiceRequestFormSubmission $record) => $record->submitted_at),
             ])
             ->paginated(false);

@@ -52,11 +52,11 @@ use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\CaseManagement\Models\ServiceRequestType;
 use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
 use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 
 class CreateCase extends CreateRecord
 {
-    protected static string $resource = ServiceRequestResource::class;
+    protected static string $resource = CaseResource::class;
 
     public function form(Form $form): Form
     {

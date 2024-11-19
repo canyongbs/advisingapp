@@ -19,7 +19,7 @@
 	"extra": {
 		"laravel": {
 			"providers": [
-				"AdvisingApp\\CaseManagement\\Providers\\ServiceManagementServiceProvider"
+				"AdvisingApp\\CaseManagement\\Providers\\CaseManagementServiceProvider"
 			]
 		}
 	},

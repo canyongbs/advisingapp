@@ -182,7 +182,7 @@ class ManagePortalSettings extends SettingsPage
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->columnSpanFull(),
                         Toggle::make('knowledge_management_portal_service_management')
-                            ->label('Service Management')
+                            ->label('Case Management')
                             ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled'))
                             ->disabled(! Gate::check(Feature::ServiceManagement->getGateName()))
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)

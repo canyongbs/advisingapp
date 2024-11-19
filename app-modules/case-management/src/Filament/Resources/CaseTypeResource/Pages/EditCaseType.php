@@ -48,11 +48,11 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\CaseManagement\Models\ServiceRequestType;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestTypeResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 
 class EditCaseType extends EditRecord
 {
-    protected static string $resource = ServiceRequestTypeResource::class;
+    protected static string $resource = CaseTypeResource::class;
 
     public function form(Form $form): Form
     {

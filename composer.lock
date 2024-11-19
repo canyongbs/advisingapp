@@ -1818,7 +1818,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/case-management",
-                "reference": "32241d2695126f5fffc8ea0da019fc9c4e66fdd6"
+                "reference": "8649795f0e1d95f54b21b6eba57b08ff40b7d85c"
             },
             "require": {
                 "filament/filament": "^3.0"
@@ -1827,7 +1827,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "AdvisingApp\\CaseManagement\\Providers\\ServiceManagementServiceProvider"
+                        "AdvisingApp\\CaseManagement\\Providers\\CaseManagementServiceProvider"
                     ]
                 }
             },

@@ -52,11 +52,11 @@ use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\CaseManagement\Models\ServiceRequestType;
 use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
 use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 
 class EditCase extends EditRecord
 {
-    protected static string $resource = ServiceRequestResource::class;
+    protected static string $resource = CaseResource::class;
 
     public function form(Form $form): Form
     {

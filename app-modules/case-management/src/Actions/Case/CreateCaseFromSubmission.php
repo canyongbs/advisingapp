@@ -40,12 +40,12 @@ use AdvisingApp\CaseManagement\Models\ServiceRequestFormSubmission;
 
 class CreateCaseFromSubmission
 {
-    public function handle(ServiceRequestFormSubmission $serviceRequestFormSubmission): void
+    public function handle(ServiceRequestFormSubmission $caseFormSubmission): void
     {
-        $serviceRequestFormSubmission->serviceRequest()->create([
-            'respondent_type' => $serviceRequestFormSubmission->author->getMorphClass(),
-            'respondent_id' => $serviceRequestFormSubmission->author->getKey(),
-            'priority_id' => $serviceRequestFormSubmission->service_request_priority_id,
+        $caseFormSubmission->serviceRequest()->create([
+            'respondent_type' => $caseFormSubmission->author->getMorphClass(),
+            'respondent_id' => $caseFormSubmission->author->getKey(),
+            'priority_id' => $caseFormSubmission->service_request_priority_id,
         ]);
     }
 }

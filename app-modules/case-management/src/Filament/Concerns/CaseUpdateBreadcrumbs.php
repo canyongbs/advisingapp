@@ -37,22 +37,22 @@
 namespace AdvisingApp\CaseManagement\Filament\Concerns;
 
 use Illuminate\Support\Str;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ManageCaseUpdate;
 
 trait CaseUpdateBreadcrumbs
 {
     public function getBreadcrumbs(): array
     {
-        $serviceRequestResource = ServiceRequestResource::class;
-        $manageServiceRequestUpdate = ManageCaseUpdate::class;
+        $caseResource = CaseResource::class;
+        $manageCaseUpdate = ManageCaseUpdate::class;
         $currentResource = static::getResource();
 
         $breadcrumbs = [
             'Case Management',
-            $serviceRequestResource::getUrl() => $serviceRequestResource::getBreadcrumb(),
-            $serviceRequestResource::getUrl('view', ['record' => $this->getRecord()->serviceRequest]) => $this->getRecord()?->serviceRequest?->service_request_number,
-            $manageServiceRequestUpdate::getUrl(['record' => $this->getRecord()->serviceRequest]) => 'Updates',
+            $caseResource::getUrl() => $caseResource::getBreadcrumb(),
+            $caseResource::getUrl('view', ['record' => $this->getRecord()->serviceRequest]) => $this->getRecord()?->serviceRequest?->service_request_number,
+            $manageCaseUpdate::getUrl(['record' => $this->getRecord()->serviceRequest]) => 'Updates',
             $currentResource::getUrl('view', ['record' => $this->getRecord()?->getKey()]) => Str::limit($this->getRecord()?->getKey(), 18),
             ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
         ];

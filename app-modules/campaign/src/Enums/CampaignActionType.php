@@ -46,6 +46,7 @@ use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\Campaign\Filament\Blocks\CaseBlock;
 use AdvisingApp\Campaign\Filament\Blocks\TaskBlock;
 use AdvisingApp\Campaign\Filament\Blocks\EventBlock;
 use AdvisingApp\CaseManagement\Models\ServiceRequest;
@@ -53,7 +54,6 @@ use AdvisingApp\Campaign\Filament\Blocks\CareTeamBlock;
 use AdvisingApp\Campaign\Filament\Blocks\InteractionBlock;
 use AdvisingApp\Campaign\Filament\Blocks\SubscriptionBlock;
 use AdvisingApp\Campaign\Filament\Blocks\ProactiveAlertBlock;
-use AdvisingApp\Campaign\Filament\Blocks\ServiceRequestBlock;
 use AdvisingApp\Campaign\Filament\Blocks\EngagementBatchSmsBlock;
 use AdvisingApp\Campaign\Filament\Blocks\EngagementBatchEmailBlock;
 
@@ -63,7 +63,7 @@ enum CampaignActionType: string implements HasLabel
 
     case BulkEngagementSms = 'bulk_engagement_sms';
 
-    case ServiceRequest = 'service_request';
+    case Case = 'case';
 
     case ProactiveAlert = 'proactive_alert';
 
@@ -90,7 +90,7 @@ enum CampaignActionType: string implements HasLabel
         ];
 
         if (app(LicenseSettings::class)->data->addons->serviceManagement) {
-            $blocks[] = ServiceRequestBlock::make();
+            $blocks[] = CaseBlock::make();
         }
 
         if (app(LicenseSettings::class)->data->addons->eventManagement) {
@@ -105,7 +105,7 @@ enum CampaignActionType: string implements HasLabel
         return match ($this) {
             CampaignActionType::BulkEngagementEmail => 'Email',
             CampaignActionType::BulkEngagementSms => 'Text Message',
-            CampaignActionType::ServiceRequest => 'Service Request',
+            CampaignActionType::Case => 'Case',
             CampaignActionType::ProactiveAlert => 'Proactive Alert',
             CampaignActionType::CareTeam => 'Care Team',
             default => $this->name,
@@ -117,7 +117,7 @@ enum CampaignActionType: string implements HasLabel
         return match ($this) {
             CampaignActionType::BulkEngagementEmail => EngagementBatch::class,
             CampaignActionType::BulkEngagementSms => EngagementBatch::class,
-            CampaignActionType::ServiceRequest => ServiceRequest::class,
+            CampaignActionType::Case => ServiceRequest::class,
             CampaignActionType::ProactiveAlert => Alert::class,
             CampaignActionType::Interaction => Interaction::class,
             CampaignActionType::CareTeam => CareTeam::class,
@@ -132,7 +132,7 @@ enum CampaignActionType: string implements HasLabel
         $block = match ($this) {
             CampaignActionType::BulkEngagementEmail => EngagementBatchEmailBlock::make(),
             CampaignActionType::BulkEngagementSms => EngagementBatchSmsBlock::make(),
-            CampaignActionType::ServiceRequest => ServiceRequestBlock::make(),
+            CampaignActionType::Case => CaseBlock::make(),
             CampaignActionType::ProactiveAlert => ProactiveAlertBlock::make(),
             CampaignActionType::Interaction => InteractionBlock::make(),
             CampaignActionType::CareTeam => CareTeamBlock::make(),
@@ -149,7 +149,7 @@ enum CampaignActionType: string implements HasLabel
         return match ($this) {
             CampaignActionType::BulkEngagementEmail => 'filament.forms.components.campaigns.actions.bulk-engagement',
             CampaignActionType::BulkEngagementSms => 'filament.forms.components.campaigns.actions.bulk-engagement',
-            CampaignActionType::ServiceRequest => 'filament.forms.components.campaigns.actions.service-request',
+            CampaignActionType::Case => 'filament.forms.components.campaigns.actions.case',
             CampaignActionType::ProactiveAlert => 'filament.forms.components.campaigns.actions.proactive-alert',
             CampaignActionType::Interaction => 'filament.forms.components.campaigns.actions.interaction',
             CampaignActionType::CareTeam => 'filament.forms.components.campaigns.actions.care-team',
@@ -164,7 +164,7 @@ enum CampaignActionType: string implements HasLabel
         return match ($this) {
             CampaignActionType::BulkEngagementEmail => EngagementBatch::executeFromCampaignAction($action),
             CampaignActionType::BulkEngagementSms => EngagementBatch::executeFromCampaignAction($action),
-            CampaignActionType::ServiceRequest => ServiceRequest::executeFromCampaignAction($action),
+            CampaignActionType::Case => ServiceRequest::executeFromCampaignAction($action),
             CampaignActionType::ProactiveAlert => Alert::executeFromCampaignAction($action),
             CampaignActionType::Interaction => Interaction::executeFromCampaignAction($action),
             CampaignActionType::CareTeam => CareTeam::executeFromCampaignAction($action),

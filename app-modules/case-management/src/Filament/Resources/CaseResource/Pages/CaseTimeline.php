@@ -40,12 +40,12 @@ use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\CaseManagement\Models\ServiceRequestHistory;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Models\ServiceRequestAssignment;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource;
 
 class CaseTimeline extends TimelinePage
 {
-    protected static string $resource = ServiceRequestResource::class;
+    protected static string $resource = CaseResource::class;
 
     protected static ?string $navigationLabel = 'Timeline';
 

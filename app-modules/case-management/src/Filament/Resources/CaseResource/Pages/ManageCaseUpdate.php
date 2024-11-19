@@ -38,12 +38,12 @@ namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
 
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers\CaseUpdatesRelationManager;
 
 class ManageCaseUpdate extends ManageRelatedRecords
 {
-    protected static string $resource = ServiceRequestResource::class;
+    protected static string $resource = CaseResource::class;
 
     // TODO: Obsolete when there is no table, remove from Filament
     protected static string $relationship = 'serviceRequestUpdates';

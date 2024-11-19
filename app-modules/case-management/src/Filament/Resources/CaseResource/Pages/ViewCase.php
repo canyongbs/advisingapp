@@ -49,12 +49,12 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\CaseManagement\Enums\SlaComplianceStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource;
 
 class ViewCase extends ViewRecord
 {
-    protected static string $resource = ServiceRequestResource::class;
+    protected static string $resource = CaseResource::class;
 
     public function infolist(Infolist $infolist): Infolist
     {

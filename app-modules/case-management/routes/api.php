@@ -35,30 +35,30 @@
 */
 
 use Illuminate\Support\Facades\Route;
+use AdvisingApp\CaseManagement\Http\Controllers\CaseFormWidgetController;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
-use AdvisingApp\CaseManagement\Http\Controllers\ServiceRequestFormWidgetController;
-use AdvisingApp\CaseManagement\Http\Middleware\EnsureServiceManagementFeatureIsActive;
+use AdvisingApp\CaseManagement\Http\Middleware\EnsureCaseManagementFeatureIsActive;
 
 Route::prefix('api')
     ->middleware([
         'api',
-        EnsureServiceManagementFeatureIsActive::class,
-        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':serviceRequestForm',
+        EnsureCaseManagementFeatureIsActive::class,
+        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':caseForm',
     ])
     ->group(function () {
-        Route::prefix('service-request-forms')
-            ->name('service-request-forms.')
+        Route::prefix('case-forms')
+            ->name('case-forms.')
             ->group(function () {
-                Route::get('/{serviceRequestForm}', [ServiceRequestFormWidgetController::class, 'view'])
+                Route::get('/{caseForm}', [CaseFormWidgetController::class, 'view'])
                     ->middleware(['signed:relative'])
                     ->name('define');
-                Route::post('/{serviceRequestForm}/authenticate/request', [ServiceRequestFormWidgetController::class, 'requestAuthentication'])
+                Route::post('/{caseForm}/authenticate/request', [CaseFormWidgetController::class, 'requestAuthentication'])
                     ->middleware(['signed:relative'])
                     ->name('request-authentication');
-                Route::post('/{serviceRequestForm}/authenticate/{authentication}', [ServiceRequestFormWidgetController::class, 'authenticate'])
+                Route::post('/{caseForm}/authenticate/{authentication}', [CaseFormWidgetController::class, 'authenticate'])
                     ->middleware(['signed:relative'])
                     ->name('authenticate');
-                Route::post('/{serviceRequestForm}/submit', [ServiceRequestFormWidgetController::class, 'store'])
+                Route::post('/{caseForm}/submit', [CaseFormWidgetController::class, 'store'])
                     ->middleware(['signed:relative'])
                     ->name('submit');
             });

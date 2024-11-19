@@ -41,12 +41,12 @@ use Filament\Resources\Resource;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\CaseManagement\Models\Sla;
+use App\Filament\Clusters\CaseManagementAdministration;
 use App\Filament\Forms\Components\SecondsDurationInput;
-use App\Filament\Clusters\ServiceManagementAdministration;
 use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\EditSla;
 use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\ListSlas;
 use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\CreateSla;
-use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\RelationManagers\ServiceRequestPrioritiesRelationManager;
+use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\RelationManagers\CasePrioritiesRelationManager;
 
 class SlaResource extends Resource
 {
@@ -60,7 +60,7 @@ class SlaResource extends Resource
 
     protected static ?string $pluralModelLabel = 'SLAs';
 
-    protected static ?string $cluster = ServiceManagementAdministration::class;
+    protected static ?string $cluster = CaseManagementAdministration::class;
 
     public static function form(Form $form): Form
     {
@@ -86,7 +86,7 @@ class SlaResource extends Resource
     public static function getRelations(): array
     {
         return [
-            ServiceRequestPrioritiesRelationManager::class,
+            CasePrioritiesRelationManager::class,
         ];
     }
 

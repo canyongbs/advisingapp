@@ -43,11 +43,11 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestTypeResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 
 class CreateCaseType extends CreateRecord
 {
-    protected static string $resource = ServiceRequestTypeResource::class;
+    protected static string $resource = CaseTypeResource::class;
 
     public function form(Form $form): Form
     {

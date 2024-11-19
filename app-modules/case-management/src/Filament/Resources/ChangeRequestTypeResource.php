@@ -39,8 +39,8 @@ namespace AdvisingApp\CaseManagement\Filament\Resources;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Clusters\CaseManagementAdministration;
 use AdvisingApp\CaseManagement\Models\ChangeRequestType;
-use App\Filament\Clusters\ServiceManagementAdministration;
 use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestTypeResource\Pages\EditChangeRequestType;
 use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestTypeResource\Pages\ViewChangeRequestType;
 use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestTypeResource\Pages\ListChangeRequestTypes;
@@ -54,7 +54,7 @@ class ChangeRequestTypeResource extends Resource
 
     protected static ?int $navigationSort = 40;
 
-    protected static ?string $cluster = ServiceManagementAdministration::class;
+    protected static ?string $cluster = CaseManagementAdministration::class;
 
     public static function getEloquentQuery(): Builder
     {

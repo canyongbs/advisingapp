@@ -44,10 +44,10 @@ class CaseUpdateSeeder extends Seeder
 {
     public function run(): void
     {
-        ServiceRequest::each(function (ServiceRequest $serviceRequest) {
+        ServiceRequest::each(function (ServiceRequest $case) {
             ServiceRequestUpdate::factory()
                 ->count(3)
-                ->for($serviceRequest, 'serviceRequest')
+                ->for($case, 'serviceRequest')
                 ->create();
         });
     }

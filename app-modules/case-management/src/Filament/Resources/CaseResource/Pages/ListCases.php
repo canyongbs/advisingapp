@@ -53,14 +53,14 @@ use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\CaseManagement\Enums\SlaComplianceStatus;
 use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSort;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource;
 
 class ListCases extends ListRecords
 {
-    protected ?string $heading = 'Service Management';
+    protected ?string $heading = 'Case Management';
 
-    protected static string $resource = ServiceRequestResource::class;
+    protected static string $resource = CaseResource::class;
 
     public function table(Table $table): Table
     {
@@ -88,7 +88,7 @@ class ListCases extends ListRecords
                     ->label('SIS ID')
                     ->searchable()
                     ->sortable(query: function (Builder $query, string $direction): Builder {
-                        // Update this if any other relations are added to the ServiceRequest model respondent relationship
+                        // Update this if any other relations are added to the Case model respondent relationship
                         return $query->join('students', function (JoinClause $join) {
                             $join->on('service_requests.respondent_id', '=', 'students.sisid')
                                 ->where('service_requests.respondent_type', '=', 'student');
@@ -98,7 +98,7 @@ class ListCases extends ListRecords
                     ->label('Other ID')
                     ->searchable()
                     ->sortable(query: function (Builder $query, string $direction): Builder {
-                        // Update this if any other relations are added to the ServiceRequest model respondent relationship
+                        // Update this if any other relations are added to the Case model respondent relationship
                         return $query->join('students', function (JoinClause $join) {
                             $join->on('service_requests.respondent_id', '=', 'students.sisid')
                                 ->where('service_requests.respondent_type', '=', 'student');

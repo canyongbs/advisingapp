@@ -35,12 +35,12 @@
 */
 
 use Illuminate\Support\Facades\Route;
-use AdvisingApp\CaseManagement\Livewire\RenderServiceRequestForm;
+use AdvisingApp\CaseManagement\Livewire\RenderCaseForm;
 
 Route::middleware('web')
-    ->prefix('service-request-forms')
-    ->name('service-request-forms.')
+    ->prefix('case-forms')
+    ->name('case-forms.')
     ->group(function () {
-        Route::get('/{serviceRequestForm}/respond', RenderServiceRequestForm::class)
+        Route::get('/{caseForm}/respond', RenderCaseForm::class)
             ->name('show');
     });

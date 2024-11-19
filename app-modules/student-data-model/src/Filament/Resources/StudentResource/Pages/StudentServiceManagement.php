@@ -43,7 +43,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Concerns\FiltersManagersFromGroups;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ServiceRequestsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\CasesRelationManager;
 
 class StudentServiceManagement extends ManageRelatedRecords
 {
@@ -79,7 +79,7 @@ class StudentServiceManagement extends ManageRelatedRecords
     private static function managers(?Model $record = null): array
     {
         return collect([
-            ServiceRequestsRelationManager::class,
+            CasesRelationManager::class,
         ])
             ->map(fn ($relationManager) => self::filterRelationManagers($relationManager, $record))
             ->filter()

@@ -43,12 +43,12 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\CaseManagement\Models\ServiceRequestType;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestFormResource;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestTypeResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 
 class ViewCaseType extends ViewRecord
 {
-    protected static string $resource = ServiceRequestTypeResource::class;
+    protected static string $resource = CaseTypeResource::class;
 
     public function infolist(Infolist $infolist): Infolist
     {
@@ -62,7 +62,7 @@ class ViewCaseType extends ViewRecord
                         TextEntry::make('form.name')
                             ->label('Form')
                             ->hidden(fn (ServiceRequestType $record) => ! $record->form)
-                            ->url(fn (ServiceRequestType $record) => $record->form ? ServiceRequestFormResource::getUrl('edit', ['record' => $record?->form]) : null)
+                            ->url(fn (ServiceRequestType $record) => $record->form ? CaseFormResource::getUrl('edit', ['record' => $record?->form]) : null)
                             ->color('primary'),
                         Group::make()
                             ->schema([

@@ -38,14 +38,14 @@ namespace AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestFormResource;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestFormResource\Pages\Concerns\HasSharedFormConfiguration;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages\Concerns\HasSharedFormConfiguration;
 
 class CreateCaseForm extends CreateRecord
 {
     use HasSharedFormConfiguration;
 
-    protected static string $resource = ServiceRequestFormResource::class;
+    protected static string $resource = CaseFormResource::class;
 
     public function form(Form $form): Form
     {

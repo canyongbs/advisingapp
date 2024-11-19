@@ -33,7 +33,7 @@
 --}}
 @php
     use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
-    use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestUpdateResource;
+    use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
 @endphp
 
 <div>
@@ -42,7 +42,7 @@
 
             <a
                 class="font-medium underline"
-                href="{{ ServiceRequestUpdateResource::getUrl('view', ['record' => $record]) }}"
+                href="{{ CaseUpdateResource::getUrl('view', ['record' => $record]) }}"
             >
                 Case Update Created
             </a>

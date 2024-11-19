@@ -159,12 +159,12 @@ trait HasSharedFormConfiguration
 
                 $record->wasRecentlyCreated && $component->processImages();
 
-                $serviceRequestForm = $record instanceof ServiceRequestForm ? $record : $record->submissible;
-                $serviceRequestFormStep = $record instanceof ServiceRequestFormStep ? $record : null;
+                $caseForm = $record instanceof ServiceRequestForm ? $record : $record->submissible;
+                $caseFormStep = $record instanceof ServiceRequestFormStep ? $record : null;
 
                 ServiceRequestFormField::query()
-                    ->whereBelongsTo($serviceRequestForm, 'submissible')
-                    ->when($serviceRequestFormStep, fn (EloquentBuilder $query) => $query->whereBelongsTo($serviceRequestFormStep, 'step'))
+                    ->whereBelongsTo($caseForm, 'submissible')
+                    ->when($caseFormStep, fn (EloquentBuilder $query) => $query->whereBelongsTo($caseFormStep, 'step'))
                     ->delete();
 
                 $content = [];
@@ -174,9 +174,9 @@ trait HasSharedFormConfiguration
                 }
 
                 $content['content'] = $this->saveFieldsFromComponents(
-                    $serviceRequestForm,
+                    $caseForm,
                     $content['content'] ?? [],
-                    $serviceRequestFormStep,
+                    $caseFormStep,
                 );
 
                 $record->content = $content;
@@ -187,11 +187,11 @@ trait HasSharedFormConfiguration
             ->extraInputAttributes(['style' => 'min-height: 12rem;']);
     }
 
-    public function saveFieldsFromComponents(ServiceRequestForm $serviceRequestForm, array $components, ?ServiceRequestFormStep $serviceRequestFormStep): array
+    public function saveFieldsFromComponents(ServiceRequestForm $caseForm, array $components, ?ServiceRequestFormStep $caseFormStep): array
     {
         foreach ($components as $componentKey => $component) {
             if (array_key_exists('content', $component)) {
-                $components[$componentKey]['content'] = $this->saveFieldsFromComponents($serviceRequestForm, $component['content'], $serviceRequestFormStep);
+                $components[$componentKey]['content'] = $this->saveFieldsFromComponents($caseForm, $component['content'], $caseFormStep);
 
                 continue;
             }
@@ -218,8 +218,8 @@ trait HasSharedFormConfiguration
             }
 
             /** @var ServiceRequestFormField $field */
-            $field = $serviceRequestForm->fields()->findOrNew($id ?? null);
-            $field->step()->associate($serviceRequestFormStep);
+            $field = $caseForm->fields()->findOrNew($id ?? null);
+            $field->step()->associate($caseFormStep);
             $field->label = $label ?? $componentAttributes['type'];
             $field->is_required = $isRequired ?? false;
             $field->type = $componentAttributes['type'];

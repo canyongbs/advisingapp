@@ -48,7 +48,7 @@ use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestUpdateResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
 
 class CaseUpdatesRelationManager extends RelationManager
 {
@@ -104,7 +104,7 @@ class CaseUpdatesRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
-                    ->url(fn (ServiceRequestUpdate $serviceRequestUpdate) => ServiceRequestUpdateResource::getUrl('view', ['record' => $serviceRequestUpdate])),
+                    ->url(fn (ServiceRequestUpdate $caseUpdate) => CaseUpdateResource::getUrl('view', ['record' => $caseUpdate])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

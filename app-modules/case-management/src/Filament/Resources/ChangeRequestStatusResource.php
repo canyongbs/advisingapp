@@ -39,8 +39,8 @@ namespace AdvisingApp\CaseManagement\Filament\Resources;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Clusters\CaseManagementAdministration;
 use AdvisingApp\CaseManagement\Models\ChangeRequestStatus;
-use App\Filament\Clusters\ServiceManagementAdministration;
 use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestStatusResource\Pages\EditChangeRequestStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestStatusResource\Pages\ViewChangeRequestStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestStatusResource\Pages\CreateChangeRequestStatus;
@@ -54,7 +54,7 @@ class ChangeRequestStatusResource extends Resource
 
     protected static ?int $navigationSort = 50;
 
-    protected static ?string $cluster = ServiceManagementAdministration::class;
+    protected static ?string $cluster = CaseManagementAdministration::class;
 
     public static function getEloquentQuery(): Builder
     {

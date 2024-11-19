@@ -46,11 +46,11 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestTypeResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 
 class ListCaseTypes extends ListRecords
 {
-    protected static string $resource = ServiceRequestTypeResource::class;
+    protected static string $resource = CaseTypeResource::class;
 
     public function table(Table $table): Table
     {

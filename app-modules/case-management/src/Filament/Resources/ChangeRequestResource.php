@@ -37,7 +37,7 @@
 namespace AdvisingApp\CaseManagement\Filament\Resources;
 
 use Filament\Resources\Resource;
-use App\Filament\Clusters\ServiceManagement;
+use App\Filament\Clusters\CaseManagement;
 use AdvisingApp\CaseManagement\Models\ChangeRequest;
 use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestResource\Pages\EditChangeRequest;
 use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestResource\Pages\ViewChangeRequest;
@@ -56,7 +56,7 @@ class ChangeRequestResource extends Resource
 
     protected static ?string $breadcrumb = 'Change Management';
 
-    protected static ?string $cluster = ServiceManagement::class;
+    protected static ?string $cluster = CaseManagement::class;
 
     public static function getPages(): array
     {

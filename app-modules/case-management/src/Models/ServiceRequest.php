@@ -73,7 +73,7 @@ use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\CaseManagement\Exceptions\CaseNumberExceededReRollsException;
-use AdvisingApp\CaseManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
+use AdvisingApp\CaseManagement\Cases\CaseNumber\Contracts\CaseNumberGenerator;
 
 /**
  * @property-read Student|Prospect $respondent
@@ -120,7 +120,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
                 $save = false;
 
                 if ($attempts < 3) {
-                    $this->service_request_number = app(ServiceRequestNumberGenerator::class)->generate();
+                    $this->service_request_number = app(CaseNumberGenerator::class)->generate();
                 }
 
                 DB::rollBack();

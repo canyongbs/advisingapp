@@ -39,7 +39,7 @@ namespace AdvisingApp\Timeline\Timelines;
 use Filament\Actions\ViewAction;
 use AdvisingApp\Timeline\Models\CustomTimeline;
 use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestUpdateResource\Components\ServiceRequestUpdateViewAction;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Components\CaseUpdateViewAction;
 
 // TODO Decide where these belong - might want to keep these in the context of the original module
 class ServiceRequestUpdateTimeline extends CustomTimeline
@@ -70,6 +70,6 @@ class ServiceRequestUpdateTimeline extends CustomTimeline
 
     public function modalViewAction(): ViewAction
     {
-        return ServiceRequestUpdateViewAction::make()->record($this->serviceRequestUpdate);
+        return CaseUpdateViewAction::make()->record($this->serviceRequestUpdate);
     }
 }

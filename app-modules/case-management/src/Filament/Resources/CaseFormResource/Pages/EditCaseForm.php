@@ -43,14 +43,14 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\CaseManagement\Models\ServiceRequestForm;
 use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestFormResource;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestFormResource\Pages\Concerns\HasSharedFormConfiguration;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages\Concerns\HasSharedFormConfiguration;
 
 class EditCaseForm extends EditRecord
 {
     use HasSharedFormConfiguration;
 
-    protected static string $resource = ServiceRequestFormResource::class;
+    protected static string $resource = CaseFormResource::class;
 
     public function form(Form $form): Form
     {
@@ -62,7 +62,7 @@ class EditCaseForm extends EditRecord
     {
         return [
             Action::make('view')
-                ->url(fn (ServiceRequestForm $serviceRequestForm) => route('service-request-forms.show', ['serviceRequestForm' => $serviceRequestForm]))
+                ->url(fn (ServiceRequestForm $caseForm) => route('case-forms.show', ['serviceRequestForm' => $caseForm]))
                 ->icon('heroicon-m-arrow-top-right-on-square')
                 ->openUrlInNewTab(),
             Action::make('embed_snippet')
@@ -71,8 +71,8 @@ class EditCaseForm extends EditRecord
                     [
                         TextEntry::make('snippet')
                             ->label('Click to Copy')
-                            ->state(function (ServiceRequestForm $serviceRequestForm) {
-                                $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($serviceRequestForm);
+                            ->state(function (ServiceRequestForm $caseForm) {
+                                $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($caseForm);
 
                                 $state = <<<EOD
                                 ```
@@ -83,7 +83,7 @@ class EditCaseForm extends EditRecord
                                 return str($state)->markdown()->toHtmlString();
                             })
                             ->copyable()
-                            ->copyableState(fn (ServiceRequestForm $serviceRequestForm) => resolve(GenerateSubmissibleEmbedCode::class)->handle($serviceRequestForm))
+                            ->copyableState(fn (ServiceRequestForm $caseForm) => resolve(GenerateSubmissibleEmbedCode::class)->handle($caseForm))
                             ->copyMessage('Copied!')
                             ->copyMessageDuration(1500)
                             ->extraAttributes(['class' => 'embed-code-snippet']),
@@ -91,7 +91,7 @@ class EditCaseForm extends EditRecord
                 )
                 ->modalSubmitAction(false)
                 ->modalCancelActionLabel('Close')
-                ->hidden(fn (ServiceRequestForm $serviceRequestForm) => ! $serviceRequestForm->embed_enabled),
+                ->hidden(fn (ServiceRequestForm $caseForm) => ! $caseForm->embed_enabled),
             DeleteAction::make(),
         ];
     }

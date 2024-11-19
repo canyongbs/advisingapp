@@ -48,11 +48,11 @@ use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
 use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestStatusResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
 
 class EditCaseStatus extends EditRecord
 {
-    protected static string $resource = ServiceRequestStatusResource::class;
+    protected static string $resource = CaseStatusResource::class;
 
     public function form(Form $form): Form
     {

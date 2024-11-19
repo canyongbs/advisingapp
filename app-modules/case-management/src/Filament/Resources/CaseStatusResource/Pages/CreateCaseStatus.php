@@ -43,11 +43,11 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestStatusResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
 
 class CreateCaseStatus extends CreateRecord
 {
-    protected static string $resource = ServiceRequestStatusResource::class;
+    protected static string $resource = CaseStatusResource::class;
 
     public function form(Form $form): Form
     {

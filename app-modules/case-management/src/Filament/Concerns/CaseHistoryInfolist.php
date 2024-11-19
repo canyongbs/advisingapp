@@ -38,7 +38,7 @@ namespace AdvisingApp\CaseManagement\Filament\Concerns;
 
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\CaseManagement\Models\ServiceRequestHistory;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 
 // TODO Re-use this trait across other places where infolist is rendered
 trait CaseHistoryInfolist
@@ -48,7 +48,7 @@ trait CaseHistoryInfolist
         return [
             TextEntry::make('serviceRequest.service_request_number')
                 ->label('Case')
-                ->url(fn (ServiceRequestHistory $serviceRequestHistory): string => ServiceRequestResource::getUrl('view', ['record' => $serviceRequestHistory->serviceRequest]))
+                ->url(fn (ServiceRequestHistory $caseHistory): string => CaseResource::getUrl('view', ['record' => $caseHistory->serviceRequest]))
                 ->color('primary'),
             TextEntry::make('getUpdates')
                 ->label('Updates')

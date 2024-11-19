@@ -51,7 +51,7 @@ class CreateCaseHistory implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        public ServiceRequest $serviceRequest,
+        public ServiceRequest $case,
         public array $changes,
         public array $original,
     ) {}
@@ -69,7 +69,7 @@ class CreateCaseHistory implements ShouldQueue
         }
 
         if (! blank($newValues)) {
-            $this->serviceRequest->histories()->create([
+            $this->case->histories()->create([
                 'original_values' => $originalValues,
                 'new_values' => $newValues,
             ]);

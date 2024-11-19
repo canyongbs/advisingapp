@@ -40,7 +40,7 @@ use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
-use AdvisingApp\CaseManagement\Filament\Resources\ServiceRequestResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 
 // TODO Re-use this trait across other places where infolist is rendered
 trait CaseUpdateInfolist
@@ -50,7 +50,7 @@ trait CaseUpdateInfolist
         return [
             TextEntry::make('serviceRequest.service_request_number')
                 ->label('Case')
-                ->url(fn (ServiceRequestUpdate $serviceRequestUpdate): string => ServiceRequestResource::getUrl('view', ['record' => $serviceRequestUpdate->serviceRequest]))
+                ->url(fn (ServiceRequestUpdate $caseUpdate): string => CaseResource::getUrl('view', ['record' => $caseUpdate->serviceRequest]))
                 ->color('primary'),
             IconEntry::make('internal')
                 ->boolean(),
