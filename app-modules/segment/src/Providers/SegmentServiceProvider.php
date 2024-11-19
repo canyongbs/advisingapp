@@ -43,8 +43,6 @@ use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Segment\Models\SegmentSubject;
 use AdvisingApp\Segment\Observers\SegmentObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Segment\Registries\SegmentRbacRegistry;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 
 class SegmentServiceProvider extends ServiceProvider
 {
@@ -61,8 +59,6 @@ class SegmentServiceProvider extends ServiceProvider
         ]);
 
         $this->registerObservers();
-
-        AuthorizationRoleRegistry::register(SegmentRbacRegistry::class);
     }
 
     protected function registerObservers(): void

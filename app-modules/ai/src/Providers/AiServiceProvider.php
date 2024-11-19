@@ -53,13 +53,11 @@ use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Events\AiMessageCreated;
 use AdvisingApp\Ai\Events\AiMessageTrashed;
 use AdvisingApp\Ai\Observers\PromptObserver;
-use AdvisingApp\Ai\Registries\AiRbacRegistry;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
 use AdvisingApp\Ai\Observers\AiAssistantFileObserver;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
 use AdvisingApp\Ai\Listeners\HandleAssistantFilesFinishedUploading;
 
@@ -105,8 +103,6 @@ class AiServiceProvider extends ServiceProvider
         ]);
 
         $this->registerObservers();
-
-        AuthorizationRoleRegistry::register(AiRbacRegistry::class);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
 

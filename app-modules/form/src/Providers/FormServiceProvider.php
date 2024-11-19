@@ -44,11 +44,9 @@ use AdvisingApp\Form\Models\FormField;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Form\Observers\FormObserver;
-use AdvisingApp\Form\Registries\FormRbacRegistry;
 use AdvisingApp\Form\Events\FormSubmissionCreated;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Form\Observers\FormSubmissionObserver;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Form\Listeners\ClearFormFormSubmissionCountCache;
 use AdvisingApp\Form\Listeners\NotifySubscribersOfFormSubmission;
 use AdvisingApp\Form\Listeners\ClearAuthorFormSubmissionCountCache;
@@ -71,8 +69,6 @@ class FormServiceProvider extends ServiceProvider
 
         $this->registerObservers();
         $this->registerEvents();
-
-        AuthorizationRoleRegistry::register(FormRbacRegistry::class);
     }
 
     public function registerObservers(): void

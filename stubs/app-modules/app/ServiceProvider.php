@@ -39,9 +39,7 @@ namespace StubModuleNamespace\StubClassNamePrefix\Providers;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use StubModuleNamespace\StubClassNamePrefix\StubClassNamePrefixPlugin;
-use StubModuleNamespace\StubClassNamePrefix\Registries\StubClassNamePrefixRbacRegistry;
 
 class StubClassNamePrefixServiceProvider extends ServiceProvider
 {
@@ -53,7 +51,5 @@ class StubClassNamePrefixServiceProvider extends ServiceProvider
     public function boot()
     {
         Relation::morphMap([]);
-
-        AuthorizationRoleRegistry::register(StubClassNamePrefixRbacRegistry::class);
     }
 }

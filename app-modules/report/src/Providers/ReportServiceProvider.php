@@ -42,8 +42,6 @@ use AdvisingApp\Report\Models\Report;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Report\Observers\ReportObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Report\Registries\ReportRbacRegistry;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 
 class ReportServiceProvider extends ServiceProvider
 {
@@ -59,8 +57,6 @@ class ReportServiceProvider extends ServiceProvider
         ]);
 
         $this->registerObservers();
-
-        AuthorizationRoleRegistry::register(ReportRbacRegistry::class);
     }
 
     protected function registerObservers(): void

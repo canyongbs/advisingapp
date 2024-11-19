@@ -45,8 +45,6 @@ use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Observers\ProspectObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Prospect\Registries\ProspectRbacRegistry;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Observers\ProspectStatusObserver;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
@@ -74,7 +72,5 @@ class ProspectServiceProvider extends ServiceProvider
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
         $this->registerEnum(ProspectStatusColorOptions::class);
         $this->registerEnum(SystemProspectClassification::class);
-
-        AuthorizationRoleRegistry::register(ProspectRbacRegistry::class);
     }
 }
