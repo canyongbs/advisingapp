@@ -60,6 +60,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use App\Features\AlertStatusId;
 use Illuminate\Database\Eloquent\Builder;
 
 class ManageProspectAlerts extends ManageRelatedRecords
@@ -90,7 +91,10 @@ class ManageProspectAlerts extends ManageRelatedRecords
                 "alert-count-{$ownerRecord->getKey()}",
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
-                    return $ownerRecord->alerts()->whereRelation('status', 'classification', SystemAlertStatusClassification::Active->value)->count();
+                    if (AlertStatusId::active())
+                        return $ownerRecord->alerts()->whereRelation('status', 'classification', SystemAlertStatusClassification::Active->value)->count();
+                    else
+                        return $ownerRecord->alerts()->status(SystemAlertStatusClassification::Active->value)->count();
                 },
             );
 
@@ -106,7 +110,8 @@ class ManageProspectAlerts extends ManageRelatedRecords
                 TextEntry::make('description'),
                 TextEntry::make('severity'),
                 TextEntry::make('suggested_intervention'),
-                TextEntry::make('status.name'),
+                TextEntry::make('status.name')->visible(AlertStatusId::active()),
+                TextEntry::make('status')->visible(AlertStatusId::active() == false),
                 TextEntry::make('createdBy.name')->label('Created By')->default('N/A'),
                 TextEntry::make('created_at')->label('Created Date'),
             ]);
@@ -134,6 +139,14 @@ class ManageProspectAlerts extends ManageRelatedRecords
                     ->default(SystemAlertStatusClassification::default())
                     ->selectablePlaceholder(false)
                     ->required()
+                    ->visible(AlertStatusId::active()),
+                Select::make('status')
+                    ->options(SystemAlertStatusClassification::class)
+                    ->selectablePlaceholder(false)
+                    ->default(SystemAlertStatusClassification::default())
+                    ->required()
+                    ->enum(SystemAlertStatusClassification::class)
+                    ->visible(AlertStatusId::active() == false),
             ]);
     }
 
@@ -148,7 +161,11 @@ class ManageProspectAlerts extends ManageRelatedRecords
                 TextColumn::make('severity')
                     ->sortable(),
                 TextColumn::make('status.name')
-                    ->sortable(),
+                    ->sortable()
+                    ->visible(AlertStatusId::active()),
+                TextColumn::make('status')
+                    ->sortable()
+                    ->visible(AlertStatusId::active() == false),
                 TextColumn::make('created_at')
                     ->sortable(),
             ])
@@ -157,6 +174,10 @@ class ManageProspectAlerts extends ManageRelatedRecords
                     ->options(AlertSeverity::class),
                 SelectFilter::make('status_id')
                     ->relationship('status', 'name')
+                    ->visible(AlertStatusId::active()),
+                SelectFilter::make('status')
+                    ->options(AlertStatus::class)
+                    ->visible(AlertStatusId::active() == false),
             ])
             ->headerActions([
                 CreateAction::make()
