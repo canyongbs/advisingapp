@@ -50,6 +50,8 @@ use AdvisingApp\Alert\Observers\AlertObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Alert\Observers\AlertHistoryObserver;
 use AdvisingApp\Alert\Listeners\NotifySubscribersOfAlertCreated;
+use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Alert\Observers\AlertStatusObserver;
 
 class AlertServiceProvider extends ServiceProvider
 {
@@ -80,6 +82,7 @@ class AlertServiceProvider extends ServiceProvider
   {
     Alert::observe(AlertObserver::class);
     AlertHistory::observe(AlertHistoryObserver::class);
+    AlertStatus::observe(AlertStatusObserver::class);
   }
 
   protected function registerEvents(): void
