@@ -44,6 +44,7 @@ use AdvisingApp\Form\Models\FormField;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Form\Observers\FormObserver;
+use AdvisingApp\Form\Models\FormEmailAutoReply;
 use AdvisingApp\Form\Events\FormSubmissionCreated;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Form\Observers\FormSubmissionObserver;
@@ -65,6 +66,7 @@ class FormServiceProvider extends ServiceProvider
             'form' => Form::class,
             'form_field' => FormField::class,
             'form_submission' => FormSubmission::class,
+            'form_email_auto_reply' => FormEmailAutoReply::class,
         ]);
 
         $this->registerObservers();
