@@ -40,6 +40,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
+/**
+ * @mixin IdeHelperEducatablePipelineStage
+ */
 class EducatablePipelineStage extends MorphPivot
 {
     use HasFactory;
