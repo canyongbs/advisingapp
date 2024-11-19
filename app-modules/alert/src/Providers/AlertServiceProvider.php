@@ -52,6 +52,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Alert\Observers\AlertHistoryObserver;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Listeners\NotifySubscribersOfAlertCreated;
+use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Alert\Observers\AlertStatusObserver;
 
 class AlertServiceProvider extends ServiceProvider
 {
