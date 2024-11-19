@@ -190,7 +190,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                 Section::make('Product Resource Hub URL')
                     ->aside()
                     ->schema([
-                        TextInput::make('product_knowledge_base_url')
+                        TextInput::make('product_resource_hub_url')
                             ->label('Product Resource Hub URL')
                             ->url()
                             ->maxLength('255'),

@@ -1,5 +1,6 @@
 <?php
 
+use App\Features\ResourceHub;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
 
@@ -21,7 +22,9 @@ return new class () extends Migration {
         DB::commit();
 
         /** Drop view */
-        DB::statement('DROP VIEW IF EXISTS division_knowledge_base_item');
+        if (ResourceHub::active()) {
+            DB::statement('DROP VIEW IF EXISTS division_knowledge_base_item');
+        }
 
         /**
          * Renaming the table knowledge_base_item_upvotes to resource_hub_item_upvotes
@@ -38,7 +41,9 @@ return new class () extends Migration {
         DB::commit();
 
         /** Drop view */
-        DB::statement('DROP VIEW IF EXISTS knowledge_base_item_upvotes');
+        if (ResourceHub::active()) {
+            DB::statement('DROP VIEW IF EXISTS knowledge_base_item_upvotes');
+        }
 
         /**
          * Renaming the table knowledge_base_item_views to resource_hub_item_views
@@ -55,7 +60,9 @@ return new class () extends Migration {
         DB::commit();
 
         /** Drop view */
-        DB::statement('DROP VIEW IF EXISTS knowledge_base_item_views');
+        if (ResourceHub::active()) {
+            DB::statement('DROP VIEW IF EXISTS knowledge_base_item_views');
+        }
     }
 
     public function down(): void
@@ -75,7 +82,9 @@ return new class () extends Migration {
         DB::commit();
 
         /** Drop view */
-        DB::statement('DROP VIEW IF EXISTS division_resource_hub_item');
+        if (! ResourceHub::active()) {
+            DB::statement('DROP VIEW IF EXISTS division_resource_hub_item');
+        }
 
         /**
          * Renaming the table resource_hub_item_upvotes to knowledge_base_item_upvotes
@@ -92,7 +101,9 @@ return new class () extends Migration {
         DB::commit();
 
         /** Drop view */
-        DB::statement('DROP VIEW IF EXISTS resource_hub_item_upvotes');
+        if (! ResourceHub::active()) {
+            DB::statement('DROP VIEW IF EXISTS resource_hub_item_upvotes');
+        }
 
         /**
         * Renaming the table resource_hub_item_views to knowledge_base_item_views
@@ -109,6 +120,8 @@ return new class () extends Migration {
         DB::commit();
 
         /** Drop view */
-        DB::statement('DROP VIEW IF EXISTS resource_hub_item_views');
+        if (! ResourceHub::active()) {
+            DB::statement('DROP VIEW IF EXISTS resource_hub_item_views');
+        }
     }
 };

@@ -1,5 +1,6 @@
 <?php
 
+use App\Features\ResourceHub;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
 
@@ -15,7 +16,9 @@ return new class () extends Migration {
 
         DB::commit();
 
-        DB::statement('DROP VIEW IF EXISTS knowledge_base_articles');
+        if (ResourceHub::active()) {
+            DB::statement('DROP VIEW IF EXISTS knowledge_base_articles');
+        }
 
         /** Rename knowledge_base_categories to resource_hub_categories*/
         DB::beginTransaction();
@@ -26,7 +29,9 @@ return new class () extends Migration {
 
         DB::commit();
 
-        DB::statement('DROP VIEW IF EXISTS knowledge_base_categories');
+        if (ResourceHub::active()) {
+            DB::statement('DROP VIEW IF EXISTS knowledge_base_categories');
+        }
 
         /** Rename knowledge_base_qualities to resource_hub_qualities*/
         DB::beginTransaction();
@@ -37,7 +42,9 @@ return new class () extends Migration {
 
         DB::commit();
 
-        DB::statement('DROP VIEW IF EXISTS knowledge_base_qualities');
+        if (ResourceHub::active()) {
+            DB::statement('DROP VIEW IF EXISTS knowledge_base_qualities');
+        }
 
         /** Rename knowledge_base_statuses to resource_hub_statuses*/
         DB::beginTransaction();
@@ -48,7 +55,9 @@ return new class () extends Migration {
 
         DB::commit();
 
-        DB::statement('DROP VIEW IF EXISTS knowledge_base_statuses');
+        if (ResourceHub::active()) {
+            DB::statement('DROP VIEW IF EXISTS knowledge_base_statuses');
+        }
     }
 
     public function down(): void
@@ -62,7 +71,9 @@ return new class () extends Migration {
 
         DB::commit();
 
-        DB::statement('DROP VIEW IF EXISTS resource_hub_articles');
+        if (! ResourceHub::active()) {
+            DB::statement('DROP VIEW IF EXISTS resource_hub_articles');
+        }
 
         /** Rename resource_hub_categories to knowledge_base_categories*/
         DB::beginTransaction();
@@ -73,7 +84,9 @@ return new class () extends Migration {
 
         DB::commit();
 
-        DB::statement('DROP VIEW IF EXISTS resource_hub_categories');
+        if (! ResourceHub::active()) {
+            DB::statement('DROP VIEW IF EXISTS resource_hub_categories');
+        }
 
         /** Rename resource_hub_qualities to knowledge_base_qualities*/
         DB::beginTransaction();
@@ -84,7 +97,9 @@ return new class () extends Migration {
 
         DB::commit();
 
-        DB::statement('DROP VIEW IF EXISTS resource_hub_qualities');
+        if (! ResourceHub::active()) {
+            DB::statement('DROP VIEW IF EXISTS resource_hub_qualities');
+        }
 
         /** Rename resource_hub_statuses to knowledge_base_statuses*/
         DB::beginTransaction();
@@ -95,6 +110,8 @@ return new class () extends Migration {
 
         DB::commit();
 
-        DB::statement('DROP VIEW IF EXISTS resource_hub_statuses');
+        if (! ResourceHub::active()) {
+            DB::statement('DROP VIEW IF EXISTS resource_hub_statuses');
+        }
     }
 };
