@@ -44,6 +44,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
 class ConvertToStudent extends Action
 {
@@ -94,6 +95,8 @@ class ConvertToStudent extends Action
                     ->title('Prospect converted to Student')
                     ->success()
                     ->send();
+
+                $this->redirect(ProspectResource::getUrl('view', ['record' => $this->record]));
             });
     }
 

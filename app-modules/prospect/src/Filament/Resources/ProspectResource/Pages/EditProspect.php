@@ -65,23 +65,6 @@ class EditProspect extends EditRecord
     // TODO: Automatically set from Filament
     protected static ?string $navigationLabel = 'Edit';
 
-    public function mount(int | string $record): void
-    {
-        $this->record = $this->resolveRecord($record);
-
-        if (filled($this->record?->student_id)) {
-            $this->redirect(ProspectResource::getUrl('view', ['record' => $this->record]));
-
-            return;
-        }
-
-        $this->authorizeAccess();
-
-        $this->fillForm();
-
-        $this->previousUrl = url()->previous();
-    }
-
     public function form(Form $form): Form
     {
         return $form
