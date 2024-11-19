@@ -97,9 +97,9 @@ it('will create the task records for educatables in the segment', function (Coll
     });
 })->with([
     'prospects' => [
-        'educatables' => fn () => Prospect::factory()->count(3)->create(),
+        fn () => Prospect::factory()->count(3)->create(),
     ],
     'students' => [
-        'educatables' => fn () => Student::factory()->count(3)->create(),
+        fn () => Student::factory()->count(3)->create(),
     ],
 ]);
