@@ -1,17 +1,17 @@
 <?php
 
+use App\Features\AlertStatusId;
 use Illuminate\Database\Migrations\Migration;
-use Laravel\Pennant\Feature;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        Feature::activate('alert_status_id');
+        AlertStatusId::activate();
     }
 
     public function down(): void
     {
-        Feature::deactivate('alert_status_id');
+        AlertStatusId::deactivate();
     }
 };

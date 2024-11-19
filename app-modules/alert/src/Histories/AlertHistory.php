@@ -41,6 +41,7 @@ use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Timeline\Models\History;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Timeline\Timelines\AlertHistoryTimeline;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 
@@ -60,10 +61,12 @@ class AlertHistory extends History implements ProvidesATimeline
   public function getFormattedValueForKey(string $key): array
   {
     return match ($key) {
-      'status' => [
+      'status_id' => [
         'key' => 'Status',
-        'old' => array_key_exists($key, $this->old) ? SystemAlertStatusClassification::tryFrom($this->old[$key])?->getLabel() : null,
-        'new' => SystemAlertStatusClassification::tryFrom($this->new[$key])?->getLabel(),
+        'old' => array_key_exists($key, $this->old)
+          ? AlertStatus::find($this->old[$key])?->name
+          : null,
+        'new' => AlertStatus::find($this->new[$key])?->name,
       ],
       'severity' => [
         'key' => 'Severity',
