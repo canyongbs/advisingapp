@@ -44,15 +44,15 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\CaseManagement\Models\CaseType;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
-use AdvisingApp\CaseManagement\Models\ServiceRequestType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ListCaseTypes;
 
 test('The correct details are displayed on the ListCaseType page', function () {
-    $caseTypes = ServiceRequestType::factory()
-        ->has(ServiceRequest::factory()->count(fake()->randomNumber(1)), 'serviceRequests')
+    $caseTypes = CaseType::factory()
+        ->has(CaseModel::factory()->count(fake()->randomNumber(1)), 'serviceRequests')
         ->count(10)
         ->create();
 
@@ -67,7 +67,7 @@ test('The correct details are displayed on the ListCaseType page', function () {
         ->assertTableColumnExists('service_requests_count');
 
     $caseTypes->each(
-        fn (ServiceRequestType $caseType) => $component
+        fn (CaseType $caseType) => $component
             ->assertTableColumnStateSet(
                 'id',
                 $caseType->id,

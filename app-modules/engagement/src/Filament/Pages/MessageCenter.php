@@ -53,10 +53,10 @@ use AdvisingApp\Prospect\Models\Prospect;
 use App\Actions\GetRecordFromMorphAndKey;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Actions\SyncTimelineData;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -298,7 +298,7 @@ class MessageCenter extends Page
             ->when($this->filterOpenServiceRequests === true, function (Builder $query) use ($idColumn) {
                 $query->whereIn(
                     $idColumn,
-                    ServiceRequest::query()
+                    CaseModel::query()
                         ->open()
                         ->pluck('respondent_id')
                 );

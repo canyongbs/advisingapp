@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\CaseManagement\Database\Factories;
 
+use AdvisingApp\CaseManagement\Models\CaseStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
-use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 
 /**
- * @extends Factory<ServiceRequestStatus>
+ * @extends Factory<CaseStatus>
  */
 class CaseStatusFactory extends Factory
 {

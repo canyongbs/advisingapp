@@ -49,10 +49,10 @@ use function PHPUnit\Framework\assertCount;
 use function Pest\Laravel\assertDatabaseHas;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 
 use function Pest\Laravel\assertDatabaseMissing;
 
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateCaseRequestFactory;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CreateCase;
@@ -74,10 +74,10 @@ test('A successful action on the CreateCase page', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, ServiceRequest::all());
+    assertCount(1, CaseModel::all());
 
     assertDatabaseHas(
-        ServiceRequest::class,
+        CaseModel::class,
         $request->except(
             [
                 'division_id',
@@ -89,7 +89,7 @@ test('A successful action on the CreateCase page', function () {
         )->toArray()
     );
 
-    $case = ServiceRequest::first();
+    $case = CaseModel::first();
 
     expect($case->division->id)
         ->toEqual($request->get('division_id'))
@@ -113,7 +113,7 @@ test('CreateCase requires valid data', function ($data, $errors, $setup = null) 
         ->call('create')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseMissing(ServiceRequest::class, $request->except(['division_id', 'status_id', 'priority_id', 'type_id'])->toArray());
+    assertDatabaseMissing(CaseModel::class, $request->except(['division_id', 'status_id', 'priority_id', 'type_id'])->toArray());
 })->with(
     [
         'division_id missing' => [CreateCaseRequestFactory::new()->without('division_id'), ['division_id' => 'required']],
@@ -167,10 +167,10 @@ test('CreateCase is gated with proper access control', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, ServiceRequest::all());
+    assertCount(1, CaseModel::all());
 
     assertDatabaseHas(
-        ServiceRequest::class,
+        CaseModel::class,
         $request->except(
             [
                 'division_id',
@@ -182,7 +182,7 @@ test('CreateCase is gated with proper access control', function () {
         )->toArray()
     );
 
-    $case = ServiceRequest::first();
+    $case = CaseModel::first();
 
     expect($case->division->id)
         ->toEqual($request->get('division_id'))
@@ -231,11 +231,11 @@ test('CreateCase is gated with proper feature access control', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, ServiceRequest::all());
+    assertCount(1, CaseModel::all());
 
-    assertDatabaseHas(ServiceRequest::class, $request->except(['division_id', 'respondent_id', 'type_id'])->toArray());
+    assertDatabaseHas(CaseModel::class, $request->except(['division_id', 'respondent_id', 'type_id'])->toArray());
 
-    $case = ServiceRequest::first();
+    $case = CaseModel::first();
 
     expect($case->division->id)->toEqual($request['division_id']);
 });

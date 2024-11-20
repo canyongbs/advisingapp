@@ -36,14 +36,14 @@
     use App\Models\User;
     use AdvisingApp\Division\Models\Division;
     use AdvisingApp\Campaign\Settings\CampaignSettings;
-    use AdvisingApp\CaseManagement\Models\ServiceRequestType;
-    use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
-    use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
+    use AdvisingApp\CaseManagement\Models\CaseType;
+    use AdvisingApp\CaseManagement\Models\CaseStatus;
+    use AdvisingApp\CaseManagement\Models\CasePriority;
 @endphp
 
 <x-filament::fieldset>
     <x-slot name="label">
-        Service Request
+        Case
     </x-slot>
 
     <dl class="max-w-md divide-y divide-gray-200 text-gray-900 dark:divide-gray-700 dark:text-white">
@@ -53,11 +53,11 @@
         </div>
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Status</dt>
-            <dd class="text-sm font-semibold">{{ ServiceRequestStatus::find($action['status_id'])?->name }}</dd>
+            <dd class="text-sm font-semibold">{{ CaseStatus::find($action['status_id'])?->name }}</dd>
         </div>
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Priority</dt>
-            <dd class="text-sm font-semibold">{{ ServiceRequestPriority::find($action['priority_id'])?->name }}</dd>
+            <dd class="text-sm font-semibold">{{ CasePriority::find($action['priority_id'])?->name }}</dd>
         </div>
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Assigned To</dt>
@@ -68,7 +68,7 @@
             <dd class="text-sm font-semibold">{{ $action['close_details'] }}</dd>
         </div>
         <div class="flex flex-col pt-3">
-            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Internal Service Request Details</dt>
+            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Internal Case Details</dt>
             <dd class="text-sm font-semibold">{{ $action['res_details'] }}</dd>
         </div>
         <div class="flex flex-col pt-3">

@@ -50,13 +50,13 @@ use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
 use AdvisingApp\CaseManagement\Tests\RequestFactories\EditCaseStatusRequestFactory;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\EditCaseStatus;
 
 test('A successful action on the EditCaseStatus page', function () {
-    $caseStatus = ServiceRequestStatus::factory()->create();
+    $caseStatus = CaseStatus::factory()->create();
 
     asSuperAdmin()
         ->get(
@@ -88,7 +88,7 @@ test('A successful action on the EditCaseStatus page', function () {
 test('EditCaseStatus requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    $caseStatus = ServiceRequestStatus::factory()->create();
+    $caseStatus = CaseStatus::factory()->create();
 
     livewire(EditCaseStatus::class, [
         'record' => $caseStatus->getRouteKey(),
@@ -102,7 +102,7 @@ test('EditCaseStatus requires valid data', function ($data, $errors) {
         ->call('save')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseHas(ServiceRequestStatus::class, $caseStatus->toArray());
+    assertDatabaseHas(CaseStatus::class, $caseStatus->toArray());
 })->with(
     [
         'name missing' => [EditCaseStatusRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
@@ -117,7 +117,7 @@ test('EditCaseStatus requires valid data', function ($data, $errors) {
 test('EditCaseStatus is gated with proper access control', function () {
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
-    $caseStatus = ServiceRequestStatus::factory()->create();
+    $caseStatus = CaseStatus::factory()->create();
 
     actingAs($user)
         ->get(
@@ -165,7 +165,7 @@ test('EditCaseStatus is gated with proper feature access control', function () {
     $user->givePermissionTo('service_request_status.view-any');
     $user->givePermissionTo('service_request_status.*.update');
 
-    $caseStatus = ServiceRequestStatus::factory()->create();
+    $caseStatus = CaseStatus::factory()->create();
 
     actingAs($user)
         ->get(

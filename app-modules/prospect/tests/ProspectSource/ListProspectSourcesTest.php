@@ -48,7 +48,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\ListPro
 test('The correct details are displayed on the ListProspectSources page', function () {
     $prospectSources = ProspectSource::factory()
         // TODO: Fix this once Prospect factory is created
-        //->has(ServiceRequest::factory()->count(fake()->randomNumber(1)), 'serviceRequests')
+        //->has(CaseModel::factory()->count(fake()->randomNumber(1)), 'serviceRequests')
         ->count(10)
         ->create();
 

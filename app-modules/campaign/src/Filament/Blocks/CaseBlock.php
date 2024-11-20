@@ -44,15 +44,15 @@ use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Division\Models\Division;
 use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
+use AdvisingApp\CaseManagement\Models\CasePriority;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
-use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
-use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
 
 class CaseBlock extends CampaignActionBlock
 {
-    protected Model | string | Closure | null $model = ServiceRequest::class;
+    protected Model | string | Closure | null $model = CaseModel::class;
 
     protected function setUp(): void
     {
@@ -68,30 +68,30 @@ class CaseBlock extends CampaignActionBlock
         return [
             Select::make($fieldPrefix . 'division_id')
                 ->relationship('division', 'name')
-                ->model(ServiceRequest::class)
+                ->model(CaseModel::class)
                 ->label('Division')
                 ->required()
                 ->exists((new Division())->getTable(), 'id'),
             Select::make($fieldPrefix . 'status_id')
                 ->relationship('status', 'name')
-                ->model(ServiceRequest::class)
+                ->model(CaseModel::class)
                 ->preload()
                 ->label('Status')
                 ->required()
-                ->exists((new ServiceRequestStatus())->getTable(), 'id'),
+                ->exists((new CaseStatus())->getTable(), 'id'),
             Select::make($fieldPrefix . 'priority_id')
                 ->relationship(
                     name: 'priority',
                     titleAttribute: 'name',
                     modifyQueryUsing: fn (Builder $query) => $query->orderBy('order'),
                 )
-                ->model(ServiceRequest::class)
+                ->model(CaseModel::class)
                 ->label('Priority')
                 ->required()
-                ->exists((new ServiceRequestPriority())->getTable(), 'id'),
+                ->exists((new CasePriority())->getTable(), 'id'),
             Select::make($fieldPrefix . 'assigned_to_id')
                 ->relationship('assignedTo.user', 'name')
-                ->model(ServiceRequest::class)
+                ->model(CaseModel::class)
                 ->searchable()
                 ->label('Assign Case to')
                 ->nullable()

@@ -35,13 +35,13 @@
 */
 
 use Mockery\MockInterface;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Exceptions\CaseNumberUpdateAttemptException;
 use AdvisingApp\CaseManagement\Exceptions\CaseNumberExceededReRollsException;
 use AdvisingApp\CaseManagement\Cases\CaseNumber\Contracts\CaseNumberGenerator;
 
 test('An Exception is thrown if it is attempted to change the case_number', function () {
-    $case = ServiceRequest::factory()->create();
+    $case = CaseModel::factory()->create();
 
     $case->service_request_number = '1234567890';
 
@@ -49,7 +49,7 @@ test('An Exception is thrown if it is attempted to change the case_number', func
 })->throws(CaseNumberUpdateAttemptException::class);
 
 test('A save is attempted again and the case_number re-rolled if a UniqueConstraintViolationException is thrown', function () {
-    $case = ServiceRequest::factory()->create();
+    $case = CaseModel::factory()->create();
 
     app()->instance(CaseNumberGenerator::class, mock(CaseNumberGenerator::class, function (MockInterface $mock) use ($case) {
         $mock->shouldReceive('generate')
@@ -57,18 +57,18 @@ test('A save is attempted again and the case_number re-rolled if a UniqueConstra
             ->andReturn($case->service_request_number, '1234567891');
     }));
 
-    $newCase = ServiceRequest::factory()->create();
+    $newCase = CaseModel::factory()->create();
 
     expect($newCase->service_request_number)->toBe('1234567891');
 });
 
 test('CaseNumberExceededReRollsException will be thrown if the case_number is re-rolled more than allowed times', function () {
-    $case = ServiceRequest::factory()->create();
+    $case = CaseModel::factory()->create();
 
     app()->instance(CaseNumberGenerator::class, mock(CaseNumberGenerator::class, function (MockInterface $mock) use ($case) {
         $mock->shouldReceive('generate')
             ->andReturn($case->service_request_number);
     }));
 
-    ServiceRequest::factory()->create();
+    CaseModel::factory()->create();
 })->throws(CaseNumberExceededReRollsException::class);

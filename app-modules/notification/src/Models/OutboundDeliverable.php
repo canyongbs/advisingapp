@@ -43,9 +43,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Notification\Drivers\SmsDriver;
 use AdvisingApp\Timeline\Models\CustomTimeline;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Notification\Drivers\EmailDriver;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
@@ -85,7 +85,7 @@ class OutboundDeliverable extends BaseModel implements ProvidesATimeline
     ];
 
     public array $timelineables = [
-        ServiceRequest::class,
+        CaseModel::class,
     ];
 
     public function related(): MorphTo

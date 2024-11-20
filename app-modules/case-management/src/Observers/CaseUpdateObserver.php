@@ -37,14 +37,14 @@
 namespace AdvisingApp\CaseManagement\Observers;
 
 use App\Models\User;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 
 class CaseUpdateObserver
 {
-    public function created(ServiceRequestUpdate $caseUpdate): void
+    public function created(CaseUpdate $caseUpdate): void
     {
         $user = auth()->user();
 
@@ -55,7 +55,7 @@ class CaseUpdateObserver
         TimelineableRecordCreated::dispatch($caseUpdate->serviceRequest, $caseUpdate);
     }
 
-    public function deleted(ServiceRequestUpdate $caseUpdate): void
+    public function deleted(CaseUpdate $caseUpdate): void
     {
         TimelineableRecordDeleted::dispatch($caseUpdate->serviceRequest, $caseUpdate);
     }

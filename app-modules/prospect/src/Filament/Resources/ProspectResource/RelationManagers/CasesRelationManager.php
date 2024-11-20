@@ -46,8 +46,8 @@ use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\CaseManagement\Models\CasePriority;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ViewCase;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CreateCase;
 
@@ -87,7 +87,7 @@ class CasesRelationManager extends RelationManager
             ->filters([
                 SelectFilter::make('priority')
                     ->relationship('priority', 'name', fn (Builder $query) => $query->with('type'))
-                    ->getOptionLabelFromRecordUsing(fn (ServiceRequestPriority $record) => "{$record->type->name} - {$record->name}")
+                    ->getOptionLabelFromRecordUsing(fn (CasePriority $record) => "{$record->type->name} - {$record->name}")
                     ->multiple()
                     ->preload(),
                 SelectFilter::make('status')

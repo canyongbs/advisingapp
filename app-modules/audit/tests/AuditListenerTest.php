@@ -37,28 +37,28 @@
 use function Tests\asSuperAdmin;
 
 use AdvisingApp\Audit\Settings\AuditSettings;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 
 test('Audit logs are only created if the Model is not set to be excluded from Auditing by audit settings', function () {
     asSuperAdmin();
 
-    $serviceRequest = ServiceRequest::factory()->make();
+    $case = CaseModel::factory()->make();
 
     $auditSettings = resolve(AuditSettings::class);
 
-    $auditSettings->audited_models_exclude = [$serviceRequest->getMorphClass()];
+    $auditSettings->audited_models_exclude = [$case->getMorphClass()];
 
     $auditSettings->save();
 
-    expect($serviceRequest->audits)->toHaveCount(0);
+    expect($case->audits)->toHaveCount(0);
 
     $auditSettings->audited_models_exclude = [];
 
     $auditSettings->save();
 
-    $serviceRequest->save();
+    $case->save();
 
-    $serviceRequest->refresh();
+    $case->refresh();
 
-    expect($serviceRequest->audits)->toHaveCount(1);
+    expect($case->audits)->toHaveCount(1);
 });

@@ -45,15 +45,15 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
-use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\ListCaseUpdates;
 
 test('The correct details are displayed on the ListCaseUpdates page', function () {
-    $caseUpdates = ServiceRequestUpdate::factory()
-        ->for(ServiceRequest::factory(), 'serviceRequest')
+    $caseUpdates = CaseUpdate::factory()
+        ->for(CaseModel::factory(), 'serviceRequest')
         ->count(10)
         ->create();
 
@@ -66,7 +66,7 @@ test('The correct details are displayed on the ListCaseUpdates page', function (
         ->assertCountTableRecords(10);
 
     $caseUpdates->each(
-        fn (ServiceRequestUpdate $caseUpdate) => $component
+        fn (CaseUpdate $caseUpdate) => $component
             ->assertTableColumnStateSet(
                 'id',
                 $caseUpdate->id,

@@ -38,12 +38,13 @@ namespace AdvisingApp\CaseManagement\Policies;
 
 use App\Enums\Feature;
 use App\Models\Authenticatable;
+use App\Features\CaseManagement;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
 use App\Support\FeatureAccessResponse;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\ServiceRequestType;
 
 class CaseTypePolicy
 {
@@ -64,14 +65,28 @@ class CaseTypePolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'case_type.view-any',
+                denyResponse: 'You do not have permissions to view case types.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'service_request_type.view-any',
             denyResponse: 'You do not have permissions to view service request types.'
         );
     }
 
-    public function view(Authenticatable $authenticatable, ServiceRequestType $caseType): Response
+    public function view(Authenticatable $authenticatable, CaseType $caseType): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_type.{$caseType->id}.view"],
+                denyResponse: 'You do not have permissions to view this case type.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_type.{$caseType->id}.view"],
             denyResponse: 'You do not have permissions to view this service request type.'
@@ -80,40 +95,75 @@ class CaseTypePolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'case_type.create',
+                denyResponse: 'You do not have permissions to create case types.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'service_request_type.create',
             denyResponse: 'You do not have permissions to create service request types.'
         );
     }
 
-    public function update(Authenticatable $authenticatable, ServiceRequestType $caseType): Response
+    public function update(Authenticatable $authenticatable, CaseType $caseType): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_type.{$caseType->id}.update"],
+                denyResponse: 'You do not have permissions to update this case type.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_type.{$caseType->id}.update"],
             denyResponse: 'You do not have permissions to update this service request type.'
         );
     }
 
-    public function delete(Authenticatable $authenticatable, ServiceRequestType $caseType): Response
+    public function delete(Authenticatable $authenticatable, CaseType $caseType): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_type.{$caseType->id}.delete"],
+                denyResponse: 'You do not have permissions to delete this case type.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_type.{$caseType->id}.delete"],
             denyResponse: 'You do not have permissions to delete this service request type.'
         );
     }
 
-    public function restore(Authenticatable $authenticatable, ServiceRequestType $caseType): Response
+    public function restore(Authenticatable $authenticatable, CaseType $caseType): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_type.{$caseType->id}.restore"],
+                denyResponse: 'You do not have permissions to restore this case type.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_type.{$caseType->id}.restore"],
             denyResponse: 'You do not have permissions to restore this service request type.'
         );
     }
 
-    public function forceDelete(Authenticatable $authenticatable, ServiceRequestType $caseType): Response
+    public function forceDelete(Authenticatable $authenticatable, CaseType $caseType): Response
     {
         if ($caseType->serviceRequests()->exists()) {
-            return Response::deny('You cannot force delete this service request type because it has associated service requests.');
+            return Response::deny('You cannot force delete this case type because it has associated cases.');
+        }
+
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_type.{$caseType->id}.force-delete"],
+                denyResponse: 'You do not have permissions to force delete this case type.'
+            );
         }
 
         return $authenticatable->canOrElse(

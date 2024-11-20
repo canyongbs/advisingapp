@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\URL;
 use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Application\Models\Application;
-use AdvisingApp\CaseManagement\Models\ServiceRequestForm;
+use AdvisingApp\CaseManagement\Models\CaseForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 
 class GenerateSubmissibleEmbedCode
@@ -111,8 +111,8 @@ class GenerateSubmissibleEmbedCode
                 <script src="{$scriptUrl}"></script>
                 EOD;
             })(),
-            ServiceRequestForm::class => (function () use ($submissible) {
-                /** @var ServiceRequestForm $submissible */
+            CaseForm::class => (function () use ($submissible) {
+                /** @var CaseForm $submissible */
                 $scriptUrl = url('js/widgets/service-request-form/advising-app-service-request-form-widget.js?');
                 $formDefinitionUrl = URL::to(
                     URL::signedRoute(

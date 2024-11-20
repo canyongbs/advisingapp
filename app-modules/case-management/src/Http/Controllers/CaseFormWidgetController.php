@@ -48,19 +48,19 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
-use AdvisingApp\CaseManagement\Models\ServiceRequestForm;
+use AdvisingApp\CaseManagement\Models\CaseForm;
+use AdvisingApp\CaseManagement\Models\CaseFormSubmission;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
+use AdvisingApp\CaseManagement\Models\CaseFormAuthentication;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
 use AdvisingApp\CaseManagement\Actions\GenerateCaseFormKitSchema;
-use AdvisingApp\CaseManagement\Models\ServiceRequestFormSubmission;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
-use AdvisingApp\CaseManagement\Models\ServiceRequestFormAuthentication;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
 class CaseFormWidgetController extends Controller
 {
-    public function view(GenerateCaseFormKitSchema $generateSchema, ServiceRequestForm $caseForm): JsonResponse
+    public function view(GenerateCaseFormKitSchema $generateSchema, CaseForm $caseForm): JsonResponse
     {
         return response()->json(
             [
@@ -69,14 +69,14 @@ class CaseFormWidgetController extends Controller
                 'is_authenticated' => $caseForm->is_authenticated,
                 ...($caseForm->is_authenticated ? [
                     'authentication_url' => URL::signedRoute(
-                        name: 'service-request-forms.request-authentication',
-                        parameters: ['serviceRequestForm' => $caseForm],
+                        name: 'case-forms.request-authentication',
+                        parameters: ['caseForm' => $caseForm],
                         absolute: false
                     ),
                 ] : [
                     'submission_url' => URL::signedRoute(
-                        name: 'service-request-forms.submit',
-                        parameters: ['serviceRequestForm' => $caseForm],
+                        name: 'case-forms.submit',
+                        parameters: ['caseForm' => $caseForm],
                         absolute: false
                     ),
                 ]),
@@ -91,7 +91,7 @@ class CaseFormWidgetController extends Controller
         );
     }
 
-    public function requestAuthentication(Request $request, ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail, ServiceRequestForm $caseForm): JsonResponse
+    public function requestAuthentication(Request $request, ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail, CaseForm $caseForm): JsonResponse
     {
         $data = $request->validate([
             'email' => ['required', 'email'],
@@ -107,7 +107,7 @@ class CaseFormWidgetController extends Controller
 
         $code = random_int(100000, 999999);
 
-        $authentication = new ServiceRequestFormAuthentication();
+        $authentication = new CaseFormAuthentication();
         $authentication->author()->associate($author);
         $authentication->submissible()->associate($caseForm);
         $authentication->code = Hash::make($code);
@@ -120,9 +120,9 @@ class CaseFormWidgetController extends Controller
         return response()->json([
             'message' => "We've sent an authentication code to {$data['email']}.",
             'authentication_url' => URL::signedRoute(
-                name: 'service-request-forms.authenticate',
+                name: 'case-forms.authenticate',
                 parameters: [
-                    'serviceRequestForm' => $caseForm,
+                    'caseForm' => $caseForm,
                     'authentication' => $authentication,
                 ],
                 absolute: false
@@ -130,7 +130,7 @@ class CaseFormWidgetController extends Controller
         ]);
     }
 
-    public function authenticate(Request $request, ServiceRequestForm $caseForm, ServiceRequestFormAuthentication $authentication): JsonResponse
+    public function authenticate(Request $request, CaseForm $caseForm, CaseFormAuthentication $authentication): JsonResponse
     {
         if ($authentication->isExpired()) {
             return response()->json([
@@ -150,10 +150,10 @@ class CaseFormWidgetController extends Controller
 
         return response()->json([
             'submission_url' => URL::signedRoute(
-                name: 'service-request-forms.submit',
+                name: 'case-forms.submit',
                 parameters: [
                     'authentication' => $authentication,
-                    'serviceRequestForm' => $authentication->submissible,
+                    'caseForm' => $authentication->submissible,
                 ],
                 absolute: false
             ),
@@ -164,12 +164,12 @@ class CaseFormWidgetController extends Controller
         Request $request,
         GenerateSubmissibleValidation $generateValidation,
         ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail,
-        ServiceRequestForm $caseForm,
+        CaseForm $caseForm,
     ): JsonResponse {
         $authentication = $request->query('authentication');
 
         if (filled($authentication)) {
-            $authentication = ServiceRequestFormAuthentication::findOrFail($authentication);
+            $authentication = CaseFormAuthentication::findOrFail($authentication);
         }
 
         if (
@@ -193,7 +193,7 @@ class CaseFormWidgetController extends Controller
             );
         }
 
-        /** @var ?ServiceRequestFormSubmission $submission */
+        /** @var ?CaseFormSubmission $submission */
         $submission = $authentication ? $caseForm->submissions()
             ->requested()
             ->whereMorphedTo('author', $authentication->author)

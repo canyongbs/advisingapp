@@ -44,11 +44,11 @@ use function Pest\Laravel\actingAs;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
 
 test('The correct details are displayed on the ViewCaseStatus page', function () {
-    $caseStatus = ServiceRequestStatus::factory()->create();
+    $caseStatus = CaseStatus::factory()->create();
 
     asSuperAdmin()
         ->get(
@@ -72,7 +72,7 @@ test('The correct details are displayed on the ViewCaseStatus page', function ()
 test('ViewCaseStatus is gated with proper access control', function () {
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
-    $prospectSource = ServiceRequestStatus::factory()->create();
+    $prospectSource = CaseStatus::factory()->create();
 
     actingAs($user)
         ->get(
@@ -104,7 +104,7 @@ test('ViewCaseStatus is gated with proper feature access control', function () {
     $user->givePermissionTo('service_request_status.view-any');
     $user->givePermissionTo('service_request_status.*.view');
 
-    $caseStatus = ServiceRequestStatus::factory()->create();
+    $caseStatus = CaseStatus::factory()->create();
 
     actingAs($user)
         ->get(

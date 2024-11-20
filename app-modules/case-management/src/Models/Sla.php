@@ -67,6 +67,6 @@ class Sla extends BaseModel implements Auditable
 
     public function serviceRequestPriorities(): HasMany
     {
-        return $this->hasMany(ServiceRequestPriority::class);
+        return $this->hasMany(CasePriority::class);
     }
 }

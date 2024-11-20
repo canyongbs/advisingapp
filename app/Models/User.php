@@ -71,6 +71,7 @@ use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use AdvisingApp\CaseManagement\Models\ChangeRequest;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -85,7 +86,6 @@ use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
-use AdvisingApp\CaseManagement\Models\ServiceRequestAssignment;
 use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
@@ -301,15 +301,15 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
     }
 
-    public function serviceRequestAssignments(): HasMany
+    public function caseAssignments(): HasMany
     {
-        return $this->hasMany(ServiceRequestAssignment::class)
+        return $this->hasMany(CaseAssignment::class)
             ->where('status', CaseAssignmentStatus::Active);
     }
 
     public function serviceRequests(): HasManyDeep
     {
-        return $this->hasManyDeepFromRelations($this->serviceRequestAssignments(), (new ServiceRequestAssignment())->serviceRequest());
+        return $this->hasManyDeepFromRelations($this->caseAssignments(), (new CaseAssignment())->serviceRequest());
     }
 
     public function changeRequests(): HasMany

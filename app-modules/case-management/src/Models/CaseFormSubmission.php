@@ -37,6 +37,7 @@
 namespace AdvisingApp\CaseManagement\Models;
 
 use App\Models\User;
+use App\Features\CaseManagement;
 use AdvisingApp\Form\Models\Submission;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
@@ -51,9 +52,9 @@ use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 /**
  * @property Student|Prospect|null $author
  *
- * @mixin IdeHelperServiceRequestFormSubmission
+ * @mixin IdeHelperCaseFormSubmission
  */
-class ServiceRequestFormSubmission extends Submission
+class CaseFormSubmission extends Submission
 {
     protected $fillable = [
         'canceled_at',
@@ -69,14 +70,19 @@ class ServiceRequestFormSubmission extends Submission
         'request_method' => FormSubmissionRequestDeliveryMethod::class,
     ];
 
+    public function getTable()
+    {
+        return CaseManagement::active() ? 'case_form_submissions' : 'service_request_form_submissions';
+    }
+
     public function serviceRequest(): HasOne
     {
-        return $this->hasOne(ServiceRequest::class, 'service_request_form_submission_id');
+        return $this->hasOne(CaseModel::class, 'service_request_form_submission_id');
     }
 
     public function submissible(): BelongsTo
     {
-        return $this->belongsTo(ServiceRequestForm::class, 'service_request_form_id');
+        return $this->belongsTo(CaseForm::class, 'service_request_form_id');
     }
 
     public function requester(): BelongsTo
@@ -86,13 +92,13 @@ class ServiceRequestFormSubmission extends Submission
 
     public function priority(): BelongsTo
     {
-        return $this->belongsTo(ServiceRequestPriority::class, 'service_request_priority_id');
+        return $this->belongsTo(CasePriority::class, 'service_request_priority_id');
     }
 
     public function fields(): BelongsToMany
     {
         return $this->belongsToMany(
-            ServiceRequestFormField::class,
+            CaseFormField::class,
             'service_request_form_field_submission',
             'service_request_form_submission_id',
             'service_request_form_field_id',

@@ -47,7 +47,7 @@ use Filament\Forms\Components\Section;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\CaseManagement\Models\ServiceRequestType;
+use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 
 class EditCaseType extends EditRecord
@@ -79,13 +79,13 @@ class EditCaseType extends EditRecord
                             ]),
                     ]),
             ])
-            ->disabled(fn (ServiceRequestType $record) => $record->trashed());
+            ->disabled(fn (CaseType $record) => $record->trashed());
     }
 
     protected function getSaveFormAction(): Action
     {
         return parent::getSaveFormAction()
-            ->hidden(fn (ServiceRequestType $record) => $record->trashed());
+            ->hidden(fn (CaseType $record) => $record->trashed());
     }
 
     protected function getHeaderActions(): array

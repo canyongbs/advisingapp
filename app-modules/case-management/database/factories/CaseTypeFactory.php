@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\CaseManagement\Database\Factories;
 
+use AdvisingApp\CaseManagement\Models\CaseType;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\CaseManagement\Models\ServiceRequestType;
 
 /**
- * @extends Factory<ServiceRequestType>
+ * @extends Factory<CaseType>
  */
 class CaseTypeFactory extends Factory
 {

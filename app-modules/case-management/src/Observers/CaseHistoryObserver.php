@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\CaseManagement\Observers;
 
+use AdvisingApp\CaseManagement\Models\CaseHistory;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use AdvisingApp\CaseManagement\Models\ServiceRequestHistory;
 
 class CaseHistoryObserver
 {
-    public function created(ServiceRequestHistory $caseHistory): void
+    public function created(CaseHistory $caseHistory): void
     {
         TimelineableRecordCreated::dispatch($caseHistory->serviceRequest, $caseHistory);
     }
 
-    public function deleted(ServiceRequestHistory $caseHistory): void
+    public function deleted(CaseHistory $caseHistory): void
     {
         TimelineableRecordDeleted::dispatch($caseHistory->serviceRequest, $caseHistory);
     }

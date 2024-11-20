@@ -47,11 +47,11 @@ use Filament\Forms\Components\Textarea;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\Division\Models\Division;
 use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\CaseManagement\Models\CaseType;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\CaseManagement\Models\CasePriority;
 use App\Filament\Forms\Components\EducatableSelect;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
-use AdvisingApp\CaseManagement\Models\ServiceRequestType;
-use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
-use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 
 class EditCase extends EditRecord
@@ -60,8 +60,8 @@ class EditCase extends EditRecord
 
     public function form(Form $form): Form
     {
-        $disabledStatuses = ServiceRequestStatus::onlyTrashed()->pluck('id');
-        $disabledTypes = ServiceRequestType::onlyTrashed()->pluck('id');
+        $disabledStatuses = CaseStatus::onlyTrashed()->pluck('id');
+        $disabledTypes = CaseType::onlyTrashed()->pluck('id');
 
         return $form
             ->schema([
@@ -73,22 +73,22 @@ class EditCase extends EditRecord
                 Select::make('status_id')
                     ->relationship('status', 'name')
                     ->label('Status')
-                    ->options(fn (ServiceRequest $record) => ServiceRequestStatus::withTrashed()
+                    ->options(fn (CaseModel $record) => CaseStatus::withTrashed()
                         ->whereKey($record->status_id)
                         ->orWhereNull('deleted_at')
                         ->orderBy('classification')
                         ->orderBy('name')
                         ->get(['id', 'name', 'classification'])
-                        ->groupBy(fn (ServiceRequestStatus $status) => $status->classification->getlabel())
+                        ->groupBy(fn (CaseStatus $status) => $status->classification->getlabel())
                         ->map(fn (Collection $group) => $group->pluck('name', 'id')))
                     ->required()
-                    ->exists((new ServiceRequestStatus())->getTable(), 'id')
+                    ->exists((new CaseStatus())->getTable(), 'id')
                     ->disableOptionWhen(fn (string $value) => $disabledStatuses->contains($value)),
                 Grid::make()
                     ->schema([
                         Select::make('type_id')
                             ->options(
-                                fn (ServiceRequest $record) => ServiceRequestType::withTrashed()
+                                fn (CaseModel $record) => CaseType::withTrashed()
                                     ->whereKey($record->priority?->type_id)
                                     ->orWhereNull('deleted_at')
                                     ->orderBy('name')
@@ -98,7 +98,7 @@ class EditCase extends EditRecord
                             ->label('Type')
                             ->required()
                             ->live()
-                            ->exists(ServiceRequestType::class, 'id')
+                            ->exists(CaseType::class, 'id')
                             ->disableOptionWhen(fn (string $value) => $disabledTypes->contains($value)),
                         Select::make('priority_id')
                             ->relationship(
@@ -108,7 +108,7 @@ class EditCase extends EditRecord
                             )
                             ->label('Priority')
                             ->required()
-                            ->exists(ServiceRequestPriority::class, 'id')
+                            ->exists(CasePriority::class, 'id')
                             ->visible(fn (Get $get): bool => filled($get('type_id'))),
                     ]),
                 Textarea::make('close_details')

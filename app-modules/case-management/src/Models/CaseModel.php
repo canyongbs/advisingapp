@@ -41,6 +41,7 @@ use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Carbon\CarbonInterface;
+use App\Features\CaseManagement;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\DB;
 use Kirschbaum\PowerJoins\PowerJoins;
@@ -78,9 +79,9 @@ use AdvisingApp\CaseManagement\Cases\CaseNumber\Contracts\CaseNumberGenerator;
 /**
  * @property-read Student|Prospect $respondent
  *
- * @mixin IdeHelperServiceRequest
+ * @mixin IdeHelperCaseModel
  */
-class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable, ExecutableFromACampaignAction
+class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable, ExecutableFromACampaignAction
 {
     use BelongsToEducatable;
     use SoftDeletes;
@@ -105,6 +106,11 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     protected $casts = [
         'status_updated_at' => 'immutable_datetime',
     ];
+
+    public function getTable()
+    {
+        return CaseManagement::active() ? 'cases' : 'service_requests';
+    }
 
     public function save(array $options = [])
     {
@@ -169,45 +175,45 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
 
     public function serviceRequestUpdates(): HasMany
     {
-        return $this->hasMany(ServiceRequestUpdate::class, 'service_request_id');
+        return $this->hasMany(CaseUpdate::class, 'service_request_id');
     }
 
     public function status(): BelongsTo
     {
-        return $this->belongsTo(ServiceRequestStatus::class);
+        return $this->belongsTo(CaseStatus::class);
     }
 
     public function priority(): BelongsTo
     {
-        return $this->belongsTo(ServiceRequestPriority::class);
+        return $this->belongsTo(CasePriority::class);
     }
 
     public function serviceRequestFormSubmission(): BelongsTo
     {
-        return $this->belongsTo(ServiceRequestFormSubmission::class, 'service_request_form_submission_id');
+        return $this->belongsTo(CaseFormSubmission::class, 'service_request_form_submission_id');
     }
 
     public function assignments(): HasMany
     {
-        return $this->hasMany(ServiceRequestAssignment::class);
+        return $this->hasMany(CaseAssignment::class);
     }
 
     public function assignedTo(): HasOne
     {
-        return $this->hasOne(ServiceRequestAssignment::class)
+        return $this->hasOne(CaseAssignment::class)
             ->latest('assigned_at')
             ->where('status', CaseAssignmentStatus::Active);
     }
 
     public function initialAssignment(): HasOne
     {
-        return $this->hasOne(ServiceRequestAssignment::class)
+        return $this->hasOne(CaseAssignment::class)
             ->oldest('assigned_at');
     }
 
     public function histories(): HasMany
     {
-        return $this->hasMany(ServiceRequestHistory::class);
+        return $this->hasMany(CaseHistory::class);
     }
 
     public function createdBy(): BelongsTo
@@ -219,7 +225,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     {
         $query->whereIn(
             'status_id',
-            ServiceRequestStatus::where('classification', SystemCaseClassification::Open)->pluck('id')
+            CaseStatus::where('classification', SystemCaseClassification::Open)->pluck('id')
         );
     }
 
@@ -232,7 +238,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
                     ->segment
                     ->retrieveRecords()
                     ->each(function (Educatable $educatable) use ($action) {
-                        $request = ServiceRequest::create([
+                        $request = CaseModel::create([
                             'respondent_type' => $educatable->getMorphClass(),
                             'respondent_id' => $educatable->getKey(),
                             'close_details' => $action->data['close_details'],
@@ -264,7 +270,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
 
     public function latestInboundServiceRequestUpdate(): HasOne
     {
-        return $this->hasOne(ServiceRequestUpdate::class, 'service_request_id')
+        return $this->hasOne(CaseUpdate::class, 'service_request_id')
             ->ofMany([
                 'created_at' => 'max',
             ], function (Builder $query) {
@@ -276,7 +282,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
 
     public function latestOutboundServiceRequestUpdate(): HasOne
     {
-        return $this->hasOne(ServiceRequestUpdate::class, 'service_request_id')
+        return $this->hasOne(CaseUpdate::class, 'service_request_id')
             ->ofMany([
                 'created_at' => 'max',
             ], function (Builder $query) {

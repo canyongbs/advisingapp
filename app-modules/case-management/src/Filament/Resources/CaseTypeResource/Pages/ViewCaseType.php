@@ -42,7 +42,7 @@ use Filament\Infolists\Components\Group;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\CaseManagement\Models\ServiceRequestType;
+use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 
@@ -61,8 +61,8 @@ class ViewCaseType extends ViewRecord
                             ->label('Name'),
                         TextEntry::make('form.name')
                             ->label('Form')
-                            ->hidden(fn (ServiceRequestType $record) => ! $record->form)
-                            ->url(fn (ServiceRequestType $record) => $record->form ? CaseFormResource::getUrl('edit', ['record' => $record?->form]) : null)
+                            ->hidden(fn (CaseType $record) => ! $record->form)
+                            ->url(fn (CaseType $record) => $record->form ? CaseFormResource::getUrl('edit', ['record' => $record?->form]) : null)
                             ->color('primary'),
                         Group::make()
                             ->schema([
@@ -70,17 +70,17 @@ class ViewCaseType extends ViewRecord
                                     ->hiddenLabel()
                                     ->state('Feedback collection')
                                     ->badge()
-                                    ->color(fn (ServiceRequestType $record) => $record->has_enabled_feedback_collection ? 'success' : 'gray'),
+                                    ->color(fn (CaseType $record) => $record->has_enabled_feedback_collection ? 'success' : 'gray'),
                                 TextEntry::make('has_enabled_csat')
                                     ->hiddenLabel()
                                     ->state('CSAT')
                                     ->badge()
-                                    ->color(fn (ServiceRequestType $record) => $record->has_enabled_csat ? 'success' : 'gray'),
+                                    ->color(fn (CaseType $record) => $record->has_enabled_csat ? 'success' : 'gray'),
                                 TextEntry::make('has_enabled_nps')
                                     ->hiddenLabel()
                                     ->state('NPS')
                                     ->badge()
-                                    ->color(fn (ServiceRequestType $record) => $record->has_enabled_nps ? 'success' : 'gray'),
+                                    ->color(fn (CaseType $record) => $record->has_enabled_nps ? 'success' : 'gray'),
                             ]),
                     ]),
             ]);

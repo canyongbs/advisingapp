@@ -1,12 +1,11 @@
-type ServiceRequest
-    @model(class: "AdvisingApp\\CaseManagement\\Models\\ServiceRequest") {
+type CaseModel @model(class: "AdvisingApp\\CaseManagement\\Models\\CaseModel") {
     "Unique primary key."
     id: UUID!
 
     # TODO: Finish fields
 }
 
-input ServiceRequestQuery {
+input CaseModelQuery {
     "Unique primary key."
     id: UUID
 }
@@ -14,24 +13,22 @@ input ServiceRequestQuery {
 # TODO: Query and Mutate
 
 # TODO: Move to own file
-type ServiceRequestAssignment
-    @model(
-        class: "AdvisingApp\\CaseManagement\\Models\\ServiceRequestAssignment"
-    ) {
+type CaseAssignment
+    @model(class: "AdvisingApp\\CaseManagement\\Models\\CaseAssignment") {
     "Unique primary key."
     id: UUID!
 
     "The case of the assignment."
-    service_request: ServiceRequest @belongsTo
+    case: CaseModel @belongsTo
 
     "The user of the assignment."
     user: User @belongsTo @canResolved(ability: "view")
 
     #    "The role of the assignment."
-    #    role: ServiceRequestAssignmentRole @belongsTo
+    #    role: CaseAssignmentRole @belongsTo
 
     #    "The status of the assignment."
-    #    status: ServiceRequestAssignmentStatus @belongsTo
+    #    status: CaseAssignmentStatus @belongsTo
 
     "The created datetime of the assignment."
     created_at: DateTime

@@ -45,7 +45,7 @@ use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\CaseManagement\Models\ServiceRequestForm;
+use AdvisingApp\CaseManagement\Models\CaseForm;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource;
 
 class ListCaseForms extends ListRecords
@@ -61,7 +61,7 @@ class ListCaseForms extends ListRecords
             ])
             ->actions([
                 Action::make('Respond')
-                    ->url(fn (ServiceRequestForm $form) => route('case-forms.show', ['serviceRequestForm' => $form]))
+                    ->url(fn (CaseForm $form) => route('case-forms.show', ['serviceRequestForm' => $form]))
                     ->icon('heroicon-m-arrow-top-right-on-square')
                     ->openUrlInNewTab()
                     ->color('gray'),

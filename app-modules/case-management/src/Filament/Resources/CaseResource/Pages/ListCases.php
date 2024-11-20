@@ -49,9 +49,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Enums\SlaComplianceStatus;
-use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSort;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
@@ -81,7 +81,7 @@ class ListCases extends ListRecords
                     ->sortable(),
                 TextColumn::make('respondent.display_name')
                     ->label('Related To')
-                    ->getStateUsing(fn (ServiceRequest $record) => $record->respondent->{$record->respondent::displayNameKey()})
+                    ->getStateUsing(fn (CaseModel $record) => $record->respondent->{$record->respondent::displayNameKey()})
                     ->searchable(query: fn (Builder $query, $search) => $query->tap(new EducatableSearch(relationship: 'respondent', search: $search)))
                     ->sortable(query: fn (Builder $query, string $direction): Builder => $query->tap(new EducatableSort($direction))),
                 TextColumn::make('respondent.sisid')
@@ -114,17 +114,17 @@ class ListCases extends ListRecords
                     ->sortable(),
                 IconColumn::make('response_sla_compliance')
                     ->label('SLA Response')
-                    ->state(fn (ServiceRequest $record): ?SlaComplianceStatus => $record->getResponseSlaComplianceStatus())
-                    ->tooltip(fn (ServiceRequest $record): ?string => $record->getResponseSlaComplianceStatus()?->getLabel()),
+                    ->state(fn (CaseModel $record): ?SlaComplianceStatus => $record->getResponseSlaComplianceStatus())
+                    ->tooltip(fn (CaseModel $record): ?string => $record->getResponseSlaComplianceStatus()?->getLabel()),
                 IconColumn::make('resolution_sla_compliance')
                     ->label('SLA Resolution')
-                    ->state(fn (ServiceRequest $record): ?SlaComplianceStatus => $record->getResolutionSlaComplianceStatus())
-                    ->tooltip(fn (ServiceRequest $record): ?string => $record->getResolutionSlaComplianceStatus()?->getLabel()),
+                    ->state(fn (CaseModel $record): ?SlaComplianceStatus => $record->getResolutionSlaComplianceStatus())
+                    ->tooltip(fn (CaseModel $record): ?string => $record->getResolutionSlaComplianceStatus()?->getLabel()),
             ])
             ->filters([
                 SelectFilter::make('priority')
                     ->relationship('priority', 'name', fn (Builder $query) => $query->with('type')->whereRelation('type', 'deleted_at'))
-                    ->getOptionLabelFromRecordUsing(fn (ServiceRequestPriority $record) => "{$record->type->name} - {$record->name}")
+                    ->getOptionLabelFromRecordUsing(fn (CasePriority $record) => "{$record->type->name} - {$record->name}")
                     ->multiple()
                     ->preload(),
                 SelectFilter::make('status')

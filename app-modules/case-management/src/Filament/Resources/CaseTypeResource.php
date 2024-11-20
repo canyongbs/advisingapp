@@ -38,9 +38,9 @@ namespace AdvisingApp\CaseManagement\Filament\Resources;
 
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\CaseManagement\Models\CaseType;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Clusters\CaseManagementAdministration;
-use AdvisingApp\CaseManagement\Models\ServiceRequestType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ViewCaseType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ListCaseTypes;
@@ -49,7 +49,7 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\RelationManag
 
 class CaseTypeResource extends Resource
 {
-    protected static ?string $model = ServiceRequestType::class;
+    protected static ?string $model = CaseType::class;
 
     protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
 

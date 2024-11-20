@@ -45,13 +45,13 @@ use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Tests\RequestFactories\EditCaseRequestFactory;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\EditCase;
 
 test('A successful action on the EditCase page', function () {
-    $case = ServiceRequest::factory()->create();
+    $case = CaseModel::factory()->create();
 
     asSuperAdmin()
         ->get(
@@ -71,7 +71,7 @@ test('A successful action on the EditCase page', function () {
         ->assertHasNoFormErrors();
 
     assertDatabaseHas(
-        ServiceRequest::class,
+        CaseModel::class,
         $request->except(
             [
                 'division_id',
@@ -92,7 +92,7 @@ test('A successful action on the EditCase page', function () {
 });
 
 test('EditCase requires valid data', function ($data, $errors) {
-    $case = ServiceRequest::factory()->create();
+    $case = CaseModel::factory()->create();
 
     asSuperAdmin();
 
@@ -105,7 +105,7 @@ test('EditCase requires valid data', function ($data, $errors) {
         ->call('save')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseHas(ServiceRequest::class, $case->withoutRelations()->toArray());
+    assertDatabaseHas(CaseModel::class, $case->withoutRelations()->toArray());
 
     expect($case->fresh()->division->id)
         ->toEqual($case->division->id)
@@ -140,7 +140,7 @@ test('EditCase requires valid data', function ($data, $errors) {
 test('EditCase is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $case = ServiceRequest::factory()->create();
+    $case = CaseModel::factory()->create();
 
     actingAs($user)
         ->get(
@@ -174,7 +174,7 @@ test('EditCase is gated with proper access control', function () {
         ->assertHasNoFormErrors();
 
     assertDatabaseHas(
-        ServiceRequest::class,
+        CaseModel::class,
         $request->except(
             [
                 'division_id',
@@ -206,7 +206,7 @@ test('EditCase is gated with proper feature access control', function () {
     $user->givePermissionTo('service_request.view-any');
     $user->givePermissionTo('service_request.*.update');
 
-    $case = ServiceRequest::factory()->create();
+    $case = CaseModel::factory()->create();
 
     actingAs($user)
         ->get(

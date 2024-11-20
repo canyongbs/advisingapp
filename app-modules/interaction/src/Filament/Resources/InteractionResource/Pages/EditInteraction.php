@@ -48,11 +48,11 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Forms\Components\MorphToSelect\Type;
 use AdvisingApp\Interaction\Models\InteractionType;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
@@ -84,7 +84,7 @@ class EditInteraction extends EditRecord
                                         ->orWhere('id', '=', $record->interactable_id)
                                 ),
                         ] : []),
-                        Type::make(ServiceRequest::class)
+                        Type::make(CaseModel::class)
                             ->label('Service Request')
                             ->titleAttribute('service_request_number'),
                     ])

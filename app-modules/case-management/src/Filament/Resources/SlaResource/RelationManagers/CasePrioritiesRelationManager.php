@@ -46,8 +46,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\AssociateAction;
 use Filament\Tables\Actions\DissociateAction;
 use Filament\Tables\Actions\DissociateBulkAction;
+use AdvisingApp\CaseManagement\Models\CasePriority;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 
 class CasePrioritiesRelationManager extends RelationManager
@@ -63,7 +63,7 @@ class CasePrioritiesRelationManager extends RelationManager
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('type.name')
-                    ->url(fn (ServiceRequestPriority $record): string => CaseTypeResource::getUrl('edit', ['record' => $record->type]))
+                    ->url(fn (CasePriority $record): string => CaseTypeResource::getUrl('edit', ['record' => $record->type]))
                     ->searchable(),
                 TextColumn::make('name')
                     ->label('Name')

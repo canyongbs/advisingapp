@@ -37,15 +37,15 @@
 namespace AdvisingApp\CaseManagement\Filament\Resources;
 
 use Filament\Resources\Resource;
+use AdvisingApp\CaseManagement\Models\CaseForm;
 use App\Filament\Clusters\CaseManagementAdministration;
-use AdvisingApp\CaseManagement\Models\ServiceRequestForm;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages\EditCaseForm;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages\ListCaseForms;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages\CreateCaseForm;
 
 class CaseFormResource extends Resource
 {
-    protected static ?string $model = ServiceRequestForm::class;
+    protected static ?string $model = CaseForm::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard';
 

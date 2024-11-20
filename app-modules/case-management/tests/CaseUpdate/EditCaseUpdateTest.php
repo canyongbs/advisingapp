@@ -49,13 +49,13 @@ use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
 use AdvisingApp\CaseManagement\Tests\RequestFactories\EditCaseUpdateRequestFactory;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\EditCaseUpdate;
 
 test('A successful action on the EditCaseUpdate page', function () {
-    $caseUpdate = ServiceRequestUpdate::factory()->create();
+    $caseUpdate = CaseUpdate::factory()->create();
 
     asSuperAdmin()
         ->get(
@@ -74,14 +74,14 @@ test('A successful action on the EditCaseUpdate page', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    assertDatabaseHas(ServiceRequestUpdate::class, $request->except('service_request_id')->toArray());
+    assertDatabaseHas(CaseUpdate::class, $request->except('service_request_id')->toArray());
 
-    expect(ServiceRequestUpdate::first()->serviceRequest->id)
+    expect(CaseUpdate::first()->serviceRequest->id)
         ->toEqual($request->get('service_request_id'));
 });
 
 test('EditCaseUpdate requires valid data', function ($data, $errors) {
-    $caseUpdate = ServiceRequestUpdate::factory()->create();
+    $caseUpdate = CaseUpdate::factory()->create();
 
     asSuperAdmin();
 
@@ -94,9 +94,9 @@ test('EditCaseUpdate requires valid data', function ($data, $errors) {
 
     unset($caseUpdate->serviceRequest);
 
-    assertDatabaseHas(ServiceRequestUpdate::class, $caseUpdate->toArray());
+    assertDatabaseHas(CaseUpdate::class, $caseUpdate->toArray());
 
-    expect(ServiceRequestUpdate::first()->serviceRequest->id)
+    expect(CaseUpdate::first()->serviceRequest->id)
         ->toEqual($caseUpdate->serviceRequest->id);
 })->with(
     [
@@ -115,7 +115,7 @@ test('EditCaseUpdate requires valid data', function ($data, $errors) {
 test('EditCaseUpdate is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $caseUpdate = ServiceRequestUpdate::factory()->create();
+    $caseUpdate = CaseUpdate::factory()->create();
 
     actingAs($user)
         ->get(
@@ -148,9 +148,9 @@ test('EditCaseUpdate is gated with proper access control', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    assertDatabaseHas(ServiceRequestUpdate::class, $request->except('service_request_id')->toArray());
+    assertDatabaseHas(CaseUpdate::class, $request->except('service_request_id')->toArray());
 
-    expect(ServiceRequestUpdate::first()->serviceRequest->id)
+    expect(CaseUpdate::first()->serviceRequest->id)
         ->toEqual($request->get('service_request_id'));
 });
 
@@ -166,7 +166,7 @@ test('EditCaseUpdate is gated with proper feature access control', function () {
     $user->givePermissionTo('service_request_update.view-any');
     $user->givePermissionTo('service_request_update.*.update');
 
-    $caseUpdate = ServiceRequestUpdate::factory()->create();
+    $caseUpdate = CaseUpdate::factory()->create();
 
     actingAs($user)
         ->get(

@@ -38,8 +38,8 @@ namespace AdvisingApp\CaseManagement\Filament\Concerns;
 
 use App\Filament\Resources\UserResource;
 use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
-use AdvisingApp\CaseManagement\Models\ServiceRequestAssignment;
 
 // TODO Re-use this trait across other places where infolist is rendered
 trait CaseAssignmentInfolist
@@ -49,11 +49,11 @@ trait CaseAssignmentInfolist
         return [
             TextEntry::make('serviceRequest.service_request_number')
                 ->label('Case')
-                ->url(fn (ServiceRequestAssignment $caseAssignment): string => CaseResource::getUrl('view', ['record' => $caseAssignment->serviceRequest]))
+                ->url(fn (CaseAssignment $caseAssignment): string => CaseResource::getUrl('view', ['record' => $caseAssignment->serviceRequest]))
                 ->color('primary'),
             TextEntry::make('user.name')
                 ->label('Assigned To')
-                ->url(fn (ServiceRequestAssignment $caseAssignment): string => UserResource::getUrl('view', ['record' => $caseAssignment->user]))
+                ->url(fn (CaseAssignment $caseAssignment): string => UserResource::getUrl('view', ['record' => $caseAssignment->user]))
                 ->color('primary'),
         ];
     }

@@ -36,38 +36,24 @@
 
 namespace AdvisingApp\CaseManagement\Models;
 
+use App\Features\CaseManagement;
 use App\Models\Attributes\NoPermissions;
-use AdvisingApp\Form\Models\SubmissibleStep;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Form\Models\SubmissibleAuthentication;
 
 /**
- * @mixin IdeHelperServiceRequestFormStep
+ * @mixin IdeHelperCaseFormAuthentication
  */
 #[NoPermissions]
-class ServiceRequestFormStep extends SubmissibleStep
+class CaseFormAuthentication extends SubmissibleAuthentication
 {
-    use SoftDeletes;
-
-    protected $fillable = [
-        'label',
-        'content',
-        'sort',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-        'sort' => 'integer',
-    ];
+    public function getTable()
+    {
+        return CaseManagement::active() ? 'case_form_authentications' : 'service_request_form_authentications';
+    }
 
     public function submissible(): BelongsTo
     {
-        return $this->belongsTo(ServiceRequestForm::class);
-    }
-
-    public function fields(): HasMany
-    {
-        return $this->hasMany(ServiceRequestFormField::class);
+        return $this->belongsTo(CaseForm::class, 'service_request_form_id');
     }
 }

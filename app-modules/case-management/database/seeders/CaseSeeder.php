@@ -38,8 +38,8 @@ namespace AdvisingApp\CaseManagement\Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
-use AdvisingApp\CaseManagement\Models\ServiceRequestAssignment;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
 
 class CaseSeeder extends Seeder
 {
@@ -47,9 +47,9 @@ class CaseSeeder extends Seeder
     {
         $superAdmin = User::where('email', config('local_development.super_admin.email'))->first();
 
-        ServiceRequest::factory()
+        CaseModel::factory()
             ->has(
-                factory: ServiceRequestAssignment::factory()
+                factory: CaseAssignment::factory()
                     ->for($superAdmin, 'user')
                     ->count(1)
                     ->active(),

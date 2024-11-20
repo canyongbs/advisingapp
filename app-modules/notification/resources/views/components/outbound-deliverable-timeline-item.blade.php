@@ -32,7 +32,7 @@
 </COPYRIGHT>
 --}}
 @php
-    use AdvisingApp\CaseManagement\Models\ServiceRequest;
+    use AdvisingApp\CaseManagement\Models\CaseModel;
 @endphp
 
 @props(['component', 'record'])
@@ -44,7 +44,7 @@
                     $related = $record->related;
 
                     $title = match ($related::class) {
-                        ServiceRequest::class => "Auto-response {$record->channel->getLabel()} sent",
+                        CaseModel::class => "Auto-response {$record->channel->getLabel()} sent",
                         default => $record->getKey(),
                     };
                 @endphp

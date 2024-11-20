@@ -38,23 +38,24 @@ namespace AdvisingApp\CaseManagement\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
+use App\Features\CaseManagement;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Timeline\Timelines\CaseUpdateTimeline;
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
-use AdvisingApp\Timeline\Timelines\ServiceRequestUpdateTimeline;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
- * @mixin IdeHelperServiceRequestUpdate
+ * @mixin IdeHelperCaseUpdate
  */
-class ServiceRequestUpdate extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline
+class CaseUpdate extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline
 {
     use SoftDeletes;
     use HasUuids;
@@ -72,9 +73,14 @@ class ServiceRequestUpdate extends BaseModel implements Auditable, CanTriggerAut
         'direction' => CaseUpdateDirection::class,
     ];
 
+    public function getTable()
+    {
+        return CaseManagement::active() ? 'case_updates' : 'service_request_updates';
+    }
+
     public function serviceRequest(): BelongsTo
     {
-        return $this->belongsTo(ServiceRequest::class);
+        return $this->belongsTo(CaseModel::class);
     }
 
     public function getSubscribable(): ?Subscribable
@@ -87,9 +93,9 @@ class ServiceRequestUpdate extends BaseModel implements Auditable, CanTriggerAut
             : null;
     }
 
-    public function timeline(): ServiceRequestUpdateTimeline
+    public function timeline(): CaseUpdateTimeline
     {
-        return new ServiceRequestUpdateTimeline($this);
+        return new CaseUpdateTimeline($this);
     }
 
     public static function getTimelineData(Model $forModel): Collection

@@ -51,6 +51,7 @@ use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use AdvisingApp\Engagement\Models\EngagementFile;
@@ -143,7 +144,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     public function serviceRequests(): MorphMany
     {
         return $this->morphMany(
-            related: ServiceRequest::class,
+            related: CaseModel::class,
             name: 'respondent',
             type: 'respondent_type',
             id: 'respondent_id',

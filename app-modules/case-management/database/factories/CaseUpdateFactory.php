@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\CaseManagement\Database\Factories;
 
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
-use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
 
 /**
- * @extends Factory<ServiceRequestUpdate>
+ * @extends Factory<CaseUpdate>
  */
 class CaseUpdateFactory extends Factory
 {
     public function definition(): array
     {
         return [
-            'service_request_id' => ServiceRequest::factory(),
+            'service_request_id' => CaseModel::factory(),
             'update' => $this->faker->sentence(),
             'internal' => $this->faker->boolean(),
             'direction' => $this->faker->randomElement(CaseUpdateDirection::cases())->value,

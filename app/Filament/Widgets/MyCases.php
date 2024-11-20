@@ -44,8 +44,8 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Filament\Widgets\TableWidget as BaseWidget;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
-use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSort;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
@@ -77,7 +77,7 @@ class MyCases extends BaseWidget
                     ->sortable(),
                 TextColumn::make('respondent.display_name')
                     ->label('Related To')
-                    ->getStateUsing(fn (ServiceRequest $record) => $record->respondent->{$record->respondent::displayNameKey()})
+                    ->getStateUsing(fn (CaseModel $record) => $record->respondent->{$record->respondent::displayNameKey()})
                     ->searchable(query: fn (Builder $query, $search) => $query->tap(new EducatableSearch(relationship: 'respondent', search: $search)))
                     ->sortable(query: fn (Builder $query, string $direction): Builder => $query->tap(new EducatableSort($direction))),
                 TextColumn::make('respondent.sisid')
@@ -94,7 +94,7 @@ class MyCases extends BaseWidget
             ->filters([
                 SelectFilter::make('priority')
                     ->relationship('priority', 'name', fn (Builder $query) => $query->with('type'))
-                    ->getOptionLabelFromRecordUsing(fn (ServiceRequestPriority $record) => "{$record->type->name} - {$record->name}")
+                    ->getOptionLabelFromRecordUsing(fn (CasePriority $record) => "{$record->type->name} - {$record->name}")
                     ->multiple()
                     ->preload(),
                 SelectFilter::make('status')
@@ -104,10 +104,10 @@ class MyCases extends BaseWidget
             ])
             ->actions([
                 ViewAction::make()
-                    ->url(fn (ServiceRequest $record): string => CaseResource::getUrl(name: 'view', parameters: ['record' => $record->service_request_id])),
+                    ->url(fn (CaseModel $record): string => CaseResource::getUrl(name: 'view', parameters: ['record' => $record->service_request_id])),
             ])
             ->recordUrl(
-                fn (ServiceRequest $record): string => CaseResource::getUrl(name: 'view', parameters: ['record' => $record->service_request_id]),
+                fn (CaseModel $record): string => CaseResource::getUrl(name: 'view', parameters: ['record' => $record->service_request_id]),
             )
             ->paginated([5]);
     }

@@ -36,55 +36,62 @@
 
 namespace AdvisingApp\CaseManagement\Models;
 
-use DateTimeInterface;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use App\Features\CaseManagement;
+use AdvisingApp\Form\Enums\Rounding;
+use AdvisingApp\Form\Models\Submissible;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperServiceRequestType
+ * @mixin IdeHelperCaseForm
  */
-class ServiceRequestType extends BaseModel implements Auditable
+class CaseForm extends Submissible
 {
-    use SoftDeletes;
-    use HasUuids;
-    use AuditableTrait;
-
     protected $fillable = [
         'name',
-        'has_enabled_feedback_collection',
-        'has_enabled_csat',
-        'has_enabled_nps',
+        'description',
+        'embed_enabled',
+        'allowed_domains',
+        'is_authenticated',
+        'is_wizard',
+        'recaptcha_enabled',
+        'primary_color',
+        'rounding',
+        'content',
     ];
 
     protected $casts = [
-        'has_enabled_feedback_collection' => 'boolean',
-        'has_enabled_csat' => 'boolean',
-        'has_enabled_nps' => 'boolean',
+        'content' => 'array',
+        'embed_enabled' => 'boolean',
+        'allowed_domains' => 'array',
+        'is_authenticated' => 'boolean',
+        'is_wizard' => 'boolean',
+        'recaptcha_enabled' => 'boolean',
+        'rounding' => Rounding::class,
     ];
 
-    public function serviceRequests(): HasManyThrough
+    public function getTable()
     {
-        return $this->through('priorities')->has('serviceRequests');
+        return CaseManagement::active() ? 'case_forms' : 'service_request_forms';
     }
 
-    public function priorities(): HasMany
+    public function fields(): HasMany
     {
-        return $this->hasMany(ServiceRequestPriority::class, 'type_id');
+        return $this->hasMany(CaseFormField::class, 'service_request_form_id');
     }
 
-    public function form(): HasOne
+    public function steps(): HasMany
     {
-        return $this->hasOne(ServiceRequestForm::class, 'service_request_type_id');
+        return $this->hasMany(CaseFormStep::class, 'service_request_form_id');
     }
 
-    protected function serializeDate(DateTimeInterface $date): string
+    public function submissions(): HasMany
     {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+        return $this->hasMany(CaseFormSubmission::class, 'service_request_form_id');
+    }
+
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(CaseType::class, 'service_request_type_id');
     }
 }

@@ -38,14 +38,14 @@ namespace AdvisingApp\CaseManagement\Database\Factories;
 
 use App\Models\User;
 use AdvisingApp\Division\Models\Division;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\CaseManagement\Models\CasePriority;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
-use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
-use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
 
 /**
- * @extends Factory<ServiceRequest>
+ * @extends Factory<CaseModel>
  */
 class CaseFactory extends Factory
 {
@@ -59,8 +59,8 @@ class CaseFactory extends Factory
             'close_details' => $this->faker->sentence(),
             'res_details' => $this->faker->sentence(),
             'division_id' => Division::inRandomOrder()->first()?->id ?? Division::factory(),
-            'status_id' => ServiceRequestStatus::inRandomOrder()->first() ?? ServiceRequestStatus::factory(),
-            'priority_id' => ServiceRequestPriority::inRandomOrder()->first() ?? ServiceRequestPriority::factory(),
+            'status_id' => CaseStatus::inRandomOrder()->first() ?? CaseStatus::factory(),
+            'priority_id' => CasePriority::inRandomOrder()->first() ?? CasePriority::factory(),
             'created_by_id' => User::factory(),
         ];
     }

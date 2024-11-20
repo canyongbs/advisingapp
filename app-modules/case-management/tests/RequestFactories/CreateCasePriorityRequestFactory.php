@@ -37,7 +37,7 @@
 namespace AdvisingApp\CaseManagement\Tests\RequestFactories;
 
 use Worksome\RequestFactories\RequestFactory;
-use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
+use AdvisingApp\CaseManagement\Models\CasePriority;
 
 class CreateCasePriorityRequestFactory extends RequestFactory
 {
@@ -45,7 +45,7 @@ class CreateCasePriorityRequestFactory extends RequestFactory
     {
         return [
             'name' => $this->faker->name(),
-            'order' => ServiceRequestPriority::orderBy('order', 'desc')->first()?->order + 1 ?? 1,
+            'order' => CasePriority::orderBy('order', 'desc')->first()?->order + 1 ?? 1,
         ];
     }
 }

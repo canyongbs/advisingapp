@@ -52,6 +52,7 @@ use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Segment\Models\SegmentSubject;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Notification\Models\Subscription;
@@ -182,7 +183,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     public function serviceRequests(): MorphMany
     {
         return $this->morphMany(
-            related: ServiceRequest::class,
+            related: CaseModel::class,
             name: 'respondent',
             type: 'respondent_type',
             id: 'respondent_id',

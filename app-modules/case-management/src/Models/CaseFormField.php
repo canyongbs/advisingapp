@@ -36,47 +36,43 @@
 
 namespace AdvisingApp\CaseManagement\Models;
 
-use DateTimeInterface;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
+use App\Features\CaseManagement;
+use AdvisingApp\Form\Models\SubmissibleField;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
- * @mixin IdeHelperServiceRequestPriority
+ * @mixin IdeHelperCaseFormField
  */
-class ServiceRequestPriority extends BaseModel implements Auditable
+class CaseFormField extends SubmissibleField
 {
     use SoftDeletes;
-    use HasUuids;
-    use AuditableTrait;
 
     protected $fillable = [
-        'name',
-        'order',
-        'sla_id',
+        'config',
+        'label',
+        'type',
+        'is_required',
+        'service_request_form_id',
     ];
 
-    public function serviceRequests(): HasMany
+    protected $casts = [
+        'config' => 'array',
+        'is_required' => 'bool',
+    ];
+
+    public function getTable()
     {
-        return $this->hasMany(ServiceRequest::class, 'priority_id');
+        return CaseManagement::active() ? 'case_form_fields' : 'service_request_form_fields';
     }
 
-    public function type(): BelongsTo
+    public function submissible(): BelongsTo
     {
-        return $this->belongsTo(ServiceRequestType::class, 'type_id');
+        return $this->belongsTo(CaseForm::class, 'service_request_form_id');
     }
 
-    public function sla(): BelongsTo
+    public function step(): BelongsTo
     {
-        return $this->belongsTo(Sla::class);
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+        return $this->belongsTo(CaseFormStep::class, 'service_request_form_step_id');
     }
 }

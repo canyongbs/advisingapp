@@ -49,8 +49,8 @@ use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
+use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\ServiceRequestType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateCaseTypeRequestFactory;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\CreateCaseType;
@@ -69,9 +69,9 @@ test('A successful action on the CreateCaseType page', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, ServiceRequestType::all());
+    assertCount(1, CaseType::all());
 
-    assertDatabaseHas(ServiceRequestType::class, $editRequest);
+    assertDatabaseHas(CaseType::class, $editRequest);
 });
 
 test('CreateCaseType requires valid data', function ($data, $errors) {
@@ -82,7 +82,7 @@ test('CreateCaseType requires valid data', function ($data, $errors) {
         ->call('create')
         ->assertHasFormErrors($errors);
 
-    assertEmpty(ServiceRequestType::all());
+    assertEmpty(CaseType::all());
 })->with(
     [
         'name missing' => [CreateCaseTypeRequestFactory::new()->without('name'), ['name' => 'required']],
@@ -118,9 +118,9 @@ test('CreateCaseType is gated with proper access control', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, ServiceRequestType::all());
+    assertCount(1, CaseType::all());
 
-    assertDatabaseHas(ServiceRequestType::class, $request->toArray());
+    assertDatabaseHas(CaseType::class, $request->toArray());
 });
 
 test('CreateCaseType is gated with proper feature access control', function () {
@@ -159,7 +159,7 @@ test('CreateCaseType is gated with proper feature access control', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, ServiceRequestType::all());
+    assertCount(1, CaseType::all());
 
-    assertDatabaseHas(ServiceRequestType::class, $request->toArray());
+    assertDatabaseHas(CaseType::class, $request->toArray());
 });

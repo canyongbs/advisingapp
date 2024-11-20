@@ -45,8 +45,8 @@ use Filament\Forms\Components\Section;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
-use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
 
@@ -77,13 +77,13 @@ class EditCaseStatus extends EditRecord
                             ->required()
                             ->enum(ColumnColorOptions::class),
                     ]),
-            ])->disabled(fn (ServiceRequestStatus $record) => $record->trashed());
+            ])->disabled(fn (CaseStatus $record) => $record->trashed());
     }
 
     protected function getSaveFormAction(): Action
     {
         return parent::getSaveFormAction()
-            ->hidden(fn (ServiceRequestStatus $record) => $record->trashed());
+            ->hidden(fn (CaseStatus $record) => $record->trashed());
     }
 
     protected function getHeaderActions(): array

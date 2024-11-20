@@ -34,39 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Models;
+namespace AdvisingApp\Timeline\Timelines;
 
-use AdvisingApp\Form\Models\SubmissibleField;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Filament\Actions\ViewAction;
+use AdvisingApp\Timeline\Models\CustomTimeline;
+use AdvisingApp\CaseManagement\Models\CaseHistory;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Components\CaseHistoryViewAction;
 
-/**
- * @mixin IdeHelperServiceRequestFormField
- */
-class ServiceRequestFormField extends SubmissibleField
+// TODO Decide where these belong - might want to keep these in the context of the original module
+class CaseHistoryTimeline extends CustomTimeline
 {
-    use SoftDeletes;
+    public function __construct(
+        public CaseHistory $caseHistory
+    ) {}
 
-    protected $fillable = [
-        'config',
-        'label',
-        'type',
-        'is_required',
-        'service_request_form_id',
-    ];
-
-    protected $casts = [
-        'config' => 'array',
-        'is_required' => 'bool',
-    ];
-
-    public function submissible(): BelongsTo
+    public function icon(): string
     {
-        return $this->belongsTo(ServiceRequestForm::class, 'service_request_form_id');
+        return 'heroicon-o-pencil';
     }
 
-    public function step(): BelongsTo
+    public function sortableBy(): string
     {
-        return $this->belongsTo(ServiceRequestFormStep::class, 'service_request_form_step_id');
+        return $this->caseHistory->created_at;
+    }
+
+    public function providesCustomView(): bool
+    {
+        return true;
+    }
+
+    public function renderCustomView(): string
+    {
+        return 'case-management::case-history-timeline-item';
+    }
+
+    public function modalViewAction(): ViewAction
+    {
+        return CaseHistoryViewAction::make()->record($this->caseHistory);
     }
 }

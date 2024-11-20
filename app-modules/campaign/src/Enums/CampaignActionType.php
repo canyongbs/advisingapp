@@ -44,12 +44,12 @@ use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Campaign\Filament\Blocks\CaseBlock;
 use AdvisingApp\Campaign\Filament\Blocks\TaskBlock;
 use AdvisingApp\Campaign\Filament\Blocks\EventBlock;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\Campaign\Filament\Blocks\CareTeamBlock;
 use AdvisingApp\Campaign\Filament\Blocks\InteractionBlock;
 use AdvisingApp\Campaign\Filament\Blocks\SubscriptionBlock;
@@ -117,7 +117,7 @@ enum CampaignActionType: string implements HasLabel
         return match ($this) {
             CampaignActionType::BulkEngagementEmail => EngagementBatch::class,
             CampaignActionType::BulkEngagementSms => EngagementBatch::class,
-            CampaignActionType::Case => ServiceRequest::class,
+            CampaignActionType::Case => CaseModel::class,
             CampaignActionType::ProactiveAlert => Alert::class,
             CampaignActionType::Interaction => Interaction::class,
             CampaignActionType::CareTeam => CareTeam::class,
@@ -164,7 +164,7 @@ enum CampaignActionType: string implements HasLabel
         return match ($this) {
             CampaignActionType::BulkEngagementEmail => EngagementBatch::executeFromCampaignAction($action),
             CampaignActionType::BulkEngagementSms => EngagementBatch::executeFromCampaignAction($action),
-            CampaignActionType::Case => ServiceRequest::executeFromCampaignAction($action),
+            CampaignActionType::Case => CaseModel::executeFromCampaignAction($action),
             CampaignActionType::ProactiveAlert => Alert::executeFromCampaignAction($action),
             CampaignActionType::Interaction => Interaction::executeFromCampaignAction($action),
             CampaignActionType::CareTeam => CareTeam::executeFromCampaignAction($action),

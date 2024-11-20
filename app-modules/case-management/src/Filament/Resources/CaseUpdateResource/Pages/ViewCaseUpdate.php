@@ -41,8 +41,8 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
-use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
 use AdvisingApp\CaseManagement\Filament\Concerns\CaseUpdateBreadcrumbs;
@@ -65,7 +65,7 @@ class ViewCaseUpdate extends ViewRecord
                     ->schema([
                         TextEntry::make('serviceRequest.service_request_number')
                             ->label('Case')
-                            ->url(fn (ServiceRequestUpdate $caseUpdate): string => CaseResource::getUrl('view', ['record' => $caseUpdate->serviceRequest]))
+                            ->url(fn (CaseUpdate $caseUpdate): string => CaseResource::getUrl('view', ['record' => $caseUpdate->serviceRequest]))
                             ->color('primary'),
                         IconEntry::make('internal')
                             ->boolean(),

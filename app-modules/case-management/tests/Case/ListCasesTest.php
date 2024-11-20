@@ -44,16 +44,16 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
-use AdvisingApp\CaseManagement\Models\ServiceRequestAssignment;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ListCases;
 
 test('The correct details are displayed on the ListCases page', function () {
-    $cases = ServiceRequest::factory()
+    $cases = CaseModel::factory()
         ->has(
-            factory: ServiceRequestAssignment::factory()
+            factory: CaseAssignment::factory()
                 ->count(1)
                 ->active(),
             relationship: 'assignments'
@@ -70,7 +70,7 @@ test('The correct details are displayed on the ListCases page', function () {
         ->assertCountTableRecords(10);
 
     $cases->each(
-        fn (ServiceRequest $case) => $component
+        fn (CaseModel $case) => $component
             ->assertTableColumnStateSet(
                 'service_request_number',
                 $case->service_request_number,

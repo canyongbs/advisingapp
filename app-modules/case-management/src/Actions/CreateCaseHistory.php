@@ -41,7 +41,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 
 class CreateCaseHistory implements ShouldQueue
 {
@@ -51,7 +51,7 @@ class CreateCaseHistory implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        public ServiceRequest $case,
+        public CaseModel $case,
         public array $changes,
         public array $original,
     ) {}

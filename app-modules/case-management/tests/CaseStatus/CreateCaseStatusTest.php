@@ -51,7 +51,7 @@ use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
 use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateCaseStatusRequestFactory;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\CreateCaseStatus;
@@ -70,9 +70,9 @@ test('A successful action on the CreateCaseStatus page', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, ServiceRequestStatus::all());
+    assertCount(1, CaseStatus::all());
 
-    assertDatabaseHas(ServiceRequestStatus::class, $request);
+    assertDatabaseHas(CaseStatus::class, $request);
 });
 
 test('CreateCaseStatus requires valid data', function ($data, $errors) {
@@ -83,7 +83,7 @@ test('CreateCaseStatus requires valid data', function ($data, $errors) {
         ->call('create')
         ->assertHasFormErrors($errors);
 
-    assertEmpty(ServiceRequestStatus::all());
+    assertEmpty(CaseStatus::all());
 })->with(
     [
         'name missing' => [CreateCaseStatusRequestFactory::new()->without('name'), ['name' => 'required']],
@@ -121,9 +121,9 @@ test('CreateCaseStatus is gated with proper access control', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, ServiceRequestStatus::all());
+    assertCount(1, CaseStatus::all());
 
-    assertDatabaseHas(ServiceRequestStatus::class, $request->toArray());
+    assertDatabaseHas(CaseStatus::class, $request->toArray());
 });
 
 test('CreateCaseStatus is gated with proper feature access control', function () {
@@ -162,7 +162,7 @@ test('CreateCaseStatus is gated with proper feature access control', function ()
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, ServiceRequestStatus::all());
+    assertCount(1, CaseStatus::all());
 
-    assertDatabaseHas(ServiceRequestStatus::class, $request->toArray());
+    assertDatabaseHas(CaseStatus::class, $request->toArray());
 });

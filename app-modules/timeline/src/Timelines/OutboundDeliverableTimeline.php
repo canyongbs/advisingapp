@@ -38,7 +38,7 @@ namespace AdvisingApp\Timeline\Timelines;
 
 use Filament\Actions\ViewAction;
 use AdvisingApp\Timeline\Models\CustomTimeline;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Filament\Actions\OutboundDeliverableViewAction;
@@ -52,7 +52,7 @@ class OutboundDeliverableTimeline extends CustomTimeline
     public function icon(): string
     {
         return match ($this->outboundDeliverable->related::class) {
-            ServiceRequest::class => match ($this->outboundDeliverable->channel) {
+            CaseModel::class => match ($this->outboundDeliverable->channel) {
                 NotificationChannel::Email => 'heroicon-o-envelope',
                 NotificationChannel::Sms => 'heroicon-o-chat-bubble-bottom-center-text',
             },

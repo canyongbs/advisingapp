@@ -45,8 +45,8 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\CaseManagement\Enums\SlaComplianceStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
@@ -71,13 +71,13 @@ class ViewCase extends ViewRecord
                         TextEntry::make('status.name')
                             ->label('Status')
                             ->state(
-                                fn (ServiceRequest $record) => $record->status()->withTrashed()->first()?->name
+                                fn (CaseModel $record) => $record->status()->withTrashed()->first()?->name
                             ),
                         TextEntry::make('priority.name')
                             ->label('Priority'),
                         TextEntry::make('priority.type.name')
                             ->state(
-                                fn (ServiceRequest $record) => $record->priority->type()->withTrashed()->first()?->name
+                                fn (CaseModel $record) => $record->priority->type()->withTrashed()->first()?->name
                             )
                             ->label('Type'),
                         TextEntry::make('close_details')
@@ -91,7 +91,7 @@ class ViewCase extends ViewRecord
                         TextEntry::make('respondent')
                             ->label('Related To')
                             ->color('primary')
-                            ->state(function (ServiceRequest $record): string {
+                            ->state(function (CaseModel $record): string {
                                 /** @var Student|Prospect $respondent */
                                 $respondent = $record->respondent;
 
@@ -100,7 +100,7 @@ class ViewCase extends ViewRecord
                                     Prospect::class => "{$respondent->{Prospect::displayNameKey()}} (Prospect)",
                                 };
                             })
-                            ->url(function (ServiceRequest $record) {
+                            ->url(function (CaseModel $record) {
                                 /** @var Student|Prospect $respondent */
                                 $respondent = $record->respondent;
 
@@ -112,45 +112,45 @@ class ViewCase extends ViewRecord
                     ])
                     ->columns(2),
                 Section::make('SLA Management')
-                    ->visible(fn (ServiceRequest $record): bool => $record->priority?->sla !== null)
+                    ->visible(fn (CaseModel $record): bool => $record->priority?->sla !== null)
                     ->schema([
                         Group::make([
                             TextEntry::make('sla_response_seconds')
                                 ->label('Response agreement')
-                                ->state(fn (ServiceRequest $record): ?int => $record->getSlaResponseSeconds())
+                                ->state(fn (CaseModel $record): ?int => $record->getSlaResponseSeconds())
                                 ->formatStateUsing($formatSecondsAsInterval)
                                 ->placeholder('-'),
                             TextEntry::make('response_age')
                                 ->label('Response age')
-                                ->state(fn (ServiceRequest $record): ?int => $record->getLatestResponseSeconds())
+                                ->state(fn (CaseModel $record): ?int => $record->getLatestResponseSeconds())
                                 ->formatStateUsing($formatSecondsAsInterval)
                                 ->placeholder('-'),
                             TextEntry::make('response_sla_compliance')
                                 ->label('Response compliance')
                                 ->badge()
-                                ->state(fn (ServiceRequest $record): ?SlaComplianceStatus => $record->getResponseSlaComplianceStatus()),
+                                ->state(fn (CaseModel $record): ?SlaComplianceStatus => $record->getResponseSlaComplianceStatus()),
                         ]),
                         Group::make([
                             TextEntry::make('sla_resolution_seconds')
                                 ->label('Resolution agreement')
-                                ->state(fn (ServiceRequest $record): ?int => $record->getSlaResolutionSeconds())
+                                ->state(fn (CaseModel $record): ?int => $record->getSlaResolutionSeconds())
                                 ->formatStateUsing($formatSecondsAsInterval)
                                 ->placeholder('-'),
                             TextEntry::make('resolution_seconds')
                                 ->label('Resolution age')
-                                ->state(fn (ServiceRequest $record): int => $record->getResolutionSeconds())
+                                ->state(fn (CaseModel $record): int => $record->getResolutionSeconds())
                                 ->formatStateUsing($formatSecondsAsInterval)
                                 ->placeholder('-'),
                             TextEntry::make('resolution_sla_compliance')
                                 ->label('Resolution compliance')
                                 ->badge()
-                                ->state(fn (ServiceRequest $record): ?SlaComplianceStatus => $record->getResolutionSlaComplianceStatus()),
+                                ->state(fn (CaseModel $record): ?SlaComplianceStatus => $record->getResolutionSlaComplianceStatus()),
                         ]),
                     ])
                     ->columns(2),
                 Section::make('Form Submission Details')
                     ->collapsed()
-                    ->visible(fn (ServiceRequest $record): bool => ! is_null($record->serviceRequestFormSubmission))
+                    ->visible(fn (CaseModel $record): bool => ! is_null($record->serviceRequestFormSubmission))
                     ->schema([
                         TextEntry::make('serviceRequestFormSubmission.submitted_at')
                             ->dateTime(),

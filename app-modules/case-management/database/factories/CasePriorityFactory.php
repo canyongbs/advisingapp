@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\CaseManagement\Database\Factories;
 
+use AdvisingApp\CaseManagement\Models\CaseType;
+use AdvisingApp\CaseManagement\Models\CasePriority;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\CaseManagement\Models\ServiceRequestType;
-use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
 
 /**
- * @extends Factory<ServiceRequestPriority>
+ * @extends Factory<CasePriority>
  */
 class CasePriorityFactory extends Factory
 {
@@ -50,7 +50,7 @@ class CasePriorityFactory extends Factory
         return [
             'name' => $this->faker->name,
             'order' => $this->faker->randomNumber(1),
-            'type_id' => ServiceRequestType::factory(),
+            'type_id' => CaseType::factory(),
         ];
     }
 

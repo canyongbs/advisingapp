@@ -41,7 +41,7 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
 
 class ViewCaseStatus extends ViewRecord
@@ -61,7 +61,7 @@ class ViewCaseStatus extends ViewRecord
                         TextEntry::make('color')
                             ->label('Color')
                             ->badge()
-                            ->color(fn (ServiceRequestStatus $caseStatus) => $caseStatus->color->value),
+                            ->color(fn (CaseStatus $caseStatus) => $caseStatus->color->value),
                     ])
                     ->columns(),
             ]);

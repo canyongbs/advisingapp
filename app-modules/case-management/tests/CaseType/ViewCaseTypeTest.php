@@ -43,12 +43,12 @@ use App\Settings\LicenseSettings;
 use function Pest\Laravel\actingAs;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\ServiceRequestType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 
 test('The correct details are displayed on the ViewCaseType page', function () {
-    $caseType = ServiceRequestType::factory()->create();
+    $caseType = CaseType::factory()->create();
 
     asSuperAdmin()
         ->get(
@@ -70,7 +70,7 @@ test('The correct details are displayed on the ViewCaseType page', function () {
 test('ViewCaseType is gated with proper access control', function () {
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
-    $caseType = ServiceRequestType::factory()->create();
+    $caseType = CaseType::factory()->create();
 
     actingAs($user)
         ->get(
@@ -102,7 +102,7 @@ test('ViewCaseType is gated with proper feature access control', function () {
     $user->givePermissionTo('service_request_type.view-any');
     $user->givePermissionTo('service_request_type.*.view');
 
-    $caseType = ServiceRequestType::factory()->create();
+    $caseType = CaseType::factory()->create();
 
     actingAs($user)
         ->get(

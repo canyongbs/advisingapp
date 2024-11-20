@@ -37,19 +37,19 @@
 namespace AdvisingApp\CaseManagement\Database\Factories;
 
 use App\Models\User;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\CaseManagement\Models\ServiceRequestAssignment>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\CaseManagement\Models\CaseAssignment>
  */
 class CaseAssignmentFactory extends Factory
 {
     public function definition(): array
     {
         return [
-            'service_request_id' => ServiceRequest::factory(),
+            'service_request_id' => CaseModel::factory(),
             'user_id' => User::factory(),
             'assigned_by_id' => User::factory(),
             'assigned_at' => fake()->dateTimeBetween('-1 year', now()),

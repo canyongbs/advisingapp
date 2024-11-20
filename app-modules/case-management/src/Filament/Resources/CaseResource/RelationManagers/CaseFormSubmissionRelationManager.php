@@ -42,7 +42,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\CaseManagement\Models\ServiceRequestFormSubmission;
+use AdvisingApp\CaseManagement\Models\CaseFormSubmission;
 
 class CaseFormSubmissionRelationManager extends RelationManager
 {
@@ -58,7 +58,7 @@ class CaseFormSubmissionRelationManager extends RelationManager
                     ->dateTime(),
                 TextColumn::make('author.email')
                     ->label('Submitted By')
-                    ->url(fn (ServiceRequestFormSubmission $record) => resolve($record->author::filamentResource())->getUrl('view', ['record' => $record->author]))
+                    ->url(fn (CaseFormSubmission $record) => resolve($record->author::filamentResource())->getUrl('view', ['record' => $record->author]))
                     ->color('primary'),
                 TextColumn::make('author_type')
                     ->label('Submitted By Type')
@@ -68,8 +68,8 @@ class CaseFormSubmissionRelationManager extends RelationManager
             ])
             ->actions([
                 ViewAction::make()
-                    ->modalHeading(fn (ServiceRequestFormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
-                    ->infolist(fn (ServiceRequestFormSubmission $record): ?array => ($record->author && $record->submissible->is_authenticated) ? [
+                    ->modalHeading(fn (CaseFormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
+                    ->infolist(fn (CaseFormSubmission $record): ?array => ($record->author && $record->submissible->is_authenticated) ? [
                         Section::make('Submitted By')
                             ->schema([
                                 TextEntry::make('author.' . $record->author::displayNameKey())
@@ -79,8 +79,8 @@ class CaseFormSubmissionRelationManager extends RelationManager
                             ])
                             ->columns(2),
                     ] : null)
-                    ->modalContent(fn (ServiceRequestFormSubmission $record) => view('case-management::submission', ['submission' => $record]))
-                    ->visible(fn (ServiceRequestFormSubmission $record) => $record->submitted_at),
+                    ->modalContent(fn (CaseFormSubmission $record) => view('case-management::submission', ['submission' => $record]))
+                    ->visible(fn (CaseFormSubmission $record) => $record->submitted_at),
             ])
             ->paginated(false);
     }

@@ -38,24 +38,24 @@ namespace AdvisingApp\Timeline\Timelines;
 
 use Filament\Actions\ViewAction;
 use AdvisingApp\Timeline\Models\CustomTimeline;
-use AdvisingApp\CaseManagement\Models\ServiceRequestAssignment;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Components\CaseAssignmentViewAction;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Components\CaseUpdateViewAction;
 
 // TODO Decide where these belong - might want to keep these in the context of the original module
-class ServiceRequestAssignmentTimeline extends CustomTimeline
+class CaseUpdateTimeline extends CustomTimeline
 {
     public function __construct(
-        public ServiceRequestAssignment $serviceRequestAssignment
+        public CaseUpdate $caseUpdate
     ) {}
 
     public function icon(): string
     {
-        return 'heroicon-o-arrows-right-left';
+        return 'heroicon-o-adjustments-vertical';
     }
 
     public function sortableBy(): string
     {
-        return $this->serviceRequestAssignment->assigned_at;
+        return $this->caseUpdate->created_at;
     }
 
     public function providesCustomView(): bool
@@ -65,11 +65,11 @@ class ServiceRequestAssignmentTimeline extends CustomTimeline
 
     public function renderCustomView(): string
     {
-        return 'case-management::case-assignment-timeline-item';
+        return 'case-management::case-update-timeline-item';
     }
 
     public function modalViewAction(): ViewAction
     {
-        return CaseAssignmentViewAction::make()->record($this->serviceRequestAssignment);
+        return CaseUpdateViewAction::make()->record($this->caseUpdate);
     }
 }

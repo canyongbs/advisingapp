@@ -43,11 +43,11 @@ use App\Settings\LicenseSettings;
 use function Pest\Laravel\actingAs;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 
 test('The correct details are displayed on the ViewCase page', function () {
-    $case = ServiceRequest::factory()->create();
+    $case = CaseModel::factory()->create();
 
     asSuperAdmin()
         ->get(
@@ -81,7 +81,7 @@ test('The correct details are displayed on the ViewCase page', function () {
 test('ViewCase is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $case = ServiceRequest::factory()->create();
+    $case = CaseModel::factory()->create();
 
     actingAs($user)
         ->get(
@@ -113,7 +113,7 @@ test('ViewCase is gated with proper feature access control', function () {
     $user->givePermissionTo('service_request.view-any');
     $user->givePermissionTo('service_request.*.view');
 
-    $case = ServiceRequest::factory()->create();
+    $case = CaseModel::factory()->create();
 
     actingAs($user)
         ->get(

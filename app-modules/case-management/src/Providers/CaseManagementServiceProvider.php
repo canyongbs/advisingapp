@@ -40,32 +40,32 @@ use Filament\Panel;
 use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\CaseManagement\Models\Sla;
+use AdvisingApp\CaseManagement\Models\CaseForm;
+use AdvisingApp\CaseManagement\Models\CaseType;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
+use AdvisingApp\CaseManagement\Models\CaseHistory;
+use AdvisingApp\CaseManagement\Models\CaseFormStep;
+use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\CaseManagementPlugin;
+use AdvisingApp\CaseManagement\Models\CaseFormField;
 use AdvisingApp\CaseManagement\Models\ChangeRequest;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\CaseManagement\Observers\CaseObserver;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\CaseManagement\Models\ChangeRequestType;
-use AdvisingApp\CaseManagement\Models\ServiceRequestForm;
-use AdvisingApp\CaseManagement\Models\ServiceRequestType;
+use AdvisingApp\CaseManagement\Models\CaseFormSubmission;
 use AdvisingApp\CaseManagement\Models\ChangeRequestStatus;
-use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
-use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\CaseManagement\Models\ChangeRequestResponse;
-use AdvisingApp\CaseManagement\Models\ServiceRequestHistory;
 use AdvisingApp\CaseManagement\Observers\CaseUpdateObserver;
-use AdvisingApp\CaseManagement\Models\ServiceRequestFormStep;
-use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
+use AdvisingApp\CaseManagement\Models\CaseFormAuthentication;
 use AdvisingApp\CaseManagement\Observers\CaseHistoryObserver;
-use AdvisingApp\CaseManagement\Models\ServiceRequestFormField;
-use AdvisingApp\CaseManagement\Models\ServiceRequestAssignment;
 use AdvisingApp\CaseManagement\Observers\ChangeRequestObserver;
 use AdvisingApp\CaseManagement\Observers\CaseAssignmentObserver;
-use AdvisingApp\CaseManagement\Models\ServiceRequestFormSubmission;
 use AdvisingApp\CaseManagement\Observers\CaseFormSubmissionObserver;
 use AdvisingApp\CaseManagement\Registries\CaseManagementRbacRegistry;
-use AdvisingApp\CaseManagement\Models\ServiceRequestFormAuthentication;
 use AdvisingApp\CaseManagement\Cases\CaseNumber\Contracts\CaseNumberGenerator;
 use AdvisingApp\CaseManagement\Cases\CaseNumber\SqidPlusSixCaseNumberGenerator;
 
@@ -87,18 +87,18 @@ class CaseManagementServiceProvider extends ServiceProvider
             'change_request_status' => ChangeRequestStatus::class,
             'change_request_type' => ChangeRequestType::class,
             'change_request' => ChangeRequest::class,
-            'service_request_assignment' => ServiceRequestAssignment::class,
-            'service_request_form_authentication' => ServiceRequestFormAuthentication::class,
-            'service_request_form_field' => ServiceRequestFormField::class,
-            'service_request_form_step' => ServiceRequestFormStep::class,
-            'service_request_form_submission' => ServiceRequestFormSubmission::class,
-            'service_request_form' => ServiceRequestForm::class,
-            'service_request_history' => ServiceRequestHistory::class,
-            'service_request_priority' => ServiceRequestPriority::class,
-            'service_request_status' => ServiceRequestStatus::class,
-            'service_request_type' => ServiceRequestType::class,
-            'service_request_update' => ServiceRequestUpdate::class,
-            'service_request' => ServiceRequest::class,
+            'case_assignment' => CaseAssignment::class,
+            'case_form_authentication' => CaseFormAuthentication::class,
+            'case_form_field' => CaseFormField::class,
+            'case_form_step' => CaseFormStep::class,
+            'case_form_submission' => CaseFormSubmission::class,
+            'case_form' => CaseForm::class,
+            'case_history' => CaseHistory::class,
+            'case_priority' => CasePriority::class,
+            'case_status' => CaseStatus::class,
+            'case_type' => CaseType::class,
+            'case_update' => CaseUpdate::class,
+            'case_model' => CaseModel::class,
             'sla' => Sla::class,
         ]);
 
@@ -113,10 +113,10 @@ class CaseManagementServiceProvider extends ServiceProvider
     {
         ChangeRequest::observe(ChangeRequestObserver::class);
 
-        ServiceRequest::observe(CaseObserver::class);
-        ServiceRequestAssignment::observe(CaseAssignmentObserver::class);
-        ServiceRequestFormSubmission::observe(CaseFormSubmissionObserver::class);
-        ServiceRequestHistory::observe(CaseHistoryObserver::class);
-        ServiceRequestUpdate::observe(CaseUpdateObserver::class);
+        CaseModel::observe(CaseObserver::class);
+        CaseAssignment::observe(CaseAssignmentObserver::class);
+        CaseFormSubmission::observe(CaseFormSubmissionObserver::class);
+        CaseHistory::observe(CaseHistoryObserver::class);
+        CaseUpdate::observe(CaseUpdateObserver::class);
     }
 }

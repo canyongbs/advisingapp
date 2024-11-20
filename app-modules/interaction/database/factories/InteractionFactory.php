@@ -40,10 +40,10 @@ use App\Models\User;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Interaction\Models\InteractionType;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
@@ -60,13 +60,13 @@ class InteractionFactory extends Factory
         $interactable = fake()->randomElement([
             Student::class,
             Prospect::class,
-            ServiceRequest::class,
+            CaseModel::class,
         ]);
 
         $interactable = match ($interactable) {
             Student::class => Student::inRandomOrder()->first() ?? Student::factory()->create(),
             Prospect::class => Prospect::factory()->create(),
-            ServiceRequest::class => ServiceRequest::factory()->create([
+            CaseModel::class => CaseModel::factory()->create([
                 'service_request_number' => fake()->randomNumber(8),
             ]),
         };

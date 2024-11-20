@@ -38,35 +38,47 @@ namespace AdvisingApp\CaseManagement\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
+use App\Features\CaseManagement;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
-use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
- * @mixin IdeHelperServiceRequestStatus
+ * @mixin IdeHelperCasePriority
  */
-class ServiceRequestStatus extends BaseModel implements Auditable
+class CasePriority extends BaseModel implements Auditable
 {
     use SoftDeletes;
+    use HasUuids;
     use AuditableTrait;
 
     protected $fillable = [
-        'classification',
         'name',
-        'color',
+        'order',
+        'sla_id',
     ];
 
-    protected $casts = [
-        'classification' => SystemCaseClassification::class,
-        'color' => ColumnColorOptions::class,
-    ];
+    public function getTable()
+    {
+        return CaseManagement::active() ? 'case_priorities' : 'service_request_priorities';
+    }
 
     public function serviceRequests(): HasMany
     {
-        return $this->hasMany(ServiceRequest::class, 'status_id');
+        return $this->hasMany(CaseModel::class, 'priority_id');
+    }
+
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(CaseType::class, 'type_id');
+    }
+
+    public function sla(): BelongsTo
+    {
+        return $this->belongsTo(Sla::class);
     }
 
     protected function serializeDate(DateTimeInterface $date): string

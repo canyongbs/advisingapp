@@ -46,12 +46,12 @@ use Filament\Forms\Components\Textarea;
 use AdvisingApp\Division\Models\Division;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\CaseManagement\Models\CaseType;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use AdvisingApp\CaseManagement\Models\CasePriority;
 use App\Filament\Forms\Components\EducatableSelect;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\CaseManagement\Models\ServiceRequestType;
-use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
-use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 
 class CreateCase extends CreateRecord
@@ -70,23 +70,23 @@ class CreateCase extends CreateRecord
                 Select::make('status_id')
                     ->relationship('status', 'name')
                     ->label('Status')
-                    ->options(fn () => ServiceRequestStatus::query()
+                    ->options(fn () => CaseStatus::query()
                         ->orderBy('classification')
                         ->orderBy('name')
                         ->get(['id', 'name', 'classification'])
-                        ->groupBy(fn (ServiceRequestStatus $status) => $status->classification->getlabel())
+                        ->groupBy(fn (CaseStatus $status) => $status->classification->getlabel())
                         ->map(fn (Collection $group) => $group->pluck('name', 'id')))
                     ->required()
-                    ->exists((new ServiceRequestStatus())->getTable(), 'id'),
+                    ->exists((new CaseStatus())->getTable(), 'id'),
                 Grid::make()
                     ->schema([
                         Select::make('type_id')
-                            ->options(ServiceRequestType::pluck('name', 'id'))
+                            ->options(CaseType::pluck('name', 'id'))
                             ->afterStateUpdated(fn (Set $set) => $set('priority_id', null))
                             ->label('Type')
                             ->required()
                             ->live()
-                            ->exists(ServiceRequestType::class, 'id'),
+                            ->exists(CaseType::class, 'id'),
                         Select::make('priority_id')
                             ->relationship(
                                 name: 'priority',
@@ -95,7 +95,7 @@ class CreateCase extends CreateRecord
                             )
                             ->label('Priority')
                             ->required()
-                            ->exists(ServiceRequestPriority::class, 'id')
+                            ->exists(CasePriority::class, 'id')
                             ->visible(fn (Get $get): bool => filled($get('type_id'))),
                     ]),
                 Textarea::make('close_details')

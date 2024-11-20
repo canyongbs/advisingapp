@@ -48,14 +48,14 @@ use AdvisingApp\Prospect\Models\Prospect;
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
+use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\ServiceRequestType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 use AdvisingApp\CaseManagement\Tests\RequestFactories\EditCaseTypeRequestFactory;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseType;
 
 test('A successful action on the EditCaseType page', function () {
-    $serviceRequestType = ServiceRequestType::factory()->create();
+    $serviceRequestType = CaseType::factory()->create();
 
     asSuperAdmin()
         ->get(
@@ -83,7 +83,7 @@ test('A successful action on the EditCaseType page', function () {
 test('EditCaseType requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    $serviceRequestType = ServiceRequestType::factory()->create();
+    $serviceRequestType = CaseType::factory()->create();
 
     livewire(EditCaseType::class, [
         'record' => $serviceRequestType->getRouteKey(),
@@ -95,7 +95,7 @@ test('EditCaseType requires valid data', function ($data, $errors) {
         ->call('save')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseHas(ServiceRequestType::class, $serviceRequestType->toArray());
+    assertDatabaseHas(CaseType::class, $serviceRequestType->toArray());
 })->with(
     [
         'name missing' => [EditCaseTypeRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
@@ -108,7 +108,7 @@ test('EditCaseType requires valid data', function ($data, $errors) {
 test('EditCaseType is gated with proper access control', function () {
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
-    $serviceRequestType = ServiceRequestType::factory()->create();
+    $serviceRequestType = CaseType::factory()->create();
 
     actingAs($user)
         ->get(
@@ -156,7 +156,7 @@ test('EditCaseType is gated with proper feature access control', function () {
     $user->givePermissionTo('service_request_type.view-any');
     $user->givePermissionTo('service_request_type.*.update');
 
-    $serviceRequestType = ServiceRequestType::factory()->create();
+    $serviceRequestType = CaseType::factory()->create();
 
     actingAs($user)
         ->get(

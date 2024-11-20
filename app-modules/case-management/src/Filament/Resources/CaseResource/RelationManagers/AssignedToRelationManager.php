@@ -48,10 +48,10 @@ use App\Filament\Resources\UserResource;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Tables\Columns\IdColumn;
 use Illuminate\Database\Query\Expression;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
-use AdvisingApp\CaseManagement\Models\ServiceRequestAssignment;
 
 class AssignedToRelationManager extends RelationManager
 {
@@ -104,13 +104,13 @@ class AssignedToRelationManager extends RelationManager
             ])
             ->actions([
                 ViewAction::make()
-                    ->url(fn (ServiceRequestAssignment $assignment) => UserResource::getUrl('view', ['record' => $assignment->user])),
+                    ->url(fn (CaseAssignment $assignment) => UserResource::getUrl('view', ['record' => $assignment->user])),
             ]);
     }
 
-    public function getOwnerRecord(): ServiceRequest
+    public function getOwnerRecord(): CaseModel
     {
-        /** @var ServiceRequest $record */
+        /** @var CaseModel $record */
         $record = parent::getOwnerRecord();
 
         return $record;

@@ -38,8 +38,8 @@ namespace AdvisingApp\CaseManagement\Tests\RequestFactories;
 
 use AdvisingApp\Division\Models\Division;
 use Worksome\RequestFactories\RequestFactory;
-use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
-use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\CaseManagement\Models\CasePriority;
 
 class EditCaseRequestFactory extends RequestFactory
 {
@@ -47,8 +47,8 @@ class EditCaseRequestFactory extends RequestFactory
     {
         return [
             'division_id' => Division::inRandomOrder()->first()?->id ?? Division::factory()->create()->id,
-            'status_id' => ServiceRequestStatus::factory()->create()->id,
-            'priority_id' => ServiceRequestPriority::factory()->create()->id,
+            'status_id' => CaseStatus::factory()->create()->id,
+            'priority_id' => CasePriority::factory()->create()->id,
             'close_details' => $this->faker->sentence,
             'res_details' => $this->faker->sentence,
         ];

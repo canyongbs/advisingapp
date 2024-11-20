@@ -37,15 +37,15 @@
 namespace AdvisingApp\CaseManagement\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
-use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
 
 class CaseUpdateSeeder extends Seeder
 {
     public function run(): void
     {
-        ServiceRequest::each(function (ServiceRequest $case) {
-            ServiceRequestUpdate::factory()
+        CaseModel::each(function (CaseModel $case) {
+            CaseUpdate::factory()
                 ->count(3)
                 ->for($case, 'serviceRequest')
                 ->create();

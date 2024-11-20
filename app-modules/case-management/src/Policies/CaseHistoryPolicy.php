@@ -38,12 +38,13 @@ namespace AdvisingApp\CaseManagement\Policies;
 
 use App\Enums\Feature;
 use App\Models\Authenticatable;
+use App\Features\CaseManagement;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
 use App\Support\FeatureAccessResponse;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\ServiceRequestHistory;
+use AdvisingApp\CaseManagement\Models\CaseHistory;
 
 class CaseHistoryPolicy
 {
@@ -64,14 +65,28 @@ class CaseHistoryPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'case_history.view-any',
+                denyResponse: 'You do not have permissions to view case history.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'service_request_history.view-any',
             denyResponse: 'You do not have permissions to view service request history.'
         );
     }
 
-    public function view(Authenticatable $authenticatable, ServiceRequestHistory $caseHistory): Response
+    public function view(Authenticatable $authenticatable, CaseHistory $caseHistory): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_history.{$caseHistory->id}.view"],
+                denyResponse: 'You do not have permissions to view this case history.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_history.{$caseHistory->id}.view"],
             denyResponse: 'You do not have permissions to view this service request history.'
@@ -80,38 +95,73 @@ class CaseHistoryPolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'case_history.create',
+                denyResponse: 'You do not have permissions to create case history.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'service_request_history.create',
             denyResponse: 'You do not have permissions to create service request history.'
         );
     }
 
-    public function update(Authenticatable $authenticatable, ServiceRequestHistory $caseHistory): Response
+    public function update(Authenticatable $authenticatable, CaseHistory $caseHistory): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_history.{$caseHistory->id}.update"],
+                denyResponse: 'You do not have permissions to update this case history.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_history.{$caseHistory->id}.update"],
             denyResponse: 'You do not have permissions to update this service request history.'
         );
     }
 
-    public function delete(Authenticatable $authenticatable, ServiceRequestHistory $caseHistory): Response
+    public function delete(Authenticatable $authenticatable, CaseHistory $caseHistory): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_history.{$caseHistory->id}.delete"],
+                denyResponse: 'You do not have permissions to delete this case history.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_history.{$caseHistory->id}.delete"],
             denyResponse: 'You do not have permissions to delete this service request history.'
         );
     }
 
-    public function restore(Authenticatable $authenticatable, ServiceRequestHistory $caseHistory): Response
+    public function restore(Authenticatable $authenticatable, CaseHistory $caseHistory): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_history.{$caseHistory->id}.restore"],
+                denyResponse: 'You do not have permissions to restore this case history.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_history.{$caseHistory->id}.restore"],
             denyResponse: 'You do not have permissions to restore this service request history.'
         );
     }
 
-    public function forceDelete(Authenticatable $authenticatable, ServiceRequestHistory $caseHistory): Response
+    public function forceDelete(Authenticatable $authenticatable, CaseHistory $caseHistory): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_history.{$caseHistory->id}.force-delete"],
+                denyResponse: 'You do not have permissions to force delete this case history.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_history.{$caseHistory->id}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this service request history.'

@@ -38,9 +38,9 @@ namespace AdvisingApp\CaseManagement\Filament\Resources;
 
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Clusters\CaseManagementAdministration;
-use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\EditCaseStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\ViewCaseStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\CreateCaseStatus;
@@ -48,7 +48,7 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\ListC
 
 class CaseStatusResource extends Resource
 {
-    protected static ?string $model = ServiceRequestStatus::class;
+    protected static ?string $model = CaseStatus::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 

@@ -46,7 +46,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
 
 class ListCaseStatuses extends ListRecords
@@ -67,7 +67,7 @@ class ListCaseStatuses extends ListRecords
                 TextColumn::make('color')
                     ->label('Color')
                     ->badge()
-                    ->color(fn (ServiceRequestStatus $caseStatus) => $caseStatus->color->value),
+                    ->color(fn (CaseStatus $caseStatus) => $caseStatus->color->value),
                 TextColumn::make('service_requests_count')
                     ->label('# of Cases')
                     ->counts('serviceRequests')

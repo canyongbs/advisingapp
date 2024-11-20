@@ -38,12 +38,13 @@ namespace AdvisingApp\CaseManagement\Policies;
 
 use App\Enums\Feature;
 use App\Models\Authenticatable;
+use App\Features\CaseManagement;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
 use App\Support\FeatureAccessResponse;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
 
 class CaseUpdatePolicy
 {
@@ -64,14 +65,28 @@ class CaseUpdatePolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'case_update.view-any',
+                denyResponse: 'You do not have permissions to view case updates.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'service_request_update.view-any',
             denyResponse: 'You do not have permissions to view service request updates.'
         );
     }
 
-    public function view(Authenticatable $authenticatable, ServiceRequestUpdate $caseUpdate): Response
+    public function view(Authenticatable $authenticatable, CaseUpdate $caseUpdate): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_update.{$caseUpdate->id}.view"],
+                denyResponse: 'You do not have permissions to view this case update.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_update.{$caseUpdate->id}.view"],
             denyResponse: 'You do not have permissions to view this service request update.'
@@ -80,38 +95,73 @@ class CaseUpdatePolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'case_update.create',
+                denyResponse: 'You do not have permissions to create case updates.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'service_request_update.create',
             denyResponse: 'You do not have permissions to create service request updates.'
         );
     }
 
-    public function update(Authenticatable $authenticatable, ServiceRequestUpdate $caseUpdate): Response
+    public function update(Authenticatable $authenticatable, CaseUpdate $caseUpdate): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_update.{$caseUpdate->id}.update"],
+                denyResponse: 'You do not have permissions to update this case update.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_update.{$caseUpdate->id}.update"],
             denyResponse: 'You do not have permissions to update this service request update.'
         );
     }
 
-    public function delete(Authenticatable $authenticatable, ServiceRequestUpdate $caseUpdate): Response
+    public function delete(Authenticatable $authenticatable, CaseUpdate $caseUpdate): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_update.{$caseUpdate->id}.delete"],
+                denyResponse: 'You do not have permissions to delete this case update.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_update.{$caseUpdate->id}.delete"],
             denyResponse: 'You do not have permissions to delete this service request update.'
         );
     }
 
-    public function restore(Authenticatable $authenticatable, ServiceRequestUpdate $caseUpdate): Response
+    public function restore(Authenticatable $authenticatable, CaseUpdate $caseUpdate): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_update.{$caseUpdate->id}.restore"],
+                denyResponse: 'You do not have permissions to restore this case update.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_update.{$caseUpdate->id}.restore"],
             denyResponse: 'You do not have permissions to restore this service request update.'
         );
     }
 
-    public function forceDelete(Authenticatable $authenticatable, ServiceRequestUpdate $caseUpdate): Response
+    public function forceDelete(Authenticatable $authenticatable, CaseUpdate $caseUpdate): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_update.{$caseUpdate->id}.force-delete"],
+                denyResponse: 'You do not have permissions to force delete this case update.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_update.{$caseUpdate->id}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this service request update.'

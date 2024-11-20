@@ -45,7 +45,7 @@ use App\Filament\Concerns\FiltersManagersFromGroups;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\CasesRelationManager;
 
-class StudentServiceManagement extends ManageRelatedRecords
+class StudentCaseManagement extends ManageRelatedRecords
 {
     use FiltersManagersFromGroups;
 
@@ -54,16 +54,16 @@ class StudentServiceManagement extends ManageRelatedRecords
     protected static string $relationship = 'serviceRequests';
 
     // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Service Management';
+    protected static ?string $navigationLabel = 'Case Management';
 
     // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Service Management';
+    protected static ?string $breadcrumb = 'Case Management';
 
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
     public function getTitle(): string | Htmlable
     {
-        return 'Student Service Management';
+        return 'Student Case Management';
     }
 
     public static function canAccess(array $parameters = []): bool

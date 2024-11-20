@@ -34,42 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Timeline\Timelines;
+namespace AdvisingApp\CaseManagement\Models;
 
-use Filament\Actions\ViewAction;
-use AdvisingApp\Timeline\Models\CustomTimeline;
-use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Components\CaseUpdateViewAction;
+use DateTimeInterface;
+use App\Models\BaseModel;
+use App\Features\CaseManagement;
+use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
+use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
-// TODO Decide where these belong - might want to keep these in the context of the original module
-class ServiceRequestUpdateTimeline extends CustomTimeline
+/**
+ * @mixin IdeHelperCaseStatus
+ */
+class CaseStatus extends BaseModel implements Auditable
 {
-    public function __construct(
-        public ServiceRequestUpdate $serviceRequestUpdate
-    ) {}
+    use SoftDeletes;
+    use AuditableTrait;
 
-    public function icon(): string
+    protected $fillable = [
+        'classification',
+        'name',
+        'color',
+    ];
+
+    protected $casts = [
+        'classification' => SystemCaseClassification::class,
+        'color' => ColumnColorOptions::class,
+    ];
+
+    public function getTable()
     {
-        return 'heroicon-o-adjustments-vertical';
+        return CaseManagement::active() ? 'case_statuses' : 'service_request_statuses';
     }
 
-    public function sortableBy(): string
+    public function serviceRequests(): HasMany
     {
-        return $this->serviceRequestUpdate->created_at;
+        return $this->hasMany(CaseModel::class, 'status_id');
     }
 
-    public function providesCustomView(): bool
+    protected function serializeDate(DateTimeInterface $date): string
     {
-        return true;
-    }
-
-    public function renderCustomView(): string
-    {
-        return 'case-management::case-update-timeline-item';
-    }
-
-    public function modalViewAction(): ViewAction
-    {
-        return CaseUpdateViewAction::make()->record($this->serviceRequestUpdate);
+        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 }

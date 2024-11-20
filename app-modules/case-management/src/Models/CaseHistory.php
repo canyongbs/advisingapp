@@ -39,6 +39,7 @@ namespace AdvisingApp\CaseManagement\Models;
 use Exception;
 use App\Models\BaseModel;
 use Illuminate\Support\Str;
+use App\Features\CaseManagement;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Division\Models\Division;
@@ -47,13 +48,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Timeline\Timelines\CaseHistoryTimeline;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
-use AdvisingApp\Timeline\Timelines\ServiceRequestHistoryTimeline;
 
 /**
- * @mixin IdeHelperServiceRequestHistory
+ * @mixin IdeHelperCaseHistory
  */
-class ServiceRequestHistory extends BaseModel implements ProvidesATimeline
+class CaseHistory extends BaseModel implements ProvidesATimeline
 {
     use SoftDeletes;
 
@@ -67,14 +68,19 @@ class ServiceRequestHistory extends BaseModel implements ProvidesATimeline
         'new_values',
     ];
 
-    public function serviceRequest(): BelongsTo
+    public function getTable()
     {
-        return $this->belongsTo(ServiceRequest::class);
+        return CaseManagement::active() ? 'case_histories' : 'service_request_histories';
     }
 
-    public function timeline(): ServiceRequestHistoryTimeline
+    public function serviceRequest(): BelongsTo
     {
-        return new ServiceRequestHistoryTimeline($this);
+        return $this->belongsTo(CaseModel::class);
+    }
+
+    public function timeline(): CaseHistoryTimeline
+    {
+        return new CaseHistoryTimeline($this);
     }
 
     public static function getTimelineData(Model $forModel): Collection
@@ -114,10 +120,10 @@ class ServiceRequestHistory extends BaseModel implements ProvidesATimeline
     protected function formatValues(array $value): array
     {
         $relationsMap = [
-            'priority_id' => [ServiceRequestPriority::class, 'name'],
-            'status_id' => [ServiceRequestStatus::class, 'name'],
+            'priority_id' => [CasePriority::class, 'name'],
+            'status_id' => [CaseStatus::class, 'name'],
             'division_id' => [Division::class, 'name'],
-            'type_id' => [ServiceRequestType::class, 'name'],
+            'type_id' => [CaseType::class, 'name'],
             'respondent_id' => [
                 [Prospect::class, Student::class],
             ],

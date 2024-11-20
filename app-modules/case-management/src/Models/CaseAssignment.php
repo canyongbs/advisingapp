@@ -38,22 +38,23 @@ namespace AdvisingApp\CaseManagement\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use App\Features\CaseManagement;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
+use AdvisingApp\Timeline\Timelines\CaseAssignmentTimeline;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Timeline\Timelines\ServiceRequestAssignmentTimeline;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
- * @mixin IdeHelperServiceRequestAssignment
+ * @mixin IdeHelperCaseAssignment
  */
-class ServiceRequestAssignment extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline
+class CaseAssignment extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline
 {
     use AuditableTrait;
     use SoftDeletes;
@@ -70,6 +71,11 @@ class ServiceRequestAssignment extends BaseModel implements Auditable, CanTrigge
         'status',
     ];
 
+    public function getTable()
+    {
+        return CaseManagement::active() ? 'case_assignments' : 'service_request_assignments';
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -82,12 +88,12 @@ class ServiceRequestAssignment extends BaseModel implements Auditable, CanTrigge
 
     public function serviceRequest(): BelongsTo
     {
-        return $this->belongsTo(ServiceRequest::class);
+        return $this->belongsTo(CaseModel::class);
     }
 
-    public function timeline(): ServiceRequestAssignmentTimeline
+    public function timeline(): CaseAssignmentTimeline
     {
-        return new ServiceRequestAssignmentTimeline($this);
+        return new CaseAssignmentTimeline($this);
     }
 
     public static function getTimelineData(Model $forModel): Collection

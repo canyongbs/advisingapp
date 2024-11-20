@@ -38,8 +38,8 @@ namespace AdvisingApp\CaseManagement\Notifications;
 
 use App\Models\NotificationSetting;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
@@ -52,7 +52,7 @@ class SendEducatableCaseOpenedNotification extends BaseNotification implements E
     use EmailChannelTrait;
 
     public function __construct(
-        protected ServiceRequest $case,
+        protected CaseModel $case,
     ) {}
 
     public function toEmail(object $notifiable): MailMessage

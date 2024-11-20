@@ -38,24 +38,24 @@ namespace AdvisingApp\Timeline\Timelines;
 
 use Filament\Actions\ViewAction;
 use AdvisingApp\Timeline\Models\CustomTimeline;
-use AdvisingApp\CaseManagement\Models\ServiceRequestHistory;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Components\CaseHistoryViewAction;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Components\CaseAssignmentViewAction;
 
 // TODO Decide where these belong - might want to keep these in the context of the original module
-class ServiceRequestHistoryTimeline extends CustomTimeline
+class CaseAssignmentTimeline extends CustomTimeline
 {
     public function __construct(
-        public ServiceRequestHistory $serviceRequestHistory
+        public CaseAssignment $caseAssignment
     ) {}
 
     public function icon(): string
     {
-        return 'heroicon-o-pencil';
+        return 'heroicon-o-arrows-right-left';
     }
 
     public function sortableBy(): string
     {
-        return $this->serviceRequestHistory->created_at;
+        return $this->caseAssignment->assigned_at;
     }
 
     public function providesCustomView(): bool
@@ -65,11 +65,11 @@ class ServiceRequestHistoryTimeline extends CustomTimeline
 
     public function renderCustomView(): string
     {
-        return 'case-management::case-history-timeline-item';
+        return 'case-management::case-assignment-timeline-item';
     }
 
     public function modalViewAction(): ViewAction
     {
-        return CaseHistoryViewAction::make()->record($this->serviceRequestHistory);
+        return CaseAssignmentViewAction::make()->record($this->caseAssignment);
     }
 }

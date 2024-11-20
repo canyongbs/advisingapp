@@ -39,7 +39,7 @@ namespace AdvisingApp\CaseManagement\Filament\Resources;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use App\Filament\Clusters\CaseManagement;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\EditCase;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ViewCase;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ListCases;
@@ -52,7 +52,7 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ManageCaseF
 
 class CaseResource extends Resource
 {
-    protected static ?string $model = ServiceRequest::class;
+    protected static ?string $model = CaseModel::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 

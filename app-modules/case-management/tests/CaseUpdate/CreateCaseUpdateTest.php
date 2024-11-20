@@ -50,7 +50,7 @@ use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
 use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateCaseUpdateRequestFactory;
@@ -76,11 +76,11 @@ test('A successful action on the CreateCaseUpdate page', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, ServiceRequestUpdate::all());
+    assertCount(1, CaseUpdate::all());
 
-    assertDatabaseHas(ServiceRequestUpdate::class, $request->except('service_request_id')->toArray());
+    assertDatabaseHas(CaseUpdate::class, $request->except('service_request_id')->toArray());
 
-    expect(ServiceRequestUpdate::first()->serviceRequest->id)
+    expect(CaseUpdate::first()->serviceRequest->id)
         ->toEqual($request->get('service_request_id'));
 });
 
@@ -92,7 +92,7 @@ test('CreateCaseUpdate requires valid data', function ($data, $errors) {
         ->call('create')
         ->assertHasFormErrors($errors);
 
-    assertEmpty(ServiceRequestUpdate::all());
+    assertEmpty(CaseUpdate::all());
 })->with(
     [
         'service_request missing' => [CreateCaseUpdateRequestFactory::new()->without('service_request_id'), ['service_request_id' => 'required']],
@@ -138,9 +138,9 @@ test('CreateCaseUpdate is gated with proper access control', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, ServiceRequestUpdate::all());
+    assertCount(1, CaseUpdate::all());
 
-    assertDatabaseHas(ServiceRequestUpdate::class, $request->toArray());
+    assertDatabaseHas(CaseUpdate::class, $request->toArray());
 });
 
 test('CreateCaseUpdate is gated with proper feature access control', function () {
@@ -179,7 +179,7 @@ test('CreateCaseUpdate is gated with proper feature access control', function ()
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, ServiceRequestUpdate::all());
+    assertCount(1, CaseUpdate::all());
 
-    assertDatabaseHas(ServiceRequestUpdate::class, $request->toArray());
+    assertDatabaseHas(CaseUpdate::class, $request->toArray());
 });

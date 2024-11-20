@@ -46,8 +46,8 @@ use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\CaseManagement\Models\CasePriority;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\CaseManagement\Models\ServiceRequestPriority;
 use AdvisingApp\CaseManagement\Filament\Resources\SlaResource;
 
 class CasePrioritiesRelationManager extends RelationManager
@@ -93,7 +93,7 @@ class CasePrioritiesRelationManager extends RelationManager
                     ->sortable(),
                 TextColumn::make('sla.name')
                     ->label('SLA')
-                    ->url(fn (ServiceRequestPriority $record): ?string => $record->sla ? SlaResource::getUrl('edit', ['record' => $record->sla]) : null)
+                    ->url(fn (CasePriority $record): ?string => $record->sla ? SlaResource::getUrl('edit', ['record' => $record->sla]) : null)
                     ->searchable(),
                 TextColumn::make('service_requests_count')
                     ->label('# of Cases')

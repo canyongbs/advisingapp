@@ -39,8 +39,8 @@ namespace AdvisingApp\CaseManagement\Livewire;
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
 use Filament\Forms\Contracts\HasForms;
+use AdvisingApp\CaseManagement\Models\CaseForm;
 use Filament\Forms\Concerns\InteractsWithForms;
-use AdvisingApp\CaseManagement\Models\ServiceRequestForm;
 
 class RenderCaseForm extends Component implements HasForms
 {
@@ -48,7 +48,7 @@ class RenderCaseForm extends Component implements HasForms
 
     public bool $show = true;
 
-    public ServiceRequestForm $caseForm;
+    public CaseForm $caseForm;
 
     public ?array $data = [];
 

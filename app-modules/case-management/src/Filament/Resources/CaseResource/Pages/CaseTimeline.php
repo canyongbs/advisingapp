@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
 
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
+use AdvisingApp\CaseManagement\Models\CaseHistory;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
-use AdvisingApp\CaseManagement\Models\ServiceRequestHistory;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
-use AdvisingApp\CaseManagement\Models\ServiceRequestAssignment;
 
 class CaseTimeline extends TimelinePage
 {
@@ -54,9 +54,9 @@ class CaseTimeline extends TimelinePage
     public string $noMoreRecordsMessage = "You have reached the end of this case's timeline.";
 
     public array $modelsToTimeline = [
-        ServiceRequestUpdate::class,
-        ServiceRequestAssignment::class,
-        ServiceRequestHistory::class,
+        CaseUpdate::class,
+        CaseAssignment::class,
+        CaseHistory::class,
         OutboundDeliverable::class,
     ];
 }

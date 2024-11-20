@@ -46,9 +46,9 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Textarea;
 use App\Filament\Tables\Columns\IdColumn;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
-use AdvisingApp\CaseManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\EditCaseUpdate;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\ViewCaseUpdate;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\ListCaseUpdates;
@@ -56,7 +56,7 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\Creat
 
 class CaseUpdateResource extends Resource
 {
-    protected static ?string $model = ServiceRequestUpdate::class;
+    protected static ?string $model = CaseUpdate::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
@@ -82,8 +82,8 @@ class CaseUpdateResource extends Resource
                     ->label('Case')
                     ->required()
                     ->exists(
-                        table: (new ServiceRequest())->getTable(),
-                        column: (new ServiceRequest())->getKeyName()
+                        table: (new CaseModel())->getTable(),
+                        column: (new CaseModel())->getKeyName()
                     ),
                 Textarea::make('update')
                     ->label('Update')

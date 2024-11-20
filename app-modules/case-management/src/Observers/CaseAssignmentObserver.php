@@ -37,15 +37,15 @@
 namespace AdvisingApp\CaseManagement\Observers;
 
 use App\Models\User;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
-use AdvisingApp\CaseManagement\Models\ServiceRequestAssignment;
 
 class CaseAssignmentObserver
 {
-    public function created(ServiceRequestAssignment $caseAssignment): void
+    public function created(CaseAssignment $caseAssignment): void
     {
         $user = auth()->user();
 
@@ -60,7 +60,7 @@ class CaseAssignmentObserver
         TimelineableRecordCreated::dispatch($caseAssignment->serviceRequest, $caseAssignment);
     }
 
-    public function deleted(ServiceRequestAssignment $caseAssignment): void
+    public function deleted(CaseAssignment $caseAssignment): void
     {
         TimelineableRecordDeleted::dispatch($caseAssignment->serviceRequest, $caseAssignment);
     }

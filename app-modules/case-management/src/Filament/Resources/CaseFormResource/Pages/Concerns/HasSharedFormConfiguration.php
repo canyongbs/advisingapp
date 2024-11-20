@@ -49,11 +49,11 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Forms\Components\ColorSelect;
-use AdvisingApp\CaseManagement\Models\ServiceRequestForm;
+use AdvisingApp\CaseManagement\Models\CaseForm;
+use AdvisingApp\CaseManagement\Models\CaseFormStep;
+use AdvisingApp\CaseManagement\Models\CaseFormField;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use AdvisingApp\CaseManagement\Models\ServiceRequestFormStep;
-use AdvisingApp\CaseManagement\Models\ServiceRequestFormField;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
 trait HasSharedFormConfiguration
@@ -101,7 +101,7 @@ trait HasSharedFormConfiguration
             Toggle::make('is_wizard')
                 ->label('Multi-step case form')
                 ->live()
-                ->disabled(fn (?ServiceRequestForm $record) => $record?->submissions()->submitted()->exists()),
+                ->disabled(fn (?CaseForm $record) => $record?->submissions()->submitted()->exists()),
             Toggle::make('recaptcha_enabled')
                 ->label('Enable reCAPTCHA')
                 ->live()
@@ -116,7 +116,7 @@ trait HasSharedFormConfiguration
                     $this->fieldBuilder(),
                 ])
                 ->hidden(fn (Get $get) => $get('is_wizard'))
-                ->disabled(fn (?ServiceRequestForm $record) => $record?->submissions()->submitted()->exists()),
+                ->disabled(fn (?CaseForm $record) => $record?->submissions()->submitted()->exists()),
             Repeater::make('steps')
                 ->schema([
                     TextInput::make('label')
@@ -131,7 +131,7 @@ trait HasSharedFormConfiguration
                 ->addActionLabel('New step')
                 ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
                 ->visible(fn (Get $get) => $get('is_wizard'))
-                ->disabled(fn (?ServiceRequestForm $record) => $record?->submissions()->submitted()->exists())
+                ->disabled(fn (?CaseForm $record) => $record?->submissions()->submitted()->exists())
                 ->relationship()
                 ->reorderable()
                 ->columnSpanFull(),
@@ -152,17 +152,17 @@ trait HasSharedFormConfiguration
             ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
             ->placeholder('Drag blocks here to build your case form')
             ->hiddenLabel()
-            ->saveRelationshipsUsing(function (TiptapEditor $component, ServiceRequestForm | ServiceRequestFormStep $record) {
+            ->saveRelationshipsUsing(function (TiptapEditor $component, CaseForm | CaseFormStep $record) {
                 if ($component->isDisabled()) {
                     return;
                 }
 
                 $record->wasRecentlyCreated && $component->processImages();
 
-                $caseForm = $record instanceof ServiceRequestForm ? $record : $record->submissible;
-                $caseFormStep = $record instanceof ServiceRequestFormStep ? $record : null;
+                $caseForm = $record instanceof CaseForm ? $record : $record->submissible;
+                $caseFormStep = $record instanceof CaseFormStep ? $record : null;
 
-                ServiceRequestFormField::query()
+                CaseFormField::query()
                     ->whereBelongsTo($caseForm, 'submissible')
                     ->when($caseFormStep, fn (EloquentBuilder $query) => $query->whereBelongsTo($caseFormStep, 'step'))
                     ->delete();
@@ -187,7 +187,7 @@ trait HasSharedFormConfiguration
             ->extraInputAttributes(['style' => 'min-height: 12rem;']);
     }
 
-    public function saveFieldsFromComponents(ServiceRequestForm $caseForm, array $components, ?ServiceRequestFormStep $caseFormStep): array
+    public function saveFieldsFromComponents(CaseForm $caseForm, array $components, ?CaseFormStep $caseFormStep): array
     {
         foreach ($components as $componentKey => $component) {
             if (array_key_exists('content', $component)) {
@@ -217,7 +217,7 @@ trait HasSharedFormConfiguration
                 unset($componentAttributes['data']['isRequired']);
             }
 
-            /** @var ServiceRequestFormField $field */
+            /** @var CaseFormField $field */
             $field = $caseForm->fields()->findOrNew($id ?? null);
             $field->step()->associate($caseFormStep);
             $field->label = $label ?? $componentAttributes['type'];
@@ -244,7 +244,7 @@ trait HasSharedFormConfiguration
 
     protected function clearFormContentForWizard(): void
     {
-        /** @var ServiceRequestForm $record */
+        /** @var CaseForm $record */
         $record = $this->record;
 
         if ($record->is_wizard) {

@@ -37,7 +37,7 @@
 namespace AdvisingApp\CaseManagement\Observers;
 
 use App\Models\User;
-use AdvisingApp\CaseManagement\Models\ServiceRequest;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Actions\CreateCaseHistory;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
@@ -48,12 +48,12 @@ use AdvisingApp\CaseManagement\Notifications\SendEducatableCaseOpenedNotificatio
 
 class CaseObserver
 {
-    public function creating(ServiceRequest $case): void
+    public function creating(CaseModel $case): void
     {
         $case->service_request_number ??= app(CaseNumberGenerator::class)->generate();
     }
 
-    public function created(ServiceRequest $case): void
+    public function created(CaseModel $case): void
     {
         $user = auth()->user();
 
@@ -66,19 +66,19 @@ class CaseObserver
         }
     }
 
-    public function updating(ServiceRequest $case): void
+    public function updating(CaseModel $case): void
     {
         throw_if($case->isDirty('service_request_number'), new CaseNumberUpdateAttemptException());
     }
 
-    public function saving(ServiceRequest $case): void
+    public function saving(CaseModel $case): void
     {
         if ($case->wasChanged('status_id')) {
             $case->status_updated_at = now();
         }
     }
 
-    public function saved(ServiceRequest $case): void
+    public function saved(CaseModel $case): void
     {
         CreateCaseHistory::dispatch($case, $case->getChanges(), $case->getOriginal());
 

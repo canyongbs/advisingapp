@@ -38,12 +38,13 @@ namespace AdvisingApp\CaseManagement\Policies;
 
 use App\Enums\Feature;
 use App\Models\Authenticatable;
+use App\Features\CaseManagement;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
 use App\Support\FeatureAccessResponse;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\ServiceRequestAssignment;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
 
 class CaseAssignmentPolicy
 {
@@ -64,14 +65,28 @@ class CaseAssignmentPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'case_assignment.view-any',
+                denyResponse: 'You do not have permissions to view case assignments.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'service_request_assignment.view-any',
             denyResponse: 'You do not have permissions to view service request assignments.'
         );
     }
 
-    public function view(Authenticatable $authenticatable, ServiceRequestAssignment $caseAssignment): Response
+    public function view(Authenticatable $authenticatable, CaseAssignment $caseAssignment): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_assignment.{$caseAssignment->id}.view"],
+                denyResponse: 'You do not have permissions to view this case assignment.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_assignment.{$caseAssignment->id}.view"],
             denyResponse: 'You do not have permissions to view this service request assignment.'
@@ -80,38 +95,73 @@ class CaseAssignmentPolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'case_assignment.create',
+                denyResponse: 'You do not have permissions to create case assignments.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'service_request_assignment.create',
             denyResponse: 'You do not have permissions to create service request assignments.'
         );
     }
 
-    public function update(Authenticatable $authenticatable, ServiceRequestAssignment $caseAssignment): Response
+    public function update(Authenticatable $authenticatable, CaseAssignment $caseAssignment): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_assignment.{$caseAssignment->id}.update"],
+                denyResponse: 'You do not have permissions to update this case assignment.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_assignment.{$caseAssignment->id}.update"],
             denyResponse: 'You do not have permissions to update this service request assignment.'
         );
     }
 
-    public function delete(Authenticatable $authenticatable, ServiceRequestAssignment $caseAssignment): Response
+    public function delete(Authenticatable $authenticatable, CaseAssignment $caseAssignment): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_assignment.{$caseAssignment->id}.delete"],
+                denyResponse: 'You do not have permissions to delete this case assignment.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_assignment.{$caseAssignment->id}.delete"],
             denyResponse: 'You do not have permissions to delete this service request assignment.'
         );
     }
 
-    public function restore(Authenticatable $authenticatable, ServiceRequestAssignment $caseAssignment): Response
+    public function restore(Authenticatable $authenticatable, CaseAssignment $caseAssignment): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_assignment.{$caseAssignment->id}.restore"],
+                denyResponse: 'You do not have permissions to restore this case assignment.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_assignment.{$caseAssignment->id}.restore"],
             denyResponse: 'You do not have permissions to restore this service request assignment.'
         );
     }
 
-    public function forceDelete(Authenticatable $authenticatable, ServiceRequestAssignment $caseAssignment): Response
+    public function forceDelete(Authenticatable $authenticatable, CaseAssignment $caseAssignment): Response
     {
+        if (CaseManagement::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["case_assignment.{$caseAssignment->id}.force-delete"],
+                denyResponse: 'You do not have permissions to force delete this case assignment.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["service_request_assignment.{$caseAssignment->id}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this service request assignment.'

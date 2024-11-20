@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\CaseManagement\Actions\Case;
 
-use AdvisingApp\CaseManagement\Models\ServiceRequestFormSubmission;
+use AdvisingApp\CaseManagement\Models\CaseFormSubmission;
 
 class CreateCaseFromSubmission
 {
-    public function handle(ServiceRequestFormSubmission $caseFormSubmission): void
+    public function handle(CaseFormSubmission $caseFormSubmission): void
     {
         $caseFormSubmission->serviceRequest()->create([
             'respondent_type' => $caseFormSubmission->author->getMorphClass(),

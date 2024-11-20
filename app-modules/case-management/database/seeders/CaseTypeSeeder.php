@@ -37,13 +37,13 @@
 namespace AdvisingApp\CaseManagement\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use AdvisingApp\CaseManagement\Models\ServiceRequestType;
+use AdvisingApp\CaseManagement\Models\CaseType;
 
 class CaseTypeSeeder extends Seeder
 {
     public function run(): void
     {
-        ServiceRequestType::factory()
+        CaseType::factory()
             ->createMany(
                 [
                     ['name' => 'Admissions'],
@@ -61,7 +61,7 @@ class CaseTypeSeeder extends Seeder
                     ['name' => 'Veterans'],
                 ]
             )
-            ->each(function (ServiceRequestType $type) {
+            ->each(function (CaseType $type) {
                 $type->priorities()->createMany(
                     [
                         ['name' => 'High', 'order' => 1],

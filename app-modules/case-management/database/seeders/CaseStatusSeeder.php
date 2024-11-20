@@ -37,15 +37,15 @@
 namespace AdvisingApp\CaseManagement\Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
-use AdvisingApp\CaseManagement\Models\ServiceRequestStatus;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 
 class CaseStatusSeeder extends Seeder
 {
     public function run(): void
     {
-        ServiceRequestStatus::factory()
+        CaseStatus::factory()
             ->createMany(
                 [
                     [
