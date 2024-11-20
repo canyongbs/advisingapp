@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Alert\Database\Seeders;
 
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
-use AdvisingApp\Alert\Models\AlertStatus;
 use Illuminate\Database\Seeder;
+use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 
 class AlertStatusSeeder extends Seeder
 {
@@ -54,19 +54,19 @@ class AlertStatusSeeder extends Seeder
                         'name' => 'Active',
                         'classification' => SystemAlertStatusClassification::Active,
                         'sort' => 1,
-                        'is_default' => true
+                        'is_default' => true,
                     ],
                     [
                         'name' => 'Resolved',
                         'classification' => SystemAlertStatusClassification::Resolved,
                         'sort' => 2,
-                        'is_default' => false
+                        'is_default' => false,
                     ],
                     [
                         'name' => 'Canceled',
                         'classification' => SystemAlertStatusClassification::Canceled,
                         'sort' => 3,
-                        'is_default' => false
+                        'is_default' => false,
                     ],
                 ]
             );

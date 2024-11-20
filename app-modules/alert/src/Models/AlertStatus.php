@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Alert\Models;
 
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 
 class AlertStatus extends BaseModel
 {

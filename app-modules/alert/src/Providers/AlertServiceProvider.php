@@ -42,64 +42,64 @@ use AdvisingApp\Alert\Models\Alert;
 use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Events\AlertCreated;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Alert\Observers\AlertObserver;
 use AdvisingApp\Alert\Registries\AlertRbacRegistry;
+use AdvisingApp\Alert\Observers\AlertStatusObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Alert\Observers\AlertHistoryObserver;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Listeners\NotifySubscribersOfAlertCreated;
-use AdvisingApp\Alert\Models\AlertStatus;
-use AdvisingApp\Alert\Observers\AlertStatusObserver;
 
 class AlertServiceProvider extends ServiceProvider
 {
-  use ImplementsGraphQL;
+    use ImplementsGraphQL;
 
-  public function register(): void
-  {
-    Panel::configureUsing(fn(Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AlertPlugin()));
-  }
+    public function register(): void
+    {
+        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AlertPlugin()));
+    }
 
-  public function boot(): void
-  {
-    Relation::morphMap([
-      'alert' => Alert::class,
-      'alert_history' => AlertHistory::class,
-    ]);
+    public function boot(): void
+    {
+        Relation::morphMap([
+            'alert' => Alert::class,
+            'alert_history' => AlertHistory::class,
+        ]);
 
-    $this->registerObservers();
+        $this->registerObservers();
 
-    $this->registerEvents();
+        $this->registerEvents();
 
-    $this->registerGraphQL();
+        $this->registerGraphQL();
 
-    AuthorizationRoleRegistry::register(AlertRbacRegistry::class);
-  }
+        AuthorizationRoleRegistry::register(AlertRbacRegistry::class);
+    }
 
-  protected function registerObservers(): void
-  {
-    Alert::observe(AlertObserver::class);
-    AlertHistory::observe(AlertHistoryObserver::class);
-    AlertStatus::observe(AlertStatusObserver::class);
-  }
+    protected function registerObservers(): void
+    {
+        Alert::observe(AlertObserver::class);
+        AlertHistory::observe(AlertHistoryObserver::class);
+        AlertStatus::observe(AlertStatusObserver::class);
+    }
 
-  protected function registerEvents(): void
-  {
-    Event::listen(
-      AlertCreated::class,
-      NotifySubscribersOfAlertCreated::class
-    );
-  }
+    protected function registerEvents(): void
+    {
+        Event::listen(
+            AlertCreated::class,
+            NotifySubscribersOfAlertCreated::class
+        );
+    }
 
-  protected function registerGraphQL(): void
-  {
-    $this->discoverSchema(__DIR__ . '/../../graphql/alert.graphql');
+    protected function registerGraphQL(): void
+    {
+        $this->discoverSchema(__DIR__ . '/../../graphql/alert.graphql');
 
-    $this->registerEnum(AlertSeverity::class);
-    $this->registerEnum(SystemAlertStatusClassification::class);
-  }
+        $this->registerEnum(AlertSeverity::class);
+        $this->registerEnum(SystemAlertStatusClassification::class);
+    }
 }

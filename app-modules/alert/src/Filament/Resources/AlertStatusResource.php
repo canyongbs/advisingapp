@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Alert\Filament\Resources;
 
-use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\CreateAlertStatus;
-use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\EditAlertStatus;
-use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\ListAlertStatuses;
-use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\ViewAlertStatus;
+use Filament\Resources\Resource;
 use AdvisingApp\Alert\Models\AlertStatus;
 use App\Filament\Clusters\ConstituentManagement;
-use Filament\Resources\Resource;
+use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\EditAlertStatus;
+use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\ViewAlertStatus;
+use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\CreateAlertStatus;
+use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\ListAlertStatuses;
 
 class AlertStatusResource extends Resource
 {
