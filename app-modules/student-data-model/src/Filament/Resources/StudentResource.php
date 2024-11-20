@@ -79,7 +79,7 @@ class StudentResource extends Resource
             'Other ID' => $record->otherid,
             'Email Address' => collect([$record->email, $record->email_id])->filter()->implode(', '),
             'Mobile' => $record->mobile,
-            'Phone' => collect([$record->mobile, $record->phone])->filter()->implode(', '),
+            'Phone' => $record->phone,
         ], fn (mixed $value): bool => filled($value));
     }
 

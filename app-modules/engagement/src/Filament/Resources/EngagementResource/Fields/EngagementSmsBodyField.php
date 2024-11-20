@@ -53,11 +53,11 @@ use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 
 class EngagementSmsBodyField
 {
-    public static function make(string $context, ?Form $form = null)
+    public static function make(string $context, ?Form $form = null, string $fieldPrefix = '')
     {
         // TODO Implement length validation (320 characters max)
         // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
-        return TiptapEditor::make('body')
+        return TiptapEditor::make("{$fieldPrefix}body")
             ->label('Body')
             ->mergeTags([
                 'student first name',

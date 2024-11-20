@@ -2911,16 +2911,16 @@
         },
         {
             "name": "canyongbs/filament-tiptap-editor",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/filament-tiptap-editor.git",
-                "reference": "9f90ef321e48bc4809eed292b68f4ef6a543e9a6"
+                "reference": "33666bfe929b8cd9ec00831903b5c5cc90785446"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/filament-tiptap-editor/zipball/9f90ef321e48bc4809eed292b68f4ef6a543e9a6",
-                "reference": "9f90ef321e48bc4809eed292b68f4ef6a543e9a6",
+                "url": "https://api.github.com/repos/canyongbs/filament-tiptap-editor/zipball/33666bfe929b8cd9ec00831903b5c5cc90785446",
+                "reference": "33666bfe929b8cd9ec00831903b5c5cc90785446",
                 "shasum": ""
             },
             "require": {
@@ -2983,7 +2983,7 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/filament-tiptap-editor/issues",
-                "source": "https://github.com/canyongbs/filament-tiptap-editor/tree/1.0.2"
+                "source": "https://github.com/canyongbs/filament-tiptap-editor/tree/1.0.3"
             },
             "funding": [
                 {
@@ -2991,7 +2991,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-09-10T09:29:05+00:00"
+            "time": "2024-11-18T12:41:25+00:00"
         },
         {
             "name": "carbonphp/carbon-doctrine-types",

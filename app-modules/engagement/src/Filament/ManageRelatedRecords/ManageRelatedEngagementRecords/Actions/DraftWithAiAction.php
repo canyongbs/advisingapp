@@ -53,6 +53,7 @@ use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEngagementRelationManager;
 
 class DraftWithAiAction extends Action
 {
@@ -66,8 +67,8 @@ class DraftWithAiAction extends Action
             ->label('Draft with AI Assistant')
             ->link()
             ->icon('heroicon-m-pencil')
-            ->modalContent(fn (ManageRelatedEngagementRecords $livewire) => view('engagement::filament.manage-related-records.manage-related-engagement-records.draft-with-ai-modal-content', [
-                'recordTitle' => $livewire->getRecordTitle(),
+            ->modalContent(fn (ManageRelatedEngagementRecords | StudentEngagementRelationManager $livewire) => view('engagement::filament.manage-related-records.manage-related-engagement-records.draft-with-ai-modal-content', [
+                'recordTitle' => $livewire->getOwnerRecord()->getAttribute($livewire->getOwnerRecord()::displayNameKey()),
                 'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
                     ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
             ]))
@@ -80,7 +81,7 @@ class DraftWithAiAction extends Action
                     ->placeholder('What do you want to write about?')
                     ->required(),
             ])
-            ->action(function (array $data, Get $get, Set $set, ManageRelatedEngagementRecords $livewire) {
+            ->action(function (array $data, Get $get, Set $set, ManageRelatedEngagementRecords | StudentEngagementRelationManager $livewire) {
                 $model = app(AiIntegratedAssistantSettings::class)->default_model;
 
                 $userName = auth()->user()->name;

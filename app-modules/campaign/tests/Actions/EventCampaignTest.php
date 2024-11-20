@@ -90,9 +90,9 @@ it('will create the event records for segment', function (Collection $educatable
     assertTrue($campaign->hasBeenExecuted());
 })->with([
     'prospects' => [
-        'educatables' => fn () => Prospect::factory()->count(3)->create(),
+        fn () => Prospect::factory()->count(3)->create(),
     ],
     'students' => [
-        'educatables' => fn () => Student::factory()->count(3)->create(),
+        fn () => Student::factory()->count(3)->create(),
     ],
 ]);

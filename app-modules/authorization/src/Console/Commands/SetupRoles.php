@@ -38,10 +38,8 @@ namespace AdvisingApp\Authorization\Console\Commands;
 
 use App\Models\Authenticatable;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use AdvisingApp\Authorization\Models\Role;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 
 class SetupRoles extends Command
 {
@@ -59,43 +57,6 @@ class SetupRoles extends Command
             'name' => Authenticatable::SUPER_ADMIN_ROLE,
             'guard_name' => 'web',
         ]);
-
-        $roleRegistry = resolve(AuthorizationRoleRegistry::class);
-
-        $rolePermissions = [];
-
-        foreach ($roleRegistry->getWebRoles() as $roleName => $permissionIds) {
-            $roleId = Role::create([
-                'name' => $roleName,
-                'guard_name' => 'web',
-            ])->id;
-
-            $rolePermissions = [
-                ...$rolePermissions,
-                ...array_map(fn (string $permissionId) => [
-                    'permission_id' => $permissionId,
-                    'role_id' => $roleId,
-                ], $permissionIds),
-            ];
-        }
-
-        foreach ($roleRegistry->getApiRoles() as $roleName => $permissionIds) {
-            $roleId = Role::create([
-                'name' => $roleName,
-                'guard_name' => 'api',
-            ])->id;
-
-            $rolePermissions = [
-                ...$rolePermissions,
-                ...array_map(fn (string $permissionId) => [
-                    'permission_id' => $permissionId,
-                    'role_id' => $roleId,
-                ], $permissionIds),
-            ];
-        }
-
-        DB::table('role_has_permissions')
-            ->insert($rolePermissions);
 
         $this->info('Roles created successfully!');
 
