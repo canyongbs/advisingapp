@@ -61,6 +61,11 @@ class AlertHistory extends History implements ProvidesATimeline
   public function getFormattedValueForKey(string $key): array
   {
     return match ($key) {
+      'status' => [
+        'key' => 'Status',
+        'old' => array_key_exists($key, $this->old) ? AlertStatus::tryFrom($this->old[$key])?->getLabel() : null,
+        'new' => AlertStatus::tryFrom($this->new[$key])?->getLabel(),
+      ],
       'status_id' => [
         'key' => 'Status',
         'old' => array_key_exists($key, $this->old)
