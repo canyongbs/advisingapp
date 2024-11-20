@@ -51,6 +51,7 @@ use Filament\Tables\Filters\SelectFilter;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Models\AlertStatus;
+use App\Features\AlertStatusId;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -73,7 +74,8 @@ trait CanManageEducatableAlerts
                 TextEntry::make('description'),
                 TextEntry::make('severity'),
                 TextEntry::make('suggested_intervention'),
-                TextEntry::make('status.name'),
+                TextEntry::make('status.name')->visible(AlertStatusId::active()),
+                TextEntry::make('status')->visible(AlertStatusId::active() == false),
                 TextEntry::make('createdBy.name')->label('Created By')->default('N/A'),
                 TextEntry::make('created_at')->label('Created Date'),
             ]);
@@ -95,12 +97,20 @@ trait CanManageEducatableAlerts
                 Textarea::make('suggested_intervention')
                     ->required()
                     ->string(),
+                Select::make('status')
+                    ->options(SystemAlertStatusClassification::class)
+                    ->selectablePlaceholder(false)
+                    ->default(SystemAlertStatusClassification::default())
+                    ->required()
+                    ->enum(SystemAlertStatusClassification::class)
+                    ->visible(AlertStatusId::active() == false),
                 Select::make('status_id')
                     ->label('status')
                     ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('sort'))
                     ->selectablePlaceholder(false)
                     ->default(SystemAlertStatusClassification::default())
                     ->required()
+                    ->visible(AlertStatusId::active()),
             ]);
     }
 
@@ -118,7 +128,11 @@ trait CanManageEducatableAlerts
                         isToggledHiddenByDefault: true,
                     ),
                 TextColumn::make('status.name')
-                    ->sortable(),
+                    ->sortable()
+                    ->visible(AlertStatusId::active()),
+                TextColumn::make('status')
+                    ->sortable()
+                    ->visible(AlertStatusId::active() == false),
                 TextColumn::make('created_at')
                     ->sortable()
                     ->toggleable(
@@ -129,7 +143,11 @@ trait CanManageEducatableAlerts
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
                 SelectFilter::make('status_id')
-                    ->relationship('status', 'name'),
+                    ->relationship('status', 'name')
+                    ->visible(AlertStatusId::active()),
+                SelectFilter::make('status')
+                    ->options(SystemAlertStatusClassification::class)
+                    ->visible(AlertStatusId::active() == false),
             ])
             ->headerActions([
                 CreateAction::make()
