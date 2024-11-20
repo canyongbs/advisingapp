@@ -47,5 +47,11 @@ return new class () extends Migration {
         });
     }
 
-    public function down(): void {}
+    public function down(): void
+    {
+        Schema::table('campaigns', function (Blueprint $table) {
+            $table->uuid('created_by_id')->nullable(true)->change();
+            $table->string('created_by_type')->nullable(true)->change();
+        });
+    }
 };
