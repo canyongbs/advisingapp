@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions;
 
+use Filament\Pages\Page;
 use Filament\Actions\Action;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Select;
@@ -64,7 +65,7 @@ class ConvertToStudent extends Action
                     ->label('Select Student')
                     ->searchable(),
             ])
-            ->action(function ($data, Prospect $record) {
+            ->action(function ($data, Prospect $record, Page $livewire) {
                 /** @var Student $student */
                 $student = Student::find($data['student_id']);
 
@@ -96,7 +97,9 @@ class ConvertToStudent extends Action
                     ->success()
                     ->send();
 
-                $this->redirect(ProspectResource::getUrl('view', ['record' => $this->record]));
+                if ($livewire::getResourcePageName() === 'edit') {
+                    $this->redirect(ProspectResource::getUrl('view', ['record' => $this->record]));
+                }
             });
     }
 
