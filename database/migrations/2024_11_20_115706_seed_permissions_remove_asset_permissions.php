@@ -1,24 +1,14 @@
 <?php
 
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Migrations\Migration;
-use Database\Migrations\Concerns\CanModifyPermissions;
 
-return new class () extends Migration {
-    use CanModifyPermissions;
-
+return new class extends Migration
+{
     public function up(): void
     {
-        Schema::dropIfExists('asset_check_outs');
-        Schema::dropIfExists('asset_check_ins');
-        Schema::dropIfExists('maintenance_activities');
-        Schema::dropIfExists('maintenance_providers');
-        Schema::dropIfExists('assets');
-        Schema::dropIfExists('asset_locations');
-        Schema::dropIfExists('asset_statuses');
-        Schema::dropIfExists('asset_types');
-
         $roleQuery = DB::table('roles')
             ->whereIn('name', ['inventory-management.inventory_management']);
 
@@ -51,5 +41,5 @@ return new class () extends Migration {
         $permissionGroups->delete();
     }
 
-    public function down(): void {}
+    public function down(): void{}
 };
