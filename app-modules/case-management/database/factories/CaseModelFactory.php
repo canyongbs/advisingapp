@@ -47,7 +47,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends Factory<CaseModel>
  */
-class CaseFactory extends Factory
+class CaseModelFactory extends Factory
 {
     public function definition(): array
     {
