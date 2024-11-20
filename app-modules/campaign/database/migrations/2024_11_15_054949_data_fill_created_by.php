@@ -40,12 +40,17 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::table('campaigns')->orderBy('created_at')->chunk(100, function ($campaigns) {
+        $firstUser = DB::table('users')
+            ->whereNull('deleted_at')
+            ->orderBy('id')
+            ->first();
+
+        DB::table('campaigns')->orderBy('id')->chunk(100, function ($campaigns) use ($firstUser) {
             foreach ($campaigns as $campaign) {
                 DB::table('campaigns')
                     ->where('id', $campaign->id)
                     ->update([
-                        'created_by_id' => $campaign->user_id,
+                        'created_by_id' => $campaign->user_id ?? $firstUser->id,
                         'created_by_type' => 'user',
                     ]);
             }
