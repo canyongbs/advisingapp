@@ -34,49 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
-
-use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
 use App\Features\AddCreatedByFeature;
-use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\Campaign\Models\Campaign;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
+use Illuminate\Database\Migrations\Migration;
 
-class ViewCampaign extends ViewRecord
-{
-    protected static string $resource = CampaignResource::class;
-
-    public function infolist(Infolist $infolist): Infolist
+return new class () extends Migration {
+    public function up(): void
     {
-        return $infolist
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('name'),
-                        TextEntry::make('segment.name')
-                            ->label('Population Segment'),
-                        IconEntry::make('enabled')
-                            ->boolean(),
-                        IconEntry::make('execution_status')
-                            ->label('Has Been Executed?')
-                            ->getStateUsing(fn (Campaign $record) => $record->hasBeenExecuted())
-                            ->boolean(),
-                        TextEntry::make('createdBy.name')
-                            ->label('Created By')
-                            ->visible(fn () => AddCreatedByFeature::active()),
-                    ]),
-            ]);
+        AddCreatedByFeature::activate();
     }
 
-    protected function getHeaderActions(): array
+    public function down(): void
     {
-        return [
-            EditAction::make()
-                ->hidden(fn (Campaign $record) => $record->hasBeenExecuted() === true),
-        ];
+        AddCreatedByFeature::deactivate();
     }
-}
+};

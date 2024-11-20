@@ -34,39 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Database\Factories;
+namespace App\Features;
 
-use App\Models\User;
-use AdvisingApp\Segment\Models\Segment;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Campaign\Models\Campaign>
- */
-class CampaignFactory extends Factory
+class AddCreatedByFeature extends AbstractFeatureFlag
 {
-    public function definition(): array
+    public function resolve(mixed $scope): mixed
     {
-        return [
-            'created_by_id' => User::factory(),
-            'created_by_type' => 'user',
-            'segment_id' => Segment::factory(),
-            'name' => fake()->catchPhrase(),
-            'enabled' => true,
-        ];
-    }
-
-    public function enabled(): self
-    {
-        return $this->state([
-            'enabled' => true,
-        ]);
-    }
-
-    public function disabled(): self
-    {
-        return $this->state([
-            'enabled' => false,
-        ]);
+        return false;
     }
 }

@@ -34,39 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Database\Factories;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\User;
-use AdvisingApp\Segment\Models\Segment;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Campaign\Models\Campaign>
- */
-class CampaignFactory extends Factory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'created_by_id' => User::factory(),
-            'created_by_type' => 'user',
-            'segment_id' => Segment::factory(),
-            'name' => fake()->catchPhrase(),
-            'enabled' => true,
-        ];
+        Schema::table('campaigns', function (Blueprint $table) {
+            $table->dropColumn('user_id');
+        });
     }
 
-    public function enabled(): self
+    public function down(): void
     {
-        return $this->state([
-            'enabled' => true,
-        ]);
+        Schema::table('campaigns', function (Blueprint $table) {
+            $table->uuid('user_id');
+        });
     }
-
-    public function disabled(): self
-    {
-        return $this->state([
-            'enabled' => false,
-        ]);
-    }
-}
+};

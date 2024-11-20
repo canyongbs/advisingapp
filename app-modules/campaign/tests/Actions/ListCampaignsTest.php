@@ -52,7 +52,7 @@ it('can filter campaigns by `My Campaigns`', function () {
     asSuperAdmin($user);
 
     $expectedCampaign = Campaign::factory()
-        ->for($user, 'user')
+        ->for($user, 'createdBy')
         ->create();
 
     $filteredOutCampaigns = Campaign::factory()->count(2)->create();

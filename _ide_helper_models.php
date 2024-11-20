@@ -1606,19 +1606,20 @@ namespace AdvisingApp\Campaign\Models{
  * AdvisingApp\Campaign\Models\Campaign
  *
  * @property string $id
- * @property string $user_id
  * @property string $name
  * @property bool $enabled
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property string $segment_id
+ * @property string $created_by_type
+ * @property string $created_by_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Campaign\Models\CampaignAction> $actions
  * @property-read int|null $actions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $createdBy
  * @property-read \AdvisingApp\Segment\Models\Segment $segment
- * @property-read \App\Models\User $user
  * @method static \AdvisingApp\Campaign\Database\Factories\CampaignFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign hasNotBeenExecuted()
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign newModelQuery()
@@ -1626,13 +1627,14 @@ namespace AdvisingApp\Campaign\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign query()
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereCreatedById($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereCreatedByType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereSegmentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign withoutTrashed()
  * @mixin \Eloquent
@@ -2229,6 +2231,8 @@ namespace AdvisingApp\Form\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \AdvisingApp\Form\Models\Form $form
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
  * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply onlyTrashed()
