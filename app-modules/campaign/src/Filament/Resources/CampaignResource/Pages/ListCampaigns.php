@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
+use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
@@ -80,7 +81,11 @@ class ListCampaigns extends ListRecords
                     ->hidden(fn (Campaign $record) => $record->hasBeenExecuted() === true),
             ])->filters([
                 Filter::make('My Campaigns')
-                    ->query(fn (Builder $query) => $query->where('created_by_id', auth()->id())),
+                    ->query(
+                        fn (Builder $query) => $query
+                            ->where('created_by_id', auth()->id())
+                            ->where('created_by_type', (new User())->getMorphClass()),
+                    ),
                 Filter::make('Enabled')
                     ->query(fn (Builder $query) => $query->where('enabled', true)),
                 Filter::make('Completed')
