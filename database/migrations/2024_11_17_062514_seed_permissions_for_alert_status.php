@@ -34,13 +34,12 @@
 </COPYRIGHT>
 */
 
-use Database\Migrations\Concerns\CanModifyPermissions;
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
+use Database\Migrations\Concerns\CanModifyPermissions;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     use CanModifyPermissions;
 
     private array $permissions = [
@@ -74,6 +73,6 @@ return new class extends Migration
     public function down(): void
     {
         collect($this->guards)
-            ->each(fn(string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
+            ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
     }
 };

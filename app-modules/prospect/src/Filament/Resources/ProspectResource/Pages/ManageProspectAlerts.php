@@ -38,6 +38,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Features\AlertStatusId;
 use Filament\Infolists\Infolist;
 use AdvisingApp\Alert\Models\Alert;
 use Filament\Forms\Components\Select;
@@ -46,22 +47,21 @@ use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
-use AdvisingApp\Alert\Models\AlertStatus;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use App\Features\AlertStatusId;
-use Illuminate\Database\Eloquent\Builder;
 
 class ManageProspectAlerts extends ManageRelatedRecords
 {
@@ -91,10 +91,11 @@ class ManageProspectAlerts extends ManageRelatedRecords
                 "alert-count-{$ownerRecord->getKey()}",
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
-                    if (AlertStatusId::active())
+                    if (AlertStatusId::active()) {
                         return $ownerRecord->alerts()->whereRelation('status', 'classification', SystemAlertStatusClassification::Active->value)->count();
-                    else
-                        return $ownerRecord->alerts()->status(SystemAlertStatusClassification::Active->value)->count();
+                    }
+
+                    return $ownerRecord->alerts()->status(SystemAlertStatusClassification::Active->value)->count();
                 },
             );
 
@@ -135,7 +136,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
                     ->string(),
                 Select::make('status_id')
                     ->label('Status')
-                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('sort'))
+                    ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
                     ->default(SystemAlertStatusClassification::default())
                     ->selectablePlaceholder(false)
                     ->required()

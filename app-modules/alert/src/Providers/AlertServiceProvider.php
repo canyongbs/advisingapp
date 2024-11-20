@@ -42,16 +42,18 @@ use AdvisingApp\Alert\Models\Alert;
 use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Events\AlertCreated;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Alert\Observers\AlertObserver;
+use AdvisingApp\Alert\Registries\AlertRbacRegistry;
+use AdvisingApp\Alert\Observers\AlertStatusObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Alert\Observers\AlertHistoryObserver;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Listeners\NotifySubscribersOfAlertCreated;
-use AdvisingApp\Alert\Models\AlertStatus;
-use AdvisingApp\Alert\Observers\AlertStatusObserver;
 
 class AlertServiceProvider extends ServiceProvider
 {

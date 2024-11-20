@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages;
 
-use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
-use AdvisingApp\Alert\Models\AlertStatus;
-use App\Filament\Tables\Columns\IdColumn;
+use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use AdvisingApp\Alert\Models\AlertStatus;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\DeleteAction;
+use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
 
 class ListAlertStatuses extends ListRecords
 {
@@ -67,7 +67,7 @@ class ListAlertStatuses extends ListRecords
                     ->sortable(),
                 IconColumn::make('is_default')
                     ->label('Set as default')
-                    ->state(fn(AlertStatus $alertStatus): bool => $alertStatus->is_default)
+                    ->state(fn (AlertStatus $alertStatus): bool => $alertStatus->is_default)
                     ->boolean(),
                 TextColumn::make('alerts_count')
                     ->label('# of Alerts')
@@ -79,7 +79,7 @@ class ListAlertStatuses extends ListRecords
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),
-                DeleteAction::make()
+                DeleteAction::make(),
             ]);
     }
 

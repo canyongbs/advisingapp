@@ -34,13 +34,12 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         $alerts = DB::table('alerts')->whereNotNull('status')->get();
@@ -53,8 +52,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('alert', function (Blueprint $table) {
-            //
-        });
+        Schema::table('alert', function (Blueprint $table) {});
     }
 };

@@ -39,54 +39,54 @@ use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Segment\Enums\SegmentType;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 
 it('will create the appropriate records for educatables in the segment', function () {
-  // Given we have no proactive alerts
-  expect(Alert::count())->toBe(0);
+    // Given we have no proactive alerts
+    expect(Alert::count())->toBe(0);
 
-  // But we have a segment, a campaign, and an action that defines we should create an alert at a certain point in time
-  $prospects = Prospect::factory()->count(3)->create([
-    'first_name' => 'TestTest',
-  ]);
-
-  $segment = Segment::factory()->create([
-    'type' => SegmentType::Static,
-  ]);
-
-  $prospects->each(function (Prospect $prospect) use ($segment) {
-    $segment->subjects()->create([
-      'subject_id' => $prospect->getKey(),
-      'subject_type' => $prospect->getMorphClass(),
-    ]);
-  });
-
-  $campaign = Campaign::factory()->create([
-    'segment_id' => $segment->id,
-  ]);
-
-  $action = CampaignAction::factory()
-    ->for($campaign, 'campaign')
-    ->create([
-      'type' => CampaignActionType::ProactiveAlert,
-      'data' => [
-        'description' => 'This is the description',
-        'severity' => 'low',
-        'suggested_intervention' => 'This is the suggested intervention',
-        'status' => 'active',
-      ],
+    // But we have a segment, a campaign, and an action that defines we should create an alert at a certain point in time
+    $prospects = Prospect::factory()->count(3)->create([
+        'first_name' => 'TestTest',
     ]);
 
-  // When that action runs
-  $action->execute();
+    $segment = Segment::factory()->create([
+        'type' => SegmentType::Static,
+    ]);
 
-  // We should have created the appropriate alerts for the appropriate educatable records
-  expect(Alert::count())->toBe(3);
-  expect(Alert::first()->description)->toBe('This is the description');
-  expect(Alert::first()->severity)->toBe(AlertSeverity::Low);
-  expect(Alert::first()->suggested_intervention)->toBe('This is the suggested intervention');
-  expect(Alert::first()->status)->toBe(SystemAlertStatusClassification::Active);
+    $prospects->each(function (Prospect $prospect) use ($segment) {
+        $segment->subjects()->create([
+            'subject_id' => $prospect->getKey(),
+            'subject_type' => $prospect->getMorphClass(),
+        ]);
+    });
+
+    $campaign = Campaign::factory()->create([
+        'segment_id' => $segment->id,
+    ]);
+
+    $action = CampaignAction::factory()
+        ->for($campaign, 'campaign')
+        ->create([
+            'type' => CampaignActionType::ProactiveAlert,
+            'data' => [
+                'description' => 'This is the description',
+                'severity' => 'low',
+                'suggested_intervention' => 'This is the suggested intervention',
+                'status' => 'active',
+            ],
+        ]);
+
+    // When that action runs
+    $action->execute();
+
+    // We should have created the appropriate alerts for the appropriate educatable records
+    expect(Alert::count())->toBe(3);
+    expect(Alert::first()->description)->toBe('This is the description');
+    expect(Alert::first()->severity)->toBe(AlertSeverity::Low);
+    expect(Alert::first()->suggested_intervention)->toBe('This is the suggested intervention');
+    expect(Alert::first()->status)->toBe(SystemAlertStatusClassification::Active);
 });

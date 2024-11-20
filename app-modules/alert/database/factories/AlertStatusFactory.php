@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Alert\Database\Factories;
 
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Alert\Models\Model>
@@ -59,11 +59,11 @@ class AlertStatusFactory extends Factory
 
     public function resolved(): self
     {
-        return $this->state(fn() => ['classification' => SystemAlertStatusClassification::Resolved]);
+        return $this->state(fn () => ['classification' => SystemAlertStatusClassification::Resolved]);
     }
 
     public function canceled(): self
     {
-        return $this->state(fn() => ['classification' => SystemAlertStatusClassification::Canceled]);
+        return $this->state(fn () => ['classification' => SystemAlertStatusClassification::Canceled]);
     }
 }
