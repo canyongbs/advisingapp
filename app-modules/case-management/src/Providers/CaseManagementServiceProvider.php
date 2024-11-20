@@ -54,7 +54,6 @@ use AdvisingApp\CaseManagement\Models\ChangeRequest;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\CaseManagement\Observers\CaseObserver;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\CaseManagement\Models\ChangeRequestType;
 use AdvisingApp\CaseManagement\Models\CaseFormSubmission;
 use AdvisingApp\CaseManagement\Models\ChangeRequestStatus;
@@ -65,7 +64,6 @@ use AdvisingApp\CaseManagement\Observers\CaseHistoryObserver;
 use AdvisingApp\CaseManagement\Observers\ChangeRequestObserver;
 use AdvisingApp\CaseManagement\Observers\CaseAssignmentObserver;
 use AdvisingApp\CaseManagement\Observers\CaseFormSubmissionObserver;
-use AdvisingApp\CaseManagement\Registries\CaseManagementRbacRegistry;
 use AdvisingApp\CaseManagement\Cases\CaseNumber\Contracts\CaseNumberGenerator;
 use AdvisingApp\CaseManagement\Cases\CaseNumber\SqidPlusSixCaseNumberGenerator;
 
@@ -105,8 +103,6 @@ class CaseManagementServiceProvider extends ServiceProvider
         $this->registerObservers();
 
         $this->discoverSchema(__DIR__ . '/../../graphql/case-management.graphql');
-
-        AuthorizationRoleRegistry::register(CaseManagementRbacRegistry::class);
     }
 
     protected function registerObservers(): void
