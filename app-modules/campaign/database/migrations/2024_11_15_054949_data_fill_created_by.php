@@ -34,16 +34,21 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Campaign\Models\Campaign;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
 
 return new class () extends Migration {
     public function up(): void
     {
-        Campaign::with('user')->each(function ($campaign) {
-            $campaign->created_by_id = $campaign->user?->getKey();
-            $campaign->created_by_type = 'user';
-            $campaign->save();
+        DB::table('campaigns')->orderBy('created_at')->chunk(100, function ($campaigns) {
+            foreach ($campaigns as $campaign) {
+                DB::table('campaigns')
+                    ->where('id', $campaign->id)
+                    ->update([
+                        'created_by_id' => $campaign->user_id,
+                        'created_by_type' => 'user',
+                    ]);
+            }
         });
     }
 };

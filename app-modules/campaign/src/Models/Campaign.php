@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Campaign\Models;
 
-use App\Models\User;
 use App\Models\BaseModel;
 use AdvisingApp\Segment\Models\Segment;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -64,11 +63,6 @@ class Campaign extends BaseModel implements Auditable
     protected $casts = [
         'enabled' => 'boolean',
     ];
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function segment(): BelongsTo
     {

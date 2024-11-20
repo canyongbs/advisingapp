@@ -80,7 +80,7 @@ class ListCampaigns extends ListRecords
                     ->hidden(fn (Campaign $record) => $record->hasBeenExecuted() === true),
             ])->filters([
                 Filter::make('My Campaigns')
-                    ->query(fn (Builder $query) => $query->where('user_id', auth()->id())),
+                    ->query(fn (Builder $query) => $query->where('created_by_id', auth()->id())),
                 Filter::make('Enabled')
                     ->query(fn (Builder $query) => $query->where('enabled', true)),
                 Filter::make('Completed')
