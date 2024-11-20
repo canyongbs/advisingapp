@@ -47,8 +47,5 @@ return new class () extends Migration {
         });
     }
 
-    public function down(): void
-    {
-        Schema::table('campaigns', function (Blueprint $table) {});
-    }
+    public function down(): void {}
 };
