@@ -47,30 +47,30 @@ use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\ListAlertStat
 
 class AlertStatusResource extends Resource
 {
-    protected static ?string $model = AlertStatus::class;
+  protected static ?string $model = AlertStatus::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+  protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationLabel = 'Statuses';
+  protected static ?string $navigationLabel = 'Statuses';
 
-    protected static ?string $cluster = ConstituentManagement::class;
+  protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static ?string $navigationGroup = 'Alert';
+  protected static ?string $navigationGroup = 'Alert';
 
-    protected static ?int $navigationSort = 10;
+  protected static ?int $navigationSort = 10;
 
-    public static function canAccess(): bool
-    {
-        return AlertStatusId::active() && parent::canAccess();
-    }
+  public static function canAccess(): bool
+  {
+    return AlertStatusId::active() && parent::canAccess();
+  }
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListAlertStatuses::route('/'),
-            'create' => CreateAlertStatus::route('/create'),
-            'view' => ViewAlertStatus::route('/{record}'),
-            'edit' => EditAlertStatus::route('/{record}/edit'),
-        ];
-    }
+  public static function getPages(): array
+  {
+    return [
+      'index' => ListAlertStatuses::route('/'),
+      'create' => CreateAlertStatus::route('/create'),
+      'view' => ViewAlertStatus::route('/{record}'),
+      'edit' => EditAlertStatus::route('/{record}/edit'),
+    ];
+  }
 }
