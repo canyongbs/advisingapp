@@ -39,9 +39,7 @@ namespace AdvisingApp\Theme\Providers;
 use Filament\Panel;
 use AdvisingApp\Theme\ThemePlugin;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Theme\Registries\ThemeRbacRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Theme\Settings\SettingsProperties\ThemeSettingsProperty;
 
 class ThemeServiceProvider extends ServiceProvider
@@ -56,7 +54,5 @@ class ThemeServiceProvider extends ServiceProvider
         Relation::morphMap([
             'theme_settings_property' => ThemeSettingsProperty::class,
         ]);
-
-        AuthorizationRoleRegistry::register(ThemeRbacRegistry::class);
     }
 }

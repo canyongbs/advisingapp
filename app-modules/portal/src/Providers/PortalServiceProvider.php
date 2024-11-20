@@ -40,8 +40,6 @@ use Filament\Panel;
 use AdvisingApp\Portal\PortalPlugin;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Portal\Registries\PortalRbacRegistry;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Portal\Settings\SettingsProperties\PortalSettingsProperty;
 
 class PortalServiceProvider extends ServiceProvider
@@ -56,7 +54,5 @@ class PortalServiceProvider extends ServiceProvider
         Relation::morphMap([
             'portal_settings_property' => PortalSettingsProperty::class,
         ]);
-
-        AuthorizationRoleRegistry::register(PortalRbacRegistry::class);
     }
 }

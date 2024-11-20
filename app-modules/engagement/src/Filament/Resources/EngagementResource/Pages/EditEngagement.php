@@ -48,13 +48,16 @@ use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use AdvisingApp\Engagement\Models\Engagement;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Forms\Components\EducatableSelect;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource;
@@ -152,6 +155,28 @@ class EditEngagement extends EditRecord
                             ->visible(fn (callable $get) => $get('send_later')),
                     ]),
             ]);
+    }
+
+    protected function beforeSave(): void
+    {
+        $record = null;
+
+        $data = $this->form->getState();
+
+        if ($data['recipient_type'] == app(Prospect::class)->getMorphClass()) {
+            $record = Prospect::find($data['recipient_id']);
+        } elseif ($data['recipient_type'] == app(Student::class)->getMorphClass()) {
+            $record = Student::find($data['recipient_id']);
+        }
+
+        if ($record && ! $record->canRecieveSms()) {
+            Notification::make()
+                ->title(ucfirst($data['recipient_type']) . ' does not have mobile number.')
+                ->danger()
+                ->send();
+
+            $this->halt();
+        }
     }
 
     protected function getHeaderActions(): array

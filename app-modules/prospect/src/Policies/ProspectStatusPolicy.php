@@ -40,7 +40,6 @@ use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Features\ProspectStatusSystemProtectionAndAutoAssignment;
 
 class ProspectStatusPolicy
 {
@@ -79,7 +78,7 @@ class ProspectStatusPolicy
 
     public function update(Authenticatable $authenticatable, ProspectStatus $prospectStatus): Response
     {
-        if (ProspectStatusSystemProtectionAndAutoAssignment::active() && $prospectStatus->is_system_protected) {
+        if ($prospectStatus->is_system_protected) {
             return Response::deny('You cannot update this prospect status because it is system protected.');
         }
 
@@ -91,7 +90,7 @@ class ProspectStatusPolicy
 
     public function delete(Authenticatable $authenticatable, ProspectStatus $prospectStatus): Response
     {
-        if (ProspectStatusSystemProtectionAndAutoAssignment::active() && $prospectStatus->is_system_protected) {
+        if ($prospectStatus->is_system_protected) {
             return Response::deny('You cannot delete this prospect status because it is system protected.');
         }
 
@@ -111,7 +110,7 @@ class ProspectStatusPolicy
 
     public function forceDelete(Authenticatable $authenticatable, ProspectStatus $prospectStatus): Response
     {
-        if (ProspectStatusSystemProtectionAndAutoAssignment::active() && $prospectStatus->is_system_protected) {
+        if ($prospectStatus->is_system_protected) {
             return Response::deny('You cannot delete this prospect status because it is system protected.');
         }
 

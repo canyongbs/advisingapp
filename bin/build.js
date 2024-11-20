@@ -101,3 +101,10 @@ compile({
     entryPoints: ['./app-modules/task/resources/js/kanban.js'],
     outfile: './public/js/canyon-gbs/task/kanban.js',
 })
+
+compile({
+    ...defaultOptions,
+    entryPoints: ['./app-modules/prospect/resources/js/kanban.js'],
+    outfile: './public/js/canyon-gbs/prospect-pipeline/kanban.js',
+})
+

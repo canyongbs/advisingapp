@@ -331,6 +331,28 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return 'prospect';
     }
 
+    /**
+     * @return MorphToMany<Pipeline>
+     */
+    public function educatablePipelineStages(): MorphToMany
+    {
+        return $this->morphToMany(
+            related: Pipeline::class,
+            name: 'educatable',
+            table: 'educatable_pipeline_stages',
+            foreignPivotKey: 'educatable_id',
+            relatedPivotKey: 'pipeline_id',
+        )
+            ->using(EducatablePipelineStage::class)
+            ->withPivot(['pipeline_stage_id'])
+            ->withTimestamps();
+    }
+
+    public function canRecieveSms(): bool
+    {
+        return filled($this->mobile);
+    }
+
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {

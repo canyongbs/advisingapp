@@ -163,7 +163,19 @@ it('allows user which has sass global admin role to assign sass global admin rol
 });
 it('Not allows user which has not sass global admin role to assign sass global admin role to other user', function () {
     $user = User::factory()->create();
-    $user->assignRole('authorization.permission_manager', 'authorization.role_manager', 'authorization.user_management');
+    $user->givePermissionTo(
+        'permission.view-any',
+        'permission.*.view',
+        'role.view-any',
+        'role.*.view',
+        'user.view-any',
+        'user.*.view',
+        'user.create',
+        'user.*.update',
+        'user.*.delete',
+        'user.*.restore',
+        'user.*.force-delete',
+    );
 
     $second = User::factory()->create();
 

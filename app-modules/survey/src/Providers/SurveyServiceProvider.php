@@ -45,8 +45,6 @@ use AdvisingApp\Survey\Models\SurveyField;
 use AdvisingApp\Survey\Models\SurveySubmission;
 use AdvisingApp\Survey\Models\SurveyAuthentication;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Survey\Registries\SurveyRbacRegistry;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 
 class SurveyServiceProvider extends ServiceProvider
 {
@@ -64,7 +62,5 @@ class SurveyServiceProvider extends ServiceProvider
             'survey_submission' => SurveySubmission::class,
             'survey' => Survey::class,
         ]);
-
-        AuthorizationRoleRegistry::register(SurveyRbacRegistry::class);
     }
 }

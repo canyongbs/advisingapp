@@ -44,9 +44,7 @@ use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
-use AdvisingApp\StudentDataModel\Registries\StudentDataModelRbacRegistry;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentTasksRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentAlertsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentCareTeamRelationManager;
@@ -68,8 +66,6 @@ class StudentDataModelServiceProvider extends ServiceProvider
             'enrollment' => Enrollment::class,
             'program' => Program::class,
         ]);
-
-        AuthorizationRoleRegistry::register(StudentDataModelRbacRegistry::class);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
 

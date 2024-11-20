@@ -76,8 +76,6 @@ class AlertServiceProvider extends ServiceProvider
         $this->registerEvents();
 
         $this->registerGraphQL();
-
-        AuthorizationRoleRegistry::register(AlertRbacRegistry::class);
     }
 
     protected function registerObservers(): void

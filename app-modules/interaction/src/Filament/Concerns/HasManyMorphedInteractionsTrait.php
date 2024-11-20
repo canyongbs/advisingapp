@@ -45,6 +45,7 @@ use Filament\Tables\Columns\TextColumn;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Interaction\Models\Interaction;
@@ -122,7 +123,12 @@ trait HasManyMorphedInteractionsTrait
             ])
             ->actions([
                 ViewAction::make()
-                    ->modalHeading('Interaction Details'),
+                    ->modalHeading('Interaction Details')
+                    ->extraModalFooterActions([
+                        DeleteAction::make()
+                            ->modalHeading('Are you sure you wish to delete this interaction?')
+                            ->cancelParentActions(),
+                    ]),
                 EditAction::make(),
             ])
             ->emptyStateDescription('Create an interaction to get started');

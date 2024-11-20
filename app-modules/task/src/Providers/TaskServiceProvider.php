@@ -42,10 +42,8 @@ use AdvisingApp\Task\Models\Task;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Task\Observers\TaskObserver;
-use AdvisingApp\Task\Registries\TaskRbacRegistry;
 use AdvisingApp\Task\Observers\TaskHistoryObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 
 class TaskServiceProvider extends ServiceProvider
 {
@@ -62,8 +60,6 @@ class TaskServiceProvider extends ServiceProvider
         ]);
 
         $this->registerObservers();
-
-        AuthorizationRoleRegistry::register(TaskRbacRegistry::class);
     }
 
     protected function registerObservers(): void

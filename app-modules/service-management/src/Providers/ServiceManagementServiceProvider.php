@@ -42,7 +42,6 @@ use Illuminate\Support\ServiceProvider;
 use AdvisingApp\ServiceManagement\Models\Sla;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\ServiceManagement\Models\ChangeRequest;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\ServiceManagement\ServiceManagementPlugin;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
@@ -63,7 +62,6 @@ use AdvisingApp\ServiceManagement\Models\ServiceRequestFormSubmission;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestUpdateObserver;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestFormAuthentication;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestHistoryObserver;
-use AdvisingApp\ServiceManagement\Registries\ServiceManagementRbacRegistry;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestAssignmentObserver;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestFormSubmissionObserver;
 use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
@@ -105,8 +103,6 @@ class ServiceManagementServiceProvider extends ServiceProvider
         $this->registerObservers();
 
         $this->discoverSchema(__DIR__ . '/../../graphql/service-management.graphql');
-
-        AuthorizationRoleRegistry::register(ServiceManagementRbacRegistry::class);
     }
 
     protected function registerObservers(): void

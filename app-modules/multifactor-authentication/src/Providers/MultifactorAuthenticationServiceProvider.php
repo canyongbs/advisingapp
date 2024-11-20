@@ -38,10 +38,7 @@ namespace AdvisingApp\MultifactorAuthentication\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\MultifactorAuthentication\MultifactorAuthenticationPlugin;
-use AdvisingApp\MultifactorAuthentication\Registries\MultifactorAuthenticationRbacRegistry;
 
 class MultifactorAuthenticationServiceProvider extends ServiceProvider
 {
@@ -50,10 +47,5 @@ class MultifactorAuthenticationServiceProvider extends ServiceProvider
         Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new MultifactorAuthenticationPlugin()));
     }
 
-    public function boot()
-    {
-        Relation::morphMap([]);
-
-        AuthorizationRoleRegistry::register(MultifactorAuthenticationRbacRegistry::class);
-    }
+    public function boot() {}
 }

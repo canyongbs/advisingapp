@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions;
 
+use Filament\Pages\Page;
 use Filament\Actions\Action;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Select;
@@ -44,7 +45,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use App\Features\ProspectStatusSystemProtectionAndAutoAssignment;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
 class ConvertToStudent extends Action
 {
@@ -64,7 +65,7 @@ class ConvertToStudent extends Action
                     ->label('Select Student')
                     ->searchable(),
             ])
-            ->action(function ($data, Prospect $record) {
+            ->action(function ($data, Prospect $record, Page $livewire) {
                 /** @var Student $student */
                 $student = Student::find($data['student_id']);
 
@@ -81,15 +82,13 @@ class ConvertToStudent extends Action
 
                 $record->student()->associate($student);
 
-                if (ProspectStatusSystemProtectionAndAutoAssignment::active()) {
-                    $record->status()->associate(
-                        ProspectStatus::query()
-                            ->where('classification', SystemProspectClassification::Converted)
-                            ->where('name', 'Converted')
-                            ->where('is_system_protected', true)
-                            ->firstOrFail()
-                    );
-                }
+                $record->status()->associate(
+                    ProspectStatus::query()
+                        ->where('classification', SystemProspectClassification::Converted)
+                        ->where('name', 'Converted')
+                        ->where('is_system_protected', true)
+                        ->firstOrFail()
+                );
 
                 $record->save();
 
@@ -97,6 +96,10 @@ class ConvertToStudent extends Action
                     ->title('Prospect converted to Student')
                     ->success()
                     ->send();
+
+                if ($livewire::getResourcePageName() === 'edit') {
+                    $this->redirect(ProspectResource::getUrl('view', ['record' => $this->record]));
+                }
             });
     }
 

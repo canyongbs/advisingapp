@@ -44,11 +44,9 @@ use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationStep;
 use AdvisingApp\Application\Models\ApplicationField;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use AdvisingApp\Application\Registries\ApplicationRbacRegistry;
 use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
 use AdvisingApp\Application\Observers\ApplicationSubmissionObserver;
 use AdvisingApp\Application\Listeners\NotifySubscribersOfApplicationSubmission;
@@ -73,8 +71,6 @@ class ApplicationServiceProvider extends ServiceProvider
 
         $this->registerObservers();
         $this->registerEvents();
-
-        AuthorizationRoleRegistry::register(ApplicationRbacRegistry::class);
     }
 
     public function registerObservers(): void

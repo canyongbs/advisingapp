@@ -41,7 +41,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRejectEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesDeliveryEvent;
@@ -54,7 +53,6 @@ use AdvisingApp\IntegrationAwsSesEventHandling\IntegrationAwsSesEventHandlingPlu
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesDeliveryDelayEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesRenderingFailureEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\EnsureSesConfigurationSetHeadersArePresent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Registries\IntegrationAwsSesEventHandlingRbacRegistry;
 
 class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
 {
@@ -68,8 +66,6 @@ class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
         Relation::morphMap([]);
 
         $this->registerEvents();
-
-        AuthorizationRoleRegistry::register(IntegrationAwsSesEventHandlingRbacRegistry::class);
     }
 
     public function registerEvents(): void

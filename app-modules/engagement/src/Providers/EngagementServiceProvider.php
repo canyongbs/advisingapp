@@ -51,7 +51,6 @@ use AdvisingApp\Engagement\Models\EngagementBatch;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Actions\DeliverEngagements;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
 use AdvisingApp\Engagement\Models\EngagementFileEntities;
@@ -60,7 +59,6 @@ use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Engagement\Observers\EmailTemplateObserver;
 use AdvisingApp\Engagement\Observers\EngagementBatchObserver;
-use AdvisingApp\Engagement\Registries\EngagementRbacRegistry;
 use AdvisingApp\Engagement\Observers\EngagementFileEntitiesObserver;
 
 class EngagementServiceProvider extends ServiceProvider
@@ -104,8 +102,6 @@ class EngagementServiceProvider extends ServiceProvider
         $this->registerObservers();
 
         $this->registerGraphQL();
-
-        AuthorizationRoleRegistry::register(EngagementRbacRegistry::class);
     }
 
     public function registerObservers(): void

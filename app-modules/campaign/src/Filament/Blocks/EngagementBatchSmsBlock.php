@@ -61,7 +61,7 @@ class EngagementBatchSmsBlock extends CampaignActionBlock
         return [
             Hidden::make($fieldPrefix . 'delivery_method')
                 ->default(EngagementDeliveryMethod::Sms->value),
-            EngagementSmsBodyField::make(context: 'create'),
+            EngagementSmsBodyField::make(context: 'create', fieldPrefix: $fieldPrefix),
             Actions::make([
                 DraftCampaignEngagementBlockWithAi::make()
                     ->deliveryMethod(EngagementDeliveryMethod::Sms)

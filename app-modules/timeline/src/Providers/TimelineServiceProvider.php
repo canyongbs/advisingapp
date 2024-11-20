@@ -43,8 +43,6 @@ use AdvisingApp\Timeline\TimelinePlugin;
 use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Timeline\Listeners\AddRecordToTimeline;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Timeline\Registries\TimelineRbacRegistry;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
 use AdvisingApp\Timeline\Listeners\RemoveRecordFromTimeline;
@@ -63,8 +61,6 @@ class TimelineServiceProvider extends ServiceProvider
         ]);
 
         $this->registerEvents();
-
-        AuthorizationRoleRegistry::register(TimelineRbacRegistry::class);
     }
 
     protected function registerEvents(): void
