@@ -48,44 +48,44 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 abstract class History extends BaseModel
 {
-  use SoftDeletes;
+    use SoftDeletes;
 
-  protected $table = 'histories';
+    protected $table = 'histories';
 
-  protected $fillable = [
-    'event',
-    'old',
-    'new',
-  ];
-
-  protected $casts = [
-    'old' => 'array',
-    'new' => 'array',
-  ];
-
-  public function subject(): MorphTo
-  {
-    return $this->morphTo();
-  }
-
-  public function getFormattedValueForKey(string $key): array
-  {
-    return [
-      'key' => str($key)->headline()->toString(),
-      'old' => $this->old[$key] ?? null,
-      'new' => $this->new[$key],
+    protected $fillable = [
+        'event',
+        'old',
+        'new',
     ];
-  }
 
-  public function getFormattedValues(): Collection
-  {
-    return collect($this->new)
-      ->keys()
-      ->mapWithKeys(fn(string $key) => [$key => $this->getFormattedValueForKey($key)]);
-  }
+    protected $casts = [
+        'old' => 'array',
+        'new' => 'array',
+    ];
 
-  public function formatted(): Attribute
-  {
-    return Attribute::get(fn() => $this->getFormattedValues()->filter());
-  }
+    public function subject(): MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    public function getFormattedValueForKey(string $key): array
+    {
+        return [
+            'key' => str($key)->headline()->toString(),
+            'old' => $this->old[$key] ?? null,
+            'new' => $this->new[$key],
+        ];
+    }
+
+    public function getFormattedValues(): Collection
+    {
+        return collect($this->new)
+            ->keys()
+            ->mapWithKeys(fn (string $key) => [$key => $this->getFormattedValueForKey($key)]);
+    }
+
+    public function formatted(): Attribute
+    {
+        return Attribute::get(fn () => $this->getFormattedValues()->filter());
+    }
 }
