@@ -2011,6 +2011,7 @@ namespace AdvisingApp\Engagement\Models{
  * @property string|null $retention_date
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
@@ -2024,6 +2025,7 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile query()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereRetentionDate($value)
@@ -2151,6 +2153,7 @@ namespace AdvisingApp\Form\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property bool $generate_prospects
  * @property-read \AdvisingApp\Form\Models\FormEmailAutoReply|null $emailAutoReply
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormField> $fields
  * @property-read int|null $fields_count
@@ -2168,6 +2171,7 @@ namespace AdvisingApp\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereEmbedEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereGenerateProspects($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereIsAuthenticated($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereIsWizard($value)
@@ -3716,6 +3720,101 @@ namespace AdvisingApp\Portal\Models{
 
 namespace AdvisingApp\Prospect\Models{
 /**
+ * AdvisingApp\Prospect\Models\EducatablePipelineStage
+ *
+ * @property string $pipeline_id
+ * @property string $pipeline_stage_id
+ * @property string $educatable_type
+ * @property string $educatable_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $educatable
+ * @property-read \AdvisingApp\Prospect\Models\Pipeline $pipeline
+ * @property-read \AdvisingApp\Prospect\Models\PipelineStage|null $stage
+ * @method static \Illuminate\Database\Eloquent\Builder|EducatablePipelineStage newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EducatablePipelineStage newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EducatablePipelineStage query()
+ * @method static \Illuminate\Database\Eloquent\Builder|EducatablePipelineStage whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EducatablePipelineStage whereEducatableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EducatablePipelineStage whereEducatableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EducatablePipelineStage wherePipelineId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EducatablePipelineStage wherePipelineStageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EducatablePipelineStage whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperEducatablePipelineStage {}
+}
+
+namespace AdvisingApp\Prospect\Models{
+/**
+ * AdvisingApp\Prospect\Models\Pipeline
+ *
+ * @property string $id
+ * @property string $name
+ * @property string $description
+ * @property string $user_id
+ * @property string $segment_id
+ * @property string|null $default_stage
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \App\Models\User $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $educatablePipelineStages
+ * @property-read int|null $educatable_pipeline_stages_count
+ * @property-read \AdvisingApp\Segment\Models\Segment $segment
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\PipelineStage> $stages
+ * @property-read int|null $stages_count
+ * @method static \AdvisingApp\Prospect\Database\Factories\PipelineFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Pipeline newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Pipeline newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Pipeline query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Pipeline whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pipeline whereDefaultStage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pipeline whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pipeline whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pipeline whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pipeline whereSegmentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pipeline whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pipeline whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperPipeline {}
+}
+
+namespace AdvisingApp\Prospect\Models{
+/**
+ * AdvisingApp\Prospect\Models\PipelineStage
+ *
+ * @property string $id
+ * @property string $name
+ * @property string $pipeline_id
+ * @property int $order
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\EducatablePipelineStage> $educatables
+ * @property-read int|null $educatables_count
+ * @property-read \AdvisingApp\Prospect\Models\Pipeline $pipeline
+ * @method static \AdvisingApp\Prospect\Database\Factories\PipelineStageFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|PipelineStage newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PipelineStage newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PipelineStage query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PipelineStage whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PipelineStage whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PipelineStage whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PipelineStage whereOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PipelineStage wherePipelineId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PipelineStage whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperPipelineStage {}
+}
+
+namespace AdvisingApp\Prospect\Models{
+/**
  * AdvisingApp\Prospect\Models\Prospect
  *
  * @property string $display_name
@@ -3761,6 +3860,8 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $careTeam
  * @property-read int|null $care_team_count
  * @property-read \App\Models\User|null $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Pipeline> $educatablePipelineStages
+ * @property-read int|null $educatable_pipeline_stages_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\EngagementFile> $engagementFiles
  * @property-read int|null $engagement_files_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\EngagementResponse> $engagementResponses
@@ -4782,18 +4883,23 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string|null $semester_name
  * @property \Illuminate\Support\Carbon|null $start_date
  * @property \Illuminate\Support\Carbon|null $end_date
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string $id
  * @property-read \AdvisingApp\StudentDataModel\Models\Student|null $student
  * @method static \AdvisingApp\StudentDataModel\Database\Factories\EnrollmentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment query()
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereClassNbr($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereCrseGradeOff($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereDepartment($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereDivision($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereEndDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereFacultyEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereFacultyName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereLastUpdDtStmp($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereSection($value)
@@ -4803,6 +4909,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereStartDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereUntEarned($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment whereUntTaken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment withoutTrashed()
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -4825,23 +4933,30 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string $foi
  * @property \Illuminate\Support\Carbon $change_dt
  * @property \Illuminate\Support\Carbon $declare_dt
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string $id
  * @property-read \AdvisingApp\StudentDataModel\Models\Student|null $student
  * @method static \AdvisingApp\StudentDataModel\Database\Factories\ProgramFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Program newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Program newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Program onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Program query()
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereAcadCareer($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereAcadPlan($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereChangeDt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereCumGpa($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereDeclareDt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Program whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereDescr($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereDivision($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereFoi($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Program whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereOtherid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereProgStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereSemester($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereSisid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Program withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Program withoutTrashed()
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -4871,11 +4986,11 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string|null $city
  * @property string|null $state
  * @property string|null $postal
- * @property string|null $birthdate
+ * @property \Illuminate\Support\Carbon|null $birthdate
  * @property int|null $hsgrad
  * @property bool $dual
  * @property bool $ferpa
- * @property string|null $dfw
+ * @property \Illuminate\Support\Carbon|null $dfw
  * @property bool $sap
  * @property string|null $holds
  * @property bool $firstgen
@@ -4887,6 +5002,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $created_at_source
  * @property \Illuminate\Support\Carbon|null $updated_at_source
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Alert\Models\Alert> $alerts
  * @property-read int|null $alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $applicationSubmissions
@@ -4913,6 +5029,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $event_attendee_records_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormSubmission> $formSubmissions
  * @property-read int|null $form_submissions_count
+ * @property-read mixed $full_address
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
@@ -4927,6 +5044,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $programs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $prospects
  * @property-read int|null $prospects_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Segment\Models\SegmentSubject> $segmentSubjects
+ * @property-read int|null $segment_subjects_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $subscribedUsers
@@ -4945,6 +5064,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \AdvisingApp\StudentDataModel\Database\Factories\StudentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Student newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Student newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Student onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Student query()
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereAddress2($value)
@@ -4953,6 +5073,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereCity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereCreatedAtSource($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereDfw($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereDual($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereEmail($value)
@@ -4980,6 +5101,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereState($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Student whereUpdatedAtSource($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Student withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Student withoutTrashed()
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]

@@ -39,8 +39,6 @@ namespace AdvisingApp\Assistant\Providers;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Assistant\AssistantPlugin;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Assistant\Registries\AssistantRbacRegistry;
 
 class AssistantServiceProvider extends ServiceProvider
 {
@@ -49,8 +47,5 @@ class AssistantServiceProvider extends ServiceProvider
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AssistantPlugin()));
     }
 
-    public function boot(): void
-    {
-        AuthorizationRoleRegistry::register(AssistantRbacRegistry::class);
-    }
+    public function boot(): void {}
 }
