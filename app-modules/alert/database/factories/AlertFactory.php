@@ -42,33 +42,33 @@ use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\AlertStatus;
 
 /**
  * @extends Factory<Alert>
  */
 class AlertFactory extends Factory
 {
-    public function definition(): array
-    {
-        return [
-            'concern_type' => fake()->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
-            'concern_id' => function (array $attributes) {
-                $concernClass = Relation::getMorphedModel($attributes['concern_type']);
+  public function definition(): array
+  {
+    return [
+      'concern_type' => fake()->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
+      'concern_id' => function (array $attributes) {
+        $concernClass = Relation::getMorphedModel($attributes['concern_type']);
 
-                /** @var Student|Prospect $concernModel */
-                $concernModel = new $concernClass();
+        /** @var Student|Prospect $concernModel */
+        $concernModel = new $concernClass();
 
-                $concern = $concernClass === Student::class
-                  ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                  : $concernModel::factory()->create();
+        $concern = $concernClass === Student::class
+          ? Student::inRandomOrder()->first() ?? Student::factory()->create()
+          : $concernModel::factory()->create();
 
-                return $concern->getKey();
-            },
-            'description' => fake()->sentence(),
-            'severity' => fake()->randomElement(AlertSeverity::cases()),
-            'status' => fake()->randomElement(SystemAlertStatusClassification::cases()),
-            'suggested_intervention' => fake()->sentence(),
-        ];
-    }
+        return $concern->getKey();
+      },
+      'description' => fake()->sentence(),
+      'severity' => fake()->randomElement(AlertSeverity::cases()),
+      'status_id' => (AlertStatus::factory()->create())->getKey(),
+      'suggested_intervention' => fake()->sentence(),
+    ];
+  }
 }
