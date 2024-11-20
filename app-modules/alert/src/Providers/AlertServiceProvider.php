@@ -47,11 +47,9 @@ use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Events\AlertCreated;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Alert\Observers\AlertObserver;
-use AdvisingApp\Alert\Registries\AlertRbacRegistry;
 use AdvisingApp\Alert\Observers\AlertStatusObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Alert\Observers\AlertHistoryObserver;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Listeners\NotifySubscribersOfAlertCreated;
 
