@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Timeline\Filament\Pages\Concerns;
+namespace AdvisingApp\Timeline\Livewire\Concerns;
 
 use Illuminate\Pagination\Cursor;
 use Illuminate\Support\Collection;
 use AdvisingApp\Timeline\Models\Timeline;
 
-trait LoadsTimelineRecords
+trait CanLoadTimelineRecords
 {
     public int $recordsPerPage = 5;
 

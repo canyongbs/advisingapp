@@ -157,12 +157,11 @@
     @apply dark:border dark:border-white dark:hover:border-white !important;
 }
 
-.view_student_relation_manager .fi-ta-ctn {
-    min-height: 500px;
-    overflow-y: auto;
+.fi-section.fi-section-has-subsections > .fi-section-content-ctn > .fi-section-content {
+    @apply p-0;
 }
 
-.view_student_relation_manager .fi-ta-ctn .fi-ta-content {
-    height: 300px;
-    overflow-y: auto;
+.fi-section.fi-section-has-subsections > .fi-section-content-ctn > .fi-section-content,
+.fi-section.fi-section-has-subsections > .fi-section-content-ctn > .fi-section-content > dl > .fi-fo-component-ctn {
+    @apply gap-0 divide-y divide-gray-200 dark:divide-white/10;
 }

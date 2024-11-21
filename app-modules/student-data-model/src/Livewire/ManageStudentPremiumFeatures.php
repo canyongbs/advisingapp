@@ -39,9 +39,9 @@ namespace AdvisingApp\StudentDataModel\Livewire;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEventsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFormSubmissionsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentApplicationSubmissionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EventsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\FormSubmissionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ApplicationSubmissionsRelationManager;
 
 class ManageStudentPremiumFeatures extends ManageRelatedRecords
 {
@@ -70,9 +70,9 @@ class ManageStudentPremiumFeatures extends ManageRelatedRecords
     private static function managers(?Model $record = null): array
     {
         return collect([
-            StudentFormSubmissionsRelationManager::class,
-            StudentEventsRelationManager::class,
-            StudentApplicationSubmissionsRelationManager::class,
+            FormSubmissionsRelationManager::class,
+            EventsRelationManager::class,
+            ApplicationSubmissionsRelationManager::class,
         ])
             ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
             ->toArray();

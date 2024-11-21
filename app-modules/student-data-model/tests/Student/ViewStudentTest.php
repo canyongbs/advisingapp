@@ -47,18 +47,18 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Livewire\ManageStudentInformation;
 use AdvisingApp\StudentDataModel\Livewire\ManageStudentPremiumFeatures;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EventsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFilesRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentTasksRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentAlertsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEventsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\FormSubmissionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentCareTeamRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEngagementRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentInteractionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentSubscriptionsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFormSubmissionsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentApplicationSubmissionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ApplicationSubmissionsRelationManager;
 
 it('requires proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -158,7 +158,7 @@ it('renders the EnrollmentsRelationManager based on proper access', function () 
         ->assertSeeLivewire($relationManager);
 });
 
-it('renders the StudentEngagementRelationManager based on proper access', function () {
+it('renders the EngagementsRelationManager based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -168,7 +168,7 @@ it('renders the StudentEngagementRelationManager based on proper access', functi
 
     actingAs($user);
 
-    $relationManager = StudentEngagementRelationManager::class;
+    $relationManager = EngagementsRelationManager::class;
 
     livewire(ManageStudentInformation::class, [
         'record' => $student->getKey(),
@@ -197,7 +197,7 @@ it('renders the StudentEngagementRelationManager based on proper access', functi
         ->assertSeeLivewire($relationManager);
 });
 
-it('renders the StudentInteractionsRelationManager based on proper access', function () {
+it('renders the InteractionsRelationManager based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -207,7 +207,7 @@ it('renders the StudentInteractionsRelationManager based on proper access', func
 
     actingAs($user);
 
-    $relationManager = StudentInteractionsRelationManager::class;
+    $relationManager = InteractionsRelationManager::class;
 
     livewire(ManageStudentInformation::class, [
         'record' => $student->getKey(),
@@ -236,7 +236,7 @@ it('renders the StudentInteractionsRelationManager based on proper access', func
         ->assertSeeLivewire($relationManager);
 });
 
-it('renders the StudentFilesRelationManager based on proper access', function () {
+it('renders the EngagementFilesRelationManager based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -246,7 +246,7 @@ it('renders the StudentFilesRelationManager based on proper access', function ()
 
     actingAs($user);
 
-    $relationManager = StudentFilesRelationManager::class;
+    $relationManager = EngagementFilesRelationManager::class;
 
     livewire(ManageStudentInformation::class, [
         'record' => $student->getKey(),
@@ -442,7 +442,7 @@ it('renders the StudentFormSubmissionsRelationManager based on Feature access', 
 
     asSuperAdmin();
 
-    $relationManager = StudentFormSubmissionsRelationManager::class;
+    $relationManager = FormSubmissionsRelationManager::class;
 
     livewire(ManageStudentPremiumFeatures::class, [
         'record' => $student->getKey(),
@@ -473,7 +473,7 @@ it('renders the StudentFormSubmissionsRelationManager based on Feature access', 
         ->assertSeeLivewire($relationManager);
 });
 
-it('renders the StudentEventsRelationManager based on Feature access', function () {
+it('renders the EventsRelationManager based on Feature access', function () {
     $student = Student::factory()->create();
 
     $licenseSettings = app(LicenseSettings::class);
@@ -484,7 +484,7 @@ it('renders the StudentEventsRelationManager based on Feature access', function 
 
     asSuperAdmin();
 
-    $relationManager = StudentEventsRelationManager::class;
+    $relationManager = EventsRelationManager::class;
 
     livewire(ManageStudentPremiumFeatures::class, [
         'record' => $student->getKey(),
@@ -526,7 +526,7 @@ it('renders the StudentApplicationSubmissionsRelationManager based on Feature ac
 
     asSuperAdmin();
 
-    $relationManager = StudentApplicationSubmissionsRelationManager::class;
+    $relationManager = ApplicationSubmissionsRelationManager::class;
 
     livewire(ManageStudentPremiumFeatures::class, [
         'record' => $student->getKey(),

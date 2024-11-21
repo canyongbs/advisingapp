@@ -68,13 +68,17 @@
                                         class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
                                         <span
                                             class="cursor-pointer font-medium underline"
+                                            {{-- @todo: Refactor --}}
                                             wire:click="viewRecord('{{ $record->timelineable->getKey() }}', '{{ $record->timelineable->getMorphClass() }}')"
+                                            {{-- @endtodo --}}
                                         >
+                                            {{-- @todo: Refactor --}}
                                             @if ($record->timelineable()->timeline()->providesCustomView())
-                                                {{ $this->fetchTitle($record->timelineable->getMorphClass(), $record->timelineable->getKey()) }}
+                                                {{ $this->getTimelineRecordTitle($record->timelineable) }}
                                             @else
                                                 {{ $record->timelineable?->timelineRecordTitle() }}
                                             @endif
+                                            {{-- @endtodo --}}
                                         </span>
                                     </h3>
                                 </div>

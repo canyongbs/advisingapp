@@ -38,15 +38,12 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Relati
 
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
 
-class StudentInteractionsRelationManager extends RelationManager
+class InteractionsRelationManager extends RelationManager
 {
     use HasManyMorphedInteractionsTrait;
-
-    protected static string $resource = StudentResource::class;
 
     protected static string $relationship = 'interactions';
 

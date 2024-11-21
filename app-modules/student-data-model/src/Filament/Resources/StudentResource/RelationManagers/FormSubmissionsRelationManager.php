@@ -38,30 +38,31 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Relati
 
 use App\Enums\Feature;
 use Filament\Tables\Table;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Gate;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use App\Filament\Tables\Columns\IdColumn;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use Filament\Tables\Actions\DeleteAction;
+use AdvisingApp\Form\Models\FormSubmission;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\Form\Enums\FormSubmissionStatus;
+use AdvisingApp\Form\Filament\Resources\FormResource;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\MeetingCenter\Filament\Actions\InviteEventAttendeeAction;
-use AdvisingApp\MeetingCenter\Filament\Actions\Table\ViewEventAttendeeAction;
+use AdvisingApp\Form\Filament\Actions\RequestFormSubmission;
+use AdvisingApp\Form\Filament\Tables\Filters\FormSubmissionStatusFilter;
 
-class StudentEventsRelationManager extends RelationManager
+class FormSubmissionsRelationManager extends RelationManager
 {
-    protected static string $resource = StudentResource::class;
+    protected static string $relationship = 'formSubmissions';
 
-    protected static string $relationship = 'eventAttendeeRecords';
-
-    protected static ?string $title = 'Events';
+    protected static ?string $title = 'Forms';
 
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        return parent::canViewForRecord($ownerRecord, $pageClass) && Gate::check(Feature::EventManagement->getGateName());
+        return parent::canViewForRecord($ownerRecord, $pageClass) && Gate::check(Feature::OnlineForms->getGateName());
     }
 
     public function table(Table $table): Table
@@ -69,25 +70,38 @@ class StudentEventsRelationManager extends RelationManager
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('event.title')
-                    ->url(fn (EventAttendee $record) => EventResource::getUrl('view', ['record' => $record->event]))
-                    ->color('primary'),
+                TextColumn::make('submissible.name')
+                    ->label('Form')
+                    ->searchable()
+                    ->url(fn (FormSubmission $record): string => FormResource::getUrl('edit', ['record' => $record->submissible])),
                 TextColumn::make('status')
-                    ->badge(),
+                    ->badge()
+                    ->getStateUsing(fn (FormSubmission $record): FormSubmissionStatus => $record->getStatus()),
+                TextColumn::make('submitted_at')
+                    ->dateTime()
+                    ->sortable(),
+                TextColumn::make('requester.name'),
+                TextColumn::make('requested_at')
+                    ->dateTime()
+                    ->getStateUsing(fn (FormSubmission $record): ?CarbonInterface => $record->requester ? $record->created_at : null),
+            ])
+            ->filters([
+                FormSubmissionStatusFilter::make(),
+            ])
+            ->headerActions([
+                RequestFormSubmission::make(),
             ])
             ->actions([
-                ViewEventAttendeeAction::make(),
+                ViewAction::make()
+                    ->modalHeading(fn (FormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
+                    ->modalContent(fn (FormSubmission $record) => view('form::submission', ['submission' => $record]))
+                    ->visible(fn (FormSubmission $record) => $record->submitted_at),
+                DeleteAction::make(),
             ])
-            ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('status', [
-                EventAttendeeStatus::Invited,
-                EventAttendeeStatus::Attending,
-            ]));
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            InviteEventAttendeeAction::make(),
-        ];
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 }

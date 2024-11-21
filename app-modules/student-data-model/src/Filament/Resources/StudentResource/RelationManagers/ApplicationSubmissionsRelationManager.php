@@ -53,7 +53,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 
-class StudentApplicationSubmissionsRelationManager extends RelationManager
+class ApplicationSubmissionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'applicationSubmissions';
 

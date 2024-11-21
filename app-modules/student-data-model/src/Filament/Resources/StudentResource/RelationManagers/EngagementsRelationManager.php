@@ -36,108 +36,338 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+
+use function Filament\authorize;
+
 use Illuminate\Support\HtmlString;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Actions;
+use FilamentTiptapEditor\TiptapEditor;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Fieldset;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Support\Enums\IconPosition;
-use App\Filament\Tables\Columns\IdColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Timeline\Models\Timeline;
 use Filament\Tables\Actions\CreateAction;
-use Filament\Infolists\Components\Fieldset;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Engagement\Models\Engagement;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Auth\Access\AuthorizationException;
+use AdvisingApp\Engagement\Models\EngagementResponse;
 use Filament\Resources\RelationManagers\RelationManager;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
+use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
-use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages\CreateEngagement;
+use Filament\Infolists\Components\Fieldset as InfolistFieldset;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
+use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords\Actions\DraftWithAiAction;
 
 class EngagementsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'engagements';
+    protected static string $relationship = 'timeline';
 
-    public static function getTitle(Model $ownerRecord, string $pageClass): string
-    {
-        return 'Outbound';
-    }
-
-    public function form(Form $form): Form
-    {
-        return (resolve(CreateEngagement::class))->form($form);
-    }
+    protected static ?string $title = 'Messages';
 
     public function infolist(Infolist $infolist): Infolist
     {
-        return $infolist
-            ->schema([
+        return $infolist->schema(fn (Timeline $record) => match ($record->timelineable::class) {
+            Engagement::class => [
                 TextEntry::make('user.name')
-                    ->label('Created By'),
-                Fieldset::make('Content')
+                    ->label('Created By')
+                    ->getStateUsing(fn (Timeline $record): string => $record->timelineable->user->name),
+                InfolistFieldset::make('Content')
                     ->schema([
                         TextEntry::make('subject')
+                            ->getStateUsing(fn (Timeline $record): ?string => $record->timelineable->subject)
+                            ->hidden(fn ($state): bool => blank($state))
                             ->columnSpanFull(),
                         TextEntry::make('body')
-                            ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getBody())
+                            ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
                             ->columnSpanFull(),
                     ]),
-                Fieldset::make('deliverable')
+                InfolistFieldset::make('deliverable')
                     ->label('Delivery Information')
                     ->columnSpanFull()
                     ->schema([
                         TextEntry::make('deliverable.channel')
-                            ->label('Channel'),
-                        TextEntry::make('deliverable.delivery_status')
-                            ->iconPosition(IconPosition::After)
+                            ->label('Channel')
+                            ->getStateUsing(function (Timeline $record): string {
+                                /** @var HasDeliveryMethod $timelineable */
+                                $timelineable = $record->timelineable;
+
+                                return $timelineable->getDeliveryMethod()->getLabel();
+                            }),
+                        IconEntry::make('deliverable.delivery_status')
+                            ->getStateUsing(fn (Timeline $record): EngagementDeliveryStatus => $record->timelineable->deliverable->delivery_status)
                             ->icon(fn (EngagementDeliveryStatus $state): string => $state->getIconClass())
-                            ->iconColor(fn (EngagementDeliveryStatus $state): string => $state->getColor())
-                            ->label('Status')
-                            ->formatStateUsing(fn (Engagement $engagement): string => $engagement->deliverable->delivery_status->getMessage()),
+                            ->color(fn (EngagementDeliveryStatus $state): string => $state->getColor())
+                            ->label('Status'),
                         TextEntry::make('deliverable.delivered_at')
+                            ->getStateUsing(fn (Timeline $record): string => $record->timelineable->deliverable->delivered_at)
                             ->label('Delivered At')
-                            ->hidden(fn (Engagement $engagement): bool => is_null($engagement->deliverable->delivered_at)),
+                            ->hidden(fn (Timeline $record): bool => is_null($record->timelineable->deliverable->delivered_at)),
                         TextEntry::make('deliverable.delivery_response')
+                            ->getStateUsing(fn (Timeline $record): string => $record->timelineable->deliverable->delivery_response)
                             ->label('Error Details')
-                            ->hidden(fn (Engagement $engagement): bool => is_null($engagement->deliverable->delivery_response)),
+                            ->hidden(fn (Timeline $record): bool => is_null($record->timelineable->deliverable->delivery_response)),
                     ])
-                    ->columns(2),
-            ]);
+                    ->columns(),
+            ],
+            EngagementResponse::class => [
+                TextEntry::make('content'),
+                TextEntry::make('sent_at')
+                    ->dateTime('Y-m-d H:i:s'),
+            ],
+        });
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form->schema([
+            Select::make('delivery_method')
+                ->label('What would you like to send?')
+                ->options(EngagementDeliveryMethod::getOptions())
+                ->default(EngagementDeliveryMethod::Email->value)
+                ->disableOptionWhen(fn (string $value): bool => (($value == (EngagementDeliveryMethod::Sms->value) && ! $this->getOwnerRecord()->canRecieveSms())) || EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
+                ->selectablePlaceholder(false)
+                ->live(),
+            Fieldset::make('Content')
+                ->schema([
+                    TextInput::make('subject')
+                        ->autofocus()
+                        ->required()
+                        ->placeholder(__('Subject'))
+                        ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                        ->columnSpanFull(),
+                    TiptapEditor::make('body')
+                        ->disk('s3-public')
+                        ->label('Body')
+                        ->mergeTags($mergeTags = [
+                            'student first name',
+                            'student last name',
+                            'student full name',
+                            'student email',
+                            'student preferred name',
+                        ])
+                        ->showMergeTagsInBlocksPanel(! ($form->getLivewire() instanceof RelationManager))
+                        ->profile('email')
+                        ->required()
+                        ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
+                            ->form([
+                                Select::make('emailTemplate')
+                                    ->searchable()
+                                    ->options(function (Get $get): array {
+                                        return EmailTemplate::query()
+                                            ->when(
+                                                $get('onlyMyTemplates'),
+                                                fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+                                            )
+                                            ->orderBy('name')
+                                            ->limit(50)
+                                            ->pluck('name', 'id')
+                                            ->toArray();
+                                    })
+                                    ->getSearchResultsUsing(function (Get $get, string $search): array {
+                                        return EmailTemplate::query()
+                                            ->when(
+                                                $get('onlyMyTemplates'),
+                                                fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+                                            )
+                                            ->when(
+                                                $get('onlyMyTeamTemplates'),
+                                                fn (Builder $query) => $query->whereIn('user_id', auth()->user()->teams->users->pluck('id'))
+                                            )
+                                            ->where(new Expression('lower(name)'), 'like', "%{$search}%")
+                                            ->orderBy('name')
+                                            ->limit(50)
+                                            ->pluck('name', 'id')
+                                            ->toArray();
+                                    }),
+                                Checkbox::make('onlyMyTemplates')
+                                    ->label('Only show my templates')
+                                    ->live()
+                                    ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
+                                Checkbox::make('onlyMyTeamTemplates')
+                                    ->label("Only show my team's templates")
+                                    ->live()
+                                    ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
+                            ])
+                            ->action(function (array $data) use ($component) {
+                                $template = EmailTemplate::find($data['emailTemplate']);
+
+                                if (! $template) {
+                                    return;
+                                }
+
+                                $component->state(
+                                    $component->generateImageUrls($template->content),
+                                );
+                            }))
+                        ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                        ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
+                        ->columnSpanFull(),
+                    EngagementSmsBodyField::make(context: 'create', form: $form),
+                    Actions::make([
+                        DraftWithAiAction::make()
+                            ->mergeTags($mergeTags),
+                    ]),
+                ]),
+            Fieldset::make('Send your email or text')
+                ->schema([
+                    Toggle::make('send_later')
+                        ->reactive()
+                        ->helperText('By default, this email or text will send as soon as it is created unless you schedule it to send later.'),
+                    DateTimePicker::make('deliver_at')
+                        ->required()
+                        ->visible(fn (Get $get) => $get('send_later')),
+                ]),
+        ]);
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Email and Text Messages')
-            ->recordTitleAttribute('id')
+            ->emptyStateHeading('No email or text messages.')
+            ->emptyStateDescription('Create an email or text message to get started.')
+            ->defaultSort('record_sortable_date', 'desc')
+            ->modifyQueryUsing(fn (Builder $query) => $query->whereHasMorph('timelineable', [
+                Engagement::class,
+                EngagementResponse::class,
+            ]))
             ->columns([
-                IdColumn::make(),
-                TextColumn::make('subject'),
-                TextColumn::make('deliverable.channel')
-                    ->label('Delivery Channel'),
-                TextColumn::make('created_at')
-                    ->dateTime(),
+                TextColumn::make('direction')
+                    ->getStateUsing(fn (Timeline $record) => match ($record->timelineable::class) {
+                        Engagement::class => 'Outbound',
+                        EngagementResponse::class => 'Inbound',
+                    })
+                    ->icon(fn (string $state) => match ($state) {
+                        'Outbound' => 'heroicon-o-arrow-up-tray',
+                        'Inbound' => 'heroicon-o-arrow-down-tray',
+                    }),
+                TextColumn::make('type')
+                    ->getStateUsing(function (Timeline $record) {
+                        /** @var HasDeliveryMethod $timelineable */
+                        $timelineable = $record->timelineable;
+
+                        return $timelineable->getDeliveryMethod();
+                    }),
+                TextColumn::make('record_sortable_date')
+                    ->label('Date')
+                    ->sortable(),
             ])
             ->headerActions([
                 CreateAction::make()
                     ->label('New Email or Text')
                     ->modalHeading('Create new email or text')
-                    ->after(function (Engagement $engagement, array $data) {
-                        $this->afterCreate($engagement, $data['delivery_method']);
+                    ->authorize(function () {
+                        $ownerRecord = $this->getOwnerRecord();
+
+                        return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
+                    })
+                    ->createAnother(false)
+                    ->action(function (CreateAction $action, array $data, Form $form) {
+                        if ($data['delivery_method'] == EngagementDeliveryMethod::Sms->value && ! $this->getOwnerRecord()->canRecieveSms()) {
+                            Notification::make()
+                                ->title('Student does not have mobile number.')
+                                ->danger()
+                                ->send();
+
+                            $action->halt();
+                        }
+
+                        /** @var Student $record */
+                        $record = $this->getOwnerRecord();
+
+                        $engagement = new Engagement($data);
+                        $engagement->recipient()->associate($record);
+                        $engagement->save();
+
+                        $form->model($engagement)->saveRelationships();
+
+                        $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
+
+                        $createEngagementDeliverable($engagement, $data['delivery_method']);
                     }),
             ])
             ->actions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->modalHeading(function (Timeline $record) {
+                        /** @var HasDeliveryMethod $timelineable */
+                        $timelineable = $record->timelineable;
+
+                        return "View {$timelineable->getDeliveryMethod()->getLabel()}";
+                    }),
             ])
-            ->bulkActions([
-            ])
-            ->defaultSort('created_at', 'desc');
+            ->filters([
+                SelectFilter::make('direction')
+                    ->options([
+                        Engagement::class => 'Outbound',
+                        EngagementResponse::class => 'Inbound',
+                    ])
+                    ->modifyQueryUsing(
+                        fn (Builder $query, array $data) => $query
+                            ->when($data['value'], fn (Builder $query) => $query->whereHasMorph('timelineable', $data['value']))
+                    ),
+                SelectFilter::make('type')
+                    ->options(EngagementDeliveryMethod::class)
+                    ->modifyQueryUsing(
+                        fn (Builder $query, array $data) => $query
+                            ->when(
+                                $data['value'] === EngagementDeliveryMethod::Email->value,
+                                fn (Builder $query) => $query
+                                    ->whereHasMorph(
+                                        'timelineable',
+                                        [Engagement::class],
+                                        fn (Builder $query, string $type) => match ($type) {
+                                            Engagement::class => $query->whereRelation('deliverable', 'channel', $data['value']),
+                                        }
+                                    )
+                            )
+                            ->when(
+                                $data['value'] === EngagementDeliveryMethod::Sms->value,
+                                fn (Builder $query) => $query->whereHasMorph(
+                                    'timelineable',
+                                    [Engagement::class, EngagementResponse::class],
+                                    fn (Builder $query, string $type) => match ($type) {
+                                        Engagement::class => $query->whereRelation('deliverable', 'channel', $data['value']),
+                                        EngagementResponse::class => $query,
+                                    }
+                                )
+                            )
+                    ),
+            ]);
     }
 
-    public function afterCreate(Engagement $engagement, string $deliveryMethod): void
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
+        if (static::shouldSkipAuthorization()) {
+            return true;
+        }
 
-        $createEngagementDeliverable($engagement, $deliveryMethod);
+        $model = Engagement::class;
+
+        try {
+            return authorize('viewAny', $model, static::shouldCheckPolicyExistence())->allowed();
+        } catch (AuthorizationException $exception) {
+            return $exception->toResponse()->allowed();
+        }
     }
 }

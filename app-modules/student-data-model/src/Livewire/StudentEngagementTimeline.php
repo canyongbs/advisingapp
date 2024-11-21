@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Livewire;
 
+use Illuminate\Database\Eloquent\Model;
 use Filament\Support\Concerns\CanBeLazy;
-use App\Actions\GetRecordFromMorphAndKey;
 use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -82,15 +82,13 @@ class StudentEngagementTimeline extends TimelinePage
         $this->dispatch('close-modal', id: 'show-full-feed');
     }
 
-    public function fetchTitle($morphReference, $key): ?string
+    public function getTimelineRecordTitle(Model $record): ?string
     {
-        $record = resolve(GetRecordFromMorphAndKey::class)->via($morphReference, $key);
-
-        return match ($morphReference) {
-            'interaction', 'engagement' => $record?->user?->name,
-            'engagement_response' => $record?->sender?->full_name,
-            'task_history' => 'Task ' . $record?->timeline()?->history?->event,
-            'alert_history' => 'Alert ' . $record?->timeline()?->history?->event,
+        return match ($record->getMorphClass()) {
+            'interaction', 'engagement' => $record->user?->name,
+            'engagement_response' => $record->sender?->full_name,
+            'task_history' => 'Task ' . $record->timeline()?->history?->event,
+            'alert_history' => 'Alert ' . $record->timeline()?->history?->event,
         };
     }
 

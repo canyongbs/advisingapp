@@ -40,10 +40,10 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentFilesRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentEngagementRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentInteractionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
 
 class ManageStudentInformation extends ManageRelatedRecords
 {
@@ -79,9 +79,9 @@ class ManageStudentInformation extends ManageRelatedRecords
         return collect([
             ProgramsRelationManager::class,
             EnrollmentsRelationManager::class,
-            StudentEngagementRelationManager::class,
-            StudentInteractionsRelationManager::class,
-            StudentFilesRelationManager::class,
+            EngagementsRelationManager::class,
+            InteractionsRelationManager::class,
+            EngagementFilesRelationManager::class,
         ])
             ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
             ->toArray();

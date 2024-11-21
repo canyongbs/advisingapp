@@ -61,12 +61,12 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
-use AdvisingApp\Timeline\Filament\Pages\Concerns\LoadsTimelineRecords;
+use AdvisingApp\Timeline\Livewire\Concerns\CanLoadTimelineRecords;
 
 class MessageCenter extends Page
 {
     use WithPagination;
-    use LoadsTimelineRecords;
+    use CanLoadTimelineRecords;
 
     protected static ?string $navigationIcon = 'heroicon-o-inbox';
 
