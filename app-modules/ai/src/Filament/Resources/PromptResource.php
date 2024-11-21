@@ -47,8 +47,6 @@ class PromptResource extends Resource
 {
     protected static ?string $model = Prompt::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-library';
-
     protected static ?string $navigationGroup = 'Artificial Intelligence';
 
     protected static ?string $navigationLabel = 'Prompt Library';

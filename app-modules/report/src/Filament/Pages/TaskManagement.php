@@ -45,8 +45,6 @@ use AdvisingApp\Report\Filament\Widgets\TaskCumulativeCountLineChart;
 
 class TaskManagement extends EngagementReport
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
     protected static ?string $cluster = ReportLibrary::class;
 
     protected static ?string $navigationGroup = 'Engagement Features';

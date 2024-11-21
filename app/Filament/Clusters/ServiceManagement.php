@@ -42,8 +42,6 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 
 class ServiceManagement extends Cluster
 {
-    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
-
     protected static ?string $navigationGroup = 'Premium Features';
 
     protected static ?int $navigationSort = 30;
