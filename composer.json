@@ -177,7 +177,7 @@
             "rm -f ./.php-cs-fixer.cache"
         ],
         "prettier": [
-            "./node_modules/.bin/prettier \"resources/**/*{.css,.blade.php,.js}\" \"app-modules/**/resources/**/*{.css,.blade.php,.js}\" \"graphql/*.graphql\" \"app-modules/**/graphql/*.graphql\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
+            "./node_modules/.bin/prettier \"resources/**/*{.css,.blade.php,.js}\" \"app-modules/**/resources/**/*{.css,.blade.php,.js}\" \"graphql/*.graphql\" \"app-modules/**/graphql/*.graphql\" \"portals/**/*{.vue,.js}\" \"widgets/**/*{.vue,.js}\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
         ],
         "prettier-format": [
             "@prettier --write"
