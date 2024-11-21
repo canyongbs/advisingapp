@@ -37,63 +37,63 @@
 use Illuminate\Support\Facades\Route;
 use App\Multitenancy\Http\Middleware\NeedsTenant;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEnabled;
+use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalController;
 use AdvisingApp\Portal\Http\Middleware\AuthenticateIfRequiredByPortalDefinition;
-use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
-use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalController;
-use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized;
-use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalLogoutController;
-use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalSearchController;
-use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalArticleController;
-use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalCategoryController;
-use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalAuthenticateController;
-use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalRequestAuthenticationController;
+use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalLogoutController;
+use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalSearchController;
+use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalArticleController;
+use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalCategoryController;
+use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEmbeddableAndAuthorized;
+use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalAuthenticateController;
+use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalRequestAuthenticationController;
 
 Route::prefix('api')
     ->name('api.')
     ->middleware([
         'api',
         NeedsTenant::class,
-        EnsureKnowledgeManagementPortalIsEnabled::class,
-        EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
+        EnsureResourceHubPortalIsEnabled::class,
+        EnsureResourceHubPortalIsEmbeddableAndAuthorized::class,
     ])
     ->group(function () {
-        Route::middleware(['auth:sanctum', 'abilities:knowledge-management-portal'])
+        Route::middleware(['auth:sanctum', 'abilities:resource-hub-portal'])
             ->group(function () {
                 Route::get('/user', fn () => auth()->user())
                     ->name('user.auth-check');
             });
 
-        Route::prefix('portal/knowledge-management')
-            ->name('portal.knowledge-management.')
+        Route::prefix('portal/resource-hub')
+            ->name('portal.resource-hub.')
             ->group(function () {
-                Route::get('/', [KnowledgeManagementPortalController::class, 'show'])
+                Route::get('/', [ResourceHubPortalController::class, 'show'])
                     ->middleware(['signed:relative'])
                     ->name('define');
 
                 Route::middleware([AuthenticateIfRequiredByPortalDefinition::class])
                     ->group(function () {
-                        Route::post('/authenticate/logout', KnowledgeManagementPortalLogoutController::class)
+                        Route::post('/authenticate/logout', ResourceHubPortalLogoutController::class)
                             ->name('logout');
 
-                        Route::post('/search', [KnowledgeManagementPortalSearchController::class, 'get'])
+                        Route::post('/search', [ResourceHubPortalSearchController::class, 'get'])
                             ->middleware(['signed:relative'])
                             ->name('search');
 
-                        Route::get('/categories', [KnowledgeManagementPortalCategoryController::class, 'index'])
+                        Route::get('/categories', [ResourceHubPortalCategoryController::class, 'index'])
                             ->name('category.index');
 
-                        Route::get('/categories/{category}', [KnowledgeManagementPortalCategoryController::class, 'show'])
+                        Route::get('/categories/{category}', [ResourceHubPortalCategoryController::class, 'show'])
                             ->name('category.show');
 
-                        Route::get('/categories/{category}/articles/{article}', [KnowledgeManagementPortalArticleController::class, 'show'])
+                        Route::get('/categories/{category}/articles/{article}', [ResourceHubPortalArticleController::class, 'show'])
                             ->name('article.show');
                     });
 
-                Route::post('/authenticate/request', KnowledgeManagementPortalRequestAuthenticationController::class)
+                Route::post('/authenticate/request', ResourceHubPortalRequestAuthenticationController::class)
                     ->middleware(['signed:relative'])
                     ->name('request-authentication');
 
-                Route::post('/authenticate/{authentication}', KnowledgeManagementPortalAuthenticateController::class)
+                Route::post('/authenticate/{authentication}', ResourceHubPortalAuthenticateController::class)
                     ->middleware(['signed:relative', EnsureFrontendRequestsAreStateful::class])
                     ->name('authenticate.embedded');
             });

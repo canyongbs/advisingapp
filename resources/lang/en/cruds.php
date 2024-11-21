@@ -271,13 +271,13 @@ return [
             'deleted_at_helper' => ' ',
         ],
     ],
-    'kbMenu' => [
-        'title' => 'Knowledge Base',
-        'title_singular' => 'Knowledge Base',
+    'rhMenu' => [
+        'title' => 'Resource Hub',
+        'title_singular' => 'Resource Hub',
     ],
-    'kbItem' => [
-        'title' => 'KB Article',
-        'title_singular' => 'KB Article',
+    'rhItem' => [
+        'title' => 'RH Article',
+        'title_singular' => 'RH Article',
         'fields' => [
             'id' => 'ID',
             'id_helper' => ' ',
@@ -305,9 +305,9 @@ return [
             'institution_helper' => ' ',
         ],
     ],
-    'kbItemQuality' => [
-        'title' => 'KB Quality',
-        'title_singular' => 'KB Quality',
+    'rhItemQuality' => [
+        'title' => 'RH Quality',
+        'title_singular' => 'RH Quality',
         'fields' => [
             'id' => 'ID',
             'id_helper' => ' ',
@@ -321,9 +321,9 @@ return [
             'deleted_at_helper' => ' ',
         ],
     ],
-    'kbItemStatus' => [
-        'title' => 'KB Statuses',
-        'title_singular' => 'KB Status',
+    'rhItemStatus' => [
+        'title' => 'RH Statuses',
+        'title_singular' => 'RH Status',
         'fields' => [
             'id' => 'ID',
             'id_helper' => ' ',
@@ -337,9 +337,9 @@ return [
             'deleted_at_helper' => ' ',
         ],
     ],
-    'kbItemCategory' => [
-        'title' => 'KB Categories',
-        'title_singular' => 'KB Category',
+    'rhItemCategory' => [
+        'title' => 'RH Categories',
+        'title_singular' => 'RH Category',
         'fields' => [
             'id' => 'ID',
             'id_helper' => ' ',

@@ -57,7 +57,7 @@ jobs:
         # SHA of release v20.0.1
         uses: tj-actions/verify-changed-files@6ed7632824d235029086612d4330d659005af687
         with:
-          fail-if-changed: 'true'
+          fail-if-changed: "true"
 
   fix-code-style:
     runs-on: ubuntu-22.04
@@ -86,8 +86,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
+          node-version-file: ".nvmrc"
+          cache: "npm"
       - run: npm install
 
       - name: Cache PHP CS Fixer
@@ -114,7 +114,7 @@ jobs:
         # SHA of release v20.0.1
         uses: tj-actions/verify-changed-files@6ed7632824d235029086612d4330d659005af687
         with:
-          fail-if-changed: 'true'
+          fail-if-changed: "true"
 
   test:
     runs-on: ubuntu-22.04
@@ -130,7 +130,7 @@ jobs:
 
     timeout-minutes: 15
 
-    needs: [build-deps,enforce-copyright,fix-code-style]
+    needs: [build-deps, enforce-copyright, fix-code-style]
 
     services:
       postgres:
@@ -161,7 +161,7 @@ jobs:
       - name: Create tenant database
         run: psql -h 127.0.0.1 -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
         env:
-           PGPASSWORD: root
+          PGPASSWORD: root
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -181,8 +181,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
+          node-version-file: ".nvmrc"
+          cache: "npm"
       - run: npm install
 
       - name: Build Assets
@@ -213,10 +213,11 @@ jobs:
       DB_PASSWORD: root
       DB_DATABASE: testing_landlord
       SCOUT_PREFIX: test_
+      PENNANT_STORE: array
 
     timeout-minutes: 15
 
-    needs: [build-deps,enforce-copyright,fix-code-style]
+    needs: [build-deps, enforce-copyright, fix-code-style]
 
     services:
       postgres:
