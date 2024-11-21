@@ -29,7 +29,7 @@
                     size="lg"
                 />
 
-                <div class="grid flex-1 gap-y-1">
+                <div class="grid flex-1 gap-y-0.5">
                     <p class="font-medium text-gray-950 dark:text-white">
                         {{ $subscriber->name }}
                     </p>
@@ -49,7 +49,7 @@
                     </div>
 
                     <h4 class="text-base font-semibold leading-6 text-gray-950 dark:text-white">
-                        No subscriptions yet
+                        No subscriptions
                     </h4>
                 </div>
             </div>

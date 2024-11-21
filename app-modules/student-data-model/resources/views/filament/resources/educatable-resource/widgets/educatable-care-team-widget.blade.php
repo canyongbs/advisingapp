@@ -28,7 +28,7 @@
                     size="lg"
                 />
 
-                <div class="grid flex-1 gap-y-1">
+                <div class="grid flex-1 gap-y-0.5">
                     <p class="font-medium text-gray-950 dark:text-white">
                         {{ $careTeamUser->name }}
                     </p>
@@ -44,11 +44,11 @@
             <div class="p-6">
                 <div class="mx-auto grid max-w-lg justify-items-center gap-4 text-center">
                     <div class="rounded-full bg-gray-100 p-3 dark:bg-gray-500/20">
-                        @svg('heroicon-o-x-mark', 'h-6 w-6 text-gray-500 dark:text-gray-400')
+                        @svg('heroicon-o-user-group', 'h-6 w-6 text-gray-500 dark:text-gray-400')
                     </div>
 
                     <h4 class="text-base font-semibold leading-6 text-gray-950 dark:text-white">
-                        No care team yet
+                        No care team
                     </h4>
                 </div>
             </div>

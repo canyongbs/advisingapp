@@ -17,6 +17,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Actions\Concerns\InteractsWithActions;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Timeline\Livewire\Concerns\HasTimelineRecords;
 use AdvisingApp\Timeline\Livewire\Concerns\CanLoadTimelineRecords;
@@ -52,7 +53,11 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
     public function getTimelineRecordTitle(Model $record): ?string
     {
         return match ($record->getMorphClass()) {
-            'interaction', 'engagement' => $record->user?->name,
+            'interaction' => 'Interaction Created',
+            'engagement' => match ($record->getDeliveryMethod()) {
+                EngagementDeliveryMethod::Sms => 'SMS Sent',
+                default => 'Email Sent',
+            },
             'engagement_response' => $record->sender?->full_name,
             'task_history' => 'Task ' . $record->event,
             'alert_history' => 'Alert ' . $record->event,
@@ -62,8 +67,12 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
     public function getTimelineRecordDescription(Model $record): ?string
     {
         return (string) str(match ($record->getMorphClass()) {
-            'interaction', 'engagement' => "Subject: {$record->subject}",
-            'engagement_response' => 'Preview: {$record->content}',
+            'interaction' => "Subject: {$record->subject}",
+            'engagement' => match ($record->getDeliveryMethod()) {
+                EngagementDeliveryMethod::Sms => "Preview: {$record->getBodyMarkdown()}",
+                default => "Subject: {$record->subject}",
+            },
+            'engagement_response' => "Preview: {$record->content}",
             'task_history' => "Title: {$record->subject?->title}",
             'alert_history' => "{$record->subject?->severity->getLabel()} severity, " . str($record->subject?->description)->limit(200),
         })->limit(110);

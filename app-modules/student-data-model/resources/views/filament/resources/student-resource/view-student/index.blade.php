@@ -49,20 +49,22 @@
 @endphp
 
 <x-filament-panels::page>
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
-        <div class="col-span-1 grid gap-6">
-            {{ $this->profile }}
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16 xl:grid-cols-3">
+        <div class="col-span-1">
+            <div class="grid gap-8">
+                {{ $this->profile }}
 
-            @if (EducatableActivityFeedWidget::canView())
-                @livewire(EducatableActivityFeedWidget::class, [
-                    'educatable' => $this->getRecord(),
-                    'lazy' => 'on-load',
-                ])
-            @endif
+                @if (EducatableActivityFeedWidget::canView())
+                    @livewire(EducatableActivityFeedWidget::class, [
+                        'educatable' => $this->getRecord(),
+                        'lazy' => 'on-load',
+                    ])
+                @endif
+            </div>
         </div>
 
         <div class="lg:col-span-1 xl:col-span-2">
-            <div class="grid gap-6">
+            <div class="grid gap-8">
                 <x-student-data-model::filament.resources.educatable-resource.view-educatable.relation-managers
                     :managers="[
                         'programs' => ProgramsRelationManager::class,
@@ -73,7 +75,7 @@
                     ]"
                 />
 
-                <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+                <div class="grid grid-cols-1 gap-8 xl:grid-cols-2">
                     @if (EducatableAlertsWidget::canView())
                         @livewire(EducatableAlertsWidget::class, [
                             'educatable' => $this->getRecord(),
@@ -89,7 +91,7 @@
                     @endif
                 </div>
 
-                <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+                <div class="grid grid-cols-1 gap-8 xl:grid-cols-2">
                     @if (EducatableCareTeamWidget::canView())
                         @livewire(EducatableCareTeamWidget::class, [
                             'educatable' => $this->getRecord(),
