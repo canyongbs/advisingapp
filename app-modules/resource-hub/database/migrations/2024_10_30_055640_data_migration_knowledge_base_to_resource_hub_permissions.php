@@ -7,20 +7,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-            DB::table('roles')
-                ->where('name', 'knowledge-base.knowledge_base_field_settings_management')
-                ->update([
-                    'name' => 'resource-hub.resource_hub_field_settings_management',
-                    'updated_at' => now(),
-                ]);
-
-            DB::table('roles')
-                ->where('name', 'knowledge-base.knowledge_base_management')
-                ->update([
-                    'name' => 'resource-hub.resource_hub_management',
-                    'updated_at' => now(),
-                ]);
-
             DB::table('permissions')
                 ->where('name', 'LIKE', 'knowledge_base_article.%')
                 ->update([
@@ -82,20 +68,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-            DB::table('roles')
-                ->where('name', 'resource-hub.resource_hub_field_settings_management')
-                ->update([
-                    'name' => 'knowledge-base.knowledge_base_field_settings_management',
-                    'updated_at' => now(),
-                ]);
-
-            DB::table('roles')
-                ->where('name', 'resource-hub.resource_hub_management')
-                ->update([
-                    'name' => 'knowledge-base.knowledge_base_management',
-                    'updated_at' => now(),
-                ]);
-
             DB::table('permissions')
                 ->where('name', 'LIKE', 'resource_hub_article.%')
                 ->update([
