@@ -32,19 +32,17 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { defineProps, onMounted, ref, watch } from 'vue';
-import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
-import getRecaptchaToken from '../../../app-modules/integration-google-recaptcha/resources/js/Services/GetRecaptchaToken.js';
 import AppLoading from '@/Components/AppLoading.vue';
-import MobileSidebar from '@/Components/MobileSidebar.vue';
 import DesktopSidebar from '@/Components/DesktopSidebar.vue';
+import MobileSidebar from '@/Components/MobileSidebar.vue';
+import axios from '@/Globals/Axios.js';
+import { consumer } from '@/Services/Consumer.js';
 import determineIfUserIsAuthenticated from '@/Services/DetermineIfUserIsAuthenticated.js';
 import getAppContext from '@/Services/GetAppContext.js';
-import axios from '@/Globals/Axios.js';
-import { useTokenStore } from '@/Stores/token.js';
 import { useAuthStore } from '@/Stores/auth.js';
+import { useTokenStore } from '@/Stores/token.js';
+import { defineProps, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { consumer } from '@/Services/Consumer.js';
 
 const errorLoading = ref(false);
 const loading = ref(true);

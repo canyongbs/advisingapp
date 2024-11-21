@@ -32,8 +32,8 @@
 </COPYRIGHT>
 -->
 <script setup>
-import {onMounted, ref, watch} from 'vue';
 import { RadioGroup, RadioGroupLabel, RadioGroupOption } from '@headlessui/vue';
+import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps({
     context: Object,
@@ -93,13 +93,29 @@ watch(text, () => {
 
             <div class="flex items-center flex-wrap gap-2">
                 <RadioGroupOption as="template" value="draw" v-slot="{ active, checked }">
-                    <div :class="[active ? 'ring-2 ring-primary-600 ring-offset-2' : '', checked ? 'bg-primary-600 text-white hover:bg-primary-500' : 'ring-1 ring-inset ring-gray-300 bg-white text-gray-900 hover:bg-gray-50', 'flex items-center justify-center rounded py-1 px-2 text-sm font-medium cursor-pointer focus:outline-none']">
+                    <div
+                        :class="[
+                            active ? 'ring-2 ring-primary-600 ring-offset-2' : '',
+                            checked
+                                ? 'bg-primary-600 text-white hover:bg-primary-500'
+                                : 'ring-1 ring-inset ring-gray-300 bg-white text-gray-900 hover:bg-gray-50',
+                            'flex items-center justify-center rounded py-1 px-2 text-sm font-medium cursor-pointer focus:outline-none',
+                        ]"
+                    >
                         <RadioGroupLabel as="span">Draw it</RadioGroupLabel>
                     </div>
                 </RadioGroupOption>
 
                 <RadioGroupOption as="template" value="type" v-slot="{ active, checked }">
-                    <div :class="[active ? 'ring-2 ring-primary-600 ring-offset-2' : '', checked ? 'bg-primary-600 text-white hover:bg-primary-500' : 'ring-1 ring-inset ring-gray-300 bg-white text-gray-900 hover:bg-gray-50', 'flex items-center justify-center rounded py-1 px-2 text-sm font-medium cursor-pointer focus:outline-none']">
+                    <div
+                        :class="[
+                            active ? 'ring-2 ring-primary-600 ring-offset-2' : '',
+                            checked
+                                ? 'bg-primary-600 text-white hover:bg-primary-500'
+                                : 'ring-1 ring-inset ring-gray-300 bg-white text-gray-900 hover:bg-gray-50',
+                            'flex items-center justify-center rounded py-1 px-2 text-sm font-medium cursor-pointer focus:outline-none',
+                        ]"
+                    >
                         <RadioGroupLabel as="span">Type it</RadioGroupLabel>
                     </div>
                 </RadioGroupOption>
@@ -116,11 +132,19 @@ watch(text, () => {
             />
 
             <div class="flex items-center gap-1">
-                <button @click="undoDrawing" type="button" class="inline-flex items-center border border-gray-400 text-xs font-normal py-1 px-2 rounded focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2">
+                <button
+                    @click="undoDrawing"
+                    type="button"
+                    class="inline-flex items-center border border-gray-400 text-xs font-normal py-1 px-2 rounded focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2"
+                >
                     Undo
                 </button>
 
-                <button @click="clearDrawing" type="button" class="inline-flex items-center border border-gray-400 text-xs font-normal py-1 px-2 rounded focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2">
+                <button
+                    @click="clearDrawing"
+                    type="button"
+                    class="inline-flex items-center border border-gray-400 text-xs font-normal py-1 px-2 rounded focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2"
+                >
                     Clear
                 </button>
             </div>

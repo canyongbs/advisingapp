@@ -54,10 +54,7 @@ const data = reactive({
     steps,
     visitedSteps,
     activeStep,
-    plugins: [
-        wizardPlugin,
-        asteriskPlugin,
-    ],
+    plugins: [wizardPlugin, asteriskPlugin],
     setStep: (target) => () => {
         setStep(target);
     },

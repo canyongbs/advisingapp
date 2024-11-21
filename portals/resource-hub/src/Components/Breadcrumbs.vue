@@ -62,7 +62,10 @@ defineProps({
                 <div class="flex items-center">
                     <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
 
-                    <router-link :to="{ name: crumb.route }" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                    <router-link
+                        :to="{ name: crumb.route }"
+                        class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+                    >
                         {{ crumb.name }}
                     </router-link>
                 </div>

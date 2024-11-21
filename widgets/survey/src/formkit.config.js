@@ -31,8 +31,8 @@
 
 </COPYRIGHT>
 */
-import { generateClasses } from '@formkit/themes';
 import { genesisIcons } from '@formkit/icons';
+import { generateClasses } from '@formkit/themes';
 import theme from '../../form/src/FormKit/theme';
 import inputs from './FormKit/Inputs/index';
 
