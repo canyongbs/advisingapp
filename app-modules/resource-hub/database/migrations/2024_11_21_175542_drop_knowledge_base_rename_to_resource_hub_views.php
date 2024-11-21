@@ -44,6 +44,8 @@ return new class () extends Migration {
 
         DB::statement('DROP VIEW IF EXISTS knowledge_base_categories');
 
+        DB::statement('DROP VIEW IF EXISTS knowledge_base_qualities');
+
         DB::statement('DROP VIEW IF EXISTS knowledge_base_statuses');
 
         DB::statement('DROP VIEW IF EXISTS division_knowledge_base_item');
@@ -58,6 +60,8 @@ return new class () extends Migration {
         DB::statement('CREATE VIEW knowledge_base_articles AS SELECT * FROM resource_hub_articles');
 
         DB::statement('CREATE VIEW knowledge_base_categories AS SELECT * FROM resource_hub_categories');
+
+        DB::statement('CREATE VIEW knowledge_base_qualities AS SELECT * FROM resource_hub_qualities');
 
         DB::statement('CREATE VIEW knowledge_base_statuses AS SELECT * FROM resource_hub_statuses');
 

@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\ResourceHub;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
 
@@ -46,6 +45,8 @@ return new class () extends Migration {
 
         DB::statement('ALTER TABLE knowledge_base_articles RENAME TO resource_hub_articles');
 
+        DB::statement('ALTER TABLE resource_hub_articles RENAME CONSTRAINT knowledge_base_articles_pkey TO resource_hub_articles_pkey');
+
         DB::statement('CREATE VIEW knowledge_base_articles AS SELECT * FROM resource_hub_articles');
 
         DB::commit();
@@ -54,6 +55,8 @@ return new class () extends Migration {
         DB::beginTransaction();
 
         DB::statement('ALTER TABLE knowledge_base_categories RENAME TO resource_hub_categories');
+
+        DB::statement('ALTER TABLE resource_hub_categories RENAME CONSTRAINT knowledge_base_categories_pkey TO resource_hub_categories_pkey');
 
         DB::statement('CREATE VIEW knowledge_base_categories AS SELECT * FROM resource_hub_categories');
 
@@ -66,11 +69,9 @@ return new class () extends Migration {
 
         DB::statement('CREATE VIEW knowledge_base_qualities AS SELECT * FROM resource_hub_qualities');
 
-        DB::commit();
+        DB::statement('ALTER TABLE resource_hub_qualities RENAME CONSTRAINT knowledge_base_qualities_pkey TO resource_hub_qualities_pkey');
 
-        if (ResourceHub::active()) {
-            DB::statement('DROP VIEW IF EXISTS knowledge_base_qualities');
-        }
+        DB::commit();
 
         /** Rename knowledge_base_statuses to resource_hub_statuses*/
         DB::beginTransaction();
@@ -78,6 +79,8 @@ return new class () extends Migration {
         DB::statement('ALTER TABLE knowledge_base_statuses RENAME TO resource_hub_statuses');
 
         DB::statement('CREATE VIEW knowledge_base_statuses AS SELECT * FROM resource_hub_statuses');
+
+        DB::statement('ALTER TABLE resource_hub_statuses RENAME CONSTRAINT knowledge_base_statuses_pkey TO resource_hub_statuses_pkey');
 
         DB::commit();
     }
@@ -91,6 +94,8 @@ return new class () extends Migration {
 
         DB::statement('ALTER TABLE resource_hub_articles RENAME TO knowledge_base_articles');
 
+        DB::statement('ALTER TABLE knowledge_base_articles RENAME CONSTRAINT resource_hub_articles_pkey TO knowledge_base_articles_pkey');
+
         DB::commit();
 
         /** Rename resource_hub_categories to knowledge_base_categories*/
@@ -99,6 +104,8 @@ return new class () extends Migration {
         DB::statement('DROP VIEW IF EXISTS knowledge_base_categories');
 
         DB::statement('ALTER TABLE resource_hub_categories RENAME TO knowledge_base_categories');
+
+        DB::statement('ALTER TABLE knowledge_base_categories RENAME CONSTRAINT resource_hub_categories_pkey TO knowledge_base_categories_pkey');
 
         DB::commit();
 
@@ -109,6 +116,8 @@ return new class () extends Migration {
 
         DB::statement('ALTER TABLE resource_hub_qualities RENAME TO knowledge_base_qualities');
 
+        DB::statement('ALTER TABLE knowledge_base_qualities RENAME CONSTRAINT resource_hub_qualities_pkey TO knowledge_base_qualities_pkey');
+
         DB::commit();
 
         /** Rename resource_hub_statuses to knowledge_base_statuses*/
@@ -117,6 +126,8 @@ return new class () extends Migration {
         DB::statement('DROP VIEW IF EXISTS knowledge_base_statuses');
 
         DB::statement('ALTER TABLE resource_hub_statuses RENAME TO knowledge_base_statuses');
+
+        DB::statement('ALTER TABLE knowledge_base_statuses RENAME CONSTRAINT resource_hub_statuses_pkey TO knowledge_base_statuses_pkey');
 
         DB::commit();
     }

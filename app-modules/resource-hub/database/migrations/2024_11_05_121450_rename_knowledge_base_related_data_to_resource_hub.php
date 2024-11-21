@@ -62,6 +62,8 @@ return new class () extends Migration {
 
         DB::statement('ALTER TABLE knowledge_base_item_upvotes RENAME TO resource_hub_item_upvotes');
 
+        DB::statement('ALTER TABLE resource_hub_item_upvotes RENAME CONSTRAINT knowledge_base_item_upvotes_pkey TO resource_hub_item_upvotes_pkey');
+
         DB::statement('ALTER TABLE resource_hub_item_upvotes RENAME COLUMN knowledge_base_item_id TO resource_hub_item_id');
 
         DB::statement('CREATE VIEW knowledge_base_item_upvotes AS SELECT resource_hub_item_id AS knowledge_base_item_id FROM resource_hub_item_upvotes');
@@ -75,6 +77,8 @@ return new class () extends Migration {
         DB::beginTransaction();
 
         DB::statement('ALTER TABLE knowledge_base_item_views RENAME TO resource_hub_item_views');
+
+        DB::statement('ALTER TABLE resource_hub_item_views RENAME CONSTRAINT knowledge_base_item_views_pkey TO resource_hub_item_views_pkey');
 
         DB::statement('ALTER TABLE resource_hub_item_views RENAME COLUMN knowledge_base_item_id TO resource_hub_item_id');
 
