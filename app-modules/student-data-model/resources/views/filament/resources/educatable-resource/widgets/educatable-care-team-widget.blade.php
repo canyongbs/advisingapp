@@ -13,8 +13,9 @@
 
         <x-slot name="headerActions">
             <x-filament::button
-                x-on:click="$dispatch('open-modal', { id: 'feed' })"
                 color="gray"
+                tag="a"
+                :href="$manageUrl"
             >
                 Manage
             </x-filament::button>
@@ -24,7 +25,8 @@
             <div class="flex w-full items-center gap-6 px-6 py-3">
                 <x-filament::avatar
                     class="shrink-0"
-                    :href="filament()->getUserAvatarUrl($careTeamUser)"
+                    :src="filament()->getUserAvatarUrl($careTeamUser)"
+                    loading="lazy"
                     size="lg"
                 />
 
@@ -54,6 +56,4 @@
             </div>
         @endforelse
     </x-filament::section>
-
-    <x-filament-actions::modals />
 </x-filament-widgets::widget>

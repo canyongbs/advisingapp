@@ -96,6 +96,7 @@
                         @livewire(EducatableCareTeamWidget::class, [
                             'educatable' => $this->getRecord(),
                             'lazy' => 'on-load',
+                            'manageUrl' => \AdvisingApp\StudentDataModel\Filament\Resources\StudentResource::getUrl('care-team', ['record' => $this->getRecord()]),
                         ])
                     @endif
 
@@ -103,6 +104,7 @@
                         @livewire(EducatableSubscriptionsWidget::class, [
                             'educatable' => $this->getRecord(),
                             'lazy' => 'on-load',
+                            'manageUrl' => \AdvisingApp\StudentDataModel\Filament\Resources\StudentResource::getUrl('subscriptions', ['record' => $this->getRecord()]),
                         ])
                     @endif
                 </div>

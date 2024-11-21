@@ -13,8 +13,9 @@
 
         <x-slot name="headerActions">
             <x-filament::button
-                x-on:click="$dispatch('open-modal', { id: 'feed' })"
                 color="gray"
+                tag="a"
+                :href="$manageUrl"
             >
                 Manage
             </x-filament::button>
@@ -55,6 +56,4 @@
             </div>
         @endforelse
     </x-filament::section>
-
-    <x-filament-actions::modals />
 </x-filament-widgets::widget>

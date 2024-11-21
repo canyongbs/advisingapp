@@ -4,7 +4,8 @@
             Alerts
 
             @if ($activeCount = $this->getActiveCount())
-                <span class="font-normal text-gray-500 dark:text-gray-400">({{ $activeCount }} Active)</ @endif
+                <span class="font-normal text-gray-500 dark:text-gray-400">({{ $activeCount }} Active)</span>
+            @endif
         </x-slot>
 
         <x-slot name="headerActions">
