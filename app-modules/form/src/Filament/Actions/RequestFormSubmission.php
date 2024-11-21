@@ -45,6 +45,7 @@ use Filament\Notifications\Notification;
 use Illuminate\Database\Query\Expression;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
 
 class RequestFormSubmission extends Action
@@ -85,7 +86,7 @@ class RequestFormSubmission extends Action
                 ]),
         ]);
 
-        $this->action(function (array $data, ManageRelatedRecords $livewire) {
+        $this->action(function (array $data, ManageRelatedRecords | RelationManager $livewire) {
             $submission = $livewire->getOwnerRecord()->formSubmissions()->requested()->firstOrNew(['form_id' => $data['form_id']]);
             $submission->fill($data);
             $submission->requester()->associate(auth()->user());

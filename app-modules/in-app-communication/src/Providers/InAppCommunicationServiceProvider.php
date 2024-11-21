@@ -39,10 +39,8 @@ namespace AdvisingApp\InAppCommunication\Providers;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\InAppCommunication\InAppCommunicationPlugin;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
-use AdvisingApp\InAppCommunication\Registries\InAppCommunicationRbacRegistry;
 
 class InAppCommunicationServiceProvider extends ServiceProvider
 {
@@ -53,12 +51,8 @@ class InAppCommunicationServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        Relation::morphMap(
-            [
-                'twilio_conversation' => TwilioConversation::class,
-            ]
-        );
-
-        AuthorizationRoleRegistry::register(InAppCommunicationRbacRegistry::class);
+        Relation::morphMap([
+            'twilio_conversation' => TwilioConversation::class,
+        ]);
     }
 }

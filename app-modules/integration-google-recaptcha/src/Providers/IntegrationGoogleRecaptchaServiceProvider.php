@@ -38,9 +38,7 @@ namespace AdvisingApp\IntegrationGoogleRecaptcha\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\IntegrationGoogleRecaptcha\IntegrationGoogleRecaptchaPlugin;
-use AdvisingApp\IntegrationGoogleRecaptcha\Registries\IntegrationGoogleRecaptchaRbacRegistry;
 
 class IntegrationGoogleRecaptchaServiceProvider extends ServiceProvider
 {
@@ -49,8 +47,5 @@ class IntegrationGoogleRecaptchaServiceProvider extends ServiceProvider
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationGoogleRecaptchaPlugin()));
     }
 
-    public function boot()
-    {
-        AuthorizationRoleRegistry::register(IntegrationGoogleRecaptchaRbacRegistry::class);
-    }
+    public function boot() {}
 }

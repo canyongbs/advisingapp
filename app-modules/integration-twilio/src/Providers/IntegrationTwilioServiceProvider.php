@@ -44,11 +44,9 @@ use App\Models\Scopes\SetupIsComplete;
 use Illuminate\Support\ServiceProvider;
 use App\Exceptions\IntegrationException;
 use Illuminate\Console\Scheduling\Schedule;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\IntegrationTwilio\IntegrationTwilioPlugin;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Engagement\Actions\FindEngagementResponseSender;
-use AdvisingApp\IntegrationTwilio\Registries\IntegrationTwilioRbacRegistry;
 use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
 use AdvisingApp\IntegrationTwilio\Jobs\CheckStatusOfOutboundDeliverablesWithoutATerminalStatus;
 use AdvisingApp\IntegrationTwilio\Actions\Playground\FindEngagementResponseSender as PlaygroundFindEngagementResponseSender;
@@ -94,8 +92,5 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
         });
     }
 
-    public function boot(): void
-    {
-        AuthorizationRoleRegistry::register(IntegrationTwilioRbacRegistry::class);
-    }
+    public function boot(): void {}
 }

@@ -100,44 +100,44 @@ it('will create the subscription records for subscribables in the segment', func
 })->with(
     [
         'no prior subscriptions | prospects | remove prior false' => [
-            'priorSubscriptions' => [],
-            'subscribables' => fn () => Prospect::factory()->count(3)->create(),
-            'removePrior' => false,
+            [],
+            fn () => Prospect::factory()->count(3)->create(),
+            false,
         ],
         'no prior subscriptions | prospects | remove prior true' => [
-            'priorSubscriptions' => [],
-            'subscribables' => fn () => Prospect::factory()->count(3)->create(),
-            'removePrior' => true,
+            [],
+            fn () => Prospect::factory()->count(3)->create(),
+            true,
         ],
         'prior subscriptions | prospects | remove prior false' => [
-            'priorSubscriptions' => fn () => User::factory()->count(3)->create()->pluck('id')->toArray(),
-            'subscribables' => fn () => Prospect::factory()->count(3)->create(),
-            'removePrior' => false,
+            fn () => User::factory()->count(3)->create()->pluck('id')->toArray(),
+            fn () => Prospect::factory()->count(3)->create(),
+            false,
         ],
         'prior subscriptions | prospects | remove prior true' => [
-            'priorSubscriptions' => fn () => User::factory()->count(3)->create()->pluck('id')->toArray(),
-            'subscribables' => fn () => Prospect::factory()->count(3)->create(),
-            'removePrior' => true,
+            fn () => User::factory()->count(3)->create()->pluck('id')->toArray(),
+            fn () => Prospect::factory()->count(3)->create(),
+            true,
         ],
         'no prior subscriptions | students | remove prior false' => [
-            'priorSubscriptions' => [],
-            'subscribables' => fn () => Student::factory()->count(3)->create(),
-            'removePrior' => false,
+            [],
+            fn () => Student::factory()->count(3)->create(),
+            false,
         ],
         'no prior subscriptions | students | remove prior true' => [
-            'priorSubscriptions' => [],
-            'subscribables' => fn () => Student::factory()->count(3)->create(),
-            'removePrior' => true,
+            [],
+            fn () => Student::factory()->count(3)->create(),
+            true,
         ],
         'prior subscriptions | students | remove prior false' => [
-            'priorSubscriptions' => fn () => User::factory()->count(3)->create()->pluck('id')->toArray(),
-            'subscribables' => fn () => Student::factory()->count(3)->create(),
-            'removePrior' => false,
+            fn () => User::factory()->count(3)->create()->pluck('id')->toArray(),
+            fn () => Student::factory()->count(3)->create(),
+            false,
         ],
         'prior subscriptions | students | remove prior true' => [
-            'priorSubscriptions' => fn () => User::factory()->count(3)->create()->pluck('id')->toArray(),
-            'subscribables' => fn () => Student::factory()->count(3)->create(),
-            'removePrior' => true,
+            fn () => User::factory()->count(3)->create()->pluck('id')->toArray(),
+            fn () => Student::factory()->count(3)->create(),
+            true,
         ],
     ]
 );

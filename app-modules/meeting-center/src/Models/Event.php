@@ -85,7 +85,7 @@ class Event extends BaseModel
 
                 $event = Event::find($action->data['event']);
 
-                $user = $action->campaign->user;
+                $user = $action->campaign->createdBy;
 
                 $emails = $action
                     ->campaign

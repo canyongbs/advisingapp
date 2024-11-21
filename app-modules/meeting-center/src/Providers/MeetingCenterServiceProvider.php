@@ -49,12 +49,10 @@ use AdvisingApp\MeetingCenter\MeetingCenterPlugin;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Observers\CalendarEventObserver;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
-use AdvisingApp\MeetingCenter\Registries\MeetingCenterRbacRegistry;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use AdvisingApp\MeetingCenter\Livewire\EventAttendeeSubmissionsManager;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
@@ -102,8 +100,6 @@ class MeetingCenterServiceProvider extends ServiceProvider
         $this->registerObservers();
 
         Livewire::component('event-attendee-submissions-manager', EventAttendeeSubmissionsManager::class);
-
-        AuthorizationRoleRegistry::register(MeetingCenterRbacRegistry::class);
     }
 
     protected function registerObservers(): void
