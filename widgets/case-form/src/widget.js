@@ -39,7 +39,7 @@ import config from './formkit.config.js';
 import './widget.css';
 
 customElements.define(
-    'service-request-form-embed',
+    'case-form-embed',
     defineCustomElement({
         setup(props) {
             const app = createApp();

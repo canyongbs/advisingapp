@@ -197,7 +197,7 @@ async function getForm() {
             display.value = true;
         })
         .catch((error) => {
-            console.error(`Advising App Embed Service Request Form ${error}`);
+            console.error(`Advising App Embed Case Form ${error}`);
         });
 }
 
@@ -303,7 +303,7 @@ async function authenticate(formData, node) {
         class="font-sans"
     >
         <div class="prose max-w-none" v-if="display && !submittedSuccess">
-            <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/service-request-form/style.css'" />
+            <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/case-form/style.css'" />
 
             <h1>
                 {{ formName }}

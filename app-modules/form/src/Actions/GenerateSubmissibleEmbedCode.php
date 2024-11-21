@@ -113,17 +113,17 @@ class GenerateSubmissibleEmbedCode
             })(),
             CaseForm::class => (function () use ($submissible) {
                 /** @var CaseForm $submissible */
-                $scriptUrl = url('js/widgets/service-request-form/advising-app-service-request-form-widget.js?');
+                $scriptUrl = url('js/widgets/case-form/advising-app-case-form-widget.js?');
                 $formDefinitionUrl = URL::to(
                     URL::signedRoute(
-                        name: 'service-request-forms.define',
-                        parameters: ['serviceRequestForm' => $submissible],
+                        name: 'case-forms.define',
+                        parameters: ['caseForm' => $submissible],
                         absolute: false,
                     )
                 );
 
                 return <<<EOD
-                <service-request-form-embed url="{$formDefinitionUrl}"></service-request-form-embed>
+                <case-form-embed url="{$formDefinitionUrl}"></case-form-embed>
                 <script src="{$scriptUrl}"></script>
                 EOD;
             })(),

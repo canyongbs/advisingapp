@@ -1145,15 +1145,9 @@
         {
             "name": "bacon/bacon-qr-code",
             "version": "v3.0.1",
-            "source": {
                 "type": "git",
                 "url": "https://github.com/Bacon/BaconQrCode.git",
                 "reference": "f9cc1f52b5a463062251d666761178dbdb6b544f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Bacon/BaconQrCode/zipball/f9cc1f52b5a463062251d666761178dbdb6b544f",
-                "reference": "f9cc1f52b5a463062251d666761178dbdb6b544f",
                 "shasum": ""
             },
             "require": {
