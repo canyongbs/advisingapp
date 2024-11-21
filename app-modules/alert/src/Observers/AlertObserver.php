@@ -46,6 +46,17 @@ use AdvisingApp\Notification\Actions\SubscriptionCreate;
 
 class AlertObserver
 {
+    public function creating(Alert $alert): void
+    {
+        $user = auth()->user();
+
+        if ($user) {
+            if (! $alert->createdBy) {
+                $alert->createdBy()->associate($user);
+            }
+        }
+    }
+
     public function created(Alert $alert): void
     {
         $user = auth()->user();

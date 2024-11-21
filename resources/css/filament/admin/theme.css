@@ -165,3 +165,7 @@
 .fi-section.fi-section-has-subsections > .fi-section-content-ctn > .fi-section-content > dl > .fi-fo-component-ctn {
     @apply gap-0 divide-y divide-gray-200 dark:divide-white/10;
 }
+
+.fi-section.fi-scrollable > .fi-section-content-ctn > .fi-section-content {
+    @apply max-h-56 overflow-y-auto;
+}

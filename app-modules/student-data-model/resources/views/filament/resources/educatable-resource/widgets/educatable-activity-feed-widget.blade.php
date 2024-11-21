@@ -1,5 +1,8 @@
 <x-filament-widgets::widget>
-    <x-filament::section class="fi-section-has-subsections">
+    <x-filament::section
+        class="fi-section-has-subsections"
+        wire:poll
+    >
         <x-slot name="heading">
             Activity Feed
         </x-slot>
@@ -17,7 +20,7 @@
 
         @forelse ($timelineRecords->slice(0, 5) as $record)
             <button
-                class="flex cursor-pointer items-center gap-6 px-6 py-3 text-start"
+                class="flex w-full items-center gap-6 px-6 py-3 text-start"
                 type="button"
                 wire:click="viewRecord('{{ $record->timelineable->getKey() }}', '{{ $record->timelineable->getMorphClass() }}')"
             >

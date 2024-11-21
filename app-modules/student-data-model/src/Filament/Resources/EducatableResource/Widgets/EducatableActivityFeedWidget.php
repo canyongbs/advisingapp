@@ -4,6 +4,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Wid
 
 use App\Models\User;
 use Filament\Widgets\Widget;
+use Livewire\Attributes\Locked;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Actions\Contracts\HasActions;
@@ -20,19 +21,17 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Timeline\Livewire\Concerns\HasTimelineRecords;
 use AdvisingApp\Timeline\Livewire\Concerns\CanLoadTimelineRecords;
 
-class EducatableActivityFeed extends Widget implements HasActions, HasForms, HasInfolists
+class EducatableActivityFeedWidget extends Widget implements HasActions, HasForms, HasInfolists
 {
-    // @todo: Refactor
-    use HasTimelineRecords;
-    use CanLoadTimelineRecords;
-
-    // @endtodo
+    use HasTimelineRecords; // @todo: Refactor
+    use CanLoadTimelineRecords; // @todo: Refactor
     use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithInfolists;
 
-    protected static string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-activity-feed';
+    protected static string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-activity-feed-widget';
 
+    #[Locked]
     public Educatable&Model $educatable;
 
     public function mount(): void
@@ -62,12 +61,12 @@ class EducatableActivityFeed extends Widget implements HasActions, HasForms, Has
 
     public function getTimelineRecordDescription(Model $record): ?string
     {
-        return match ($record->getMorphClass()) {
+        return (string) str(match ($record->getMorphClass()) {
             'interaction', 'engagement' => "Subject: {$record->subject}",
-            'engagement_response' => 'Preview: ' . str($record->content)->limit(200),
+            'engagement_response' => 'Preview: {$record->content}',
             'task_history' => "Title: {$record->subject?->title}",
             'alert_history' => "{$record->subject?->severity->getLabel()} severity, " . str($record->subject?->description)->limit(200),
-        };
+        })->limit(110);
     }
 
     public function getTimelineRecordUser(Model $record): ?User

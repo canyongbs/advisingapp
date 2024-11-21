@@ -33,7 +33,11 @@
 --}}
 
 @php
-    use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableActivityFeed;
+    use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableActivityFeedWidget;
+    use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableAlertsWidget;
+    use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableTasksWidget;
+    use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableCareTeamWidget;
+    use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableSubscriptionsWidget;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
@@ -49,8 +53,11 @@
         <div class="col-span-1 grid gap-6">
             {{ $this->profile }}
 
-            @if (EducatableActivityFeed::canView())
-                @livewire(EducatableActivityFeed::class, ['educatable' => $this->getRecord(), 'lazy' => true])
+            @if (EducatableActivityFeedWidget::canView())
+                @livewire(EducatableActivityFeedWidget::class, [
+                    'educatable' => $this->getRecord(),
+                    'lazy' => 'on-load',
+                ])
             @endif
         </div>
 
@@ -65,6 +72,38 @@
                         'files' => EngagementFilesRelationManager::class,
                     ]"
                 />
+
+                <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+                    @if (EducatableAlertsWidget::canView())
+                        @livewire(EducatableAlertsWidget::class, [
+                            'educatable' => $this->getRecord(),
+                            'manageUrl' => \AdvisingApp\StudentDataModel\Filament\Resources\StudentResource::getUrl('alerts', ['record' => $this->getRecord()]),
+                        ])
+                    @endif
+
+                    @if (EducatableTasksWidget::canView())
+                        @livewire(EducatableTasksWidget::class, [
+                            'educatable' => $this->getRecord(),
+                            'manageUrl' => \AdvisingApp\StudentDataModel\Filament\Resources\StudentResource::getUrl('tasks', ['record' => $this->getRecord()]),
+                        ])
+                    @endif
+                </div>
+
+                <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+                    @if (EducatableCareTeamWidget::canView())
+                        @livewire(EducatableCareTeamWidget::class, [
+                            'educatable' => $this->getRecord(),
+                            'lazy' => 'on-load',
+                        ])
+                    @endif
+
+                    @if (EducatableSubscriptionsWidget::canView())
+                        @livewire(EducatableSubscriptionsWidget::class, [
+                            'educatable' => $this->getRecord(),
+                            'lazy' => 'on-load',
+                        ])
+                    @endif
+                </div>
 
                 <x-student-data-model::filament.resources.educatable-resource.view-educatable.relation-managers
                     :managers="[
