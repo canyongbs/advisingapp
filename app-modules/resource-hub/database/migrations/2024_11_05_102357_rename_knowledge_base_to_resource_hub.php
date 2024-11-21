@@ -47,6 +47,12 @@ return new class () extends Migration {
 
         DB::statement('ALTER TABLE resource_hub_articles RENAME CONSTRAINT knowledge_base_articles_pkey TO resource_hub_articles_pkey');
 
+        DB::statement('ALTER TABLE resource_hub_articles RENAME CONSTRAINT knowledge_base_articles_category_id_foreign TO resource_hub_articles_category_id_foreign');
+
+        DB::statement('ALTER TABLE resource_hub_articles RENAME CONSTRAINT knowledge_base_articles_quality_id_foreign TO resource_hub_articles_quality_id_foreign');
+
+        DB::statement('ALTER TABLE resource_hub_articles RENAME CONSTRAINT knowledge_base_articles_status_id_foreign TO resource_hub_articles_status_id_foreign');
+
         DB::statement('CREATE VIEW knowledge_base_articles AS SELECT * FROM resource_hub_articles');
 
         DB::commit();
@@ -95,6 +101,12 @@ return new class () extends Migration {
         DB::statement('ALTER TABLE resource_hub_articles RENAME TO knowledge_base_articles');
 
         DB::statement('ALTER TABLE knowledge_base_articles RENAME CONSTRAINT resource_hub_articles_pkey TO knowledge_base_articles_pkey');
+
+        DB::statement('ALTER TABLE knowledge_base_articles RENAME CONSTRAINT resource_hub_articles_category_id_foreign TO knowledge_base_articles_category_id_foreign');
+
+        DB::statement('ALTER TABLE knowledge_base_articles RENAME CONSTRAINT resource_hub_articles_quality_id_foreign TO knowledge_base_articles_quality_id_foreign');
+
+        DB::statement('ALTER TABLE knowledge_base_articles RENAME CONSTRAINT resource_hub_articles_status_id_foreign TO knowledge_base_articles_status_id_foreign');
 
         DB::commit();
 
