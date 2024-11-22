@@ -1,13 +1,10 @@
 <?php
 
-use Database\Migrations\Concerns\CanModifyPermissions;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Migrations\Migration;
+use Database\Migrations\Concerns\CanModifyPermissions;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     use CanModifyPermissions;
 
     private array $permissions = [
@@ -34,7 +31,7 @@ return new class extends Migration
 
         DB::table('permission_groups')
             ->whereIn('name', [
-                'Maintenance Provider'
+                'Maintenance Provider',
             ])
             ->delete();
     }
@@ -42,8 +39,8 @@ return new class extends Migration
     public function down(): void
     {
         collect($this->guards)
-        ->each(function (string $guard) {
-            $this->createPermissions($this->permissions, $guard);
-        });
+            ->each(function (string $guard) {
+                $this->createPermissions($this->permissions, $guard);
+            });
     }
 };
