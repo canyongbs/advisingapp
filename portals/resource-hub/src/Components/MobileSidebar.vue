@@ -69,10 +69,7 @@ defineProps({
                 </div>
 
                 <div class="flex grow flex-col overflow-y-auto bg-white">
-                    <SidebarContent
-                        :categories="categories"
-                        :api-url="apiUrl"
-                    ></SidebarContent>
+                    <SidebarContent :categories="categories" :api-url="apiUrl"></SidebarContent>
                 </div>
             </div>
         </div>

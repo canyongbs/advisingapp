@@ -36,10 +36,10 @@ import OneTimePassword from './OneTimePassword.vue';
 import Signature from './Signature.vue';
 
 export default {
-    'otp': createInput(OneTimePassword, {
+    otp: createInput(OneTimePassword, {
         props: ['digits'],
     }),
-    'signature': createInput(Signature, {
+    signature: createInput(Signature, {
         props: [],
     }),
-}
+};

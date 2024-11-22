@@ -65,10 +65,12 @@
         "postcss": "^8.4.31",
         "postcss-import": "^16.0.1",
         "prettier": "^3.0.0",
+        "prettier-plugin-organize-imports": "^4.1.0",
         "showdown": "^2.1.0",
         "sortablejs": "^1.15.0",
         "vue": "^3.3.4",
         "vue-router": "^4.2.5",
-        "vue-signature-pad": "^3.0.2"
+        "vue-signature-pad": "^3.0.2",
+        "vue-tsc": "^2.1.10"
     }
 }

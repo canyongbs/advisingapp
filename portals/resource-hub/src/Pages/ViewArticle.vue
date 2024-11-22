@@ -32,13 +32,13 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { defineProps, ref, watch, onMounted } from 'vue';
-import { useRoute, onBeforeRouteUpdate } from 'vue-router';
-import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import AppLoading from '@/Components/AppLoading.vue';
-import DOMPurify from 'dompurify';
+import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import { consumer } from '@/Services/Consumer.js';
-import { Bars3Icon, ClockIcon, EyeIcon } from "@heroicons/vue/24/outline/index.js";
+import { Bars3Icon, ClockIcon, EyeIcon } from '@heroicons/vue/24/outline/index.js';
+import DOMPurify from 'dompurify';
+import { defineProps, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 const route = useRoute();
 
@@ -103,22 +103,25 @@ function getData() {
                 </div>
                 <div v-else>
                     <main class="flex flex-col gap-8">
-                        <Breadcrumbs :breadcrumbs="[
-                            { name: category.name, route: 'view-category', params: { categoryId: category.id } },
-                        ]" currentCrumb="Articles"></Breadcrumbs>
+                        <Breadcrumbs
+                            :breadcrumbs="[
+                                { name: category.name, route: 'view-category', params: { categoryId: category.id } },
+                            ]"
+                            currentCrumb="Articles"
+                        ></Breadcrumbs>
 
                         <div class="flex flex-col gap-3">
                             <div class="prose max-w-none">
                                 <h1>{{ article.name }}</h1>
                                 <div class="flex mb-4">
-                                  <div class="text-gray-500 flex items-center space-x-1 mr-2">
-                                      <EyeIcon class="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-                                      <span class="text-xs">{{portalViewCount}} Views</span>
-                                  </div>
-                                  <div class="text-gray-500 flex items-center space-x-1">
-                                      <ClockIcon class="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-                                      <span class="text-xs">Last updated: {{ article.lastUpdated }}</span>
-                                  </div>
+                                    <div class="text-gray-500 flex items-center space-x-1 mr-2">
+                                        <EyeIcon class="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                                        <span class="text-xs">{{ portalViewCount }} Views</span>
+                                    </div>
+                                    <div class="text-gray-500 flex items-center space-x-1">
+                                        <ClockIcon class="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                                        <span class="text-xs">Last updated: {{ article.lastUpdated }}</span>
+                                    </div>
                                 </div>
                                 <div class="border-t"></div>
                                 <div v-html="DOMPurify.sanitize(article.content)"></div>

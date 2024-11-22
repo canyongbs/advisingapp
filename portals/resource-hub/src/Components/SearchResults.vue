@@ -32,9 +32,9 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { defineProps } from 'vue';
 import SearchLoading from '@/Components/SearchLoading.vue';
-import { ChevronRightIcon, XMarkIcon } from "@heroicons/vue/20/solid";
+import { ChevronRightIcon, XMarkIcon } from '@heroicons/vue/20/solid';
+import { defineProps } from 'vue';
 
 defineProps({
     searchQuery: {
@@ -63,14 +63,13 @@ defineProps({
         </h3>
 
         <div class="flex flex-col divide-y ring-1 ring-black/5 shadow-sm px-3 pt-3 pb-1 rounded bg-white">
-            <h4 class="text-lg font-semibold text-gray-800 px-3 pt-1 pb-3">Articles ({{ searchResults.data.articles.length }})</h4>
+            <h4 class="text-lg font-semibold text-gray-800 px-3 pt-1 pb-3">
+                Articles ({{ searchResults.data.articles.length }})
+            </h4>
 
             <div v-if="searchResults.data.articles.length > 0">
                 <ul role="list" class="divide-y">
-                    <li
-                        v-for="article in searchResults.data.articles"
-                        :key="article.id"
-                    >
+                    <li v-for="article in searchResults.data.articles" :key="article.id">
                         <router-link
                             :to="{
                                 name: 'view-article',
@@ -82,7 +81,9 @@ defineProps({
                                 {{ article.name }}
                             </h5>
 
-                            <ChevronRightIcon class="opacity-0 h-5 w-5 text-primary-600 transition-all group-hover:translate-x-2 group-hover:opacity-100" />
+                            <ChevronRightIcon
+                                class="opacity-0 h-5 w-5 text-primary-600 transition-all group-hover:translate-x-2 group-hover:opacity-100"
+                            />
                         </router-link>
                     </li>
                 </ul>
@@ -90,9 +91,7 @@ defineProps({
             <div v-else class="p-3 flex items-start gap-2">
                 <XMarkIcon class="h-5 w-5 text-gray-400" />
 
-                <p class="text-gray-600 text-sm font-medium">
-                    No articles found that match this search.
-                </p>
+                <p class="text-gray-600 text-sm font-medium">No articles found that match this search.</p>
             </div>
         </div>
 
@@ -101,10 +100,7 @@ defineProps({
 
             <div v-if="searchResults.data.categories.length > 0">
                 <ul role="list" class="divide-y">
-                    <li
-                        v-for="category in searchResults.data.categories"
-                        :key="category.id"
-                    >
+                    <li v-for="category in searchResults.data.categories" :key="category.id">
                         <router-link
                             :to="{ name: 'view-category', params: { categoryId: category.id } }"
                             class="group p-3 flex items-start text-sm font-medium text-gray-700"
@@ -113,7 +109,9 @@ defineProps({
                                 {{ category.name }}
                             </h5>
 
-                            <ChevronRightIcon class="opacity-0 h-5 w-5 text-primary-600 transition-all group-hover:translate-x-2 group-hover:opacity-100" />
+                            <ChevronRightIcon
+                                class="opacity-0 h-5 w-5 text-primary-600 transition-all group-hover:translate-x-2 group-hover:opacity-100"
+                            />
                         </router-link>
                     </li>
                 </ul>
@@ -121,9 +119,7 @@ defineProps({
             <div v-else class="p-3 flex items-start gap-2">
                 <XMarkIcon class="h-5 w-5 text-gray-400" />
 
-                <p class="text-gray-600 text-sm font-medium">
-                    No categories found that match this search.
-                </p>
+                <p class="text-gray-600 text-sm font-medium">No categories found that match this search.</p>
             </div>
         </div>
     </div>

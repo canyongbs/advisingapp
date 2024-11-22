@@ -31,12 +31,12 @@
 
 </COPYRIGHT>
 */
-import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import './widget.css';
-import App from './App.vue';
 import { defaultConfig, plugin } from '@formkit/vue';
-import config from './formkit.config.js';
+import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
 import VueSignaturePad from 'vue-signature-pad';
+import App from './App.vue';
+import config from './formkit.config.js';
+import './widget.css';
 
 customElements.define(
     'service-request-form-embed',
