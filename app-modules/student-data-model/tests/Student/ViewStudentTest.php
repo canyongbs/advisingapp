@@ -44,20 +44,18 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Livewire\ManageStudentInformation;
-use AdvisingApp\StudentDataModel\Livewire\ManageStudentPremiumFeatures;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableTasksWidget;
+use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableAlertsWidget;
+use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableCareTeamWidget;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EventsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableSubscriptionsWidget;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentTasksRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentAlertsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\FormSubmissionsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentCareTeamRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentSubscriptionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ApplicationSubmissionsRelationManager;
 
 it('requires proper access', function () {
@@ -67,7 +65,7 @@ it('requires proper access', function () {
     actingAs($user);
 
     livewire(ViewStudent::class, [
-        'record' => $student->getKey(),
+        'record' => $student,
     ])
         ->assertForbidden();
 
@@ -75,7 +73,7 @@ it('requires proper access', function () {
     $user->givePermissionTo('student.*.view');
 
     livewire(ViewStudent::class, [
-        'record' => $student->getKey(),
+        'record' => $student,
     ])
         ->assertOk();
 });
@@ -92,28 +90,16 @@ it('renders the ProgramsRelationManager based on proper access', function () {
 
     $relationManager = ProgramsRelationManager::class;
 
-    livewire(ManageStudentInformation::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ManageStudentInformation())
-                ->tap(fn (ManageStudentInformation $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+    livewire(ViewStudent::class, [
+        'record' => $student,
     ])
         ->assertOk()
         ->assertDontSeeLivewire($relationManager);
 
     $user->givePermissionTo('program.view-any');
 
-    livewire(ManageStudentInformation::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ManageStudentInformation())
-                ->tap(fn (ManageStudentInformation $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+    livewire(ViewStudent::class, [
+        'record' => $student,
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);
@@ -131,28 +117,16 @@ it('renders the EnrollmentsRelationManager based on proper access', function () 
 
     $relationManager = EnrollmentsRelationManager::class;
 
-    livewire(ManageStudentInformation::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ManageStudentInformation())
-                ->tap(fn (ManageStudentInformation $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+    livewire(ViewStudent::class, [
+        'record' => $student,
     ])
         ->assertOk()
         ->assertDontSeeLivewire($relationManager);
 
     $user->givePermissionTo('enrollment.view-any');
 
-    livewire(ManageStudentInformation::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ManageStudentInformation())
-                ->tap(fn (ManageStudentInformation $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+    livewire(ViewStudent::class, [
+        'record' => $student,
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);
@@ -170,28 +144,16 @@ it('renders the EngagementsRelationManager based on proper access', function () 
 
     $relationManager = EngagementsRelationManager::class;
 
-    livewire(ManageStudentInformation::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ManageStudentInformation())
-                ->tap(fn (ManageStudentInformation $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+    livewire(ViewStudent::class, [
+        'record' => $student,
     ])
         ->assertOk()
         ->assertDontSeeLivewire($relationManager);
 
     $user->givePermissionTo('engagement.view-any');
 
-    livewire(ManageStudentInformation::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ManageStudentInformation())
-                ->tap(fn (ManageStudentInformation $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+    livewire(ViewStudent::class, [
+        'record' => $student,
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);
@@ -209,28 +171,16 @@ it('renders the InteractionsRelationManager based on proper access', function ()
 
     $relationManager = InteractionsRelationManager::class;
 
-    livewire(ManageStudentInformation::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ManageStudentInformation())
-                ->tap(fn (ManageStudentInformation $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+    livewire(ViewStudent::class, [
+        'record' => $student,
     ])
         ->assertOk()
         ->assertDontSeeLivewire($relationManager);
 
     $user->givePermissionTo('interaction.view-any');
 
-    livewire(ManageStudentInformation::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ManageStudentInformation())
-                ->tap(fn (ManageStudentInformation $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+    livewire(ViewStudent::class, [
+        'record' => $student,
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);
@@ -248,34 +198,22 @@ it('renders the EngagementFilesRelationManager based on proper access', function
 
     $relationManager = EngagementFilesRelationManager::class;
 
-    livewire(ManageStudentInformation::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ManageStudentInformation())
-                ->tap(fn (ManageStudentInformation $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+    livewire(ViewStudent::class, [
+        'record' => $student,
     ])
         ->assertOk()
         ->assertDontSeeLivewire($relationManager);
 
     $user->givePermissionTo('engagement_file.view-any');
 
-    livewire(ManageStudentInformation::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ManageStudentInformation())
-                ->tap(fn (ManageStudentInformation $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+    livewire(ViewStudent::class, [
+        'record' => $student,
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);
 });
 
-it('renders the StudentAlertsRelationManager based on proper access', function () {
+it('renders the EducatableAlertsWidget based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -285,36 +223,24 @@ it('renders the StudentAlertsRelationManager based on proper access', function (
 
     actingAs($user);
 
-    $relationManager = StudentAlertsRelationManager::class;
+    $widget = EducatableAlertsWidget::class;
 
     livewire(ViewStudent::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ViewStudent())
-                ->tap(fn (ViewStudent $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+        'record' => $student,
     ])
         ->assertOk()
-        ->assertDontSeeLivewire($relationManager);
+        ->assertDontSeeLivewire($widget);
 
     $user->givePermissionTo('alert.view-any');
 
     livewire(ViewStudent::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ViewStudent())
-                ->tap(fn (ViewStudent $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+        'record' => $student,
     ])
         ->assertOk()
-        ->assertSeeLivewire($relationManager);
+        ->assertSeeLivewire($widget);
 });
 
-it('renders the StudentTasksRelationManager based on proper access', function () {
+it('renders the EducatableTasksWidget based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -324,36 +250,24 @@ it('renders the StudentTasksRelationManager based on proper access', function ()
 
     actingAs($user);
 
-    $relationManager = StudentTasksRelationManager::class;
+    $widget = EducatableTasksWidget::class;
 
     livewire(ViewStudent::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ViewStudent())
-                ->tap(fn (ViewStudent $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+        'record' => $student,
     ])
         ->assertOk()
-        ->assertDontSeeLivewire($relationManager);
+        ->assertDontSeeLivewire($widget);
 
     $user->givePermissionTo('task.view-any');
 
     livewire(ViewStudent::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ViewStudent())
-                ->tap(fn (ViewStudent $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+        'record' => $student,
     ])
         ->assertOk()
-        ->assertSeeLivewire($relationManager);
+        ->assertSeeLivewire($widget);
 });
 
-it('renders the StudentCareTeamRelationManager based on proper access', function () {
+it('renders the EducatableCareTeamWidget based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -363,36 +277,24 @@ it('renders the StudentCareTeamRelationManager based on proper access', function
 
     actingAs($user);
 
-    $relationManager = StudentCareTeamRelationManager::class;
+    $widget = EducatableCareTeamWidget::class;
 
     livewire(ViewStudent::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ViewStudent())
-                ->tap(fn (ViewStudent $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+        'record' => $student,
     ])
         ->assertOk()
-        ->assertDontSeeLivewire($relationManager);
+        ->assertDontSeeLivewire($widget);
 
     $user->givePermissionTo('care_team.view-any');
 
     livewire(ViewStudent::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ViewStudent())
-                ->tap(fn (ViewStudent $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+        'record' => $student,
     ])
         ->assertOk()
-        ->assertSeeLivewire($relationManager);
+        ->assertSeeLivewire($widget);
 })->skip('This test is skipped because the relationship is to Users, we need to change the manager to focus permissions on CareTeam permissions.');
 
-it('renders the StudentSubscriptionsRelationManager based on proper access', function () {
+it('renders the EducatableSubscriptionsWidget based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -402,36 +304,24 @@ it('renders the StudentSubscriptionsRelationManager based on proper access', fun
 
     actingAs($user);
 
-    $relationManager = StudentSubscriptionsRelationManager::class;
+    $widget = EducatableSubscriptionsWidget::class;
 
     livewire(ViewStudent::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ViewStudent())
-                ->tap(fn (ViewStudent $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+        'record' => $student,
     ])
         ->assertOk()
-        ->assertDontSeeLivewire($relationManager);
+        ->assertDontSeeLivewire($widget);
 
     $user->givePermissionTo('subscription.view-any');
 
     livewire(ViewStudent::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ViewStudent())
-                ->tap(fn (ViewStudent $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+        'record' => $student,
     ])
         ->assertOk()
-        ->assertSeeLivewire($relationManager);
+        ->assertSeeLivewire($widget);
 })->skip('This test is skipped because the relationship is to Users, we need to change the manager to focus permissions on Subscription permissions.');
 
-it('renders the StudentFormSubmissionsRelationManager based on Feature access', function () {
+it('renders the FormSubmissionsRelationManager based on Feature access', function () {
     $student = Student::factory()->create();
 
     $licenseSettings = app(LicenseSettings::class);
@@ -444,14 +334,8 @@ it('renders the StudentFormSubmissionsRelationManager based on Feature access', 
 
     $relationManager = FormSubmissionsRelationManager::class;
 
-    livewire(ManageStudentPremiumFeatures::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ManageStudentPremiumFeatures())
-                ->tap(fn (ManageStudentPremiumFeatures $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+    livewire(ViewStudent::class, [
+        'record' => $student,
     ])
         ->assertOk()
         ->assertDontSeeLivewire($relationManager);
@@ -460,14 +344,8 @@ it('renders the StudentFormSubmissionsRelationManager based on Feature access', 
 
     $licenseSettings->save();
 
-    livewire(ManageStudentPremiumFeatures::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ManageStudentPremiumFeatures())
-                ->tap(fn (ManageStudentPremiumFeatures $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+    livewire(ViewStudent::class, [
+        'record' => $student,
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);
@@ -486,14 +364,8 @@ it('renders the EventsRelationManager based on Feature access', function () {
 
     $relationManager = EventsRelationManager::class;
 
-    livewire(ManageStudentPremiumFeatures::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ManageStudentPremiumFeatures())
-                ->tap(fn (ManageStudentPremiumFeatures $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+    livewire(ViewStudent::class, [
+        'record' => $student,
     ])
         ->assertOk()
         ->assertDontSeeLivewire($relationManager);
@@ -502,20 +374,14 @@ it('renders the EventsRelationManager based on Feature access', function () {
 
     $licenseSettings->save();
 
-    livewire(ManageStudentPremiumFeatures::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ManageStudentPremiumFeatures())
-                ->tap(fn (ManageStudentPremiumFeatures $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+    livewire(ViewStudent::class, [
+        'record' => $student,
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);
 });
 
-it('renders the StudentApplicationSubmissionsRelationManager based on Feature access', function () {
+it('renders the ApplicationSubmissionsRelationManager based on Feature access', function () {
     $student = Student::factory()->create();
 
     $licenseSettings = app(LicenseSettings::class);
@@ -528,14 +394,8 @@ it('renders the StudentApplicationSubmissionsRelationManager based on Feature ac
 
     $relationManager = ApplicationSubmissionsRelationManager::class;
 
-    livewire(ManageStudentPremiumFeatures::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ManageStudentPremiumFeatures())
-                ->tap(fn (ManageStudentPremiumFeatures $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+    livewire(ViewStudent::class, [
+        'record' => $student,
     ])
         ->assertOk()
         ->assertDontSeeLivewire($relationManager);
@@ -544,14 +404,8 @@ it('renders the StudentApplicationSubmissionsRelationManager based on Feature ac
 
     $licenseSettings->save();
 
-    livewire(ManageStudentPremiumFeatures::class, [
-        'record' => $student->getKey(),
-        'activeRelationManager' => array_search(
-            $relationManager,
-            (new ManageStudentPremiumFeatures())
-                ->tap(fn (ManageStudentPremiumFeatures $manager) => $manager->mount($student->getKey()))
-                ->getRelationManagers()
-        ),
+    livewire(ViewStudent::class, [
+        'record' => $student,
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);

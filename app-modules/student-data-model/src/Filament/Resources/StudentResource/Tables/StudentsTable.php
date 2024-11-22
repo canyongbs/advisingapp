@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Tables;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Tables;
 
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -54,7 +54,7 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
 
 class StudentsTable
 {
-    public function __invoke(Table $table): Table
+    public static function configure(Table $table): Table
     {
         return $table
             ->query(fn () => Student::query())

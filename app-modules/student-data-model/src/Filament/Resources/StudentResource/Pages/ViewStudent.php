@@ -48,7 +48,7 @@ class ViewStudent extends ViewRecord
 
     protected static string $resource = StudentResource::class;
 
-    protected static string $view = 'student-data-model::filament.resources.student-resource.view-student.index';
+    protected static string $view = 'student-data-model::filament.resources.student-resource.view-student';
 
     protected static ?string $navigationLabel = 'View';
 

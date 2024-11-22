@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Tables;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Tables;
 
 use Filament\Tables\Table;
 use Filament\Tables\Actions\ViewAction;
@@ -51,7 +51,7 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Oper
 
 class ProspectsTable
 {
-    public function __invoke(Table $table): Table
+    public static function configure(Table $table): Table
     {
         return $table
             ->query(fn () => Prospect::query())
