@@ -31,9 +31,9 @@
 
 </COPYRIGHT>
 */
+import FormKitVariants from '@formkit/themes/tailwindcss';
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
-import FormKitVariants from '@formkit/themes/tailwindcss';
 
 export default {
     theme: {
@@ -66,4 +66,4 @@ export default {
         },
     },
     plugins: [forms, typography, FormKitVariants],
-}
+};

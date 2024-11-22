@@ -1,8 +1,13 @@
 {
-    "plugins": ["@shufo/prettier-plugin-blade"],
+    "plugins": [
+        "@shufo/prettier-plugin-blade",
+        "prettier-plugin-organize-imports"
+    ],
     "overrides": [
         {
-            "files": ["*.blade.php"],
+            "files": [
+                "*.blade.php"
+            ],
             "options": {
                 "printWidth": 120,
                 "tabWidth": 4,
@@ -14,7 +19,11 @@
             }
         },
         {
-            "files": ["*.js", "*.css", "*.vue"],
+            "files": [
+                "*.js",
+                "*.css",
+                "*.vue"
+            ],
             "options": {
                 "printWidth": 120,
                 "tabWidth": 4,
@@ -25,13 +34,17 @@
             }
         },
         {
-            "files": ["*.json"],
+            "files": [
+                "*.json"
+            ],
             "options": {
                 "tabWidth": 4
             }
         },
         {
-            "files": ["*.graphql"]
+            "files": [
+                "*.graphql"
+            ]
         }
     ]
 }
