@@ -64,11 +64,9 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Engagement\Models\EngagementFileEntities;
-use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -268,28 +266,6 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             related: EventAttendee::class,
             foreignKey: 'email',
             localKey: 'email',
-        );
-    }
-
-    public function assetCheckIns(): MorphMany
-    {
-        return $this->morphMany(
-            related: AssetCheckIn::class,
-            name: 'checked_in_from',
-            type: 'checked_in_from_type',
-            id: 'checked_in_from_id',
-            localKey: 'sisid'
-        );
-    }
-
-    public function assetCheckOuts(): MorphMany
-    {
-        return $this->morphMany(
-            related: AssetCheckOut::class,
-            name: 'checked_out_to',
-            type: 'checked_out_to_type',
-            id: 'checked_out_to_id',
-            localKey: 'sisid'
         );
     }
 
