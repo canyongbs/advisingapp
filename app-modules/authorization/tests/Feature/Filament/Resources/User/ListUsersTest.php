@@ -272,6 +272,7 @@ it('it filters users based on team', function () {
     $teamB = Team::factory()->create(['name' => 'Team B']);
 
     $userInTeamA = User::factory()
+        ->count(3)
         ->hasAttached($teamA, [], 'teams')
         ->create();
 
