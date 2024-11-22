@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "56938c7b3afe5e4a76cf173d8bb885b6",
+    "content-hash": "006d9a55c75a7f08e13b8ede0417e89b",
     "packages": [
         {
             "name": "amphp/amp",
@@ -2190,41 +2190,6 @@
                     "AdvisingApp\\Interaction\\Tests\\": "tests/",
                     "AdvisingApp\\Interaction\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\Interaction\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "canyon-gbs/advising-app-inventory-management",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/inventory-management",
-                "reference": "a937451d549c2b43fb417f73b2bbce506674cbfe"
-            },
-            "require": {
-                "filament/filament": "^3.0.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\InventoryManagement\\Providers\\InventoryManagementServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\InventoryManagement\\": "src/",
-                    "AdvisingApp\\InventoryManagement\\Tests\\": "tests/",
-                    "AdvisingApp\\InventoryManagement\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\InventoryManagement\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

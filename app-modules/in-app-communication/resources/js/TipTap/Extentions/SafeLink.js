@@ -31,8 +31,8 @@
 
 </COPYRIGHT>
 */
-import Link from '@tiptap/extension-link';
 import { mergeAttributes } from '@tiptap/core';
+import Link from '@tiptap/extension-link';
 
 export const SafeLink = Link.extend({
     renderHTML({ HTMLAttributes }) {

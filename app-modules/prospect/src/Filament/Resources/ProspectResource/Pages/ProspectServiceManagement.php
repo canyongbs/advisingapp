@@ -42,11 +42,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Concerns\FiltersManagersFromGroups;
-use Filament\Resources\RelationManagers\RelationGroup;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\AssetCheckInRelationManager;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\AssetCheckOutRelationManager;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\ServiceRequestsRelationManager;
 
 class ProspectServiceManagement extends ManageRelatedRecords
@@ -83,10 +80,6 @@ class ProspectServiceManagement extends ManageRelatedRecords
     {
         return collect([
             ServiceRequestsRelationManager::class,
-            RelationGroup::make('Assets', [
-                AssetCheckOutRelationManager::class,
-                AssetCheckInRelationManager::class,
-            ]),
         ])
             ->map(fn ($relationManager) => self::filterRelationManagers($relationManager, $record))
             ->filter()

@@ -32,13 +32,13 @@
 </COPYRIGHT>
 -->
 <script setup>
+import DOMPurify from 'dompurify';
+import { marked } from 'marked';
 import { defineProps, onMounted, reactive, ref } from 'vue';
-import wizard from './FormKit/wizard';
 import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
 import getRecaptchaToken from '../../../app-modules/integration-google-recaptcha/resources/js/Services/GetRecaptchaToken.js';
-import { marked } from 'marked';
-import DOMPurify from 'dompurify';
 import asteriskPlugin from './FormKit/asterisk.js';
+import wizard from './FormKit/wizard';
 
 onMounted(async () => {
     await getForm().then(function () {
@@ -56,10 +56,7 @@ const data = reactive({
     steps,
     visitedSteps,
     activeStep,
-    plugins: [
-        wizardPlugin,
-        asteriskPlugin,
-    ],
+    plugins: [wizardPlugin, asteriskPlugin],
     setStep: (target) => () => {
         setStep(target);
     },
@@ -259,7 +256,6 @@ async function authenticate(formData, node) {
     }
 
     if (authentication.value.registrationAllowed) {
-
         fetch(authentication.value.url, {
             method: 'POST',
             headers: {
@@ -323,7 +319,6 @@ async function authenticate(formData, node) {
                 return;
             }
             if (json.registrationAllowed) {
-
                 authentication.value.registrationAllowed = true;
                 authentication.value.isRequested = false;
                 authentication.value.requestedMessage = json.message;
@@ -343,7 +338,8 @@ async function authenticate(formData, node) {
 </script>
 
 <template>
-    <div :style="{
+    <div
+        :style="{
             '--primary-50': formPrimaryColor[50],
             '--primary-100': formPrimaryColor[100],
             '--primary-200': formPrimaryColor[200],
@@ -359,7 +355,9 @@ async function authenticate(formData, node) {
             '--rounding-md': formRounding.md,
             '--rounding-lg': formRounding.lg,
             '--rounding-full': formRounding.full,
-        }" class="font-sans">
+        }"
+        class="font-sans"
+    >
         <div class="prose max-w-none" v-if="display && !submittedSuccess">
             <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/form/style.css'" />
 
@@ -373,8 +371,14 @@ async function authenticate(formData, node) {
 
             <div v-if="!formSubmissionUrl">
                 <FormKit type="form" @submit="authenticate" v-model="authentication">
-                    <FormKit type="email" label="Your email address" name="email" validation="required|email"
-                        validation-visibility="submit" :disabled="authentication.isRequested" />
+                    <FormKit
+                        type="email"
+                        label="Your email address"
+                        name="email"
+                        validation="required|email"
+                        validation-visibility="submit"
+                        :disabled="authentication.isRequested"
+                    />
 
                     <div v-if="authentication.registrationAllowed">
                         <p class="text-gray-700 font-medium text-xs my-3">
@@ -382,64 +386,121 @@ async function authenticate(formData, node) {
                         </p>
                         <div class="flex flex-wrap -mx-3 mb-6">
                             <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                                <FormKit type="text" label="First Name" name="first_name"
-                                    validation="required|alpha|length:0,255" validation-visibility="submit" />
+                                <FormKit
+                                    type="text"
+                                    label="First Name"
+                                    name="first_name"
+                                    validation="required|alpha|length:0,255"
+                                    validation-visibility="submit"
+                                />
                             </div>
                             <div class="w-full md:w-1/2 px-3">
-                                <FormKit type="text" label="Last Name" name="last_name"
-                                    validation="required|alpha|length:0,255" validation-visibility="submit" />
+                                <FormKit
+                                    type="text"
+                                    label="Last Name"
+                                    name="last_name"
+                                    validation="required|alpha|length:0,255"
+                                    validation-visibility="submit"
+                                />
                             </div>
                         </div>
                         <div class="flex flex-wrap -mx-3 mb-6">
                             <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                                <FormKit type="text" label="Preferred Name" name="preferred"
-                                    validation="required|alpha|length:0,255" validation-visibility="submit" />
+                                <FormKit
+                                    type="text"
+                                    label="Preferred Name"
+                                    name="preferred"
+                                    validation="required|alpha|length:0,255"
+                                    validation-visibility="submit"
+                                />
                             </div>
                             <div class="w-full md:w-1/2 px-3">
-                                <FormKit type="date" label="Birth Date" name="birthdate" validation="required"
-                                    validation-visibility="submit" />
+                                <FormKit
+                                    type="date"
+                                    label="Birth Date"
+                                    name="birthdate"
+                                    validation="required"
+                                    validation-visibility="submit"
+                                />
                             </div>
                         </div>
                         <div class="flex flex-wrap -mx-3 mb-6">
                             <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                                <FormKit type="tel" label="Mobile" name="mobile" placeholder="xxx-xxx-xxxx"
-                                    validation="required|length:0,255" validation-visibility="submit" />
+                                <FormKit
+                                    type="tel"
+                                    label="Mobile"
+                                    name="mobile"
+                                    placeholder="xxx-xxx-xxxx"
+                                    validation="required|length:0,255"
+                                    validation-visibility="submit"
+                                />
                             </div>
                             <div class="w-full md:w-1/2 px-3">
-                                <FormKit type="text" label="Address" name="address"
-                                    validation="required|length:0,255" validation-visibility="submit" />
+                                <FormKit
+                                    type="text"
+                                    label="Address"
+                                    name="address"
+                                    validation="required|length:0,255"
+                                    validation-visibility="submit"
+                                />
                             </div>
                         </div>
                         <div class="flex flex-wrap -mx-3 mb-6">
                             <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                                <FormKit type="text" label="Apartment/Unit Number" name="address_2"
-                                    validation="required|length:0,255" validation-visibility="submit" />
+                                <FormKit
+                                    type="text"
+                                    label="Apartment/Unit Number"
+                                    name="address_2"
+                                    validation="required|length:0,255"
+                                    validation-visibility="submit"
+                                />
                             </div>
                             <div class="w-full md:w-1/2 px-3">
-                                <FormKit type="text" label="City" name="city" validation="required|length:0,255"
-                                    validation-visibility="submit" />
+                                <FormKit
+                                    type="text"
+                                    label="City"
+                                    name="city"
+                                    validation="required|length:0,255"
+                                    validation-visibility="submit"
+                                />
                             </div>
                         </div>
                         <div class="flex flex-wrap -mx-3 mb-6">
                             <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                                <FormKit type="text" label="State" name="state" validation="required|length:0,255"
-                                    validation-visibility="submit" />
+                                <FormKit
+                                    type="text"
+                                    label="State"
+                                    name="state"
+                                    validation="required|length:0,255"
+                                    validation-visibility="submit"
+                                />
                             </div>
                             <div class="w-full md:w-1/2 px-3">
-                                <FormKit type="text" label="Postal" name="postal" validation="required|length:0,255"
-                                    validation-visibility="submit" />
+                                <FormKit
+                                    type="text"
+                                    label="Postal"
+                                    name="postal"
+                                    validation="required|length:0,255"
+                                    validation-visibility="submit"
+                                />
                             </div>
                         </div>
                     </div>
-
 
                     <p v-if="authentication.requestedMessage" class="text-sm">
                         {{ authentication.requestedMessage }}
                     </p>
 
-                    <FormKit type="otp" digits="6" label="Authentication code" name="code"
-                        help="We’ve sent a code to your email address." validation="required"
-                        validation-visibility="submit" v-if="authentication.isRequested" />
+                    <FormKit
+                        type="otp"
+                        digits="6"
+                        label="Authentication code"
+                        name="code"
+                        help="We’ve sent a code to your email address."
+                        validation="required"
+                        validation-visibility="submit"
+                        v-if="authentication.isRequested"
+                    />
                 </FormKit>
             </div>
 

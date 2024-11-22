@@ -51,10 +51,11 @@ defineProps({
             :key="category.id"
             class="group relative bg-white p-6 focus-within:bg-gray-50"
         >
-            <span v-if="category.icon"
-                  v-html="category.icon"
-                  class="pointer-events-none absolute top-6 text-primary-700"
-                  aria-hidden="true"
+            <span
+                v-if="category.icon"
+                v-html="category.icon"
+                class="pointer-events-none absolute top-6 text-primary-700"
+                aria-hidden="true"
             >
             </span>
             <div class="mt-8">
@@ -80,6 +81,6 @@ defineProps({
             </span>
         </div>
 
-        <div v-show="(categories.length % 2) === 1" class="hidden sm:block bg-white"></div>
+        <div v-show="categories.length % 2 === 1" class="hidden sm:block bg-white"></div>
     </div>
 </template>

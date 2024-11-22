@@ -45,7 +45,6 @@ use AdvisingApp\Interaction\Database\Seeders\InteractionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSourceSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
-use AdvisingApp\InventoryManagement\Database\Seeders\AssetSeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubStatusSeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubQualitySeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubCategorySeeder;
@@ -82,8 +81,6 @@ class NewTenantSeeder extends Seeder
             ConsentAgreementSeeder::class,
             PronounsSeeder::class,
             ApplicationSubmissionStateSeeder::class,
-            // InventoryManagement
-            ...AssetSeeder::metadataSeeders(),
 
             // Change Request
             ChangeRequestTypeSeeder::class,

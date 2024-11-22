@@ -32,11 +32,11 @@
 </COPYRIGHT>
 -->
 <script setup>
+import { consumer } from '@/Services/Consumer.js';
 import { Bars3Icon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
+import { defineProps, ref, watch } from 'vue';
 import HelpCenter from '../Components/HelpCenter.vue';
 import SearchResults from '../Components/SearchResults.vue';
-import { defineProps, ref, watch } from 'vue';
-import { consumer } from '@/Services/Consumer.js';
 
 const props = defineProps({
     searchUrl: {

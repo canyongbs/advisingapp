@@ -32,13 +32,13 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { defineProps, ref, watch } from 'vue';
-import { useRoute, onBeforeRouteUpdate } from 'vue-router';
-import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import AppLoading from '@/Components/AppLoading.vue';
+import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import { consumer } from '@/Services/Consumer.js';
-import { Bars3Icon } from "@heroicons/vue/24/outline/index.js";
-import { ChevronRightIcon, XMarkIcon, ChevronLeftIcon } from '@heroicons/vue/20/solid/index.js';
+import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/vue/20/solid/index.js';
+import { Bars3Icon } from '@heroicons/vue/24/outline/index.js';
+import { defineProps, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 const route = useRoute();
 
@@ -118,7 +118,7 @@ async function getData(page = 1) {
 </script>
 
 <template>
-    <div class="sticky top-0 z-40 flex flex-col items-center bg-gray-50 ">
+    <div class="sticky top-0 z-40 flex flex-col items-center bg-gray-50">
         <button class="w-full p-3 lg:hidden" type="button" @click="$emit('sidebarOpened')">
             <span class="sr-only">Open sidebar</span>
 
@@ -140,37 +140,50 @@ async function getData(page = 1) {
                             </h2>
 
                             <div
-                                class="flex flex-col divide-y ring-1 ring-black/5 shadow-sm px-3 pt-3 pb-1 rounded bg-white">
-
-                                <h3 class="text-lg font-semibold text-gray-800 px-3 pt-1 pb-3">Articles ({{ totalArticles }})</h3>
+                                class="flex flex-col divide-y ring-1 ring-black/5 shadow-sm px-3 pt-3 pb-1 rounded bg-white"
+                            >
+                                <h3 class="text-lg font-semibold text-gray-800 px-3 pt-1 pb-3">
+                                    Articles ({{ totalArticles }})
+                                </h3>
 
                                 <div v-if="articles.length > 0">
                                     <ul role="list" class="divide-y">
                                         <li v-for="article in articles" :key="article.id">
-                                            <router-link :to="{
-                                                name: 'view-article',
-                                                params: { categoryId: article.categoryId, articleId: article.id },
-                                            }" class="group p-3 flex items-start text-sm font-medium text-gray-700">
+                                            <router-link
+                                                :to="{
+                                                    name: 'view-article',
+                                                    params: { categoryId: article.categoryId, articleId: article.id },
+                                                }"
+                                                class="group p-3 flex items-start text-sm font-medium text-gray-700"
+                                            >
                                                 <h4>
                                                     {{ article.name }}
                                                 </h4>
 
                                                 <ChevronRightIcon
-                                                    class="opacity-0 h-5 w-5 text-primary-600 transition-all group-hover:translate-x-2 group-hover:opacity-100" />
+                                                    class="opacity-0 h-5 w-5 text-primary-600 transition-all group-hover:translate-x-2 group-hover:opacity-100"
+                                                />
                                             </router-link>
                                         </li>
                                     </ul>
                                     <div
-                                        class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+                                        class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
+                                    >
                                         <div class="flex flex-1 justify-between sm:hidden">
-                                            <button type="button"
+                                            <button
+                                                type="button"
                                                 class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                                                :disabled="currentPage === 1" @click="fetchPreviousPage">
+                                                :disabled="currentPage === 1"
+                                                @click="fetchPreviousPage"
+                                            >
                                                 Previous
                                             </button>
-                                            <button type="button"
+                                            <button
+                                                type="button"
                                                 class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                                                :disabled="currentPage === lastPage" @click="fetchNextPage">
+                                                :disabled="currentPage === lastPage"
+                                                @click="fetchNextPage"
+                                            >
                                                 Next
                                             </button>
                                         </div>
@@ -193,53 +206,72 @@ async function getData(page = 1) {
                                                 </p>
                                             </div>
                                             <div>
-                                                <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm"
-                                                    aria-label="Pagination">
-                                                    <button type="button"
+                                                <nav
+                                                    class="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                                                    aria-label="Pagination"
+                                                >
+                                                    <button
+                                                        type="button"
                                                         class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                                                        :disabled="currentPage === 1" @click="fetchPreviousPage">
+                                                        :disabled="currentPage === 1"
+                                                        @click="fetchPreviousPage"
+                                                    >
                                                         <span class="sr-only">Previous</span>
                                                         <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
                                                     </button>
 
                                                     <!-- First Page Button -->
-                                                    <button v-if="currentPage > 4"
+                                                    <button
+                                                        v-if="currentPage > 4"
                                                         class="relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                                        :class="currentPage === 1
-                                                            ? 'bg-indigo-600 text-white'
-                                                            : 'bg-white-500 text-black border border-gray-300'
-                                                            " @click="fetchPage(1)">
+                                                        :class="
+                                                            currentPage === 1
+                                                                ? 'bg-indigo-600 text-white'
+                                                                : 'bg-white-500 text-black border border-gray-300'
+                                                        "
+                                                        @click="fetchPage(1)"
+                                                    >
                                                         1
                                                     </button>
                                                     <span v-if="currentPage > 4">...</span>
 
                                                     <!-- Page Numbers -->
-                                                    <button v-for="page in visiblePages()" :key="page"
+                                                    <button
+                                                        v-for="page in visiblePages()"
+                                                        :key="page"
                                                         @click="fetchPage(page)"
-                                                        
                                                         aria-current="page {{ page }} {{ currentPage }}"
-                                                        
                                                         class="relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                                        :class="page === currentPage
-                                                            ? 'bg-indigo-600 text-white'
-                                                            : 'bg-white-500 text-black border border-gray-300'
-                                                            " :disabled="page === currentPage">
+                                                        :class="
+                                                            page === currentPage
+                                                                ? 'bg-indigo-600 text-white'
+                                                                : 'bg-white-500 text-black border border-gray-300'
+                                                        "
+                                                        :disabled="page === currentPage"
+                                                    >
                                                         {{ page }}
                                                     </button>
 
                                                     <span v-if="currentPage < lastPage - 3">...</span>
-                                                    <button v-if="currentPage < lastPage - 3"
+                                                    <button
+                                                        v-if="currentPage < lastPage - 3"
                                                         class="relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                                        :class="currentPage === lastPage
-                                                            ? 'bg-indigo-600 text-white'
-                                                            : 'bg-white-500 text-black border border-gray-300'
-                                                            " @click="fetchPage(lastPage)">
+                                                        :class="
+                                                            currentPage === lastPage
+                                                                ? 'bg-indigo-600 text-white'
+                                                                : 'bg-white-500 text-black border border-gray-300'
+                                                        "
+                                                        @click="fetchPage(lastPage)"
+                                                    >
                                                         {{ lastPage }}
                                                     </button>
 
-                                                    <button type="button"
+                                                    <button
+                                                        type="button"
                                                         class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                                                        :disabled="currentPage === lastPage" @click="fetchNextPage">
+                                                        :disabled="currentPage === lastPage"
+                                                        @click="fetchNextPage"
+                                                    >
                                                         <span class="sr-only">Next </span>
                                                         <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
                                                     </button>
@@ -251,9 +283,7 @@ async function getData(page = 1) {
                                 <div v-else class="p-3 flex items-start gap-2">
                                     <XMarkIcon class="h-5 w-5 text-gray-400" />
 
-                                    <p class="text-gray-600 text-sm font-medium">
-                                        No articles found in this category.
-                                    </p>
+                                    <p class="text-gray-600 text-sm font-medium">No articles found in this category.</p>
                                 </div>
                             </div>
                         </div>
