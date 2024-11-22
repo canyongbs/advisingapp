@@ -40,8 +40,6 @@ use Filament\Clusters\Cluster;
 
 class GlobalSettings extends Cluster
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?int $navigationSort = 110;

@@ -46,8 +46,6 @@ class SegmentResource extends Resource
 {
     protected static ?string $model = Segment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-inbox-stack';
-
     protected static ?string $navigationGroup = 'Engagement Features';
 
     protected static ?int $navigationSort = 20;

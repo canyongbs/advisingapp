@@ -55,6 +55,8 @@ class RetentionCrmDashboard extends BaseDashboard
 
     protected static string $routePath = 'retention-crm-dashboard';
 
+    protected static ?string $navigationIcon = '';
+
     public static function shouldRegisterNavigation(): bool
     {
         /** @var User $user */

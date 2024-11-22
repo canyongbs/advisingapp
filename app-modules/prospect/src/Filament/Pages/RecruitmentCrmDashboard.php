@@ -56,6 +56,8 @@ class RecruitmentCrmDashboard extends BaseDashboard
 
     protected static string $routePath = 'recruitment-crm-dashboard';
 
+    protected static ?string $navigationIcon = '';
+
     public static function shouldRegisterNavigation(): bool
     {
         /** @var User $user */

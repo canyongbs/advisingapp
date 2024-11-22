@@ -68,8 +68,6 @@ class MessageCenter extends Page
     use WithPagination;
     use LoadsTimelineRecords;
 
-    protected static ?string $navigationIcon = 'heroicon-o-inbox';
-
     protected static string $view = 'engagement::filament.pages.message-center';
 
     protected static ?string $navigationGroup = 'Engagement Features';

@@ -50,8 +50,6 @@ class StudentResource extends Resource
 
     protected static ?string $model = Student::class;
 
-    protected static ?string $navigationIcon = 'heroicon-m-users';
-
     protected static ?int $navigationSort = 20;
 
     protected static ?string $navigationGroup = 'Retention CRM';
