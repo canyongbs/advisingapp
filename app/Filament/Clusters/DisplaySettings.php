@@ -34,41 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
-use App\Models\User;
-use Filament\Forms\Form;
-use Filament\Pages\SettingsPage;
-use App\Settings\DisplaySettings;
-use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
-use App\Filament\Clusters\DisplaySettings as DisplaySettingsCluster;
+use Filament\Clusters\Cluster;
 
-class ManageDisplaySettings extends SettingsPage
+class DisplaySettings extends Cluster
 {
-    protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?string $navigationLabel = 'Dates and Times';
-
-    protected static ?int $navigationSort = 70;
-
-    protected static string $settings = DisplaySettings::class;
-
-    protected static ?string $cluster = DisplaySettingsCluster::class;
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return parent::canAccess() && $user->can('display_settings.manage');
-    }
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TimezoneSelect::make('timezone')
-                    ->helperText('Default: ' . config('app.timezone')),
-            ]);
-    }
+    protected static ?int $navigationSort = 110;
 }
