@@ -264,3 +264,26 @@ it('can filter users by multiple teams', function () {
         )
         ->assertCanNotSeeTableRecords($supportTeamGroup);
 });
+
+it('it filters users based on team', function () {
+    asSuperAdmin();
+
+    $teamA = Team::factory()->create(['name' => 'Team A']);
+    $teamB = Team::factory()->create(['name' => 'Team B']);
+
+    $userInTeamA = User::factory()
+        ->hasAttached($teamA, [], 'teams')
+        ->create();
+
+    $userInTeamB = User::factory()
+        ->hasAttached($teamB, [], 'teams')
+        ->create();
+
+    $unassignedUser = User::factory()->create();
+
+    livewire(ListUsers::class)
+        ->filterTable('teams', [$teamA->id])
+        ->assertCanSeeTableRecords(
+            $userInTeamA
+        );
+});
