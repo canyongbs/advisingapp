@@ -101,8 +101,9 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        /*** Renaming the table division_resource_hub_item to division_knowledge_base_item
-         ** Renaming the column resource_hub_item_id to knowledge_base_item_id in table
+        /**
+         * Renaming the table division_resource_hub_item to division_knowledge_base_item
+         * Renaming the column resource_hub_item_id to knowledge_base_item_id in table
         **/
         DB::beginTransaction();
 
@@ -116,10 +117,13 @@ return new class () extends Migration {
 
         DB::statement('ALTER TABLE division_knowledge_base_item RENAME CONSTRAINT division_resource_hub_item_resource_hub_item_id_foreign TO division_knowledge_base_item_knowledge_base_item_id_foreign');
 
+        DB::statement('ALTER TABLE division_knowledge_base_item RENAME COLUMN resource_hub_item_id TO knowledge_base_item_id');
+
         DB::commit();
 
-        /*** Renaming the table resource_hub_item_upvotes to knowledge_base_item_upvotes
-         ** Renaming the column resource_hub_item_id to knowledge_base_item_id in table
+        /**
+         * Renaming the table resource_hub_item_upvotes to knowledge_base_item_upvotes
+         * Renaming the column resource_hub_item_id to knowledge_base_item_id in table
         **/
         DB::beginTransaction();
 
@@ -129,16 +133,17 @@ return new class () extends Migration {
 
         DB::statement('ALTER TABLE knowledge_base_item_upvotes RENAME COLUMN resource_hub_item_id TO knowledge_base_item_id');
 
-        DB::statement('ALTER TABLE knowledge_base_item_upvotes RENAME CONSTRAINT resource_hub_item_upvotes_pkey TO knowledge_base_item_upvotes_pkey');
+        DB::statement('ALTER TABLE resource_hub_item_upvotes RENAME CONSTRAINT resource_hub_item_upvotes_pkey TO knowledge_base_item_upvotes_pkey');
 
-        DB::statement('ALTER TABLE knowledge_base_item_upvotes RENAME CONSTRAINT resource_hub_item_upvotes_resource_hub_item_id_foreign TO knowledge_base_item_upvotes_knowledge_base_item_id_foreign');
+        DB::statement('ALTER TABLE resource_hub_item_upvotes RENAME CONSTRAINT resource_hub_item_upvotes_resource_hub_item_id_foreign TO knowledge_base_item_upvotes_knowledge_base_item_id_foreign');
 
-        DB::statement('ALTER TABLE knowledge_base_item_upvotes RENAME CONSTRAINT resource_hub_item_upvotes_user_id_foreign TO knowledge_base_item_upvotes_user_id_foreign');
+        DB::statement('ALTER TABLE resource_hub_item_upvotes RENAME CONSTRAINT resource_hub_item_upvotes_user_id_foreign TO knowledge_base_item_upvotes_user_id_foreign');
 
         DB::commit();
 
-        /*** Renaming the table resource_hub_item_views to knowledge_base_item_views
-         ** Renaming the column resource_hub_item_id to knowledge_base_item_id in table
+        /**
+        * Renaming the table resource_hub_item_views to knowledge_base_item_views
+        * Renaming the column resource_hub_item_id to knowledge_base_item_id in table
         **/
         DB::beginTransaction();
 
@@ -148,11 +153,9 @@ return new class () extends Migration {
 
         DB::statement('ALTER TABLE knowledge_base_item_views RENAME COLUMN resource_hub_item_id TO knowledge_base_item_id');
 
-        DB::statement('ALTER TABLE knowledge_base_item_views RENAME CONSTRAINT resource_hub_item_views_resource_hub_item_id_foreign TO knowledge_base_item_views_knowledge_base_item_id_foreign');
+        DB::statement('ALTER TABLE resource_hub_item_views RENAME CONSTRAINT resource_hub_item_views_resource_hub_item_id_foreign TO knowledge_base_item_views_knowledge_base_item_id_foreign');
 
-        DB::statement('ALTER TABLE knowledge_base_item_views RENAME CONSTRAINT resource_hub_item_views_user_id_foreign TO knowledge_base_item_views_user_id_foreign');
-
-        DB::statement('ALTER TABLE knowledge_base_item_views RENAME CONSTRAINT resource_hub_item_views_pkey TO knowledge_base_item_views_pkey');
+        DB::statement('ALTER TABLE resource_hub_item_views RENAME CONSTRAINT resource_hub_item_views_user_id_foreign TO knowledge_base_item_views_user_id_foreign');
 
         DB::commit();
     }
