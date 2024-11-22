@@ -49,9 +49,19 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Notification\Models\Subscription;
 
 trait CanManageEducatableSubscriptions
 {
+    public static function canAccess(array $parameters = []): bool
+    {
+        if (! static::getResource()::canView($parameters['record'])) {
+            return false;
+        }
+
+        return auth()->user()->can('viewAny', Subscription::class);
+    }
+
     public function table(Table $table): Table
     {
         return $table

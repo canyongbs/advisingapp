@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Wid
 
 use Filament\Widgets\Widget;
 use Livewire\Attributes\Locked;
+use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Alert\Enums\AlertStatus;
 use AdvisingApp\Alert\Enums\AlertSeverity;
@@ -55,7 +56,7 @@ class EducatableAlertsWidget extends Widget
 
     public static function canView(): bool
     {
-        return auth()->user()->can('alert.view-any');
+        return auth()->user()->can('viewAny', Alert::class);
     }
 
     protected function getActiveCount(): int

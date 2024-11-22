@@ -42,6 +42,7 @@ use App\Models\Scopes\HasLicense;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
+use AdvisingApp\CareTeam\Models\CareTeam;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
@@ -52,6 +53,15 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 trait CanManageEducatableCareTeam
 {
+    public static function canAccess(array $parameters = []): bool
+    {
+        if (! static::getResource()::canView($parameters['record'])) {
+            return false;
+        }
+
+        return auth()->user()->can('viewAny', CareTeam::class);
+    }
+
     public function table(Table $table): Table
     {
         return $table

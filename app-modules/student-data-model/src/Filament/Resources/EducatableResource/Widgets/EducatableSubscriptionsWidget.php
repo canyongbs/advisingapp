@@ -39,6 +39,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Wid
 use Filament\Widgets\Widget;
 use Livewire\Attributes\Locked;
 use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
 class EducatableSubscriptionsWidget extends Widget
@@ -53,7 +54,7 @@ class EducatableSubscriptionsWidget extends Widget
 
     public static function canView(): bool
     {
-        return auth()->user()->can('subscription.view-any');
+        return auth()->user()->can('viewAny', Subscription::class);
     }
 
     protected function getSubscribedUsers(): array

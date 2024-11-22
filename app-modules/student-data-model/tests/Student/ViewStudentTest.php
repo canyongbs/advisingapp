@@ -49,6 +49,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\E
 use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableAlertsWidget;
 use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableCareTeamWidget;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EventsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableActivityFeedWidget;
 use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableSubscriptionsWidget;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
@@ -65,7 +66,7 @@ it('requires proper access', function () {
     actingAs($user);
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertForbidden();
 
@@ -73,9 +74,36 @@ it('requires proper access', function () {
     $user->givePermissionTo('student.*.view');
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk();
+});
+
+it('renders the EducatableActivityFeedWidget based on proper access', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    $student = Student::factory()->create();
+
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+
+    actingAs($user);
+
+    $widget = EducatableActivityFeedWidget::class;
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertOk()
+        ->assertDontSeeLivewire($widget);
+
+    $user->givePermissionTo('timeline.access');
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($widget);
 });
 
 it('renders the ProgramsRelationManager based on proper access', function () {
@@ -91,7 +119,7 @@ it('renders the ProgramsRelationManager based on proper access', function () {
     $relationManager = ProgramsRelationManager::class;
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertDontSeeLivewire($relationManager);
@@ -99,7 +127,7 @@ it('renders the ProgramsRelationManager based on proper access', function () {
     $user->givePermissionTo('program.view-any');
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);
@@ -118,7 +146,7 @@ it('renders the EnrollmentsRelationManager based on proper access', function () 
     $relationManager = EnrollmentsRelationManager::class;
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertDontSeeLivewire($relationManager);
@@ -126,7 +154,7 @@ it('renders the EnrollmentsRelationManager based on proper access', function () 
     $user->givePermissionTo('enrollment.view-any');
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);
@@ -145,7 +173,7 @@ it('renders the EngagementsRelationManager based on proper access', function () 
     $relationManager = EngagementsRelationManager::class;
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertDontSeeLivewire($relationManager);
@@ -153,7 +181,31 @@ it('renders the EngagementsRelationManager based on proper access', function () 
     $user->givePermissionTo('engagement.view-any');
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($relationManager);
+
+    $user->revokePermissionTo('engagement.view-any');
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertOk()
+        ->assertDontSeeLivewire($relationManager);
+
+    $user->givePermissionTo('engagement_response.view-any');
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($relationManager);
+
+    $user->givePermissionTo('engagement.view-any');
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);
@@ -172,7 +224,7 @@ it('renders the InteractionsRelationManager based on proper access', function ()
     $relationManager = InteractionsRelationManager::class;
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertDontSeeLivewire($relationManager);
@@ -180,7 +232,7 @@ it('renders the InteractionsRelationManager based on proper access', function ()
     $user->givePermissionTo('interaction.view-any');
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);
@@ -199,7 +251,7 @@ it('renders the EngagementFilesRelationManager based on proper access', function
     $relationManager = EngagementFilesRelationManager::class;
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertDontSeeLivewire($relationManager);
@@ -207,7 +259,7 @@ it('renders the EngagementFilesRelationManager based on proper access', function
     $user->givePermissionTo('engagement_file.view-any');
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);
@@ -226,7 +278,7 @@ it('renders the EducatableAlertsWidget based on proper access', function () {
     $widget = EducatableAlertsWidget::class;
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertDontSeeLivewire($widget);
@@ -234,7 +286,7 @@ it('renders the EducatableAlertsWidget based on proper access', function () {
     $user->givePermissionTo('alert.view-any');
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertSeeLivewire($widget);
@@ -253,7 +305,7 @@ it('renders the EducatableTasksWidget based on proper access', function () {
     $widget = EducatableTasksWidget::class;
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertDontSeeLivewire($widget);
@@ -261,7 +313,7 @@ it('renders the EducatableTasksWidget based on proper access', function () {
     $user->givePermissionTo('task.view-any');
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertSeeLivewire($widget);
@@ -280,7 +332,7 @@ it('renders the EducatableCareTeamWidget based on proper access', function () {
     $widget = EducatableCareTeamWidget::class;
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertDontSeeLivewire($widget);
@@ -288,11 +340,11 @@ it('renders the EducatableCareTeamWidget based on proper access', function () {
     $user->givePermissionTo('care_team.view-any');
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertSeeLivewire($widget);
-})->skip('This test is skipped because the relationship is to Users, we need to change the manager to focus permissions on CareTeam permissions.');
+});
 
 it('renders the EducatableSubscriptionsWidget based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -307,7 +359,7 @@ it('renders the EducatableSubscriptionsWidget based on proper access', function 
     $widget = EducatableSubscriptionsWidget::class;
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertDontSeeLivewire($widget);
@@ -315,11 +367,11 @@ it('renders the EducatableSubscriptionsWidget based on proper access', function 
     $user->givePermissionTo('subscription.view-any');
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertSeeLivewire($widget);
-})->skip('This test is skipped because the relationship is to Users, we need to change the manager to focus permissions on Subscription permissions.');
+});
 
 it('renders the FormSubmissionsRelationManager based on Feature access', function () {
     $student = Student::factory()->create();
@@ -335,7 +387,7 @@ it('renders the FormSubmissionsRelationManager based on Feature access', functio
     $relationManager = FormSubmissionsRelationManager::class;
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertDontSeeLivewire($relationManager);
@@ -345,7 +397,7 @@ it('renders the FormSubmissionsRelationManager based on Feature access', functio
     $licenseSettings->save();
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);
@@ -365,7 +417,7 @@ it('renders the EventsRelationManager based on Feature access', function () {
     $relationManager = EventsRelationManager::class;
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertDontSeeLivewire($relationManager);
@@ -375,7 +427,7 @@ it('renders the EventsRelationManager based on Feature access', function () {
     $licenseSettings->save();
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);
@@ -395,7 +447,7 @@ it('renders the ApplicationSubmissionsRelationManager based on Feature access', 
     $relationManager = ApplicationSubmissionsRelationManager::class;
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertDontSeeLivewire($relationManager);
@@ -405,7 +457,7 @@ it('renders the ApplicationSubmissionsRelationManager based on Feature access', 
     $licenseSettings->save();
 
     livewire(ViewStudent::class, [
-        'record' => $student,
+        'record' => $student->getKey(),
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);

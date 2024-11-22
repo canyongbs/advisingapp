@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Wid
 
 use Filament\Widgets\Widget;
 use Livewire\Attributes\Locked;
+use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Task\Enums\TaskStatus;
 use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -54,7 +55,7 @@ class EducatableTasksWidget extends Widget
 
     public static function canView(): bool
     {
-        return auth()->user()->can('task.view-any');
+        return auth()->user()->can('viewAny', Task::class);
     }
 
     protected function getStatusCounts(): array

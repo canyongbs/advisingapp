@@ -39,6 +39,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Wid
 use Filament\Widgets\Widget;
 use Livewire\Attributes\Locked;
 use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
 class EducatableCareTeamWidget extends Widget
@@ -53,7 +54,7 @@ class EducatableCareTeamWidget extends Widget
 
     public static function canView(): bool
     {
-        return auth()->user()->can('care_team.view-any');
+        return auth()->user()->can('viewAny', CareTeam::class);
     }
 
     protected function getCareTeam(): array

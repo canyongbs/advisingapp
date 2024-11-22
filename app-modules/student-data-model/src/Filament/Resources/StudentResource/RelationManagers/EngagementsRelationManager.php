@@ -41,9 +41,6 @@ use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
-
-use function Filament\authorize;
-
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -69,7 +66,6 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Auth\Access\AuthorizationException;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
@@ -244,13 +240,16 @@ class EngagementsRelationManager extends RelationManager
 
     public function table(Table $table): Table
     {
+        $canAccessEngagements = auth()->user()->can('viewAny', Engagement::class);
+        $canAccessEngagementResponses = auth()->user()->can('viewAny', EngagementResponse::class);
+
         return $table
             ->emptyStateHeading('No email or text messages.')
             ->emptyStateDescription('Create an email or text message to get started.')
             ->defaultSort('record_sortable_date', 'desc')
             ->modifyQueryUsing(fn (Builder $query) => $query->whereHasMorph('timelineable', [
-                Engagement::class,
-                EngagementResponse::class,
+                ...($canAccessEngagements ? [Engagement::class] : []),
+                ...($canAccessEngagements ? [EngagementResponse::class] : []),
             ]))
             ->columns([
                 TextColumn::make('direction')
@@ -325,7 +324,8 @@ class EngagementsRelationManager extends RelationManager
                     ->modifyQueryUsing(
                         fn (Builder $query, array $data) => $query
                             ->when($data['value'], fn (Builder $query) => $query->whereHasMorph('timelineable', $data['value']))
-                    ),
+                    )
+                    ->visible($canAccessEngagements && $canAccessEngagementResponses),
                 SelectFilter::make('type')
                     ->options(EngagementDeliveryMethod::class)
                     ->modifyQueryUsing(
@@ -358,16 +358,7 @@ class EngagementsRelationManager extends RelationManager
 
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        if (static::shouldSkipAuthorization()) {
-            return true;
-        }
-
-        $model = Engagement::class;
-
-        try {
-            return authorize('viewAny', $model, static::shouldCheckPolicyExistence())->allowed();
-        } catch (AuthorizationException $exception) {
-            return $exception->toResponse()->allowed();
-        }
+        return auth()->user()->can('viewAny', Engagement::class)
+            || auth()->user()->can('viewAny', EngagementResponse::class);
     }
 }

@@ -65,6 +65,15 @@ use AdvisingApp\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 
 trait CanManageEducatableTasks
 {
+    public static function canAccess(array $parameters = []): bool
+    {
+        if (! static::getResource()::canView($parameters['record'])) {
+            return false;
+        }
+
+        return parent::canAccess($parameters);
+    }
+
     public function form(Form $form): Form
     {
         return $form
