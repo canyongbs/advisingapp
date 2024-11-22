@@ -32,7 +32,7 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { defineProps, ref, reactive, onMounted } from 'vue';
+import { defineProps, onMounted, reactive, ref } from 'vue';
 import wizard from '../../form/src/FormKit/wizard';
 
 import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
@@ -54,10 +54,7 @@ const data = reactive({
     steps,
     visitedSteps,
     activeStep,
-    plugins: [
-        wizardPlugin,
-        asteriskPlugin,
-    ],
+    plugins: [wizardPlugin, asteriskPlugin],
     setStep: (target) => () => {
         setStep(target);
     },

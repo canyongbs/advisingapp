@@ -32,11 +32,11 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { defineProps, ref, reactive, onMounted } from 'vue';
-import wizard from '../../form/src/FormKit/wizard';
+import { defineProps, onMounted, reactive, ref } from 'vue';
 import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
 import getRecaptchaToken from '../../../app-modules/integration-google-recaptcha/resources/js/Services/GetRecaptchaToken.js';
 import asteriskPlugin from '../../form/src/FormKit/asterisk.js';
+import wizard from '../../form/src/FormKit/wizard';
 onMounted(async () => {
     await getForm().then(function () {
         if (formRecaptchaEnabled.value === true) {
@@ -53,10 +53,7 @@ const data = reactive({
     steps,
     visitedSteps,
     activeStep,
-    plugins: [
-        wizardPlugin,
-        asteriskPlugin,
-    ],
+    plugins: [wizardPlugin, asteriskPlugin],
     setStep: (target) => () => {
         setStep(target);
     },

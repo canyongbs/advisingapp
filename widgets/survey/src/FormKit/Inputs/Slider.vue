@@ -32,8 +32,7 @@
 </COPYRIGHT>
 -->
 <script setup>
-
-import {ref, watch} from "vue";
+import { ref, watch } from 'vue';
 
 const props = defineProps({
     context: Object,
@@ -47,8 +46,7 @@ props.context.node.input(value.value);
 
 watch(value, (value) => {
     props.context.node.input(value);
-})
-
+});
 </script>
 
 <template>
@@ -59,10 +57,18 @@ watch(value, (value) => {
                     <span>{{ min }}</span>
                     <span>{{ max }}</span>
                 </div>
-                <input class="w-full accent-primary-500" type="range" :min="min" :max="max" v-model="value">
+                <input class="w-full accent-primary-500" type="range" :min="min" :max="max" v-model="value" />
             </div>
-            <div class="flex items-center max-w-md ring-1 ring-gray-400 focus-within:ring-primary-500 focus-within:ring-2 rounded">
-                <input class="appearance-none bg-transparent focus:outline-none focus:ring-0 focus:shadow-none font-sans w-full px-3 py-2 border-none text-sm text-gray-700 placeholder-gray-400" type="number" :min="min" :max="max" v-model="value">
+            <div
+                class="flex items-center max-w-md ring-1 ring-gray-400 focus-within:ring-primary-500 focus-within:ring-2 rounded"
+            >
+                <input
+                    class="appearance-none bg-transparent focus:outline-none focus:ring-0 focus:shadow-none font-sans w-full px-3 py-2 border-none text-sm text-gray-700 placeholder-gray-400"
+                    type="number"
+                    :min="min"
+                    :max="max"
+                    v-model="value"
+                />
             </div>
         </div>
     </div>

@@ -42,10 +42,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Concerns\FiltersManagersFromGroups;
-use Filament\Resources\RelationManagers\RelationGroup;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\AssetCheckInRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\AssetCheckOutRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ServiceRequestsRelationManager;
 
 class StudentServiceManagement extends ManageRelatedRecords
@@ -83,10 +80,6 @@ class StudentServiceManagement extends ManageRelatedRecords
     {
         return collect([
             ServiceRequestsRelationManager::class,
-            RelationGroup::make('Assets', [
-                AssetCheckOutRelationManager::class,
-                AssetCheckInRelationManager::class,
-            ]),
         ])
             ->map(fn ($relationManager) => self::filterRelationManagers($relationManager, $record))
             ->filter()

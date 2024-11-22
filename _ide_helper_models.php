@@ -2745,327 +2745,6 @@ namespace AdvisingApp\Interaction\Models{
 	class IdeHelperInteractionType {}
 }
 
-namespace AdvisingApp\InventoryManagement\Models{
-/**
- * AdvisingApp\InventoryManagement\Models\Asset
- *
- * @property-read string $purchase_age
- * @property string $id
- * @property string $serial_number
- * @property string $name
- * @property string $description
- * @property string $type_id
- * @property string $status_id
- * @property string $location_id
- * @property \Illuminate\Support\Carbon $purchase_date
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\AssetCheckIn> $checkIns
- * @property-read int|null $check_ins_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\AssetCheckOut> $checkOuts
- * @property-read int|null $check_outs_count
- * @property-read \AdvisingApp\InventoryManagement\Models\AssetCheckIn|null $latestCheckIn
- * @property-read \AdvisingApp\InventoryManagement\Models\AssetCheckOut|null $latestCheckOut
- * @property-read \AdvisingApp\InventoryManagement\Models\AssetLocation $location
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\MaintenanceActivity> $maintenanceActivities
- * @property-read int|null $maintenance_activities_count
- * @property-read \AdvisingApp\InventoryManagement\Models\AssetStatus $status
- * @property-read \AdvisingApp\InventoryManagement\Models\AssetType $type
- * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Asset newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Asset newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Asset onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Asset query()
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereLocationId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset wherePurchaseDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereSerialNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereStatusId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Asset withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAsset {}
-}
-
-namespace AdvisingApp\InventoryManagement\Models{
-/**
- * AdvisingApp\InventoryManagement\Models\AssetCheckIn
- *
- * @property string $id
- * @property string $asset_id
- * @property string|null $checked_in_by_type
- * @property string|null $checked_in_by_id
- * @property string $checked_in_from_type
- * @property string $checked_in_from_id
- * @property \Illuminate\Support\Carbon $checked_in_at
- * @property string|null $notes
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \AdvisingApp\InventoryManagement\Models\Asset $asset
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\InventoryManagement\Models\AssetCheckOut|null $checkOut
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $checkedInBy
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $checkedInFrom
- * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timelineRecord
- * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetCheckInFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn query()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereAssetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereCheckedInAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereCheckedInById($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereCheckedInByType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereCheckedInFromId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereCheckedInFromType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereNotes($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAssetCheckIn {}
-}
-
-namespace AdvisingApp\InventoryManagement\Models{
-/**
- * AdvisingApp\InventoryManagement\Models\AssetCheckOut
- *
- * @property string $id
- * @property string $asset_id
- * @property string|null $asset_check_in_id
- * @property string|null $checked_out_by_type
- * @property string|null $checked_out_by_id
- * @property string $checked_out_to_type
- * @property string $checked_out_to_id
- * @property \Illuminate\Support\Carbon $checked_out_at
- * @property \Illuminate\Support\Carbon|null $expected_check_in_at
- * @property string|null $notes
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \AdvisingApp\InventoryManagement\Models\Asset $asset
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\InventoryManagement\Models\AssetCheckIn|null $checkIn
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $checkedOutBy
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $checkedOutTo
- * @property-read mixed $status
- * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timelineRecord
- * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetCheckOutFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut query()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereAssetCheckInId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereAssetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereCheckedOutAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereCheckedOutById($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereCheckedOutByType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereCheckedOutToId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereCheckedOutToType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereExpectedCheckInAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereNotes($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut withoutReturned()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAssetCheckOut {}
-}
-
-namespace AdvisingApp\InventoryManagement\Models{
-/**
- * AdvisingApp\InventoryManagement\Models\AssetLocation
- *
- * @property string $id
- * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\Asset> $assets
- * @property-read int|null $assets_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetLocationFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation query()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAssetLocation {}
-}
-
-namespace AdvisingApp\InventoryManagement\Models{
-/**
- * AdvisingApp\InventoryManagement\Models\AssetStatus
- *
- * @property string $id
- * @property \AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification $classification
- * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\Asset> $assets
- * @property-read int|null $assets_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetStatusFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus query()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus whereClassification($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAssetStatus {}
-}
-
-namespace AdvisingApp\InventoryManagement\Models{
-/**
- * AdvisingApp\InventoryManagement\Models\AssetType
- *
- * @property string $id
- * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\Asset> $assets
- * @property-read int|null $assets_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetTypeFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType query()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAssetType {}
-}
-
-namespace AdvisingApp\InventoryManagement\Models{
-/**
- * AdvisingApp\InventoryManagement\Models\MaintenanceActivity
- *
- * @property string $id
- * @property string $asset_id
- * @property string|null $maintenance_provider_id
- * @property string $details
- * @property \Illuminate\Support\Carbon|null $scheduled_date
- * @property \Illuminate\Support\Carbon|null $completed_date
- * @property \AdvisingApp\InventoryManagement\Enums\MaintenanceActivityStatus $status
- * @property string|null $notes
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \AdvisingApp\InventoryManagement\Models\Asset $asset
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\InventoryManagement\Models\MaintenanceProvider|null $maintenanceProvider
- * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timelineRecord
- * @method static \AdvisingApp\InventoryManagement\Database\Factories\MaintenanceActivityFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity query()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereAssetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereCompletedDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereDetails($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereMaintenanceProviderId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereNotes($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereScheduledDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperMaintenanceActivity {}
-}
-
-namespace AdvisingApp\InventoryManagement\Models{
-/**
- * AdvisingApp\InventoryManagement\Models\MaintenanceProvider
- *
- * @property string $id
- * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\MaintenanceActivity> $maintenanceActivities
- * @property-read int|null $maintenance_activities_count
- * @method static \AdvisingApp\InventoryManagement\Database\Factories\MaintenanceProviderFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider query()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperMaintenanceProvider {}
-}
-
 namespace AdvisingApp\MeetingCenter\Models{
 /**
  * AdvisingApp\MeetingCenter\Models\Calendar
@@ -3647,10 +3326,6 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read int|null $alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $applicationSubmissions
  * @property-read int|null $application_submissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\AssetCheckIn> $assetCheckIns
- * @property-read int|null $asset_check_ins_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\AssetCheckOut> $assetCheckOuts
- * @property-read int|null $asset_check_outs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\BasicNeeds\Models\BasicNeedsProgram> $basicNeedsPrograms
@@ -3952,7 +3627,7 @@ namespace AdvisingApp\ResourceHub\Models{
  * AdvisingApp\ResourceHub\Models\ResourceHubArticleUpvote
  *
  * @property string $id
- * @property string $knowledge_base_item_id
+ * @property string $resource_hub_item_id
  * @property string $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -3965,7 +3640,7 @@ namespace AdvisingApp\ResourceHub\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleUpvote whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleUpvote whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleUpvote whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleUpvote whereKnowledgeBaseItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleUpvote whereResourceHubItemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleUpvote whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleUpvote whereUserId($value)
  * @mixin \Eloquent
@@ -3979,7 +3654,7 @@ namespace AdvisingApp\ResourceHub\Models{
  * AdvisingApp\ResourceHub\Models\ResourceHubArticleView
  *
  * @property string $id
- * @property string $knowledge_base_item_id
+ * @property string $resource_hub_item_id
  * @property string|null $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -3992,7 +3667,7 @@ namespace AdvisingApp\ResourceHub\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleView whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleView whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleView whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleView whereKnowledgeBaseItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleView whereResourceHubItemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleView whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleView whereUserId($value)
  * @mixin \Eloquent
@@ -5011,10 +4686,6 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $applicationSubmissions
  * @property-read int|null $application_submissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\AssetCheckIn> $assetCheckIns
- * @property-read int|null $asset_check_ins_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\AssetCheckOut> $assetCheckOuts
- * @property-read int|null $asset_check_outs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\BasicNeeds\Models\BasicNeedsProgram> $basicNeedsPrograms
