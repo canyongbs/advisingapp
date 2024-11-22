@@ -40,12 +40,12 @@ use Filament\Support\Contracts\HasLabel;
 
 enum PortalType: string implements HasLabel
 {
-    case KnowledgeManagement = 'knowledge_management';
+    case ResourceHub = 'resource_hub';
 
     public function getLabel(): ?string
     {
         return match ($this) {
-            PortalType::KnowledgeManagement => 'Knowledge Management',
+            PortalType::ResourceHub => 'Resource Hub',
         };
     }
 }

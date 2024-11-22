@@ -94,7 +94,7 @@
 
     <div class="w-full lg:w-1/2">
         <x-filament-panels::login-version-card :themeChangelogUrl="$themeChangelogUrl" />
-        <x-filament-panels::login-knowledge-portal-card :productKnowledgebaseUrl="$productKnowledgebaseUrl" />
+        <x-filament-panels::login-resource-portal-card :productResourcehubUrl="$productResourcehubUrl" />
     </div>
 
 </div>

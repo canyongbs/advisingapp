@@ -45,33 +45,33 @@ class GeneratePortalEmbedCode
     public function handle(PortalType $portal): string
     {
         return match ($portal) {
-            PortalType::KnowledgeManagement => (function () {
-                $scriptUrl = url('js/portals/knowledge-management/advising-app-knowledge-management-portal.js?');
+            PortalType::ResourceHub => (function () {
+                $scriptUrl = url('js/portals/resource-hub/advising-app-resource-hub-portal.js?');
 
-                $portalAccessUrl = route('portal.knowledge-management.show');
+                $portalAccessUrl = route('portal.resource-hub.show');
 
                 $userAuthenticationUrl = route('api.user.auth-check');
 
                 $portalDefinitionUrl = URL::to(
                     URL::signedRoute(
-                        name: 'api.portal.knowledge-management.define',
+                        name: 'api.portal.resource-hub.define',
                         absolute: false,
                     )
                 );
 
                 $portalSearchUrl = URL::to(
                     URL::signedRoute(
-                        name: 'api.portal.knowledge-management.search',
+                        name: 'api.portal.resource-hub.search',
                         absolute: false,
                     )
                 );
 
                 $appUrl = config('app.url');
 
-                $apiUrl = route('api.portal.knowledge-management.define');
+                $apiUrl = route('api.portal.resource-hub.define');
 
                 return <<<EOD
-                <knowledge-management-portal-embed url="{$portalDefinitionUrl}" user-authentication-url={$userAuthenticationUrl} access-url={$portalAccessUrl} search-url="{$portalSearchUrl}" app-url="{$appUrl}" api-url="{$apiUrl}"></knowledge-management-portal-embed>
+                <resource-hub-portal-embed url="{$portalDefinitionUrl}" user-authentication-url={$userAuthenticationUrl} access-url={$portalAccessUrl} search-url="{$portalSearchUrl}" app-url="{$appUrl}" api-url="{$apiUrl}"></resource-hub-portal-embed>
                 <script src="{$scriptUrl}"></script>
                 EOD;
             })(),

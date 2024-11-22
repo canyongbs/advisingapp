@@ -55,11 +55,11 @@ use AdvisingApp\Prospect\Database\Seeders\ProspectSourceSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
 use AdvisingApp\InventoryManagement\Database\Seeders\AssetSeeder;
+use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubStatusSeeder;
+use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubArticleSeeder;
+use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubQualitySeeder;
+use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubCategorySeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestSeeder;
-use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
-use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseArticleSeeder;
-use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseQualitySeeder;
-use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseCategorySeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ChangeRequestTypeSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ChangeRequestStatusSeeder;
@@ -93,9 +93,9 @@ class DatabaseSeeder extends Seeder
             ServiceRequestTypeSeeder::class,
             ProspectStatusSeeder::class,
             ProspectSourceSeeder::class,
-            KnowledgeBaseCategorySeeder::class,
-            KnowledgeBaseQualitySeeder::class,
-            KnowledgeBaseStatusSeeder::class,
+            ResourceHubCategorySeeder::class,
+            ResourceHubQualitySeeder::class,
+            ResourceHubStatusSeeder::class,
             ...InteractionSeeder::metadataSeeders(),
             ConsentAgreementSeeder::class,
             PronounsSeeder::class,
@@ -103,7 +103,7 @@ class DatabaseSeeder extends Seeder
             ServiceRequestSeeder::class,
             ServiceRequestUpdateSeeder::class,
             ProspectSeeder::class,
-            KnowledgeBaseArticleSeeder::class,
+            ResourceHubArticleSeeder::class,
             TaskSeeder::class,
             FormSeeder::class,
             AlertSeeder::class,
