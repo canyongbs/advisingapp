@@ -49,7 +49,7 @@ class ManageDisplaySettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Dates and Times';
 
-    protected static ?int $navigationSort = 70;
+    protected static ?int $navigationSort = 10;
 
     protected static string $settings = DisplaySettings::class;
 
