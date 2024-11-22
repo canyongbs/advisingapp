@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "168206288872581dc5b9b8dab1aadc3b",
+    "content-hash": "da5b58775d997c00e5165cdf8b54b6b3",
     "packages": [
         {
             "name": "amphp/amp",
@@ -1145,9 +1145,15 @@
         {
             "name": "bacon/bacon-qr-code",
             "version": "v3.0.1",
+            "source": {
                 "type": "git",
                 "url": "https://github.com/Bacon/BaconQrCode.git",
                 "reference": "f9cc1f52b5a463062251d666761178dbdb6b544f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Bacon/BaconQrCode/zipball/f9cc1f52b5a463062251d666761178dbdb6b544f",
+                "reference": "f9cc1f52b5a463062251d666761178dbdb6b544f",
                 "shasum": ""
             },
             "require": {
