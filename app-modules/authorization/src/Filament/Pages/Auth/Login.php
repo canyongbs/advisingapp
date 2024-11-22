@@ -74,7 +74,7 @@ class Login extends FilamentLogin
 
     public string $themeChangelogUrl = '';
 
-    public string $productKnowledgebaseUrl = '';
+    public string $productResourcehubUrl = '';
 
     public function mount(): void
     {
@@ -82,7 +82,7 @@ class Login extends FilamentLogin
 
         $this->themeChangelogUrl = ! empty($themeSettings->changelog_url) ? $themeSettings->changelog_url : 'https://advising.app/changelog/';
 
-        $this->productKnowledgebaseUrl = ! empty($themeSettings->product_knowledge_base_url) ? $themeSettings->product_knowledge_base_url : 'https://canyongbs.aiding.app/portal/categories/9bcc47d1-05be-40d2-bf95-9bd719209b06';
+        $this->productResourcehubUrl = ! empty($themeSettings->product_resource_hub_url) ? $themeSettings->product_resource_hub_url : 'https://canyongbs.aiding.app/portal/categories/9bcc47d1-05be-40d2-bf95-9bd719209b06';
     }
 
     public function authenticate(): ?LoginResponse

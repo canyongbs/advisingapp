@@ -67,7 +67,7 @@ class ThemeSettings extends SettingsWithMedia
 
     public ?string $changelog_url = null;
 
-    public ?string $product_knowledge_base_url = null;
+    public ?string $product_resource_hub_url = null;
 
     public static function group(): string
     {

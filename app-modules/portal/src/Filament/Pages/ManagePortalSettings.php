@@ -123,10 +123,10 @@ class ManagePortalSettings extends SettingsPage
                         Toggle::make('has_notifications')
                             ->label('Portal Notifications'),
                         Toggle::make('has_knowledge_base')
-                            ->label('Knowledge Management')
+                            ->label('Resource Hub')
                             ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
-                            ->hintIconTooltip('Knowledge Management is not a part of your current subscription.'),
+                            ->hintIconTooltip('Resource Hub is not a part of your current subscription.'),
                         Toggle::make('has_tasks')
                             ->label('Tasks'),
                         Toggle::make('has_files_and_documents')
@@ -143,13 +143,13 @@ class ManagePortalSettings extends SettingsPage
                             ->hintIconTooltip('Surveys are not a part of your current subscription.'),
                     ])
                     ->columns(3),
-                Section::make('Knowledge Portal')
+                Section::make('Resource Portal')
                     ->schema([
                         Toggle::make('knowledge_management_portal_enabled')
-                            ->label('Knowledge Management')
+                            ->label('Resource Hub')
                             ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
-                            ->hintIconTooltip('Knowledge Management is not a part of your current subscription.')
+                            ->hintIconTooltip('Resource Hub is not a part of your current subscription.')
                             ->live()
                             ->columnSpanFull(),
                         ColorSelect::make('knowledge_management_portal_primary_color')
@@ -157,7 +157,7 @@ class ManagePortalSettings extends SettingsPage
                             ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled'))
                             ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
                             ->hintIcon(fn (ColorSelect $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
-                            ->hintIconTooltip('Knowledge Management is not a part of your current subscription.')
+                            ->hintIconTooltip('Resource Hub is not a part of your current subscription.')
                             ->columnSpan(1),
                         Select::make('knowledge_management_portal_rounding')
                             ->label('Rounding')
@@ -165,7 +165,7 @@ class ManagePortalSettings extends SettingsPage
                             ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled'))
                             ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
                             ->hintIcon(fn (Select $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
-                            ->hintIconTooltip('Knowledge Management is not a part of your current subscription.')
+                            ->hintIconTooltip('Resource Hub is not a part of your current subscription.')
                             ->columnSpan(1),
                         TextInput::make('knowledge_management_portal_authorized_domain')
                             ->label('Authorized Domain')
@@ -173,7 +173,7 @@ class ManagePortalSettings extends SettingsPage
                             ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled'))
                             ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
                             ->hintIcon(fn (TextInput $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
-                            ->hintIconTooltip('Knowledge Management is not a part of your current subscription.')
+                            ->hintIconTooltip('Resource Hub is not a part of your current subscription.')
                             ->columnSpanFull(),
                         Toggle::make('knowledge_management_portal_requires_authentication')
                             ->label('Require Authentication')
@@ -189,7 +189,7 @@ class ManagePortalSettings extends SettingsPage
                             ->columnSpanFull(),
                         Actions::make([
                             Action::make('view')
-                                ->url(fn () => route('portal.knowledge-management.show'))
+                                ->url(fn () => route('portal.resource-hub.show'))
                                 ->icon('heroicon-m-arrow-top-right-on-square')
                                 ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
                                 ->openUrlInNewTab(),
@@ -201,7 +201,7 @@ class ManagePortalSettings extends SettingsPage
                                         TextEntry::make('snippet')
                                             ->label('Click to Copy')
                                             ->state(function () {
-                                                $code = resolve(GeneratePortalEmbedCode::class)->handle(PortalType::KnowledgeManagement);
+                                                $code = resolve(GeneratePortalEmbedCode::class)->handle(PortalType::ResourceHub);
 
                                                 $state = <<<EOD
                                                 ```
@@ -212,7 +212,7 @@ class ManagePortalSettings extends SettingsPage
                                                 return str($state)->markdown()->toHtmlString();
                                             })
                                             ->copyable()
-                                            ->copyableState(fn () => resolve(GeneratePortalEmbedCode::class)->handle(PortalType::KnowledgeManagement))
+                                            ->copyableState(fn () => resolve(GeneratePortalEmbedCode::class)->handle(PortalType::ResourceHub))
                                             ->copyMessage('Copied!')
                                             ->copyMessageDuration(1500)
                                             ->extraAttributes(['class' => 'embed-code-snippet']),
