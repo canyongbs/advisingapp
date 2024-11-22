@@ -35,7 +35,6 @@
         "canyon-gbs/advising-app-integration-microsoft-clarity": "*",
         "canyon-gbs/advising-app-integration-twilio": "*",
         "canyon-gbs/advising-app-interaction": "*",
-        "canyon-gbs/advising-app-inventory-management": "*",
         "canyon-gbs/advising-app-resource-hub": "*",
         "canyon-gbs/advising-app-meeting-center": "*",
         "canyon-gbs/advising-app-notification": "*",
@@ -178,7 +177,7 @@
             "rm -f ./.php-cs-fixer.cache"
         ],
         "prettier": [
-            "./node_modules/.bin/prettier \"resources/**/*{.css,.blade.php,.js}\" \"app-modules/**/resources/**/*{.css,.blade.php,.js}\" \"graphql/*.graphql\" \"app-modules/**/graphql/*.graphql\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
+            "./node_modules/.bin/prettier \"resources/**/*{.css,.blade.php,.js}\" \"app-modules/**/resources/**/*{.css,.blade.php,.js}\" \"graphql/*.graphql\" \"app-modules/**/graphql/*.graphql\" \"portals/**/*{.vue,.js}\" \"widgets/**/*{.vue,.js}\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
         ],
         "prettier-format": [
             "@prettier --write"

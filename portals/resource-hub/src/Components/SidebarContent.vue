@@ -32,11 +32,10 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { defineProps } from 'vue';
-import axios from '@/Globals/Axios.js';
 import { consumer } from '@/Services/Consumer.js';
-import { useTokenStore } from '@/Stores/token.js';
 import { useAuthStore } from '@/Stores/auth.js';
+import { useTokenStore } from '@/Stores/token.js';
+import { defineProps } from 'vue';
 
 const props = defineProps({
     categories: {
@@ -56,8 +55,8 @@ const logout = () => {
     const { post } = consumer();
 
     post(props.apiUrl + '/authenticate/logout').then((response) => {
-        if (! response.data.success) {
-            return
+        if (!response.data.success) {
+            return;
         }
 
         removeToken();

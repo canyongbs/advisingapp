@@ -31,8 +31,8 @@
 
 </COPYRIGHT>
 */
-import './bootstrap';
 import 'flowbite';
+import './bootstrap';
 
 import.meta.glob(['../images/**']);
 import.meta.glob(['../svg/**']);

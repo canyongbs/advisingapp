@@ -31,17 +31,17 @@
 
 </COPYRIGHT>
 */
-import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import '@/portal.css';
-import App from './App.vue';
-import { createMemoryHistory, createRouter, createWebHistory } from 'vue-router';
 import Home from '@/Pages/Home.vue';
-import ViewCategory from '@/Pages/ViewCategory.vue';
 import ViewArticle from '@/Pages/ViewArticle.vue';
-import { defaultConfig, plugin } from '@formkit/vue';
-import config from './formkit.config.js';
+import ViewCategory from '@/Pages/ViewCategory.vue';
+import '@/portal.css';
 import getAppContext from '@/Services/GetAppContext.js';
+import { defaultConfig, plugin } from '@formkit/vue';
 import { createPinia } from 'pinia';
+import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
+import { createMemoryHistory, createRouter, createWebHistory } from 'vue-router';
+import App from './App.vue';
+import config from './formkit.config.js';
 
 customElements.define(
     'resource-hub-portal-embed',
