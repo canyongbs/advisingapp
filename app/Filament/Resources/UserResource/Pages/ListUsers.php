@@ -49,6 +49,7 @@ use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
+use AdvisingApp\Authorization\Models\Role;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Contracts\Support\Htmlable;
@@ -57,6 +58,7 @@ use AdvisingApp\Authorization\Models\License;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use App\Filament\Resources\UserResource\Actions\AssignTeamBulkAction;
 use App\Filament\Resources\UserResource\Actions\AssignRolesBulkAction;
@@ -154,6 +156,14 @@ class ListUsers extends ListRecords
                     ->multiple()
                     ->searchable()
                     ->preload(),
+                SelectFilter::make('roles')
+                    ->label('Roles')
+                    ->options($this->getRolesOption())
+                    ->getSearchResultsUsing(fn (string $search) => Role::query()->where('name', 'like', '%' . $search . '%')->take(50)->pluck('name', 'id')->toArray())
+                    ->query(fn (Builder $query, array $data) => $this->roleFilter($query, $data))
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
             ])
             ->defaultSort('name', 'asc');
     }
@@ -166,5 +176,36 @@ class ListUsers extends ListRecords
                 ->authorize('import', User::class),
             CreateAction::make(),
         ];
+    }
+
+    protected function getRolesOption(): array
+    {
+        $roles = Role::query()->take(50)->pluck('name', 'id')->toArray();
+
+        return [
+            'no_roles' => 'None',
+            ...$roles,
+        ];
+    }
+
+    protected function roleFilter(Builder $query, array $data): void
+    {
+        if (empty($data['values'])) {
+            return;
+        }
+
+        $query->where(function ($query) use ($data) {
+            $filteredValues = $data['values'];
+            $query->when(in_array('no_roles', $filteredValues), function ($query) {
+                $query->whereDoesntHave('roles');
+            })
+                ->orWhereHas('roles', function ($query) use ($filteredValues) {
+                    if (in_array('no_roles', $filteredValues)) {
+                        unset($filteredValues[array_search('no_roles', $filteredValues)]);
+                    }
+
+                    $query->whereIn('id', $filteredValues);
+                });
+        });
     }
 }
