@@ -63,9 +63,9 @@ class ViewCaseUpdate extends ViewRecord
             ->schema([
                 Section::make()
                     ->schema([
-                        TextEntry::make('serviceRequest.service_request_number')
+                        TextEntry::make('case.case_number')
                             ->label('Case')
-                            ->url(fn (CaseUpdate $caseUpdate): string => CaseResource::getUrl('view', ['record' => $caseUpdate->serviceRequest]))
+                            ->url(fn (CaseUpdate $caseUpdate): string => CaseResource::getUrl('view', ['record' => $caseUpdate->case]))
                             ->color('primary'),
                         IconEntry::make('internal')
                             ->boolean(),

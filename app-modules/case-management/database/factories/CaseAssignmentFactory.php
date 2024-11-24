@@ -49,7 +49,7 @@ class CaseAssignmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'service_request_id' => CaseModel::factory(),
+            'case_id' => CaseModel::factory(),
             'user_id' => User::factory(),
             'assigned_by_id' => User::factory(),
             'assigned_at' => fake()->dateTimeBetween('-1 year', now()),

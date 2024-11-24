@@ -39,6 +39,7 @@ namespace AdvisingApp\Campaign\Filament\Blocks;
 use Closure;
 use App\Models\User;
 use Carbon\CarbonImmutable;
+use App\Features\CaseManagement;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
@@ -118,6 +119,6 @@ class CaseBlock extends CampaignActionBlock
 
     public static function type(): string
     {
-        return 'service_request';
+        return CaseManagement::active() ? 'case' : 'service_request';
     }
 }

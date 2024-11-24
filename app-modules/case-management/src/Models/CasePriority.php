@@ -66,7 +66,7 @@ class CasePriority extends BaseModel implements Auditable
         return CaseManagement::active() ? 'case_priorities' : 'service_request_priorities';
     }
 
-    public function serviceRequests(): HasMany
+    public function cases(): HasMany
     {
         return $this->hasMany(CaseModel::class, 'priority_id');
     }

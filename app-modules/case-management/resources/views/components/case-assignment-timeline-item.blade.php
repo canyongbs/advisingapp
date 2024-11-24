@@ -41,7 +41,7 @@
         <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
 
             <span class="ml-2 flex space-x-2">
-                @if ($record->id === $record->serviceRequest->initialAssignment->id)
+                @if ($record->id === $record->case->initialAssignment->id)
                     Case Assigned
                 @else
                     Case Reassigned

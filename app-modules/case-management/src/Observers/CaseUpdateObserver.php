@@ -52,11 +52,11 @@ class CaseUpdateObserver
             TriggeredAutoSubscription::dispatch($user, $caseUpdate);
         }
 
-        TimelineableRecordCreated::dispatch($caseUpdate->serviceRequest, $caseUpdate);
+        TimelineableRecordCreated::dispatch($caseUpdate->case, $caseUpdate);
     }
 
     public function deleted(CaseUpdate $caseUpdate): void
     {
-        TimelineableRecordDeleted::dispatch($caseUpdate->serviceRequest, $caseUpdate);
+        TimelineableRecordDeleted::dispatch($caseUpdate->case, $caseUpdate);
     }
 }

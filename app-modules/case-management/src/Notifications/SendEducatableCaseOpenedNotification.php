@@ -70,9 +70,9 @@ class SendEducatableCaseOpenedNotification extends BaseNotification implements E
 
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject("{$this->case->service_request_number} - is now {$status->name}")
+            ->subject("{$this->case->case_number} - is now {$status->name}")
             ->greeting("Hello {$name},")
-            ->line("A new {$type->name} case has been created and is now in a {$status->name} status. Your new ticket number is: {$this->case->service_request_number}.")
+            ->line("A new {$type->name} case has been created and is now in a {$status->name} status. Your new ticket number is: {$this->case->case_number}.")
             ->line('The details of your case are shown below:')
             ->lines(str(nl2br($this->case->close_details))->explode('<br />'));
     }

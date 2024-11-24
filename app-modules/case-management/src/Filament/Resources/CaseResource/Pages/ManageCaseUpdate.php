@@ -46,7 +46,7 @@ class ManageCaseUpdate extends ManageRelatedRecords
     protected static string $resource = CaseResource::class;
 
     // TODO: Obsolete when there is no table, remove from Filament
-    protected static string $relationship = 'serviceRequestUpdates';
+    protected static string $relationship = 'caseUpdates';
 
     protected static ?string $navigationLabel = 'Updates';
 

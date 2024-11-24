@@ -49,7 +49,7 @@ class CaseUpdateFactory extends Factory
     public function definition(): array
     {
         return [
-            'service_request_id' => CaseModel::factory(),
+            'case_id' => CaseModel::factory(),
             'update' => $this->faker->sentence(),
             'internal' => $this->faker->boolean(),
             'direction' => $this->faker->randomElement(CaseUpdateDirection::cases())->value,

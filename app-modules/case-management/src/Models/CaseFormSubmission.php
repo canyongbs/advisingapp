@@ -58,7 +58,7 @@ class CaseFormSubmission extends Submission
 {
     protected $fillable = [
         'canceled_at',
-        'service_request_form_id',
+        'case_form_id',
         'request_method',
         'request_note',
         'submitted_at',
@@ -75,13 +75,21 @@ class CaseFormSubmission extends Submission
         return CaseManagement::active() ? 'case_form_submissions' : 'service_request_form_submissions';
     }
 
-    public function serviceRequest(): HasOne
+    public function case(): HasOne
     {
+        if (CaseManagement::active()) {
+            return $this->hasOne(CaseModel::class, 'case_form_submission_id');
+        }
+
         return $this->hasOne(CaseModel::class, 'service_request_form_submission_id');
     }
 
     public function submissible(): BelongsTo
     {
+        if (CaseManagement::active()) {
+            return $this->belongsTo(CaseForm::class, 'case_form_id');
+        }
+
         return $this->belongsTo(CaseForm::class, 'service_request_form_id');
     }
 
@@ -92,11 +100,25 @@ class CaseFormSubmission extends Submission
 
     public function priority(): BelongsTo
     {
+        if (CaseManagement::active()) {
+            return $this->belongsTo(CasePriority::class, 'case_priority_id');
+        }
+
         return $this->belongsTo(CasePriority::class, 'service_request_priority_id');
     }
 
     public function fields(): BelongsToMany
     {
+        if (CaseManagement::active()) {
+            return $this->belongsToMany(
+                CaseFormField::class,
+                'case_form_field_submission',
+                'case_form_submission_id',
+                'case_form_field_id',
+            )
+                ->withPivot(['id', 'response']);
+        }
+
         return $this->belongsToMany(
             CaseFormField::class,
             'service_request_form_field_submission',

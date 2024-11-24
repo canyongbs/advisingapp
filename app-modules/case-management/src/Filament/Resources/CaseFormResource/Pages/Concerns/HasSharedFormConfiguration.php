@@ -71,7 +71,7 @@ trait HasSharedFormConfiguration
             Textarea::make('description')
                 ->string()
                 ->columnSpanFull(),
-            Select::make('service_request_type_id')
+            Select::make('case_type_id')
                 ->label('Case Type')
                 ->helperText('This is the type of case that will be created when this form is submitted.')
                 ->relationship('type', 'name')

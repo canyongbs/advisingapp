@@ -62,7 +62,7 @@ class CaseUpdate extends BaseModel implements Auditable, CanTriggerAutoSubscript
     use AuditableTrait;
 
     protected $fillable = [
-        'service_request_id',
+        'case_id',
         'update',
         'internal',
         'direction',
@@ -78,7 +78,7 @@ class CaseUpdate extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return CaseManagement::active() ? 'case_updates' : 'service_request_updates';
     }
 
-    public function serviceRequest(): BelongsTo
+    public function case(): BelongsTo
     {
         return $this->belongsTo(CaseModel::class);
     }
@@ -86,7 +86,7 @@ class CaseUpdate extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function getSubscribable(): ?Subscribable
     {
         /** @var Subscribable|Model $respondent */
-        $respondent = $this->serviceRequest->respondent;
+        $respondent = $this->case->respondent;
 
         return $respondent instanceof Subscribable
             ? $respondent
@@ -100,7 +100,7 @@ class CaseUpdate extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public static function getTimelineData(Model $forModel): Collection
     {
-        return $forModel->serviceRequestUpdates()->get();
+        return $forModel->caseUpdates()->get();
     }
 
     protected function serializeDate(DateTimeInterface $date): string

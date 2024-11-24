@@ -53,7 +53,7 @@ class CaseFormField extends SubmissibleField
         'label',
         'type',
         'is_required',
-        'service_request_form_id',
+        'case_form_id',
     ];
 
     protected $casts = [
@@ -68,11 +68,19 @@ class CaseFormField extends SubmissibleField
 
     public function submissible(): BelongsTo
     {
+        if (CaseManagement::active()) {
+            return $this->belongsTo(CaseForm::class, 'case_form_id');
+        }
+
         return $this->belongsTo(CaseForm::class, 'service_request_form_id');
     }
 
     public function step(): BelongsTo
     {
+        if (CaseManagement::active()) {
+            return $this->belongsTo(CaseForm::class, 'case_form_step_id');
+        }
+
         return $this->belongsTo(CaseFormStep::class, 'service_request_form_step_id');
     }
 }

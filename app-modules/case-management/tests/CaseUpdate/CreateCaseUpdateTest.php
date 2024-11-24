@@ -78,10 +78,10 @@ test('A successful action on the CreateCaseUpdate page', function () {
 
     assertCount(1, CaseUpdate::all());
 
-    assertDatabaseHas(CaseUpdate::class, $request->except('service_request_id')->toArray());
+    assertDatabaseHas(CaseUpdate::class, $request->except('case_id')->toArray());
 
-    expect(CaseUpdate::first()->serviceRequest->id)
-        ->toEqual($request->get('service_request_id'));
+    expect(CaseUpdate::first()->case->id)
+        ->toEqual($request->get('case_id'));
 });
 
 test('CreateCaseUpdate requires valid data', function ($data, $errors) {
@@ -95,8 +95,8 @@ test('CreateCaseUpdate requires valid data', function ($data, $errors) {
     assertEmpty(CaseUpdate::all());
 })->with(
     [
-        'service_request missing' => [CreateCaseUpdateRequestFactory::new()->without('service_request_id'), ['service_request_id' => 'required']],
-        'service_request not existing service_request id' => [CreateCaseUpdateRequestFactory::new()->state(['service_request_id' => fake()->uuid()]), ['service_request_id' => 'exists']],
+        'case missing' => [CreateCaseUpdateRequestFactory::new()->without('case_id'), ['case_id' => 'required']],
+        'case not existing case id' => [CreateCaseUpdateRequestFactory::new()->state(['case_id' => fake()->uuid()]), ['case_id' => 'exists']],
         'update missing' => [CreateCaseUpdateRequestFactory::new()->without('update'), ['update' => 'required']],
         'update is not a string' => [CreateCaseUpdateRequestFactory::new()->state(['update' => 99]), ['update' => 'string']],
         'direction missing' => [CreateCaseUpdateRequestFactory::new()->state(['direction' => null]), ['direction' => 'required']],
@@ -123,8 +123,8 @@ test('CreateCaseUpdate is gated with proper access control', function () {
     livewire(CreateCaseUpdate::class)
         ->assertForbidden();
 
-    $user->givePermissionTo('service_request_update.view-any');
-    $user->givePermissionTo('service_request_update.create');
+    $user->givePermissionTo('case_update.view-any');
+    $user->givePermissionTo('case_update.create');
 
     actingAs($user)
         ->get(
@@ -152,8 +152,8 @@ test('CreateCaseUpdate is gated with proper feature access control', function ()
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $user->givePermissionTo('service_request_update.view-any');
-    $user->givePermissionTo('service_request_update.create');
+    $user->givePermissionTo('case_update.view-any');
+    $user->givePermissionTo('case_update.create');
 
     actingAs($user)
         ->get(

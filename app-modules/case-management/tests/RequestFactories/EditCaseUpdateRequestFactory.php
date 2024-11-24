@@ -45,7 +45,7 @@ class EditCaseUpdateRequestFactory extends RequestFactory
     public function definition(): array
     {
         return [
-            'service_request_id' => CaseModel::factory()->create()->id,
+            'case_id' => CaseModel::factory()->create()->id,
             'update' => $this->faker->sentence,
             'direction' => $this->faker->randomElement(CaseUpdateDirection::cases())->value,
             'internal' => $this->faker->boolean,

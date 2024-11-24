@@ -58,8 +58,8 @@ test('The correct details are displayed on the ViewCaseUpdate page', function ()
         ->assertSuccessful()
         ->assertSeeTextInOrder(
             [
-                'Service Request',
-                $caseUpdate->serviceRequest->service_request_number,
+                'Case',
+                $caseUpdate->case->case_number,
                 'Internal',
                 // TODO: Figure out how to check whether this internal value the check or the X icon
                 'Direction',
@@ -84,8 +84,8 @@ test('ViewCaseUpdate is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo('service_request_update.view-any');
-    $user->givePermissionTo('service_request_update.*.view');
+    $user->givePermissionTo('case_update.view-any');
+    $user->givePermissionTo('case_update.*.view');
 
     actingAs($user)
         ->get(
@@ -104,8 +104,8 @@ test('ViewCaseUpdate is gated with proper feature access control', function () {
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $user->givePermissionTo('service_request_update.view-any');
-    $user->givePermissionTo('service_request_update.*.view');
+    $user->givePermissionTo('case_update.view-any');
+    $user->givePermissionTo('case_update.*.view');
 
     $caseUpdate = CaseUpdate::factory()->create();
 

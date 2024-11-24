@@ -154,8 +154,8 @@ test('EditCase is gated with proper access control', function () {
     ])
         ->assertForbidden();
 
-    $user->givePermissionTo('service_request.view-any');
-    $user->givePermissionTo('service_request.*.update');
+    $user->givePermissionTo('case.view-any');
+    $user->givePermissionTo('case.*.update');
 
     actingAs($user)
         ->get(
@@ -203,8 +203,8 @@ test('EditCase is gated with proper feature access control', function () {
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $user->givePermissionTo('service_request.view-any');
-    $user->givePermissionTo('service_request.*.update');
+    $user->givePermissionTo('case.view-any');
+    $user->givePermissionTo('case.*.update');
 
     $case = CaseModel::factory()->create();
 

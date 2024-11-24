@@ -126,7 +126,7 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
                 $save = false;
 
                 if ($attempts < 3) {
-                    $this->service_request_number = app(CaseNumberGenerator::class)->generate();
+                    $this->case_number = app(CaseNumberGenerator::class)->generate();
                 }
 
                 DB::rollBack();
@@ -173,8 +173,12 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
         return $this->belongsTo(Division::class, 'division_id');
     }
 
-    public function serviceRequestUpdates(): HasMany
+    public function caseUpdates(): HasMany
     {
+        if (CaseManagement::active()) {
+            return $this->hasMany(CaseUpdate::class, 'case_id');
+        }
+
         return $this->hasMany(CaseUpdate::class, 'service_request_id');
     }
 
@@ -188,8 +192,12 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
         return $this->belongsTo(CasePriority::class);
     }
 
-    public function serviceRequestFormSubmission(): BelongsTo
+    public function caseFormSubmission(): BelongsTo
     {
+        if (CaseManagement::active()) {
+            return $this->belongsTo(CaseFormSubmission::class, 'case_form_submission_id');
+        }
+
         return $this->belongsTo(CaseFormSubmission::class, 'service_request_form_submission_id');
     }
 
@@ -268,8 +276,19 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
         return false;
     }
 
-    public function latestInboundServiceRequestUpdate(): HasOne
+    public function latestInboundCaseUpdate(): HasOne
     {
+        if (CaseManagement::active()) {
+            return $this->hasOne(CaseUpdate::class, 'case_id')
+                ->ofMany([
+                    'created_at' => 'max',
+                ], function (Builder $query) {
+                    $query
+                        ->where('direction', CaseUpdateDirection::Inbound)
+                        ->where('internal', false);
+                });
+        }
+
         return $this->hasOne(CaseUpdate::class, 'service_request_id')
             ->ofMany([
                 'created_at' => 'max',
@@ -280,8 +299,19 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
             });
     }
 
-    public function latestOutboundServiceRequestUpdate(): HasOne
+    public function latestOutboundCaseUpdate(): HasOne
     {
+        if (CaseManagement::active()) {
+            return $this->hasOne(CaseUpdate::class, 'case_id')
+                ->ofMany([
+                    'created_at' => 'max',
+                ], function (Builder $query) {
+                    $query
+                        ->where('direction', CaseUpdateDirection::Outbound)
+                        ->where('internal', false);
+                });
+        }
+
         return $this->hasOne(CaseUpdate::class, 'service_request_id')
             ->ofMany([
                 'created_at' => 'max',
@@ -299,29 +329,29 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
 
     public function getLatestResponseSeconds(): int
     {
-        if (! $this->latestInboundServiceRequestUpdate) {
+        if (! $this->latestInboundCaseUpdate) {
             return $this->created_at->diffInSeconds(now());
         }
 
         if (
             $this->isResolved() &&
-            ($resolvedAt = $this->getResolvedAt())->isAfter($this->latestInboundServiceRequestUpdate->created_at)
+            ($resolvedAt = $this->getResolvedAt())->isAfter($this->latestInboundCaseUpdate->created_at)
         ) {
-            return $resolvedAt->diffInSeconds($this->latestInboundServiceRequestUpdate->created_at);
+            return $resolvedAt->diffInSeconds($this->latestInboundCaseUpdate->created_at);
         }
 
         if (
-            $this->latestOutboundServiceRequestUpdate &&
-            $this->latestOutboundServiceRequestUpdate->created_at->isAfter(
-                $this->latestInboundServiceRequestUpdate->created_at,
+            $this->latestOutboundCaseUpdate &&
+            $this->latestOutboundCaseUpdate->created_at->isAfter(
+                $this->latestInboundCaseUpdate->created_at,
             )
         ) {
-            return $this->latestOutboundServiceRequestUpdate->created_at->diffInSeconds(
-                $this->latestInboundServiceRequestUpdate->created_at,
+            return $this->latestOutboundCaseUpdate->created_at->diffInSeconds(
+                $this->latestInboundCaseUpdate->created_at,
             );
         }
 
-        return $this->latestInboundServiceRequestUpdate->created_at->diffInSeconds();
+        return $this->latestInboundCaseUpdate->created_at->diffInSeconds();
     }
 
     public function getResolutionSeconds(): int

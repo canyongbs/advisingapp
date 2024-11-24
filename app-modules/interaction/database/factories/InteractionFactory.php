@@ -67,7 +67,7 @@ class InteractionFactory extends Factory
             Student::class => Student::inRandomOrder()->first() ?? Student::factory()->create(),
             Prospect::class => Prospect::factory()->create(),
             CaseModel::class => CaseModel::factory()->create([
-                'service_request_number' => fake()->randomNumber(8),
+                'case_number' => fake()->randomNumber(8),
             ]),
         };
 

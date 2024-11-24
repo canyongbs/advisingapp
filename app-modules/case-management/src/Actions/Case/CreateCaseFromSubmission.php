@@ -42,10 +42,10 @@ class CreateCaseFromSubmission
 {
     public function handle(CaseFormSubmission $caseFormSubmission): void
     {
-        $caseFormSubmission->serviceRequest()->create([
+        $caseFormSubmission->case()->create([
             'respondent_type' => $caseFormSubmission->author->getMorphClass(),
             'respondent_id' => $caseFormSubmission->author->getKey(),
-            'priority_id' => $caseFormSubmission->service_request_priority_id,
+            'priority_id' => $caseFormSubmission->case_priority_id,
         ]);
     }
 }

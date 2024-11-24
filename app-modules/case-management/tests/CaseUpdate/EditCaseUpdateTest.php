@@ -74,10 +74,10 @@ test('A successful action on the EditCaseUpdate page', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    assertDatabaseHas(CaseUpdate::class, $request->except('service_request_id')->toArray());
+    assertDatabaseHas(CaseUpdate::class, $request->except('case_id')->toArray());
 
-    expect(CaseUpdate::first()->serviceRequest->id)
-        ->toEqual($request->get('service_request_id'));
+    expect(CaseUpdate::first()->case->id)
+        ->toEqual($request->get('case_id'));
 });
 
 test('EditCaseUpdate requires valid data', function ($data, $errors) {
@@ -92,16 +92,16 @@ test('EditCaseUpdate requires valid data', function ($data, $errors) {
         ->call('save')
         ->assertHasFormErrors($errors);
 
-    unset($caseUpdate->serviceRequest);
+    unset($caseUpdate->case);
 
     assertDatabaseHas(CaseUpdate::class, $caseUpdate->toArray());
 
-    expect(CaseUpdate::first()->serviceRequest->id)
-        ->toEqual($caseUpdate->serviceRequest->id);
+    expect(CaseUpdate::first()->case->id)
+        ->toEqual($caseUpdate->case->id);
 })->with(
     [
-        'service_request missing' => [EditCaseUpdateRequestFactory::new()->state(['service_request_id' => null]), ['service_request_id' => 'required']],
-        'service_request not existing service_request id' => [EditCaseUpdateRequestFactory::new()->state(['service_request_id' => fake()->uuid()]), ['service_request_id' => 'exists']],
+        'case missing' => [EditCaseUpdateRequestFactory::new()->state(['case_id' => null]), ['case_id' => 'required']],
+        'case not existing case id' => [EditCaseUpdateRequestFactory::new()->state(['case_id' => fake()->uuid()]), ['case_id' => 'exists']],
         'update missing' => [EditCaseUpdateRequestFactory::new()->state(['update' => null]), ['update' => 'required']],
         'update is not a string' => [EditCaseUpdateRequestFactory::new()->state(['update' => 99]), ['update' => 'string']],
         'direction missing' => [EditCaseUpdateRequestFactory::new()->state(['direction' => null]), ['direction' => 'required']],
@@ -129,8 +129,8 @@ test('EditCaseUpdate is gated with proper access control', function () {
     ])
         ->assertForbidden();
 
-    $user->givePermissionTo('service_request_update.view-any');
-    $user->givePermissionTo('service_request_update.*.update');
+    $user->givePermissionTo('case_update.view-any');
+    $user->givePermissionTo('case_update.*.update');
 
     actingAs($user)
         ->get(
@@ -148,10 +148,10 @@ test('EditCaseUpdate is gated with proper access control', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    assertDatabaseHas(CaseUpdate::class, $request->except('service_request_id')->toArray());
+    assertDatabaseHas(CaseUpdate::class, $request->except('case_id')->toArray());
 
-    expect(CaseUpdate::first()->serviceRequest->id)
-        ->toEqual($request->get('service_request_id'));
+    expect(CaseUpdate::first()->case->id)
+        ->toEqual($request->get('case_id'));
 });
 
 test('EditCaseUpdate is gated with proper feature access control', function () {
@@ -163,8 +163,8 @@ test('EditCaseUpdate is gated with proper feature access control', function () {
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $user->givePermissionTo('service_request_update.view-any');
-    $user->givePermissionTo('service_request_update.*.update');
+    $user->givePermissionTo('case_update.view-any');
+    $user->givePermissionTo('case_update.*.update');
 
     $caseUpdate = CaseUpdate::factory()->create();
 

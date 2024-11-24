@@ -58,8 +58,8 @@ test('The correct details are displayed on the ViewCase page', function () {
         ->assertSuccessful()
         ->assertSeeTextInOrder(
             [
-                'Service Request Number',
-                $case->service_request_number,
+                'Case Number',
+                $case->case_number,
                 'Division',
                 $case->division->name,
                 'Status',
@@ -70,7 +70,7 @@ test('The correct details are displayed on the ViewCase page', function () {
                 $case->priority->type->name,
                 'Close Details/Description',
                 $case->close_details,
-                'Internal Service Request Details',
+                'Internal Case Details',
                 $case->res_details,
             ]
         );
@@ -90,8 +90,8 @@ test('ViewCase is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo('service_request.view-any');
-    $user->givePermissionTo('service_request.*.view');
+    $user->givePermissionTo('case.view-any');
+    $user->givePermissionTo('case.*.view');
 
     actingAs($user)
         ->get(
@@ -110,8 +110,8 @@ test('ViewCase is gated with proper feature access control', function () {
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $user->givePermissionTo('service_request.view-any');
-    $user->givePermissionTo('service_request.*.view');
+    $user->givePermissionTo('case.view-any');
+    $user->givePermissionTo('case.*.view');
 
     $case = CaseModel::factory()->create();
 

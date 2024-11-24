@@ -154,13 +154,13 @@ class StudentExporter extends Exporter
             static::notDefault($type::make('care_team_count')
                 ->label('Count of Care Team Members')
                 ->counts('careTeam')),
-            static::notDefault($type::make('service_requests_count')
+            static::notDefault($type::make('cases_count')
                 ->label('Count of Cases')
-                ->counts('serviceRequests')),
-            ...CaseStatus::all()->map(fn (CaseStatus $status): TextColumn | ExportColumn => static::notDefault($type::make("service_requests_{$status->getKey()}_count")
+                ->counts('cases')),
+            ...CaseStatus::all()->map(fn (CaseStatus $status): TextColumn | ExportColumn => static::notDefault($type::make("cases_{$status->getKey()}_count")
                 ->label("Count of {$status->name} Cases")
                 ->counts([
-                    "serviceRequests as service_requests_{$status->getKey()}_count" => fn (Builder $query) => $query->whereBelongsTo($status, 'status'),
+                    "cases as cases_{$status->getKey()}_count" => fn (Builder $query) => $query->whereBelongsTo($status, 'status'),
                 ]))),
             static::notDefault($type::make('event_attendee_records_count')
                 ->label('Count of Events')

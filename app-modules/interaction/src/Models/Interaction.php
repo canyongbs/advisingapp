@@ -206,7 +206,7 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
             /** @var Authenticatable $user */
             $user = auth()->user();
 
-            $serviceRequestRespondentTypeColumn = app(CaseModel::class)->respondent()->getMorphType();
+            $caseRespondentTypeColumn = app(CaseModel::class)->respondent()->getMorphType();
 
             $builder
                 ->where(fn (Builder $query) => $query
@@ -216,7 +216,7 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
                         fn (Builder $query) => $query->where(fn (Builder $query) => $query->whereHasMorph(
                             'interactable',
                             CaseModel::class,
-                            fn (Builder $query) => $query->where($serviceRequestRespondentTypeColumn, '!=', app(Student::class)->getMorphClass()),
+                            fn (Builder $query) => $query->where($caseRespondentTypeColumn, '!=', app(Student::class)->getMorphClass()),
                         )->orWhere(
                             'interactable_type',
                             '!=',
@@ -228,7 +228,7 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
                         fn (Builder $query) => $query->where(fn (Builder $query) => $query->whereHasMorph(
                             'interactable',
                             CaseModel::class,
-                            fn (Builder $query) => $query->where($serviceRequestRespondentTypeColumn, '!=', app(Prospect::class)->getMorphClass()),
+                            fn (Builder $query) => $query->where($caseRespondentTypeColumn, '!=', app(Prospect::class)->getMorphClass()),
                         )->orWhere(
                             'interactable_type',
                             '!=',

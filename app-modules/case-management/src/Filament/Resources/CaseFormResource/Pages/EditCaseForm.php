@@ -62,7 +62,7 @@ class EditCaseForm extends EditRecord
     {
         return [
             Action::make('view')
-                ->url(fn (CaseForm $caseForm) => route('case-forms.show', ['serviceRequestForm' => $caseForm]))
+                ->url(fn (CaseForm $caseForm) => route('case-forms.show', ['caseForm' => $caseForm]))
                 ->icon('heroicon-m-arrow-top-right-on-square')
                 ->openUrlInNewTab(),
             Action::make('embed_snippet')

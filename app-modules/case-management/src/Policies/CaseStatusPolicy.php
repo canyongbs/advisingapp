@@ -155,7 +155,7 @@ class CaseStatusPolicy
 
     public function forceDelete(Authenticatable $authenticatable, CaseStatus $caseStatus): Response
     {
-        if ($caseStatus->serviceRequests()->exists()) {
+        if ($caseStatus->cases()->exists()) {
             return Response::deny('You cannot force delete this case status because it has associated cases.');
         }
 

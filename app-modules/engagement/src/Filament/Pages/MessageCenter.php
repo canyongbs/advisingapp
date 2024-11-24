@@ -106,8 +106,8 @@ class MessageCenter extends Page
     #[Url(as: 'hasOpenTasks')]
     public bool $filterOpenTasks = false;
 
-    #[Url(as: 'hasOpenServiceRequests')]
-    public bool $filterOpenServiceRequests = false;
+    #[Url(as: 'hasOpenCases')]
+    public bool $filterOpenCases = false;
 
     #[Url(as: 'startDate')]
     public ?string $filterStartDate = null;
@@ -152,7 +152,7 @@ class MessageCenter extends Page
             'filterPeopleType',
             'filterSubscribed',
             'filterOpenTasks',
-            'filterOpenServiceRequests',
+            'filterOpenCases',
             'filterStartDate',
             'filterEndDate',
             'filterMemberOfCareTeam',
@@ -295,7 +295,7 @@ class MessageCenter extends Page
                         ->pluck('concern_id')
                 );
             })
-            ->when($this->filterOpenServiceRequests === true, function (Builder $query) use ($idColumn) {
+            ->when($this->filterOpenCases === true, function (Builder $query) use ($idColumn) {
                 $query->whereIn(
                     $idColumn,
                     CaseModel::query()

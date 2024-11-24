@@ -180,7 +180,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return 'preferred';
     }
 
-    public function serviceRequests(): MorphMany
+    public function cases(): MorphMany
     {
         return $this->morphMany(
             related: CaseModel::class,

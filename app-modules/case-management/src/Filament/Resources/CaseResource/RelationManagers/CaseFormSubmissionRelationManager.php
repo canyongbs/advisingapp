@@ -46,7 +46,7 @@ use AdvisingApp\CaseManagement\Models\CaseFormSubmission;
 
 class CaseFormSubmissionRelationManager extends RelationManager
 {
-    protected static string $relationship = 'serviceRequestFormSubmission';
+    protected static string $relationship = 'caseFormSubmission';
 
     protected static ?string $recordTitleAttribute = 'id';
 

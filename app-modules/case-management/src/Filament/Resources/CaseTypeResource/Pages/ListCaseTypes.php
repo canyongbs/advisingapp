@@ -61,9 +61,9 @@ class ListCaseTypes extends ListRecords
                     ->label('Name')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('service_requests_count')
+                TextColumn::make('cases_count')
                     ->label('# of Cases')
-                    ->counts('serviceRequests')
+                    ->counts('cases')
                     ->sortable(),
                 TextColumn::make('deleted_at')
                     ->dateTime()

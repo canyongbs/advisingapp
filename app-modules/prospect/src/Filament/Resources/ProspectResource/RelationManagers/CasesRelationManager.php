@@ -53,7 +53,7 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CreateCase;
 
 class CasesRelationManager extends RelationManager
 {
-    protected static string $relationship = 'serviceRequests';
+    protected static string $relationship = 'cases';
 
     public function form(Form $form): Form
     {
@@ -71,7 +71,7 @@ class CasesRelationManager extends RelationManager
             ->recordTitleAttribute('id')
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('service_request_number')
+                TextColumn::make('case_number')
                     ->label('Case #')
                     ->searchable()
                     ->sortable(),

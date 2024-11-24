@@ -73,7 +73,7 @@ class CaseHistory extends BaseModel implements ProvidesATimeline
         return CaseManagement::active() ? 'case_histories' : 'service_request_histories';
     }
 
-    public function serviceRequest(): BelongsTo
+    public function case(): BelongsTo
     {
         return $this->belongsTo(CaseModel::class);
     }

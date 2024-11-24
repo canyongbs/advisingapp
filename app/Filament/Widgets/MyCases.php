@@ -64,14 +64,14 @@ class MyCases extends BaseWidget
             ->heading('My Cases')
             ->query(
                 auth()->user()
-                    ->serviceRequests()
+                    ->cases()
                     ->getQuery()
-                    ->latest('service_requests.created_at')
+                    ->latest('cases.created_at')
                     ->limit(5)
             )
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('service_request_number')
+                TextColumn::make('case_number')
                     ->label('Case #')
                     ->searchable()
                     ->sortable(),
@@ -86,8 +86,8 @@ class MyCases extends BaseWidget
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         // Update this if any other relations are added to the Case model respondent relationship
                         return $query->join('students', function (JoinClause $join) {
-                            $join->on('service_requests.respondent_id', '=', 'students.sisid')
-                                ->where('service_requests.respondent_type', '=', 'student');
+                            $join->on('cases.respondent_id', '=', 'students.sisid')
+                                ->where('cases.respondent_type', '=', 'student');
                         })->orderBy('sisid', $direction);
                     }),
             ])
@@ -104,10 +104,10 @@ class MyCases extends BaseWidget
             ])
             ->actions([
                 ViewAction::make()
-                    ->url(fn (CaseModel $record): string => CaseResource::getUrl(name: 'view', parameters: ['record' => $record->service_request_id])),
+                    ->url(fn (CaseModel $record): string => CaseResource::getUrl(name: 'view', parameters: ['record' => $record->case_id])),
             ])
             ->recordUrl(
-                fn (CaseModel $record): string => CaseResource::getUrl(name: 'view', parameters: ['record' => $record->service_request_id]),
+                fn (CaseModel $record): string => CaseResource::getUrl(name: 'view', parameters: ['record' => $record->case_id]),
             )
             ->paginated([5]);
     }

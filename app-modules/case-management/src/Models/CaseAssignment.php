@@ -86,7 +86,7 @@ class CaseAssignment extends BaseModel implements Auditable, CanTriggerAutoSubsc
         return $this->belongsTo(User::class, 'assigned_by_id');
     }
 
-    public function serviceRequest(): BelongsTo
+    public function case(): BelongsTo
     {
         return $this->belongsTo(CaseModel::class);
     }
@@ -104,7 +104,7 @@ class CaseAssignment extends BaseModel implements Auditable, CanTriggerAutoSubsc
     public function getSubscribable(): ?Subscribable
     {
         /** @var Subscribable|Model $respondent */
-        $respondent = $this->serviceRequest->respondent;
+        $respondent = $this->case->respondent;
 
         return $respondent instanceof Subscribable
             ? $respondent

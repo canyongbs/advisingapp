@@ -108,8 +108,8 @@ class CreateInteraction extends CreateRecord
                             ->modifyOptionsQueryUsing(fn (Builder $query) => $query->tap(new ExcludeConvertedProspects())),
                         ] : []),
                         MorphToSelect\Type::make(CaseModel::class)
-                            ->label('Service Request')
-                            ->titleAttribute('service_request_number'),
+                            ->label('Case')
+                            ->titleAttribute('case_number'),
                     ])
                     ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
                 Fieldset::make('Details')

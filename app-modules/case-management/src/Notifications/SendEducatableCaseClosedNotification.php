@@ -69,9 +69,9 @@ class SendEducatableCaseClosedNotification extends BaseNotification implements E
 
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject("{$this->case->service_request_number} - is now {$status->name}")
+            ->subject("{$this->case->case_number} - is now {$status->name}")
             ->greeting("Hi {$name},")
-            ->line("Your request {$this->case->service_request_number} for case is now {$status->name}.");
+            ->line("Your request {$this->case->case_number} for case is now {$status->name}.");
     }
 
     protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void

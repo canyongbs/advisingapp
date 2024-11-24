@@ -53,7 +53,7 @@ class ProspectCaseManagement extends ManageRelatedRecords
 
     protected static string $resource = ProspectResource::class;
 
-    protected static string $relationship = 'serviceRequests';
+    protected static string $relationship = 'cases';
 
     protected static ?string $navigationLabel = 'Case Management';
 

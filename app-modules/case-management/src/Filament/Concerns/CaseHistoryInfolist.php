@@ -46,9 +46,9 @@ trait CaseHistoryInfolist
     public function caseHistoryInfolist(): array
     {
         return [
-            TextEntry::make('serviceRequest.service_request_number')
+            TextEntry::make('case.case_number')
                 ->label('Case')
-                ->url(fn (CaseHistory $caseHistory): string => CaseResource::getUrl('view', ['record' => $caseHistory->serviceRequest]))
+                ->url(fn (CaseHistory $caseHistory): string => CaseResource::getUrl('view', ['record' => $caseHistory->case]))
                 ->color('primary'),
             TextEntry::make('getUpdates')
                 ->label('Updates')

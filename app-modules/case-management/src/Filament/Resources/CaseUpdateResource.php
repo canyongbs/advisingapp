@@ -76,8 +76,8 @@ class CaseUpdateResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('service_request_id')
-                    ->relationship('serviceRequest', 'id')
+                Select::make('case_id')
+                    ->relationship('case', 'id')
                     ->preload()
                     ->label('Case')
                     ->required()
@@ -108,43 +108,43 @@ class CaseUpdateResource extends Resource
         return $table
             ->columns([
                 IdColumn::make(),
-                Tables\Columns\TextColumn::make('serviceRequest.respondent.full')
+                Tables\Columns\TextColumn::make('case.respondent.full')
                     ->label('Related To')
                     ->sortable(query: function (Builder $query, string $direction, $record): Builder {
                         // TODO: Update this to work with other respondent types
-                        return $query->join('service_requests', 'service_request_updates.service_request_id', '=', 'service_requests.id')
+                        return $query->join('cases', 'case_updates.case_id', '=', 'cases.id')
                             ->join('students', function ($join) {
-                                $join->on('service_requests.respondent_id', '=', 'students.sisid')
-                                    ->where('service_requests.respondent_type', '=', 'student');
+                                $join->on('cases.respondent_id', '=', 'students.sisid')
+                                    ->where('cases.respondent_type', '=', 'student');
                             })
                             ->orderBy('full', $direction);
                     })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('serviceRequest.respondent.sisid')
+                Tables\Columns\TextColumn::make('case.respondent.sisid')
                     ->label('SIS ID')
                     ->sortable(query: function (Builder $query, string $direction, $record): Builder {
                         // TODO: Update this to work with other respondent types
-                        return $query->join('service_requests', 'service_request_updates.service_request_id', '=', 'service_requests.id')
+                        return $query->join('cases', 'case_updates.case_id', '=', 'cases.id')
                             ->join('students', function ($join) {
-                                $join->on('service_requests.respondent_id', '=', 'students.sisid')
-                                    ->where('service_requests.respondent_type', '=', 'student');
+                                $join->on('cases.respondent_id', '=', 'students.sisid')
+                                    ->where('cases.respondent_type', '=', 'student');
                             })
                             ->orderBy('sisid', $direction);
                     })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('serviceRequest.respondent.otherid')
+                Tables\Columns\TextColumn::make('case.respondent.otherid')
                     ->label('Other ID')
                     ->sortable(query: function (Builder $query, string $direction, $record): Builder {
                         // TODO: Update this to work with other respondent types
-                        return $query->join('service_requests', 'service_request_updates.service_request_id', '=', 'service_requests.id')
+                        return $query->join('cases', 'case_updates.case_id', '=', 'cases.id')
                             ->join('students', function ($join) {
-                                $join->on('service_requests.respondent_id', '=', 'students.sisid')
-                                    ->where('service_requests.respondent_type', '=', 'student');
+                                $join->on('cases.respondent_id', '=', 'students.sisid')
+                                    ->where('cases.respondent_type', '=', 'student');
                             })
                             ->orderBy('otherid', $direction);
                     })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('serviceRequest.service_request_number')
+                Tables\Columns\TextColumn::make('case.case_number')
                     ->label('Case')
                     ->sortable()
                     ->searchable(),

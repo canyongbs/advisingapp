@@ -55,12 +55,12 @@ use AdvisingApp\CaseManagement\Tests\RequestFactories\EditCaseTypeRequestFactory
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseType;
 
 test('A successful action on the EditCaseType page', function () {
-    $serviceRequestType = CaseType::factory()->create();
+    $caseType = CaseType::factory()->create();
 
     asSuperAdmin()
         ->get(
             CaseTypeResource::getUrl('edit', [
-                'record' => $serviceRequestType->getRouteKey(),
+                'record' => $caseType->getRouteKey(),
             ])
         )
         ->assertSuccessful();
@@ -68,34 +68,34 @@ test('A successful action on the EditCaseType page', function () {
     $editRequest = EditCaseTypeRequestFactory::new()->create();
 
     livewire(EditCaseType::class, [
-        'record' => $serviceRequestType->getRouteKey(),
+        'record' => $caseType->getRouteKey(),
     ])
         ->assertFormSet([
-            'name' => $serviceRequestType->name,
+            'name' => $caseType->name,
         ])
         ->fillForm($editRequest)
         ->call('save')
         ->assertHasNoFormErrors();
 
-    assertEquals($editRequest['name'], $serviceRequestType->fresh()->name);
+    assertEquals($editRequest['name'], $caseType->fresh()->name);
 });
 
 test('EditCaseType requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    $serviceRequestType = CaseType::factory()->create();
+    $caseType = CaseType::factory()->create();
 
     livewire(EditCaseType::class, [
-        'record' => $serviceRequestType->getRouteKey(),
+        'record' => $caseType->getRouteKey(),
     ])
         ->assertFormSet([
-            'name' => $serviceRequestType->name,
+            'name' => $caseType->name,
         ])
         ->fillForm(EditCaseTypeRequestFactory::new($data)->create())
         ->call('save')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseHas(CaseType::class, $serviceRequestType->toArray());
+    assertDatabaseHas(CaseType::class, $caseType->toArray());
 })->with(
     [
         'name missing' => [EditCaseTypeRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
@@ -108,40 +108,40 @@ test('EditCaseType requires valid data', function ($data, $errors) {
 test('EditCaseType is gated with proper access control', function () {
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
-    $serviceRequestType = CaseType::factory()->create();
+    $caseType = CaseType::factory()->create();
 
     actingAs($user)
         ->get(
             CaseTypeResource::getUrl('edit', [
-                'record' => $serviceRequestType,
+                'record' => $caseType,
             ])
         )->assertForbidden();
 
     livewire(EditCaseType::class, [
-        'record' => $serviceRequestType->getRouteKey(),
+        'record' => $caseType->getRouteKey(),
     ])
         ->assertForbidden();
 
-    $user->givePermissionTo('service_request_type.view-any');
-    $user->givePermissionTo('service_request_type.*.update');
+    $user->givePermissionTo('case_type.view-any');
+    $user->givePermissionTo('case_type.*.update');
 
     actingAs($user)
         ->get(
             CaseTypeResource::getUrl('edit', [
-                'record' => $serviceRequestType,
+                'record' => $caseType,
             ])
         )->assertSuccessful();
 
     $request = collect(EditCaseTypeRequestFactory::new()->create());
 
     livewire(EditCaseType::class, [
-        'record' => $serviceRequestType->getRouteKey(),
+        'record' => $caseType->getRouteKey(),
     ])
         ->fillForm($request->toArray())
         ->call('save')
         ->assertHasNoFormErrors();
 
-    assertEquals($request['name'], $serviceRequestType->fresh()->name);
+    assertEquals($request['name'], $caseType->fresh()->name);
 });
 
 test('EditCaseType is gated with proper feature access control', function () {
@@ -153,20 +153,20 @@ test('EditCaseType is gated with proper feature access control', function () {
 
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
-    $user->givePermissionTo('service_request_type.view-any');
-    $user->givePermissionTo('service_request_type.*.update');
+    $user->givePermissionTo('case_type.view-any');
+    $user->givePermissionTo('case_type.*.update');
 
-    $serviceRequestType = CaseType::factory()->create();
+    $caseType = CaseType::factory()->create();
 
     actingAs($user)
         ->get(
             CaseTypeResource::getUrl('edit', [
-                'record' => $serviceRequestType,
+                'record' => $caseType,
             ])
         )->assertForbidden();
 
     livewire(EditCaseType::class, [
-        'record' => $serviceRequestType->getRouteKey(),
+        'record' => $caseType->getRouteKey(),
     ])
         ->assertForbidden();
 
@@ -177,18 +177,18 @@ test('EditCaseType is gated with proper feature access control', function () {
     actingAs($user)
         ->get(
             CaseTypeResource::getUrl('edit', [
-                'record' => $serviceRequestType,
+                'record' => $caseType,
             ])
         )->assertSuccessful();
 
     $request = collect(EditCaseTypeRequestFactory::new()->create());
 
     livewire(EditCaseType::class, [
-        'record' => $serviceRequestType->getRouteKey(),
+        'record' => $caseType->getRouteKey(),
     ])
         ->fillForm($request->toArray())
         ->call('save')
         ->assertHasNoFormErrors();
 
-    assertEquals($request['name'], $serviceRequestType->fresh()->name);
+    assertEquals($request['name'], $caseType->fresh()->name);
 });

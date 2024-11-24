@@ -50,7 +50,7 @@ class CaseObserver
 {
     public function creating(CaseModel $case): void
     {
-        $case->service_request_number ??= app(CaseNumberGenerator::class)->generate();
+        $case->case_number ??= app(CaseNumberGenerator::class)->generate();
     }
 
     public function created(CaseModel $case): void
@@ -68,7 +68,7 @@ class CaseObserver
 
     public function updating(CaseModel $case): void
     {
-        throw_if($case->isDirty('service_request_number'), new CaseNumberUpdateAttemptException());
+        throw_if($case->isDirty('case_number'), new CaseNumberUpdateAttemptException());
     }
 
     public function saving(CaseModel $case): void

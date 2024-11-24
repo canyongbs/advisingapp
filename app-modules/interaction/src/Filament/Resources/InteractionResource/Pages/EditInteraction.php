@@ -85,8 +85,8 @@ class EditInteraction extends EditRecord
                                 ),
                         ] : []),
                         Type::make(CaseModel::class)
-                            ->label('Service Request')
-                            ->titleAttribute('service_request_number'),
+                            ->label('Case')
+                            ->titleAttribute('case_number'),
                     ])
                     ->columnSpanFull(),
                 Fieldset::make('Details')

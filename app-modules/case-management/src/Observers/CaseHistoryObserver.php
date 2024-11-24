@@ -44,11 +44,11 @@ class CaseHistoryObserver
 {
     public function created(CaseHistory $caseHistory): void
     {
-        TimelineableRecordCreated::dispatch($caseHistory->serviceRequest, $caseHistory);
+        TimelineableRecordCreated::dispatch($caseHistory->case, $caseHistory);
     }
 
     public function deleted(CaseHistory $caseHistory): void
     {
-        TimelineableRecordDeleted::dispatch($caseHistory->serviceRequest, $caseHistory);
+        TimelineableRecordDeleted::dispatch($caseHistory->case, $caseHistory);
     }
 }

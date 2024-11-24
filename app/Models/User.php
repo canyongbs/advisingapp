@@ -307,9 +307,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->where('status', CaseAssignmentStatus::Active);
     }
 
-    public function serviceRequests(): HasManyDeep
+    public function cases(): HasManyDeep
     {
-        return $this->hasManyDeepFromRelations($this->caseAssignments(), (new CaseAssignment())->serviceRequest());
+        return $this->hasManyDeepFromRelations($this->caseAssignments(), (new CaseAssignment())->case());
     }
 
     public function changeRequests(): HasMany

@@ -52,7 +52,7 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\ListC
 
 test('The correct details are displayed on the ListCaseStatuses page', function () {
     $caseStatuses = CaseStatus::factory()
-        ->has(CaseModel::factory()->count(fake()->randomNumber(1)), 'serviceRequests')
+        ->has(CaseModel::factory()->count(fake()->randomNumber(1)), 'cases')
         ->count(10)
         ->create();
 
@@ -64,7 +64,7 @@ test('The correct details are displayed on the ListCaseStatuses page', function 
         ->assertSuccessful()
         ->assertCanSeeTableRecords($caseStatuses)
         ->assertCountTableRecords(10)
-        ->assertTableColumnExists('service_requests_count');
+        ->assertTableColumnExists('cases_count');
 
     $caseStatuses->each(
         fn (CaseStatus $caseType) => $component
@@ -104,7 +104,7 @@ test('ListCaseStatuses is gated with proper access control', function () {
             CaseStatusResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('service_request_status.view-any');
+    $user->givePermissionTo('case_status.view-any');
 
     actingAs($user)
         ->get(
@@ -121,7 +121,7 @@ test('ListCaseStatuses is gated with proper feature access control', function ()
 
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
-    $user->givePermissionTo('service_request_status.view-any');
+    $user->givePermissionTo('case_status.view-any');
 
     actingAs($user)
         ->get(

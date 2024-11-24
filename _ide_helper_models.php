@@ -493,8 +493,8 @@ namespace App\Models{
  * @property-read int|null $prospect_alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Authorization\Models\Permission[] $permissionsFromRoles
  * @property-read int|null $permissions_from_roles_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\CaseManagement\Models\CaseModel[] $serviceRequests
- * @property-read int|null $service_requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\CaseManagement\Models\CaseModel[] $cases
+ * @property-read int|null $cases_count
  * @method static \Illuminate\Database\Eloquent\Builder|User admins()
  * @method static \Illuminate\Database\Eloquent\Builder|User advancedFilter($data)
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
@@ -1698,7 +1698,7 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property-read \App\Models\User|null $assignedBy
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\CaseManagement\Models\CaseModel|null $serviceRequest
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseModel $case
  * @property-read \App\Models\User $user
  * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseAssignmentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment newModelQuery()
@@ -1784,7 +1784,7 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $author
- * @property-read \AdvisingApp\CaseManagement\Models\CaseForm|null $submissible
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseForm $submissible
  * @method static \Illuminate\Database\Eloquent\Builder|CaseFormAuthentication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseFormAuthentication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseFormAuthentication query()
@@ -1815,8 +1815,8 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \AdvisingApp\CaseManagement\Models\CaseFormStep|null $step
- * @property-read \AdvisingApp\CaseManagement\Models\CaseForm|null $submissible
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseForm|null $step
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseForm $submissible
  * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField onlyTrashed()
@@ -1892,12 +1892,12 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseModel|null $case
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseFormField> $fields
  * @property-read int|null $fields_count
  * @property-read \AdvisingApp\CaseManagement\Models\CasePriority|null $priority
  * @property-read \App\Models\User|null $requester
- * @property-read \AdvisingApp\CaseManagement\Models\CaseModel|null $serviceRequest
- * @property-read \AdvisingApp\CaseManagement\Models\CaseForm|null $submissible
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseForm $submissible
  * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission canceled()
  * @method static \Illuminate\Database\Eloquent\Builder|Submission licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission newModelQuery()
@@ -1937,9 +1937,9 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseModel $case
  * @property-read mixed $new_values_formatted
  * @property-read mixed $original_values_formatted
- * @property-read \AdvisingApp\CaseManagement\Models\CaseModel|null $serviceRequest
  * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseHistoryFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory newQuery()
@@ -1985,6 +1985,9 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property-read int|null $assignments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseFormSubmission|null $caseFormSubmission
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseUpdate> $caseUpdates
+ * @property-read int|null $case_updates_count
  * @property-read \App\Models\User|null $createdBy
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\OutboundDeliverable> $deliverables
  * @property-read int|null $deliverables_count
@@ -1994,14 +1997,11 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property-read \AdvisingApp\CaseManagement\Models\CaseAssignment|null $initialAssignment
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
- * @property-read \AdvisingApp\CaseManagement\Models\CaseUpdate|null $latestInboundServiceRequestUpdate
- * @property-read \AdvisingApp\CaseManagement\Models\CaseUpdate|null $latestOutboundServiceRequestUpdate
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseUpdate|null $latestInboundCaseUpdate
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseUpdate|null $latestOutboundCaseUpdate
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $orderedInteractions
  * @property-read int|null $ordered_interactions_count
  * @property-read \AdvisingApp\CaseManagement\Models\CasePriority|null $priority
- * @property-read \AdvisingApp\CaseManagement\Models\CaseFormSubmission|null $serviceRequestFormSubmission
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseUpdate> $serviceRequestUpdates
- * @property-read int|null $service_request_updates_count
  * @property-read \AdvisingApp\CaseManagement\Models\CaseStatus|null $status
  * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseModelFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|CaseModel licensedToEducatable(string $relationship)
@@ -2047,8 +2047,8 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $serviceRequests
- * @property-read int|null $service_requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $cases
+ * @property-read int|null $cases_count
  * @property-read \AdvisingApp\CaseManagement\Models\Sla|null $sla
  * @property-read \AdvisingApp\CaseManagement\Models\CaseType $type
  * @method static \AdvisingApp\CaseManagement\Database\Factories\CasePriorityFactory factory($count = null, $state = [])
@@ -2085,8 +2085,8 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $serviceRequests
- * @property-read int|null $service_requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $cases
+ * @property-read int|null $cases_count
  * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseStatusFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|CaseStatus newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseStatus newQuery()
@@ -2121,11 +2121,11 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $cases
+ * @property-read int|null $cases_count
  * @property-read \AdvisingApp\CaseManagement\Models\CaseForm|null $form
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CasePriority> $priorities
  * @property-read int|null $priorities_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $serviceRequests
- * @property-read int|null $service_requests_count
  * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|CaseType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseType newQuery()
@@ -2161,7 +2161,7 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\CaseManagement\Models\CaseModel|null $serviceRequest
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseModel|null $case
  * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseUpdateFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate newQuery()
@@ -2353,8 +2353,8 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CasePriority> $serviceRequestPriorities
- * @property-read int|null $service_request_priorities_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CasePriority> $casePriorities
+ * @property-read int|null $case_priorities_count
  * @method static \Illuminate\Database\Eloquent\Builder|Sla newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Sla newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Sla onlyTrashed()
@@ -3992,6 +3992,8 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read int|null $basic_needs_programs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $careTeam
  * @property-read int|null $care_team_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $cases
+ * @property-read int|null $cases_count
  * @property-read \App\Models\User|null $createdBy
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Pipeline> $educatablePipelineStages
  * @property-read int|null $educatable_pipeline_stages_count
@@ -4015,8 +4017,6 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read int|null $ordered_engagements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $orderedInteractions
  * @property-read int|null $ordered_interactions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $serviceRequests
- * @property-read int|null $service_requests_count
  * @property-read \AdvisingApp\Prospect\Models\ProspectSource $source
  * @property-read \AdvisingApp\Prospect\Models\ProspectStatus $status
  * @property-read \AdvisingApp\StudentDataModel\Models\Student|null $student
@@ -4658,6 +4658,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $basic_needs_programs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $careTeam
  * @property-read int|null $care_team_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $cases
+ * @property-read int|null $cases_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\EngagementFile> $engagementFiles
  * @property-read int|null $engagement_files_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\EngagementResponse> $engagementResponses
@@ -4687,8 +4689,6 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $prospects_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Segment\Models\SegmentSubject> $segmentSubjects
  * @property-read int|null $segment_subjects_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $serviceRequests
- * @property-read int|null $service_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $subscribedUsers
  * @property-read int|null $subscribed_users_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\Subscription> $subscriptions

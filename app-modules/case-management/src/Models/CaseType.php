@@ -74,8 +74,12 @@ class CaseType extends BaseModel implements Auditable
         return CaseManagement::active() ? 'case_types' : 'service_request_types';
     }
 
-    public function serviceRequests(): HasManyThrough
+    public function cases(): HasManyThrough
     {
+        if (CaseManagement::active()) {
+            return $this->through('priorities')->has('cases');
+        }
+
         return $this->through('priorities')->has('serviceRequests');
     }
 
@@ -86,6 +90,10 @@ class CaseType extends BaseModel implements Auditable
 
     public function form(): HasOne
     {
+        if (CaseManagement::active()) {
+            return $this->hasOne(CaseForm::class, 'case_type_id');
+        }
+
         return $this->hasOne(CaseForm::class, 'service_request_type_id');
     }
 

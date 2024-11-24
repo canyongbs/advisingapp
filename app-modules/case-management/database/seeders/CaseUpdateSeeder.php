@@ -47,7 +47,7 @@ class CaseUpdateSeeder extends Seeder
         CaseModel::each(function (CaseModel $case) {
             CaseUpdate::factory()
                 ->count(3)
-                ->for($case, 'serviceRequest')
+                ->for($case, 'case')
                 ->create();
         });
     }

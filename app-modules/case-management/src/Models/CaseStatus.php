@@ -70,7 +70,7 @@ class CaseStatus extends BaseModel implements Auditable
         return CaseManagement::active() ? 'case_statuses' : 'service_request_statuses';
     }
 
-    public function serviceRequests(): HasMany
+    public function cases(): HasMany
     {
         return $this->hasMany(CaseModel::class, 'status_id');
     }

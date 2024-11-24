@@ -61,7 +61,7 @@ class ListCaseForms extends ListRecords
             ])
             ->actions([
                 Action::make('Respond')
-                    ->url(fn (CaseForm $form) => route('case-forms.show', ['serviceRequestForm' => $form]))
+                    ->url(fn (CaseForm $form) => route('case-forms.show', ['caseForm' => $form]))
                     ->icon('heroicon-m-arrow-top-right-on-square')
                     ->openUrlInNewTab()
                     ->color('gray'),

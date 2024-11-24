@@ -79,8 +79,8 @@ test('ViewCaseType is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo('service_request_type.view-any');
-    $user->givePermissionTo('service_request_type.*.view');
+    $user->givePermissionTo('case_type.view-any');
+    $user->givePermissionTo('case_type.*.view');
 
     actingAs($user)
         ->get(
@@ -99,8 +99,8 @@ test('ViewCaseType is gated with proper feature access control', function () {
 
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
-    $user->givePermissionTo('service_request_type.view-any');
-    $user->givePermissionTo('service_request_type.*.view');
+    $user->givePermissionTo('case_type.view-any');
+    $user->givePermissionTo('case_type.*.view');
 
     $caseType = CaseType::factory()->create();
 

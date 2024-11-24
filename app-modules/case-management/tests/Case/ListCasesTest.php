@@ -72,8 +72,8 @@ test('The correct details are displayed on the ListCases page', function () {
     $cases->each(
         fn (CaseModel $case) => $component
             ->assertTableColumnStateSet(
-                'service_request_number',
-                $case->service_request_number,
+                'case_number',
+                $case->case_number,
                 $case
             )
             ->assertTableColumnStateSet(
@@ -116,7 +116,7 @@ test('ListCases is gated with proper access control', function () {
             CaseResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('service_request.view-any');
+    $user->givePermissionTo('case.view-any');
 
     actingAs($user)
         ->get(
@@ -133,7 +133,7 @@ test('ListCases is gated with proper feature access control', function () {
 
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
-    $user->givePermissionTo('service_request.view-any');
+    $user->givePermissionTo('case.view-any');
 
     actingAs($user)
         ->get(

@@ -51,8 +51,8 @@ trait CaseUpdateBreadcrumbs
         $breadcrumbs = [
             'Case Management',
             $caseResource::getUrl() => $caseResource::getBreadcrumb(),
-            $caseResource::getUrl('view', ['record' => $this->getRecord()->serviceRequest]) => $this->getRecord()?->serviceRequest?->service_request_number,
-            $manageCaseUpdate::getUrl(['record' => $this->getRecord()->serviceRequest]) => 'Updates',
+            $caseResource::getUrl('view', ['record' => $this->getRecord()->case]) => $this->getRecord()?->case?->case_number,
+            $manageCaseUpdate::getUrl(['record' => $this->getRecord()->case]) => 'Updates',
             $currentResource::getUrl('view', ['record' => $this->getRecord()?->getKey()]) => Str::limit($this->getRecord()?->getKey(), 18),
             ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
         ];

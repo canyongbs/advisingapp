@@ -51,7 +51,7 @@ class StudentCaseManagement extends ManageRelatedRecords
 
     protected static string $resource = StudentResource::class;
 
-    protected static string $relationship = 'serviceRequests';
+    protected static string $relationship = 'cases';
 
     // TODO: Automatically set from Filament based on relationship name
     protected static ?string $navigationLabel = 'Case Management';

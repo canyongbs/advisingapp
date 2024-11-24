@@ -62,7 +62,7 @@ class CaseResource extends Resource
 
     public static function shouldShowFormSubmission(Page $page): bool
     {
-        if (! is_null($page->record) && ! is_null($page->record->serviceRequestFormSubmission)) {
+        if (! is_null($page->record) && ! is_null($page->record->caseFormSubmission)) {
             return true;
         }
 

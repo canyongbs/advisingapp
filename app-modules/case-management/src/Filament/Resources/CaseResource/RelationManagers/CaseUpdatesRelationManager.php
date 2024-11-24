@@ -52,7 +52,7 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
 
 class CaseUpdatesRelationManager extends RelationManager
 {
-    protected static string $relationship = 'serviceRequestUpdates';
+    protected static string $relationship = 'caseUpdates';
 
     protected static ?string $recordTitleAttribute = 'update';
 

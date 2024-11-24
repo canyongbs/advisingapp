@@ -66,8 +66,8 @@ class ListCases extends ListRecords
     {
         return $table
             ->modifyQueryUsing(fn (Builder $query) => $query->with([
-                'latestInboundServiceRequestUpdate',
-                'latestOutboundServiceRequestUpdate',
+                'latestInboundCaseUpdate',
+                'latestOutboundCaseUpdate',
                 'priority' => [
                     'sla',
                 ],
@@ -75,7 +75,7 @@ class ListCases extends ListRecords
             ]))
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('service_request_number')
+                TextColumn::make('case_number')
                     ->label('Case #')
                     ->searchable()
                     ->sortable(),
@@ -90,8 +90,8 @@ class ListCases extends ListRecords
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         // Update this if any other relations are added to the Case model respondent relationship
                         return $query->join('students', function (JoinClause $join) {
-                            $join->on('service_requests.respondent_id', '=', 'students.sisid')
-                                ->where('service_requests.respondent_type', '=', 'student');
+                            $join->on('cases.respondent_id', '=', 'students.sisid')
+                                ->where('cases.respondent_type', '=', 'student');
                         })->orderBy('sisid', $direction);
                     }),
                 TextColumn::make('respondent.otherid')
@@ -100,8 +100,8 @@ class ListCases extends ListRecords
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         // Update this if any other relations are added to the Case model respondent relationship
                         return $query->join('students', function (JoinClause $join) {
-                            $join->on('service_requests.respondent_id', '=', 'students.sisid')
-                                ->where('service_requests.respondent_type', '=', 'student');
+                            $join->on('cases.respondent_id', '=', 'students.sisid')
+                                ->where('cases.respondent_type', '=', 'student');
                         })->orderBy('otherid', $direction);
                     }),
                 TextColumn::make('division.name')

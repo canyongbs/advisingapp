@@ -53,15 +53,15 @@ class CaseAssignmentObserver
             TriggeredAutoSubscription::dispatch($user, $caseAssignment);
         }
 
-        $caseAssignment->serviceRequest->assignments()->where('id', '!=', $caseAssignment->id)->update([
+        $caseAssignment->case->assignments()->where('id', '!=', $caseAssignment->id)->update([
             'status' => CaseAssignmentStatus::Inactive,
         ]);
 
-        TimelineableRecordCreated::dispatch($caseAssignment->serviceRequest, $caseAssignment);
+        TimelineableRecordCreated::dispatch($caseAssignment->case, $caseAssignment);
     }
 
     public function deleted(CaseAssignment $caseAssignment): void
     {
-        TimelineableRecordDeleted::dispatch($caseAssignment->serviceRequest, $caseAssignment);
+        TimelineableRecordDeleted::dispatch($caseAssignment->case, $caseAssignment);
     }
 }

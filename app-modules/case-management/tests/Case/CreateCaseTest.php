@@ -149,8 +149,8 @@ test('CreateCase is gated with proper access control', function () {
     livewire(CreateCase::class)
         ->assertForbidden();
 
-    $user->givePermissionTo('service_request.view-any');
-    $user->givePermissionTo('service_request.create');
+    $user->givePermissionTo('case.view-any');
+    $user->givePermissionTo('case.create');
 
     actingAs($user)
         ->get(
@@ -206,8 +206,8 @@ test('CreateCase is gated with proper feature access control', function () {
             CaseResource::getUrl('create')
         )->assertForbidden();
 
-    $user->givePermissionTo('service_request.view-any');
-    $user->givePermissionTo('service_request.create');
+    $user->givePermissionTo('case.view-any');
+    $user->givePermissionTo('case.create');
 
     livewire(CreateCase::class)
         ->assertForbidden();

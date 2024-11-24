@@ -53,7 +53,7 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\ListC
 
 test('The correct details are displayed on the ListCaseUpdates page', function () {
     $caseUpdates = CaseUpdate::factory()
-        ->for(CaseModel::factory(), 'serviceRequest')
+        ->for(CaseModel::factory(), 'case')
         ->count(10)
         ->create();
 
@@ -73,23 +73,23 @@ test('The correct details are displayed on the ListCaseUpdates page', function (
                 $caseUpdate
             )
             ->assertTableColumnStateSet(
-                'serviceRequest.respondent.full',
-                $caseUpdate->serviceRequest->respondent->full,
+                'case.respondent.full',
+                $caseUpdate->case->respondent->full,
                 $caseUpdate
             )
             ->assertTableColumnStateSet(
-                'serviceRequest.respondent.sisid',
-                $caseUpdate->serviceRequest->respondent->sisid,
+                'case.respondent.sisid',
+                $caseUpdate->case->respondent->sisid,
                 $caseUpdate
             )
             ->assertTableColumnStateSet(
-                'serviceRequest.respondent.otherid',
-                $caseUpdate->serviceRequest->respondent->otherid,
+                'case.respondent.otherid',
+                $caseUpdate->case->respondent->otherid,
                 $caseUpdate
             )
             ->assertTableColumnStateSet(
-                'serviceRequest.service_request_number',
-                $caseUpdate->serviceRequest->service_request_number,
+                'case.case_number',
+                $caseUpdate->case->case_number,
                 $caseUpdate
             )
             ->assertTableColumnStateSet(
@@ -123,7 +123,7 @@ test('ListCaseUpdates is gated with proper access control', function () {
             CaseUpdateResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('service_request_update.view-any');
+    $user->givePermissionTo('case_update.view-any');
 
     actingAs($user)
         ->get(
@@ -140,7 +140,7 @@ test('ListCaseUpdates is gated with proper feature access control', function () 
 
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
-    $user->givePermissionTo('service_request_update.view-any');
+    $user->givePermissionTo('case_update.view-any');
 
     actingAs($user)
         ->get(

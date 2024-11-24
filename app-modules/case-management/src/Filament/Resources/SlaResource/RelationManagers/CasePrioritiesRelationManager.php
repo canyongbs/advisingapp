@@ -52,7 +52,7 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 
 class CasePrioritiesRelationManager extends RelationManager
 {
-    protected static string $relationship = 'serviceRequestPriorities';
+    protected static string $relationship = 'casePriorities';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -72,9 +72,9 @@ class CasePrioritiesRelationManager extends RelationManager
                 TextColumn::make('order')
                     ->label('Priority Order')
                     ->sortable(),
-                TextColumn::make('service_requests_count')
+                TextColumn::make('cases_count')
                     ->label('# of Cases')
-                    ->counts('serviceRequests')
+                    ->counts('cases')
                     ->sortable(),
             ])
             ->headerActions([

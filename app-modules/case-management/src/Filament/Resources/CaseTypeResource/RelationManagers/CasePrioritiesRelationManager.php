@@ -95,9 +95,9 @@ class CasePrioritiesRelationManager extends RelationManager
                     ->label('SLA')
                     ->url(fn (CasePriority $record): ?string => $record->sla ? SlaResource::getUrl('edit', ['record' => $record->sla]) : null)
                     ->searchable(),
-                TextColumn::make('service_requests_count')
+                TextColumn::make('cases_count')
                     ->label('# of Cases')
-                    ->counts('serviceRequests')
+                    ->counts('cases')
                     ->sortable(),
             ])
             ->defaultSort('order')

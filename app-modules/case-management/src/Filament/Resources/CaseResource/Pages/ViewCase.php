@@ -64,7 +64,7 @@ class ViewCase extends ViewRecord
             ->schema([
                 Section::make()
                     ->schema([
-                        TextEntry::make('service_request_number')
+                        TextEntry::make('case_number')
                             ->label('Case Number'),
                         TextEntry::make('division.name')
                             ->label('Division'),
@@ -150,11 +150,11 @@ class ViewCase extends ViewRecord
                     ->columns(2),
                 Section::make('Form Submission Details')
                     ->collapsed()
-                    ->visible(fn (CaseModel $record): bool => ! is_null($record->serviceRequestFormSubmission))
+                    ->visible(fn (CaseModel $record): bool => ! is_null($record->caseFormSubmission))
                     ->schema([
-                        TextEntry::make('serviceRequestFormSubmission.submitted_at')
+                        TextEntry::make('caseFormSubmission.submitted_at')
                             ->dateTime(),
-                        ViewEntry::make('serviceRequestFormSubmission')
+                        ViewEntry::make('caseFormSubmission')
                             ->view('filament.infolists.components.submission-entry'),
                     ]),
             ]);

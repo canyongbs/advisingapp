@@ -141,7 +141,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return $this->id;
     }
 
-    public function serviceRequests(): MorphMany
+    public function cases(): MorphMany
     {
         return $this->morphMany(
             related: CaseModel::class,

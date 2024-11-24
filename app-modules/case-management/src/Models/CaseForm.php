@@ -77,21 +77,37 @@ class CaseForm extends Submissible
 
     public function fields(): HasMany
     {
+        if (CaseManagement::active()) {
+            return $this->hasMany(CaseFormField::class, 'case_form_id');
+        }
+
         return $this->hasMany(CaseFormField::class, 'service_request_form_id');
     }
 
     public function steps(): HasMany
     {
+        if (CaseManagement::active()) {
+            return $this->hasMany(CaseFormStep::class, 'case_form_id');
+        }
+
         return $this->hasMany(CaseFormStep::class, 'service_request_form_id');
     }
 
     public function submissions(): HasMany
     {
+        if (CaseManagement::active()) {
+            return $this->hasMany(CaseFormSubmission::class, 'case_form_id');
+        }
+
         return $this->hasMany(CaseFormSubmission::class, 'service_request_form_id');
     }
 
     public function type(): BelongsTo
     {
+        if (CaseManagement::active()) {
+            return $this->belongsTo(CaseType::class, 'case_type_id');
+        }
+
         return $this->belongsTo(CaseType::class, 'service_request_type_id');
     }
 }

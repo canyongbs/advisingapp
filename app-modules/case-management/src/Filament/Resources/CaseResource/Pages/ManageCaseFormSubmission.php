@@ -46,7 +46,7 @@ class ManageCaseFormSubmission extends ManageRelatedRecords
     protected static string $resource = CaseResource::class;
 
     // TODO: Obsolete when there is no table, remove from Filament
-    protected static string $relationship = 'serviceRequestFormSubmission';
+    protected static string $relationship = 'caseFormSubmission';
 
     protected static ?string $navigationLabel = 'Case Form Submission';
 

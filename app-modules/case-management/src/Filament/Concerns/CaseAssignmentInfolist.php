@@ -47,9 +47,9 @@ trait CaseAssignmentInfolist
     public function caseAssignmentInfolist(): array
     {
         return [
-            TextEntry::make('serviceRequest.service_request_number')
+            TextEntry::make('case.case_number')
                 ->label('Case')
-                ->url(fn (CaseAssignment $caseAssignment): string => CaseResource::getUrl('view', ['record' => $caseAssignment->serviceRequest]))
+                ->url(fn (CaseAssignment $caseAssignment): string => CaseResource::getUrl('view', ['record' => $caseAssignment->case]))
                 ->color('primary'),
             TextEntry::make('user.name')
                 ->label('Assigned To')
