@@ -1687,7 +1687,7 @@ namespace AdvisingApp\CaseManagement\Models{
  * AdvisingApp\CaseManagement\Models\CaseAssignment
  *
  * @property string $id
- * @property string $case_id
+ * @property string $case_model_id
  * @property string $user_id
  * @property string|null $assigned_by_id
  * @property \Illuminate\Support\Carbon $assigned_at
@@ -1707,7 +1707,7 @@ namespace AdvisingApp\CaseManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment query()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment whereAssignedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment whereAssignedById($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment whereCaseId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment whereCaseModelId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment whereId($value)
@@ -1931,7 +1931,7 @@ namespace AdvisingApp\CaseManagement\Models{
  * AdvisingApp\CaseManagement\Models\CaseHistory
  *
  * @property string $id
- * @property string $case_id
+ * @property string $case_model_id
  * @property array $original_values
  * @property array $new_values
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -1945,7 +1945,7 @@ namespace AdvisingApp\CaseManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory query()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory whereCaseId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory whereCaseModelId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory whereId($value)
@@ -2152,7 +2152,7 @@ namespace AdvisingApp\CaseManagement\Models{
  * AdvisingApp\CaseManagement\Models\CaseUpdate
  *
  * @property string $id
- * @property string|null $case_id
+ * @property string|null $case_model_id
  * @property string $update
  * @property bool $internal
  * @property \AdvisingApp\CaseManagement\Enums\CaseUpdateDirection $direction
@@ -2167,7 +2167,7 @@ namespace AdvisingApp\CaseManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate query()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate whereCaseId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate whereCaseModelId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate whereDirection($value)
