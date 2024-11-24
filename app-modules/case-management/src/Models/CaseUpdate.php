@@ -62,7 +62,7 @@ class CaseUpdate extends BaseModel implements Auditable, CanTriggerAutoSubscript
     use AuditableTrait;
 
     protected $fillable = [
-        'case_id',
+        'case_model_id',
         'update',
         'internal',
         'direction',
@@ -80,7 +80,7 @@ class CaseUpdate extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function case(): BelongsTo
     {
-        return $this->belongsTo(CaseModel::class);
+        return $this->belongsTo(CaseModel::class, 'case_model_id', 'id');
     }
 
     public function getSubscribable(): ?Subscribable

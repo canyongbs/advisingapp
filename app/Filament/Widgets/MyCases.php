@@ -104,10 +104,10 @@ class MyCases extends BaseWidget
             ])
             ->actions([
                 ViewAction::make()
-                    ->url(fn (CaseModel $record): string => CaseResource::getUrl(name: 'view', parameters: ['record' => $record->case_id])),
+                    ->url(fn (CaseModel $record): string => CaseResource::getUrl(name: 'view', parameters: ['record' => $record->case_model_id])),
             ])
             ->recordUrl(
-                fn (CaseModel $record): string => CaseResource::getUrl(name: 'view', parameters: ['record' => $record->case_id]),
+                fn (CaseModel $record): string => CaseResource::getUrl(name: 'view', parameters: ['record' => $record->case_model_id]),
             )
             ->paginated([5]);
     }

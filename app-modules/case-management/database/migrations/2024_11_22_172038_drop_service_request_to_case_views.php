@@ -40,7 +40,7 @@ return new class () extends Migration {
 
         DB::statement('CREATE VIEW service_request_priorities AS SELECT * FROM case_priorities');
 
-        DB::statement('CREATE VIEW service_request_assignments AS SELECT case_id AS service_request_id FROM case_assignments');
+        DB::statement('CREATE VIEW service_request_assignments AS SELECT case_model_id AS service_request_id FROM case_assignments');
 
         DB::statement('CREATE VIEW service_request_form_authentications AS SELECT case_form_id AS service_request_form_id FROM case_form_authentications');
 
@@ -54,9 +54,9 @@ return new class () extends Migration {
 
         DB::statement('CREATE VIEW service_request_forms AS SELECT case_type_id AS service_request_type_id FROM case_forms');
 
-        DB::statement('CREATE VIEW service_request_histories AS SELECT case_id AS service_request_id FROM case_histories');
+        DB::statement('CREATE VIEW service_request_histories AS SELECT case_model_id AS service_request_id FROM case_histories');
 
-        DB::statement('CREATE VIEW service_request_updates AS SELECT case_id AS service_request_id FROM case_updates');
+        DB::statement('CREATE VIEW service_request_updates AS SELECT case_model_id AS service_request_id FROM case_updates');
 
         DB::statement('CREATE VIEW service_requests AS SELECT case_number AS service_request_number, case_form_submission_id AS service_request_form_submission_id FROM cases');
     }

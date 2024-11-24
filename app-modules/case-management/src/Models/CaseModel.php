@@ -176,7 +176,7 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
     public function caseUpdates(): HasMany
     {
         if (CaseManagement::active()) {
-            return $this->hasMany(CaseUpdate::class, 'case_id');
+            return $this->hasMany(CaseUpdate::class);
         }
 
         return $this->hasMany(CaseUpdate::class, 'service_request_id');
@@ -279,7 +279,7 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
     public function latestInboundCaseUpdate(): HasOne
     {
         if (CaseManagement::active()) {
-            return $this->hasOne(CaseUpdate::class, 'case_id')
+            return $this->hasOne(CaseUpdate::class)
                 ->ofMany([
                     'created_at' => 'max',
                 ], function (Builder $query) {
@@ -302,7 +302,7 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
     public function latestOutboundCaseUpdate(): HasOne
     {
         if (CaseManagement::active()) {
-            return $this->hasOne(CaseUpdate::class, 'case_id')
+            return $this->hasOne(CaseUpdate::class)
                 ->ofMany([
                     'created_at' => 'max',
                 ], function (Builder $query) {

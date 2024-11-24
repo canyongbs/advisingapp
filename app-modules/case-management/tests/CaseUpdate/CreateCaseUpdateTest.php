@@ -78,10 +78,10 @@ test('A successful action on the CreateCaseUpdate page', function () {
 
     assertCount(1, CaseUpdate::all());
 
-    assertDatabaseHas(CaseUpdate::class, $request->except('case_id')->toArray());
+    assertDatabaseHas(CaseUpdate::class, $request->except('case_model_id')->toArray());
 
     expect(CaseUpdate::first()->case->id)
-        ->toEqual($request->get('case_id'));
+        ->toEqual($request->get('case_model_id'));
 });
 
 test('CreateCaseUpdate requires valid data', function ($data, $errors) {
@@ -95,8 +95,8 @@ test('CreateCaseUpdate requires valid data', function ($data, $errors) {
     assertEmpty(CaseUpdate::all());
 })->with(
     [
-        'case missing' => [CreateCaseUpdateRequestFactory::new()->without('case_id'), ['case_id' => 'required']],
-        'case not existing case id' => [CreateCaseUpdateRequestFactory::new()->state(['case_id' => fake()->uuid()]), ['case_id' => 'exists']],
+        'case missing' => [CreateCaseUpdateRequestFactory::new()->without('case_model_id'), ['case_model_id' => 'required']],
+        'case not existing case id' => [CreateCaseUpdateRequestFactory::new()->state(['case_model_id' => fake()->uuid()]), ['case_model_id' => 'exists']],
         'update missing' => [CreateCaseUpdateRequestFactory::new()->without('update'), ['update' => 'required']],
         'update is not a string' => [CreateCaseUpdateRequestFactory::new()->state(['update' => 99]), ['update' => 'string']],
         'direction missing' => [CreateCaseUpdateRequestFactory::new()->state(['direction' => null]), ['direction' => 'required']],

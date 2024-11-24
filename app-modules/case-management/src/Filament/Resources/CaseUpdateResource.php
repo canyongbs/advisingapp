@@ -76,7 +76,7 @@ class CaseUpdateResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('case_id')
+                Select::make('case_model_id')
                     ->relationship('case', 'id')
                     ->preload()
                     ->label('Case')
@@ -112,7 +112,7 @@ class CaseUpdateResource extends Resource
                     ->label('Related To')
                     ->sortable(query: function (Builder $query, string $direction, $record): Builder {
                         // TODO: Update this to work with other respondent types
-                        return $query->join('cases', 'case_updates.case_id', '=', 'cases.id')
+                        return $query->join('cases', 'case_updates.case_model_id', '=', 'cases.id')
                             ->join('students', function ($join) {
                                 $join->on('cases.respondent_id', '=', 'students.sisid')
                                     ->where('cases.respondent_type', '=', 'student');
@@ -124,7 +124,7 @@ class CaseUpdateResource extends Resource
                     ->label('SIS ID')
                     ->sortable(query: function (Builder $query, string $direction, $record): Builder {
                         // TODO: Update this to work with other respondent types
-                        return $query->join('cases', 'case_updates.case_id', '=', 'cases.id')
+                        return $query->join('cases', 'case_updates.case_model_id', '=', 'cases.id')
                             ->join('students', function ($join) {
                                 $join->on('cases.respondent_id', '=', 'students.sisid')
                                     ->where('cases.respondent_type', '=', 'student');
@@ -136,7 +136,7 @@ class CaseUpdateResource extends Resource
                     ->label('Other ID')
                     ->sortable(query: function (Builder $query, string $direction, $record): Builder {
                         // TODO: Update this to work with other respondent types
-                        return $query->join('cases', 'case_updates.case_id', '=', 'cases.id')
+                        return $query->join('cases', 'case_updates.case_model_id', '=', 'cases.id')
                             ->join('students', function ($join) {
                                 $join->on('cases.respondent_id', '=', 'students.sisid')
                                     ->where('cases.respondent_type', '=', 'student');

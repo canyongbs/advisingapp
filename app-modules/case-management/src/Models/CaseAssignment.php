@@ -88,7 +88,7 @@ class CaseAssignment extends BaseModel implements Auditable, CanTriggerAutoSubsc
 
     public function case(): BelongsTo
     {
-        return $this->belongsTo(CaseModel::class);
+        return $this->belongsTo(CaseModel::class, 'case_model_id', 'id');
     }
 
     public function timeline(): CaseAssignmentTimeline

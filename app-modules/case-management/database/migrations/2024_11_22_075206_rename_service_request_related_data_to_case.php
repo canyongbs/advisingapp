@@ -8,7 +8,7 @@ return new class () extends Migration {
     {
         /**
          * Renaming the table service_request_assignments to case_assignments
-         * Renaming the column service_request_id to case_id in table
+         * Renaming the column service_request_id to case_model_id in table
         **/
         DB::beginTransaction();
 
@@ -18,13 +18,13 @@ return new class () extends Migration {
 
         DB::statement('ALTER TABLE case_assignments RENAME CONSTRAINT service_request_assignments_assigned_by_id_foreign TO case_assignments_assigned_by_id_foreign');
 
-        DB::statement('ALTER TABLE case_assignments RENAME CONSTRAINT service_request_assignments_service_request_id_foreign TO case_assignments_case_id_foreign');
+        DB::statement('ALTER TABLE case_assignments RENAME CONSTRAINT service_request_assignments_service_request_id_foreign TO case_assignments_case_model_id_foreign');
 
         DB::statement('ALTER TABLE case_assignments RENAME CONSTRAINT service_request_assignments_user_id_foreign TO case_assignments_user_id_foreign');
 
-        DB::statement('ALTER TABLE case_assignments RENAME COLUMN service_request_id TO case_id');
+        DB::statement('ALTER TABLE case_assignments RENAME COLUMN service_request_id TO case_model_id');
 
-        DB::statement('CREATE VIEW service_request_assignments AS SELECT case_id AS service_request_id FROM case_assignments');
+        DB::statement('CREATE VIEW service_request_assignments AS SELECT case_model_id AS service_request_id FROM case_assignments');
 
         DB::commit();
 
@@ -162,7 +162,7 @@ return new class () extends Migration {
 
         /**
          * Renaming the table service_request_histories to case_histories
-         * Renaming the column service_request_id to case_id in table
+         * Renaming the column service_request_id to case_model_id in table
         **/
         DB::beginTransaction();
 
@@ -170,17 +170,17 @@ return new class () extends Migration {
 
         DB::statement('ALTER TABLE case_histories RENAME CONSTRAINT service_request_histories_pkey TO case_histories_pkey');
 
-        DB::statement('ALTER TABLE case_histories RENAME CONSTRAINT service_request_histories_service_request_id_foreign TO case_histories_case_id_foreign');
+        DB::statement('ALTER TABLE case_histories RENAME CONSTRAINT service_request_histories_service_request_id_foreign TO case_histories_case_model_id_foreign');
 
-        DB::statement('ALTER TABLE case_histories RENAME COLUMN service_request_id TO case_id');
+        DB::statement('ALTER TABLE case_histories RENAME COLUMN service_request_id TO case_model_id');
 
-        DB::statement('CREATE VIEW service_request_histories AS SELECT case_id AS service_request_id FROM case_histories');
+        DB::statement('CREATE VIEW service_request_histories AS SELECT case_model_id AS service_request_id FROM case_histories');
 
         DB::commit();
 
         /**
          * Renaming the table service_request_updates to case_updates
-         * Renaming the column service_request_id to case_id in table
+         * Renaming the column service_request_id to case_model_id in table
         **/
         DB::beginTransaction();
 
@@ -188,11 +188,11 @@ return new class () extends Migration {
 
         DB::statement('ALTER TABLE case_updates RENAME CONSTRAINT service_request_updates_pkey TO case_updates_pkey');
 
-        DB::statement('ALTER TABLE case_updates RENAME CONSTRAINT service_request_updates_service_request_id_foreign TO case_updates_case_id_foreign');
+        DB::statement('ALTER TABLE case_updates RENAME CONSTRAINT service_request_updates_service_request_id_foreign TO case_updates_case_model_id_foreign');
 
-        DB::statement('ALTER TABLE case_updates RENAME COLUMN service_request_id TO case_id');
+        DB::statement('ALTER TABLE case_updates RENAME COLUMN service_request_id TO case_model_id');
 
-        DB::statement('CREATE VIEW service_request_updates AS SELECT case_id AS service_request_id FROM case_updates');
+        DB::statement('CREATE VIEW service_request_updates AS SELECT case_model_id AS service_request_id FROM case_updates');
 
         DB::commit();
 
@@ -231,7 +231,7 @@ return new class () extends Migration {
     {
         /**
          * Renaming the table case_assignments to service_request_assignments
-         * Renaming the column case_id to service_request_id in table
+         * Renaming the column case_model_id to service_request_id in table
         **/
         DB::beginTransaction();
 
@@ -239,13 +239,13 @@ return new class () extends Migration {
 
         DB::statement('ALTER TABLE case_assignments RENAME TO service_request_assignments');
 
-        DB::statement('ALTER TABLE service_request_assignments RENAME COLUMN case_id TO service_request_id');
+        DB::statement('ALTER TABLE service_request_assignments RENAME COLUMN case_model_id TO service_request_id');
 
         DB::statement('ALTER TABLE service_request_assignments RENAME CONSTRAINT case_assignments_pkey TO service_request_assignments_pkey');
 
         DB::statement('ALTER TABLE service_request_assignments RENAME CONSTRAINT case_assignments_assigned_by_id_foreign TO service_request_assignments_assigned_by_id_foreign');
 
-        DB::statement('ALTER TABLE service_request_assignments RENAME CONSTRAINT case_assignments_case_id_foreign TO service_request_assignments_service_request_id_foreign');
+        DB::statement('ALTER TABLE service_request_assignments RENAME CONSTRAINT case_assignments_case_model_id_foreign TO service_request_assignments_service_request_id_foreign');
 
         DB::statement('ALTER TABLE service_request_assignments RENAME CONSTRAINT case_assignments_user_id_foreign TO service_request_assignments_user_id_foreign');
 
@@ -385,7 +385,7 @@ return new class () extends Migration {
 
         /**
          * Renaming the table case_histories to service_request_histories
-         * Renaming the column case_id to service_request_id in table
+         * Renaming the column case_model_id to service_request_id in table
         **/
         DB::beginTransaction();
 
@@ -393,17 +393,17 @@ return new class () extends Migration {
 
         DB::statement('ALTER TABLE case_histories RENAME TO service_request_histories');
 
-        DB::statement('ALTER TABLE service_request_histories RENAME COLUMN case_id TO service_request_id');
+        DB::statement('ALTER TABLE service_request_histories RENAME COLUMN case_model_id TO service_request_id');
 
         DB::statement('ALTER TABLE service_request_histories RENAME CONSTRAINT case_histories_pkey TO service_request_histories_pkey');
 
-        DB::statement('ALTER TABLE service_request_histories RENAME CONSTRAINT case_histories_case_id_foreign TO service_request_histories_service_request_id_foreign');
+        DB::statement('ALTER TABLE service_request_histories RENAME CONSTRAINT case_histories_case_model_id_foreign TO service_request_histories_service_request_id_foreign');
 
         DB::commit();
 
         /**
          * Renaming the table case_updates to service_request_updates
-         * Renaming the column case_id to service_request_id in table
+         * Renaming the column case_model_id to service_request_id in table
         **/
         DB::beginTransaction();
 
@@ -411,11 +411,11 @@ return new class () extends Migration {
 
         DB::statement('ALTER TABLE case_updates RENAME TO service_request_updates');
 
-        DB::statement('ALTER TABLE service_request_updates RENAME COLUMN case_id TO service_request_id');
+        DB::statement('ALTER TABLE service_request_updates RENAME COLUMN case_model_id TO service_request_id');
 
         DB::statement('ALTER TABLE service_request_updates RENAME CONSTRAINT case_updates_pkey TO service_request_updates_pkey');
 
-        DB::statement('ALTER TABLE service_request_updates RENAME CONSTRAINT case_updates_case_id_foreign TO service_request_updates_service_request_id_foreign');
+        DB::statement('ALTER TABLE service_request_updates RENAME CONSTRAINT case_updates_case_model_id_foreign TO service_request_updates_service_request_id_foreign');
 
         DB::commit();
 

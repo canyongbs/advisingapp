@@ -74,10 +74,10 @@ test('A successful action on the EditCaseUpdate page', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    assertDatabaseHas(CaseUpdate::class, $request->except('case_id')->toArray());
+    assertDatabaseHas(CaseUpdate::class, $request->except('case_model_id')->toArray());
 
     expect(CaseUpdate::first()->case->id)
-        ->toEqual($request->get('case_id'));
+        ->toEqual($request->get('case_model_id'));
 });
 
 test('EditCaseUpdate requires valid data', function ($data, $errors) {
@@ -100,8 +100,8 @@ test('EditCaseUpdate requires valid data', function ($data, $errors) {
         ->toEqual($caseUpdate->case->id);
 })->with(
     [
-        'case missing' => [EditCaseUpdateRequestFactory::new()->state(['case_id' => null]), ['case_id' => 'required']],
-        'case not existing case id' => [EditCaseUpdateRequestFactory::new()->state(['case_id' => fake()->uuid()]), ['case_id' => 'exists']],
+        'case missing' => [EditCaseUpdateRequestFactory::new()->state(['case_model_id' => null]), ['case_model_id' => 'required']],
+        'case not existing case id' => [EditCaseUpdateRequestFactory::new()->state(['case_model_id' => fake()->uuid()]), ['case_model_id' => 'exists']],
         'update missing' => [EditCaseUpdateRequestFactory::new()->state(['update' => null]), ['update' => 'required']],
         'update is not a string' => [EditCaseUpdateRequestFactory::new()->state(['update' => 99]), ['update' => 'string']],
         'direction missing' => [EditCaseUpdateRequestFactory::new()->state(['direction' => null]), ['direction' => 'required']],
@@ -148,10 +148,10 @@ test('EditCaseUpdate is gated with proper access control', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    assertDatabaseHas(CaseUpdate::class, $request->except('case_id')->toArray());
+    assertDatabaseHas(CaseUpdate::class, $request->except('case_model_id')->toArray());
 
     expect(CaseUpdate::first()->case->id)
-        ->toEqual($request->get('case_id'));
+        ->toEqual($request->get('case_model_id'));
 });
 
 test('EditCaseUpdate is gated with proper feature access control', function () {
