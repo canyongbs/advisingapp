@@ -58,6 +58,10 @@ class CaseResource extends Resource
 
     protected static ?int $navigationSort = 10;
 
+    protected static ?string $navigationLabel = 'Case';
+
+    protected static ?string $breadcrumb = 'Case';
+
     protected static ?string $cluster = CaseManagement::class;
 
     public static function shouldShowFormSubmission(Page $page): bool

@@ -46,7 +46,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Student;
 
-class CasePolicy
+class CaseModelPolicy
 {
     public function before(Authenticatable $authenticatable): ?Response
     {
