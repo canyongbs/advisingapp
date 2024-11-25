@@ -53,6 +53,7 @@ return new class () extends Migration {
         'integration-aws-ses-event-handling.view_ses_settings' => 'Integration: AWS SES Event Handling',
         'authorization.view_azure_sso_settings' => 'Authorization',
         'authorization.view_google_sso_settings' => 'Authorization',
+        'meeting-center.view_azure_calendar_settings' => 'Meeting Center',
     ];
 
     private array $guards = [
