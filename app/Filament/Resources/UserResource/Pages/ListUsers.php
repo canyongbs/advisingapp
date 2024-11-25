@@ -183,7 +183,7 @@ class ListUsers extends ListRecords
         $roles = Role::query()->take(50)->pluck('name', 'id')->toArray();
 
         return [
-            'no_roles' => 'None',
+            'none' => 'None',
             ...$roles,
         ];
     }
@@ -196,12 +196,12 @@ class ListUsers extends ListRecords
 
         $query->where(function ($query) use ($data) {
             $filteredValues = $data['values'];
-            $query->when(in_array('no_roles', $filteredValues), function ($query) {
+            $query->when(in_array('none', $filteredValues), function ($query) {
                 $query->whereDoesntHave('roles');
             })
                 ->orWhereHas('roles', function ($query) use ($filteredValues) {
-                    if (in_array('no_roles', $filteredValues)) {
-                        unset($filteredValues[array_search('no_roles', $filteredValues)]);
+                    if (in_array('none', $filteredValues)) {
+                        unset($filteredValues[array_search('none', $filteredValues)]);
                     }
 
                     $query->whereIn('id', $filteredValues);
