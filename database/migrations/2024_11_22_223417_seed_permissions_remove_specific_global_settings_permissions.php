@@ -47,6 +47,7 @@ return new class () extends Migration {
         'multifactor_settings.manage' => 'Multifactor',
         'theme.view_theme_settings' => 'Theme',
         'integration-google-analytics.view_google_analytics_settings' => 'Integration: Google Analytics',
+        'integration-google-recaptcha.view_google_recaptcha_settings' => 'Integration: Google reCAPTCHA',
     ];
 
     private array $guards = [
