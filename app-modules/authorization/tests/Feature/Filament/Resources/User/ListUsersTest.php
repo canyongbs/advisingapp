@@ -284,16 +284,26 @@ it('it filters users based on team', function () {
     $unassignedUser = User::factory()->count(2)->create();
 
     livewire(ListUsers::class)
+        ->assertCanSeeTableRecords($unassignedUser->merge($userInTeamA)->merge($userInTeamB))
         ->filterTable('teams', [$teamA->id])
         ->assertCanSeeTableRecords(
             $userInTeamA
+        )
+        ->assertCanNotSeeTableRecords(
+            $unassignedUser->merge($userInTeamB)
         )
         ->filterTable('teams', [$teamB->id])
         ->assertCanSeeTableRecords(
             $userInTeamB
         )
-        ->filterTable('teams', [])
+        ->assertCanNotSeeTableRecords(
+            $unassignedUser->merge($userInTeamA)
+        )
+        ->filterTable('teams', ['unassigned'])
         ->assertCanSeeTableRecords(
             $unassignedUser
+        )
+        ->assertCanNotSeeTableRecords(
+            $userInTeamA->merge($userInTeamB)
         );
 });
