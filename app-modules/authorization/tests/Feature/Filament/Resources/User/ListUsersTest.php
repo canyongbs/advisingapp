@@ -303,16 +303,28 @@ it('filters users based on roles', function () {
         ->assertCanSeeTableRecords(
             $usersInRoleA
         )
+        ->assertCanNotSeeTableRecords(
+            $noRolesUsers->merge($usersInRoleB)->merge($usersInRoleC)
+        )
         ->filterTable('roles', [$roleB->id])
         ->assertCanSeeTableRecords(
             $usersInRoleB
+        )
+        ->assertCanNotSeeTableRecords(
+            $noRolesUsers->merge($usersInRoleA)->merge($usersInRoleC)
         )
         ->filterTable('roles', [$roleB->id, $roleC->id])
         ->assertCanSeeTableRecords(
             $usersInRoleB->merge($usersInRoleC)
         )
-        ->filterTable('roles', [])
+        ->assertCanNotSeeTableRecords(
+            $noRolesUsers->merge($usersInRoleA)
+        )
+        ->filterTable('roles', ['none'])
         ->assertCanSeeTableRecords(
             $noRolesUsers
+        )
+        ->assertCanNotSeeTableRecords(
+            $usersInRoleA->merge($usersInRoleB)->merge($usersInRoleC)
         );
 });
