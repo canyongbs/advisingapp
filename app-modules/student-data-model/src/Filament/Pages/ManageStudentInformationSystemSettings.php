@@ -36,13 +36,15 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
+use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
+use App\Models\Authenticatable;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
-use App\Filament\Clusters\GlobalSettings;
+use App\Filament\Clusters\ProductIntegrations;
 use AdvisingApp\StudentDataModel\Enums\SisSystem;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 
@@ -54,9 +56,7 @@ class ManageStudentInformationSystemSettings extends SettingsPage
 
     protected static string $settings = StudentInformationSystemSettings::class;
 
-    protected static ?string $cluster = GlobalSettings::class;
-
-    protected static ?string $navigationGroup = 'Product Integrations';
+    protected static ?string $cluster = ProductIntegrations::class;
 
     protected static ?int $navigationSort = 110;
 
@@ -65,7 +65,7 @@ class ManageStudentInformationSystemSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('sis.manage_sis_settings');
+        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE) && parent::canAccess();
     }
 
     public function form(Form $form): Form
