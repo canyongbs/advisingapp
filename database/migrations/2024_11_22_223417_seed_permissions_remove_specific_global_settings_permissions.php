@@ -51,6 +51,7 @@ return new class () extends Migration {
         'integration-microsoft-clarity.view_microsoft_clarity_settings' => 'Integration: Microsoft Clarity',
         'integration-twilio.view_twilio_settings' => 'Integration: Twilio',
         'integration-aws-ses-event-handling.view_ses_settings' => 'Integration: AWS SES Event Handling',
+        'authorization.view_azure_sso_settings' => 'Authorization',
     ];
 
     private array $guards = [
