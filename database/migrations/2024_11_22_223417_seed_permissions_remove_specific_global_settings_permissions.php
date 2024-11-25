@@ -58,6 +58,8 @@ return new class () extends Migration {
         'ai.view_cognitive_services_settings' => 'Integration: Cognitive Services',
         'amazon-s3.manage_s3_settings' => 'Amazon S3',
         'sis.manage_sis_settings' => 'Student Information System',
+        'inbound_webhook.*.view' => 'Inbound Webhook',
+        'inbound_webhook.view-any' => 'Inbound Webhook',
     ];
 
     private array $guards = [

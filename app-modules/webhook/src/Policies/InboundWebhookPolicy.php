@@ -44,18 +44,16 @@ class InboundWebhookPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: 'inbound_webhook.view-any',
-            denyResponse: 'You do not have permission to view inbound webhooks.'
-        );
+        if (! $authenticatable->hasRole(Authenticatable::SUPER_ADMIN_ROLE)) {
+            return Response::deny('You do not have permission to view inbound webhooks.');
+        }
     }
 
     public function view(Authenticatable $authenticatable, InboundWebhook $inboundWebhook): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: ["inbound_webhook.{$inboundWebhook->id}.view"],
-            denyResponse: 'You do not have permission to view this inbound webhook.'
-        );
+        if (! $authenticatable->hasRole(Authenticatable::SUPER_ADMIN_ROLE)) {
+            return Response::deny('You do not have permission to view this inbound webhook.');
+        }
     }
 
     public function create(Authenticatable $authenticatable): Response
