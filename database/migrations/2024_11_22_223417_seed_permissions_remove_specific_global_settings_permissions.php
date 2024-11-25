@@ -44,6 +44,7 @@ return new class () extends Migration {
         'license_settings.manage' => 'License Settings',
         'audit.view_audit_settings' => 'Audit',
         'portal.view_portal_settings' => 'Portal',
+        'multifactor_settings.manage' => 'Multifactor',
     ];
 
     private array $guards = [

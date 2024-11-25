@@ -38,29 +38,27 @@ namespace AdvisingApp\MultifactorAuthentication\Filament\Pages;
 
 use App\Models\User;
 use Filament\Forms\Form;
+use App\Models\Authenticatable;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
-use App\Filament\Clusters\GlobalSettings;
 use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
 
 class ManageMultifactorSettings extends SettingsPage
 {
-    protected static ?string $navigationIcon = 'heroicon-o-lock-closed';
-
     protected static ?string $navigationLabel = 'Multifactor';
 
-    protected static ?int $navigationSort = 80;
+    protected static ?int $navigationSort = 50;
 
     protected static string $settings = MultifactorSettings::class;
 
-    protected static ?string $cluster = GlobalSettings::class;
+    protected static ?string $navigationGroup = 'Global Administration';
 
     public static function canAccess(): bool
     {
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('multifactor_settings.manage');
+        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE) && parent::canAccess();
     }
 
     public function form(Form $form): Form
