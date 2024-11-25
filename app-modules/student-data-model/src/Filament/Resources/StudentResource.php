@@ -78,6 +78,7 @@ class StudentResource extends Resource
             'Email Address' => collect([$record->email, $record->email_id])->filter()->implode(', '),
             'Mobile' => $record->mobile,
             'Phone' => $record->phone,
+            'Preferred Name' => $record->preferred,
         ], fn (mixed $value): bool => filled($value));
     }
 

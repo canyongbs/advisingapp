@@ -114,6 +114,7 @@ class ProspectResource extends Resource
             'Other ID' => $record->otherid,
             'Email Address' => collect([$record->email, $record->email_id])->filter()->implode(', '),
             'Phone' => collect([$record->mobile, $record->phone])->filter()->implode(', '),
+            'Preferred Name' => $record->preferred,
         ], fn (mixed $value): bool => filled($value));
     }
 
