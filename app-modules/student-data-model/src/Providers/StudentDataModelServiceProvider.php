@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Providers;
 
+use App\Models\Tag;
 use Filament\Panel;
 use Livewire\Livewire;
 use App\Concerns\ImplementsGraphQL;
@@ -45,6 +46,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
+use AdvisingApp\StudentDataModel\Observers\StudentTagObserver;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentTasksRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentAlertsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentCareTeamRelationManager;
@@ -68,6 +70,8 @@ class StudentDataModelServiceProvider extends ServiceProvider
         ]);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
+
+        Tag::observe(StudentTagObserver::class);
 
         Livewire::component('student-alert-relation-manager', StudentAlertsRelationManager::class);
         Livewire::component('student-care-team-relation-manager', StudentCareTeamRelationManager::class);

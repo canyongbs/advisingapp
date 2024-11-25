@@ -38,21 +38,41 @@ namespace App\Policies;
 
 use App\Models\Tag;
 use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
 
 class TagPolicy
 {
-    public function viewAny(Authenticatable $authenticatable): Response {}
+    public function viewAny(Authenticatable $authenticatable)
+    {
+        return true;
+    }
 
-    public function view(Authenticatable $authenticatable, Tag $tag): Response {}
+    public function view(Authenticatable $authenticatable, Tag $tag)
+    {
+        return true;
+    }
 
-    public function create(Authenticatable $authenticatable): Response {}
+    public function create(Authenticatable $authenticatable)
+    {
+        return true;
+    }
 
-    public function update(Authenticatable $authenticatable, Tag $tag): Response {}
+    public function update(Authenticatable $authenticatable, Tag $tag)
+    {
+        return true;
+    }
 
-    public function delete(Authenticatable $authenticatable, Tag $tag): Response {}
+    public function delete(Authenticatable $authenticatable, Tag $tag)
+    {
+        return true;
+    }
 
-    public function restore(Authenticatable $authenticatable, Tag $tag): Response {}
+    public function restore(Authenticatable $authenticatable, Tag $tag)
+    {
+        return true;
+    }
 
-    public function forceDelete(Authenticatable $authenticatable, Tag $tag): Response {}
+    public function forceDelete(Authenticatable $authenticatable, Tag $tag)
+    {
+        return true;
+    }
 }

@@ -34,46 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Providers;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages;
 
-use App\Models\Tag;
-use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Prospect\ProspectPlugin;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Prospect\Observers\ProspectObserver;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Prospect\Observers\ProspectTagObserver;
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Observers\ProspectStatusObserver;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource;
 
-class ProspectServiceProvider extends ServiceProvider
+class ViewProspectTag extends ViewRecord
 {
-    use ImplementsGraphQL;
+    protected static string $resource = ProspectTagResource::class;
 
-    public function register(): void
+    public function infolist(Infolist $infolist): Infolist
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ProspectPlugin()));
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name')
+                            ->label('Name'),
+                    ])
+                    ->columns(),
+            ]);
     }
 
-    public function boot(): void
+    protected function getHeaderActions(): array
     {
-        Relation::morphMap([
-            'prospect' => Prospect::class,
-            'prospect_source' => ProspectSource::class,
-            'prospect_status' => ProspectStatus::class,
-        ]);
-
-        Prospect::observe(ProspectObserver::class);
-        ProspectStatus::observe(ProspectStatusObserver::class);
-        Tag::observe(ProspectTagObserver::class);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        $this->registerEnum(ProspectStatusColorOptions::class);
-        $this->registerEnum(SystemProspectClassification::class);
+        return [
+            EditAction::make(),
+        ];
     }
 }
