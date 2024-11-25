@@ -56,6 +56,7 @@ return new class () extends Migration {
         'meeting-center.view_azure_calendar_settings' => 'Meeting Center',
         'meeting-center.view_google_calendar_settings' => 'Meeting Center',
         'ai.view_cognitive_services_settings' => 'Integration: Cognitive Services',
+        'amazon-s3.manage_s3_settings' => 'Amazon S3',
     ];
 
     private array $guards = [
