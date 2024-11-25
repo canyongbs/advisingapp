@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Webhook\Filament\Resources;
 
-use App\Models\Authenticatable;
 use Filament\Resources\Resource;
 use AdvisingApp\Webhook\Models\InboundWebhook;
 use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages\ViewInboundWebhook;
@@ -49,15 +48,6 @@ class InboundWebhookResource extends Resource
     protected static ?int $navigationSort = 30;
 
     protected static ?string $navigationGroup = 'Global Administration';
-
-    // TODO: Determine if this needs to be adjusted to remove the Inbound Webhook permissions from the policy.
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE) && parent::canAccess();
-    }
 
     public static function getPages(): array
     {
