@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages;
 
+use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
 use App\Models\Authenticatable;

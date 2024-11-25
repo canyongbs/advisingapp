@@ -52,6 +52,7 @@ return new class () extends Migration {
         'integration-twilio.view_twilio_settings' => 'Integration: Twilio',
         'integration-aws-ses-event-handling.view_ses_settings' => 'Integration: AWS SES Event Handling',
         'authorization.view_azure_sso_settings' => 'Authorization',
+        'authorization.view_google_sso_settings' => 'Authorization',
     ];
 
     private array $guards = [
