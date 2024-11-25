@@ -48,6 +48,7 @@ return new class () extends Migration {
         'theme.view_theme_settings' => 'Theme',
         'integration-google-analytics.view_google_analytics_settings' => 'Integration: Google Analytics',
         'integration-google-recaptcha.view_google_recaptcha_settings' => 'Integration: Google reCAPTCHA',
+        'integration-microsoft-clarity.view_microsoft_clarity_settings' => 'Integration: Microsoft Clarity',
     ];
 
     private array $guards = [
