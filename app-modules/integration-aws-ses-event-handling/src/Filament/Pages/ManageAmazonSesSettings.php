@@ -41,17 +41,18 @@ use App\Models\User;
 use App\Models\Tenant;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
+use App\Models\Authenticatable;
 use Filament\Pages\SettingsPage;
 use Illuminate\Support\Facades\DB;
 use Filament\Forms\Components\Toggle;
 use Filament\Support\Exceptions\Halt;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Clusters\GlobalSettings;
 
 use function Filament\Support\is_app_url;
 
 use Filament\Support\Facades\FilamentView;
+use App\Filament\Clusters\ProductIntegrations;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 
@@ -67,16 +68,14 @@ class ManageAmazonSesSettings extends SettingsPage
 
     protected static ?int $navigationSort = 50;
 
-    protected static ?string $navigationGroup = 'Product Integrations';
-
-    protected static ?string $cluster = GlobalSettings::class;
+    protected static ?string $cluster = ProductIntegrations::class;
 
     public static function canAccess(): bool
     {
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('integration-aws-ses-event-handling.view_ses_settings');
+        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE) && parent::canAccess();
     }
 
     public function form(Form $form): Form

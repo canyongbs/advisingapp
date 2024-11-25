@@ -50,6 +50,7 @@ return new class () extends Migration {
         'integration-google-recaptcha.view_google_recaptcha_settings' => 'Integration: Google reCAPTCHA',
         'integration-microsoft-clarity.view_microsoft_clarity_settings' => 'Integration: Microsoft Clarity',
         'integration-twilio.view_twilio_settings' => 'Integration: Twilio',
+        'integration-aws-ses-event-handling.view_ses_settings' => 'Integration: AWS SES Event Handling',
     ];
 
     private array $guards = [
