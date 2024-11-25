@@ -43,6 +43,7 @@ return new class () extends Migration {
     private array $permissions = [
         'license_settings.manage' => 'License Settings',
         'audit.view_audit_settings' => 'Audit',
+        'portal.view_portal_settings' => 'Portal',
     ];
 
     private array $guards = [
