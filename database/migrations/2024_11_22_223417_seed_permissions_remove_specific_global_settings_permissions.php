@@ -55,6 +55,7 @@ return new class () extends Migration {
         'authorization.view_google_sso_settings' => 'Authorization',
         'meeting-center.view_azure_calendar_settings' => 'Meeting Center',
         'meeting-center.view_google_calendar_settings' => 'Meeting Center',
+        'ai.view_cognitive_services_settings' => 'Integration: Cognitive Services',
     ];
 
     private array $guards = [
