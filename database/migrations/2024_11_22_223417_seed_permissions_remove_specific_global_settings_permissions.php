@@ -45,6 +45,7 @@ return new class () extends Migration {
         'audit.view_audit_settings' => 'Audit',
         'portal.view_portal_settings' => 'Portal',
         'multifactor_settings.manage' => 'Multifactor',
+        'theme.view_theme_settings' => 'Theme',
     ];
 
     private array $guards = [
