@@ -64,7 +64,7 @@ class ManageLicenseSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return parent::canAccess() && $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE);
+        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE) && parent::canAccess();
     }
 
     public function form(Form $form): Form
