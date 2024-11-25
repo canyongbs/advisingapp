@@ -34,39 +34,13 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
-use Database\Migrations\Concerns\CanModifyPermissions;
+namespace App\Filament\Clusters;
 
-return new class () extends Migration {
-    use CanModifyPermissions;
+use Filament\Clusters\Cluster;
 
-    private array $permissions = [
-        'license_settings.manage' => 'License Settings',
-        'audit.view_audit_settings' => 'Audit',
-        'portal.view_portal_settings' => 'Portal',
-        'multifactor_settings.manage' => 'Multifactor',
-        'theme.view_theme_settings' => 'Theme',
-        'integration-google-analytics.view_google_analytics_settings' => 'Integration: Google Analytics',
-    ];
+class ProductIntegrations extends Cluster
+{
+    protected static ?string $navigationGroup = 'Global Administration';
 
-    private array $guards = [
-        'web',
-        'api',
-    ];
-
-    public function up(): void
-    {
-        collect($this->guards)
-            ->each(function (string $guard) {
-                $this->deletePermissions(array_keys($this->permissions), $guard);
-            });
-    }
-
-    public function down(): void
-    {
-        collect($this->guards)
-            ->each(function (string $guard) {
-                $this->createPermissions($this->permissions, $guard);
-            });
-    }
-};
+    protected static ?int $navigationSort = 70;
+}
