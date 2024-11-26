@@ -85,32 +85,35 @@ class ListUsers extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('name'),
+                TextColumn::make('name')
+                    ->searchable(),
                 TextColumn::make('teams.name')
                     ->label('Team')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('email')
                     ->label('Email address')
+                    ->searchable()
                     ->toggleable(),
                 TextColumn::make('job_title')
+                    ->searchable()
                     ->toggleable(),
                 IconColumn::make(LicenseType::ConversationalAi->value . '_enabled')
                     ->label('AI Assistant')
-                    ->state(fn (User $record): bool => $record->hasLicense(LicenseType::ConversationalAi))
+                    ->state(fn(User $record): bool => $record->hasLicense(LicenseType::ConversationalAi))
                     ->boolean()
-                    ->tooltip(fn (bool $state): string => $state ? 'Licensed' : 'Unlicensed')
+                    ->tooltip(fn(bool $state): string => $state ? 'Licensed' : 'Unlicensed')
                     ->toggleable(),
                 IconColumn::make(LicenseType::RetentionCrm->value . '_enabled')
                     ->label('Retention')
-                    ->state(fn (User $record): bool => $record->hasLicense(LicenseType::RetentionCrm))
+                    ->state(fn(User $record): bool => $record->hasLicense(LicenseType::RetentionCrm))
                     ->boolean()
-                    ->tooltip(fn (bool $state): string => $state ? 'Licensed' : 'Unlicensed')
+                    ->tooltip(fn(bool $state): string => $state ? 'Licensed' : 'Unlicensed')
                     ->toggleable(),
                 IconColumn::make(LicenseType::RecruitmentCrm->value . '_enabled')
                     ->label('Recruitment')
-                    ->state(fn (User $record): bool => $record->hasLicense(LicenseType::RecruitmentCrm))
+                    ->state(fn(User $record): bool => $record->hasLicense(LicenseType::RecruitmentCrm))
                     ->boolean()
-                    ->tooltip(fn (bool $state): string => $state ? 'Licensed' : 'Unlicensed')
+                    ->tooltip(fn(bool $state): string => $state ? 'Licensed' : 'Unlicensed')
                     ->toggleable(),
                 TextColumn::make('created_at')
                     ->label('Created At')
@@ -124,8 +127,8 @@ class ListUsers extends ListRecords
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('deleted_at')
                     ->label('Status')
-                    ->getStateUsing(fn (User $record): string => $record->trashed() ? 'Archived' : 'Active')
-                    ->visible(fn ($livewire) => isset($livewire->getTableFilterState('trashed')['value']) ? true : false),
+                    ->getStateUsing(fn(User $record): string => $record->trashed() ? 'Archived' : 'Active')
+                    ->visible(fn($livewire) => isset($livewire->getTableFilterState('trashed')['value']) ? true : false),
             ])
             ->actions([
                 Impersonate::make(),
@@ -138,16 +141,16 @@ class ListUsers extends ListRecords
                     DeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                     AssignLicensesBulkAction::make()
-                        ->visible(fn () => auth()->user()->can('create', License::class)),
+                        ->visible(fn() => auth()->user()->can('create', License::class)),
                     AssignRolesBulkAction::make()
-                        ->visible(fn () => auth()->user()->can('user.*.update', User::class)),
+                        ->visible(fn() => auth()->user()->can('user.*.update', User::class)),
                     AssignTeamBulkAction::make()
-                        ->visible(fn () => auth()->user()->can('user.*.update', User::class)),
+                        ->visible(fn() => auth()->user()->can('user.*.update', User::class)),
                 ]),
             ])
             ->filters([
                 TrashedFilter::make()
-                    ->visible((fn () => auth()->user()->can('user.*.restore'))),
+                    ->visible((fn() => auth()->user()->can('user.*.restore'))),
                 SelectFilter::make('teams')
                     ->label('Team')
                     ->relationship('teams', 'name')
