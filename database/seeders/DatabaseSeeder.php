@@ -104,7 +104,7 @@ class DatabaseSeeder extends Seeder
             ProspectSeeder::class,
             ResourceHubArticleSeeder::class,
             TaskSeeder::class,
-            FormSeeder::class,          
+            FormSeeder::class,
             AlertStatusSeeder::class,
             AlertSeeder::class,
             TeamSeeder::class,

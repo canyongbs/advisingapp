@@ -36,10 +36,10 @@
 
 namespace Database\Seeders;
 
-use AdvisingApp\Alert\Database\Seeders\AlertStatusSeeder;
 use App\Models\Tenant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
+use AdvisingApp\Alert\Database\Seeders\AlertStatusSeeder;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Authorization\Console\Commands\SetupRoles;
 use AdvisingApp\CaseManagement\Database\Seeders\CaseTypeSeeder;
@@ -57,17 +57,17 @@ use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 
 class NewTenantSeeder extends Seeder
 {
-  public function run(): void
-  {
-    $currentTenant = Tenant::current();
+    public function run(): void
+    {
+        $currentTenant = Tenant::current();
 
-    Artisan::call(
-      command: SetupRoles::class,
-      parameters: [
-        '--tenant' => $currentTenant->id,
-      ],
-      outputBuffer: $this->command->getOutput(),
-    );
+        Artisan::call(
+            command: SetupRoles::class,
+            parameters: [
+                '--tenant' => $currentTenant->id,
+            ],
+            outputBuffer: $this->command->getOutput(),
+        );
 
         $this->call([
             DivisionSeeder::class,
@@ -83,10 +83,10 @@ class NewTenantSeeder extends Seeder
             PronounsSeeder::class,
             ApplicationSubmissionStateSeeder::class,
 
-      // Change Request
-      ChangeRequestTypeSeeder::class,
-      ChangeRequestStatusSeeder::class,
-      AlertStatusSeeder::class,
-    ]);
-  }
+            // Change Request
+            ChangeRequestTypeSeeder::class,
+            ChangeRequestStatusSeeder::class,
+            AlertStatusSeeder::class,
+        ]);
+    }
 }

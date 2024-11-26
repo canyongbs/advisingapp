@@ -38,47 +38,47 @@ namespace AdvisingApp\StudentDataModel\Filament\Widgets;
 
 use App\Models\User;
 use Illuminate\Support\Number;
+use App\Features\AlertStatusId;
 use Illuminate\Support\Facades\Cache;
 use Filament\Widgets\StatsOverviewWidget;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
-use App\Features\AlertStatusId;
 
 class StudentStats extends StatsOverviewWidget
 {
-  protected function getStats(): array
-  {
-    /** @var User $user */
-    $user = auth()->user();
+    protected function getStats(): array
+    {
+        /** @var User $user */
+        $user = auth()->user();
 
-    return [
-      Stat::make('Students', Number::abbreviate(
-        Cache::tags(['students'])
-          ->remember('students-count', now()->addHour(), function (): int {
-            return Student::count();
-          }),
-        maxPrecision: 2,
-      )),
-      Stat::make('My Subscriptions', Cache::tags(['students', "user-{$user->getKey()}-student-subscriptions"])
-        ->remember("user-{$user->getKey()}-student-subscriptions-count", now()->addHour(), function () use ($user): int {
-          return $user->studentSubscriptions()->count();
-        })),
-      Stat::make('My Alerts', Cache::tags(['students', "user-{$user->getKey()}-student-alerts"])
-        ->remember("user-{$user->getKey()}-student-alerts-count", now()->addHour(), function () use ($user): int {
-          if (AlertStatusId::active()) {
-            return $user->studentAlerts()->whereHas('status', function ($query) {
-              $query->where('classification', SystemAlertStatusClassification::Active); // Replace `status_column` with your actual column name
-            })->count();
-          } else {
-            return $user->studentAlerts()->status(SystemAlertStatusClassification::Active)->count();
-          }
-        })),
-      Stat::make('My Population Segments', Cache::tags(["user-{$user->getKey()}-student-segments"])
-        ->remember("user-{$user->getKey()}-student-segments-count", now()->addHour(), function () use ($user): int {
-          return $user->segments()->model(SegmentModel::Student)->count();
-        })),
-    ];
-  }
+        return [
+            Stat::make('Students', Number::abbreviate(
+                Cache::tags(['students'])
+                    ->remember('students-count', now()->addHour(), function (): int {
+                        return Student::count();
+                    }),
+                maxPrecision: 2,
+            )),
+            Stat::make('My Subscriptions', Cache::tags(['students', "user-{$user->getKey()}-student-subscriptions"])
+                ->remember("user-{$user->getKey()}-student-subscriptions-count", now()->addHour(), function () use ($user): int {
+                    return $user->studentSubscriptions()->count();
+                })),
+            Stat::make('My Alerts', Cache::tags(['students', "user-{$user->getKey()}-student-alerts"])
+                ->remember("user-{$user->getKey()}-student-alerts-count", now()->addHour(), function () use ($user): int {
+                    if (AlertStatusId::active()) {
+                        return $user->studentAlerts()->whereHas('status', function ($query) {
+                            $query->where('classification', SystemAlertStatusClassification::Active); // Replace `status_column` with your actual column name
+                        })->count();
+                    } else {
+                        return $user->studentAlerts()->status(SystemAlertStatusClassification::Active)->count();
+                    }
+                })),
+            Stat::make('My Population Segments', Cache::tags(["user-{$user->getKey()}-student-segments"])
+                ->remember("user-{$user->getKey()}-student-segments-count", now()->addHour(), function () use ($user): int {
+                    return $user->segments()->model(SegmentModel::Student)->count();
+                })),
+        ];
+    }
 }

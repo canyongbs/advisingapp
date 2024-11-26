@@ -69,7 +69,7 @@ class StudentAlertsRelationManager extends RelationManager
                 TextEntry::make('severity'),
                 TextEntry::make('suggested_intervention'),
                 TextEntry::make('status.name')->visible(AlertStatusId::active()),
-                TextEntry::make('status')->visible(!AlertStatusId::active()),
+                TextEntry::make('status')->visible(! AlertStatusId::active()),
                 TextEntry::make('createdBy.name')->label('Created By')->default('N/A'),
                 TextEntry::make('created_at')->label('Created Date'),
             ]);
@@ -94,15 +94,15 @@ class StudentAlertsRelationManager extends RelationManager
                 Select::make('status')
                     ->options(SystemAlertStatusClassification::class)
                     ->selectablePlaceholder(false)
-                    ->default(fn() => SystemAlertStatusClassification::default()?->classification)
+                    ->default(fn () => SystemAlertStatusClassification::default()?->classification)
                     ->required()
                     ->enum(SystemAlertStatusClassification::class)
-                    ->visible(!AlertStatusId::active()),
+                    ->visible(! AlertStatusId::active()),
                 Select::make('status_id')
                     ->label('status')
-                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('sort'))
+                    ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
                     ->selectablePlaceholder(false)
-                    ->default(fn() => SystemAlertStatusClassification::default()?->getKey())
+                    ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
                     ->required()
                     ->visible(AlertStatusId::active()),
             ]);
@@ -126,7 +126,7 @@ class StudentAlertsRelationManager extends RelationManager
                     ->visible(AlertStatusId::active()),
                 TextColumn::make('status')
                     ->sortable()
-                    ->visible(!AlertStatusId::active()),
+                    ->visible(! AlertStatusId::active()),
                 TextColumn::make('created_at')
                     ->sortable()
                     ->toggleable(
@@ -141,7 +141,7 @@ class StudentAlertsRelationManager extends RelationManager
                     ->visible(AlertStatusId::active()),
                 SelectFilter::make('status')
                     ->options(SystemAlertStatusClassification::class)
-                    ->visible(!AlertStatusId::active()),
+                    ->visible(! AlertStatusId::active()),
             ])
             ->headerActions([
                 CreateAction::make()

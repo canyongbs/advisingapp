@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Alert\Filament\Resources;
 
+use App\Features\AlertStatusId;
 use Filament\Resources\Resource;
 use AdvisingApp\Alert\Models\AlertStatus;
 use App\Filament\Clusters\ConstituentManagement;
@@ -43,34 +44,33 @@ use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\EditAlertStat
 use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\ViewAlertStatus;
 use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\CreateAlertStatus;
 use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\ListAlertStatuses;
-use App\Features\AlertStatusId;
 
 class AlertStatusResource extends Resource
 {
-  protected static ?string $model = AlertStatus::class;
+    protected static ?string $model = AlertStatus::class;
 
-  protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-  protected static ?string $navigationLabel = 'Statuses';
+    protected static ?string $navigationLabel = 'Statuses';
 
-  protected static ?string $cluster = ConstituentManagement::class;
+    protected static ?string $cluster = ConstituentManagement::class;
 
-  protected static ?string $navigationGroup = 'Alert';
+    protected static ?string $navigationGroup = 'Alert';
 
-  protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 10;
 
-  public static function canAccess(): bool
-  {
-    return AlertStatusId::active();
-  }
+    public static function canAccess(): bool
+    {
+        return AlertStatusId::active();
+    }
 
-  public static function getPages(): array
-  {
-    return [
-      'index' => ListAlertStatuses::route('/'),
-      'create' => CreateAlertStatus::route('/create'),
-      'view' => ViewAlertStatus::route('/{record}'),
-      'edit' => EditAlertStatus::route('/{record}/edit'),
-    ];
-  }
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListAlertStatuses::route('/'),
+            'create' => CreateAlertStatus::route('/create'),
+            'view' => ViewAlertStatus::route('/{record}'),
+            'edit' => EditAlertStatus::route('/{record}/edit'),
+        ];
+    }
 }

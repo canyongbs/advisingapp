@@ -37,16 +37,16 @@
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
 
-return new class() extends Migration {
-  public function up(): void
-  {
-    $alerts = DB::table('alerts')->whereNotNull('status')->get();
+return new class () extends Migration {
+    public function up(): void
+    {
+        $alerts = DB::table('alerts')->whereNotNull('status')->get();
 
-    $alerts->each(function ($alert, $key) {
-      $status = DB::table('alert_statuses')->where('classification', $alert->status)->first();
-      DB::table('alerts')->where('id', $alert->id)->update(['status_id' => $status->id]);
-    });
-  }
+        $alerts->each(function ($alert, $key) {
+            $status = DB::table('alert_statuses')->where('classification', $alert->status)->first();
+            DB::table('alerts')->where('id', $alert->id)->update(['status_id' => $status->id]);
+        });
+    }
 
-  public function down(): void {}
+    public function down(): void {}
 };
