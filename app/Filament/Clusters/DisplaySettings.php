@@ -38,7 +38,7 @@ namespace App\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
 
-class GlobalSettings extends Cluster
+class DisplaySettings extends Cluster
 {
     protected static ?string $navigationGroup = 'Product Administration';
 

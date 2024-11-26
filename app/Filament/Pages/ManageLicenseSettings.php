@@ -36,33 +36,35 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Actions\Action;
+use App\Models\Authenticatable;
 use Filament\Pages\SettingsPage;
 use App\Settings\LicenseSettings;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Clusters\GlobalSettings;
 use Filament\Forms\Components\DatePicker;
 use App\DataTransferObjects\LicenseManagement\LicenseData;
 
 class ManageLicenseSettings extends SettingsPage
 {
-    protected static ?string $navigationIcon = 'heroicon-o-key';
-
     protected static ?string $navigationLabel = 'Subscription';
 
     protected static ?int $navigationSort = 10;
 
     protected static string $settings = LicenseSettings::class;
 
-    protected static ?string $cluster = GlobalSettings::class;
+    protected static ?string $navigationGroup = 'Global Administration';
 
     public static function canAccess(): bool
     {
-        return auth()->user()->can('license_settings.manage');
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE) && parent::canAccess();
     }
 
     public function form(Form $form): Form

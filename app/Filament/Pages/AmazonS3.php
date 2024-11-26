@@ -41,6 +41,7 @@ use App\Models\User;
 use App\Models\Tenant;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
+use App\Models\Authenticatable;
 use Illuminate\Support\Facades\DB;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\ComponentContainer;
@@ -48,7 +49,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use App\Filament\Clusters\GlobalSettings;
+use App\Filament\Clusters\ProductIntegrations;
 use Filament\Forms\Concerns\InteractsWithForms;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
@@ -72,9 +73,7 @@ class AmazonS3 extends Page implements HasForms
 
     protected static string $view = 'filament.pages.amazon-s3';
 
-    protected static ?string $cluster = GlobalSettings::class;
-
-    protected static ?string $navigationGroup = 'Product Integrations';
+    protected static ?string $cluster = ProductIntegrations::class;
 
     protected static ?int $navigationSort = 100;
 
@@ -85,7 +84,7 @@ class AmazonS3 extends Page implements HasForms
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('amazon-s3.manage_s3_settings');
+        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE) && parent::canAccess();
     }
 
     public function mount(): void
