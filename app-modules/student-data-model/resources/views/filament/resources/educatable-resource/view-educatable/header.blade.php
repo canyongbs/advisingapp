@@ -39,7 +39,7 @@
                 :breadcrumbs="$breadcrumbs"
             />
 
-            <div class="flex flex-col md:flex-row gap-x-6 gap-y-1">
+            <div class="flex flex-col gap-x-6 gap-y-1 md:flex-row">
                 <div
                     class="flex h-16 w-16 select-none items-center justify-center overflow-hidden rounded-full bg-blue-500 text-2xl tracking-tighter text-white">
                     {{ $educatableInitials }}

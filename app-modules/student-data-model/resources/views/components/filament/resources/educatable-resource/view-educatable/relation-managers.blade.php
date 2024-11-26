@@ -42,7 +42,7 @@
 @if ($managers)
     <div
         x-data="{ activeTab: @js(array_key_first($managers)) }"
-        {{ $attributes->class(['grid gap-3']) }}
+        {{ $attributes->class(['flex flex-col gap-3']) }}
     >
         <x-filament::tabs>
             @foreach ($managers as $managerKey => $manager)

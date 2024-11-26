@@ -34,7 +34,7 @@
 <x-filament-widgets::widget>
     <x-filament::section
         class="fi-section-has-subsections"
-        wire:poll.10s
+        wire:poll.10s=""
     >
         <x-slot name="heading">
             Activity Feed
