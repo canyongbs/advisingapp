@@ -1,0 +1,31 @@
+{
+	"name": "canyon-gbs/advising-app-case-management",
+	"description": "",
+	"type": "library",
+	"version": "1.0",
+	"license": "proprietary",
+	"require": {
+		"filament/filament": "^3.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"AdvisingApp\\CaseManagement\\": "src/",
+			"AdvisingApp\\CaseManagement\\Tests\\": "tests/",
+			"AdvisingApp\\CaseManagement\\Database\\Factories\\": "database/factories/",
+			"AdvisingApp\\CaseManagement\\Database\\Seeders\\": "database/seeders/"
+		}
+	},
+	"minimum-stability": "stable",
+	"extra": {
+		"laravel": {
+			"providers": [
+				"AdvisingApp\\CaseManagement\\Providers\\CaseManagementServiceProvider"
+			]
+		}
+	},
+	"config": {
+		"allow-plugins": {
+			"pestphp/pest-plugin": true
+		}
+	}
+}

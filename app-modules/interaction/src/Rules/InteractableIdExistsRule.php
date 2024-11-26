@@ -54,7 +54,7 @@ class InteractableIdExistsRule implements DataAwareRule, ValidationRule
         $morph = Relation::getMorphedModel($type);
 
         if (! $morph) {
-            $fail('The interactable type must be student, prospect, or service_request');
+            $fail('The interactable type must be student, prospect, or case');
         } elseif ($morph::query()->whereKey($value)->doesntExist()) {
             $fail('The interactable does not exist.');
         }

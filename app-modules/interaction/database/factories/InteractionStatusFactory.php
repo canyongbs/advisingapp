@@ -37,7 +37,7 @@
 namespace AdvisingApp\Interaction\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\ServiceManagement\Enums\ColumnColorOptions;
+use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Interaction\Models\InteractionStatus>
