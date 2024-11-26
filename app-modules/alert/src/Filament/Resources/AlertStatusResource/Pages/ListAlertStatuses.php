@@ -50,43 +50,42 @@ use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
 
 class ListAlertStatuses extends ListRecords
 {
-    protected static string $resource = AlertStatusResource::class;
+  protected static string $resource = AlertStatusResource::class;
 
-    public function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name')
-                    ->label('Name')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('classification')
-                    ->label('Classification')
-                    ->searchable()
-                    ->sortable(),
-                IconColumn::make('is_default')
-                    ->label('Set as default')
-                    ->state(fn (AlertStatus $alertStatus): bool => $alertStatus->is_default)
-                    ->boolean(),
-                TextColumn::make('alerts_count')
-                    ->label('# of Alerts')
-                    ->counts('alerts')
-                    ->sortable(),
-            ])
-            ->defaultSort('sort')
-            ->reorderable('sort')
-            ->actions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
-            ]);
-    }
+  public function table(Table $table): Table
+  {
+    return $table
+      ->columns([
+        IdColumn::make(),
+        TextColumn::make('name')
+          ->label('Name')
+          ->searchable()
+          ->sortable(),
+        TextColumn::make('classification')
+          ->label('Classification')
+          ->searchable()
+          ->sortable(),
+        IconColumn::make('is_default')
+          ->label('Set as default')
+          ->boolean(),
+        TextColumn::make('alerts_count')
+          ->label('# of Alerts')
+          ->counts('alerts')
+          ->sortable(),
+      ])
+      ->defaultSort('order')
+      ->reorderable('order')
+      ->actions([
+        ViewAction::make(),
+        EditAction::make(),
+        DeleteAction::make(),
+      ]);
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      CreateAction::make(),
+    ];
+  }
 }

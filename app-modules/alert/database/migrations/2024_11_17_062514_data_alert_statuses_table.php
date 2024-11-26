@@ -34,28 +34,61 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
 
 return new class() extends Migration {
   public function up(): void
   {
-    Schema::create('alert_statuses', function (Blueprint $table) {
-      $table->uuid('id')->primary();
+    if (! app()->runningUnitTests()) {
+      $activeStatus = DB::table('alert_statuses')
+        ->where('classification', 'active')
+        ->where('name', 'Active')
+        ->first();
 
-      $table->string('classification');
-      $table->string('name');
-      $table->integer('order');
-      $table->boolean('is_default')->default(false);
+      if ($activeStatus === null) {
+        DB::table('alert_statuses')->insert([
+          'id' => (string) Str::orderedUuid(),
+          'classification' => 'active',
+          'name' => 'Active',
+          'created_at' => now(),
+          'is_default' => true,
+          'order' => DB::raw('(SELECT COALESCE(MAX(alert_statuses.order), 0) + 1 FROM alert_statuses)'),
+        ]);
+      }
 
-      $table->timestamps();
-      $table->softDeletes();
-    });
+      $resolvedStatus = DB::table('alert_statuses')
+        ->where('classification', 'resolved')
+        ->where('name', 'Resolved')
+        ->first();
+
+      if ($resolvedStatus === null) {
+        DB::table('alert_statuses')->insert([
+          'id' => (string) Str::orderedUuid(),
+          'classification' => 'resolved',
+          'name' => 'Resolved',
+          'created_at' => now(),
+          'order' => DB::raw('(SELECT COALESCE(MAX(alert_statuses.order), 0) + 1 FROM alert_statuses)'),
+        ]);
+      }
+
+      $canceledStatus = DB::table('alert_statuses')
+        ->where('classification', 'canceled')
+        ->where('name', 'Canceled')
+        ->first();
+
+      if ($canceledStatus === null) {
+        DB::table('alert_statuses')->insert([
+          'id' => (string) Str::orderedUuid(),
+          'classification' => 'canceled',
+          'name' => 'Canceled',
+          'created_at' => now(),
+          'order' => DB::raw('(SELECT COALESCE(MAX(alert_statuses.order), 0) + 1 FROM alert_statuses)'),
+        ]);
+      }
+    }
   }
 
-  public function down(): void
-  {
-    Schema::dropIfExists('alert_statuses');
-  }
+  public function down(): void {}
 };

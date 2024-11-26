@@ -36,6 +36,7 @@
 
 namespace Database\Seeders;
 
+use AdvisingApp\Alert\Database\Seeders\AlertStatusSeeder;
 use App\Models\Tenant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
@@ -57,37 +58,38 @@ use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
 
 class NewTenantSeeder extends Seeder
 {
-    public function run(): void
-    {
-        $currentTenant = Tenant::current();
+  public function run(): void
+  {
+    $currentTenant = Tenant::current();
 
-        Artisan::call(
-            command: SetupRoles::class,
-            parameters: [
-                '--tenant' => $currentTenant->id,
-            ],
-            outputBuffer: $this->command->getOutput(),
-        );
+    Artisan::call(
+      command: SetupRoles::class,
+      parameters: [
+        '--tenant' => $currentTenant->id,
+      ],
+      outputBuffer: $this->command->getOutput(),
+    );
 
-        $this->call([
-            DivisionSeeder::class,
-            ServiceRequestStatusSeeder::class,
-            ServiceRequestTypeSeeder::class,
-            ProspectStatusSeeder::class,
-            ProspectSourceSeeder::class,
-            KnowledgeBaseCategorySeeder::class,
-            KnowledgeBaseQualitySeeder::class,
-            KnowledgeBaseStatusSeeder::class,
-            ...InteractionSeeder::metadataSeeders(),
-            ConsentAgreementSeeder::class,
-            PronounsSeeder::class,
-            ApplicationSubmissionStateSeeder::class,
-            // InventoryManagement
-            ...AssetSeeder::metadataSeeders(),
+    $this->call([
+      DivisionSeeder::class,
+      ServiceRequestStatusSeeder::class,
+      ServiceRequestTypeSeeder::class,
+      ProspectStatusSeeder::class,
+      ProspectSourceSeeder::class,
+      KnowledgeBaseCategorySeeder::class,
+      KnowledgeBaseQualitySeeder::class,
+      KnowledgeBaseStatusSeeder::class,
+      ...InteractionSeeder::metadataSeeders(),
+      ConsentAgreementSeeder::class,
+      PronounsSeeder::class,
+      ApplicationSubmissionStateSeeder::class,
+      // InventoryManagement
+      ...AssetSeeder::metadataSeeders(),
 
-            // Change Request
-            ChangeRequestTypeSeeder::class,
-            ChangeRequestStatusSeeder::class,
-        ]);
-    }
+      // Change Request
+      ChangeRequestTypeSeeder::class,
+      ChangeRequestStatusSeeder::class,
+      AlertStatusSeeder::class,
+    ]);
+  }
 }

@@ -41,21 +41,21 @@ use AdvisingApp\Alert\Models\AlertStatus;
 
 enum SystemAlertStatusClassification: string implements HasLabel
 {
-    case Active = 'active';
+  case Active = 'active';
 
-    case Resolved = 'resolved';
+  case Resolved = 'resolved';
 
-    case Canceled = 'canceled';
+  case Canceled = 'canceled';
 
-    public function getLabel(): ?string
-    {
-        return $this->name;
-    }
+  public function getLabel(): ?string
+  {
+    return $this->name;
+  }
 
-    public static function default(): String
-    {
-        $alertStatus = AlertStatus::where('is_default', true)->first();
+  public static function default(): AlertStatus
+  {
+    $alertStatus = AlertStatus::where('is_default', true)->first();
 
-        return $alertStatus->getKey();
-    }
+    return $alertStatus;
+  }
 }

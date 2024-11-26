@@ -78,8 +78,8 @@ class ListAlerts extends ListRecords
             ->schema([
                 TextEntry::make('concern.display_name')
                     ->label('Related To')
-                    ->getStateUsing(fn (Alert $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
-                    ->url(fn (Alert $record) => match ($record->concern ? $record->concern::class : null) {
+                    ->getStateUsing(fn(Alert $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
+                    ->url(fn(Alert $record) => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ManageProspectAlerts::getUrl(['record' => $record->concern]),
                         default => null,
@@ -90,7 +90,7 @@ class ListAlerts extends ListRecords
                 TextEntry::make('status.name')
                     ->visible(AlertStatusId::active()),
                 TextEntry::make('status')
-                    ->visible(AlertStatusId::active() == false),
+                    ->visible(!AlertStatusId::active()),
             ]);
     }
 
@@ -101,13 +101,13 @@ class ListAlerts extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('concern.display_name')
                     ->label('Related To')
-                    ->getStateUsing(fn (Alert $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
-                    ->url(fn (Alert $record) => match ($record->concern ? $record->concern::class : null) {
+                    ->getStateUsing(fn(Alert $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
+                    ->url(fn(Alert $record) => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ManageProspectAlerts::getUrl(['record' => $record->concern]),
                         default => null,
                     })
-                    ->searchable(query: fn (Builder $query, $search) => $query->tap(new EducatableSearch(relationship: 'concern', search: $search)))
+                    ->searchable(query: fn(Builder $query, $search) => $query->tap(new EducatableSearch(relationship: 'concern', search: $search)))
                     ->forceSearchCaseInsensitive()
                     ->sortable(),
                 TextColumn::make('description')
@@ -116,7 +116,7 @@ class ListAlerts extends ListRecords
                 TextColumn::make('severity')
                     ->sortable(),
                 TextColumn::make('status')
-                    ->visible(AlertStatusId::active() == false),
+                    ->visible(!AlertStatusId::active()),
                 TextColumn::make('status.name')
                     ->visible(AlertStatusId::active())
                     ->sortable(),
@@ -126,17 +126,17 @@ class ListAlerts extends ListRecords
             ->filters([
                 Filter::make('subscribed')
                     ->query(
-                        fn (Builder $query): Builder => $query->whereHas(
+                        fn(Builder $query): Builder => $query->whereHas(
                             relation: 'concern',
-                            callback: fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', auth()->id())
+                            callback: fn(Builder $query) => $query->whereRelation('subscriptions', 'user_id', auth()->id())
                         )
                     ),
                 Filter::make('care_team')
                     ->label('Care Team')
                     ->query(
-                        fn (Builder $query): Builder => $query->whereHas(
+                        fn(Builder $query): Builder => $query->whereHas(
                             relation: 'concern',
-                            callback: fn (Builder $query) => $query->whereRelation('careTeam', 'user_id', auth()->id())
+                            callback: fn(Builder $query) => $query->whereRelation('careTeam', 'user_id', auth()->id())
                         )
                     ),
                 SelectFilter::make('my_segments')
@@ -147,7 +147,7 @@ class ListAlerts extends ListRecords
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
+                    ->query(fn(Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 SelectFilter::make('all_segments')
                     ->label('All Population Segments')
                     ->options(
@@ -156,14 +156,14 @@ class ListAlerts extends ListRecords
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
+                    ->query(fn(Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
                 SelectFilter::make('status')
                     ->options(SystemAlertStatusClassification::class)
-                    ->visible(AlertStatusId::active() == false),
+                    ->visible(!AlertStatusId::active()),
                 SelectFilter::make('status_id')
-                    ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
+                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('order'))
                     ->multiple()
                     ->preload()
                     ->visible(AlertStatusId::active())
@@ -204,9 +204,9 @@ class ListAlerts extends ListRecords
                                 ->string(),
                             Select::make('status')
                                 ->options(SystemAlertStatusClassification::class)
-                                ->visible(AlertStatusId::active() == false),
+                                ->visible(!AlertStatusId::active()),
                             Select::make('status_id')
-                                ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
+                                ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('order'))
                                 ->selectablePlaceholder(false)
                                 ->default(SystemAlertStatusClassification::default())
                                 ->required()
