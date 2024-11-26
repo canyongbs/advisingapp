@@ -48,8 +48,6 @@ class CampaignResource extends Resource
 {
     protected static ?string $model = Campaign::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-megaphone';
-
     protected static ?string $navigationGroup = 'Engagement Features';
 
     protected static ?int $navigationSort = 30;

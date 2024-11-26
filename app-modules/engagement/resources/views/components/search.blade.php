@@ -38,7 +38,7 @@
     >
         <x-filament::input
             wire:model.live.debounce.150ms="search"
-            placeholder="Search Engagements"
+            placeholder="Search Filtered Engagements"
         />
     </x-filament::input.wrapper>
 </div>

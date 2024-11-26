@@ -56,8 +56,6 @@ class PersonalAssistant extends Page
 
     public const APPLICATION = AiApplication::PersonalAssistant;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
-
     protected static string $view = 'assistant::filament.pages.personal-assistant';
 
     protected static ?string $navigationGroup = 'Artificial Intelligence';

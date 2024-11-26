@@ -55,8 +55,6 @@ class ReportAssistant extends Page
 
     public const APPLICATION = AiApplication::ReportAssistant;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
-
     protected static string $view = 'report::filament.pages.report-assistant';
 
     protected static ?string $navigationGroup = 'Reporting';
