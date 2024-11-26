@@ -34,6 +34,8 @@
 @props(['managers'])
 
 @php
+    use Illuminate\Support\Js;
+
     $managers = array_filter($managers, fn(string $manager): bool => $manager::canViewForRecord($this->getRecord(), static::class));
 @endphp
 
@@ -44,8 +46,8 @@
     >
         <x-filament::tabs>
             @foreach ($managers as $managerKey => $manager)
-                <x-filament::tabs.item :alpine-active="'activeTab === ' . \Illuminate\Support\Js::from($managerKey)" :x-on:click="'activeTab = ' .
-                    \Illuminate\Support\Js::from($managerKey)">
+                <x-filament::tabs.item :alpine-active="'activeTab === ' . Js::from($managerKey)" :x-on:click="'activeTab = ' .
+                    Js::from($managerKey)">
                     {{ $manager::getTitle($this->getRecord(), static::class) }}
                 </x-filament::tabs.item>
             @endforeach
