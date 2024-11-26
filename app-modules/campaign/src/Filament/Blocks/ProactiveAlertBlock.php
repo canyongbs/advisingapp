@@ -45,6 +45,7 @@ use AdvisingApp\Alert\Enums\AlertSeverity;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\AlertStatus;
 
 class ProactiveAlertBlock extends CampaignActionBlock
 {
