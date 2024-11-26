@@ -99,7 +99,7 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                     ->sortable(),
                 TextColumn::make('status.name')
                     ->badge()
-                    ->color(fn(Prospect $record) => $record->status->color->value)
+                    ->color(fn (Prospect $record) => $record->status->color->value)
                     ->toggleable()
                     ->sortable(['sort']),
                 TextColumn::make('source.name')
@@ -122,7 +122,7 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn(Builder $query, array $data) => $this->segmentFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 SelectFilter::make('all_segments')
                     ->label('All Population Segments')
                     ->options(
@@ -132,11 +132,11 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn(Builder $query, array $data) => $this->segmentFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 Filter::make('subscribed')
-                    ->query(fn(Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
+                    ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
                 SelectFilter::make('status_id')
-                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('sort'))
+                    ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
                     ->multiple()
                     ->preload(),
                 SelectFilter::make('source_id')
@@ -163,7 +163,7 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                     ->searchable()
                     ->preload()
                     ->optionsLimit(20)
-                    ->query(fn(Builder $query, array $data) => $this->tagsFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->tagsFilter($query, $data)),
             ])
             ->actions([
                 ViewAction::make(),
@@ -193,24 +193,24 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                             Textarea::make('description')
                                 ->string()
                                 ->required()
-                                ->visible(fn(Get $get) => $get('field') === 'description'),
+                                ->visible(fn (Get $get) => $get('field') === 'description'),
                             Radio::make('email_bounce')
                                 ->label('Email Bounce')
                                 ->boolean()
                                 ->required()
-                                ->visible(fn(Get $get) => $get('field') === 'email_bounce'),
+                                ->visible(fn (Get $get) => $get('field') === 'email_bounce'),
                             TextInput::make('hsgrad')
                                 ->label('High School Graduation Date')
                                 ->numeric()
                                 ->minValue(1920)
                                 ->maxValue(now()->addYears(25)->year)
                                 ->required()
-                                ->visible(fn(Get $get) => $get('field') === 'hsgrad'),
+                                ->visible(fn (Get $get) => $get('field') === 'hsgrad'),
                             Radio::make('sms_opt_out')
                                 ->label('SMS Opt Out')
                                 ->boolean()
                                 ->required()
-                                ->visible(fn(Get $get) => $get('field') === 'sms_opt_out'),
+                                ->visible(fn (Get $get) => $get('field') === 'sms_opt_out'),
                             Select::make('source_id')
                                 ->label('Source')
                                 ->relationship('source', 'name')
@@ -219,20 +219,20 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                                     column: (new ProspectSource())->getKeyName()
                                 )
                                 ->required()
-                                ->visible(fn(Get $get) => $get('field') === 'source_id'),
+                                ->visible(fn (Get $get) => $get('field') === 'source_id'),
                             Select::make('status_id')
                                 ->label('Status')
-                                ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('sort'))
+                                ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
                                 ->exists(
                                     table: (new ProspectStatus())->getTable(),
                                     column: (new ProspectStatus())->getKeyName()
                                 )
                                 ->required()
-                                ->visible(fn(Get $get) => $get('field') === 'status_id'),
+                                ->visible(fn (Get $get) => $get('field') === 'status_id'),
                         ])
                         ->action(function (Collection $records, array $data) {
                             $records->each(
-                                fn(Prospect $prospect) => $prospect
+                                fn (Prospect $prospect) => $prospect
                                     ->forceFill([$data['field'] => $data[$data['field']]])
                                     ->save()
                             );
