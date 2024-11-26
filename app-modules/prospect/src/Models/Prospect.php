@@ -51,6 +51,7 @@ use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use AdvisingApp\Engagement\Models\EngagementFile;
@@ -66,11 +67,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
-use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Engagement\Models\EngagementFileEntities;
-use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
@@ -143,10 +141,10 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return $this->id;
     }
 
-    public function serviceRequests(): MorphMany
+    public function cases(): MorphMany
     {
         return $this->morphMany(
-            related: ServiceRequest::class,
+            related: CaseModel::class,
             name: 'respondent',
             type: 'respondent_type',
             id: 'respondent_id',
@@ -280,28 +278,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
             related: EventAttendee::class,
             foreignKey: 'email',
             localKey: 'email',
-        );
-    }
-
-    public function assetCheckIns(): MorphMany
-    {
-        return $this->morphMany(
-            related: AssetCheckIn::class,
-            name: 'checked_in_from',
-            type: 'checked_in_from_type',
-            id: 'checked_in_from_id',
-            localKey: 'id'
-        );
-    }
-
-    public function assetCheckOuts(): MorphMany
-    {
-        return $this->morphMany(
-            related: AssetCheckOut::class,
-            name: 'checked_out_to',
-            type: 'checked_out_to_type',
-            id: 'checked_out_to_id',
-            localKey: 'id'
         );
     }
 

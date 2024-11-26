@@ -35,8 +35,5 @@ import preset from './tailwind.config.preset.js';
 
 export default {
     presets: [preset],
-    content: [
-        './src/**/*.vue',
-        '../form/src/**/*.vue',
-        '../form/src/FormKit/theme.js',
-    ],};
+    content: ['./src/**/*.vue', '../form/src/**/*.vue', '../form/src/FormKit/theme.js'],
+};

@@ -50,83 +50,75 @@ use AdvisingApp\Alert\Database\Seeders\AlertStatusSeeder;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSeeder;
 use AdvisingApp\Authorization\Console\Commands\SetupRoles;
+use AdvisingApp\CaseManagement\Database\Seeders\CaseSeeder;
 use AdvisingApp\MeetingCenter\Database\Seeders\EventSeeder;
+use AdvisingApp\CaseManagement\Database\Seeders\CaseTypeSeeder;
 use AdvisingApp\Interaction\Database\Seeders\InteractionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSourceSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
-use AdvisingApp\InventoryManagement\Database\Seeders\AssetSeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestSeeder;
-use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
-use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseArticleSeeder;
-use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseQualitySeeder;
-use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseCategorySeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ChangeRequestTypeSeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ChangeRequestStatusSeeder;
+use AdvisingApp\CaseManagement\Database\Seeders\CaseStatusSeeder;
+use AdvisingApp\CaseManagement\Database\Seeders\CaseUpdateSeeder;
+use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubStatusSeeder;
+use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubArticleSeeder;
+use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubQualitySeeder;
+use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubCategorySeeder;
+use AdvisingApp\CaseManagement\Database\Seeders\ChangeRequestTypeSeeder;
+use AdvisingApp\CaseManagement\Database\Seeders\ChangeRequestStatusSeeder;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestUpdateSeeder;
-use AdvisingApp\InventoryManagement\Database\Seeders\MaintenanceProviderSeeder;
 
 class DatabaseSeeder extends Seeder
 {
-  public function run(): void
-  {
-    // Reduce notifications sent during seeding
-    Notification::fake();
+    public function run(): void
+    {
+        // Reduce notifications sent during seeding
+        Notification::fake();
 
-    $currentTenant = Tenant::current();
+        $currentTenant = Tenant::current();
 
-    Artisan::call(
-      command: SetupRoles::class,
-      parameters: [
-        '--tenant' => $currentTenant->id,
-      ],
-      outputBuffer: $this->command->getOutput(),
-    );
+        Artisan::call(
+            command: SetupRoles::class,
+            parameters: [
+                '--tenant' => $currentTenant->id,
+            ],
+            outputBuffer: $this->command->getOutput(),
+        );
 
-    $this->call([
-      SampleSuperAdminUserSeeder::class,
-      LocalDevelopmentSeeder::class,
-      DivisionSeeder::class,
-      ServiceRequestStatusSeeder::class,
-      ServiceRequestTypeSeeder::class,
-      ProspectStatusSeeder::class,
-      ProspectSourceSeeder::class,
-      KnowledgeBaseCategorySeeder::class,
-      KnowledgeBaseQualitySeeder::class,
-      KnowledgeBaseStatusSeeder::class,
-      ...InteractionSeeder::metadataSeeders(),
-      ConsentAgreementSeeder::class,
-      PronounsSeeder::class,
+        $this->call([
+            SampleSuperAdminUserSeeder::class,
+            LocalDevelopmentSeeder::class,
+            DivisionSeeder::class,
+            CaseStatusSeeder::class,
+            CaseTypeSeeder::class,
+            ProspectStatusSeeder::class,
+            ProspectSourceSeeder::class,
+            ResourceHubCategorySeeder::class,
+            ResourceHubQualitySeeder::class,
+            ResourceHubStatusSeeder::class,
+            ...InteractionSeeder::metadataSeeders(),
+            ConsentAgreementSeeder::class,
+            PronounsSeeder::class,
 
-      ServiceRequestSeeder::class,
-      ServiceRequestUpdateSeeder::class,
-      ProspectSeeder::class,
-      KnowledgeBaseArticleSeeder::class,
-      TaskSeeder::class,
-      FormSeeder::class,
-      AlertStatusSeeder::class,
-      AlertSeeder::class,
-      TeamSeeder::class,
-      SuperAdminSeeder::class,
-      TwilioStudentSeeder::class,
-      ApplicationSubmissionStateSeeder::class,
-      EventSeeder::class,
+            CaseSeeder::class,
+            CaseUpdateSeeder::class,
+            ProspectSeeder::class,
+            ResourceHubArticleSeeder::class,
+            TaskSeeder::class,
+            FormSeeder::class,          
+            AlertStatusSeeder::class,
+            AlertSeeder::class,
+            TeamSeeder::class,
+            SuperAdminSeeder::class,
+            TwilioStudentSeeder::class,
+            ApplicationSubmissionStateSeeder::class,
+            EventSeeder::class,
 
-      // InventoryManagement
-      ...AssetSeeder::metadataSeeders(),
-      AssetSeeder::class,
+            // Change Request
+            ChangeRequestTypeSeeder::class,
+            ChangeRequestStatusSeeder::class,
 
-      MaintenanceProviderSeeder::class,
-
-      // Change Request
-      ChangeRequestTypeSeeder::class,
-      ChangeRequestStatusSeeder::class,
-
-      PromptTypeSeeder::class,
-      PromptSeeder::class,
-    ]);
-  }
+            PromptTypeSeeder::class,
+            PromptSeeder::class,
+        ]);
+    }
 }

@@ -149,9 +149,9 @@ class ManageLicenseSettings extends SettingsPage
                             Toggle::make('data.addons.onlineAdmissions')
                                 ->label('Online Admissions'),
                             Toggle::make('data.addons.serviceManagement')
-                                ->label('Service Management'),
+                                ->label('Case Management'),
                             Toggle::make('data.addons.knowledgeManagement')
-                                ->label('Knowledge Management'),
+                                ->label('Resource Hub'),
                             Toggle::make('data.addons.eventManagement')
                                 ->label('Event Management'),
                             Toggle::make('data.addons.realtimeChat')

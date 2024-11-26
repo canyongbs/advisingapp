@@ -36,14 +36,16 @@
 
 namespace AdvisingApp\Campaign\Observers;
 
+use App\Models\User;
 use AdvisingApp\Campaign\Models\Campaign;
 
 class CampaignObserver
 {
     public function creating(Campaign $campaign): void
     {
-        if (is_null($campaign->user_id) && ! is_null(auth()->user())) {
-            $campaign->user_id = auth()->user()->id;
+        if (is_null($campaign->created_by_id) && ! is_null(auth()->user())) {
+            $campaign->created_by_type = (new User())->getMorphClass();
+            $campaign->created_by_id = auth()->user()->getKey();
         }
     }
 }

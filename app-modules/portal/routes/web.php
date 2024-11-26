@@ -35,11 +35,11 @@
 */
 
 use Illuminate\Support\Facades\Route;
-use AdvisingApp\Portal\Livewire\RenderKnowledgeManagementPortal;
+use AdvisingApp\Portal\Livewire\RenderResourceHubPortal;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
-use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEnabled;
-use AdvisingApp\Portal\Http\Middleware\EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized;
-use AdvisingApp\Portal\Http\Controllers\KnowledgeManagement\KnowledgeManagementPortalAuthenticateController;
+use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEnabled;
+use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEmbeddableAndAuthorized;
+use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalAuthenticateController;
 
 Route::prefix('portals')
     ->name('portal.')
@@ -49,21 +49,21 @@ Route::prefix('portals')
     ])
     ->group(function () {
         /**
-         * Knowledge Management Portal
+         * Resource Hub Portal
          */
         Route::middleware([
-            EnsureKnowledgeManagementPortalIsEnabled::class,
-            EnsureKnowledgeManagementPortalIsEmbeddableAndAuthorized::class,
+            EnsureResourceHubPortalIsEnabled::class,
+            EnsureResourceHubPortalIsEmbeddableAndAuthorized::class,
         ])->group(function () {
-            Route::post('/knowledge-management/authenticate/{authentication}', KnowledgeManagementPortalAuthenticateController::class)
+            Route::post('/resource-hub/authenticate/{authentication}', ResourceHubPortalAuthenticateController::class)
                 ->middleware(['signed:relative', EnsureFrontendRequestsAreStateful::class])
-                ->name('knowledge-management.authenticate');
+                ->name('resource-hub.authenticate');
 
-            Route::get('/knowledge-management', RenderKnowledgeManagementPortal::class)
-                ->name('knowledge-management.show');
-            Route::get('/knowledge-management/categories/{category}', RenderKnowledgeManagementPortal::class)
-                ->name('knowledge-management.category.show');
-            Route::get('/knowledge-management/categories/{category}/articles/{article}', RenderKnowledgeManagementPortal::class)
-                ->name('knowledge-management.article.show');
+            Route::get('/resource-hub', RenderResourceHubPortal::class)
+                ->name('resource-hub.show');
+            Route::get('/resource-hub/categories/{category}', RenderResourceHubPortal::class)
+                ->name('resource-hub.category.show');
+            Route::get('/resource-hub/categories/{category}/articles/{article}', RenderResourceHubPortal::class)
+                ->name('resource-hub.article.show');
         });
     });

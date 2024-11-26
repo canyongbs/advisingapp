@@ -477,11 +477,13 @@ namespace App\Models{
  * @property-read \AdvisingApp\MeetingCenter\Models\Calendar|null $calendar
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CareTeam\Models\CareTeam> $careTeams
  * @property-read int|null $care_teams_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequestResponse> $changeRequestResponses
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseAssignment> $caseAssignments
+ * @property-read int|null $case_assignments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\ChangeRequestResponse> $changeRequestResponses
  * @property-read int|null $change_request_responses_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequestType> $changeRequestTypes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\ChangeRequestType> $changeRequestTypes
  * @property-read int|null $change_request_types_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequest> $changeRequests
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\ChangeRequest> $changeRequests
  * @property-read int|null $change_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Consent\Models\ConsentAgreement> $consentAgreements
  * @property-read int|null $consent_agreements_count
@@ -511,8 +513,6 @@ namespace App\Models{
  * @property-read int|null $roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Segment\Models\Segment> $segments
  * @property-read int|null $segments_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment> $serviceRequestAssignments
- * @property-read int|null $service_request_assignments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Student> $studentCareTeams
  * @property-read int|null $student_care_teams_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Student> $studentSubscriptions
@@ -527,8 +527,8 @@ namespace App\Models{
  * @property-read int|null $prospect_alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Authorization\Models\Permission[] $permissionsFromRoles
  * @property-read int|null $permissions_from_roles_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\ServiceManagement\Models\ServiceRequest[] $serviceRequests
- * @property-read int|null $service_requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\CaseManagement\Models\CaseModel[] $cases
+ * @property-read int|null $cases_count
  * @method static \Illuminate\Database\Eloquent\Builder|User admins()
  * @method static \Illuminate\Database\Eloquent\Builder|User advancedFilter($data)
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
@@ -1606,19 +1606,20 @@ namespace AdvisingApp\Campaign\Models{
  * AdvisingApp\Campaign\Models\Campaign
  *
  * @property string $id
- * @property string $user_id
  * @property string $name
  * @property bool $enabled
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property string $segment_id
+ * @property string $created_by_type
+ * @property string $created_by_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Campaign\Models\CampaignAction> $actions
  * @property-read int|null $actions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $createdBy
  * @property-read \AdvisingApp\Segment\Models\Segment $segment
- * @property-read \App\Models\User $user
  * @method static \AdvisingApp\Campaign\Database\Factories\CampaignFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign hasNotBeenExecuted()
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign newModelQuery()
@@ -1626,13 +1627,14 @@ namespace AdvisingApp\Campaign\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign query()
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereCreatedById($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereCreatedByType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereSegmentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign withoutTrashed()
  * @mixin \Eloquent
@@ -1712,6 +1714,700 @@ namespace AdvisingApp\CareTeam\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperCareTeam {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * AdvisingApp\CaseManagement\Models\CaseAssignment
+ *
+ * @property string $id
+ * @property string $case_model_id
+ * @property string $user_id
+ * @property string|null $assigned_by_id
+ * @property \Illuminate\Support\Carbon $assigned_at
+ * @property \AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus $status
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\User|null $assignedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseModel $case
+ * @property-read \App\Models\User $user
+ * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseAssignmentFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment whereAssignedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment whereAssignedById($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment whereCaseModelId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseAssignment withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCaseAssignment {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * AdvisingApp\CaseManagement\Models\CaseForm
+ *
+ * @property string $id
+ * @property string|null $case_type_id
+ * @property-read string $name
+ * @property string|null $description
+ * @property-read bool $embed_enabled
+ * @property-read array|null $allowed_domains
+ * @property string|null $primary_color
+ * @property \AdvisingApp\Form\Enums\Rounding|null $rounding
+ * @property bool $is_authenticated
+ * @property-read bool $is_wizard
+ * @property bool $recaptcha_enabled
+ * @property-read array|null $content
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseFormField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseFormStep> $steps
+ * @property-read int|null $steps_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseFormSubmission> $submissions
+ * @property-read int|null $submissions_count
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseType|null $type
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm whereAllowedDomains($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm whereCaseTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm whereEmbedEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm whereIsAuthenticated($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm whereIsWizard($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm wherePrimaryColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm whereRecaptchaEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm whereRounding($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseForm whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCaseForm {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * AdvisingApp\CaseManagement\Models\CaseFormAuthentication
+ *
+ * @property string $id
+ * @property string|null $author_id
+ * @property string|null $author_type
+ * @property string|null $code
+ * @property string $case_form_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $author
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseForm $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormAuthentication newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormAuthentication newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormAuthentication query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormAuthentication whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormAuthentication whereAuthorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormAuthentication whereCaseFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormAuthentication whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormAuthentication whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormAuthentication whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormAuthentication whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCaseFormAuthentication {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * AdvisingApp\CaseManagement\Models\CaseFormField
+ *
+ * @property string $id
+ * @property-read string $label
+ * @property-read string $type
+ * @property-read bool $is_required
+ * @property-read array $config
+ * @property string $case_form_id
+ * @property string|null $case_form_step_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseForm|null $step
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseForm $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField whereCaseFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField whereCaseFormStepId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField whereConfig($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField whereIsRequired($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormField withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCaseFormField {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * AdvisingApp\CaseManagement\Models\CaseFormStep
+ *
+ * @property string $id
+ * @property-read string $label
+ * @property-read array|null $content
+ * @property string $case_form_id
+ * @property int $sort
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseFormField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseForm|null $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormStep newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormStep newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormStep onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormStep query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormStep whereCaseFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormStep whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormStep whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormStep whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormStep whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormStep whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormStep whereSort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormStep whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormStep withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormStep withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCaseFormStep {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * AdvisingApp\CaseManagement\Models\CaseFormSubmission
+ *
+ * @property Student|Prospect|null $author
+ * @property string $id
+ * @property string $case_form_id
+ * @property string|null $case_priority_id
+ * @property string|null $author_id
+ * @property string|null $author_type
+ * @property \Carbon\CarbonImmutable|null $submitted_at
+ * @property \Carbon\CarbonImmutable|null $canceled_at
+ * @property \AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod|null $request_method
+ * @property string|null $request_note
+ * @property string|null $requester_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseModel|null $case
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseFormField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \AdvisingApp\CaseManagement\Models\CasePriority|null $priority
+ * @property-read \App\Models\User|null $requester
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseForm $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission canceled()
+ * @method static \Illuminate\Database\Eloquent\Builder|Submission licensedToEducatable(string $relationship)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission notCanceled()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission notSubmitted()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission requested()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission submitted()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission whereAuthorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission whereCanceledAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission whereCaseFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission whereCasePriorityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission whereRequestMethod($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission whereRequestNote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission whereRequesterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission whereSubmittedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseFormSubmission whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCaseFormSubmission {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * AdvisingApp\CaseManagement\Models\CaseHistory
+ *
+ * @property string $id
+ * @property string $case_model_id
+ * @property array $original_values
+ * @property array $new_values
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseModel $case
+ * @property-read mixed $new_values_formatted
+ * @property-read mixed $original_values_formatted
+ * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseHistoryFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory whereCaseModelId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory whereNewValues($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory whereOriginalValues($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseHistory withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCaseHistory {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * AdvisingApp\CaseManagement\Models\CaseModel
+ *
+ * @property-read Student|Prospect $respondent
+ * @property string $id
+ * @property string $case_number
+ * @property string $respondent_type
+ * @property string $respondent_id
+ * @property string|null $close_details
+ * @property string|null $res_details
+ * @property string|null $case_form_submission_id
+ * @property string $division_id
+ * @property string|null $status_id
+ * @property string|null $priority_id
+ * @property string|null $created_by_id
+ * @property \Carbon\CarbonImmutable|null $status_updated_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseAssignment|null $assignedTo
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseAssignment> $assignments
+ * @property-read int|null $assignments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseFormSubmission|null $caseFormSubmission
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseUpdate> $caseUpdates
+ * @property-read int|null $case_updates_count
+ * @property-read \App\Models\User|null $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\OutboundDeliverable> $deliverables
+ * @property-read int|null $deliverables_count
+ * @property-read \AdvisingApp\Division\Models\Division $division
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseHistory> $histories
+ * @property-read int|null $histories_count
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseAssignment|null $initialAssignment
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
+ * @property-read int|null $interactions_count
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseUpdate|null $latestInboundCaseUpdate
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseUpdate|null $latestOutboundCaseUpdate
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $orderedInteractions
+ * @property-read int|null $ordered_interactions_count
+ * @property-read \AdvisingApp\CaseManagement\Models\CasePriority|null $priority
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseStatus|null $status
+ * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseModelFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel licensedToEducatable(string $relationship)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel open()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel whereCaseFormSubmissionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel whereCaseNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel whereCloseDetails($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel whereCreatedById($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel whereDivisionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel wherePriorityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel whereResDetails($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel whereRespondentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel whereRespondentType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel whereStatusId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel whereStatusUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseModel withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCaseModel {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * AdvisingApp\CaseManagement\Models\CasePriority
+ *
+ * @property string $id
+ * @property string $name
+ * @property int $order
+ * @property string|null $sla_id
+ * @property string $type_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $cases
+ * @property-read int|null $cases_count
+ * @property-read \AdvisingApp\CaseManagement\Models\Sla|null $sla
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseType $type
+ * @method static \AdvisingApp\CaseManagement\Database\Factories\CasePriorityFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CasePriority newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CasePriority newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CasePriority onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CasePriority query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CasePriority whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CasePriority whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CasePriority whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CasePriority whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CasePriority whereOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CasePriority whereSlaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CasePriority whereTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CasePriority whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CasePriority withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CasePriority withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCasePriority {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * AdvisingApp\CaseManagement\Models\CaseStatus
+ *
+ * @property string $id
+ * @property \AdvisingApp\CaseManagement\Enums\SystemCaseClassification $classification
+ * @property string $name
+ * @property \AdvisingApp\CaseManagement\Enums\ColumnColorOptions $color
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $cases
+ * @property-read int|null $cases_count
+ * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseStatusFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseStatus newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseStatus newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseStatus onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseStatus query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseStatus whereClassification($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseStatus whereColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseStatus whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseStatus whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseStatus whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseStatus whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseStatus whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseStatus withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseStatus withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCaseStatus {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * AdvisingApp\CaseManagement\Models\CaseType
+ *
+ * @property string $id
+ * @property string $name
+ * @property bool $has_enabled_feedback_collection
+ * @property bool $has_enabled_csat
+ * @property bool $has_enabled_nps
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $cases
+ * @property-read int|null $cases_count
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseForm|null $form
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CasePriority> $priorities
+ * @property-read int|null $priorities_count
+ * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseTypeFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseType newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseType newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseType onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseType whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseType whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseType whereHasEnabledCsat($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseType whereHasEnabledFeedbackCollection($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseType whereHasEnabledNps($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseType whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseType whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseType withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseType withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCaseType {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * AdvisingApp\CaseManagement\Models\CaseUpdate
+ *
+ * @property string $id
+ * @property string|null $case_model_id
+ * @property string $update
+ * @property bool $internal
+ * @property \AdvisingApp\CaseManagement\Enums\CaseUpdateDirection $direction
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseModel|null $case
+ * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseUpdateFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate whereCaseModelId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate whereDirection($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate whereInternal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate whereUpdate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdate withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCaseUpdate {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * AdvisingApp\CaseManagement\Models\ChangeRequest
+ *
+ * @property string $id
+ * @property string|null $created_by
+ * @property string $change_request_type_id
+ * @property string $change_request_status_id
+ * @property string $title
+ * @property string $description
+ * @property string $reason
+ * @property string $backout_strategy
+ * @property int $impact
+ * @property int $likelihood
+ * @property int $risk_score
+ * @property \Illuminate\Support\Carbon $start_time
+ * @property \Illuminate\Support\Carbon $end_time
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\ChangeRequestResponse> $approvals
+ * @property-read int|null $approvals_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\ChangeRequestResponse> $responses
+ * @property-read int|null $responses_count
+ * @property-read \AdvisingApp\CaseManagement\Models\ChangeRequestStatus $status
+ * @property-read \AdvisingApp\CaseManagement\Models\ChangeRequestType $type
+ * @property-read \App\Models\User|null $user
+ * @method static \AdvisingApp\CaseManagement\Database\Factories\ChangeRequestFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereBackoutStrategy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereChangeRequestStatusId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereChangeRequestTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereEndTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereImpact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereLikelihood($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereReason($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereRiskScore($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereStartTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperChangeRequest {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * AdvisingApp\CaseManagement\Models\ChangeRequestResponse
+ *
+ * @property string $id
+ * @property string $change_request_id
+ * @property string $user_id
+ * @property bool $approved
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\CaseManagement\Models\ChangeRequest $changeRequest
+ * @property-read \App\Models\User $user
+ * @method static \AdvisingApp\CaseManagement\Database\Factories\ChangeRequestResponseFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereApproved($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereChangeRequestId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperChangeRequestResponse {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * AdvisingApp\CaseManagement\Models\ChangeRequestStatus
+ *
+ * @property string $id
+ * @property string $name
+ * @property \AdvisingApp\CaseManagement\Enums\SystemChangeRequestClassification $classification
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\ChangeRequest> $changeRequests
+ * @property-read int|null $change_requests_count
+ * @method static \AdvisingApp\CaseManagement\Database\Factories\ChangeRequestStatusFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereClassification($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperChangeRequestStatus {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * AdvisingApp\CaseManagement\Models\ChangeRequestType
+ *
+ * @property string $id
+ * @property string $name
+ * @property int $number_of_required_approvals
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\ChangeRequest> $changeRequests
+ * @property-read int|null $change_requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $userApprovers
+ * @property-read int|null $user_approvers_count
+ * @method static \AdvisingApp\CaseManagement\Database\Factories\ChangeRequestTypeFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereNumberOfRequiredApprovals($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperChangeRequestType {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * AdvisingApp\CaseManagement\Models\Sla
+ *
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property int|null $response_seconds
+ * @property int|null $resolution_seconds
+ * @property string|null $terms
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CasePriority> $casePriorities
+ * @property-read int|null $case_priorities_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Sla newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Sla newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Sla onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Sla query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Sla whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Sla whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Sla whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Sla whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Sla whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Sla whereResolutionSeconds($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Sla whereResponseSeconds($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Sla whereTerms($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Sla whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Sla withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Sla withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperSla {}
 }
 
 namespace AdvisingApp\Consent\Models{
@@ -2229,6 +2925,8 @@ namespace AdvisingApp\Form\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \AdvisingApp\Form\Models\Form $form
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
  * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply onlyTrashed()
@@ -2739,533 +3437,6 @@ namespace AdvisingApp\Interaction\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperInteractionType {}
-}
-
-namespace AdvisingApp\InventoryManagement\Models{
-/**
- * AdvisingApp\InventoryManagement\Models\Asset
- *
- * @property-read string $purchase_age
- * @property string $id
- * @property string $serial_number
- * @property string $name
- * @property string $description
- * @property string $type_id
- * @property string $status_id
- * @property string $location_id
- * @property \Illuminate\Support\Carbon $purchase_date
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\AssetCheckIn> $checkIns
- * @property-read int|null $check_ins_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\AssetCheckOut> $checkOuts
- * @property-read int|null $check_outs_count
- * @property-read \AdvisingApp\InventoryManagement\Models\AssetCheckIn|null $latestCheckIn
- * @property-read \AdvisingApp\InventoryManagement\Models\AssetCheckOut|null $latestCheckOut
- * @property-read \AdvisingApp\InventoryManagement\Models\AssetLocation $location
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\MaintenanceActivity> $maintenanceActivities
- * @property-read int|null $maintenance_activities_count
- * @property-read \AdvisingApp\InventoryManagement\Models\AssetStatus $status
- * @property-read \AdvisingApp\InventoryManagement\Models\AssetType $type
- * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Asset newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Asset newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Asset onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Asset query()
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereLocationId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset wherePurchaseDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereSerialNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereStatusId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asset withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Asset withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAsset {}
-}
-
-namespace AdvisingApp\InventoryManagement\Models{
-/**
- * AdvisingApp\InventoryManagement\Models\AssetCheckIn
- *
- * @property string $id
- * @property string $asset_id
- * @property string|null $checked_in_by_type
- * @property string|null $checked_in_by_id
- * @property string $checked_in_from_type
- * @property string $checked_in_from_id
- * @property \Illuminate\Support\Carbon $checked_in_at
- * @property string|null $notes
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \AdvisingApp\InventoryManagement\Models\Asset $asset
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\InventoryManagement\Models\AssetCheckOut|null $checkOut
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $checkedInBy
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $checkedInFrom
- * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timelineRecord
- * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetCheckInFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn query()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereAssetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereCheckedInAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereCheckedInById($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereCheckedInByType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereCheckedInFromId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereCheckedInFromType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereNotes($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAssetCheckIn {}
-}
-
-namespace AdvisingApp\InventoryManagement\Models{
-/**
- * AdvisingApp\InventoryManagement\Models\AssetCheckOut
- *
- * @property string $id
- * @property string $asset_id
- * @property string|null $asset_check_in_id
- * @property string|null $checked_out_by_type
- * @property string|null $checked_out_by_id
- * @property string $checked_out_to_type
- * @property string $checked_out_to_id
- * @property \Illuminate\Support\Carbon $checked_out_at
- * @property \Illuminate\Support\Carbon|null $expected_check_in_at
- * @property string|null $notes
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \AdvisingApp\InventoryManagement\Models\Asset $asset
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\InventoryManagement\Models\AssetCheckIn|null $checkIn
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $checkedOutBy
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $checkedOutTo
- * @property-read mixed $status
- * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timelineRecord
- * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetCheckOutFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut query()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereAssetCheckInId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereAssetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereCheckedOutAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereCheckedOutById($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereCheckedOutByType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereCheckedOutToId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereCheckedOutToType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereExpectedCheckInAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereNotes($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut withoutReturned()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAssetCheckOut {}
-}
-
-namespace AdvisingApp\InventoryManagement\Models{
-/**
- * AdvisingApp\InventoryManagement\Models\AssetLocation
- *
- * @property string $id
- * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\Asset> $assets
- * @property-read int|null $assets_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetLocationFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation query()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAssetLocation {}
-}
-
-namespace AdvisingApp\InventoryManagement\Models{
-/**
- * AdvisingApp\InventoryManagement\Models\AssetStatus
- *
- * @property string $id
- * @property \AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification $classification
- * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\Asset> $assets
- * @property-read int|null $assets_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetStatusFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus query()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus whereClassification($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAssetStatus {}
-}
-
-namespace AdvisingApp\InventoryManagement\Models{
-/**
- * AdvisingApp\InventoryManagement\Models\AssetType
- *
- * @property string $id
- * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\Asset> $assets
- * @property-read int|null $assets_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetTypeFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType query()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetType withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperAssetType {}
-}
-
-namespace AdvisingApp\InventoryManagement\Models{
-/**
- * AdvisingApp\InventoryManagement\Models\MaintenanceActivity
- *
- * @property string $id
- * @property string $asset_id
- * @property string|null $maintenance_provider_id
- * @property string $details
- * @property \Illuminate\Support\Carbon|null $scheduled_date
- * @property \Illuminate\Support\Carbon|null $completed_date
- * @property \AdvisingApp\InventoryManagement\Enums\MaintenanceActivityStatus $status
- * @property string|null $notes
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \AdvisingApp\InventoryManagement\Models\Asset $asset
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\InventoryManagement\Models\MaintenanceProvider|null $maintenanceProvider
- * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timelineRecord
- * @method static \AdvisingApp\InventoryManagement\Database\Factories\MaintenanceActivityFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity query()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereAssetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereCompletedDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereDetails($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereMaintenanceProviderId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereNotes($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereScheduledDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperMaintenanceActivity {}
-}
-
-namespace AdvisingApp\InventoryManagement\Models{
-/**
- * AdvisingApp\InventoryManagement\Models\MaintenanceProvider
- *
- * @property string $id
- * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\MaintenanceActivity> $maintenanceActivities
- * @property-read int|null $maintenance_activities_count
- * @method static \AdvisingApp\InventoryManagement\Database\Factories\MaintenanceProviderFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider query()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperMaintenanceProvider {}
-}
-
-namespace AdvisingApp\KnowledgeBase\Models{
-/**
- * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle
- *
- * @property string $id
- * @property bool $public
- * @property string $title
- * @property array|null $article_details
- * @property string|null $notes
- * @property string|null $quality_id
- * @property string|null $status_id
- * @property string|null $category_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property int $portal_view_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory|null $category
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Division\Models\Division> $division
- * @property-read int|null $division_count
- * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
- * @property-read int|null $media_count
- * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality|null $quality
- * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus|null $status
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticleUpvote> $upvotes
- * @property-read int|null $upvotes_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticleView> $views
- * @property-read int|null $views_count
- * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseArticleFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle public()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle query()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereArticleDetails($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereCategoryId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereNotes($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle wherePortalViewCount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle wherePublic($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereQualityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereStatusId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticle withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperKnowledgeBaseArticle {}
-}
-
-namespace AdvisingApp\KnowledgeBase\Models{
-/**
- * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticleUpvote
- *
- * @property string $id
- * @property string $knowledge_base_item_id
- * @property string $user_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle $knowledgeBaseArticle
- * @property-read \App\Models\User $user
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote query()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereKnowledgeBaseItemId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleUpvote whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperKnowledgeBaseArticleUpvote {}
-}
-
-namespace AdvisingApp\KnowledgeBase\Models{
-/**
- * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticleView
- *
- * @property string $id
- * @property string $knowledge_base_item_id
- * @property string|null $user_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle $knowledgeBaseArticle
- * @property-read \App\Models\User|null $user
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView query()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereKnowledgeBaseItemId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseArticleView whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperKnowledgeBaseArticleView {}
-}
-
-namespace AdvisingApp\KnowledgeBase\Models{
-/**
- * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory
- *
- * @property string $id
- * @property string $name
- * @property string|null $description
- * @property string|null $icon
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle> $knowledgeBaseArticles
- * @property-read int|null $knowledge_base_articles_count
- * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseCategoryFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory query()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory whereIcon($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperKnowledgeBaseCategory {}
-}
-
-namespace AdvisingApp\KnowledgeBase\Models{
-/**
- * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality
- *
- * @property string $id
- * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle> $knowledgeBaseArticles
- * @property-read int|null $knowledge_base_articles_count
- * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseQualityFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality query()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperKnowledgeBaseQuality {}
-}
-
-namespace AdvisingApp\KnowledgeBase\Models{
-/**
- * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus
- *
- * @property string $id
- * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseArticle> $knowledgeBaseArticles
- * @property-read int|null $knowledge_base_articles_count
- * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseStatusFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus query()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperKnowledgeBaseStatus {}
 }
 
 namespace AdvisingApp\MeetingCenter\Models{
@@ -3849,16 +4020,14 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read int|null $alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $applicationSubmissions
  * @property-read int|null $application_submissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\AssetCheckIn> $assetCheckIns
- * @property-read int|null $asset_check_ins_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\AssetCheckOut> $assetCheckOuts
- * @property-read int|null $asset_check_outs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\BasicNeeds\Models\BasicNeedsProgram> $basicNeedsPrograms
  * @property-read int|null $basic_needs_programs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $careTeam
  * @property-read int|null $care_team_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $cases
+ * @property-read int|null $cases_count
  * @property-read \App\Models\User|null $createdBy
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Pipeline> $educatablePipelineStages
  * @property-read int|null $educatable_pipeline_stages_count
@@ -3882,8 +4051,6 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read int|null $ordered_engagements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $orderedInteractions
  * @property-read int|null $ordered_interactions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequest> $serviceRequests
- * @property-read int|null $service_requests_count
  * @property-read \AdvisingApp\Prospect\Models\ProspectSource $source
  * @property-read \AdvisingApp\Prospect\Models\ProspectStatus $status
  * @property-read \AdvisingApp\StudentDataModel\Models\Student|null $student
@@ -4094,6 +4261,212 @@ namespace AdvisingApp\Report\Models{
 	class IdeHelperTrackedEventCount {}
 }
 
+namespace AdvisingApp\ResourceHub\Models{
+/**
+ * AdvisingApp\ResourceHub\Models\ResourceHubArticle
+ *
+ * @property string $id
+ * @property bool $public
+ * @property string $title
+ * @property array|null $article_details
+ * @property string|null $notes
+ * @property string|null $quality_id
+ * @property string|null $status_id
+ * @property string|null $category_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int $portal_view_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\ResourceHub\Models\ResourceHubCategory|null $category
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Division\Models\Division> $division
+ * @property-read int|null $division_count
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @property-read \AdvisingApp\ResourceHub\Models\ResourceHubQuality|null $quality
+ * @property-read \AdvisingApp\ResourceHub\Models\ResourceHubStatus|null $status
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ResourceHub\Models\ResourceHubArticleUpvote> $upvotes
+ * @property-read int|null $upvotes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ResourceHub\Models\ResourceHubArticleView> $views
+ * @property-read int|null $views_count
+ * @method static \AdvisingApp\ResourceHub\Database\Factories\ResourceHubArticleFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle public()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle whereArticleDetails($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle whereCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle wherePortalViewCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle wherePublic($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle whereQualityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle whereStatusId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticle withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperResourceHubArticle {}
+}
+
+namespace AdvisingApp\ResourceHub\Models{
+/**
+ * AdvisingApp\ResourceHub\Models\ResourceHubArticleUpvote
+ *
+ * @property string $id
+ * @property string $resource_hub_item_id
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \AdvisingApp\ResourceHub\Models\ResourceHubArticle $resourceHubArticle
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleUpvote newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleUpvote newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleUpvote query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleUpvote whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleUpvote whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleUpvote whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleUpvote whereResourceHubItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleUpvote whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleUpvote whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperResourceHubArticleUpvote {}
+}
+
+namespace AdvisingApp\ResourceHub\Models{
+/**
+ * AdvisingApp\ResourceHub\Models\ResourceHubArticleView
+ *
+ * @property string $id
+ * @property string $resource_hub_item_id
+ * @property string|null $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \AdvisingApp\ResourceHub\Models\ResourceHubArticle $resourceHubArticle
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleView newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleView newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleView query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleView whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleView whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleView whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleView whereResourceHubItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleView whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubArticleView whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperResourceHubArticleView {}
+}
+
+namespace AdvisingApp\ResourceHub\Models{
+/**
+ * AdvisingApp\ResourceHub\Models\ResourceHubCategory
+ *
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property string|null $icon
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ResourceHub\Models\ResourceHubArticle> $resourceHubArticles
+ * @property-read int|null $resource_hub_articles_count
+ * @method static \AdvisingApp\ResourceHub\Database\Factories\ResourceHubCategoryFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubCategory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubCategory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubCategory onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubCategory query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubCategory whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubCategory whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubCategory whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubCategory whereIcon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubCategory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubCategory whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubCategory whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubCategory withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubCategory withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperResourceHubCategory {}
+}
+
+namespace AdvisingApp\ResourceHub\Models{
+/**
+ * AdvisingApp\ResourceHub\Models\ResourceHubQuality
+ *
+ * @property string $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ResourceHub\Models\ResourceHubArticle> $resourceHubArticles
+ * @property-read int|null $resource_hub_articles_count
+ * @method static \AdvisingApp\ResourceHub\Database\Factories\ResourceHubQualityFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubQuality newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubQuality newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubQuality onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubQuality query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubQuality whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubQuality whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubQuality whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubQuality whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubQuality whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubQuality withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubQuality withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperResourceHubQuality {}
+}
+
+namespace AdvisingApp\ResourceHub\Models{
+/**
+ * AdvisingApp\ResourceHub\Models\ResourceHubStatus
+ *
+ * @property string $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ResourceHub\Models\ResourceHubArticle> $resourceHubArticles
+ * @property-read int|null $resource_hub_articles_count
+ * @method static \AdvisingApp\ResourceHub\Database\Factories\ResourceHubStatusFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubStatus newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubStatus newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubStatus onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubStatus query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubStatus whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubStatus whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubStatus whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubStatus whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubStatus whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubStatus withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResourceHubStatus withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperResourceHubStatus {}
+}
+
 namespace AdvisingApp\Segment\Models{
 /**
  * AdvisingApp\Segment\Models\Segment
@@ -4167,700 +4540,6 @@ namespace AdvisingApp\Segment\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperSegmentSubject {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\ChangeRequest
- *
- * @property string $id
- * @property string|null $created_by
- * @property string $change_request_type_id
- * @property string $change_request_status_id
- * @property string $title
- * @property string $description
- * @property string $reason
- * @property string $backout_strategy
- * @property int $impact
- * @property int $likelihood
- * @property int $risk_score
- * @property \Illuminate\Support\Carbon $start_time
- * @property \Illuminate\Support\Carbon $end_time
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequestResponse> $approvals
- * @property-read int|null $approvals_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequestResponse> $responses
- * @property-read int|null $responses_count
- * @property-read \AdvisingApp\ServiceManagement\Models\ChangeRequestStatus $status
- * @property-read \AdvisingApp\ServiceManagement\Models\ChangeRequestType $type
- * @property-read \App\Models\User|null $user
- * @method static \AdvisingApp\ServiceManagement\Database\Factories\ChangeRequestFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest query()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereBackoutStrategy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereChangeRequestStatusId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereChangeRequestTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereCreatedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereEndTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereImpact($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereLikelihood($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereReason($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereRiskScore($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereStartTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperChangeRequest {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\ChangeRequestResponse
- *
- * @property string $id
- * @property string $change_request_id
- * @property string $user_id
- * @property bool $approved
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\ServiceManagement\Models\ChangeRequest $changeRequest
- * @property-read \App\Models\User $user
- * @method static \AdvisingApp\ServiceManagement\Database\Factories\ChangeRequestResponseFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse query()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereApproved($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereChangeRequestId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperChangeRequestResponse {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\ChangeRequestStatus
- *
- * @property string $id
- * @property string $name
- * @property \AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification $classification
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequest> $changeRequests
- * @property-read int|null $change_requests_count
- * @method static \AdvisingApp\ServiceManagement\Database\Factories\ChangeRequestStatusFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus query()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereClassification($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperChangeRequestStatus {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\ChangeRequestType
- *
- * @property string $id
- * @property string $name
- * @property int $number_of_required_approvals
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequest> $changeRequests
- * @property-read int|null $change_requests_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $userApprovers
- * @property-read int|null $user_approvers_count
- * @method static \AdvisingApp\ServiceManagement\Database\Factories\ChangeRequestTypeFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType query()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereNumberOfRequiredApprovals($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperChangeRequestType {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\ServiceRequest
- *
- * @property-read Student|Prospect $respondent
- * @property string $id
- * @property string $service_request_number
- * @property string $respondent_type
- * @property string $respondent_id
- * @property string|null $close_details
- * @property string|null $res_details
- * @property string|null $service_request_form_submission_id
- * @property string $division_id
- * @property string|null $status_id
- * @property string|null $priority_id
- * @property string|null $created_by_id
- * @property \Carbon\CarbonImmutable|null $status_updated_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment|null $assignedTo
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment> $assignments
- * @property-read int|null $assignments_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \App\Models\User|null $createdBy
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\OutboundDeliverable> $deliverables
- * @property-read int|null $deliverables_count
- * @property-read \AdvisingApp\Division\Models\Division $division
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestHistory> $histories
- * @property-read int|null $histories_count
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment|null $initialAssignment
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
- * @property-read int|null $interactions_count
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate|null $latestInboundServiceRequestUpdate
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate|null $latestOutboundServiceRequestUpdate
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $orderedInteractions
- * @property-read int|null $ordered_interactions_count
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestPriority|null $priority
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestFormSubmission|null $serviceRequestFormSubmission
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate> $serviceRequestUpdates
- * @property-read int|null $service_request_updates_count
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestStatus|null $status
- * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest licensedToEducatable(string $relationship)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest open()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest query()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereCloseDetails($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereCreatedById($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereDivisionId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest wherePriorityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereResDetails($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereRespondentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereRespondentType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereServiceRequestFormSubmissionId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereServiceRequestNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereStatusId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereStatusUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperServiceRequest {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment
- *
- * @property string $id
- * @property string $service_request_id
- * @property string $user_id
- * @property string|null $assigned_by_id
- * @property \Illuminate\Support\Carbon $assigned_at
- * @property \AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus $status
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \App\Models\User|null $assignedBy
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequest $serviceRequest
- * @property-read \App\Models\User $user
- * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestAssignmentFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment query()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment whereAssignedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment whereAssignedById($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment whereServiceRequestId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperServiceRequestAssignment {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\ServiceRequestForm
- *
- * @property string $id
- * @property string|null $service_request_type_id
- * @property-read string $name
- * @property string|null $description
- * @property-read bool $embed_enabled
- * @property-read array|null $allowed_domains
- * @property string|null $primary_color
- * @property \AdvisingApp\Form\Enums\Rounding|null $rounding
- * @property bool $is_authenticated
- * @property-read bool $is_wizard
- * @property bool $recaptcha_enabled
- * @property-read array|null $content
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestFormField> $fields
- * @property-read int|null $fields_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestFormStep> $steps
- * @property-read int|null $steps_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestFormSubmission> $submissions
- * @property-read int|null $submissions_count
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestType|null $type
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm query()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereAllowedDomains($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereContent($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereEmbedEnabled($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereIsAuthenticated($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereIsWizard($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm wherePrimaryColor($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereRecaptchaEnabled($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereRounding($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereServiceRequestTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperServiceRequestForm {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\ServiceRequestFormAuthentication
- *
- * @property string $id
- * @property string|null $author_id
- * @property string|null $author_type
- * @property string|null $code
- * @property string $service_request_form_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $author
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestForm $submissible
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication query()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication whereAuthorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication whereAuthorType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication whereCode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication whereServiceRequestFormId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperServiceRequestFormAuthentication {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\ServiceRequestFormField
- *
- * @property string $id
- * @property-read string $label
- * @property-read string $type
- * @property-read bool $is_required
- * @property-read array $config
- * @property string $service_request_form_id
- * @property string|null $service_request_form_step_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestFormStep|null $step
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestForm $submissible
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField query()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereConfig($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereIsRequired($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereLabel($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereServiceRequestFormId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereServiceRequestFormStepId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperServiceRequestFormField {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\ServiceRequestFormStep
- *
- * @property string $id
- * @property-read string $label
- * @property-read array|null $content
- * @property string $service_request_form_id
- * @property int $sort
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestFormField> $fields
- * @property-read int|null $fields_count
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestForm|null $submissible
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep query()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep whereContent($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep whereLabel($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep whereServiceRequestFormId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep whereSort($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperServiceRequestFormStep {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\ServiceRequestFormSubmission
- *
- * @property Student|Prospect|null $author
- * @property string $id
- * @property string $service_request_form_id
- * @property string|null $service_request_priority_id
- * @property string|null $author_id
- * @property string|null $author_type
- * @property \Carbon\CarbonImmutable|null $submitted_at
- * @property \Carbon\CarbonImmutable|null $canceled_at
- * @property \AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod|null $request_method
- * @property string|null $request_note
- * @property string|null $requester_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestFormField> $fields
- * @property-read int|null $fields_count
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestPriority|null $priority
- * @property-read \App\Models\User|null $requester
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequest|null $serviceRequest
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestForm $submissible
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission canceled()
- * @method static \Illuminate\Database\Eloquent\Builder|Submission licensedToEducatable(string $relationship)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission notCanceled()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission notSubmitted()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission query()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission requested()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission submitted()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereAuthorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereAuthorType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereCanceledAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereRequestMethod($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereRequestNote($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereRequesterId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereServiceRequestFormId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereServiceRequestPriorityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereSubmittedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperServiceRequestFormSubmission {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\ServiceRequestHistory
- *
- * @property string $id
- * @property string $service_request_id
- * @property array $original_values
- * @property array $new_values
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read mixed $new_values_formatted
- * @property-read mixed $original_values_formatted
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequest $serviceRequest
- * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestHistoryFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory query()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory whereNewValues($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory whereOriginalValues($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory whereServiceRequestId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperServiceRequestHistory {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\ServiceRequestPriority
- *
- * @property string $id
- * @property string $name
- * @property int $order
- * @property string|null $sla_id
- * @property string $type_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequest> $serviceRequests
- * @property-read int|null $service_requests_count
- * @property-read \AdvisingApp\ServiceManagement\Models\Sla|null $sla
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestType $type
- * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestPriorityFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority query()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority whereOrder($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority whereSlaId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority whereTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperServiceRequestPriority {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\ServiceRequestStatus
- *
- * @property string $id
- * @property \AdvisingApp\ServiceManagement\Enums\SystemServiceRequestClassification $classification
- * @property string $name
- * @property \AdvisingApp\ServiceManagement\Enums\ColumnColorOptions $color
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequest> $serviceRequests
- * @property-read int|null $service_requests_count
- * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestStatusFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus query()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus whereClassification($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus whereColor($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperServiceRequestStatus {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\ServiceRequestType
- *
- * @property string $id
- * @property string $name
- * @property bool $has_enabled_feedback_collection
- * @property bool $has_enabled_csat
- * @property bool $has_enabled_nps
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestForm|null $form
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestPriority> $priorities
- * @property-read int|null $priorities_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequest> $serviceRequests
- * @property-read int|null $service_requests_count
- * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestTypeFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType query()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereHasEnabledCsat($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereHasEnabledFeedbackCollection($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereHasEnabledNps($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperServiceRequestType {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate
- *
- * @property string $id
- * @property string|null $service_request_id
- * @property string $update
- * @property bool $internal
- * @property \AdvisingApp\ServiceManagement\Enums\ServiceRequestUpdateDirection $direction
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequest|null $serviceRequest
- * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestUpdateFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate query()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate whereDirection($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate whereInternal($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate whereServiceRequestId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate whereUpdate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperServiceRequestUpdate {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\Sla
- *
- * @property string $id
- * @property string $name
- * @property string|null $description
- * @property int|null $response_seconds
- * @property int|null $resolution_seconds
- * @property string|null $terms
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestPriority> $serviceRequestPriorities
- * @property-read int|null $service_request_priorities_count
- * @method static \Illuminate\Database\Eloquent\Builder|Sla newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Sla newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Sla onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Sla query()
- * @method static \Illuminate\Database\Eloquent\Builder|Sla whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Sla whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Sla whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Sla whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Sla whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Sla whereResolutionSeconds($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Sla whereResponseSeconds($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Sla whereTerms($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Sla whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Sla withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Sla withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperSla {}
 }
 
 namespace AdvisingApp\StudentDataModel\Models{
@@ -5007,16 +4686,14 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $applicationSubmissions
  * @property-read int|null $application_submissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\AssetCheckIn> $assetCheckIns
- * @property-read int|null $asset_check_ins_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\AssetCheckOut> $assetCheckOuts
- * @property-read int|null $asset_check_outs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\BasicNeeds\Models\BasicNeedsProgram> $basicNeedsPrograms
  * @property-read int|null $basic_needs_programs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $careTeam
  * @property-read int|null $care_team_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $cases
+ * @property-read int|null $cases_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\EngagementFile> $engagementFiles
  * @property-read int|null $engagement_files_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\EngagementResponse> $engagementResponses
@@ -5046,8 +4723,6 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $prospects_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Segment\Models\SegmentSubject> $segmentSubjects
  * @property-read int|null $segment_subjects_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequest> $serviceRequests
- * @property-read int|null $service_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $subscribedUsers
  * @property-read int|null $subscribed_users_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\Subscription> $subscriptions

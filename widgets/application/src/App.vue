@@ -32,9 +32,9 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { defineProps, ref, reactive } from 'vue';
-import wizard from '../../form/src/FormKit/wizard';
+import { defineProps, reactive, ref } from 'vue';
 import asteriskPlugin from '../../form/src/FormKit/asterisk.js';
+import wizard from '../../form/src/FormKit/wizard';
 let { steps, visitedSteps, activeStep, setStep, wizardPlugin } = wizard();
 
 const props = defineProps(['url']);
@@ -43,21 +43,22 @@ const data = reactive({
     steps,
     visitedSteps,
     activeStep,
-    plugins: [
-        wizardPlugin,
-        asteriskPlugin,
-    ],
-    setStep: target => () => {
-        setStep(target)
+    plugins: [wizardPlugin, asteriskPlugin],
+    setStep: (target) => () => {
+        setStep(target);
     },
-    setActiveStep: stepName => () => {
-        data.activeStep = stepName
+    setActiveStep: (stepName) => () => {
+        data.activeStep = stepName;
     },
-    showStepErrors: stepName => {
-        return (steps[stepName].errorCount > 0 || steps[stepName].blockingCount > 0) && (visitedSteps.value && visitedSteps.value.includes(stepName))
+    showStepErrors: (stepName) => {
+        return (
+            (steps[stepName].errorCount > 0 || steps[stepName].blockingCount > 0) &&
+            visitedSteps.value &&
+            visitedSteps.value.includes(stepName)
+        );
     },
-    stepIsValid: stepName => {
-        return steps[stepName].valid && steps[stepName].errorCount === 0
+    stepIsValid: (stepName) => {
+        return steps[stepName].valid && steps[stepName].errorCount === 0;
     },
     stringify: (value) => JSON.stringify(value, null, 2),
     submitForm: async (data, node) => {
@@ -66,7 +67,7 @@ const data = reactive({
         fetch(applicationSubmissionUrl.value, {
             method: 'POST',
             headers: {
-                'Accept': 'application/json',
+                Accept: 'application/json',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
@@ -83,9 +84,9 @@ const data = reactive({
             })
             .catch((error) => {
                 node.setErrors([error]);
-            })
+            });
     },
-})
+});
 
 const submittedSuccess = ref(false);
 
@@ -101,7 +102,7 @@ const applicationName = ref('');
 const applicationDescription = ref('');
 const applicationSubmissionUrl = ref('');
 const applicationPrimaryColor = ref('');
-const applicationRounding= ref('');
+const applicationRounding = ref('');
 const schema = ref([]);
 
 const authentication = ref({
@@ -162,7 +163,7 @@ fetch(props.url)
                 lg: '9999px',
                 full: '9999px',
             },
-        }[json.rounding ?? 'md']
+        }[json.rounding ?? 'md'];
 
         display.value = true;
     })
@@ -170,14 +171,14 @@ fetch(props.url)
         console.error(`Advising App Embed Application ${error}`);
     });
 
-async function authenticate (applicationData, node) {
+async function authenticate(applicationData, node) {
     node.clearErrors();
 
     if (authentication.value.isRequested) {
         fetch(authentication.value.url, {
             method: 'POST',
             headers: {
-                'Accept': 'application/json',
+                Accept: 'application/json',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -201,7 +202,7 @@ async function authenticate (applicationData, node) {
                     return;
                 }
 
-                if (! json.submission_url) {
+                if (!json.submission_url) {
                     node.setErrors([json.message]);
 
                     return;
@@ -219,7 +220,7 @@ async function authenticate (applicationData, node) {
     fetch(authentication.value.requestUrl, {
         method: 'POST',
         headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -234,7 +235,7 @@ async function authenticate (applicationData, node) {
                 return;
             }
 
-            if (! json.authentication_url) {
+            if (!json.authentication_url) {
                 node.setErrors([json.message]);
 
                 return;
@@ -248,7 +249,6 @@ async function authenticate (applicationData, node) {
             node.setErrors([error]);
         });
 }
-
 </script>
 
 <template>
@@ -273,10 +273,7 @@ async function authenticate (applicationData, node) {
         class="font-sans"
     >
         <div class="prose max-w-none" v-if="display && !submittedSuccess">
-            <link
-                rel="stylesheet"
-                v-bind:href="hostUrl + '/js/widgets/application/style.css'"
-            />
+            <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/application/style.css'" />
 
             <h1>
                 {{ applicationName }}
@@ -286,7 +283,7 @@ async function authenticate (applicationData, node) {
                 {{ applicationDescription }}
             </p>
 
-            <div v-if="! applicationSubmissionUrl">
+            <div v-if="!applicationSubmissionUrl">
                 <FormKit type="form" @submit="authenticate" v-model="authentication">
                     <FormKit
                         type="email"
@@ -297,10 +294,7 @@ async function authenticate (applicationData, node) {
                         :disabled="authentication.isRequested"
                     />
 
-                    <p
-                        v-if="authentication.requestedMessage"
-                        class="text-sm"
-                    >
+                    <p v-if="authentication.requestedMessage" class="text-sm">
                         {{ authentication.requestedMessage }}
                     </p>
 
@@ -322,17 +316,12 @@ async function authenticate (applicationData, node) {
                     Signed in as <strong>{{ authentication.email }}</strong>
                 </p>
 
-                <FormKitSchema
-                    :schema="schema"
-                    :data="data"
-                />
+                <FormKitSchema :schema="schema" :data="data" />
             </div>
         </div>
 
         <div v-if="submittedSuccess">
-            <h1 class="text-2xl font-bold mb-2 text-center">
-                Thank you, your application has been received.
-            </h1>
+            <h1 class="text-2xl font-bold mb-2 text-center">Thank you, your application has been received.</h1>
         </div>
     </div>
 </template>

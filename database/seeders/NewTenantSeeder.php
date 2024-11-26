@@ -42,19 +42,18 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Authorization\Console\Commands\SetupRoles;
+use AdvisingApp\CaseManagement\Database\Seeders\CaseTypeSeeder;
 use AdvisingApp\Interaction\Database\Seeders\InteractionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSourceSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
-use AdvisingApp\InventoryManagement\Database\Seeders\AssetSeeder;
-use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
-use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseQualitySeeder;
-use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseCategorySeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ChangeRequestTypeSeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ChangeRequestStatusSeeder;
+use AdvisingApp\CaseManagement\Database\Seeders\CaseStatusSeeder;
+use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubStatusSeeder;
+use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubQualitySeeder;
+use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubCategorySeeder;
+use AdvisingApp\CaseManagement\Database\Seeders\ChangeRequestTypeSeeder;
+use AdvisingApp\CaseManagement\Database\Seeders\ChangeRequestStatusSeeder;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
 
 class NewTenantSeeder extends Seeder
 {
@@ -70,21 +69,19 @@ class NewTenantSeeder extends Seeder
       outputBuffer: $this->command->getOutput(),
     );
 
-    $this->call([
-      DivisionSeeder::class,
-      ServiceRequestStatusSeeder::class,
-      ServiceRequestTypeSeeder::class,
-      ProspectStatusSeeder::class,
-      ProspectSourceSeeder::class,
-      KnowledgeBaseCategorySeeder::class,
-      KnowledgeBaseQualitySeeder::class,
-      KnowledgeBaseStatusSeeder::class,
-      ...InteractionSeeder::metadataSeeders(),
-      ConsentAgreementSeeder::class,
-      PronounsSeeder::class,
-      ApplicationSubmissionStateSeeder::class,
-      // InventoryManagement
-      ...AssetSeeder::metadataSeeders(),
+        $this->call([
+            DivisionSeeder::class,
+            CaseStatusSeeder::class,
+            CaseTypeSeeder::class,
+            ProspectStatusSeeder::class,
+            ProspectSourceSeeder::class,
+            ResourceHubCategorySeeder::class,
+            ResourceHubQualitySeeder::class,
+            ResourceHubStatusSeeder::class,
+            ...InteractionSeeder::metadataSeeders(),
+            ConsentAgreementSeeder::class,
+            PronounsSeeder::class,
+            ApplicationSubmissionStateSeeder::class,
 
       // Change Request
       ChangeRequestTypeSeeder::class,

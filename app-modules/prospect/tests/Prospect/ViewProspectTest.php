@@ -54,8 +54,8 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspec
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectCareTeam;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectPrograms;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectCaseManagement;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEngagement;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectServiceManagement;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectInteractions;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectEngagementTimeline;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectSubscriptions;
@@ -233,7 +233,7 @@ test('can see prospect converted to student badge on', function (string $pages) 
 
     $user->givePermissionTo('care_team.view-any');
 
-    $user->givePermissionTo('service_request.view-any');
+    $user->givePermissionTo('case.view-any');
 
     $user->givePermissionTo('event_attendee.view-any');
 
@@ -264,7 +264,7 @@ test('can see prospect converted to student badge on', function (string $pages) 
         ManageProspectTasks::class,
         ProspectEngagementTimeline::class,
         ManageProspectCareTeam::class,
-        ProspectServiceManagement::class,
+        ProspectCaseManagement::class,
         ManageProspectEvents::class,
         ManageProspectPrograms::class,
     ]);

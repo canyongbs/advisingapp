@@ -102,9 +102,9 @@
     </label>
 
     <label class="flex items-center">
-        <x-filament::input.checkbox wire:model.live="filterOpenServiceRequests" />
+        <x-filament::input.checkbox wire:model.live="filterOpenCases" />
         <span class="ml-2">
-            Open Service Requests
+            Open Cases
         </span>
     </label>
 

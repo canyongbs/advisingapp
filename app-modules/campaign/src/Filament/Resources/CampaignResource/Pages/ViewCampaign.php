@@ -38,6 +38,7 @@ namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
+use App\Features\AddCreatedByFeature;
 use Filament\Resources\Pages\ViewRecord;
 use AdvisingApp\Campaign\Models\Campaign;
 use Filament\Infolists\Components\Section;
@@ -64,6 +65,9 @@ class ViewCampaign extends ViewRecord
                             ->label('Has Been Executed?')
                             ->getStateUsing(fn (Campaign $record) => $record->hasBeenExecuted())
                             ->boolean(),
+                        TextEntry::make('createdBy.name')
+                            ->label('Created By')
+                            ->visible(fn () => AddCreatedByFeature::active()),
                     ]),
             ]);
     }

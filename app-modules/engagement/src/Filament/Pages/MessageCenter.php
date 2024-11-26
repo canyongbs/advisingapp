@@ -53,12 +53,12 @@ use AdvisingApp\Prospect\Models\Prospect;
 use App\Actions\GetRecordFromMorphAndKey;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Actions\SyncTimelineData;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Timeline\Filament\Pages\Concerns\LoadsTimelineRecords;
@@ -67,8 +67,6 @@ class MessageCenter extends Page
 {
     use WithPagination;
     use LoadsTimelineRecords;
-
-    protected static ?string $navigationIcon = 'heroicon-o-inbox';
 
     protected static string $view = 'engagement::filament.pages.message-center';
 
@@ -108,8 +106,8 @@ class MessageCenter extends Page
     #[Url(as: 'hasOpenTasks')]
     public bool $filterOpenTasks = false;
 
-    #[Url(as: 'hasOpenServiceRequests')]
-    public bool $filterOpenServiceRequests = false;
+    #[Url(as: 'hasOpenCases')]
+    public bool $filterOpenCases = false;
 
     #[Url(as: 'startDate')]
     public ?string $filterStartDate = null;
@@ -154,7 +152,7 @@ class MessageCenter extends Page
             'filterPeopleType',
             'filterSubscribed',
             'filterOpenTasks',
-            'filterOpenServiceRequests',
+            'filterOpenCases',
             'filterStartDate',
             'filterEndDate',
             'filterMemberOfCareTeam',
@@ -297,10 +295,10 @@ class MessageCenter extends Page
                         ->pluck('concern_id')
                 );
             })
-            ->when($this->filterOpenServiceRequests === true, function (Builder $query) use ($idColumn) {
+            ->when($this->filterOpenCases === true, function (Builder $query) use ($idColumn) {
                 $query->whereIn(
                     $idColumn,
-                    ServiceRequest::query()
+                    CaseModel::query()
                         ->open()
                         ->pluck('respondent_id')
                 );

@@ -9,12 +9,12 @@
         "build:event-registration": "(cd widgets/event-registration && vite build)",
         "build:form": "(cd widgets/form && vite build)",
         "build:js-compile": "node ./bin/build.js",
-        "build:knowledge-management": "(cd portals/knowledge-management && vite build)",
-        "build:portals": "npm run build:knowledge-management",
-        "build:service-request-form": "(cd widgets/service-request-form && vite build)",
+        "build:resource-hub": "(cd portals/resource-hub && vite build)",
+        "build:portals": "npm run build:resource-hub",
+        "build:case-form": "(cd widgets/case-form && vite build)",
         "build:survey": "(cd widgets/survey && vite build)",
         "build:vite": "vite build",
-        "build:widgets": "npm run build:application && npm run build:form && npm run build:survey && npm run build:event-registration && npm run build:service-request-form",
+        "build:widgets": "npm run build:application && npm run build:form && npm run build:survey && npm run build:event-registration && npm run build:case-form",
         "dev": "vite",
         "dev:application": "(cd widgets/application && vite)",
         "dev:form": "(cd widgets/form && vite)"
@@ -65,10 +65,12 @@
         "postcss": "^8.4.31",
         "postcss-import": "^16.0.1",
         "prettier": "^3.0.0",
+        "prettier-plugin-organize-imports": "^4.1.0",
         "showdown": "^2.1.0",
         "sortablejs": "^1.15.0",
         "vue": "^3.3.4",
         "vue-router": "^4.2.5",
-        "vue-signature-pad": "^3.0.2"
+        "vue-signature-pad": "^3.0.2",
+        "vue-tsc": "^2.1.10"
     }
 }

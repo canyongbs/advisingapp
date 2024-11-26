@@ -48,7 +48,8 @@ class CampaignFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
+            'created_by_id' => User::factory(),
+            'created_by_type' => 'user',
             'segment_id' => Segment::factory(),
             'name' => fake()->catchPhrase(),
             'enabled' => true,

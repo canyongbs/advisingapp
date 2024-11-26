@@ -32,17 +32,16 @@
 </COPYRIGHT>
 */
 import { createInput } from '@formkit/vue';
-import Slider from "./Slider.vue";
-import Rating from "./Rating.vue";
 import inputs from '../../../../form/src/FormKit/Inputs/index';
-
+import Rating from './Rating.vue';
+import Slider from './Slider.vue';
 
 export default {
-    'otp': inputs.otp,
-    'slider': createInput(Slider, {
+    otp: inputs.otp,
+    slider: createInput(Slider, {
         props: [],
     }),
-    'rating': createInput(Rating, {
+    rating: createInput(Rating, {
         props: [],
     }),
-}
+};

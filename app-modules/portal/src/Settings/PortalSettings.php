@@ -77,7 +77,7 @@ class PortalSettings extends SettingsWithMedia
     public ?array $footer_copyright_statement = null;
 
     /**
-    * Knowledge Base Portal
+    * Resource Hub Portal
     */
     public bool $knowledge_management_portal_enabled = false;
 
