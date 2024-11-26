@@ -46,8 +46,7 @@
     >
         <x-filament::tabs>
             @foreach ($managers as $managerKey => $manager)
-                <x-filament::tabs.item :alpine-active="'activeTab === ' . Js::from($managerKey)" :x-on:click="'activeTab = ' .
-                    Js::from($managerKey)">
+                <x-filament::tabs.item :alpine-active="'activeTab === ' . Js::from($managerKey)" :x-on:click="'activeTab = ' . Js::from($managerKey)">
                     {{ $manager::getTitle($this->getRecord(), static::class) }}
                 </x-filament::tabs.item>
             @endforeach
