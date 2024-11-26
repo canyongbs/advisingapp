@@ -36,6 +36,7 @@
     'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
 ])>
     <div class="flex w-full justify-start">
+        
         <div
             class="grid max-w-xs grid-cols-2 gap-1 rounded-lg bg-gray-100 p-1 dark:bg-gray-800"
             role="group"
@@ -57,6 +58,8 @@
                 />
             </button>
             <button
+                @disabled($this->segmentCount >= 100)
+                title="{{ $this->segmentCount >= 100 ? 'Kanban view is only available for fewer than 100 prospect records.' : '' }}"
                 type="button"
                 @class([
                     'px-5 py-1.5 text-xs font-medium rounded-lg',
