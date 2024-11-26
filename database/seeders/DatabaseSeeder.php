@@ -49,22 +49,22 @@ use AdvisingApp\Ai\Database\Seeders\PromptTypeSeeder;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSeeder;
 use AdvisingApp\Authorization\Console\Commands\SetupRoles;
+use AdvisingApp\CaseManagement\Database\Seeders\CaseSeeder;
 use AdvisingApp\MeetingCenter\Database\Seeders\EventSeeder;
+use AdvisingApp\CaseManagement\Database\Seeders\CaseTypeSeeder;
 use AdvisingApp\Interaction\Database\Seeders\InteractionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSourceSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
+use AdvisingApp\CaseManagement\Database\Seeders\CaseStatusSeeder;
+use AdvisingApp\CaseManagement\Database\Seeders\CaseUpdateSeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubStatusSeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubArticleSeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubQualitySeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubCategorySeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestSeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ChangeRequestTypeSeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ChangeRequestStatusSeeder;
+use AdvisingApp\CaseManagement\Database\Seeders\ChangeRequestTypeSeeder;
+use AdvisingApp\CaseManagement\Database\Seeders\ChangeRequestStatusSeeder;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestUpdateSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -87,8 +87,8 @@ class DatabaseSeeder extends Seeder
             SampleSuperAdminUserSeeder::class,
             LocalDevelopmentSeeder::class,
             DivisionSeeder::class,
-            ServiceRequestStatusSeeder::class,
-            ServiceRequestTypeSeeder::class,
+            CaseStatusSeeder::class,
+            CaseTypeSeeder::class,
             ProspectStatusSeeder::class,
             ProspectSourceSeeder::class,
             ResourceHubCategorySeeder::class,
@@ -98,8 +98,8 @@ class DatabaseSeeder extends Seeder
             ConsentAgreementSeeder::class,
             PronounsSeeder::class,
 
-            ServiceRequestSeeder::class,
-            ServiceRequestUpdateSeeder::class,
+            CaseSeeder::class,
+            CaseUpdateSeeder::class,
             ProspectSeeder::class,
             ResourceHubArticleSeeder::class,
             TaskSeeder::class,

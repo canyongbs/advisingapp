@@ -47,7 +47,7 @@ test('EditInteraction is gated with proper access control', function () {
 
     $user->givePermissionTo('student.*.view');
     $user->givePermissionTo('prospect.*.view');
-    $user->givePermissionTo('service_request.*.view');
+    $user->givePermissionTo('case.*.view');
 
     $interaction = Interaction::factory()->create();
 
