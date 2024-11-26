@@ -38,6 +38,7 @@
     use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableCareTeamWidget;
     use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableSubscriptionsWidget;
     use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableTasksWidget;
+    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ApplicationSubmissionsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
@@ -79,14 +80,14 @@
                     @if (EducatableAlertsWidget::canView())
                         @livewire(EducatableAlertsWidget::class, [
                             'educatable' => $this->getRecord(),
-                            'manageUrl' => \AdvisingApp\StudentDataModel\Filament\Resources\StudentResource::getUrl('alerts', ['record' => $this->getRecord()]),
+                            'manageUrl' => StudentResource::getUrl('alerts', ['record' => $this->getRecord()]),
                         ])
                     @endif
 
                     @if (EducatableTasksWidget::canView())
                         @livewire(EducatableTasksWidget::class, [
                             'educatable' => $this->getRecord(),
-                            'manageUrl' => \AdvisingApp\StudentDataModel\Filament\Resources\StudentResource::getUrl('tasks', ['record' => $this->getRecord()]),
+                            'manageUrl' => StudentResource::getUrl('tasks', ['record' => $this->getRecord()]),
                         ])
                     @endif
                 </div>
@@ -96,7 +97,7 @@
                         @livewire(EducatableCareTeamWidget::class, [
                             'educatable' => $this->getRecord(),
                             'lazy' => 'on-load',
-                            'manageUrl' => \AdvisingApp\StudentDataModel\Filament\Resources\StudentResource::getUrl('care-team', ['record' => $this->getRecord()]),
+                            'manageUrl' => StudentResource::getUrl('care-team', ['record' => $this->getRecord()]),
                         ])
                     @endif
 
@@ -104,7 +105,7 @@
                         @livewire(EducatableSubscriptionsWidget::class, [
                             'educatable' => $this->getRecord(),
                             'lazy' => 'on-load',
-                            'manageUrl' => \AdvisingApp\StudentDataModel\Filament\Resources\StudentResource::getUrl('subscriptions', ['record' => $this->getRecord()]),
+                            'manageUrl' => StudentResource::getUrl('subscriptions', ['record' => $this->getRecord()]),
                         ])
                     @endif
                 </div>
