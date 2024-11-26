@@ -41,6 +41,7 @@ use function Pest\Laravel\get;
 
 use App\Filament\Pages\AmazonS3;
 
+use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
@@ -58,9 +59,7 @@ it('prevents access to the Amazon S3 Settings when you do not have the necessary
 it('allows access to the Amazon S3 Settings when you do have the necessary permissions', function () {
     $user = User::factory()->create();
 
-    $user->givePermissionTo('amazon-s3.manage_s3_settings');
-
-    actingAs($user);
+    asSuperAdmin($user);
 
     get(AmazonS3::getUrl())
         ->assertOk();
@@ -69,9 +68,7 @@ it('allows access to the Amazon S3 Settings when you do have the necessary permi
 it('renders the correct Amazon S3 settings for the Tenant', function () {
     $user = User::factory()->create();
 
-    $user->givePermissionTo('amazon-s3.manage_s3_settings');
-
-    actingAs($user);
+    asSuperAdmin($user);
 
     /** @var Tenant $tenant */
     $tenant = Tenant::current();
@@ -105,9 +102,7 @@ it('renders the correct Amazon S3 settings for the Tenant', function () {
 it('correctly edits the Amazon S3 settings for the Tenant', function () {
     $user = User::factory()->create();
 
-    $user->givePermissionTo('amazon-s3.manage_s3_settings');
-
-    actingAs($user);
+    asSuperAdmin($user);
 
     /** @var Tenant $tenant */
     $tenant = Tenant::current();

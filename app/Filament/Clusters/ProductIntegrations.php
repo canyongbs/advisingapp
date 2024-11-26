@@ -34,50 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationMicrosoftClarity\Filament\Pages;
+namespace App\Filament\Clusters;
 
-use App\Models\User;
-use Filament\Forms\Get;
-use Filament\Forms\Form;
-use App\Models\Authenticatable;
-use Filament\Pages\SettingsPage;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\TextInput;
-use App\Filament\Clusters\ProductIntegrations;
-use AdvisingApp\IntegrationMicrosoftClarity\Settings\MicrosoftClaritySettings;
+use Filament\Clusters\Cluster;
 
-class ManageMicrosoftClaritySettings extends SettingsPage
+class ProductIntegrations extends Cluster
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static ?string $navigationGroup = 'Global Administration';
 
-    protected static string $settings = MicrosoftClaritySettings::class;
-
-    protected static ?string $title = 'Microsoft Clarity Settings';
-
-    protected static ?string $navigationLabel = 'Microsoft Clarity';
-
-    protected static ?int $navigationSort = 30;
-
-    protected static ?string $cluster = ProductIntegrations::class;
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE) && parent::canAccess();
-    }
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->columns(1)
-            ->schema([
-                Toggle::make('is_enabled')
-                    ->label('Enabled')
-                    ->live(),
-                TextInput::make('id')
-                    ->visible(fn (Get $get) => $get('is_enabled')),
-            ]);
-    }
+    protected static ?int $navigationSort = 70;
 }

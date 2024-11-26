@@ -42,23 +42,23 @@ use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Clusters\GlobalSettings;
 use App\Settings\CollegeBrandingSettings;
+use App\Filament\Clusters\DisplaySettings;
 use App\Filament\Forms\Components\ColorSelect;
 
 class ManageCollegeBrandingSettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-paint-brush';
 
-    protected static ?string $navigationLabel = 'College Branding';
+    protected static ?string $navigationLabel = 'Branding';
 
-    protected static ?int $navigationSort = 90;
+    protected static ?int $navigationSort = 20;
 
     protected static string $settings = CollegeBrandingSettings::class;
 
-    protected static ?string $title = 'College Branding';
+    protected static ?string $title = 'Branding';
 
-    protected static ?string $cluster = GlobalSettings::class;
+    protected static ?string $cluster = DisplaySettings::class;
 
     public static function canAccess(): bool
     {
