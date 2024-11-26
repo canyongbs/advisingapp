@@ -37,11 +37,23 @@
 namespace AdvisingApp\Alert\Observers;
 
 use AdvisingApp\Alert\Models\AlertStatus;
+use Illuminate\Support\Facades\DB;
 
 class AlertStatusObserver
 {
-    public function creating(AlertStatus $alertStatus): void
-    {
-        $alertStatus->sort = AlertStatus::query()->max('sort') + 1;
+  public function creating(AlertStatus $alertStatus): void
+  {
+    if ($alertStatus->order == null) {
+      $alertStatus->order = DB::raw('(SELECT COALESCE(MAX(alert_statuses.order), 0) + 1 FROM alert_statuses)');
     }
+  }
+
+  public function saving(AlertStatus $alertStatus): void
+  {
+    if ($alertStatus->is_default) {
+      AlertStatus::query()
+        ->where('is_default', true)
+        ->update(['is_default' => false]);
+    }
+  }
 }
