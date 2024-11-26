@@ -45,4 +45,12 @@ return new class () extends Migration {
             $table->nullableUuidMorphs('created_by');
         });
     }
+
+    public function down(): void
+    {
+        Schema::table('campaigns', function (Blueprint $table) {
+            $table->dropIndex(['created_by_type', 'created_by_id']);
+            $table->dropColumn(['created_by_type', 'created_by_id']);
+        });
+    }
 };

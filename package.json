@@ -11,10 +11,10 @@
         "build:js-compile": "node ./bin/build.js",
         "build:resource-hub": "(cd portals/resource-hub && vite build)",
         "build:portals": "npm run build:resource-hub",
-        "build:service-request-form": "(cd widgets/service-request-form && vite build)",
+        "build:case-form": "(cd widgets/case-form && vite build)",
         "build:survey": "(cd widgets/survey && vite build)",
         "build:vite": "vite build",
-        "build:widgets": "npm run build:application && npm run build:form && npm run build:survey && npm run build:event-registration && npm run build:service-request-form",
+        "build:widgets": "npm run build:application && npm run build:form && npm run build:survey && npm run build:event-registration && npm run build:case-form",
         "dev": "vite",
         "dev:application": "(cd widgets/application && vite)",
         "dev:form": "(cd widgets/form && vite)"
