@@ -38,57 +38,57 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
 
-return new class() extends Migration {
-  public function up(): void
-  {
-    if (! app()->runningUnitTests()) {
-      $activeStatus = DB::table('alert_statuses')
-        ->where('classification', 'active')
-        ->where('name', 'Active')
-        ->first();
+return new class () extends Migration {
+    public function up(): void
+    {
+        if (! app()->runningUnitTests()) {
+            $activeStatus = DB::table('alert_statuses')
+                ->where('classification', 'active')
+                ->where('name', 'Active')
+                ->first();
 
-      if ($activeStatus === null) {
-        DB::table('alert_statuses')->insert([
-          'id' => (string) Str::orderedUuid(),
-          'classification' => 'active',
-          'name' => 'Active',
-          'created_at' => now(),
-          'is_default' => true,
-          'order' => DB::raw('(SELECT COALESCE(MAX(alert_statuses.order), 0) + 1 FROM alert_statuses)'),
-        ]);
-      }
+            if ($activeStatus === null) {
+                DB::table('alert_statuses')->insert([
+                    'id' => (string) Str::orderedUuid(),
+                    'classification' => 'active',
+                    'name' => 'Active',
+                    'created_at' => now(),
+                    'is_default' => true,
+                    'order' => DB::raw('(SELECT COALESCE(MAX(alert_statuses.order), 0) + 1 FROM alert_statuses)'),
+                ]);
+            }
 
-      $resolvedStatus = DB::table('alert_statuses')
-        ->where('classification', 'resolved')
-        ->where('name', 'Resolved')
-        ->first();
+            $resolvedStatus = DB::table('alert_statuses')
+                ->where('classification', 'resolved')
+                ->where('name', 'Resolved')
+                ->first();
 
-      if ($resolvedStatus === null) {
-        DB::table('alert_statuses')->insert([
-          'id' => (string) Str::orderedUuid(),
-          'classification' => 'resolved',
-          'name' => 'Resolved',
-          'created_at' => now(),
-          'order' => DB::raw('(SELECT COALESCE(MAX(alert_statuses.order), 0) + 1 FROM alert_statuses)'),
-        ]);
-      }
+            if ($resolvedStatus === null) {
+                DB::table('alert_statuses')->insert([
+                    'id' => (string) Str::orderedUuid(),
+                    'classification' => 'resolved',
+                    'name' => 'Resolved',
+                    'created_at' => now(),
+                    'order' => DB::raw('(SELECT COALESCE(MAX(alert_statuses.order), 0) + 1 FROM alert_statuses)'),
+                ]);
+            }
 
-      $canceledStatus = DB::table('alert_statuses')
-        ->where('classification', 'canceled')
-        ->where('name', 'Canceled')
-        ->first();
+            $canceledStatus = DB::table('alert_statuses')
+                ->where('classification', 'canceled')
+                ->where('name', 'Canceled')
+                ->first();
 
-      if ($canceledStatus === null) {
-        DB::table('alert_statuses')->insert([
-          'id' => (string) Str::orderedUuid(),
-          'classification' => 'canceled',
-          'name' => 'Canceled',
-          'created_at' => now(),
-          'order' => DB::raw('(SELECT COALESCE(MAX(alert_statuses.order), 0) + 1 FROM alert_statuses)'),
-        ]);
-      }
+            if ($canceledStatus === null) {
+                DB::table('alert_statuses')->insert([
+                    'id' => (string) Str::orderedUuid(),
+                    'classification' => 'canceled',
+                    'name' => 'Canceled',
+                    'created_at' => now(),
+                    'order' => DB::raw('(SELECT COALESCE(MAX(alert_statuses.order), 0) + 1 FROM alert_statuses)'),
+                ]);
+            }
+        }
     }
-  }
 
-  public function down(): void {}
+    public function down(): void {}
 };

@@ -38,18 +38,18 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-return new class() extends Migration {
-  public function up(): void
-  {
-    Schema::table('alerts', function (Blueprint $table) {
-      $table->foreignUuid('status_id')->nullable()->constrained('alert_statuses');
-    });
-  }
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('alerts', function (Blueprint $table) {
+            $table->foreignUuid('status_id')->nullable()->constrained('alert_statuses');
+        });
+    }
 
-  public function down(): void
-  {
-    Schema::table('alerts', function (Blueprint $table) {
-      $table->dropColumn('status_id');
-    });
-  }
+    public function down(): void
+    {
+        Schema::table('alerts', function (Blueprint $table) {
+            $table->dropColumn('status_id');
+        });
+    }
 };

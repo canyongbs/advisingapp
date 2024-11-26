@@ -45,62 +45,61 @@ use AdvisingApp\Alert\Enums\AlertSeverity;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
-use AdvisingApp\Alert\Models\AlertStatus;
 
 class ProactiveAlertBlock extends CampaignActionBlock
 {
-  protected function setUp(): void
-  {
-    parent::setUp();
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-    $this->label('Proactive Alert');
+        $this->label('Proactive Alert');
 
-    $this->schema($this->createFields());
-  }
+        $this->schema($this->createFields());
+    }
 
-  public function generateFields(string $fieldPrefix = ''): array
-  {
-    return [
-      Textarea::make($fieldPrefix . 'description')
-        ->required()
-        ->string(),
-      Select::make($fieldPrefix . 'severity')
-        ->options(AlertSeverity::class)
-        ->selectablePlaceholder(false)
-        ->default(AlertSeverity::default())
-        ->required()
-        ->enum(AlertSeverity::class),
-      Textarea::make($fieldPrefix . 'suggested_intervention')
-        ->required()
-        ->string(),
-      Select::make($fieldPrefix . 'status_id')
-        ->label('Status')
-        ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('sort'))
-        ->selectablePlaceholder(false)
-        ->default(fn() => SystemAlertStatusClassification::default()?->getKey())
-        ->required()
-        ->visible(AlertStatusId::active()),
-      Select::make($fieldPrefix . 'status')
-        ->options(SystemAlertStatusClassification::class)
-        ->selectablePlaceholder(false)
-        ->default(fn() => SystemAlertStatusClassification::default()?->classification)
-        ->required()
-        ->enum(SystemAlertStatusClassification::class)
-        ->visible(!AlertStatusId::active()),
-      DateTimePicker::make($fieldPrefix . 'execute_at')
-        ->label('When should the journey step be executed?')
-        ->columnSpanFull()
-        ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
-        ->hintIconTooltip('This time is set in ' . app(CampaignSettings::class)->getActionExecutionTimezoneLabel() . '.')
-        ->lazy()
-        ->helperText(fn($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
-        ->required()
-        ->minDate(now()),
-    ];
-  }
+    public function generateFields(string $fieldPrefix = ''): array
+    {
+        return [
+            Textarea::make($fieldPrefix . 'description')
+                ->required()
+                ->string(),
+            Select::make($fieldPrefix . 'severity')
+                ->options(AlertSeverity::class)
+                ->selectablePlaceholder(false)
+                ->default(AlertSeverity::default())
+                ->required()
+                ->enum(AlertSeverity::class),
+            Textarea::make($fieldPrefix . 'suggested_intervention')
+                ->required()
+                ->string(),
+            Select::make($fieldPrefix . 'status_id')
+                ->label('Status')
+                ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
+                ->selectablePlaceholder(false)
+                ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
+                ->required()
+                ->visible(AlertStatusId::active()),
+            Select::make($fieldPrefix . 'status')
+                ->options(SystemAlertStatusClassification::class)
+                ->selectablePlaceholder(false)
+                ->default(fn () => SystemAlertStatusClassification::default()?->classification)
+                ->required()
+                ->enum(SystemAlertStatusClassification::class)
+                ->visible(! AlertStatusId::active()),
+            DateTimePicker::make($fieldPrefix . 'execute_at')
+                ->label('When should the journey step be executed?')
+                ->columnSpanFull()
+                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+                ->hintIconTooltip('This time is set in ' . app(CampaignSettings::class)->getActionExecutionTimezoneLabel() . '.')
+                ->lazy()
+                ->helperText(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
+                ->required()
+                ->minDate(now()),
+        ];
+    }
 
-  public static function type(): string
-  {
-    return 'proactive_alert';
-  }
+    public static function type(): string
+    {
+        return 'proactive_alert';
+    }
 }

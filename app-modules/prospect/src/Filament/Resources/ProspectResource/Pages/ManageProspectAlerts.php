@@ -112,7 +112,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
                 TextEntry::make('severity'),
                 TextEntry::make('suggested_intervention'),
                 TextEntry::make('status.name')->visible(AlertStatusId::active()),
-                TextEntry::make('status')->visible(!AlertStatusId::active()),
+                TextEntry::make('status')->visible(! AlertStatusId::active()),
                 TextEntry::make('createdBy.name')->label('Created By')->default('N/A'),
                 TextEntry::make('created_at')->label('Created Date'),
             ]);
@@ -136,18 +136,18 @@ class ManageProspectAlerts extends ManageRelatedRecords
                     ->string(),
                 Select::make('status_id')
                     ->label('Status')
-                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('sort'))
-                    ->default(fn() => SystemAlertStatusClassification::default()?->getKey())
+                    ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
+                    ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
                     ->selectablePlaceholder(false)
                     ->required()
                     ->visible(AlertStatusId::active()),
                 Select::make('status')
                     ->options(SystemAlertStatusClassification::class)
                     ->selectablePlaceholder(false)
-                    ->default(fn() => SystemAlertStatusClassification::default()?->classification)
+                    ->default(fn () => SystemAlertStatusClassification::default()?->classification)
                     ->required()
                     ->enum(SystemAlertStatusClassification::class)
-                    ->visible(!AlertStatusId::active()),
+                    ->visible(! AlertStatusId::active()),
             ]);
     }
 
@@ -166,7 +166,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
                     ->visible(AlertStatusId::active()),
                 TextColumn::make('status')
                     ->sortable()
-                    ->visible(!AlertStatusId::active()),
+                    ->visible(! AlertStatusId::active()),
                 TextColumn::make('created_at')
                     ->sortable(),
             ])
@@ -178,7 +178,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
                     ->visible(AlertStatusId::active()),
                 SelectFilter::make('status')
                     ->options(AlertStatus::class)
-                    ->visible(!AlertStatusId::active()),
+                    ->visible(! AlertStatusId::active()),
             ])
             ->headerActions([
                 CreateAction::make()

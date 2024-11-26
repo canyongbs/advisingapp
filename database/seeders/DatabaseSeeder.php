@@ -99,10 +99,10 @@ class DatabaseSeeder extends Seeder
       ConsentAgreementSeeder::class,
       PronounsSeeder::class,
 
-      ServiceRequestSeeder::class,
-      ServiceRequestUpdateSeeder::class,
+      CaseSeeder::class,
+      CaseUpdateSeeder::class,
       ProspectSeeder::class,
-      KnowledgeBaseArticleSeeder::class,
+      ResourceHubArticleSeeder::class,
       TaskSeeder::class,
       FormSeeder::class,
       AlertStatusSeeder::class,
@@ -112,12 +112,6 @@ class DatabaseSeeder extends Seeder
       TwilioStudentSeeder::class,
       ApplicationSubmissionStateSeeder::class,
       EventSeeder::class,
-
-      // InventoryManagement
-      ...AssetSeeder::metadataSeeders(),
-      AssetSeeder::class,
-
-      MaintenanceProviderSeeder::class,
 
       // Change Request
       ChangeRequestTypeSeeder::class,

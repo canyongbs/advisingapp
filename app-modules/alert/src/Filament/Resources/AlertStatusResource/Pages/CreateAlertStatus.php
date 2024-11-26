@@ -38,55 +38,55 @@ namespace AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
+use AdvisingApp\Alert\Models\AlertStatus;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
-use AdvisingApp\Alert\Models\AlertStatus;
-use Filament\Forms\Components\Toggle;
 
 class CreateAlertStatus extends CreateRecord
 {
-  protected static string $resource = AlertStatusResource::class;
+    protected static string $resource = AlertStatusResource::class;
 
-  public function form(Form $form): Form
-  {
-    return $form
-      ->schema([
-        TextInput::make('name')
-          ->label('Name')
-          ->required()
-          ->string(),
-        Select::make('classification')
-          ->label('Classification')
-          ->searchable()
-          ->options(SystemAlertStatusClassification::class)
-          ->required()
-          ->enum(SystemAlertStatusClassification::class),
-        Toggle::make('is_default')
-          ->label('Default')
-          ->live()
-          ->hint(function (?AlertStatus $record, $state): ?string {
-            if ($record?->is_default) {
-              return null;
-            }
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->label('Name')
+                    ->required()
+                    ->string(),
+                Select::make('classification')
+                    ->label('Classification')
+                    ->searchable()
+                    ->options(SystemAlertStatusClassification::class)
+                    ->required()
+                    ->enum(SystemAlertStatusClassification::class),
+                Toggle::make('is_default')
+                    ->label('Default')
+                    ->live()
+                    ->hint(function (?AlertStatus $record, $state): ?string {
+                        if ($record?->is_default) {
+                            return null;
+                        }
 
-            if (! $state) {
-              return null;
-            }
+                        if (! $state) {
+                            return null;
+                        }
 
-            $currentDefault = AlertStatus::query()
-              ->where('is_default', true)
-              ->value('name');
+                        $currentDefault = AlertStatus::query()
+                            ->where('is_default', true)
+                            ->value('name');
 
-            if (blank($currentDefault)) {
-              return null;
-            }
+                        if (blank($currentDefault)) {
+                            return null;
+                        }
 
-            return "The current default status is '{$currentDefault}', you are replacing it.";
-          })
-          ->hintColor('danger')
-          ->columnStart(1)
-      ]);
-  }
+                        return "The current default status is '{$currentDefault}', you are replacing it.";
+                    })
+                    ->hintColor('danger')
+                    ->columnStart(1),
+            ]);
+    }
 }
