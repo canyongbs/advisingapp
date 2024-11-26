@@ -36,6 +36,7 @@
 
 namespace Database\Seeders;
 
+use AdvisingApp\Alert\Database\Seeders\AlertStatusSeeder;
 use App\Models\Tenant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
@@ -57,36 +58,36 @@ use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 
 class NewTenantSeeder extends Seeder
 {
-    public function run(): void
-    {
-        $currentTenant = Tenant::current();
+  public function run(): void
+  {
+    $currentTenant = Tenant::current();
 
-        Artisan::call(
-            command: SetupRoles::class,
-            parameters: [
-                '--tenant' => $currentTenant->id,
-            ],
-            outputBuffer: $this->command->getOutput(),
-        );
+    Artisan::call(
+      command: SetupRoles::class,
+      parameters: [
+        '--tenant' => $currentTenant->id,
+      ],
+      outputBuffer: $this->command->getOutput(),
+    );
 
-        $this->call([
-            DivisionSeeder::class,
-            CaseStatusSeeder::class,
-            CaseTypeSeeder::class,
-            ProspectStatusSeeder::class,
-            ProspectSourceSeeder::class,
-            ResourceHubCategorySeeder::class,
-            ResourceHubQualitySeeder::class,
-            ResourceHubStatusSeeder::class,
-            ...InteractionSeeder::metadataSeeders(),
-            ConsentAgreementSeeder::class,
-            PronounsSeeder::class,
-            ApplicationSubmissionStateSeeder::class,
+    $this->call([
+      DivisionSeeder::class,
+      CaseStatusSeeder::class,
+      CaseTypeSeeder::class,
+      ProspectStatusSeeder::class,
+      ProspectSourceSeeder::class,
+      ResourceHubCategorySeeder::class,
+      ResourceHubQualitySeeder::class,
+      ResourceHubStatusSeeder::class,
+      ...InteractionSeeder::metadataSeeders(),
+      ConsentAgreementSeeder::class,
+      PronounsSeeder::class,
+      ApplicationSubmissionStateSeeder::class,
 
-            // Change Request
-            ChangeRequestTypeSeeder::class,
-            ChangeRequestStatusSeeder::class,
-            AlertStatusSeeder::class,
-        ]);
-    }
+      // Change Request
+      ChangeRequestTypeSeeder::class,
+      ChangeRequestStatusSeeder::class,
+      AlertStatusSeeder::class,
+    ]);
+  }
 }

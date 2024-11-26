@@ -69,56 +69,56 @@ use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 
 class DatabaseSeeder extends Seeder
 {
-    public function run(): void
-    {
-        // Reduce notifications sent during seeding
-        Notification::fake();
+  public function run(): void
+  {
+    // Reduce notifications sent during seeding
+    Notification::fake();
 
-        $currentTenant = Tenant::current();
+    $currentTenant = Tenant::current();
 
-        Artisan::call(
-            command: SetupRoles::class,
-            parameters: [
-                '--tenant' => $currentTenant->id,
-            ],
-            outputBuffer: $this->command->getOutput(),
-        );
+    Artisan::call(
+      command: SetupRoles::class,
+      parameters: [
+        '--tenant' => $currentTenant->id,
+      ],
+      outputBuffer: $this->command->getOutput(),
+    );
 
-        $this->call([
-            SampleSuperAdminUserSeeder::class,
-            LocalDevelopmentSeeder::class,
-            DivisionSeeder::class,
-            CaseStatusSeeder::class,
-            CaseTypeSeeder::class,
-            ProspectStatusSeeder::class,
-            ProspectSourceSeeder::class,
-            ResourceHubCategorySeeder::class,
-            ResourceHubQualitySeeder::class,
-            ResourceHubStatusSeeder::class,
-            ...InteractionSeeder::metadataSeeders(),
-            ConsentAgreementSeeder::class,
-            PronounsSeeder::class,
+    $this->call([
+      SampleSuperAdminUserSeeder::class,
+      LocalDevelopmentSeeder::class,
+      DivisionSeeder::class,
+      CaseStatusSeeder::class,
+      CaseTypeSeeder::class,
+      ProspectStatusSeeder::class,
+      ProspectSourceSeeder::class,
+      ResourceHubCategorySeeder::class,
+      ResourceHubQualitySeeder::class,
+      ResourceHubStatusSeeder::class,
+      ...InteractionSeeder::metadataSeeders(),
+      ConsentAgreementSeeder::class,
+      PronounsSeeder::class,
 
-            CaseSeeder::class,
-            CaseUpdateSeeder::class,
-            ProspectSeeder::class,
-            ResourceHubArticleSeeder::class,
-            TaskSeeder::class,
-            FormSeeder::class,
-            AlertStatusSeeder::class,
-            AlertSeeder::class,
-            TeamSeeder::class,
-            SuperAdminSeeder::class,
-            TwilioStudentSeeder::class,
-            ApplicationSubmissionStateSeeder::class,
-            EventSeeder::class,
+      CaseSeeder::class,
+      CaseUpdateSeeder::class,
+      ProspectSeeder::class,
+      ResourceHubArticleSeeder::class,
+      TaskSeeder::class,
+      FormSeeder::class,
+      AlertStatusSeeder::class,
+      AlertSeeder::class,
+      TeamSeeder::class,
+      SuperAdminSeeder::class,
+      TwilioStudentSeeder::class,
+      ApplicationSubmissionStateSeeder::class,
+      EventSeeder::class,
 
-            // Change Request
-            ChangeRequestTypeSeeder::class,
-            ChangeRequestStatusSeeder::class,
+      // Change Request
+      ChangeRequestTypeSeeder::class,
+      ChangeRequestStatusSeeder::class,
 
-            PromptTypeSeeder::class,
-            PromptSeeder::class,
-        ]);
-    }
+      PromptTypeSeeder::class,
+      PromptSeeder::class,
+    ]);
+  }
 }
