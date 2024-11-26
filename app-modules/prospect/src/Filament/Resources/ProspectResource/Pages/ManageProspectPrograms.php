@@ -39,7 +39,6 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProgramRelationManager;
 
 class ManageProspectPrograms extends ManageRelatedRecords
 {
@@ -58,10 +57,5 @@ class ManageProspectPrograms extends ManageRelatedRecords
     public static function getNavigationLabel(): string
     {
         return 'Programs';
-    }
-
-    public function getRelationManagers(): array
-    {
-        return [ProgramRelationManager::class];
     }
 }

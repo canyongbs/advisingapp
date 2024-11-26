@@ -38,7 +38,6 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProgramRelationManager;
 
 class ManageStudentPrograms extends ManageRelatedRecords
 {
@@ -55,10 +54,5 @@ class ManageStudentPrograms extends ManageRelatedRecords
     public static function getNavigationLabel(): string
     {
         return 'Programs';
-    }
-
-    public function getRelationManagers(): array
-    {
-        return [ProgramRelationManager::class];
     }
 }
