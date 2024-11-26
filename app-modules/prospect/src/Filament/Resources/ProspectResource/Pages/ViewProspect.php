@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use App\Models\User;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
@@ -113,8 +112,11 @@ class ViewProspect extends ViewRecord
                         TextEntry::make('description')
                             ->label('Description')
                             ->columnSpanFull(),
-                        TextEntry::make('tags.name')
+                        TextEntry::make('tags')
                             ->label('Tags')
+                            ->formatStateUsing(function ($record) {
+                                return $record->tags->pluck('name')->join(', ');
+                            })
                             ->bulleted(),
                     ])
                     ->columns(2),
@@ -139,12 +141,8 @@ class ViewProspect extends ViewRecord
 
     protected function getHeaderActions(): array
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        // ->visible(fn(User $user) => $user->can('prospect.tags.manage'))
         return [
-            ProspectTagAction::make(),
+            ProspectTagAction::make()->visible(fn () => auth()->user()?->can('prospect.tags.manage')),
             ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists()),
             DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists()),
             EditAction::make(),

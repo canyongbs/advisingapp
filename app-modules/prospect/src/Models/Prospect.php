@@ -39,6 +39,7 @@ namespace AdvisingApp\Prospect\Models;
 use App\Models\Tag;
 use App\Models\User;
 use DateTimeInterface;
+use App\Models\Taggable;
 use App\Models\Authenticatable;
 use AdvisingApp\Task\Models\Task;
 use App\Models\Scopes\HasLicense;
@@ -330,22 +331,24 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return filled($this->mobile);
     }
 
-    // public function tags(): MorphToMany
-    // {
-    //     return $this->morphToMany(
-    //         related: Tag::class,
-    //         name: 'taggable',
-    //         table: 'taggables',
-    //     )
-    //         ->using(Tag::class)
-    //         ->withPivot('id')
-    //         ->withTimestamps();
-    // }
-
-    public function tags()
+    public function tags(): MorphToMany
     {
-        return $this->morphToMany(Tag::class, 'taggable');
+        return $this->morphToMany(
+            related: Tag::class,
+            name: 'taggable',
+            table: 'taggables',
+            foreignPivotKey: 'taggable_id',
+            relatedPivotKey: 'tag_id',
+        )
+            ->using(Taggable::class)
+            ->withPivot(['tag_id'])
+            ->withTimestamps();
     }
+
+    // public function tags()
+    // {
+    //     return $this->morphToMany(Tag::class, 'taggable');
+    // }
 
     protected static function booted(): void
     {

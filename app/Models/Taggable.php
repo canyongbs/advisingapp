@@ -36,12 +36,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\MediaLibrary\MediaCollections\Models\Concerns\HasUuid;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
-class Taggable extends Model
+class Taggable extends MorphPivot
 {
     use HasFactory;
-    use HasUuid;
+    use HasUuids;
+
+    protected $table = 'taggables';
+
+    public function prospects()
+    {
+        return $this->morphTo();
+    }
+
+    public function students()
+    {
+        return $this->morphTo();
+    }
 }

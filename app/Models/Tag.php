@@ -36,6 +36,7 @@
 
 namespace App\Models;
 
+use App\Enums\TagType;
 use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -52,6 +53,10 @@ class Tag extends Model
     protected $fillable = [
         'name',
         'type',
+    ];
+
+    protected $casts = [
+        'type' => TagType::class,
     ];
 
     public function prospects()
