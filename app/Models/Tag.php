@@ -37,7 +37,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -51,4 +53,14 @@ class Tag extends Model
         'name',
         'type',
     ];
+
+    public function prospects()
+    {
+        return $this->morphedByMany(Prospect::class, 'taggable');
+    }
+
+    public function students()
+    {
+        return $this->morphedByMany(Student::class, 'taggable');
+    }
 }

@@ -59,6 +59,14 @@ class ProspectTagResource extends Resource
 
     protected static ?string $navigationGroup = 'Prospect Management';
 
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('prospect.tags.manage');
+    }
+
     public static function getPages(): array
     {
         return [

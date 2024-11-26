@@ -56,4 +56,11 @@ class CreateStudentTag extends CreateRecord
                     ->string(),
             ]);
     }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['type'] = 'Student';
+
+        return $data;
+    }
 }

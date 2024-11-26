@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use App\Models\Tag;
 use Filament\Forms\Get;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
@@ -151,6 +152,18 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                                 ->get();
                         }
                     ),
+                SelectFilter::make('tags')
+                    ->label('Tags')
+                    ->options(
+                        Tag::all()
+                            ->where('type', 'Prospect')
+                            ->pluck('name', 'id')
+                            ->toArray(),
+                    )
+                    ->searchable()
+                    ->preload()
+                    ->optionsLimit(20)
+                    ->query(fn (Builder $query, array $data) => $this->tagsFilter($query, $data)),
             ])
             ->actions([
                 ViewAction::make(),
@@ -245,6 +258,17 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                 ->handle($data['value'])
                 ->pluck($query->getModel()->getQualifiedKeyName()),
         );
+    }
+
+    protected function tagsFilter(Builder $query, array $data): void
+    {
+        if (blank($data['value'])) {
+            return;
+        }
+
+        $query->whereHas('tags', function (Builder $query) use ($data) {
+            $query->where('tag_id', $data['value'])->where('taggable_type', 'prospect');
+        });
     }
 
     protected function getHeaderActions(): array

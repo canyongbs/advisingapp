@@ -56,4 +56,11 @@ class CreateProspectTag extends CreateRecord
                     ->string(),
             ]);
     }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['type'] = 'Prospect';
+
+        return $data;
+    }
 }

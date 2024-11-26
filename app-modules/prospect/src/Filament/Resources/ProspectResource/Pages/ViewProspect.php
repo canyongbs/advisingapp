@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use App\Models\User;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
@@ -47,6 +48,7 @@ use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ProspectTagAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
 
 class ViewProspect extends ViewRecord
@@ -111,6 +113,9 @@ class ViewProspect extends ViewRecord
                         TextEntry::make('description')
                             ->label('Description')
                             ->columnSpanFull(),
+                        TextEntry::make('tags.name')
+                            ->label('Tags')
+                            ->bulleted(),
                     ])
                     ->columns(2),
                 Section::make('Engagement Restrictions')
@@ -134,7 +139,12 @@ class ViewProspect extends ViewRecord
 
     protected function getHeaderActions(): array
     {
+        /** @var User $user */
+        $user = auth()->user();
+
+        // ->visible(fn(User $user) => $user->can('prospect.tags.manage'))
         return [
+            ProspectTagAction::make(),
             ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists()),
             DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists()),
             EditAction::make(),

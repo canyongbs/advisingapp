@@ -34,43 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Providers;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions;
 
-use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Prospect\ProspectPlugin;
+use App\Models\Tag;
+use Filament\Pages\Page;
+use Filament\Actions\Action;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Prospect\Observers\ProspectObserver;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Observers\ProspectStatusObserver;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 
-class ProspectServiceProvider extends ServiceProvider
+class ProspectTagAction extends Action
 {
-    use ImplementsGraphQL;
-
-    public function register(): void
+    protected function setUp(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ProspectPlugin()));
+        parent::setUp();
+
+        $this
+            ->modalHeading('Prospect Tag')
+            ->modalWidth(MaxWidth::ExtraLarge)
+            ->modalSubmitActionLabel('Save')
+            ->form([
+                Select::make('tag_id')
+                    ->options(
+                        Tag::where('type', 'Prospect')->pluck('name', 'id')->toArray()
+                    )
+                    ->required()
+                    ->label('Tag')
+                    ->multiple()
+                    ->required()
+                    ->default(fn (?Prospect $record) => $record ? $record->tags->pluck('id')->toArray() : [])
+                    ->searchable(),
+            ])
+            ->action(function ($data, Prospect $record, Page $livewire) {
+                $record->tags()->sync($data['tag_id']);
+                $record->save();
+
+                Notification::make()
+                    ->title('Tags added to prospect.')
+                    ->success()
+                    ->send();
+            });
     }
 
-    public function boot(): void
+    public static function getDefaultName(): ?string
     {
-        Relation::morphMap([
-            'prospect' => Prospect::class,
-            'prospect_source' => ProspectSource::class,
-            'prospect_status' => ProspectStatus::class,
-        ]);
-
-        Prospect::observe(ProspectObserver::class);
-        ProspectStatus::observe(ProspectStatusObserver::class);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        $this->registerEnum(ProspectStatusColorOptions::class);
-        $this->registerEnum(SystemProspectClassification::class);
+        return 'Tags';
     }
 }

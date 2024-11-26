@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Models;
 
+use App\Models\Tag;
 use App\Models\User;
 use DateTimeInterface;
 use App\Models\Authenticatable;
@@ -327,6 +328,23 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     public function canRecieveSms(): bool
     {
         return filled($this->mobile);
+    }
+
+    // public function tags(): MorphToMany
+    // {
+    //     return $this->morphToMany(
+    //         related: Tag::class,
+    //         name: 'taggable',
+    //         table: 'taggables',
+    //     )
+    //         ->using(Tag::class)
+    //         ->withPivot('id')
+    //         ->withTimestamps();
+    // }
+
+    public function tags()
+    {
+        return $this->morphToMany(Tag::class, 'taggable');
     }
 
     protected static function booted(): void
