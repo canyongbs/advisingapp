@@ -41,10 +41,10 @@ use Filament\Support\Contracts\HasLabel;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Prospect\Filament\Tables\ProspectsTable;
-use AdvisingApp\StudentDataModel\Filament\Tables\StudentsTable;
 use AdvisingApp\Segment\Importers\StudentSegmentSubjectImporter;
 use AdvisingApp\Segment\Importers\ProspectSegmentSubjectImporter;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Tables\ProspectsTable;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Tables\StudentsTable;
 
 enum SegmentModel: string implements HasLabel
 {
@@ -80,10 +80,10 @@ enum SegmentModel: string implements HasLabel
 
     public function table(Table $table): Table
     {
-        return $table->tap(app(match ($this) {
+        return (match ($this) {
             static::Student => StudentsTable::class,
             static::Prospect => ProspectsTable::class,
-        }));
+        })::configure($table);
     }
 
     public static function tryFromCaseOrValue(SegmentModel | string $value): ?static

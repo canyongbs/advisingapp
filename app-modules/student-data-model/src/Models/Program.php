@@ -79,11 +79,16 @@ class Program extends Model
         'foi',
         'change_dt',
         'declare_dt',
+        'graduation_dt',
+        'conferred_dt',
     ];
 
     protected $casts = [
+        'acad_plan' => 'array',
         'change_dt' => 'datetime',
         'declare_dt' => 'datetime',
+        'graduation_dt' => 'datetime',
+        'conferred_dt' => 'datetime',
     ];
 
     public function student(): BelongsTo

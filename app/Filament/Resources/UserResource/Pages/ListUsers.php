@@ -38,6 +38,7 @@ namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Models\User;
 use Filament\Tables\Table;
+use AdvisingApp\Team\Models\Team;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
 use App\Filament\Imports\UserImporter;
@@ -49,6 +50,7 @@ use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use AdvisingApp\Authorization\Models\Role;
 use Filament\Tables\Actions\RestoreAction;
@@ -59,7 +61,6 @@ use AdvisingApp\Authorization\Models\License;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use App\Filament\Resources\UserResource\Actions\AssignTeamBulkAction;
 use App\Filament\Resources\UserResource\Actions\AssignRolesBulkAction;
@@ -88,14 +89,17 @@ class ListUsers extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('name'),
+                TextColumn::make('name')
+                    ->searchable(),
                 TextColumn::make('teams.name')
                     ->label('Team')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('email')
                     ->label('Email address')
+                    ->searchable()
                     ->toggleable(),
                 TextColumn::make('job_title')
+                    ->searchable()
                     ->toggleable(),
                 IconColumn::make(LicenseType::ConversationalAi->value . '_enabled')
                     ->label('AI Assistant')
@@ -153,15 +157,55 @@ class ListUsers extends ListRecords
                     ->visible((fn () => auth()->user()->can('user.*.restore'))),
                 SelectFilter::make('teams')
                     ->label('Team')
-                    ->relationship('teams', 'name')
+                    ->options(
+                        fn (): array => [
+                            '' => [
+                                'unassigned' => 'Unassigned',
+                            ],
+                            'Teams' => Team::query()->take(50)->orderBy('name')->pluck('name', 'id')->toArray(),
+                        ]
+                    )
+                    ->getSearchResultsUsing(fn (string $search): array => ['Teams' => Team::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->pluck('name', 'id')->toArray()])
+                    ->query(function (Builder $query, array $data) {
+                        if (empty($data['values'])) {
+                            return;
+                        }
+
+                        $query->when(in_array('unassigned', $data['values']), function ($query) {
+                            $query->whereDoesntHave('teams');
+                        })
+                            ->{in_array('unassigned', $data['values']) ? 'orWhereHas' : 'whereHas'}('teams', function ($query) use ($data) {
+                                $query->whereIn('team_id', array_filter($data['values'], fn ($value) => $value !== 'unassigned'));
+                            });
+                    })
                     ->multiple()
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('roles')
                     ->label('Roles')
-                    ->options($this->getRolesOption())
-                    ->getSearchResultsUsing(fn (string $search) => Role::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->pluck('name', 'id')->toArray())
-                    ->query(fn (Builder $query, array $data) => $this->roleFilter($query, $data))
+                    ->options(
+                        fn (): array => [
+                            '' => [
+                                'none' => 'None',
+                            ],
+                            'Roles' => Role::query()->take(50)->orderBy('name')->pluck('name', 'id')->toArray(),
+                        ]
+                    )
+                    ->getSearchResultsUsing(fn (string $search): array => ['Roles' => Role::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->orderBy('name')->pluck('name', 'id')->toArray()])
+                    ->query(
+                        function (Builder $query, array $data) {
+                            if (empty($data['values'])) {
+                                return;
+                            }
+
+                            $query->when(in_array('none', $data['values']), function ($query) {
+                                $query->whereDoesntHave('roles');
+                            })
+                                ->{in_array('none', $data['values']) ? 'orWhereHas' : 'whereHas'}('roles', function ($query) use ($data) {
+                                    $query->whereIn('id', array_filter($data['values'], fn ($value) => $value !== 'none'));
+                                });
+                        }
+                    )
                     ->multiple()
                     ->searchable()
                     ->preload(),
@@ -177,40 +221,5 @@ class ListUsers extends ListRecords
                 ->authorize('import', User::class),
             CreateAction::make(),
         ];
-    }
-
-    protected function getRolesOption(): array
-    {
-        $roles = Role::query()->take(50)->pluck('name', 'id')->toArray();
-
-        return [
-            '' => [
-                'none' => 'None',
-            ],
-            'Roles' => [
-                ...$roles,
-            ],
-        ];
-    }
-
-    protected function roleFilter(Builder $query, array $data): void
-    {
-        if (empty($data['values'])) {
-            return;
-        }
-
-        $query->where(function ($query) use ($data) {
-            $filteredValues = $data['values'];
-            $query->when(in_array('none', $filteredValues), function ($query) {
-                $query->whereDoesntHave('roles');
-            })
-                ->orWhereHas('roles', function ($query) use ($filteredValues) {
-                    if (in_array('none', $filteredValues)) {
-                        unset($filteredValues[array_search('none', $filteredValues)]);
-                    }
-
-                    $query->whereIn('id', $filteredValues);
-                });
-        });
     }
 }

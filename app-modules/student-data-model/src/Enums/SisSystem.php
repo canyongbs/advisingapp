@@ -57,4 +57,79 @@ enum SisSystem: string implements HasLabel
 
         return self::tryFrom($value);
     }
+
+    public function hasProgramsOtherid(): bool
+    {
+        return match ($this) {
+            SisSystem::ThesisElements => false,
+            default => true,
+        };
+    }
+
+    public function hasProgramsDivision(): bool
+    {
+        return match ($this) {
+            SisSystem::ThesisElements => false,
+            default => true,
+        };
+    }
+
+    public function hasProgramsDescr(): bool
+    {
+        return match ($this) {
+            default => true,
+        };
+    }
+
+    public function hasProgramsAcadPlan(): bool
+    {
+        return match ($this) {
+            default => true,
+        };
+    }
+
+    public function hasProgramsFoi(): bool
+    {
+        return match ($this) {
+            SisSystem::ThesisElements => false,
+            default => true,
+        };
+    }
+
+    public function hasProgramsCumGpa(): bool
+    {
+        return match ($this) {
+            SisSystem::ThesisElements => false,
+            default => true,
+        };
+    }
+
+    public function hasProgramsDeclareDt(): bool
+    {
+        return match ($this) {
+            default => true,
+        };
+    }
+
+    public function hasProgramsChangeDt(): bool
+    {
+        return match ($this) {
+            default => true,
+        };
+    }
+
+    public function hasProgramsGraduationDt(): bool
+    {
+        return match ($this) {
+            default => true,
+        };
+    }
+
+    public function hasProgramsConferredDt(): bool
+    {
+        return match ($this) {
+            SisSystem::ThesisElements => false,
+            default => true,
+        };
+    }
 }
