@@ -43,6 +43,10 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentTasks;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentCareTeam;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentSubscriptions;
 
 class StudentResource extends Resource
 {
@@ -67,7 +71,7 @@ class StudentResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['sisid', 'otherid', 'full_name', 'email', 'email_2', 'mobile', 'phone'];
+        return ['sisid', 'otherid', 'full_name', 'email', 'email_2', 'mobile', 'phone', 'preferred'];
     }
 
     public static function getGlobalSearchResultDetails(Model $record): array
@@ -78,6 +82,7 @@ class StudentResource extends Resource
             'Email Address' => collect([$record->email, $record->email_id])->filter()->implode(', '),
             'Mobile' => $record->mobile,
             'Phone' => $record->phone,
+            'Preferred Name' => $record->preferred,
         ], fn (mixed $value): bool => filled($value));
     }
 
@@ -86,6 +91,10 @@ class StudentResource extends Resource
         return [
             'index' => ListStudents::route('/'),
             'view' => ViewStudent::route('/{record}'),
+            'alerts' => ManageStudentAlerts::route('/{record}/alerts'),
+            'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
+            'subscriptions' => ManageStudentSubscriptions::route('/{record}/subscriptions'),
+            'tasks' => ManageStudentTasks::route('/{record}/tasks'),
         ];
     }
 }

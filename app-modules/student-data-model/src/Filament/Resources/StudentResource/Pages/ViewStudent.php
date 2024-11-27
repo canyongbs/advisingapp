@@ -36,139 +36,24 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
-use Throwable;
-use App\Models\Tenant;
-use App\Services\Olympus;
-use Illuminate\Support\Str;
-use Filament\View\PanelsRenderHook;
-use Illuminate\Contracts\View\View;
-use Filament\Notifications\Notification;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Support\Facades\FilamentView;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Resources\RelationManagers\RelationGroup;
-use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use Filament\Resources\RelationManagers\RelationManagerConfiguration;
-use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentTasksRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentAlertsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentCareTeamRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentSubscriptionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas\StudentProfileInfolist;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
 
 class ViewStudent extends ViewRecord
 {
+    use HasStudentHeader;
+
     protected static string $resource = StudentResource::class;
 
     protected static string $view = 'student-data-model::filament.resources.student-resource.view-student';
 
-    // TODO: Automatically set from Filament
     protected static ?string $navigationLabel = 'View';
 
-    protected static string $layout = 'filament-panels::components.layout.index';
-
-    public function boot()
+    public function profile(Infolist $infolist): Infolist
     {
-        $sisSettings = app(StudentInformationSystemSettings::class);
-
-        if (
-            $sisSettings->is_enabled
-            && ! empty($sisSettings->sis_system)
-        ) {
-            FilamentView::registerRenderHook(
-                PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE,
-                fn (): View => view('student-data-model::filament.resources.student-resource.sis-sync', [
-                    'student' => $this->getRecord(),
-                ]),
-                scopes: ViewStudent::class,
-            );
-            FilamentView::registerRenderHook(
-                PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER,
-                fn (): View => view('student-data-model::filament.resources.student-resource.sis-last-updated', [
-                    'student' => $this->getRecord(),
-                ]),
-                scopes: ViewStudent::class,
-            );
-        }
-    }
-
-    public function sisRefresh()
-    {
-        $tenantId = Tenant::current()->getKey();
-
-        /** @var Student $student */
-        $student = $this->getRecord();
-
-        try {
-            $response = app(Olympus::class)->makeRequest()
-                ->asJson()
-                ->post("integrations/{$tenantId}/student-on-demand-sync", [
-                    'sisid' => $student->getKey(),
-                    'otherid' => $student->otherid,
-                ])
-                ->throw();
-
-            if ($response->ok()) {
-                Notification::make()
-                    ->title('Student data sync initiated!')
-                    ->body('The student data sync has been initiated. Please allow some time for the data to be updated.')
-                    ->success()
-                    ->send();
-            }
-
-            return;
-        } catch (Throwable $e) {
-            report($e);
-        }
-
-        Notification::make()
-            ->title('Failed to initiate Student data sync.')
-            ->danger()
-            ->send();
-    }
-
-    public function getAbbreviatedName(): string
-    {
-        $name = $this->record?->full_name;
-
-        if (empty($name)) {
-            $name = $this->record?->first . ' ' . $this->record?->last;
-        }
-
-        return collect(Str::of($name)->explode(' '))
-            ->map(function ($word) {
-                return Str::substr($word, 0, 1);
-            })->implode('');
-    }
-
-    /**
-     * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
-     */
-    public function getRelationManagers(): array
-    {
-        $managers = [
-            StudentAlertsRelationManager::class,
-            StudentTasksRelationManager::class,
-            StudentCareTeamRelationManager::class,
-            StudentSubscriptionsRelationManager::class,
-        ];
-
-        return array_filter(
-            $managers,
-            function (string | RelationGroup | RelationManagerConfiguration $manager): bool {
-                if ($manager instanceof RelationGroup) {
-                    return (bool) count($manager->ownerRecord($this->getRecord())->pageClass(static::class)->getManagers());
-                }
-
-                return $this->normalizeRelationManagerClass($manager)::canViewForRecord($this->getRecord(), static::class);
-            },
-        );
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            SubscribeHeaderAction::make(),
-        ];
+        return StudentProfileInfolist::configure($infolist);
     }
 }

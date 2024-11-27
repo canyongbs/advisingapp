@@ -36,11 +36,12 @@
 
 namespace AdvisingApp\Prospect\Filament\Pages;
 
+use App\Models\User;
 use Filament\Forms\Form;
 use App\Features\PipelineFlag;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
-use App\Filament\Clusters\GlobalSettings;
+use App\Filament\Clusters\ConstituentManagement;
 use AdvisingApp\Prospect\Settings\ProspectPipelineSettings;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
@@ -48,17 +49,24 @@ class ManageProspectPipelineSettings extends SettingsPage
 {
     protected static string $resource = ProspectResource::class;
 
-    protected static ?string $cluster = GlobalSettings::class;
+    protected static ?string $title = 'Pipelines';
+
+    protected static ?string $cluster = ConstituentManagement::class;
+
+    protected static ?string $navigationGroup = 'Prospect Management';
 
     protected static string $settings = ProspectPipelineSettings::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?int $navigationSort = 100;
+    protected static ?int $navigationSort = 40;
 
     public static function canAccess(): bool
     {
-        return parent::canAccess() && PipelineFlag::active() && auth()->user()->can('manage_prospect_pipeline_settings');
+        /** @var User $user */
+        $user = auth()->user();
+
+        return parent::canAccess() && PipelineFlag::active() && $user->can('manage_prospect_pipeline_settings');
     }
 
     public function form(Form $form): Form

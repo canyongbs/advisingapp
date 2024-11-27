@@ -39,10 +39,11 @@ namespace AdvisingApp\IntegrationGoogleRecaptcha\Filament\Pages;
 use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
+use App\Models\Authenticatable;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Clusters\GlobalSettings;
+use App\Filament\Clusters\ProductIntegrations;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
 class ManageGoogleRecaptchaSettings extends SettingsPage
@@ -57,16 +58,14 @@ class ManageGoogleRecaptchaSettings extends SettingsPage
 
     protected static ?int $navigationSort = 20;
 
-    protected static ?string $navigationGroup = 'Product Integrations';
-
-    protected static ?string $cluster = GlobalSettings::class;
+    protected static ?string $cluster = ProductIntegrations::class;
 
     public static function canAccess(): bool
     {
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('integration-google-recaptcha.view_google_recaptcha_settings');
+        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE) && parent::canAccess();
     }
 
     public function form(Form $form): Form

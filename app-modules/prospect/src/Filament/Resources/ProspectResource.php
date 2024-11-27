@@ -102,7 +102,7 @@ class ProspectResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['full_name', 'email', 'email_2', 'mobile', 'phone'];
+        return ['full_name', 'email', 'email_2', 'mobile', 'phone', 'preferred'];
     }
 
     public static function getGlobalSearchResultDetails(Model $record): array
@@ -112,6 +112,7 @@ class ProspectResource extends Resource
             'Other ID' => $record->otherid,
             'Email Address' => collect([$record->email, $record->email_id])->filter()->implode(', '),
             'Phone' => collect([$record->mobile, $record->phone])->filter()->implode(', '),
+            'Preferred Name' => $record->preferred,
         ], fn (mixed $value): bool => filled($value));
     }
 

@@ -39,14 +39,15 @@ namespace AdvisingApp\Ai\Filament\Pages;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Actions\Action;
+use App\Models\Authenticatable;
 use Filament\Pages\SettingsPage;
 use AdvisingApp\Ai\Enums\AiModel;
 use Illuminate\Support\Facades\DB;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Clusters\GlobalSettings;
 use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
+use App\Filament\Clusters\ProductIntegrations;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
 
@@ -62,16 +63,14 @@ class ManageAiIntegrationsSettings extends SettingsPage
 
     protected static ?int $navigationSort = 100;
 
-    protected static ?string $navigationGroup = 'Product Integrations';
-
-    protected static ?string $cluster = GlobalSettings::class;
+    protected static ?string $cluster = ProductIntegrations::class;
 
     public static function canAccess(): bool
     {
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('ai.view_cognitive_services_settings');
+        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE) && parent::canAccess();
     }
 
     public function form(Form $form): Form
