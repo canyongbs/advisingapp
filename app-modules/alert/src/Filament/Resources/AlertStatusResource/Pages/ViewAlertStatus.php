@@ -36,41 +36,43 @@
 
 namespace AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages;
 
-use Filament\Forms\Form;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
 use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Infolist;
 
 class ViewAlertStatus extends ViewRecord
 {
-    protected static string $resource = AlertStatusResource::class;
+  protected static string $resource = AlertStatusResource::class;
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextInput::make('name')
-                            ->label('Name'),
-                        TextInput::make('classification')
-                            ->label('Classification'),
-                        TextInput::make('order')
-                            ->numeric(),
-                        Toggle::make('is_default')
-                            ->label('Default'),
-                    ])
-                    ->columns(),
-            ]);
-    }
+  public function infolist(Infolist $infolist): Infolist
+  {
+    return $infolist
+      ->schema([
+        Section::make()
+          ->schema([
+            TextEntry::make('name')
+              ->label('Name'),
+            TextEntry::make('classification')
+              ->label('Classification'),
+            TextEntry::make('order')
+              ->numeric(),
+            IconEntry::make('is_default')
+              ->label('Default')
+              ->boolean(),
+          ])
+          ->columns(),
+      ]);
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            EditAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      EditAction::make()
+        ->databaseTransaction(),
+    ];
+  }
 }

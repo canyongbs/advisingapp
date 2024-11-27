@@ -69,7 +69,7 @@ class StudentStats extends StatsOverviewWidget
                 ->remember("user-{$user->getKey()}-student-alerts-count", now()->addHour(), function () use ($user): int {
                     if (AlertStatusId::active()) {
                         return $user->studentAlerts()->whereHas('status', function ($query) {
-                            $query->where('classification', SystemAlertStatusClassification::Active); // Replace `status_column` with your actual column name
+                            $query->where('classification', SystemAlertStatusClassification::Active);
                         })->count();
                     } else {
                         return $user->studentAlerts()->status(SystemAlertStatusClassification::Active)->count();

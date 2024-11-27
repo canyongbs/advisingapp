@@ -44,21 +44,23 @@ use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 
 class AlertStatus extends BaseModel
 {
-    use HasFactory;
-    use SoftDeletes;
+  use HasFactory;
+  use SoftDeletes;
 
-    protected $fillable = [
-        'classification',
-        'name',
-        'is_default',
-    ];
+  protected $fillable = [
+    'classification',
+    'name',
+    'is_default',
+    'order'
+  ];
 
-    protected $casts = [
-        'classification' => SystemAlertStatusClassification::class,
-    ];
+  protected $casts = [
+    'classification' => SystemAlertStatusClassification::class,
+    'is_default' => 'boolean'
+  ];
 
-    public function alerts(): HasMany
-    {
-        return $this->hasMany(Alert::class, 'status_id');
-    }
+  public function alerts(): HasMany
+  {
+    return $this->hasMany(Alert::class, 'status_id');
+  }
 }
