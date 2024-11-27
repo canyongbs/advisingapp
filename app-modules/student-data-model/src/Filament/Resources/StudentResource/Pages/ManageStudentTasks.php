@@ -43,12 +43,12 @@ use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Con
 
 class ManageStudentTasks extends ManageRelatedRecords
 {
-  use CanManageEducatableTasks;
-  use HasStudentHeader;
+    use CanManageEducatableTasks;
+    use HasStudentHeader;
 
-  protected static string $resource = StudentResource::class;
+    protected static string $resource = StudentResource::class;
 
-  protected static string $relationship = 'tasks';
+    protected static string $relationship = 'tasks';
 
-  protected static ?string $title = 'Tasks';
+    protected static ?string $title = 'Tasks';
 }
