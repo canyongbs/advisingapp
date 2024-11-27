@@ -38,6 +38,7 @@ use App\Models\User;
 use App\Models\Tenant;
 
 use function Pest\Laravel\get;
+use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
@@ -55,9 +56,7 @@ it('prevents access to the Amazon SES Settings when you do not have the necessar
 it('allows access to the Amazon SES Settings when you do have the necessary permissions', function () {
     $user = User::factory()->create();
 
-    $user->givePermissionTo('integration-aws-ses-event-handling.view_ses_settings');
-
-    actingAs($user);
+    asSuperAdmin($user);
 
     get(ManageAmazonSesSettings::getUrl())
         ->assertOk();
@@ -66,9 +65,7 @@ it('allows access to the Amazon SES Settings when you do have the necessary perm
 it('renders the correct Amazon SES settings for the Tenant', function () {
     $user = User::factory()->create();
 
-    $user->givePermissionTo('integration-aws-ses-event-handling.view_ses_settings');
-
-    actingAs($user);
+    asSuperAdmin($user);
 
     /** @var Tenant $tenant */
     $tenant = Tenant::current();
@@ -93,9 +90,7 @@ it('renders the correct Amazon SES settings for the Tenant', function () {
 it('correctly edits the Amazon SES settings for the Tenant', function () {
     $user = User::factory()->create();
 
-    $user->givePermissionTo('integration-aws-ses-event-handling.view_ses_settings');
-
-    actingAs($user);
+    asSuperAdmin($user);
 
     /** @var Tenant $tenant */
     $tenant = Tenant::current();

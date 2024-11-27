@@ -40,6 +40,7 @@ use App\Models\User;
 use App\Enums\Feature;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
+use App\Models\Authenticatable;
 use Filament\Pages\SettingsPage;
 use AdvisingApp\Form\Enums\Rounding;
 use Illuminate\Support\Facades\Gate;
@@ -50,7 +51,6 @@ use Filament\Forms\Components\Section;
 use FilamentTiptapEditor\TiptapEditor;
 use AdvisingApp\Portal\Enums\PortalType;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Clusters\GlobalSettings;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Actions\Action;
@@ -62,24 +62,22 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class ManagePortalSettings extends SettingsPage
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
-
     protected static ?string $navigationLabel = 'Portals';
 
-    protected static ?int $navigationSort = 60;
+    protected static ?int $navigationSort = 40;
 
     protected static string $settings = PortalSettings::class;
 
     protected static ?string $title = 'Portals';
 
-    protected static ?string $cluster = GlobalSettings::class;
+    protected static ?string $navigationGroup = 'Global Administration';
 
     public static function canAccess(): bool
     {
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('portal.view_portal_settings');
+        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE) && parent::canAccess();
     }
 
     public function form(Form $form): Form
@@ -182,7 +180,7 @@ class ManagePortalSettings extends SettingsPage
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->columnSpanFull(),
                         Toggle::make('knowledge_management_portal_service_management')
-                            ->label('Service Management')
+                            ->label('Case Management')
                             ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled'))
                             ->disabled(! Gate::check(Feature::ServiceManagement->getGateName()))
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)

@@ -161,6 +161,10 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Product Administration')
                     ->icon('heroicon-o-wrench-screwdriver')
                     ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Global Administration')
+                    ->icon('heroicon-o-adjustments-vertical')
+                    ->collapsed(),
             ])
             ->sidebarCollapsibleOnDesktop()
             ->plugins([
