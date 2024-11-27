@@ -38,6 +38,7 @@ namespace AdvisingApp\Prospect\Models;
 
 use App\Models\Tag;
 use App\Models\User;
+use App\Enums\TagType;
 use DateTimeInterface;
 use App\Models\Taggable;
 use App\Models\Authenticatable;
@@ -342,7 +343,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         )
             ->using(Taggable::class)
             ->withPivot(['tag_id'])
-            ->withTimestamps();
+            ->withTimestamps()->where('type', TagType::Prospect);
     }
 
     // public function tags()
