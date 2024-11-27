@@ -51,6 +51,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Alert\Enums\AlertSeverity;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -105,9 +106,9 @@ trait CanManageEducatableAlerts
                     ->visible(! AlertStatusId::active()),
                 Select::make('status_id')
                     ->label('status')
-                    ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
+                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('order'))
                     ->selectablePlaceholder(false)
-                    ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
+                    ->default(fn() => SystemAlertStatusClassification::default()?->getKey())
                     ->required()
                     ->visible(AlertStatusId::active()),
             ]);
