@@ -69,7 +69,7 @@ class BasicNeedsProgramResource extends Resource
             'create' => CreateBasicNeedsProgram::route('/create'),
             'view' => ViewBasicNeedsProgram::route('/{record}'),
             'edit' => EditBasicNeedsProgram::route('/{record}/edit'),
-            'participants' => ManageParticipants::route('/{record}/participants'),
+            // 'participants' => ManageParticipants::route('/{record}/participants'),
         ];
     }
 
@@ -78,7 +78,7 @@ class BasicNeedsProgramResource extends Resource
         return $page->generateNavigationItems([
             ViewBasicNeedsProgram::class,
             EditBasicNeedsProgram::class,
-            ManageParticipants::class,
+            // ManageParticipants::class,
         ]);
     }
 }
