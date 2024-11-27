@@ -51,6 +51,8 @@ class EditAlertStatus extends EditRecord
 {
     protected static string $resource = AlertStatusResource::class;
 
+    protected ?bool $hasDatabaseTransactions = true;
+
     public function form(Form $form): Form
     {
         return $form
@@ -98,5 +100,17 @@ class EditAlertStatus extends EditRecord
             ViewAction::make(),
             DeleteAction::make(),
         ];
+    }
+
+    protected function beforeSave(): void
+    {
+        /** @var AlertStatus $record */
+        $record = $this->form->getState();
+
+        if ($record['is_default']) {
+            AlertStatus::query()
+                ->where('is_default', true)
+                ->update(['is_default' => false]);
+        }
     }
 }

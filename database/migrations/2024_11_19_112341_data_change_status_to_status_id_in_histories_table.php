@@ -37,26 +37,26 @@
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        $statuses = DB::table('alert_statuses')->select('id', 'classification')->get()->toArray();
-        DB::table('histories')->where('subject_type', 'alert')->eachById(function ($alertHistory, $key) use ($statuses) {
-            $statusId = '';
-            $alertData = json_decode($alertHistory->new);
+return new class() extends Migration {
+  public function up(): void
+  {
+    $statuses = DB::table('alert_statuses')->select('id', 'classification')->get()->toArray();
+    DB::table('histories')->where('subject_type', 'alert')->eachById(function ($alertHistory, $key) use ($statuses) {
+      $statusId = '';
+      $alertData = json_decode($alertHistory->new);
 
-            foreach ($statuses as $status) {
-                if (isset($alertData->status) && $alertData->status == $status->classification) {
-                    $statusId = $status->id;
-                }
-            }
+      foreach ($statuses as $status) {
+        if (isset($alertData->status) && $alertData->status === $status->classification) {
+          $statusId = $status->id;
+        }
+      }
 
-            unset($alertData->status);
-            $alertData->status_id = $statusId;
+      unset($alertData->status);
+      $alertData->status_id = $statusId;
 
-            DB::table('histories')->where('id', $alertHistory->id)->update(['new' => json_encode($alertData)]);
-        });
-    }
+      DB::table('histories')->where('id', $alertHistory->id)->update(['new' => json_encode($alertData)]);
+    });
+  }
 
-    public function down(): void {}
+  public function down(): void {}
 };
