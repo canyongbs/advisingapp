@@ -136,8 +136,8 @@ class ManageProspectAlerts extends ManageRelatedRecords
                     ->string(),
                 Select::make('status_id')
                     ->label('Status')
-                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('order'))
-                    ->default(fn() => SystemAlertStatusClassification::default()?->getKey())
+                    ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
+                    ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
                     ->selectablePlaceholder(false)
                     ->required()
                     ->visible(AlertStatusId::active()),
