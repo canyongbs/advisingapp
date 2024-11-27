@@ -67,7 +67,7 @@ class StudentResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['sisid', 'otherid', 'full_name', 'email', 'email_2', 'mobile', 'phone'];
+        return ['sisid', 'otherid', 'full_name', 'email', 'email_2', 'mobile', 'phone', 'preferred'];
     }
 
     public static function getGlobalSearchResultDetails(Model $record): array
@@ -78,6 +78,7 @@ class StudentResource extends Resource
             'Email Address' => collect([$record->email, $record->email_id])->filter()->implode(', '),
             'Mobile' => $record->mobile,
             'Phone' => $record->phone,
+            'Preferred Name' => $record->preferred,
         ], fn (mixed $value): bool => filled($value));
     }
 
