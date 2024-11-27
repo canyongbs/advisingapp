@@ -56,6 +56,8 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
 
     public ?string $viewType = 'null';
 
+    public ?int $segmentCount = 0;
+
     protected static string $relationship = 'educatablePipelineStages';
 
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-vertical';
@@ -69,7 +71,11 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
     public function mount(int | string $record): void
     {
         parent::mount($record);
+        $this->segmentCount = app(TranslateSegmentFilters::class)->handle($this->getRecord()->segment)->count();
 
+        if ($this->segmentCount >= 100) {
+            session(['pipeline-view-type' => 'table']);
+        }
         $this->viewType = session('pipeline-view-type') ?? 'table';
     }
 
@@ -99,7 +105,6 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
     public function setViewType(string $viewType): void
     {
         $this->viewType = $viewType;
-
         session(['pipeline-view-type' => $viewType]);
     }
 
