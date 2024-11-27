@@ -285,14 +285,14 @@ it('it filters users based on team', function () {
 
     livewire(ListUsers::class)
         ->assertCanSeeTableRecords($unassignedUser->merge($userInTeamA)->merge($userInTeamB))
-        ->filterTable('teams', [$teamA->id])
+        ->filterTable('teams', [$teamA->getKey()])
         ->assertCanSeeTableRecords(
             $userInTeamA
         )
         ->assertCanNotSeeTableRecords(
             $unassignedUser->merge($userInTeamB)
         )
-        ->filterTable('teams', [$teamB->id])
+        ->filterTable('teams', [$teamB->getKey()])
         ->assertCanSeeTableRecords(
             $userInTeamB
         )
