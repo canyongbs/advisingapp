@@ -46,8 +46,6 @@ class TaskResource extends Resource
 {
     protected static ?string $model = Task::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-
     protected static ?string $navigationGroup = 'Engagement Features';
 
     protected static ?int $navigationSort = 40;

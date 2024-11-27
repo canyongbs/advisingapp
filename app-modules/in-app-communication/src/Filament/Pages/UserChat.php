@@ -99,8 +99,6 @@ class UserChat extends Page implements HasForms, HasActions
 
     protected static ?int $navigationSort = 10;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-oval-left-ellipsis';
-
     protected static string $view = 'in-app-communication::filament.pages.user-chat';
 
     protected static ?string $title = 'Realtime Chat';

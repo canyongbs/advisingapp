@@ -44,9 +44,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Models\Export;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Models\InteractionStatus;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 
 class StudentExporter extends Exporter
 {
@@ -154,13 +154,13 @@ class StudentExporter extends Exporter
             static::notDefault($type::make('care_team_count')
                 ->label('Count of Care Team Members')
                 ->counts('careTeam')),
-            static::notDefault($type::make('service_requests_count')
-                ->label('Count of Service Requests')
-                ->counts('serviceRequests')),
-            ...ServiceRequestStatus::all()->map(fn (ServiceRequestStatus $status): TextColumn | ExportColumn => static::notDefault($type::make("service_requests_{$status->getKey()}_count")
-                ->label("Count of {$status->name} Service Requests")
+            static::notDefault($type::make('cases_count')
+                ->label('Count of Cases')
+                ->counts('cases')),
+            ...CaseStatus::all()->map(fn (CaseStatus $status): TextColumn | ExportColumn => static::notDefault($type::make("cases_{$status->getKey()}_count")
+                ->label("Count of {$status->name} Cases")
                 ->counts([
-                    "serviceRequests as service_requests_{$status->getKey()}_count" => fn (Builder $query) => $query->whereBelongsTo($status, 'status'),
+                    "cases as cases_{$status->getKey()}_count" => fn (Builder $query) => $query->whereBelongsTo($status, 'status'),
                 ]))),
             static::notDefault($type::make('event_attendee_records_count')
                 ->label('Count of Events')

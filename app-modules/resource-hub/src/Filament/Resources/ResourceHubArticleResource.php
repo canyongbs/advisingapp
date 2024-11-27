@@ -56,8 +56,6 @@ class ResourceHubArticleResource extends Resource
 
     protected static ?string $breadcrumb = 'Resource Hub';
 
-    protected static ?string $navigationIcon = 'heroicon-o-book-open';
-
     protected static ?string $navigationGroup = 'Premium Features';
 
     protected static ?int $navigationSort = 20;

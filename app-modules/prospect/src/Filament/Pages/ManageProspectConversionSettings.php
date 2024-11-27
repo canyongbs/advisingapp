@@ -58,7 +58,7 @@ class ManageProspectConversionSettings extends SettingsPage
 
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $navigationGroup = 'Prospect Management';
+    protected static ?string $navigationGroup = 'Prospects';
 
     protected static ?string $cluster = ConstituentManagement::class;
 

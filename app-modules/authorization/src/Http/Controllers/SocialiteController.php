@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Authorization\Http\Controllers;
 
+use Throwable;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -90,11 +91,17 @@ class SocialiteController extends Controller
         }
 
         if ($provider === SocialiteProvider::Azure) {
-            $request = Http::withToken($socialiteUser->token)
-                ->contentType('image/jpeg')
-                ->get('https://graph.microsoft.com/v1.0/me/photo/$value');
+            try {
+                $request = Http::withToken($socialiteUser->token)
+                    ->contentType('image/jpeg')
+                    ->retry(3, 500)
+                    ->get('https://graph.microsoft.com/v1.0/me/photo/$value')
+                    ->throw();
 
-            $user->addMediaFromString($request->body())->usingFileName(Str::uuid() . '.jpg')->toMediaCollection('avatar');
+                $user->addMediaFromString($request->body())->usingFileName(Str::uuid() . '.jpg')->toMediaCollection('avatar');
+            } catch (Throwable $e) {
+                report($e);
+            }
         }
 
         $user->update([

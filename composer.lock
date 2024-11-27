@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "006d9a55c75a7f08e13b8ede0417e89b",
+    "content-hash": "da5b58775d997c00e5165cdf8b54b6b3",
     "packages": [
         {
             "name": "amphp/amp",
@@ -1046,16 +1046,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.329.0",
+            "version": "3.330.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "37249799204e04cf3686d2b361cfd417d3dab123"
+                "reference": "dd1b65a4329f91d5e282a92fab2be7bdf6e2adea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/37249799204e04cf3686d2b361cfd417d3dab123",
-                "reference": "37249799204e04cf3686d2b361cfd417d3dab123",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/dd1b65a4329f91d5e282a92fab2be7bdf6e2adea",
+                "reference": "dd1b65a4329f91d5e282a92fab2be7bdf6e2adea",
                 "shasum": ""
             },
             "require": {
@@ -1138,9 +1138,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.329.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.330.0"
             },
-            "time": "2024-11-21T19:16:09+00:00"
+            "time": "2024-11-22T19:10:26+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -1813,6 +1813,41 @@
             }
         },
         {
+            "name": "canyon-gbs/advising-app-case-management",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/case-management",
+                "reference": "8649795f0e1d95f54b21b6eba57b08ff40b7d85c"
+            },
+            "require": {
+                "filament/filament": "^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\CaseManagement\\Providers\\CaseManagementServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\CaseManagement\\": "src/",
+                    "AdvisingApp\\CaseManagement\\Tests\\": "tests/",
+                    "AdvisingApp\\CaseManagement\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\CaseManagement\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "canyon-gbs/advising-app-consent",
             "version": "1.0",
             "dist": {
@@ -2403,41 +2438,6 @@
                     "AdvisingApp\\ResourceHub\\Tests\\": "tests/",
                     "AdvisingApp\\ResourceHub\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\ResourceHub\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "canyon-gbs/advising-app-service-management",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/service-management",
-                "reference": "a1161f8e2f12c52ce999f4c31c71730a924471ce"
-            },
-            "require": {
-                "filament/filament": "^3.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\ServiceManagement\\Providers\\ServiceManagementServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\ServiceManagement\\": "src/",
-                    "AdvisingApp\\ServiceManagement\\Tests\\": "tests/",
-                    "AdvisingApp\\ServiceManagement\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\ServiceManagement\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -10115,23 +10115,23 @@
         },
         {
             "name": "moneyphp/money",
-            "version": "v4.5.1",
+            "version": "v4.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/moneyphp/money.git",
-                "reference": "142107bec4870ac2586057dc2fe917d25c92a91e"
+                "reference": "ddf6a86b574808f8844777ed4e8c4f92a10dac9b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/moneyphp/money/zipball/142107bec4870ac2586057dc2fe917d25c92a91e",
-                "reference": "142107bec4870ac2586057dc2fe917d25c92a91e",
+                "url": "https://api.github.com/repos/moneyphp/money/zipball/ddf6a86b574808f8844777ed4e8c4f92a10dac9b",
+                "reference": "ddf6a86b574808f8844777ed4e8c4f92a10dac9b",
                 "shasum": ""
             },
             "require": {
                 "ext-bcmath": "*",
                 "ext-filter": "*",
                 "ext-json": "*",
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0"
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
             },
             "require-dev": {
                 "cache/taggable-cache": "^1.1.0",
@@ -10197,9 +10197,9 @@
             ],
             "support": {
                 "issues": "https://github.com/moneyphp/money/issues",
-                "source": "https://github.com/moneyphp/money/tree/v4.5.1"
+                "source": "https://github.com/moneyphp/money/tree/v4.6.0"
             },
-            "time": "2024-09-27T12:04:27+00:00"
+            "time": "2024-11-22T10:59:03+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -11681,16 +11681,16 @@
         },
         {
             "name": "phpoffice/phpspreadsheet",
-            "version": "1.29.4",
+            "version": "1.29.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPOffice/PhpSpreadsheet.git",
-                "reference": "7ca7e325dca3adb6a598385aab81f527b8d6c75d"
+                "reference": "727cb704d5479fe4ddc291497ee471c4ec08f1b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/7ca7e325dca3adb6a598385aab81f527b8d6c75d",
-                "reference": "7ca7e325dca3adb6a598385aab81f527b8d6c75d",
+                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/727cb704d5479fe4ddc291497ee471c4ec08f1b6",
+                "reference": "727cb704d5479fe4ddc291497ee471c4ec08f1b6",
                 "shasum": ""
             },
             "require": {
@@ -11780,9 +11780,9 @@
             ],
             "support": {
                 "issues": "https://github.com/PHPOffice/PhpSpreadsheet/issues",
-                "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/1.29.4"
+                "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/1.29.5"
             },
-            "time": "2024-11-10T16:26:22+00:00"
+            "time": "2024-11-22T05:57:44+00:00"
         },
         {
             "name": "phpoption/phpoption",

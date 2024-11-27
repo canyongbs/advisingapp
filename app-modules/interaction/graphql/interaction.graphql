@@ -1,9 +1,9 @@
-union Interactable = Student | Prospect | ServiceRequest
+union Interactable = Student | Prospect | CaseModel
 
 enum InteractableType {
     Student @enum(value: "student")
     Prospect @enum(value: "prospect")
-    ServiceRequest @enum(value: "service_request")
+    CaseModel @enum(value: "case_model")
 }
 
 scalar InteractableId
@@ -64,7 +64,7 @@ type Interaction
 input InteractionInteractablesQuery {
     student: StudentsQuery
     prospect: ProspectsQuery
-    service_request: ServiceRequestQuery
+    caseModel: CaseModelQuery
 }
 
 input InteractionsQuery {
@@ -127,7 +127,7 @@ input CreateInteractionInput {
 
     "The type of Interactable related to the interaction."
     interactable_type: InteractableType!
-        @rules(apply: ["required", "in:student,prospect,service_request"])
+        @rules(apply: ["required", "in:student,prospect,case_model"])
 
     "The type of interaction."
     interaction_type_id: UUID!
@@ -188,7 +188,7 @@ input UpdateInteractionInput {
     interactable_type: InteractableType
         @rules(
             apply: [
-                "in:student,prospect,service_request"
+                "in:student,prospect,case_model"
                 "required_with:interactable_id"
             ]
         )
