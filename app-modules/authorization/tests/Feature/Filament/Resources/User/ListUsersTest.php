@@ -264,3 +264,46 @@ it('can filter users by multiple teams', function () {
         )
         ->assertCanNotSeeTableRecords($supportTeamGroup);
 });
+
+it('it filters users based on team', function () {
+    asSuperAdmin();
+
+    $teamA = Team::factory()->create(['name' => 'Team A']);
+    $teamB = Team::factory()->create(['name' => 'Team B']);
+
+    $userInTeamA = User::factory()
+        ->count(3)
+        ->hasAttached($teamA, [], 'teams')
+        ->create();
+
+    $userInTeamB = User::factory()
+        ->count(3)
+        ->hasAttached($teamB, [], 'teams')
+        ->create();
+
+    $unassignedUser = User::factory()->count(2)->create();
+
+    livewire(ListUsers::class)
+        ->assertCanSeeTableRecords($unassignedUser->merge($userInTeamA)->merge($userInTeamB))
+        ->filterTable('teams', [$teamA->getKey()])
+        ->assertCanSeeTableRecords(
+            $userInTeamA
+        )
+        ->assertCanNotSeeTableRecords(
+            $unassignedUser->merge($userInTeamB)
+        )
+        ->filterTable('teams', [$teamB->getKey()])
+        ->assertCanSeeTableRecords(
+            $userInTeamB
+        )
+        ->assertCanNotSeeTableRecords(
+            $unassignedUser->merge($userInTeamA)
+        )
+        ->filterTable('teams', ['unassigned'])
+        ->assertCanSeeTableRecords(
+            $unassignedUser
+        )
+        ->assertCanNotSeeTableRecords(
+            $userInTeamA->merge($userInTeamB)
+        );
+});
