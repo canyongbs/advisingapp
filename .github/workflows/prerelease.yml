@@ -1,8 +1,9 @@
 name: Deploy to Dev Environment
 
 on:
-  release:
-    types: [prereleased]
+  pull_request:
+  merge_group:
+    types: [checks_requested]
 
 env:
   AWS_REGION: "us-west-2"
@@ -22,64 +23,70 @@ jobs:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.PAT }}
 
-      - name: Check if release author is in the canyon-gbs-lead-developers team
+      - name: Check if release author is in the canyon-gbs-lead-developers or canyon-gbs-release-management team
         id: check-author
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.PAT }}
           script: |
             const releaseAuthor = context.payload.release.author.login;
             
-            const teamMembers = await github.rest.teams.listMembersInOrg({
+            const leadDevTeamMembers = await github.rest.teams.listMembersInOrg({
               org: 'canyongbs',
               team_slug: 'canyon-gbs-lead-developers'
             });
 
-            const isAuthorized = teamMembers.data.some(member => member.login === releaseAuthor);
+            const releaseManagementTeamMembers = await github.rest.teams.listMembersInOrg({
+              org: 'canyongbs',
+              team_slug: 'canyon-gbs-release-management'
+            });
+
+            const isAuthorized = leadDevTeamMembers.data.some(member => member.login === releaseAuthor) || releaseManagementTeamMembers.data.some(member => member.login === releaseAuthor);
 
             if (!isAuthorized) {
               core.setFailed(`The user @${releaseAuthor} is not authorized to trigger deployment.`);
             }
 
-      - name: Configure AWS credentials
-        # SHA of release v4.0.2
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
-        with:
-          aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+    #   - name: Configure AWS credentials
+    #     # SHA of release v4.0.2
+    #     uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+    #     with:
+    #       aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+    #       aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
+    #       aws-region: ${{ env.AWS_REGION }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        # SHA of release v2.0.1
-        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
+    #   - name: Login to Amazon ECR
+    #     id: login-ecr
+    #     # SHA of release v2.0.1
+    #     uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
 
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.event.release.tag_name }}
-        run: |
-          # Build a docker container and
-          # push it to ECR so that it can
-          # be deployed to ECS.
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --target deploy --platform linux/amd64 --build-arg USER_ID=9999 --build-arg GROUP_ID=9999 .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+    #   - name: Build, tag, and push image to Amazon ECR
+    #     id: build-image
+    #     env:
+    #       ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+    #       IMAGE_TAG: ${{ github.event.release.tag_name }}
+    #     run: |
+    #       # Build a docker container and
+    #       # push it to ECR so that it can
+    #       # be deployed to ECS.
+    #       docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --target deploy --platform linux/amd64 --build-arg USER_ID=9999 --build-arg GROUP_ID=9999 .
+    #       docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+    #       echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        # SHA of release v1.5.0
-        uses: aws-actions/amazon-ecs-render-task-definition@9933bf0d77b7f6d52e3886fbb8aae95a677db1ab
-        with:
-          task-definition: "docker/devops/ecs/advisingapp/advisingapp-dev-task-definition.json"
-          container-name: "app"
-          image: ${{ steps.build-image.outputs.image }}
+    #   - name: Fill in the new image ID in the Amazon ECS task definition
+    #     id: task-def
+    #     # SHA of release v1.5.0
+    #     uses: aws-actions/amazon-ecs-render-task-definition@9933bf0d77b7f6d52e3886fbb8aae95a677db1ab
+    #     with:
+    #       task-definition: "docker/devops/ecs/advisingapp/advisingapp-dev-task-definition.json"
+    #       container-name: "app"
+    #       image: ${{ steps.build-image.outputs.image }}
 
-      - name: Deploy Amazon ECS task definition
-        # SHA of release v2.0.0
-        uses: aws-actions/amazon-ecs-deploy-task-definition@0a9a8fb7b39516cf53cc01d453b05c67c6fc7a2c
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: "advisingapp-dev-service"
-          cluster: "advisingapp-dev"
-          wait-for-service-stability: true
+    #   - name: Deploy Amazon ECS task definition
+    #     # SHA of release v2.0.0
+    #     uses: aws-actions/amazon-ecs-deploy-task-definition@0a9a8fb7b39516cf53cc01d453b05c67c6fc7a2c
+    #     with:
+    #       task-definition: ${{ steps.task-def.outputs.task-definition }}
+    #       service: "advisingapp-dev-service"
+    #       cluster: "advisingapp-dev"
+    #       wait-for-service-stability: true
