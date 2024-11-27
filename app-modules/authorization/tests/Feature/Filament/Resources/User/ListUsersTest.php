@@ -42,6 +42,9 @@ use AdvisingApp\Team\Models\Team;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+
+use AdvisingApp\Authorization\Models\Role;
+
 use function PHPUnit\Framework\assertTrue;
 use function PHPUnit\Framework\assertFalse;
 
@@ -305,5 +308,66 @@ it('it filters users based on team', function () {
         )
         ->assertCanNotSeeTableRecords(
             $userInTeamA->merge($userInTeamB)
+        );
+});
+
+it('filters users based on roles', function () {
+    asSuperAdmin();
+
+    $roleA = Role::factory()->create(['name' => 'Role A']);
+    $roleB = Role::factory()->create(['name' => 'Role B']);
+    $roleC = Role::factory()->create(['name' => 'Role C']);
+
+    $usersInRoleA = User::factory()
+        ->count(3)
+        ->create()
+        ->each(function ($user) use ($roleA) {
+            $user->assignRole($roleA);
+        });
+
+    $usersInRoleB = User::factory()
+        ->count(3)
+        ->create()
+        ->each(function ($user) use ($roleB) {
+            $user->assignRole($roleB);
+        });
+
+    $usersInRoleC = User::factory()
+        ->count(3)
+        ->create()
+        ->each(function ($user) use ($roleC) {
+            $user->assignRole($roleC);
+        });
+
+    $noRolesUsers = User::factory()->count(2)->create();
+
+    livewire(ListUsers::class)
+        ->filterTable('roles', [$roleA->getKey()])
+        ->assertCanSeeTableRecords(
+            $usersInRoleA
+        )
+        ->assertCanNotSeeTableRecords(
+            $noRolesUsers->merge($usersInRoleB)->merge($usersInRoleC)
+        )
+        ->filterTable('roles', [$roleB->getKey()])
+        ->assertCanSeeTableRecords(
+            $usersInRoleB
+        )
+        ->assertCanNotSeeTableRecords(
+            $noRolesUsers->merge($usersInRoleA)->merge($usersInRoleC)
+        )
+        ->filterTable('roles', [$roleB->getKey(), $roleC->getKey()])
+        ->assertCanSeeTableRecords(
+            $usersInRoleB->merge($usersInRoleC)
+        )
+        ->assertCanNotSeeTableRecords(
+            $noRolesUsers->merge($usersInRoleA)
+        )
+        ->filterTable('roles', ['none'])
+        ->assertCanSeeTableRecords(
+            $noRolesUsers
+        )
+        ->assertCanNotSeeTableRecords(
+            $usersInRoleA->merge($usersInRoleB)->merge($usersInRoleC)
         );
 });
