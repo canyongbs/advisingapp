@@ -38,6 +38,7 @@ namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Models\User;
 use Filament\Tables\Table;
+use AdvisingApp\Team\Models\Team;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
 use App\Filament\Imports\UserImporter;
@@ -49,6 +50,7 @@ use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Contracts\Support\Htmlable;
@@ -153,12 +155,28 @@ class ListUsers extends ListRecords
                     ->visible((fn () => auth()->user()->can('user.*.restore'))),
                 SelectFilter::make('teams')
                     ->label('Team')
-                    ->relationship('teams', 'name')
+                    ->options($this->getTeamsOption())
+                    ->getSearchResultsUsing(fn (string $search) => Team::query()->where('name', 'like', '%' . $search . '%')->take(50)->pluck('name', 'id')->toArray())
+                    ->query(fn (Builder $query, array $data) => $this->teamFilter($query, $data))
                     ->multiple()
                     ->searchable()
                     ->preload(),
             ])
             ->defaultSort('name', 'asc');
+    }
+
+    public function getTeamsOption(): array
+    {
+        $teams = Team::query()->take(50)->pluck('name', 'id')->toArray();
+
+        return [
+            '' => [
+                'unassigned' => 'Unassigned',
+            ],
+            'Teams' => [
+                ...$teams,
+            ],
+        ];
     }
 
     protected function getHeaderActions(): array
@@ -169,5 +187,26 @@ class ListUsers extends ListRecords
                 ->authorize('import', User::class),
             CreateAction::make(),
         ];
+    }
+
+    protected function teamFilter(Builder $query, array $data): void
+    {
+        if (empty($data['values'])) {
+            return;
+        }
+
+        $query->where(function ($query) use ($data) {
+            $filteredValues = $data['values'];
+            $query->when(in_array('unassigned', $filteredValues), function ($query) {
+                $query->whereDoesntHave('teams');
+            })
+                ->orWhereHas('teams', function ($query) use ($filteredValues) {
+                    if (in_array('unassigned', $filteredValues)) {
+                        unset($filteredValues[array_search('unassigned', $filteredValues)]);
+                    }
+
+                    $query->whereIn('team_id', $filteredValues);
+                });
+        });
     }
 }
