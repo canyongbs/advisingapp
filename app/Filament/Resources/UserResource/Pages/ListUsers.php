@@ -49,6 +49,7 @@ use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Query\Expression;
 use AdvisingApp\Authorization\Models\Role;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Filters\TrashedFilter;
@@ -159,7 +160,7 @@ class ListUsers extends ListRecords
                 SelectFilter::make('roles')
                     ->label('Roles')
                     ->options($this->getRolesOption())
-                    ->getSearchResultsUsing(fn (string $search) => Role::query()->where('name', 'like', '%' . $search . '%')->take(50)->pluck('name', 'id')->toArray())
+                    ->getSearchResultsUsing(fn (string $search) => Role::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->pluck('name', 'id')->toArray())
                     ->query(fn (Builder $query, array $data) => $this->roleFilter($query, $data))
                     ->multiple()
                     ->searchable()

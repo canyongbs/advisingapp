@@ -299,21 +299,21 @@ it('filters users based on roles', function () {
     $noRolesUsers = User::factory()->count(2)->create();
 
     livewire(ListUsers::class)
-        ->filterTable('roles', [$roleA->id])
+        ->filterTable('roles', [$roleA->getKey()])
         ->assertCanSeeTableRecords(
             $usersInRoleA
         )
         ->assertCanNotSeeTableRecords(
             $noRolesUsers->merge($usersInRoleB)->merge($usersInRoleC)
         )
-        ->filterTable('roles', [$roleB->id])
+        ->filterTable('roles', [$roleB->getKey()])
         ->assertCanSeeTableRecords(
             $usersInRoleB
         )
         ->assertCanNotSeeTableRecords(
             $noRolesUsers->merge($usersInRoleA)->merge($usersInRoleC)
         )
-        ->filterTable('roles', [$roleB->id, $roleC->id])
+        ->filterTable('roles', [$roleB->getKey(), $roleC->getKey()])
         ->assertCanSeeTableRecords(
             $usersInRoleB->merge($usersInRoleC)
         )
