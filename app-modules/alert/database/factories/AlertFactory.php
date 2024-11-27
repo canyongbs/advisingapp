@@ -43,7 +43,6 @@ use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 
 /**
  * @extends Factory<Alert>

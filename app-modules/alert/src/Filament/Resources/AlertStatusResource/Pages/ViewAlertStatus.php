@@ -37,46 +37,42 @@
 namespace AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages;
 
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Components\Toggle;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
-use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Infolist;
+use Filament\Forms\Components\Section;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
 
 class ViewAlertStatus extends ViewRecord
 {
-  protected static string $resource = AlertStatusResource::class;
+    protected static string $resource = AlertStatusResource::class;
 
-  public function infolist(Infolist $infolist): Infolist
-  {
-    return $infolist
-      ->schema([
-        Section::make()
-          ->schema([
-            TextEntry::make('name')
-              ->label('Name'),
-            TextEntry::make('classification')
-              ->label('Classification'),
-            TextEntry::make('order')
-              ->numeric(),
-            IconEntry::make('is_default')
-              ->label('Default')
-              ->boolean(),
-          ])
-          ->columns(),
-      ]);
-  }
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name')
+                            ->label('Name'),
+                        TextEntry::make('classification')
+                            ->label('Classification'),
+                        TextEntry::make('order')
+                            ->numeric(),
+                        IconEntry::make('is_default')
+                            ->label('Default')
+                            ->boolean(),
+                    ])
+                    ->columns(),
+            ]);
+    }
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      EditAction::make()
-        ->databaseTransaction(),
-    ];
-  }
+    protected function getHeaderActions(): array
+    {
+        return [
+            EditAction::make()
+                ->databaseTransaction(),
+        ];
+    }
 }

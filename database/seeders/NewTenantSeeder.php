@@ -69,19 +69,19 @@ class NewTenantSeeder extends Seeder
             outputBuffer: $this->command->getOutput(),
         );
 
-    $this->call([
-      DivisionSeeder::class,
-      CaseStatusSeeder::class,
-      CaseTypeSeeder::class,
-      ProspectStatusSeeder::class,
-      ProspectSourceSeeder::class,
-      ResourceHubCategorySeeder::class,
-      ResourceHubQualitySeeder::class,
-      ResourceHubStatusSeeder::class,
-      ...InteractionSeeder::metadataSeeders(),
-      ConsentAgreementSeeder::class,
-      PronounsSeeder::class,
-      ApplicationSubmissionStateSeeder::class,
+        $this->call([
+            DivisionSeeder::class,
+            CaseStatusSeeder::class,
+            CaseTypeSeeder::class,
+            ProspectStatusSeeder::class,
+            ProspectSourceSeeder::class,
+            ResourceHubCategorySeeder::class,
+            ResourceHubQualitySeeder::class,
+            ResourceHubStatusSeeder::class,
+            ...InteractionSeeder::metadataSeeders(),
+            ConsentAgreementSeeder::class,
+            PronounsSeeder::class,
+            ApplicationSubmissionStateSeeder::class,
 
             // Change Request
             ChangeRequestTypeSeeder::class,

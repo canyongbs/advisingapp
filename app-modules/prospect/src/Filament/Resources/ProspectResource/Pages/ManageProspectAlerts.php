@@ -54,6 +54,7 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -62,7 +63,6 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use Illuminate\Database\Eloquent\Builder;
 
 class ManageProspectAlerts extends ManageRelatedRecords
 {
@@ -137,8 +137,8 @@ class ManageProspectAlerts extends ManageRelatedRecords
                     ->string(),
                 Select::make('status_id')
                     ->label('Status')
-                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('order'))
-                    ->default(fn() => SystemAlertStatusClassification::default()?->getKey())
+                    ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
+                    ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
                     ->selectablePlaceholder(false)
                     ->required()
                     ->visible(AlertStatusId::active()),
