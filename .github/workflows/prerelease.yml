@@ -29,7 +29,8 @@ jobs:
         with:
           github-token: ${{ secrets.PAT }}
           script: |
-            const releaseAuthor = context.payload.release.author.login;
+            //const releaseAuthor = context.payload.release.author.login;
+            const releaseAuthor = context.payload.pull_request.author.login;
             
             const leadDevTeamMembers = await github.rest.teams.listMembersInOrg({
               org: 'canyongbs',
