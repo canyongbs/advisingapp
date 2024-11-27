@@ -38,28 +38,32 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pag
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use App\Features\AlertStatusId;
 use Filament\Infolists\Infolist;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use AdvisingApp\Alert\Enums\AlertStatus;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 
-class StudentAlertsRelationManager extends RelationManager
+trait CanManageEducatableAlerts
 {
-    protected static string $relationship = 'alerts';
+    public static function canAccess(array $parameters = []): bool
+    {
+        if (! static::getResource()::canView($parameters['record'])) {
+            return false;
+        }
+
+        return parent::canAccess($parameters);
+    }
 
     public function infolist(Infolist $infolist): Infolist
     {
@@ -68,8 +72,7 @@ class StudentAlertsRelationManager extends RelationManager
                 TextEntry::make('description'),
                 TextEntry::make('severity'),
                 TextEntry::make('suggested_intervention'),
-                TextEntry::make('status.name')->visible(AlertStatusId::active()),
-                TextEntry::make('status')->visible(! AlertStatusId::active()),
+                TextEntry::make('status'),
                 TextEntry::make('createdBy.name')->label('Created By')->default('N/A'),
                 TextEntry::make('created_at')->label('Created Date'),
             ]);
@@ -92,19 +95,11 @@ class StudentAlertsRelationManager extends RelationManager
                     ->required()
                     ->string(),
                 Select::make('status')
-                    ->options(SystemAlertStatusClassification::class)
+                    ->options(AlertStatus::class)
                     ->selectablePlaceholder(false)
-                    ->default(SystemAlertStatusClassification::Active)
+                    ->default(AlertStatus::default())
                     ->required()
-                    ->enum(SystemAlertStatusClassification::class)
-                    ->visible(! AlertStatusId::active()),
-                Select::make('status_id')
-                    ->label('status')
-                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('order'))
-                    ->selectablePlaceholder(false)
-                    ->default(fn() => SystemAlertStatusClassification::default()?->getKey())
-                    ->required()
-                    ->visible(AlertStatusId::active()),
+                    ->enum(AlertStatus::class),
             ]);
     }
 
@@ -121,12 +116,8 @@ class StudentAlertsRelationManager extends RelationManager
                     ->toggleable(
                         isToggledHiddenByDefault: true,
                     ),
-                TextColumn::make('status.name')
-                    ->sortable()
-                    ->visible(AlertStatusId::active()),
                 TextColumn::make('status')
-                    ->sortable()
-                    ->visible(! AlertStatusId::active()),
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->sortable()
                     ->toggleable(
@@ -136,12 +127,8 @@ class StudentAlertsRelationManager extends RelationManager
             ->filters([
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
-                SelectFilter::make('status_id')
-                    ->relationship('status', 'name')
-                    ->visible(AlertStatusId::active()),
                 SelectFilter::make('status')
-                    ->options(SystemAlertStatusClassification::class)
-                    ->visible(! AlertStatusId::active()),
+                    ->options(AlertStatus::class),
             ])
             ->headerActions([
                 CreateAction::make()
