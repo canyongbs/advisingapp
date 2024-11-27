@@ -99,21 +99,21 @@ class ListUsers extends ListRecords
                     ->toggleable(),
                 IconColumn::make(LicenseType::ConversationalAi->value . '_enabled')
                     ->label('AI Assistant')
-                    ->state(fn(User $record): bool => $record->hasLicense(LicenseType::ConversationalAi))
+                    ->state(fn (User $record): bool => $record->hasLicense(LicenseType::ConversationalAi))
                     ->boolean()
-                    ->tooltip(fn(bool $state): string => $state ? 'Licensed' : 'Unlicensed')
+                    ->tooltip(fn (bool $state): string => $state ? 'Licensed' : 'Unlicensed')
                     ->toggleable(),
                 IconColumn::make(LicenseType::RetentionCrm->value . '_enabled')
                     ->label('Retention')
-                    ->state(fn(User $record): bool => $record->hasLicense(LicenseType::RetentionCrm))
+                    ->state(fn (User $record): bool => $record->hasLicense(LicenseType::RetentionCrm))
                     ->boolean()
-                    ->tooltip(fn(bool $state): string => $state ? 'Licensed' : 'Unlicensed')
+                    ->tooltip(fn (bool $state): string => $state ? 'Licensed' : 'Unlicensed')
                     ->toggleable(),
                 IconColumn::make(LicenseType::RecruitmentCrm->value . '_enabled')
                     ->label('Recruitment')
-                    ->state(fn(User $record): bool => $record->hasLicense(LicenseType::RecruitmentCrm))
+                    ->state(fn (User $record): bool => $record->hasLicense(LicenseType::RecruitmentCrm))
                     ->boolean()
-                    ->tooltip(fn(bool $state): string => $state ? 'Licensed' : 'Unlicensed')
+                    ->tooltip(fn (bool $state): string => $state ? 'Licensed' : 'Unlicensed')
                     ->toggleable(),
                 TextColumn::make('created_at')
                     ->label('Created At')
@@ -127,8 +127,8 @@ class ListUsers extends ListRecords
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('deleted_at')
                     ->label('Status')
-                    ->getStateUsing(fn(User $record): string => $record->trashed() ? 'Archived' : 'Active')
-                    ->visible(fn($livewire) => isset($livewire->getTableFilterState('trashed')['value']) ? true : false),
+                    ->getStateUsing(fn (User $record): string => $record->trashed() ? 'Archived' : 'Active')
+                    ->visible(fn ($livewire) => isset($livewire->getTableFilterState('trashed')['value']) ? true : false),
             ])
             ->actions([
                 Impersonate::make(),
@@ -141,16 +141,16 @@ class ListUsers extends ListRecords
                     DeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                     AssignLicensesBulkAction::make()
-                        ->visible(fn() => auth()->user()->can('create', License::class)),
+                        ->visible(fn () => auth()->user()->can('create', License::class)),
                     AssignRolesBulkAction::make()
-                        ->visible(fn() => auth()->user()->can('user.*.update', User::class)),
+                        ->visible(fn () => auth()->user()->can('user.*.update', User::class)),
                     AssignTeamBulkAction::make()
-                        ->visible(fn() => auth()->user()->can('user.*.update', User::class)),
+                        ->visible(fn () => auth()->user()->can('user.*.update', User::class)),
                 ]),
             ])
             ->filters([
                 TrashedFilter::make()
-                    ->visible((fn() => auth()->user()->can('user.*.restore'))),
+                    ->visible((fn () => auth()->user()->can('user.*.restore'))),
                 SelectFilter::make('teams')
                     ->label('Team')
                     ->relationship('teams', 'name')
@@ -160,8 +160,8 @@ class ListUsers extends ListRecords
                 SelectFilter::make('roles')
                     ->label('Roles')
                     ->options($this->getRolesOption())
-                    ->getSearchResultsUsing(fn(string $search) => Role::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->pluck('name', 'id')->toArray())
-                    ->query(fn(Builder $query, array $data) => $this->roleFilter($query, $data))
+                    ->getSearchResultsUsing(fn (string $search) => Role::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->pluck('name', 'id')->toArray())
+                    ->query(fn (Builder $query, array $data) => $this->roleFilter($query, $data))
                     ->multiple()
                     ->searchable()
                     ->preload(),
@@ -189,7 +189,7 @@ class ListUsers extends ListRecords
             ],
             'Roles' => [
                 ...$roles,
-            ]
+            ],
         ];
     }
 
