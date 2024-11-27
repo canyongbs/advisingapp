@@ -67,7 +67,11 @@ class ConnectOlympus extends Command
             $url = (string) str($url)->after('://');
         }
 
-        $response = Http::post("https://{$url}", [
+        $response = Http::withOptions(
+            app()->environment('local')
+                ? ['verify' => false]
+                : []
+        )->post("https://{$url}", [
             'url' => config('app.landlord_url'),
         ])->throw();
 
