@@ -167,8 +167,12 @@ class ListUsers extends ListRecords
         $teams = Team::query()->take(50)->pluck('name', 'id')->toArray();
 
         return [
-            'unassigned' => 'Unassigned',
-            ...$teams,
+            '' => [
+                'unassigned' => 'Unassigned',
+            ],
+            'Teams' => [
+                ...$teams,
+            ],
         ];
     }
 
