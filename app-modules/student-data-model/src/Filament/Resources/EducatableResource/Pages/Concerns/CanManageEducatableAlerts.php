@@ -99,15 +99,15 @@ trait CanManageEducatableAlerts
                 Select::make('status')
                     ->options(SystemAlertStatusClassification::class)
                     ->selectablePlaceholder(false)
-                    ->default(fn () => SystemAlertStatusClassification::default()?->classification)
+                    ->default(SystemAlertStatusClassification::Active)
                     ->required()
                     ->enum(SystemAlertStatusClassification::class)
                     ->visible(! AlertStatusId::active()),
                 Select::make('status_id')
                     ->label('status')
-                    ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
+                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('order'))
                     ->selectablePlaceholder(false)
-                    ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
+                    ->default(fn() => SystemAlertStatusClassification::default()?->getKey())
                     ->required()
                     ->visible(AlertStatusId::active()),
             ]);
