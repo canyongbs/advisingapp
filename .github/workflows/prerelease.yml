@@ -40,7 +40,7 @@ jobs:
                 'nathanielDuro',
             ];
 
-            const isAuthorized = authorizedMembers.data.some(member => member === releaseAuthor);
+            const isAuthorized = authorizedMembers.some(member => member === releaseAuthor);
 
             if (!isAuthorized) {
               core.setFailed(`The user @${releaseAuthor} is not authorized to trigger deployment.`);
