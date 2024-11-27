@@ -46,38 +46,38 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
 class EducatableAlertsWidget extends Widget
 {
-  protected static string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-alerts-widget';
+    protected static string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-alerts-widget';
 
-  #[Locked]
-  public Educatable&Model $educatable;
+    #[Locked]
+    public Educatable&Model $educatable;
 
-  #[Locked]
-  public string $manageUrl;
+    #[Locked]
+    public string $manageUrl;
 
-  public static function canView(): bool
-  {
-    return auth()->user()->can('viewAny', Alert::class);
-  }
+    public static function canView(): bool
+    {
+        return auth()->user()->can('viewAny', Alert::class);
+    }
 
-  protected function getActiveCount(): int
-  {
-    return $this->educatable->alerts()
-      ->where('status', SystemAlertStatusClassification::Active)
-      ->count();
-  }
+    protected function getActiveCount(): int
+    {
+        return $this->educatable->alerts()
+            ->where('status', SystemAlertStatusClassification::Active)
+            ->count();
+    }
 
-  protected function getSeverityCounts(): array
-  {
-    $counts = $this->educatable->alerts()
-      ->toBase()
-      ->selectRaw('count(*) as alert_count, severity')
-      ->groupBy('severity')
-      ->pluck('alert_count', 'severity');
+    protected function getSeverityCounts(): array
+    {
+        $counts = $this->educatable->alerts()
+            ->toBase()
+            ->selectRaw('count(*) as alert_count, severity')
+            ->groupBy('severity')
+            ->pluck('alert_count', 'severity');
 
-    return collect(AlertSeverity::cases())
-      ->reverse()
-      ->mapWithKeys(fn(AlertSeverity $alertSeverity): array => [$alertSeverity->getLabel() => $counts[$alertSeverity->value] ?? 0])
-      ->filter()
-      ->all();
-  }
+        return collect(AlertSeverity::cases())
+            ->reverse()
+            ->mapWithKeys(fn (AlertSeverity $alertSeverity): array => [$alertSeverity->getLabel() => $counts[$alertSeverity->value] ?? 0])
+            ->filter()
+            ->all();
+    }
 }
