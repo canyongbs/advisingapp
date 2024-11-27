@@ -33,33 +33,25 @@
 
 </COPYRIGHT>
 */
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-namespace AdvisingApp\BasicNeeds\Models;
-
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-
-/**
- * @mixin IdeHelperProgramParticipant
- */
-class ProgramParticipant extends Model
-{
-    use HasFactory;
-
-    protected $fillable = [
-        'program_participants_type',
-        'program_participants_id',
-    ];
-
-    public function program_participants(): MorphTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->morphTo();
+        Schema::dropIfExists('program_participants');
     }
 
-    public function basicNeedsPrograms(): BelongsTo
+    public function down(): void
     {
-        return $this->belongsTo(BasicNeedsProgram::class, 'basic_needs_program_id', 'id');
+        Schema::create('program_participants', function (Blueprint $table) {
+            $table->foreignUuid('basic_needs_program_id')->constrained('basic_needs_programs')->cascadeOnDelete();
+            $table->string('program_participants_type');
+            $table->string('program_participants_id');
+            $table->timestamps();
+
+            $table->index(['program_participants_type', 'program_participants_id']);
+        });
     }
-}
+};
