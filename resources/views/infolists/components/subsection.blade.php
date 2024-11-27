@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,28 +30,13 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
-
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas\StudentProfileInfolist;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
-
-class ViewStudent extends ViewRecord
-{
-    use HasStudentHeader;
-
-    protected static string $resource = StudentResource::class;
-
-    protected static string $view = 'student-data-model::filament.resources.student-resource.view-student';
-
-    protected static ?string $navigationLabel = 'View';
-
-    public function profile(Infolist $infolist): Infolist
-    {
-        return StudentProfileInfolist::configure($infolist);
-    }
-}
+--}}
+<div
+    {{ $attributes->merge(
+            [
+                'id' => $getId(),
+            ],
+            escape: false,
+        )->merge($getExtraAttributes(), escape: false)->class(['p-6']) }}>
+    {{ $getChildComponentContainer() }}
+</div>

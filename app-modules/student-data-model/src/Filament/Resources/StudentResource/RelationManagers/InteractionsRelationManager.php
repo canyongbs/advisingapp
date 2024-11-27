@@ -34,26 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas\StudentProfileInfolist;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
+use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
+use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
 
-class ViewStudent extends ViewRecord
+class InteractionsRelationManager extends RelationManager
 {
-    use HasStudentHeader;
+    use HasManyMorphedInteractionsTrait;
 
-    protected static string $resource = StudentResource::class;
+    protected static string $relationship = 'interactions';
 
-    protected static string $view = 'student-data-model::filament.resources.student-resource.view-student';
-
-    protected static ?string $navigationLabel = 'View';
-
-    public function profile(Infolist $infolist): Infolist
+    public function form(Form $form): Form
     {
-        return StudentProfileInfolist::configure($infolist);
+        return (resolve(CreateInteraction::class))->form($form);
     }
 }

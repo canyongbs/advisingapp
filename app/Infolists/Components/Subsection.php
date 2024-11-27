@@ -34,26 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace App\Infolists\Components;
 
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas\StudentProfileInfolist;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
+use Filament\Infolists\Components\Group;
 
-class ViewStudent extends ViewRecord
+class Subsection extends Group
 {
-    use HasStudentHeader;
-
-    protected static string $resource = StudentResource::class;
-
-    protected static string $view = 'student-data-model::filament.resources.student-resource.view-student';
-
-    protected static ?string $navigationLabel = 'View';
-
-    public function profile(Infolist $infolist): Infolist
-    {
-        return StudentProfileInfolist::configure($infolist);
-    }
+    protected string $view = 'infolists.components.subsection';
 }

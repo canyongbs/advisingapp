@@ -43,6 +43,10 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentTasks;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentCareTeam;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentSubscriptions;
 
 class StudentResource extends Resource
 {
@@ -87,6 +91,10 @@ class StudentResource extends Resource
         return [
             'index' => ListStudents::route('/'),
             'view' => ViewStudent::route('/{record}'),
+            'alerts' => ManageStudentAlerts::route('/{record}/alerts'),
+            'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
+            'subscriptions' => ManageStudentSubscriptions::route('/{record}/subscriptions'),
+            'tasks' => ManageStudentTasks::route('/{record}/tasks'),
         ];
     }
 }

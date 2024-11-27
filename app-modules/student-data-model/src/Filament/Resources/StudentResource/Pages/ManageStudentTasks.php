@@ -36,24 +36,19 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
+use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas\StudentProfileInfolist;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
+use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns\CanManageEducatableTasks;
 
-class ViewStudent extends ViewRecord
+class ManageStudentTasks extends ManageRelatedRecords
 {
+    use CanManageEducatableTasks;
     use HasStudentHeader;
 
     protected static string $resource = StudentResource::class;
 
-    protected static string $view = 'student-data-model::filament.resources.student-resource.view-student';
+    protected static string $relationship = 'tasks';
 
-    protected static ?string $navigationLabel = 'View';
-
-    public function profile(Infolist $infolist): Infolist
-    {
-        return StudentProfileInfolist::configure($infolist);
-    }
+    protected static ?string $title = 'Tasks';
 }

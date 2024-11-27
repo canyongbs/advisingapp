@@ -50,22 +50,22 @@ class TaskObserver
     public function saving(Task $task): void
     {
         DB::beginTransaction();
-
-        if (is_null($task->created_by)) {
-            $user = auth()->user();
-
-            if ($user instanceof User) {
-                $task->created_by = $user->id;
-            }
-        }
-
-        if (is_null($task->assigned_to)) {
-            $task->assigned_to = auth()->id();
-        }
     }
 
     public function creating(Task $task): void
     {
+        $user = auth()->user();
+
+        if ($user) {
+            if (! $task->createdBy) {
+                $task->createdBy()->associate($user);
+            }
+
+            if (! $task->assignedTo) {
+                $task->assignedTo()->associate($user);
+            }
+        }
+
         Permission::create([
             'name' => "task.{$task->id}.update",
             'guard_name' => 'web',
