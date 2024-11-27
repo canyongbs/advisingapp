@@ -27,7 +27,7 @@ jobs:
         id: check-author
         uses: actions/github-script@v7
         with:
-        #   github-token: ${{ secrets.PAT }}
+          github-token: ${{ secrets.PAT }}
           script: |
             //const releaseAuthor = context.payload.release.author.login;
             const releaseAuthor = context.payload.pull_request.user.login;
