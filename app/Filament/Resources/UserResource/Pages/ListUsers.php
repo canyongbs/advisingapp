@@ -85,14 +85,17 @@ class ListUsers extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('name'),
+                TextColumn::make('name')
+                    ->searchable(),
                 TextColumn::make('teams.name')
                     ->label('Team')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('email')
                     ->label('Email address')
+                    ->searchable()
                     ->toggleable(),
                 TextColumn::make('job_title')
+                    ->searchable()
                     ->toggleable(),
                 IconColumn::make(LicenseType::ConversationalAi->value . '_enabled')
                     ->label('AI Assistant')
