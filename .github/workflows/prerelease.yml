@@ -32,17 +32,15 @@ jobs:
             //const releaseAuthor = context.payload.release.author.login;
             const releaseAuthor = context.payload.pull_request.user.login;
             
-            const leadDevTeamMembers = await github.rest.teams.listMembersInOrg({
-              org: 'canyongbs',
-              team_slug: 'canyon-gbs-lead-developers'
-            });
+            const authorizedMembers = [
+                'Orrison',
+                'joelicatajr',
+                'lquisel',
+                'danharrin',
+                'nathanielDuro',
+            ];
 
-            const releaseManagementTeamMembers = await github.rest.teams.listMembersInOrg({
-              org: 'canyongbs',
-              team_slug: 'canyon-gbs-release-management'
-            });
-
-            const isAuthorized = leadDevTeamMembers.data.some(member => member.login === releaseAuthor) || releaseManagementTeamMembers.data.some(member => member.login === releaseAuthor);
+            const isAuthorized = authorizedMembers.data.some(member => member === releaseAuthor);
 
             if (!isAuthorized) {
               core.setFailed(`The user @${releaseAuthor} is not authorized to trigger deployment.`);
