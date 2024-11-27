@@ -34,26 +34,57 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\Timeline\Livewire\Concerns;
 
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas\StudentProfileInfolist;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
+use Illuminate\Pagination\Cursor;
+use Illuminate\Support\Collection;
+use AdvisingApp\Timeline\Models\Timeline;
 
-class ViewStudent extends ViewRecord
+trait CanLoadTimelineRecords
 {
-    use HasStudentHeader;
+    public int $recordsPerPage = 5;
 
-    protected static string $resource = StudentResource::class;
+    public Collection $timelineRecords;
 
-    protected static string $view = 'student-data-model::filament.resources.student-resource.view-student';
+    public ?string $nextCursor = null;
 
-    protected static ?string $navigationLabel = 'View';
+    public bool $initialLoad = false;
 
-    public function profile(Infolist $infolist): Infolist
+    public bool $hasMorePages = false;
+
+    public function loadTimelineRecords(): void
     {
-        return StudentProfileInfolist::configure($infolist);
+        // For some reason, the intersection observer still seems to be present
+        // Even though it's in a conditional block that should not be rendered
+        // This is an additional protection to prevent loading more records
+        if ($this->initialLoad === true && $this->hasMorePages === false) {
+            return;
+        }
+
+        if ($this->initialLoad === false) {
+            $this->initialLoad = true;
+        }
+
+        $records = Timeline::query()
+            ->forEntity($this->recordModel)
+            ->whereIn(
+                'timelineable_type',
+                collect($this->modelsToTimeline)->map(fn ($model) => resolve($model)->getMorphClass())->toArray()
+            )
+            ->orderBy('record_sortable_date', 'desc')
+            ->cursorPaginate(
+                $this->recordsPerPage,
+                ['*'],
+                'cursor',
+                Cursor::fromEncoded($this->nextCursor)
+            );
+
+        $this->timelineRecords->push(...$records->items());
+
+        $this->hasMorePages = $records->hasMorePages();
+
+        if ($this->hasMorePages === true) {
+            $this->nextCursor = $records->nextCursor()->encode();
+        }
     }
 }

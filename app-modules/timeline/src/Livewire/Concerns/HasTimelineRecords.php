@@ -34,26 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\Timeline\Livewire\Concerns;
 
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas\StudentProfileInfolist;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
+use Filament\Actions\ViewAction;
+use Illuminate\Database\Eloquent\Model;
+use App\Actions\GetRecordFromMorphAndKey;
+use AdvisingApp\Timeline\Actions\SyncTimelineData;
 
-class ViewStudent extends ViewRecord
+trait HasTimelineRecords
 {
-    use HasStudentHeader;
+    public array $modelsToTimeline = [];
 
-    protected static string $resource = StudentResource::class;
+    public Model $currentRecordToView;
 
-    protected static string $view = 'student-data-model::filament.resources.student-resource.view-student';
+    public Model $recordModel;
 
-    protected static ?string $navigationLabel = 'View';
-
-    public function profile(Infolist $infolist): Infolist
+    public function mountHasTimelineRecords(): void
     {
-        return StudentProfileInfolist::configure($infolist);
+        $this->timelineRecords = collect();
+
+        resolve(SyncTimelineData::class)->now($this->recordModel, $this->modelsToTimeline);
+
+        $this->loadTimelineRecords();
+    }
+
+    public function viewRecord($key, $morphReference)
+    {
+        $this->currentRecordToView = resolve(GetRecordFromMorphAndKey::class)->via($morphReference, $key);
+
+        $this->replaceMountedAction('view');
+    }
+
+    public function viewAction(): ViewAction
+    {
+        return $this->currentRecordToView
+            ->timeline()
+            ->modalViewAction($this->currentRecordToView);
     }
 }

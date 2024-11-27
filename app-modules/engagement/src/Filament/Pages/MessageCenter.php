@@ -61,12 +61,12 @@ use AdvisingApp\Engagement\Models\EngagementResponse;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
-use AdvisingApp\Timeline\Filament\Pages\Concerns\LoadsTimelineRecords;
+use AdvisingApp\Timeline\Livewire\Concerns\CanLoadTimelineRecords;
 
 class MessageCenter extends Page
 {
     use WithPagination;
-    use LoadsTimelineRecords;
+    use CanLoadTimelineRecords;
 
     protected static string $view = 'engagement::filament.pages.message-center';
 

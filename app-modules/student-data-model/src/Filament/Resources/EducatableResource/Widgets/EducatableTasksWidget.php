@@ -34,26 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
 
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas\StudentProfileInfolist;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
+use Filament\Widgets\Widget;
+use Livewire\Attributes\Locked;
+use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Task\Enums\TaskStatus;
+use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
-class ViewStudent extends ViewRecord
+class EducatableTasksWidget extends Widget
 {
-    use HasStudentHeader;
+    protected static string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-tasks-widget';
 
-    protected static string $resource = StudentResource::class;
+    #[Locked]
+    public Educatable&Model $educatable;
 
-    protected static string $view = 'student-data-model::filament.resources.student-resource.view-student';
+    #[Locked]
+    public string $manageUrl;
 
-    protected static ?string $navigationLabel = 'View';
-
-    public function profile(Infolist $infolist): Infolist
+    public static function canView(): bool
     {
-        return StudentProfileInfolist::configure($infolist);
+        return auth()->user()->can('viewAny', Task::class);
+    }
+
+    protected function getStatusCounts(): array
+    {
+        $counts = $this->educatable->tasks()
+            ->toBase()
+            ->selectRaw('count(*) as task_count, status')
+            ->groupBy('status')
+            ->pluck('task_count', 'status');
+
+        return collect(TaskStatus::cases())
+            ->reverse()
+            ->mapWithKeys(fn (TaskStatus $taskStatus): array => [$taskStatus->getLabel() => $counts[$taskStatus->value] ?? 0])
+            ->filter()
+            ->all();
     }
 }

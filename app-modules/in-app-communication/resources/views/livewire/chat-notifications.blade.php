@@ -41,16 +41,18 @@
     class="flex"
     wire:poll.10s
 >
-    <x-filament::modal slide-over>
-        <x-slot name="trigger">
-            <x-filament::icon-button
-                label="Open chat notifications"
-                icon="heroicon-o-chat-bubble-oval-left-ellipsis"
-                color="gray"
-                :badge="count($notifications)"
-            />
-        </x-slot>
+    <x-filament::icon-button
+        label="Open chat notifications"
+        icon="heroicon-o-chat-bubble-oval-left-ellipsis"
+        color="gray"
+        :badge="count($notifications)"
+        x-on:click="$dispatch('open-modal', { id: 'chat-notifications' })"
+    />
 
+    <x-filament::modal
+        id="chat-notifications"
+        slide-over
+    >
         <x-slot name="heading">
             Chat
         </x-slot>

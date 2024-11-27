@@ -45,6 +45,7 @@ use Illuminate\Support\Facades\Vite;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Ai\Actions\CompletePrompt;
 use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -52,6 +53,7 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 
@@ -65,8 +67,8 @@ class DraftInteractionWithAiAction extends Action
             ->label('Draft with AI Assistant')
             ->link()
             ->icon('heroicon-m-pencil')
-            ->modalContent(fn (Page $livewire) => view('interaction::filament.actions.draft-with-ai-modal-content', [
-                'recordTitle' => $livewire->record['full_name'],
+            ->modalContent(fn (Page | RelationManager $livewire) => view('interaction::filament.actions.draft-with-ai-modal-content', [
+                'recordTitle' => ($livewire instanceof RelationManager ? $livewire->getOwnerRecord() : $livewire->getRecord())->full_name,
                 'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
                     ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
             ]))
@@ -79,13 +81,12 @@ class DraftInteractionWithAiAction extends Action
                     ->placeholder('What do you want to write about?')
                     ->required(),
             ])
-            ->action(function (array $data, Get $get, Set $set, Page $livewire) {
+            ->action(function (array $data, Get $get, Set $set, Page | RelationManager $livewire) {
                 $aiModel = app(AiIntegratedAssistantSettings::class)->default_model;
 
                 $userName = auth()->user()->name;
                 $userJobTitle = auth()->user()->job_title ?? 'staff member';
                 $clientName = app(LicenseSettings::class)->data->subscription->clientName;
-                $model = $livewire::getResource()::getModelLabel();
 
                 $context = collect();
 
@@ -107,13 +108,20 @@ class DraftInteractionWithAiAction extends Action
 
                 $additionalContext = $context->isNotEmpty() ? $context->implode("\n") : '';
 
+                $record = ($livewire instanceof RelationManager ? $livewire->getOwnerRecord() : $livewire->getRecord());
+                $modelName = match ($record::class) {
+                    Prospect::class => 'prospect',
+                    default => 'student',
+                };
+                $recordFullName = $record->full_name;
+
                 try {
                     $content = app(CompletePrompt::class)->execute(
                         aiModel: $aiModel,
                         prompt: <<<EOL
                             My name is {$userName}, and I am a {$userJobTitle} at {$clientName}.
 
-                            Please document my interaction with the {$model} {$livewire->record->full_name} at our college based on the following details:
+                            Please document my interaction with the {$modelName} {$recordFullName} at our college based on the following details:
 
                             Instructions:
                             - Respond only with the interaction content—no greetings or additional comments.

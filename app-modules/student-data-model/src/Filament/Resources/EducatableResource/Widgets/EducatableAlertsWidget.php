@@ -34,26 +34,50 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
 
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas\StudentProfileInfolist;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
+use Filament\Widgets\Widget;
+use Livewire\Attributes\Locked;
+use AdvisingApp\Alert\Models\Alert;
+use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Alert\Enums\AlertStatus;
+use AdvisingApp\Alert\Enums\AlertSeverity;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
-class ViewStudent extends ViewRecord
+class EducatableAlertsWidget extends Widget
 {
-    use HasStudentHeader;
+    protected static string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-alerts-widget';
 
-    protected static string $resource = StudentResource::class;
+    #[Locked]
+    public Educatable&Model $educatable;
 
-    protected static string $view = 'student-data-model::filament.resources.student-resource.view-student';
+    #[Locked]
+    public string $manageUrl;
 
-    protected static ?string $navigationLabel = 'View';
-
-    public function profile(Infolist $infolist): Infolist
+    public static function canView(): bool
     {
-        return StudentProfileInfolist::configure($infolist);
+        return auth()->user()->can('viewAny', Alert::class);
+    }
+
+    protected function getActiveCount(): int
+    {
+        return $this->educatable->alerts()
+            ->where('status', AlertStatus::Active)
+            ->count();
+    }
+
+    protected function getSeverityCounts(): array
+    {
+        $counts = $this->educatable->alerts()
+            ->toBase()
+            ->selectRaw('count(*) as alert_count, severity')
+            ->groupBy('severity')
+            ->pluck('alert_count', 'severity');
+
+        return collect(AlertSeverity::cases())
+            ->reverse()
+            ->mapWithKeys(fn (AlertSeverity $alertSeverity): array => [$alertSeverity->getLabel() => $counts[$alertSeverity->value] ?? 0])
+            ->filter()
+            ->all();
     }
 }

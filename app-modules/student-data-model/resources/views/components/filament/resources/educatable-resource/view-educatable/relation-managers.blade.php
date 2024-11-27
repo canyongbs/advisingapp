@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -32,28 +30,36 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@props(['managers'])
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+@php
+    use Illuminate\Support\Js;
 
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas\StudentProfileInfolist;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
+    $managers = array_filter($managers, fn(string $manager): bool => $manager::canViewForRecord($this->getRecord(), static::class));
+@endphp
 
-class ViewStudent extends ViewRecord
-{
-    use HasStudentHeader;
+@if ($managers)
+    <div
+        x-data="{ activeTab: @js(array_key_first($managers)) }"
+        {{ $attributes->class(['flex flex-col gap-3']) }}
+    >
+        <x-filament::tabs>
+            @foreach ($managers as $managerKey => $manager)
+                <x-filament::tabs.item :alpine-active="'activeTab === ' . Js::from($managerKey)" :x-on:click="'activeTab = ' . Js::from($managerKey)">
+                    {{ $manager::getTitle($this->getRecord(), static::class) }}
+                </x-filament::tabs.item>
+            @endforeach
+        </x-filament::tabs>
 
-    protected static string $resource = StudentResource::class;
-
-    protected static string $view = 'student-data-model::filament.resources.student-resource.view-student';
-
-    protected static ?string $navigationLabel = 'View';
-
-    public function profile(Infolist $infolist): Infolist
-    {
-        return StudentProfileInfolist::configure($infolist);
-    }
-}
+        @foreach ($managers as $managerKey => $manager)
+            <div x-show="activeTab === @js($managerKey)">
+                @livewire($manager, [
+                    'ownerRecord' => $this->getRecord(),
+                    'pageClass' => static::class,
+                    'lazy' => $loop->first ? false : 'on-load',
+                ])
+            </div>
+        @endforeach
+    </div>
+@endif

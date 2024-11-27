@@ -34,26 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas\StudentProfileInfolist;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\RelationManagers\EngagementFilesRelationManager as BaseEngagementFilesRelationManager;
 
-class ViewStudent extends ViewRecord
+class EngagementFilesRelationManager extends BaseEngagementFilesRelationManager
 {
-    use HasStudentHeader;
-
     protected static string $resource = StudentResource::class;
 
-    protected static string $view = 'student-data-model::filament.resources.student-resource.view-student';
+    protected static string $relationship = 'engagementFiles';
 
-    protected static ?string $navigationLabel = 'View';
-
-    public function profile(Infolist $infolist): Infolist
-    {
-        return StudentProfileInfolist::configure($infolist);
-    }
+    protected static ?string $title = 'Files';
 }
