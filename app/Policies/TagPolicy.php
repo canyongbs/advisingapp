@@ -43,11 +43,11 @@ class TagPolicy
 {
     public function delete(Authenticatable $authenticatable, Tag $tag)
     {
-        return (($tag->type?->name === 'Student' && ! $tag->students()->exists()) || ($tag->type?->name === 'Prospect' && ! $tag->prospects()->exists()));
+        return ($tag->type?->name === 'Student' && ! $tag->students()->exists()) || ($tag->type?->name === 'Prospect' && ! $tag->prospects()->exists());
     }
 
     public function forceDelete(Authenticatable $authenticatable, Tag $tag)
     {
-        return (($tag->type?->name === 'Student' && ! $tag->students()->exists()) || ($tag->type?->name === 'Prospect' && ! $tag->prospects()->exists()));
+        return ($tag->type?->name === 'Student' && ! $tag->students()->exists()) || ($tag->type?->name === 'Prospect' && ! $tag->prospects()->exists());
     }
 }

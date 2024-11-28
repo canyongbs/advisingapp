@@ -36,7 +36,10 @@
 
 namespace AdvisingApp\StudentDataModel\Models;
 
+use App\Models\Tag;
 use App\Models\User;
+use App\Enums\TagType;
+use App\Models\Taggable;
 use App\Models\Authenticatable;
 use AdvisingApp\Task\Models\Task;
 use App\Models\Scopes\HasLicense;
@@ -329,6 +332,20 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     public function canRecieveSms(): bool
     {
         return filled($this->mobile);
+    }
+
+    public function tags(): MorphToMany
+    {
+        return $this->morphToMany(
+            related: Tag::class,
+            name: 'taggable',
+            table: 'taggables',
+            foreignPivotKey: 'taggable_id',
+            relatedPivotKey: 'tag_id',
+        )
+            ->using(Taggable::class)
+            ->withPivot(['tag_id'])
+            ->withTimestamps()->where('type', TagType::Student);
     }
 
     protected static function booted(): void

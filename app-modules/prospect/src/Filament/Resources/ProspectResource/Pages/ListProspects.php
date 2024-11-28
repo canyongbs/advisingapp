@@ -37,6 +37,7 @@
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use App\Models\Tag;
+use App\Enums\TagType;
 use Filament\Forms\Get;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
@@ -154,16 +155,22 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                     ),
                 SelectFilter::make('tags')
                     ->label('Tags')
-                    ->options(
-                        Tag::query()
-                            ->where('type', 'Prospect')
-                            ->pluck('name', 'id')
-                            ->toArray(),
-                    )
+                    ->options(fn (): array => Tag::query()->where('type', TagType::Prospect)->pluck('name', 'id')->toArray())
                     ->searchable()
                     ->preload()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->tagsFilter($query, $data)),
+                    ->multiple()
+                    ->query(
+                        function (Builder $query, array $data) {
+                            if (blank($data['values'])) {
+                                return;
+                            }
+
+                            $query->whereHas('tags', function (Builder $query) use ($data) {
+                                $query->whereIn('tag_id', $data['values'])->where('taggable_type', 'prospect');
+                            });
+                        }
+                    ),
             ])
             ->actions([
                 ViewAction::make(),
@@ -258,17 +265,6 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                 ->handle($data['value'])
                 ->pluck($query->getModel()->getQualifiedKeyName()),
         );
-    }
-
-    protected function tagsFilter(Builder $query, array $data): void
-    {
-        if (blank($data['value'])) {
-            return;
-        }
-
-        $query->whereHas('tags', function (Builder $query) use ($data) {
-            $query->where('tag_id', $data['value'])->where('taggable_type', 'prospect');
-        });
     }
 
     protected function getHeaderActions(): array

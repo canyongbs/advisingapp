@@ -37,7 +37,7 @@
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions;
 
 use App\Models\Tag;
-use Filament\Pages\Page;
+use App\Enums\TagType;
 use Filament\Actions\Action;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Select;
@@ -56,9 +56,7 @@ class ProspectTagAction extends Action
             ->modalSubmitActionLabel('Save')
             ->form([
                 Select::make('tag_id')
-                    ->options(
-                        Tag::where('type', 'Prospect')->pluck('name', 'id')->toArray()
-                    )
+                    ->options( fn() :array => Tag::where('type', TagType::Prospect)->pluck('name', 'id')->toArray())
                     ->required()
                     ->label('Tag')
                     ->multiple()
@@ -66,7 +64,7 @@ class ProspectTagAction extends Action
                     ->default(fn (?Prospect $record) => $record ? $record->tags->pluck('id')->toArray() : [])
                     ->searchable(),
             ])
-            ->action(function ($data, Prospect $record, Page $livewire) {
+            ->action(function ($data, Prospect $record) {
                 $record->tags()->sync($data['tag_id']);
                 $record->save();
 

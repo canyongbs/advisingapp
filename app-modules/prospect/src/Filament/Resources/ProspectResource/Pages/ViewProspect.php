@@ -112,12 +112,9 @@ class ViewProspect extends ViewRecord
                         TextEntry::make('description')
                             ->label('Description')
                             ->columnSpanFull(),
-                        TextEntry::make('tags')
+                        TextEntry::make('tags.name')
                             ->label('Tags')
-                            ->formatStateUsing(function ($record) {
-                                return $record->tags->pluck('name')->join(', ');
-                            })
-                            ->bulleted(),
+                            ->badge(),
                     ])
                     ->columns(2),
                 Section::make('Engagement Restrictions')

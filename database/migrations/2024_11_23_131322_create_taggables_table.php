@@ -43,9 +43,11 @@ return new class () extends Migration {
     {
         Schema::create('taggables', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('tag_id')->constrained();
-            $table->uuidMorphs('taggable');
+            $table->foreignUuid('tag_id')->constrained('tags');
+            $table->string('taggable_id');
+            $table->string('taggable_type');
             $table->timestamps();
+            $table->index(['taggable_id', 'taggable_type']);
         });
     }
 

@@ -50,6 +50,9 @@ class StudentProfileInfolist
                 Section::make('Profile Information')
                     ->schema([
                         Subsection::make([
+                            TextEntry::make('tags.name')
+                                ->label('Tags')
+                                ->badge(),
                             TextEntry::make('email_2')
                                 ->label('Alternate Email')
                                 ->placeholder('-'),

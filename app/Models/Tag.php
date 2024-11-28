@@ -38,17 +38,20 @@ namespace App\Models;
 
 use App\Enums\TagType;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
-class Tag extends Model
+class Tag extends Model implements Auditable
 {
     use HasFactory;
     use SoftDeletes;
     use HasUuids;
+    use AuditableTrait;
 
     protected $fillable = [
         'name',

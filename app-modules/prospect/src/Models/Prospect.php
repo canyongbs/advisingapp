@@ -346,11 +346,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
             ->withTimestamps()->where('type', TagType::Prospect);
     }
 
-    // public function tags()
-    // {
-    //     return $this->morphToMany(Tag::class, 'taggable');
-    // }
-
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
