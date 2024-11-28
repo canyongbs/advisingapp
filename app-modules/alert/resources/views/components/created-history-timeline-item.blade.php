@@ -33,6 +33,7 @@
 --}}
 @php
     use AdvisingApp\Alert\Histories\AlertHistory;
+    use App\Features\AlertStatusId;
 @endphp
 
 @php

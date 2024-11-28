@@ -34,6 +34,8 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\AlertStatus;
 use App\Models\User;
 
 use function Tests\asSuperAdmin;
@@ -275,6 +277,9 @@ it('renders the EducatableAlertsWidget based on proper access', function () {
 
     actingAs($user);
 
+    AlertStatus::factory()->create([
+        'classification' => SystemAlertStatusClassification::Active
+    ]);
     $widget = EducatableAlertsWidget::class;
 
     livewire(ViewStudent::class, [
