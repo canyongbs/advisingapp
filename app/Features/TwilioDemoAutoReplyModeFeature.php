@@ -34,44 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Settings;
+namespace App\Features;
 
-use App\Settings\IntegrationSettings;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioApiKey;
+use App\Support\AbstractFeatureFlag;
 
-class TwilioSettings extends IntegrationSettings
+class TwilioDemoAutoReplyModeFeature extends AbstractFeatureFlag
 {
-    public bool $is_enabled = false;
-
-    public bool $is_demo_mode_enabled = false;
-
-    public bool $is_demo_auto_reply_mode_enabled = false;
-
-    public ?TwilioApiKey $api_key = null;
-
-    public ?string $account_sid = null;
-
-    public ?string $auth_token = null;
-
-    public ?string $from_number = null;
-
-    public static function group(): string
+    public function resolve(mixed $scope): mixed
     {
-        return 'twilio';
-    }
-
-    public static function encrypted(): array
-    {
-        return [
-            'api_key',
-            'account_sid',
-            'auth_token',
-            'from_number',
-        ];
-    }
-
-    public function isConfigured(): bool
-    {
-        return $this->account_sid && $this->auth_token && $this->from_number || $this->is_demo_mode_enabled ?? false;
+        return false;
     }
 }

@@ -36,9 +36,13 @@
 
 namespace AdvisingApp\Engagement\Drivers;
 
+use App\Features\TwilioDemoAutoReplyModeFeature;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
+use AdvisingApp\Engagement\Actions\CreateEngagementResponse;
 use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
 use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
 use AdvisingApp\Engagement\Drivers\Contracts\EngagementDeliverableDriver;
 use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
@@ -74,5 +78,12 @@ class EngagementSmsDriver implements EngagementDeliverableDriver
     public function deliver(): void
     {
         EngagementSmsChannelDelivery::dispatch($this->deliverable);
+
+        if (TwilioDemoAutoReplyModeFeature::active() && app(TwilioSettings::class)->is_demo_auto_reply_mode_enabled) {
+            app(CreateEngagementResponse::class)(EngagementResponseData::from([
+                'from' => $this->deliverable->engagement->recipient->routeNotificationForSms(),
+                'body' => 'Just got your message, thanks for sending over these details.',
+            ]));
+        }
     }
 }
