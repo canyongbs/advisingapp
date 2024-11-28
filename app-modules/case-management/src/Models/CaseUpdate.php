@@ -38,7 +38,6 @@ namespace AdvisingApp\CaseManagement\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
-use App\Features\CaseManagement;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -75,7 +74,7 @@ class CaseUpdate extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function getTable()
     {
-        return CaseManagement::active() ? 'case_updates' : 'service_request_updates';
+        return 'case_updates';
     }
 
     public function case(): BelongsTo

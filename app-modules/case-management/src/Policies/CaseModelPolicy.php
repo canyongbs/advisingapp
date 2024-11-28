@@ -38,7 +38,6 @@ namespace AdvisingApp\CaseManagement\Policies;
 
 use App\Enums\Feature;
 use App\Models\Authenticatable;
-use App\Features\CaseManagement;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
 use App\Support\FeatureAccessResponse;
@@ -65,16 +64,9 @@ class CaseModelPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'case.view-any',
-                denyResponse: 'You do not have permission to view cases.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'service_request.view-any',
-            denyResponse: 'You do not have permission to view service requests.'
+            abilities: 'case.view-any',
+            denyResponse: 'You do not have permission to view cases.'
         );
     }
 
@@ -84,31 +76,17 @@ class CaseModelPolicy
             return Response::deny('You do not have permission to view this case.');
         }
 
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["case.{$case->id}.view"],
-                denyResponse: 'You do not have permission to view this case.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["service_request.{$case->id}.view"],
-            denyResponse: 'You do not have permission to view this service request.'
+            abilities: ["case.{$case->id}.view"],
+            denyResponse: 'You do not have permission to view this case.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'case.create',
-                denyResponse: 'You do not have permission to create cases.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'service_request.create',
-            denyResponse: 'You do not have permission to create service requests.'
+            abilities: 'case.create',
+            denyResponse: 'You do not have permission to create cases.'
         );
     }
 
@@ -118,16 +96,9 @@ class CaseModelPolicy
             return Response::deny('You do not have permission to update this case.');
         }
 
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["case.{$case->id}.update"],
-                denyResponse: 'You do not have permission to update this case.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["service_request.{$case->id}.update"],
-            denyResponse: 'You do not have permission to update this service request.'
+            abilities: ["case.{$case->id}.update"],
+            denyResponse: 'You do not have permission to update this case.'
         );
     }
 
@@ -137,16 +108,9 @@ class CaseModelPolicy
             return Response::deny('You do not have permission to delete this case.');
         }
 
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["case.{$case->id}.delete"],
-                denyResponse: 'You do not have permission to delete this case.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["service_request.{$case->id}.delete"],
-            denyResponse: 'You do not have permission to delete this service request.'
+            abilities: ["case.{$case->id}.delete"],
+            denyResponse: 'You do not have permission to delete this case.'
         );
     }
 
@@ -156,16 +120,9 @@ class CaseModelPolicy
             return Response::deny('You do not have permission to restore this case.');
         }
 
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["case.{$case->id}.restore"],
-                denyResponse: 'You do not have permission to restore this case.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["service_request.{$case->id}.restore"],
-            denyResponse: 'You do not have permission to restore this service request.'
+            abilities: ["case.{$case->id}.restore"],
+            denyResponse: 'You do not have permission to restore this case.'
         );
     }
 
@@ -175,16 +132,9 @@ class CaseModelPolicy
             return Response::deny('You do not have permission to permanently delete this case.');
         }
 
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["case.{$case->id}.force-delete"],
-                denyResponse: 'You do not have permission to permanently delete this case.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["service_request.{$case->id}.force-delete"],
-            denyResponse: 'You do not have permission to permanently delete this service request.'
+            abilities: ["case.{$case->id}.force-delete"],
+            denyResponse: 'You do not have permission to permanently delete this case.'
         );
     }
 

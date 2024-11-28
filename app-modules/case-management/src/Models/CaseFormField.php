@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\CaseManagement\Models;
 
-use App\Features\CaseManagement;
 use AdvisingApp\Form\Models\SubmissibleField;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -63,24 +62,16 @@ class CaseFormField extends SubmissibleField
 
     public function getTable()
     {
-        return CaseManagement::active() ? 'case_form_fields' : 'service_request_form_fields';
+        return 'case_form_fields';
     }
 
     public function submissible(): BelongsTo
     {
-        if (CaseManagement::active()) {
-            return $this->belongsTo(CaseForm::class, 'case_form_id');
-        }
-
-        return $this->belongsTo(CaseForm::class, 'service_request_form_id');
+        return $this->belongsTo(CaseForm::class, 'case_form_id');
     }
 
     public function step(): BelongsTo
     {
-        if (CaseManagement::active()) {
-            return $this->belongsTo(CaseForm::class, 'case_form_step_id');
-        }
-
-        return $this->belongsTo(CaseFormStep::class, 'service_request_form_step_id');
+        return $this->belongsTo(CaseForm::class, 'case_form_step_id');
     }
 }
