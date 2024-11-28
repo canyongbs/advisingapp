@@ -45,6 +45,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\ProductIntegrations;
+use App\Features\TwilioDemoAutoReplyModeFeature;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 
 class ManageTwilioSettings extends SettingsPage
@@ -81,6 +82,10 @@ class ManageTwilioSettings extends SettingsPage
                     ->label('SMS Demo Mode')
                     ->helperText('When enabled, no messages will be sent.')
                     ->live(),
+                Toggle::make('is_demo_auto_reply_mode_enabled')
+                    ->label('SMS Demo Autoreply')
+                    ->helperText('When enabled, SMS messages will receive an automatic reply.')
+                    ->visible(TwilioDemoAutoReplyModeFeature::active()),
                 Section::make()
                     ->schema([
                         TextInput::make('account_sid')
