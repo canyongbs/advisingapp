@@ -49,12 +49,12 @@ use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Timeline\Timelines\InteractionTimeline;
-use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -206,7 +206,7 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
             /** @var Authenticatable $user */
             $user = auth()->user();
 
-            $serviceRequestRespondentTypeColumn = app(ServiceRequest::class)->respondent()->getMorphType();
+            $caseRespondentTypeColumn = app(CaseModel::class)->respondent()->getMorphType();
 
             $builder
                 ->where(fn (Builder $query) => $query
@@ -215,24 +215,24 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
                         ! $user->hasLicense(Student::getLicenseType()),
                         fn (Builder $query) => $query->where(fn (Builder $query) => $query->whereHasMorph(
                             'interactable',
-                            ServiceRequest::class,
-                            fn (Builder $query) => $query->where($serviceRequestRespondentTypeColumn, '!=', app(Student::class)->getMorphClass()),
+                            CaseModel::class,
+                            fn (Builder $query) => $query->where($caseRespondentTypeColumn, '!=', app(Student::class)->getMorphClass()),
                         )->orWhere(
                             'interactable_type',
                             '!=',
-                            app(ServiceRequest::class)->getMorphClass(),
+                            app(CaseModel::class)->getMorphClass(),
                         )),
                     )
                     ->when(
                         ! $user->hasLicense(Prospect::getLicenseType()),
                         fn (Builder $query) => $query->where(fn (Builder $query) => $query->whereHasMorph(
                             'interactable',
-                            ServiceRequest::class,
-                            fn (Builder $query) => $query->where($serviceRequestRespondentTypeColumn, '!=', app(Prospect::class)->getMorphClass()),
+                            CaseModel::class,
+                            fn (Builder $query) => $query->where($caseRespondentTypeColumn, '!=', app(Prospect::class)->getMorphClass()),
                         )->orWhere(
                             'interactable_type',
                             '!=',
-                            app(ServiceRequest::class)->getMorphClass(),
+                            app(CaseModel::class)->getMorphClass(),
                         )),
                     ));
         });

@@ -52,8 +52,8 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspec
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEvents;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectCareTeam;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectPrograms;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectCaseManagement;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEngagement;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectServiceManagement;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectInteractions;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectEngagementTimeline;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectSubscriptions;
@@ -87,7 +87,7 @@ class ProspectResource extends Resource
             ManageProspectCareTeam::class,
             ManageProspectFormSubmissions::class,
             ManageProspectApplicationSubmissions::class,
-            ProspectServiceManagement::class,
+            ProspectCaseManagement::class,
             ManageProspectEvents::class,
             ManageProspectPrograms::class,
         ]);
@@ -104,7 +104,7 @@ class ProspectResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['full_name', 'email', 'email_2', 'mobile', 'phone'];
+        return ['full_name', 'email', 'email_2', 'mobile', 'phone', 'preferred'];
     }
 
     public static function getGlobalSearchResultDetails(Model $record): array
@@ -114,6 +114,7 @@ class ProspectResource extends Resource
             'Other ID' => $record->otherid,
             'Email Address' => collect([$record->email, $record->email_id])->filter()->implode(', '),
             'Phone' => collect([$record->mobile, $record->phone])->filter()->implode(', '),
+            'Preferred Name' => $record->preferred,
         ], fn (mixed $value): bool => filled($value));
     }
 
@@ -139,7 +140,7 @@ class ProspectResource extends Resource
             'view' => ViewProspect::route('/{record}'),
             'timeline' => ProspectEngagementTimeline::route('/{record}/timeline'),
             'care-team' => ManageProspectCareTeam::route('/{record}/care-team'),
-            'service-management' => ProspectServiceManagement::route('/{record}/service-management'),
+            'case-management' => ProspectCaseManagement::route('/{record}/case-management'),
             'events' => ManageProspectEvents::route('/{record}/events'),
             'programs' => ManageProspectPrograms::route('/{record}/programs'),
         ];

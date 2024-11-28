@@ -31,39 +31,91 @@
 
 </COPYRIGHT>
 --}}
-@php
-    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
-    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentAlertsRelationManager;
-@endphp
-<x-student-data-model::page @class([
-    'fi-resource-view-record-page',
-    'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
-    'fi-resource-record-' . $record->getKey(),
-])>
-    <x-student-data-model::student-header-section :record="$record" />
-    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        <div class="flex flex-col gap-8">
-            <x-student-data-model::student-profile-section :record="$record" />
-            <livewire:student-data-model::student-engagement-timeline
-                :record="$record->getKey()"
-                lazy
-            />
-        </div>
-        <div class="col-auto lg:col-span-2">
-            <div class="flex flex-col gap-8">
-                <livewire:student-data-model::manage-student-information :record="$record->getKey()" />
-                <div class="view_student_relation_manager grid grid-cols-1 gap-8 lg:grid-cols-2">
-                    @foreach ($this->getRelationManagers() as $relationManager)
-                        @livewire($relationManager, [
-                            'ownerRecord' => $record,
-                            'pageClass' => ViewStudent::class,
-                            'lazy' => true,
-                        ])
-                    @endforeach
-                </div>
 
-                <livewire:student-data-model::manage-student-premium-features :record="$record->getKey()" />
+@php
+    use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableActivityFeedWidget;
+    use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableAlertsWidget;
+    use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableCareTeamWidget;
+    use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableSubscriptionsWidget;
+    use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableTasksWidget;
+    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ApplicationSubmissionsRelationManager;
+    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
+    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
+    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
+    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EventsRelationManager;
+    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\FormSubmissionsRelationManager;
+    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
+    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
+@endphp
+
+<x-filament-panels::page>
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16 xl:grid-cols-3">
+        <div class="col-span-1">
+            <div class="grid gap-8">
+                {{ $this->profile }}
+
+                @if (EducatableActivityFeedWidget::canView())
+                    @livewire(EducatableActivityFeedWidget::class, [
+                        'educatable' => $this->getRecord(),
+                        'lazy' => 'on-load',
+                    ])
+                @endif
             </div>
         </div>
+
+        <div class="flex flex-col gap-8 lg:col-span-1 xl:col-span-2">
+            <x-student-data-model::filament.resources.educatable-resource.view-educatable.relation-managers
+                :managers="[
+                    'programs' => ProgramsRelationManager::class,
+                    'enrollments' => EnrollmentsRelationManager::class,
+                    'messages' => EngagementsRelationManager::class,
+                    'interactions' => InteractionsRelationManager::class,
+                    'files' => EngagementFilesRelationManager::class,
+                ]"
+            />
+
+            <div class="grid grid-cols-1 gap-8 xl:grid-cols-2">
+                @if (EducatableAlertsWidget::canView())
+                    @livewire(EducatableAlertsWidget::class, [
+                        'educatable' => $this->getRecord(),
+                        'manageUrl' => StudentResource::getUrl('alerts', ['record' => $this->getRecord()]),
+                    ])
+                @endif
+
+                @if (EducatableTasksWidget::canView())
+                    @livewire(EducatableTasksWidget::class, [
+                        'educatable' => $this->getRecord(),
+                        'manageUrl' => StudentResource::getUrl('tasks', ['record' => $this->getRecord()]),
+                    ])
+                @endif
+            </div>
+
+            <div class="grid grid-cols-1 gap-8 xl:grid-cols-2">
+                @if (EducatableCareTeamWidget::canView())
+                    @livewire(EducatableCareTeamWidget::class, [
+                        'educatable' => $this->getRecord(),
+                        'lazy' => 'on-load',
+                        'manageUrl' => StudentResource::getUrl('care-team', ['record' => $this->getRecord()]),
+                    ])
+                @endif
+
+                @if (EducatableSubscriptionsWidget::canView())
+                    @livewire(EducatableSubscriptionsWidget::class, [
+                        'educatable' => $this->getRecord(),
+                        'lazy' => 'on-load',
+                        'manageUrl' => StudentResource::getUrl('subscriptions', ['record' => $this->getRecord()]),
+                    ])
+                @endif
+            </div>
+
+            <x-student-data-model::filament.resources.educatable-resource.view-educatable.relation-managers
+                :managers="[
+                    'forms' => FormSubmissionsRelationManager::class,
+                    'events' => EventsRelationManager::class,
+                    'applications' => ApplicationSubmissionsRelationManager::class,
+                ]"
+            />
+        </div>
     </div>
-</x-student-data-model::page>
+</x-filament-panels::page>

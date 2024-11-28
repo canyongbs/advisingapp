@@ -52,6 +52,7 @@ use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -60,7 +61,6 @@ use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionRelation;
-use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
@@ -107,9 +107,9 @@ class CreateInteraction extends CreateRecord
                             ->titleAttribute(Prospect::displayNameKey())
                             ->modifyOptionsQueryUsing(fn (Builder $query) => $query->tap(new ExcludeConvertedProspects())),
                         ] : []),
-                        MorphToSelect\Type::make(ServiceRequest::class)
-                            ->label('Service Request')
-                            ->titleAttribute('service_request_number'),
+                        MorphToSelect\Type::make(CaseModel::class)
+                            ->label('Case')
+                            ->titleAttribute('case_number'),
                     ])
                     ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
                 Fieldset::make('Details')

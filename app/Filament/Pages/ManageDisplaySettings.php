@@ -36,27 +36,31 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use App\Settings\DisplaySettings;
-use App\Filament\Clusters\GlobalSettings;
 use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
+use App\Filament\Clusters\DisplaySettings as DisplaySettingsCluster;
 
 class ManageDisplaySettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 
-    protected static ?string $navigationLabel = 'Display';
+    protected static ?string $navigationLabel = 'Dates and Times';
 
-    protected static ?int $navigationSort = 70;
+    protected static ?int $navigationSort = 10;
 
     protected static string $settings = DisplaySettings::class;
 
-    protected static ?string $cluster = GlobalSettings::class;
+    protected static ?string $cluster = DisplaySettingsCluster::class;
 
     public static function canAccess(): bool
     {
-        return auth()->user()->can('display_settings.manage');
+        /** @var User $user */
+        $user = auth()->user();
+
+        return parent::canAccess() && $user->can('display_settings.manage');
     }
 
     public function form(Form $form): Form

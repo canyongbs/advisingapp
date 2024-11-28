@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Providers;
 
 use Filament\Panel;
-use Livewire\Livewire;
 use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\StudentDataModel\Models\Program;
@@ -45,10 +44,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentTasksRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentAlertsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentCareTeamRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\StudentSubscriptionsRelationManager;
 
 class StudentDataModelServiceProvider extends ServiceProvider
 {
@@ -68,10 +63,5 @@ class StudentDataModelServiceProvider extends ServiceProvider
         ]);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
-
-        Livewire::component('student-alert-relation-manager', StudentAlertsRelationManager::class);
-        Livewire::component('student-care-team-relation-manager', StudentCareTeamRelationManager::class);
-        Livewire::component('student-subscriptions-relation-manager', StudentSubscriptionsRelationManager::class);
-        Livewire::component('student-tasks-relation-manager', StudentTasksRelationManager::class);
     }
 }
