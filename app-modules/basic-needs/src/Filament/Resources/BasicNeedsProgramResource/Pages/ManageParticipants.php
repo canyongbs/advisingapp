@@ -38,8 +38,6 @@ namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pa
 
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\StudentsRelationManager;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\RelationManagers\ProspectsRelationManager;
 
 class ManageParticipants extends ManageRelatedRecords
 {
@@ -69,13 +67,5 @@ class ManageParticipants extends ManageRelatedRecords
         }
 
         return $breadcrumbs;
-    }
-
-    public function getRelationManagers(): array
-    {
-        return [
-            StudentsRelationManager::class,
-            ProspectsRelationManager::class,
-        ];
     }
 }
