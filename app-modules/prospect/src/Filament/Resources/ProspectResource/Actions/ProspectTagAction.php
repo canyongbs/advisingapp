@@ -56,7 +56,7 @@ class ProspectTagAction extends Action
             ->modalSubmitActionLabel('Save')
             ->form([
                 Select::make('tag_id')
-                    ->options( fn() :array => Tag::where('type', TagType::Prospect)->pluck('name', 'id')->toArray())
+                    ->options(fn (): array => Tag::where('type', TagType::Prospect)->pluck('name', 'id')->toArray())
                     ->required()
                     ->label('Tag')
                     ->multiple()
