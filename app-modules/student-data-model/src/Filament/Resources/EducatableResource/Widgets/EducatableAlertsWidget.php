@@ -37,58 +37,57 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
 
 use Filament\Widgets\Widget;
+use App\Features\AlertStatusId;
 use Livewire\Attributes\Locked;
 use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
-use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use App\Features\AlertStatusId;
-use Illuminate\Database\Eloquent\Builder;
 
 class EducatableAlertsWidget extends Widget
 {
-  protected static string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-alerts-widget';
+    protected static string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-alerts-widget';
 
-  #[Locked]
-  public Educatable&Model $educatable;
+    #[Locked]
+    public Educatable&Model $educatable;
 
-  #[Locked]
-  public string $manageUrl;
+    #[Locked]
+    public string $manageUrl;
 
-  public static function canView(): bool
-  {
-    return auth()->user()->can('viewAny', Alert::class);
-  }
-
-  protected function getActiveCount(): int
-  {
-    if (AlertStatusId::active()) {
-      return $this->educatable->alerts()
-        ->whereHas('status', function (Builder $query) {
-          $query->where('classification', SystemAlertStatusClassification::Active);
-        })
-        ->count();
-    } else {
-      return $this->educatable->alerts()
-        ->where('status', SystemAlertStatusClassification::Active)
-        ->count();
+    public static function canView(): bool
+    {
+        return auth()->user()->can('viewAny', Alert::class);
     }
-  }
 
-  protected function getSeverityCounts(): array
-  {
-    $counts = $this->educatable->alerts()
-      ->toBase()
-      ->selectRaw('count(*) as alert_count, severity')
-      ->groupBy('severity')
-      ->pluck('alert_count', 'severity');
+    protected function getActiveCount(): int
+    {
+        if (AlertStatusId::active()) {
+            return $this->educatable->alerts()
+                ->whereHas('status', function (Builder $query) {
+                    $query->where('classification', SystemAlertStatusClassification::Active);
+                })
+                ->count();
+        } else {
+            return $this->educatable->alerts()
+                ->where('status', SystemAlertStatusClassification::Active)
+                ->count();
+        }
+    }
 
-    return collect(AlertSeverity::cases())
-      ->reverse()
-      ->mapWithKeys(fn(AlertSeverity $alertSeverity): array => [$alertSeverity->getLabel() => $counts[$alertSeverity->value] ?? 0])
-      ->filter()
-      ->all();
-  }
+    protected function getSeverityCounts(): array
+    {
+        $counts = $this->educatable->alerts()
+            ->toBase()
+            ->selectRaw('count(*) as alert_count, severity')
+            ->groupBy('severity')
+            ->pluck('alert_count', 'severity');
+
+        return collect(AlertSeverity::cases())
+            ->reverse()
+            ->mapWithKeys(fn (AlertSeverity $alertSeverity): array => [$alertSeverity->getLabel() => $counts[$alertSeverity->value] ?? 0])
+            ->filter()
+            ->all();
+    }
 }
