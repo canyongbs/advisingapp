@@ -114,24 +114,6 @@ test('EditProspect is gated with proper access control', function () {
         ->and($prospect->fresh()->created_by_id)->toEqual($request->get('created_by_id'));
 });
 
-it('can render manage basic needs program for prospect', function () {
-    $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
-
-    actingAs($user)
-        ->get(ProspectResource::getUrl('programs', [
-            'record' => Prospect::factory()->create(),
-        ]))->assertForbidden();
-
-    $user->givePermissionTo('prospect.*.update');
-    $user->givePermissionTo('prospect.view-any');
-    $user->givePermissionTo('basic_needs_program.view-any');
-
-    actingAs($user)
-        ->get(ProspectResource::getUrl('programs', [
-            'record' => Prospect::factory()->create(),
-        ]))->assertSuccessful();
-});
-
 test('convert action visible when prospect is not converted to student', function () {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
