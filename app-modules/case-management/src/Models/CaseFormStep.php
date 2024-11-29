@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\CaseManagement\Models;
 
-use App\Features\CaseManagement;
 use App\Models\Attributes\NoPermissions;
 use AdvisingApp\Form\Models\SubmissibleStep;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -64,7 +63,7 @@ class CaseFormStep extends SubmissibleStep
 
     public function getTable()
     {
-        return CaseManagement::active() ? 'case_form_steps' : 'service_request_form_steps';
+        return 'case_form_steps';
     }
 
     public function submissible(): BelongsTo

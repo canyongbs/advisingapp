@@ -38,7 +38,6 @@ namespace AdvisingApp\CaseManagement\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
-use App\Features\CaseManagement;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -67,7 +66,7 @@ class CaseStatus extends BaseModel implements Auditable
 
     public function getTable()
     {
-        return CaseManagement::active() ? 'case_statuses' : 'service_request_statuses';
+        return 'case_statuses';
     }
 
     public function cases(): HasMany

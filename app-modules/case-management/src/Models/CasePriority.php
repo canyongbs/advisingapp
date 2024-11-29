@@ -38,7 +38,6 @@ namespace AdvisingApp\CaseManagement\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
-use App\Features\CaseManagement;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -63,7 +62,7 @@ class CasePriority extends BaseModel implements Auditable
 
     public function getTable()
     {
-        return CaseManagement::active() ? 'case_priorities' : 'service_request_priorities';
+        return 'case_priorities';
     }
 
     public function cases(): HasMany

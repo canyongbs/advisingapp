@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\CaseManagement\Models;
 
-use App\Features\CaseManagement;
 use App\Models\Attributes\NoPermissions;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Form\Models\SubmissibleAuthentication;
@@ -49,15 +48,11 @@ class CaseFormAuthentication extends SubmissibleAuthentication
 {
     public function getTable()
     {
-        return CaseManagement::active() ? 'case_form_authentications' : 'service_request_form_authentications';
+        return 'case_form_authentications';
     }
 
     public function submissible(): BelongsTo
     {
-        if (CaseManagement::active()) {
-            return $this->belongsTo(CaseForm::class, 'case_form_id');
-        }
-
-        return $this->belongsTo(CaseForm::class, 'service_request_form_id');
+        return $this->belongsTo(CaseForm::class, 'case_form_id');
     }
 }

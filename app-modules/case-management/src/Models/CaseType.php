@@ -38,7 +38,6 @@ namespace AdvisingApp\CaseManagement\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
-use App\Features\CaseManagement;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -71,16 +70,12 @@ class CaseType extends BaseModel implements Auditable
 
     public function getTable()
     {
-        return CaseManagement::active() ? 'case_types' : 'service_request_types';
+        return 'case_types';
     }
 
     public function cases(): HasManyThrough
     {
-        if (CaseManagement::active()) {
-            return $this->through('priorities')->has('cases');
-        }
-
-        return $this->through('priorities')->has('serviceRequests');
+        return $this->through('priorities')->has('cases');
     }
 
     public function priorities(): HasMany
@@ -90,11 +85,7 @@ class CaseType extends BaseModel implements Auditable
 
     public function form(): HasOne
     {
-        if (CaseManagement::active()) {
-            return $this->hasOne(CaseForm::class, 'case_type_id');
-        }
-
-        return $this->hasOne(CaseForm::class, 'service_request_type_id');
+        return $this->hasOne(CaseForm::class, 'case_type_id');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

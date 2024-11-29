@@ -37,7 +37,6 @@
 namespace AdvisingApp\CaseManagement\Models;
 
 use App\Models\User;
-use App\Features\CaseManagement;
 use AdvisingApp\Form\Models\Submission;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
@@ -72,25 +71,17 @@ class CaseFormSubmission extends Submission
 
     public function getTable()
     {
-        return CaseManagement::active() ? 'case_form_submissions' : 'service_request_form_submissions';
+        return 'case_form_submissions';
     }
 
     public function case(): HasOne
     {
-        if (CaseManagement::active()) {
-            return $this->hasOne(CaseModel::class, 'case_form_submission_id');
-        }
-
-        return $this->hasOne(CaseModel::class, 'service_request_form_submission_id');
+        return $this->hasOne(CaseModel::class, 'case_form_submission_id');
     }
 
     public function submissible(): BelongsTo
     {
-        if (CaseManagement::active()) {
-            return $this->belongsTo(CaseForm::class, 'case_form_id');
-        }
-
-        return $this->belongsTo(CaseForm::class, 'service_request_form_id');
+        return $this->belongsTo(CaseForm::class, 'case_form_id');
     }
 
     public function requester(): BelongsTo
@@ -100,30 +91,16 @@ class CaseFormSubmission extends Submission
 
     public function priority(): BelongsTo
     {
-        if (CaseManagement::active()) {
-            return $this->belongsTo(CasePriority::class, 'case_priority_id');
-        }
-
-        return $this->belongsTo(CasePriority::class, 'service_request_priority_id');
+        return $this->belongsTo(CasePriority::class, 'case_priority_id');
     }
 
     public function fields(): BelongsToMany
     {
-        if (CaseManagement::active()) {
-            return $this->belongsToMany(
-                CaseFormField::class,
-                'case_form_field_submission',
-                'case_form_submission_id',
-                'case_form_field_id',
-            )
-                ->withPivot(['id', 'response']);
-        }
-
         return $this->belongsToMany(
             CaseFormField::class,
-            'service_request_form_field_submission',
-            'service_request_form_submission_id',
-            'service_request_form_field_id',
+            'case_form_field_submission',
+            'case_form_submission_id',
+            'case_form_field_id',
         )
             ->withPivot(['id', 'response']);
     }
