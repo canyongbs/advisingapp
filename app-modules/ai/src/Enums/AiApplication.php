@@ -42,15 +42,12 @@ enum AiApplication: string implements HasLabel
 {
     case PersonalAssistant = 'personal_assistant';
 
-    case ReportAssistant = 'report_assistant';
-
     case Test = 'test';
 
     public function getLabel(): string
     {
         return match ($this) {
             self::PersonalAssistant => 'Personal Assistant',
-            self::ReportAssistant => 'Report Assistant',
             self::Test => 'Test',
         };
     }
@@ -69,9 +66,6 @@ enum AiApplication: string implements HasLabel
                     AiModel::OpenAiGpt4o,
                     AiModel::OpenAiGpt4oMini,
                 ],
-                self::ReportAssistant => [
-                    AiModel::OpenAiGpt4,
-                ],
                 self::Test => [
                     AiModel::OpenAiGptTest,
                 ],
@@ -84,7 +78,6 @@ enum AiApplication: string implements HasLabel
     {
         return match ($this) {
             self::PersonalAssistant => AiModel::OpenAiGpt4o,
-            self::ReportAssistant => AiModel::OpenAiGpt4,
             self::Test => AiModel::Test,
         };
     }

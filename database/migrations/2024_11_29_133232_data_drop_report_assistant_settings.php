@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,6 +32,27 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
+*/
 
-<x-ai::assistant />
+use Database\Migrations\Concerns\CanModifySettings;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
+
+return new class () extends SettingsMigration {
+    use CanModifySettings;
+
+    public function up(): void
+    {
+        $this->migrator->delete('report_assistant.prompt_system_context');
+
+        $this->updateSettings(
+            group: 'license',
+            name: 'data',
+            modifyPayload: function (array $data) {
+                if (array_key_exists('experimentalReporting', $data['addons'] ?? [])) {
+                    unset($data['addons']['experimentalReporting']);
+                }
+            },
+            isEncrypted: true,
+        );
+    }
+};
