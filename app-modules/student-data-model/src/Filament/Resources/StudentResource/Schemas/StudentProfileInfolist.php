@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas;
 
+use App\Features\TagFeatureFlag;
 use Filament\Infolists\Infolist;
 use App\Infolists\Components\Subsection;
 use Filament\Infolists\Components\Section;
@@ -52,7 +53,8 @@ class StudentProfileInfolist
                         Subsection::make([
                             TextEntry::make('tags.name')
                                 ->label('Tags')
-                                ->badge(),
+                                ->badge()
+                                ->visible(fn (): bool => TagFeatureFlag::active()),
                             TextEntry::make('email_2')
                                 ->label('Alternate Email')
                                 ->placeholder('-'),

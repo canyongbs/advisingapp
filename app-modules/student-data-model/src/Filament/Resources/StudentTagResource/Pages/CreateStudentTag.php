@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages;
 
+use App\Enums\TagType;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
@@ -59,7 +60,7 @@ class CreateStudentTag extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['type'] = 'Student';
+        $data['type'] = TagType::Student;
 
         return $data;
     }

@@ -22,7 +22,7 @@ class StudentTagAction extends Action
             ->modalSubmitActionLabel('Save')
             ->form([
                 Select::make('tag_id')
-                    ->options( fn(): array => Tag::where('type', TagType::Student)->pluck('name', 'id')->toArray())
+                    ->options(fn (): array => Tag::where('type', TagType::Student)->pluck('name', 'id')->toArray())
                     ->required()
                     ->label('Tag')
                     ->multiple()
@@ -30,7 +30,7 @@ class StudentTagAction extends Action
                     ->default(fn (?Student $record): array => $record ? $record->tags->pluck('id')->toArray() : [])
                     ->searchable(),
             ])
-            ->action(function ($data, Student $record) {
+            ->action(function (array $data, Student $record) {
                 $record->tags()->sync($data['tag_id']);
                 $record->save();
 

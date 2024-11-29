@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages;
 
+use App\Enums\TagType;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
@@ -59,7 +60,7 @@ class CreateProspectTag extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['type'] = 'Prospect';
+        $data['type'] = TagType::Prospect;
 
         return $data;
     }

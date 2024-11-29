@@ -40,6 +40,7 @@ use App\Models\Tag;
 use App\Models\User;
 use App\Enums\TagType;
 use Filament\Tables\Table;
+use App\Features\TagFeatureFlag;
 use Filament\Tables\Filters\Filter;
 use AdvisingApp\Segment\Models\Segment;
 use Filament\Tables\Actions\ViewAction;
@@ -154,7 +155,7 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
                                 $query->whereIn('tag_id', $data['values'])->where('taggable_type', 'student');
                             });
                         }
-                    ),
+                    )->visible(fn (): bool => TagFeatureFlag::active()),
             ])
             ->actions([
                 ViewAction::make()

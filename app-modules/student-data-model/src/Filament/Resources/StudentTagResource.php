@@ -37,6 +37,8 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources;
 
 use App\Models\Tag;
+use App\Enums\TagType;
+use App\Features\TagFeatureFlag;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Clusters\ConstituentManagement;
@@ -64,7 +66,7 @@ class StudentTagResource extends Resource
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('prospect.tags.manage');
+        return TagFeatureFlag::active() && $user->can('prospect.tags.manage');
     }
 
     public static function getPages(): array
@@ -80,6 +82,6 @@ class StudentTagResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('type', 'Student');
+            ->where('type', TagType::Student);
     }
 }

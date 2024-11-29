@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use App\Features\TagFeatureFlag;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
@@ -114,7 +115,8 @@ class ViewProspect extends ViewRecord
                             ->columnSpanFull(),
                         TextEntry::make('tags.name')
                             ->label('Tags')
-                            ->badge(),
+                            ->badge()
+                            ->visible(fn (): bool => TagFeatureFlag::active()),
                     ])
                     ->columns(2),
                 Section::make('Engagement Restrictions')
@@ -139,7 +141,7 @@ class ViewProspect extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            ProspectTagAction::make()->visible(fn () => auth()->user()?->can('prospect.tags.manage')),
+            ProspectTagAction::make()->visible(fn (): bool => TagFeatureFlag::active() && auth()->user()?->can('prospect.tags.manage')),
             ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists()),
             DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists()),
             EditAction::make(),

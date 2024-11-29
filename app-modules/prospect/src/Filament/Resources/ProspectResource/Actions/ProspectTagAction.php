@@ -56,15 +56,15 @@ class ProspectTagAction extends Action
             ->modalSubmitActionLabel('Save')
             ->form([
                 Select::make('tag_id')
-                    ->options( fn() :array => Tag::where('type', TagType::Prospect)->pluck('name', 'id')->toArray())
+                    ->options(fn (): array => Tag::where('type', TagType::Prospect)->pluck('name', 'id')->toArray())
                     ->required()
                     ->label('Tag')
                     ->multiple()
                     ->required()
-                    ->default(fn (?Prospect $record) => $record ? $record->tags->pluck('id')->toArray() : [])
+                    ->default(fn (?Prospect $record): array => $record ? $record->tags->pluck('id')->toArray() : [])
                     ->searchable(),
             ])
-            ->action(function ($data, Prospect $record) {
+            ->action(function (array $data, Prospect $record) {
                 $record->tags()->sync($data['tag_id']);
                 $record->save();
 
