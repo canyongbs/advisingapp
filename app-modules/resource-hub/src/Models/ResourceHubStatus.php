@@ -38,7 +38,6 @@ namespace AdvisingApp\ResourceHub\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
-use App\Features\ResourceHub;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -60,7 +59,7 @@ class ResourceHubStatus extends BaseModel implements Auditable
 
     public function getTable()
     {
-        return ResourceHub::active() ? 'resource_hub_statuses' : 'knowledge_base_statuses';
+        return 'resource_hub_statuses';
     }
 
     public function resourceHubArticles(): HasMany
