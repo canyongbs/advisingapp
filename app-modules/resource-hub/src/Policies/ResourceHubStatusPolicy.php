@@ -37,7 +37,6 @@
 namespace AdvisingApp\ResourceHub\Policies;
 
 use App\Enums\Feature;
-use App\Features\ResourceHub;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use App\Concerns\PerformsFeatureChecks;
@@ -66,106 +65,57 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (ResourceHub::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'resource_hub_status.view-any',
-                denyResponse: 'You do not have permission to view any resource hub statuses.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'knowledge_base_status.view-any',
-            denyResponse: 'You do not have permission to view any knowledge base statuses.'
+            abilities: 'resource_hub_status.view-any',
+            denyResponse: 'You do not have permission to view any resource hub statuses.'
         );
     }
 
     public function view(Authenticatable $authenticatable, ResourceHubStatus $resourceHubStatus): Response
     {
-        if (ResourceHub::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["resource_hub_status.{$resourceHubStatus->id}.view"],
-                denyResponse: 'You do not have permission to view this resource hub status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["knowledge_base_status.{$resourceHubStatus->id}.view"],
-            denyResponse: 'You do not have permission to view this knowledge base status.'
+            abilities: ["resource_hub_status.{$resourceHubStatus->id}.view"],
+            denyResponse: 'You do not have permission to view this resource hub status.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (ResourceHub::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'resource_hub_status.create',
-                denyResponse: 'You do not have permission to create resource hub statuses.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'knowledge_base_status.create',
-            denyResponse: 'You do not have permission to create knowledge base statuses.'
+            abilities: 'resource_hub_status.create',
+            denyResponse: 'You do not have permission to create resource hub statuses.'
         );
     }
 
     public function update(Authenticatable $authenticatable, ResourceHubStatus $resourceHubStatus): Response
     {
-        if (ResourceHub::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["resource_hub_status.{$resourceHubStatus->id}.update"],
-                denyResponse: 'You do not have permission to update this resource hub status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["knowledge_base_status.{$resourceHubStatus->id}.update"],
-            denyResponse: 'You do not have permission to update this knowledge base status.'
+            abilities: ["resource_hub_status.{$resourceHubStatus->id}.update"],
+            denyResponse: 'You do not have permission to update this resource hub status.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, ResourceHubStatus $resourceHubStatus): Response
     {
-        if (ResourceHub::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["resource_hub_status.{$resourceHubStatus->id}.delete"],
-                denyResponse: 'You do not have permission to delete this resource hub status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["knowledge_base_status.{$resourceHubStatus->id}.delete"],
-            denyResponse: 'You do not have permission to delete this knowledge base status.'
+            abilities: ["resource_hub_status.{$resourceHubStatus->id}.delete"],
+            denyResponse: 'You do not have permission to delete this resource hub status.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, ResourceHubStatus $resourceHubStatus): Response
     {
-        if (ResourceHub::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["resource_hub_status.{$resourceHubStatus->id}.restore"],
-                denyResponse: 'You do not have permission to restore this resource hub status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["knowledge_base_status.{$resourceHubStatus->id}.restore"],
-            denyResponse: 'You do not have permission to restore this knowledge base status.'
+            abilities: ["resource_hub_status.{$resourceHubStatus->id}.restore"],
+            denyResponse: 'You do not have permission to restore this resource hub status.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, ResourceHubStatus $resourceHubStatus): Response
     {
-        if (ResourceHub::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["resource_hub_status.{$resourceHubStatus->id}.force-delete"],
-                denyResponse: 'You do not have permission to permanently delete this resource hub status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["knowledge_base_status.{$resourceHubStatus->id}.force-delete"],
-            denyResponse: 'You do not have permission to permanently delete this knowledge base status.'
+            abilities: ["resource_hub_status.{$resourceHubStatus->id}.force-delete"],
+            denyResponse: 'You do not have permission to permanently delete this resource hub status.'
         );
     }
 
