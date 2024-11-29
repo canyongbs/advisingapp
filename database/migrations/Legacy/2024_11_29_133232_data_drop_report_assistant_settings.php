@@ -51,6 +51,8 @@ return new class () extends SettingsMigration {
                 if (array_key_exists('experimentalReporting', $data['addons'] ?? [])) {
                     unset($data['addons']['experimentalReporting']);
                 }
+
+                return $data;
             },
             isEncrypted: true,
         );
