@@ -39,35 +39,29 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Wid
 use App\Models\User;
 use Filament\Widgets\Widget;
 use Livewire\Attributes\Locked;
-use Filament\Forms\Contracts\HasForms;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Actions\Contracts\HasActions;
 use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Engagement\Models\Engagement;
-use Filament\Infolists\Contracts\HasInfolists;
 use AdvisingApp\Interaction\Models\Interaction;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Actions\Concerns\InteractsWithActions;
 use AdvisingApp\Engagement\Models\EngagementResponse;
-use Filament\Infolists\Concerns\InteractsWithInfolists;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Timeline\Livewire\Concerns\HasTimelineRecords;
 use AdvisingApp\Timeline\Livewire\Concerns\CanLoadTimelineRecords;
 
-class EducatableActivityFeedWidget extends Widget implements HasActions, HasForms, HasInfolists
+class EducatableActivityFeedWidget extends Widget
 {
     use HasTimelineRecords; // @todo: Refactor
     use CanLoadTimelineRecords; // @todo: Refactor
-    use InteractsWithActions;
-    use InteractsWithForms;
-    use InteractsWithInfolists;
 
     protected static string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-activity-feed-widget';
 
     #[Locked]
     public Educatable&Model $educatable;
+
+    #[Locked]
+    public string $viewUrl;
 
     public function mount(): void
     {
