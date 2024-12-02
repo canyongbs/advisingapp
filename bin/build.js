@@ -98,6 +98,12 @@ compile({
 
 compile({
     ...defaultOptions,
+    entryPoints: ['./app-modules/in-app-communication/resources/js/userToUserChat.js'],
+    outfile: './public/js/canyon-gbs/in-app-communication/userToUserChat.js',
+})
+
+compile({
+    ...defaultOptions,
     entryPoints: ['./app-modules/task/resources/js/kanban.js'],
     outfile: './public/js/canyon-gbs/task/kanban.js',
 })
