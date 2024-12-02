@@ -37,26 +37,43 @@
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        $statuses = DB::table('alert_statuses')->select('id', 'classification')->get()->toArray();
-        DB::table('histories')->where('subject_type', 'alert')->eachById(function ($alertHistory, $key) use ($statuses) {
-            $statusId = '';
-            $alertData = json_decode($alertHistory->new);
+return new class() extends Migration {
+  public function up(): void
+  {
+    $statuses = DB::table('alert_statuses')->select('id', 'classification')->get()->toArray();
+    DB::table('histories')->where('subject_type', 'alert')->eachById(function ($alertHistory, $key) use ($statuses) {
+      $statusId = '';
+      $alertData = json_decode($alertHistory->new);
 
-            foreach ($statuses as $status) {
-                if (isset($alertData->status) && $alertData->status === $status->classification) {
-                    $statusId = $status->id;
-                }
-            }
+      foreach ($statuses as $status) {
+        if (isset($alertData->status) && $alertData->status === $status->classification) {
+          $statusId = $status->id;
+          unset($alertData->status);
+          $alertData->status_id = $statusId;
+          DB::table('histories')->where('id', $alertHistory->id)->update(['new' => json_encode($alertData)]);
+          break;
+        }
+      }
+    });
+  }
 
-            unset($alertData->status);
-            $alertData->status_id = $statusId;
+  public function down(): void
+  {
+    $statuses = DB::table('alert_statuses')->select('id', 'classification')->get()->toArray();
 
-            DB::table('histories')->where('id', $alertHistory->id)->update(['new' => json_encode($alertData)]);
-        });
-    }
+    DB::table('histories')->where('subject_type', 'alert')->eachById(function ($alertHistory, $key) use ($statuses) {
+      $statusClassification = '';
+      $alertData = json_decode($alertHistory->new);
 
-    public function down(): void {}
+      foreach ($statuses as $status) {
+        if (isset($alertData->status_id) && $alertData->status_id === $status->id) {
+          $statusClassification = $status->classification;
+          unset($alertData->status_id);
+          $alertData->status = $statusClassification;
+          DB::table('histories')->where('id', $alertHistory->id)->update(['new' => json_encode($alertData)]);
+          break;
+        }
+      }
+    });
+  }
 };

@@ -95,7 +95,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
                         return $ownerRecord->alerts()->whereRelation('status', 'classification', SystemAlertStatusClassification::Active->value)->count();
                     }
 
-                    return $ownerRecord->alerts()->status(SystemAlertStatusClassification::Active->value)->count();
+                    return $ownerRecord->alerts()->alertStatus(SystemAlertStatusClassification::Active)->count();
                 },
             );
 
@@ -136,8 +136,8 @@ class ManageProspectAlerts extends ManageRelatedRecords
                     ->string(),
                 Select::make('status_id')
                     ->label('Status')
-                    ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
-                    ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
+                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('order'))
+                    ->default(fn() => SystemAlertStatusClassification::default()?->getKey())
                     ->selectablePlaceholder(false)
                     ->required()
                     ->visible(AlertStatusId::active()),
@@ -174,7 +174,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
                 SelectFilter::make('status_id')
-                    ->relationship('status', 'name')
+                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('order'))
                     ->visible(AlertStatusId::active()),
                 SelectFilter::make('status')
                     ->options(AlertStatus::class)

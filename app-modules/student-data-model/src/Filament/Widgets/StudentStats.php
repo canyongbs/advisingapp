@@ -72,7 +72,7 @@ class StudentStats extends StatsOverviewWidget
                             $query->where('classification', SystemAlertStatusClassification::Active);
                         })->count();
                     } else {
-                        return $user->studentAlerts()->status(SystemAlertStatusClassification::Active)->count();
+                        return $user->studentAlerts()->alertStatus(SystemAlertStatusClassification::Active)->count();
                     }
                 })),
             Stat::make('My Population Segments', Cache::tags(["user-{$user->getKey()}-student-segments"])

@@ -106,9 +106,9 @@ trait CanManageEducatableAlerts
                     ->visible(! AlertStatusId::active()),
                 Select::make('status_id')
                     ->label('status')
-                    ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
+                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('order'))
                     ->selectablePlaceholder(false)
-                    ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
+                    ->default(fn() => SystemAlertStatusClassification::default()?->getKey())
                     ->required()
                     ->visible(AlertStatusId::active()),
             ]);
@@ -143,7 +143,7 @@ trait CanManageEducatableAlerts
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
                 SelectFilter::make('status_id')
-                    ->relationship('status', 'name')
+                    ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('order'))
                     ->visible(AlertStatusId::active()),
                 SelectFilter::make('status')
                     ->options(SystemAlertStatusClassification::class)

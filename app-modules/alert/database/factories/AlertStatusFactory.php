@@ -38,32 +38,33 @@ namespace AdvisingApp\Alert\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\AlertStatus;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Alert\Models\Model>
+ * @extends Factory<AlertStatus>
  */
 class AlertStatusFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            'classification' => SystemAlertStatusClassification::Active,
-            'name' => fake()->word(),
-        ];
-    }
+  /**
+   * Define the model's default state.
+   *
+   * @return array<string, mixed>
+   */
+  public function definition(): array
+  {
+    return [
+      'classification' => SystemAlertStatusClassification::Active,
+      'name' => fake()->word(),
+    ];
+  }
 
-    public function resolved(): self
-    {
-        return $this->state(fn () => ['classification' => SystemAlertStatusClassification::Resolved]);
-    }
+  public function resolved(): self
+  {
+    return $this->state(fn() => ['classification' => SystemAlertStatusClassification::Resolved]);
+  }
 
-    public function canceled(): self
-    {
-        return $this->state(fn () => ['classification' => SystemAlertStatusClassification::Canceled]);
-    }
+  public function canceled(): self
+  {
+    return $this->state(fn() => ['classification' => SystemAlertStatusClassification::Canceled]);
+  }
 }

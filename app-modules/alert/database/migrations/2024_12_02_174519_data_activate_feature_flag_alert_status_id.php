@@ -1,3 +1,4 @@
+data_activate_feature_flag_alert_status_id
 <?php
 
 /*
@@ -37,7 +38,7 @@
 use App\Features\AlertStatusId;
 use Illuminate\Database\Migrations\Migration;
 
-return new class () extends Migration {
+return new class() extends Migration {
     public function up(): void
     {
         AlertStatusId::activate();

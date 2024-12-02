@@ -113,6 +113,11 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
         return $this->concern instanceof Subscribable ? $this->concern : null;
     }
 
+    public function scopeAlertStatus(Builder $query, AlertStatus $status): void
+    {
+        $query->where('status', $status);
+    }
+
     public function status(): BelongsTo
     {
         return $this->belongsTo(AlertStatus::class, 'status_id');
