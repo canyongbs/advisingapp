@@ -2907,13 +2907,13 @@
             },
             "type": "package",
             "extra": {
+                "aliases": {
+                    "TiptapConverter": "FilamentTiptapEditor\\Facades\\TiptapConverter"
+                },
                 "laravel": {
                     "providers": [
                         "FilamentTiptapEditor\\FilamentTiptapEditorServiceProvider"
                     ]
-                },
-                "aliases": {
-                    "TiptapConverter": "FilamentTiptapEditor\\Facades\\TiptapConverter"
                 }
             },
             "autoload": {
