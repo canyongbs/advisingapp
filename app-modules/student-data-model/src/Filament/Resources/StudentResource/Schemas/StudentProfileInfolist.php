@@ -54,6 +54,7 @@ class StudentProfileInfolist
                             TextEntry::make('tags.name')
                                 ->label('Tags')
                                 ->badge()
+                                ->placeholder('-')
                                 ->visible(fn (): bool => TagFeatureFlag::active()),
                             TextEntry::make('email_2')
                                 ->label('Alternate Email')

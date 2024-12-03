@@ -152,7 +152,7 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
                             }
 
                             $query->whereHas('tags', function (Builder $query) use ($data) {
-                                $query->whereIn('tag_id', $data['values'])->where('taggable_type', 'student');
+                                $query->whereIn('tag_id', $data['values']);
                             });
                         }
                     )->visible(fn (): bool => TagFeatureFlag::active()),

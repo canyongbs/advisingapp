@@ -345,7 +345,8 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         )
             ->using(Taggable::class)
             ->withPivot(['tag_id'])
-            ->withTimestamps()->where('type', TagType::Student);
+            ->withTimestamps()
+            ->where('type', TagType::Student);
     }
 
     protected static function booted(): void

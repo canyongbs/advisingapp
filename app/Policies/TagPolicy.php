@@ -39,16 +39,78 @@ namespace App\Policies;
 use App\Models\Tag;
 use App\Enums\TagType;
 use App\Models\Authenticatable;
+use Illuminate\Auth\Access\Response;
 
 class TagPolicy
 {
-    public function delete(Authenticatable $authenticatable, Tag $tag)
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return ($tag->type?->name === TagType::Student && ! $tag->students()->exists()) || ($tag->type?->name === TagType::Prospect && ! $tag->prospects()->exists());
+        return $authenticatable->canOrElse(
+            abilities: ['product_admin.view-any'],
+            denyResponse: 'You do not have permission to view tags.'
+        );
     }
 
-    public function forceDelete(Authenticatable $authenticatable, Tag $tag)
+    public function view(Authenticatable $authenticatable, Tag $tag): Response
     {
-        return ($tag->type?->name === TagType::Student && ! $tag->students()->exists()) || ($tag->type?->name === TagType::Prospect && ! $tag->prospects()->exists());
+        return $authenticatable->canOrElse(
+            abilities: ["product_admin.{$tag->id}.view"],
+            denyResponse: 'You do not have permission to view this tag.'
+        );
+    }
+
+    public function create(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'product_admin.create',
+            denyResponse: 'You do not have permission to create tags.'
+        );
+    }
+
+    public function import(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'product_admin.import',
+            denyResponse: 'You do not have permission to import tags.',
+        );
+    }
+
+    public function update(Authenticatable $authenticatable, Tag $tag): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ["product_admin.{$tag->id}.update"],
+            denyResponse: 'You do not have permission to update this tag.'
+        );
+    }
+
+    public function delete(Authenticatable $authenticatable, Tag $tag): Response
+    {
+        if (($tag->type === TagType::Student && $tag->students()->exists()) || ($tag->type === TagType::Prospect && $tag->prospects()->exists())) {
+            return Response::deny('Delete access denided as tag is used in other records');
+        }
+
+        return $authenticatable->canOrElse(
+            abilities: ["product_admin.{$tag->id}.delete"],
+            denyResponse: 'You do not have permission to delete this tag.'
+        );
+    }
+
+    public function restore(Authenticatable $authenticatable, Tag $tag): bool
+    {
+        return $authenticatable->can(
+            abilities: ["product_admin.{$tag->id}.restore"],
+        );
+    }
+
+    public function forceDelete(Authenticatable $authenticatable, Tag $tag): Response
+    {
+        if (($tag->type === TagType::Student && $tag->students()->exists()) || ($tag->type === TagType::Prospect && $tag->prospects()->exists())) {
+            return Response::deny('Delete access denided as tag is used in other records');
+        }
+
+        return $authenticatable->canOrElse(
+            abilities: ["product_admin.{$tag->id}.force-delete"],
+            denyResponse: 'You do not have permission to permanently delete this tag.'
+        );
     }
 }

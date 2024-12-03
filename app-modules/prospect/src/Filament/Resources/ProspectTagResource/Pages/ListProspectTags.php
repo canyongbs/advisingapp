@@ -57,7 +57,6 @@ class ListProspectTags extends ListRecords
                 TextColumn::make('created_at')
                     ->label('Created At'),
             ])
-            ->filters([])
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),

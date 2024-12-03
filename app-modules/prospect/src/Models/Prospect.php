@@ -343,7 +343,8 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         )
             ->using(Taggable::class)
             ->withPivot(['tag_id'])
-            ->withTimestamps()->where('type', TagType::Prospect);
+            ->withTimestamps()
+            ->where('type', TagType::Prospect);
     }
 
     protected static function booted(): void

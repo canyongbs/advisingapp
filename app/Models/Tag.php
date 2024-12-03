@@ -37,20 +37,18 @@
 namespace App\Models;
 
 use App\Enums\TagType;
-use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
-class Tag extends Model implements Auditable
+class Tag extends BaseModel implements Auditable
 {
     use HasFactory;
     use SoftDeletes;
-    use HasUuids;
     use AuditableTrait;
 
     protected $fillable = [
@@ -62,13 +60,15 @@ class Tag extends Model implements Auditable
         'type' => TagType::class,
     ];
 
-    public function prospects()
+    public function prospects(): MorphToMany
     {
-        return $this->morphedByMany(Prospect::class, 'taggable');
+        return $this->morphedByMany(Prospect::class, 'taggable')
+            ->using(Taggable::class);
     }
 
-    public function students()
+    public function students(): MorphToMany
     {
-        return $this->morphedByMany(Student::class, 'taggable');
+        return $this->morphedByMany(Student::class, 'taggable')
+            ->using(Taggable::class);
     }
 }

@@ -55,18 +55,15 @@ class ProspectTagResource extends Resource
 
     protected static ?string $navigationLabel = 'Tags';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 50;
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static ?string $navigationGroup = 'Prospect Management';
+    protected static ?string $navigationGroup = 'Prospects';
 
     public static function canAccess(): bool
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return TagFeatureFlag::active() && $user->can('prospect.tags.manage');
+        return TagFeatureFlag::active() && parent::canAccess();
     }
 
     public static function getPages(): array

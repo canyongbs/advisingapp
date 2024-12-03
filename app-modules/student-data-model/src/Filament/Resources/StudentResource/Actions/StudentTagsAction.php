@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions;
 
 use App\Models\Tag;
 use App\Enums\TagType;
@@ -42,34 +42,34 @@ use Filament\Actions\Action;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
-use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-class ProspectTagAction extends Action
+class StudentTagsAction extends Action
 {
     protected function setUp(): void
     {
         parent::setUp();
 
         $this
-            ->modalHeading('Prospect Tag')
+            ->modalHeading('Student Tags')
             ->modalWidth(MaxWidth::ExtraLarge)
             ->modalSubmitActionLabel('Save')
             ->form([
-                Select::make('tag_id')
-                    ->options(fn (): array => Tag::where('type', TagType::Prospect)->pluck('name', 'id')->toArray())
+                Select::make('tag_ids')
+                    ->options(fn (): array => Tag::where('type', TagType::Student)->pluck('name', 'id')->toArray())
                     ->required()
                     ->label('Tag')
                     ->multiple()
                     ->required()
-                    ->default(fn (?Prospect $record): array => $record ? $record->tags->pluck('id')->toArray() : [])
+                    ->default(fn (?Student $record): array => $record ? $record->tags->pluck('id')->toArray() : [])
                     ->searchable(),
             ])
-            ->action(function (array $data, Prospect $record) {
-                $record->tags()->sync($data['tag_id']);
+            ->action(function (array $data, Student $record) {
+                $record->tags()->sync($data['tag_ids']);
                 $record->save();
 
                 Notification::make()
-                    ->title('Tags added to prospect.')
+                    ->title('Tags succesfully modified.')
                     ->success()
                     ->send();
             });

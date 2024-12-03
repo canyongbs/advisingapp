@@ -48,7 +48,7 @@ use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ProspectTagAction;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ProspectTagsAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
 
 class ViewProspect extends ViewRecord
@@ -116,6 +116,7 @@ class ViewProspect extends ViewRecord
                         TextEntry::make('tags.name')
                             ->label('Tags')
                             ->badge()
+                            ->placeholder('-')
                             ->visible(fn (): bool => TagFeatureFlag::active()),
                     ])
                     ->columns(2),
@@ -141,7 +142,7 @@ class ViewProspect extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            ProspectTagAction::make()->visible(fn (): bool => TagFeatureFlag::active() && auth()->user()?->can('prospect.tags.manage')),
+            ProspectTagsAction::make()->visible(fn (): bool => TagFeatureFlag::active() && auth()->user()?->can('prospect.tags.manage')),
             ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists()),
             DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists()),
             EditAction::make(),
