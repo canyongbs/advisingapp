@@ -51,7 +51,6 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspec
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEvents;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectCareTeam;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectPrograms;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectCaseManagement;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEngagement;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectInteractions;
@@ -89,7 +88,6 @@ class ProspectResource extends Resource
             ManageProspectApplicationSubmissions::class,
             ProspectCaseManagement::class,
             ManageProspectEvents::class,
-            ManageProspectPrograms::class,
         ]);
     }
 
@@ -142,7 +140,6 @@ class ProspectResource extends Resource
             'care-team' => ManageProspectCareTeam::route('/{record}/care-team'),
             'case-management' => ProspectCaseManagement::route('/{record}/case-management'),
             'events' => ManageProspectEvents::route('/{record}/events'),
-            'programs' => ManageProspectPrograms::route('/{record}/programs'),
         ];
     }
 }

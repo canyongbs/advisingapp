@@ -39,7 +39,6 @@ namespace AdvisingApp\CaseManagement\Models;
 use Exception;
 use App\Models\BaseModel;
 use Illuminate\Support\Str;
-use App\Features\CaseManagement;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Division\Models\Division;
@@ -70,7 +69,7 @@ class CaseHistory extends BaseModel implements ProvidesATimeline
 
     public function getTable()
     {
-        return CaseManagement::active() ? 'case_histories' : 'service_request_histories';
+        return 'case_histories';
     }
 
     public function case(): BelongsTo

@@ -37,7 +37,6 @@
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages;
 
 use Filament\Tables\Table;
-use App\Features\ResourceHub;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -202,7 +201,7 @@ class ListResourceHubArticles extends ListRecords
     {
         return [
             CreateAction::make()
-                ->disabled(fn (): bool => ! ResourceHub::active() ? ! auth()->user()->can('knowledge_base_article.create') : ! auth()->user()->can('resource_hub_article.create'))
+                ->disabled(fn (): bool => ! auth()->user()->can('resource_hub_article.create'))
                 ->label('New Article')
                 ->createAnother(false)
                 ->successRedirectUrl(fn (Model $record): string => ResourceHubArticleResource::getUrl('edit', ['record' => $record])),

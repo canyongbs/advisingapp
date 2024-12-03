@@ -38,7 +38,6 @@ namespace AdvisingApp\CaseManagement\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
-use App\Features\CaseManagement;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -73,7 +72,7 @@ class CaseAssignment extends BaseModel implements Auditable, CanTriggerAutoSubsc
 
     public function getTable()
     {
-        return CaseManagement::active() ? 'case_assignments' : 'service_request_assignments';
+        return 'case_assignments';
     }
 
     public function user(): BelongsTo

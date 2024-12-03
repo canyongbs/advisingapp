@@ -37,7 +37,6 @@
 namespace AdvisingApp\ResourceHub\Policies;
 
 use App\Enums\Feature;
-use App\Features\ResourceHub;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use App\Concerns\PerformsFeatureChecks;
@@ -66,106 +65,57 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (ResourceHub::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'resource_hub_category.view-any',
-                denyResponse: 'You do not have permission to view resource hub categories.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'knowledge_base_category.view-any',
-            denyResponse: 'You do not have permissions to view knowledge base categories.'
+            abilities: 'resource_hub_category.view-any',
+            denyResponse: 'You do not have permission to view resource hub categories.'
         );
     }
 
     public function view(Authenticatable $authenticatable, ResourceHubCategory $resourceHubCategory): Response
     {
-        if (ResourceHub::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["resource_hub_category.{$resourceHubCategory->id}.view"],
-                denyResponse: 'You do not have permission to view this resource hub category.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["knowledge_base_category.{$resourceHubCategory->id}.view"],
-            denyResponse: 'You do not have permissions to view this knowledge base category.'
+            abilities: ["resource_hub_category.{$resourceHubCategory->id}.view"],
+            denyResponse: 'You do not have permission to view this resource hub category.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (ResourceHub::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'resource_hub_category.create',
-                denyResponse: 'You do not have permission to create resource hub categories.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'knowledge_base_category.create',
-            denyResponse: 'You do not have permissions to create knowledge base categories.'
+            abilities: 'resource_hub_category.create',
+            denyResponse: 'You do not have permission to create resource hub categories.'
         );
     }
 
     public function update(Authenticatable $authenticatable, ResourceHubCategory $resourceHubCategory): Response
     {
-        if (ResourceHub::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["resource_hub_category.{$resourceHubCategory->id}.update"],
-                denyResponse: 'You do not have permission to update this resource hub category.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["knowledge_base_category.{$resourceHubCategory->id}.update"],
-            denyResponse: 'You do not have permissions to update this knowledge base category.'
+            abilities: ["resource_hub_category.{$resourceHubCategory->id}.update"],
+            denyResponse: 'You do not have permission to update this resource hub category.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, ResourceHubCategory $resourceHubCategory): Response
     {
-        if (ResourceHub::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["resource_hub_category.{$resourceHubCategory->id}.delete"],
-                denyResponse: 'You do not have permissions to delete this resource hub category.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["knowledge_base_category.{$resourceHubCategory->id}.delete"],
-            denyResponse: 'You do not have permissions to delete this knowledge base category.'
+            abilities: ["resource_hub_category.{$resourceHubCategory->id}.delete"],
+            denyResponse: 'You do not have permissions to delete this resource hub category.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, ResourceHubCategory $resourceHubCategory): Response
     {
-        if (ResourceHub::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["resource_hub_category.{$resourceHubCategory->id}.restore"],
-                denyResponse: 'You do not have permission to restore this resource hub category.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["knowledge_base_category.{$resourceHubCategory->id}.restore"],
-            denyResponse: 'You do not have permissions to restore this knowledge base category.'
+            abilities: ["resource_hub_category.{$resourceHubCategory->id}.restore"],
+            denyResponse: 'You do not have permission to restore this resource hub category.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, ResourceHubCategory $resourceHubCategory): Response
     {
-        if (ResourceHub::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["resource_hub_category.{$resourceHubCategory->id}.force-delete"],
-                denyResponse: 'You do not have permission to permanently delete this resource hub category.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["knowledge_base_category.{$resourceHubCategory->id}.force-delete"],
-            denyResponse: 'You do not have permissions to permanently delete this resource hub category.'
+            abilities: ["resource_hub_category.{$resourceHubCategory->id}.force-delete"],
+            denyResponse: 'You do not have permission to permanently delete this resource hub category.'
         );
     }
 

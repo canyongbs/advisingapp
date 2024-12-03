@@ -38,7 +38,6 @@ namespace AdvisingApp\CaseManagement\Policies;
 
 use App\Enums\Feature;
 use App\Models\Authenticatable;
-use App\Features\CaseManagement;
 use Illuminate\Auth\Access\Response;
 use App\Concerns\PerformsFeatureChecks;
 use App\Concerns\PerformsLicenseChecks;
@@ -66,106 +65,57 @@ class CaseFormPolicy implements PerformsChecksBeforeAuthorization
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'case_form.view-any',
-                denyResponse: 'You do not have permission to view case forms.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'service_request_form.view-any',
-            denyResponse: 'You do not have permission to view service request forms.'
+            abilities: 'case_form.view-any',
+            denyResponse: 'You do not have permission to view case forms.'
         );
     }
 
     public function view(Authenticatable $authenticatable, CaseForm $caseForm): Response
     {
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["case_form.{$caseForm->id}.view"],
-                denyResponse: 'You do not have permission to view this case form.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["service_request_form.{$caseForm->id}.view"],
-            denyResponse: 'You do not have permission to view this service request form.'
+            abilities: ["case_form.{$caseForm->id}.view"],
+            denyResponse: 'You do not have permission to view this case form.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'case_form.create',
-                denyResponse: 'You do not have permission to create case forms.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'service_request_form.create',
-            denyResponse: 'You do not have permission to create service request forms.'
+            abilities: 'case_form.create',
+            denyResponse: 'You do not have permission to create case forms.'
         );
     }
 
     public function update(Authenticatable $authenticatable, CaseForm $caseForm): Response
     {
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["case_form.{$caseForm->id}.update"],
-                denyResponse: 'You do not have permission to update this case form.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["service_request_form.{$caseForm->id}.update"],
-            denyResponse: 'You do not have permission to update this service request form.'
+            abilities: ["case_form.{$caseForm->id}.update"],
+            denyResponse: 'You do not have permission to update this case form.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, CaseForm $caseForm): Response
     {
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["case_form.{$caseForm->id}.delete"],
-                denyResponse: 'You do not have permission to delete this case form.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["service_request_form.{$caseForm->id}.delete"],
-            denyResponse: 'You do not have permission to delete this service request form.'
+            abilities: ["case_form.{$caseForm->id}.delete"],
+            denyResponse: 'You do not have permission to delete this case form.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, CaseForm $caseForm): Response
     {
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["case_form.{$caseForm->id}.restore"],
-                denyResponse: 'You do not have permission to restore this case form.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["service_request_form.{$caseForm->id}.restore"],
-            denyResponse: 'You do not have permission to restore this service request form.'
+            abilities: ["case_form.{$caseForm->id}.restore"],
+            denyResponse: 'You do not have permission to restore this case form.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, CaseForm $caseForm): Response
     {
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["case_form.{$caseForm->id}.force-delete"],
-                denyResponse: 'You do not have permission to permanently delete this case form.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["service_request_form.{$caseForm->id}.force-delete"],
-            denyResponse: 'You do not have permission to permanently delete this service request form.'
+            abilities: ["case_form.{$caseForm->id}.force-delete"],
+            denyResponse: 'You do not have permission to permanently delete this case form.'
         );
     }
 

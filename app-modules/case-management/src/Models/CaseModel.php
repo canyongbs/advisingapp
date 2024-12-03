@@ -41,7 +41,6 @@ use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Carbon\CarbonInterface;
-use App\Features\CaseManagement;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\DB;
 use Kirschbaum\PowerJoins\PowerJoins;
@@ -109,7 +108,7 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
 
     public function getTable()
     {
-        return CaseManagement::active() ? 'cases' : 'service_requests';
+        return 'cases';
     }
 
     public function save(array $options = [])
@@ -175,11 +174,7 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
 
     public function caseUpdates(): HasMany
     {
-        if (CaseManagement::active()) {
-            return $this->hasMany(CaseUpdate::class);
-        }
-
-        return $this->hasMany(CaseUpdate::class, 'service_request_id');
+        return $this->hasMany(CaseUpdate::class);
     }
 
     public function status(): BelongsTo
@@ -194,11 +189,7 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
 
     public function caseFormSubmission(): BelongsTo
     {
-        if (CaseManagement::active()) {
-            return $this->belongsTo(CaseFormSubmission::class, 'case_form_submission_id');
-        }
-
-        return $this->belongsTo(CaseFormSubmission::class, 'service_request_form_submission_id');
+        return $this->belongsTo(CaseFormSubmission::class, 'case_form_submission_id');
     }
 
     public function assignments(): HasMany
@@ -278,18 +269,7 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
 
     public function latestInboundCaseUpdate(): HasOne
     {
-        if (CaseManagement::active()) {
-            return $this->hasOne(CaseUpdate::class)
-                ->ofMany([
-                    'created_at' => 'max',
-                ], function (Builder $query) {
-                    $query
-                        ->where('direction', CaseUpdateDirection::Inbound)
-                        ->where('internal', false);
-                });
-        }
-
-        return $this->hasOne(CaseUpdate::class, 'service_request_id')
+        return $this->hasOne(CaseUpdate::class)
             ->ofMany([
                 'created_at' => 'max',
             ], function (Builder $query) {
@@ -301,18 +281,7 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
 
     public function latestOutboundCaseUpdate(): HasOne
     {
-        if (CaseManagement::active()) {
-            return $this->hasOne(CaseUpdate::class)
-                ->ofMany([
-                    'created_at' => 'max',
-                ], function (Builder $query) {
-                    $query
-                        ->where('direction', CaseUpdateDirection::Outbound)
-                        ->where('internal', false);
-                });
-        }
-
-        return $this->hasOne(CaseUpdate::class, 'service_request_id')
+        return $this->hasOne(CaseUpdate::class)
             ->ofMany([
                 'created_at' => 'max',
             ], function (Builder $query) {

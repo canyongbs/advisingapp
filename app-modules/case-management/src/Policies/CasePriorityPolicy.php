@@ -38,7 +38,6 @@ namespace AdvisingApp\CaseManagement\Policies;
 
 use App\Enums\Feature;
 use App\Models\Authenticatable;
-use App\Features\CaseManagement;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
 use App\Support\FeatureAccessResponse;
@@ -65,106 +64,57 @@ class CasePriorityPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'case_priority.view-any',
-                denyResponse: 'You do not have permissions to view case priorities.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'service_request_priority.view-any',
-            denyResponse: 'You do not have permissions to view service request priorities.'
+            abilities: 'case_priority.view-any',
+            denyResponse: 'You do not have permissions to view case priorities.'
         );
     }
 
     public function view(Authenticatable $authenticatable, CasePriority $casePriority): Response
     {
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["case_priority.{$casePriority->id}.view"],
-                denyResponse: 'You do not have permissions to view this case priority.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["service_request_priority.{$casePriority->id}.view"],
-            denyResponse: 'You do not have permissions to view this service request priority.'
+            abilities: ["case_priority.{$casePriority->id}.view"],
+            denyResponse: 'You do not have permissions to view this case priority.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'case_priority.create',
-                denyResponse: 'You do not have permissions to create case priorities.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'service_request_priority.create',
-            denyResponse: 'You do not have permissions to create service request priorities.'
+            abilities: 'case_priority.create',
+            denyResponse: 'You do not have permissions to create case priorities.'
         );
     }
 
     public function update(Authenticatable $authenticatable, CasePriority $casePriority): Response
     {
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["case_priority.{$casePriority->id}.update"],
-                denyResponse: 'You do not have permissions to update this case priority.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["service_request_priority.{$casePriority->id}.update"],
-            denyResponse: 'You do not have permissions to update this service request priority.'
+            abilities: ["case_priority.{$casePriority->id}.update"],
+            denyResponse: 'You do not have permissions to update this case priority.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, CasePriority $casePriority): Response
     {
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["case_priority.{$casePriority->id}.delete"],
-                denyResponse: 'You do not have permissions to delete this case priority.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["service_request_priority.{$casePriority->id}.delete"],
-            denyResponse: 'You do not have permissions to delete this service request priority.'
+            abilities: ["case_priority.{$casePriority->id}.delete"],
+            denyResponse: 'You do not have permissions to delete this case priority.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, CasePriority $casePriority): Response
     {
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["case_priority.{$casePriority->id}.restore"],
-                denyResponse: 'You do not have permissions to restore this case priority.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["service_request_priority.{$casePriority->id}.restore"],
-            denyResponse: 'You do not have permissions to restore this service request priority.'
+            abilities: ["case_priority.{$casePriority->id}.restore"],
+            denyResponse: 'You do not have permissions to restore this case priority.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, CasePriority $casePriority): Response
     {
-        if (CaseManagement::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ["case_priority.{$casePriority->id}.force-delete"],
-                denyResponse: 'You do not have permissions to force delete this case priority.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["service_request_priority.{$casePriority->id}.force-delete"],
-            denyResponse: 'You do not have permissions to force delete this service request priority.'
+            abilities: ["case_priority.{$casePriority->id}.force-delete"],
+            denyResponse: 'You do not have permissions to force delete this case priority.'
         );
     }
 
