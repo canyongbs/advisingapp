@@ -236,7 +236,7 @@ it('does not match a default assistant if one belongs to a different application
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::ReportAssistant,
+        'application' => AiApplication::NonExistantApplication, /** @phpstan-ignore-line */
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -252,11 +252,11 @@ it('does not match a default assistant if one belongs to a different application
     $settings->default_model = AiModel::Test;
     $settings->save();
 
-    $newThread = app(CreateThread::class)(AiApplication::Test);
+    $newThread = app(CreateThread::class)(AiApplication::PersonalAssistant);
 
     expect($newThread->getKey())
         ->not->toBe($thread->getKey());
-});
+})->skip('There are no alternative assistant applications to test this with yet.');
 
 it('does not match an assistant if it is not marked as default', function () {
     asSuperAdmin();

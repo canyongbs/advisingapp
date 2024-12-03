@@ -116,7 +116,7 @@ enum AiModel: string implements HasLabel
     {
         return match ($this) {
             self::OpenAiGpt35, self::OpenAiGpt4o, self::OpenAiGpt4oMini => $aiApplication === AiApplication::PersonalAssistant,
-            self::OpenAiGpt4 => $aiApplication === AiApplication::ReportAssistant,
+            self::OpenAiGpt4 => false,
             self::OpenAiGptTest => false,
             self::Test => true,
         };

@@ -159,7 +159,6 @@ class CreateTenant extends Command
                     eventManagement: true,
                     realtimeChat: true,
                     mobileApps: true,
-                    experimentalReporting: true,
                     scheduleAndAppointments: true,
                 ),
             ),

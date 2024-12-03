@@ -39,7 +39,6 @@ namespace App\Filament\Pages;
 use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
-use Filament\Actions\Action;
 use App\Models\Authenticatable;
 use Filament\Pages\SettingsPage;
 use App\Settings\LicenseSettings;
@@ -160,11 +159,6 @@ class ManageLicenseSettings extends SettingsPage
                                 ->label('Realtime Chat'),
                             Toggle::make('data.addons.mobileApps')
                                 ->label('Mobile Apps'),
-                            Toggle::make('data.addons.experimentalReporting')
-                                ->label('Experimental Reporting')
-                                ->disabled(fn (LicenseSettings $settings): bool => $settings->data->limits->conversationalAiSeats < 1)
-                                ->live()
-                                ->afterStateUpdated(fn (Toggle $component, $state) => $state ? $component->state(false) && $this->mountAction('enableExperimentalReporting') : null),
                             Toggle::make('data.addons.scheduleAndAppointments')
                                 ->label('Schedule & Appointments'),
                             Toggle::make('data.addons.customAiAssistants')
@@ -173,15 +167,6 @@ class ManageLicenseSettings extends SettingsPage
                     ),
             ])
             ->disabled(! config('app.allow_license_settings_editing'));
-    }
-
-    public function enableExperimentalReporting(): Action
-    {
-        return Action::make('enableExperimentalReporting')
-            ->color('danger')
-            ->requiresConfirmation()
-            ->modalDescription('Experimental reporting is not currently a reliable method to explore your data, but is representative of a capability in research and development at Canyon GBS to innovatively extend AI to allow you to explore your data through natural language processing. This feature should be used for educational purposes only, and should not be be relied upon for decision making at your institution.')
-            ->action(fn () => $this->data['data']['addons']['experimentalReporting'] = true);
     }
 
     protected function mutateFormDataBeforeSave(array $data): array

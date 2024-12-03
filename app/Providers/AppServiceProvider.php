@@ -93,6 +93,8 @@ class AppServiceProvider extends ServiceProvider
                 return $app->make(CacheFactory::class);
             });
         });
+
+        $this->loadMigrationsFrom(database_path('migrations/Legacy'));
     }
 
     /**

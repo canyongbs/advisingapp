@@ -57,8 +57,6 @@ enum Feature: string
 
     case MobileApps = 'mobile-apps';
 
-    case ExperimentalReporting = 'experimental-reporting';
-
     case ScheduleAndAppointments = 'schedule-and-appointments';
 
     case CustomAiAssistants = 'custom-ai-assistants';
