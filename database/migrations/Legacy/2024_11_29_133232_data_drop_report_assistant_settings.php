@@ -57,4 +57,20 @@ return new class () extends SettingsMigration {
             isEncrypted: true,
         );
     }
+
+    public function down(): void
+    {
+        $this->updateSettings(
+            group: 'license',
+            name: 'data',
+            modifyPayload: function (array $data) {
+                $data['addons']['experimentalReporting'] = false;
+
+                return $data;
+            },
+            isEncrypted: true,
+        );
+
+        $this->migrator->add('report_assistant.prompt_system_context');
+    }
 };
