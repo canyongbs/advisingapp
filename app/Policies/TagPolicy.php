@@ -67,14 +67,6 @@ class TagPolicy
         );
     }
 
-    public function import(Authenticatable $authenticatable): Response
-    {
-        return $authenticatable->canOrElse(
-            abilities: 'product_admin.import',
-            denyResponse: 'You do not have permission to import tags.',
-        );
-    }
-
     public function update(Authenticatable $authenticatable, Tag $tag): Response
     {
         return $authenticatable->canOrElse(
