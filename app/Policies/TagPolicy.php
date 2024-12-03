@@ -95,10 +95,11 @@ class TagPolicy
         );
     }
 
-    public function restore(Authenticatable $authenticatable, Tag $tag): bool
+    public function restore(Authenticatable $authenticatable, Tag $tag): Response
     {
-        return $authenticatable->can(
+        return $authenticatable->canOrElse(
             abilities: ["product_admin.{$tag->id}.restore"],
+            denyResponse: 'You do not have permission to restore this tag.'
         );
     }
 
