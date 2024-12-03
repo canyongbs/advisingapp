@@ -34,37 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+namespace App\Features;
 
-use App\Features\TwilioDemoAutoReplyModeFeature;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
-use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
-use AdvisingApp\Engagement\Notifications\EngagementSmsNotification;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
+use App\Support\AbstractFeatureFlag;
 
-class EngagementSmsChannelDelivery extends QueuedEngagementDelivery
+class TwilioDemoAutoReplyModeFeature extends AbstractFeatureFlag
 {
-    public function deliver(): void
+    public function resolve(mixed $scope): mixed
     {
-        $recipient = $this->deliverable->engagement->recipient;
-
-        if (! $recipient->canRecieveSms()) {
-            $this->deliverable->update([
-                'delivery_status' => EngagementDeliveryStatus::DispatchFailed,
-                'last_delivery_attempt' => now(),
-                'delivery_response' => 'System determined recipient cannot receive SMS messages.',
-            ]);
-
-            return;
-        }
-
-        $recipient->notifyNow(new EngagementSmsNotification($this->deliverable));
-
-        if (TwilioDemoAutoReplyModeFeature::active() && app(TwilioSettings::class)->is_demo_auto_reply_mode_enabled) {
-            app(CreateEngagementResponse::class)(EngagementResponseData::from([
-                'from' => $this->deliverable->engagement->recipient->routeNotificationForSms(),
-                'body' => 'Just got your message, thanks for sending over these details.',
-            ]));
-        }
+        return false;
     }
 }
