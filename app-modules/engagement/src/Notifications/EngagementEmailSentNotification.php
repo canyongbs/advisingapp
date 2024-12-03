@@ -59,18 +59,22 @@ class EngagementEmailSentNotification extends BaseNotification implements EmailN
 
     public function toEmail(object $notifiable): MailMessage
     {
+        $morph = str($this->engagement->recipient->getMorphClass());
+
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
             ->subject('Your Engagement email has successfully been delivered.')
-            ->line("Your engagement was successfully delivered to {$this->engagement->recipient->display_name}.");
+            ->line("Your engagement was successfully delivered to {$morph} {$this->engagement->recipient->display_name}.");
     }
 
     public function toDatabase(object $notifiable): array
     {
+        $morph = str($this->engagement->recipient->getMorphClass());
+
         return FilamentNotification::make()
             ->success()
             ->title('Engagement Email Successfully Delivered')
-            ->body("Your engagement email was successfully delivered to {$this->engagement->recipient->display_name}.")
+            ->body("Your engagement email was successfully delivered to {$morph} {$this->engagement->recipient->display_name}.")
             ->getDatabaseMessage();
     }
 
