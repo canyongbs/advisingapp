@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,40 +32,38 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@props(['managers'])
+*/
 
-@php
-    use Illuminate\Support\Js;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages;
 
-    $managers = array_filter($managers, fn(string $manager): bool => $manager::canViewForRecord($this->getRecord(), static::class));
-@endphp
+use Filament\Actions\EditAction;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource;
 
-@if ($managers)
-    <div
-        x-data="{ activeTab: @js(array_key_first($managers)) }"
-        {{ $attributes->class(['flex flex-col gap-3']) }}
-    >
-        <x-filament::tabs>
-            @foreach ($managers as $managerKey => $manager)
-                <x-filament::tabs.item :alpine-active="'activeTab === ' . Js::from($managerKey)" :x-on:click="'activeTab = ' . Js::from($managerKey)">
-                    {{ $manager::getTitle($this->getRecord(), static::class) }}
-                </x-filament::tabs.item>
-            @endforeach
-        </x-filament::tabs>
+class ViewProspectTag extends ViewRecord
+{
+    protected static string $resource = ProspectTagResource::class;
 
-        @foreach ($managers as $managerKey => $manager)
-            <div x-show="activeTab === @js($managerKey)">
-                @livewire(
-                    $manager,
-                    [
-                        'ownerRecord' => $this->getRecord(),
-                        'pageClass' => static::class,
-                        'lazy' => $loop->first ? false : 'on-load',
-                    ],
-                    key('relation-manager-' . $managerKey)
-                )
-            </div>
-        @endforeach
-    </div>
-@endif
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name')
+                            ->label('Name'),
+                    ])
+                    ->columns(),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            EditAction::make(),
+        ];
+    }
+}

@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,40 +32,51 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@props(['managers'])
+*/
 
-@php
-    use Illuminate\Support\Js;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions;
 
-    $managers = array_filter($managers, fn(string $manager): bool => $manager::canViewForRecord($this->getRecord(), static::class));
-@endphp
+use App\Models\Tag;
+use App\Enums\TagType;
+use Filament\Actions\Action;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-@if ($managers)
-    <div
-        x-data="{ activeTab: @js(array_key_first($managers)) }"
-        {{ $attributes->class(['flex flex-col gap-3']) }}
-    >
-        <x-filament::tabs>
-            @foreach ($managers as $managerKey => $manager)
-                <x-filament::tabs.item :alpine-active="'activeTab === ' . Js::from($managerKey)" :x-on:click="'activeTab = ' . Js::from($managerKey)">
-                    {{ $manager::getTitle($this->getRecord(), static::class) }}
-                </x-filament::tabs.item>
-            @endforeach
-        </x-filament::tabs>
+class StudentTagsAction extends Action
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-        @foreach ($managers as $managerKey => $manager)
-            <div x-show="activeTab === @js($managerKey)">
-                @livewire(
-                    $manager,
-                    [
-                        'ownerRecord' => $this->getRecord(),
-                        'pageClass' => static::class,
-                        'lazy' => $loop->first ? false : 'on-load',
-                    ],
-                    key('relation-manager-' . $managerKey)
-                )
-            </div>
-        @endforeach
-    </div>
-@endif
+        $this
+            ->modalHeading('Student Tags')
+            ->modalWidth(MaxWidth::ExtraLarge)
+            ->modalSubmitActionLabel('Save')
+            ->form([
+                Select::make('tag_ids')
+                    ->options(fn (): array => Tag::where('type', TagType::Student)->pluck('name', 'id')->toArray())
+                    ->required()
+                    ->label('Tag')
+                    ->multiple()
+                    ->required()
+                    ->default(fn (?Student $record): array => $record ? $record->tags->pluck('id')->toArray() : [])
+                    ->searchable(),
+            ])
+            ->action(function (array $data, Student $record) {
+                $record->tags()->sync($data['tag_ids']);
+                $record->save();
+
+                Notification::make()
+                    ->title('Tags succesfully modified.')
+                    ->success()
+                    ->send();
+            });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'Tags';
+    }
+}

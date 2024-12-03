@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,40 +32,42 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@props(['managers'])
+*/
 
-@php
-    use Illuminate\Support\Js;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
+use Database\Migrations\Concerns\CanModifyPermissions;
 
-    $managers = array_filter($managers, fn(string $manager): bool => $manager::canViewForRecord($this->getRecord(), static::class));
-@endphp
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-@if ($managers)
-    <div
-        x-data="{ activeTab: @js(array_key_first($managers)) }"
-        {{ $attributes->class(['flex flex-col gap-3']) }}
-    >
-        <x-filament::tabs>
-            @foreach ($managers as $managerKey => $manager)
-                <x-filament::tabs.item :alpine-active="'activeTab === ' . Js::from($managerKey)" :x-on:click="'activeTab = ' . Js::from($managerKey)">
-                    {{ $manager::getTitle($this->getRecord(), static::class) }}
-                </x-filament::tabs.item>
-            @endforeach
-        </x-filament::tabs>
+    private array $permissions = [
+        'student.tags.manage' => 'Tags',
+        'prospect.tags.manage' => 'Tags',
+    ];
 
-        @foreach ($managers as $managerKey => $manager)
-            <div x-show="activeTab === @js($managerKey)">
-                @livewire(
-                    $manager,
-                    [
-                        'ownerRecord' => $this->getRecord(),
-                        'pageClass' => static::class,
-                        'lazy' => $loop->first ? false : 'on-load',
-                    ],
-                    key('relation-manager-' . $managerKey)
-                )
-            </div>
-        @endforeach
-    </div>
-@endif
+    private array $guards = [
+        'web',
+        'api',
+    ];
+
+    public function up(): void
+    {
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $permissions = Arr::except($this->permissions, DB::table('permissions')
+                    ->where('guard_name', $guard)
+                    ->pluck('name')
+                    ->all());
+
+                $this->createPermissions($permissions, $guard);
+            });
+    }
+
+    public function down(): void
+    {
+        collect($this->guards)
+            ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
+    }
+};

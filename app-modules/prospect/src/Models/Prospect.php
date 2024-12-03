@@ -36,8 +36,11 @@
 
 namespace AdvisingApp\Prospect\Models;
 
+use App\Models\Tag;
 use App\Models\User;
+use App\Enums\TagType;
 use DateTimeInterface;
+use App\Models\Taggable;
 use App\Models\Authenticatable;
 use AdvisingApp\Task\Models\Task;
 use App\Models\Scopes\HasLicense;
@@ -327,6 +330,21 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     public function canRecieveSms(): bool
     {
         return filled($this->mobile);
+    }
+
+    public function tags(): MorphToMany
+    {
+        return $this->morphToMany(
+            related: Tag::class,
+            name: 'taggable',
+            table: 'taggables',
+            foreignPivotKey: 'taggable_id',
+            relatedPivotKey: 'tag_id',
+        )
+            ->using(Taggable::class)
+            ->withPivot(['tag_id'])
+            ->withTimestamps()
+            ->where('type', TagType::Prospect);
     }
 
     protected static function booted(): void

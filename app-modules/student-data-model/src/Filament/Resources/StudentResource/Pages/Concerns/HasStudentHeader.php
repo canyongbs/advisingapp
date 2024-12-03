@@ -36,12 +36,14 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns;
 
+use App\Features\TagFeatureFlag;
 use App\Settings\DisplaySettings;
 use Illuminate\Contracts\View\View;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\StudentTagsAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\SyncStudentSisAction;
 
 trait HasStudentHeader
@@ -90,6 +92,7 @@ trait HasStudentHeader
     protected function getHeaderActions(): array
     {
         return [
+            StudentTagsAction::make()->visible(fn (): bool => TagFeatureFlag::active() && auth()->user()->can('student.tags.manage')),
             SyncStudentSisAction::make(),
             SubscribeHeaderAction::make(),
         ];

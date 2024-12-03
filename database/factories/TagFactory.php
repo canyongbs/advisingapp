@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,40 +32,26 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@props(['managers'])
+*/
 
-@php
-    use Illuminate\Support\Js;
+namespace Database\Factories;
 
-    $managers = array_filter($managers, fn(string $manager): bool => $manager::canViewForRecord($this->getRecord(), static::class));
-@endphp
+use App\Models\Tag;
+use App\Enums\TagType;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-@if ($managers)
-    <div
-        x-data="{ activeTab: @js(array_key_first($managers)) }"
-        {{ $attributes->class(['flex flex-col gap-3']) }}
-    >
-        <x-filament::tabs>
-            @foreach ($managers as $managerKey => $manager)
-                <x-filament::tabs.item :alpine-active="'activeTab === ' . Js::from($managerKey)" :x-on:click="'activeTab = ' . Js::from($managerKey)">
-                    {{ $manager::getTitle($this->getRecord(), static::class) }}
-                </x-filament::tabs.item>
-            @endforeach
-        </x-filament::tabs>
+/**
+ * @extends Factory<Tag>
+ */
+class TagFactory extends Factory
+{
+    protected $model = Tag::class;
 
-        @foreach ($managers as $managerKey => $manager)
-            <div x-show="activeTab === @js($managerKey)">
-                @livewire(
-                    $manager,
-                    [
-                        'ownerRecord' => $this->getRecord(),
-                        'pageClass' => static::class,
-                        'lazy' => $loop->first ? false : 'on-load',
-                    ],
-                    key('relation-manager-' . $managerKey)
-                )
-            </div>
-        @endforeach
-    </div>
-@endif
+    public function definition(): array
+    {
+        return [
+            'name' => $this->faker->name,
+            'type' => fake()->randomElement(TagType::cases())->value,
+        ];
+    }
+}

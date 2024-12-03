@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
@@ -30,40 +32,45 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@props(['managers'])
+*/
 
-@php
-    use Illuminate\Support\Js;
+namespace App\Models;
 
-    $managers = array_filter($managers, fn(string $manager): bool => $manager::canViewForRecord($this->getRecord(), static::class));
-@endphp
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
-@if ($managers)
-    <div
-        x-data="{ activeTab: @js(array_key_first($managers)) }"
-        {{ $attributes->class(['flex flex-col gap-3']) }}
-    >
-        <x-filament::tabs>
-            @foreach ($managers as $managerKey => $manager)
-                <x-filament::tabs.item :alpine-active="'activeTab === ' . Js::from($managerKey)" :x-on:click="'activeTab = ' . Js::from($managerKey)">
-                    {{ $manager::getTitle($this->getRecord(), static::class) }}
-                </x-filament::tabs.item>
-            @endforeach
-        </x-filament::tabs>
+class Taggable extends MorphPivot
+{
+    use HasFactory;
+    use HasUuids;
 
-        @foreach ($managers as $managerKey => $manager)
-            <div x-show="activeTab === @js($managerKey)">
-                @livewire(
-                    $manager,
-                    [
-                        'ownerRecord' => $this->getRecord(),
-                        'pageClass' => static::class,
-                        'lazy' => $loop->first ? false : 'on-load',
-                    ],
-                    key('relation-manager-' . $managerKey)
-                )
-            </div>
-        @endforeach
-    </div>
-@endif
+    protected $table = 'taggables';
+
+    public $timestamps = true;
+
+    public function prospects(): MorphTo
+    {
+        return $this->morphTo(
+            name: 'prospect',
+            type: 'taggable_type',
+            id: 'taggable_id',
+        );
+    }
+
+    public function students(): MorphTo
+    {
+        return $this->morphTo(
+            name: 'student',
+            type: 'taggable_type',
+            id: 'taggable_id',
+        );
+    }
+
+    public function tag(): BelongsTo
+    {
+        return $this->belongsTo(Tag::class, 'tag_id');
+    }
+}
