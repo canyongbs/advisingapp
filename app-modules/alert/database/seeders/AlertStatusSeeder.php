@@ -34,25 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Enums;
+namespace AdvisingApp\Alert\Database\Seeders;
 
-use Filament\Support\Contracts\HasLabel;
+use Illuminate\Database\Seeder;
+use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 
-enum AlertStatus: string implements HasLabel
+class AlertStatusSeeder extends Seeder
 {
-    case Active = 'active';
-
-    case Resolved = 'resolved';
-
-    case Canceled = 'canceled';
-
-    public function getLabel(): ?string
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
     {
-        return $this->name;
-    }
-
-    public static function default(): AlertStatus
-    {
-        return AlertStatus::Active;
+        AlertStatus::factory()
+            ->createMany(
+                [
+                    [
+                        'name' => 'Active',
+                        'classification' => SystemAlertStatusClassification::Active,
+                        'order' => 1,
+                        'is_default' => true,
+                    ],
+                    [
+                        'name' => 'Resolved',
+                        'classification' => SystemAlertStatusClassification::Resolved,
+                        'order' => 2,
+                        'is_default' => false,
+                    ],
+                    [
+                        'name' => 'Canceled',
+                        'classification' => SystemAlertStatusClassification::Canceled,
+                        'order' => 3,
+                        'is_default' => false,
+                    ],
+                ]
+            );
     }
 }

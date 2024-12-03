@@ -43,7 +43,9 @@ use App\Settings\LicenseSettings;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
+use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableTasksWidget;
 use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableAlertsWidget;
@@ -275,6 +277,9 @@ it('renders the EducatableAlertsWidget based on proper access', function () {
 
     actingAs($user);
 
+    AlertStatus::factory()->create([
+        'classification' => SystemAlertStatusClassification::Active,
+    ]);
     $widget = EducatableAlertsWidget::class;
 
     livewire(ViewStudent::class, [

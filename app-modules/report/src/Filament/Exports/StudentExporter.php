@@ -36,10 +36,11 @@
 
 namespace AdvisingApp\Report\Filament\Exports;
 
+use App\Features\AlertStatusId;
 use AdvisingApp\Task\Enums\TaskStatus;
 use Filament\Actions\Exports\Exporter;
 use Filament\Tables\Columns\TextColumn;
-use AdvisingApp\Alert\Enums\AlertStatus;
+use AdvisingApp\Alert\Models\AlertStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Models\Export;
@@ -47,6 +48,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 
 class StudentExporter extends Exporter
 {
@@ -112,15 +114,22 @@ class StudentExporter extends Exporter
                 ->counts('engagementFiles')),
             static::notDefault($type::make('alerts_count')
                 ->label('Count of Alerts')
-                ->counts('alerts')),
+                ->counts('alerts'))
+                ->visible(! AlertStatusId::active()),
             ...array_map(
-                fn (AlertStatus $status): TextColumn | ExportColumn => static::notDefault($type::make("alerts_{$status->value}_count")
+                fn (SystemAlertStatusClassification $status): TextColumn | ExportColumn => static::notDefault($type::make("alerts_{$status->value}_count")
                     ->label("Count of {$status->getLabel()} Alerts")
                     ->counts([
-                        "alerts as alerts_{$status->value}_count" => fn (Builder $query) => $query->status($status),
+                        "alerts as alerts_{$status->value}_count" => fn (Builder $query) => $query->alertStatus($status),
                     ])),
-                AlertStatus::cases(),
+                SystemAlertStatusClassification::cases(),
             ),
+            ...AlertStatus::all()->map(fn (AlertStatus $status): TextColumn | ExportColumn => static::notDefault($type::make("alerts_{$status->getKey()}_count")
+                ->label("Count of {$status->name} Alerts")
+                ->visible(AlertStatusId::active())
+                ->counts([
+                    "Alerts as alerts_{$status->getKey()}_count" => fn (Builder $query) => $query->whereBelongsTo($status, 'status'),
+                ]))),
             static::notDefault($type::make('tasks_count')
                 ->label('Count of Tasks')
                 ->counts('tasks')),

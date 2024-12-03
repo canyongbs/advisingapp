@@ -1,3 +1,4 @@
+data_activate_feature_flag_alert_status_id
 <?php
 
 /*
@@ -34,41 +35,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Database\Factories;
+use App\Features\AlertStatusId;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Alert\Models\AlertStatus;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Relations\Relation;
-
-/**
- * @extends Factory<Alert>
- */
-class AlertFactory extends Factory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'concern_type' => fake()->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
-            'concern_id' => function (array $attributes) {
-                $concernClass = Relation::getMorphedModel($attributes['concern_type']);
-
-                /** @var Student|Prospect $concernModel */
-                $concernModel = new $concernClass();
-
-                $concern = $concernClass === Student::class
-                  ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                  : $concernModel::factory()->create();
-
-                return $concern->getKey();
-            },
-            'description' => fake()->sentence(),
-            'severity' => fake()->randomElement(AlertSeverity::cases()),
-            'status_id' => AlertStatus::factory(),
-            'suggested_intervention' => fake()->sentence(),
-        ];
+        AlertStatusId::activate();
     }
-}
+
+    public function down(): void
+    {
+        AlertStatusId::deactivate();
+    }
+};

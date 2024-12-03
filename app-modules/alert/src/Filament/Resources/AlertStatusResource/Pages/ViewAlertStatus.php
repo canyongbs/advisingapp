@@ -34,41 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Database\Factories;
+namespace AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages;
 
-use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Alert\Models\AlertStatus;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Infolist;
+use Filament\Forms\Components\Section;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
 
-/**
- * @extends Factory<Alert>
- */
-class AlertFactory extends Factory
+class ViewAlertStatus extends ViewRecord
 {
-    public function definition(): array
+    protected static string $resource = AlertStatusResource::class;
+
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name')
+                            ->label('Name'),
+                        TextEntry::make('classification')
+                            ->label('Classification'),
+                        TextEntry::make('order')
+                            ->numeric(),
+                        IconEntry::make('is_default')
+                            ->label('Default')
+                            ->boolean(),
+                    ])
+                    ->columns(),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
     {
         return [
-            'concern_type' => fake()->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
-            'concern_id' => function (array $attributes) {
-                $concernClass = Relation::getMorphedModel($attributes['concern_type']);
-
-                /** @var Student|Prospect $concernModel */
-                $concernModel = new $concernClass();
-
-                $concern = $concernClass === Student::class
-                  ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                  : $concernModel::factory()->create();
-
-                return $concern->getKey();
-            },
-            'description' => fake()->sentence(),
-            'severity' => fake()->randomElement(AlertSeverity::cases()),
-            'status_id' => AlertStatus::factory(),
-            'suggested_intervention' => fake()->sentence(),
+            EditAction::make()
+                ->databaseTransaction(),
         ];
     }
 }

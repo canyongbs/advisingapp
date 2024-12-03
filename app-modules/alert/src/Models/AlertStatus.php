@@ -34,41 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Database\Factories;
+namespace AdvisingApp\Alert\Models;
 
-use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Alert\Models\AlertStatus;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 
-/**
- * @extends Factory<Alert>
- */
-class AlertFactory extends Factory
+class AlertStatus extends BaseModel
 {
-    public function definition(): array
+    use HasFactory;
+    use SoftDeletes;
+
+    protected $fillable = [
+        'classification',
+        'name',
+        'is_default',
+        'order',
+    ];
+
+    protected $casts = [
+        'classification' => SystemAlertStatusClassification::class,
+        'is_default' => 'boolean',
+    ];
+
+    public function alerts(): HasMany
     {
-        return [
-            'concern_type' => fake()->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
-            'concern_id' => function (array $attributes) {
-                $concernClass = Relation::getMorphedModel($attributes['concern_type']);
-
-                /** @var Student|Prospect $concernModel */
-                $concernModel = new $concernClass();
-
-                $concern = $concernClass === Student::class
-                  ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                  : $concernModel::factory()->create();
-
-                return $concern->getKey();
-            },
-            'description' => fake()->sentence(),
-            'severity' => fake()->randomElement(AlertSeverity::cases()),
-            'status_id' => AlertStatus::factory(),
-            'suggested_intervention' => fake()->sentence(),
-        ];
+        return $this->hasMany(Alert::class, 'status_id');
     }
 }

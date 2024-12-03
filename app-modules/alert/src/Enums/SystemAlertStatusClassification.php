@@ -34,41 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Database\Factories;
+namespace AdvisingApp\Alert\Enums;
 
-use AdvisingApp\Alert\Models\Alert;
+use Filament\Support\Contracts\HasLabel;
 use AdvisingApp\Alert\Models\AlertStatus;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
-/**
- * @extends Factory<Alert>
- */
-class AlertFactory extends Factory
+enum SystemAlertStatusClassification: string implements HasLabel
 {
-    public function definition(): array
+    case Active = 'active';
+
+    case Resolved = 'resolved';
+
+    case Canceled = 'canceled';
+
+    public function getLabel(): ?string
     {
-        return [
-            'concern_type' => fake()->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
-            'concern_id' => function (array $attributes) {
-                $concernClass = Relation::getMorphedModel($attributes['concern_type']);
+        return $this->name;
+    }
 
-                /** @var Student|Prospect $concernModel */
-                $concernModel = new $concernClass();
+    public static function default(): AlertStatus
+    {
+        $alertStatus = AlertStatus::where('is_default', true)->first();
 
-                $concern = $concernClass === Student::class
-                  ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                  : $concernModel::factory()->create();
-
-                return $concern->getKey();
-            },
-            'description' => fake()->sentence(),
-            'severity' => fake()->randomElement(AlertSeverity::cases()),
-            'status_id' => AlertStatus::factory(),
-            'suggested_intervention' => fake()->sentence(),
-        ];
+        return $alertStatus;
     }
 }

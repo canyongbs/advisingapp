@@ -34,41 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Database\Factories;
+namespace AdvisingApp\Alert\Filament\Resources;
 
-use AdvisingApp\Alert\Models\Alert;
+use App\Features\AlertStatusId;
+use Filament\Resources\Resource;
 use AdvisingApp\Alert\Models\AlertStatus;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use App\Filament\Clusters\ConstituentManagement;
+use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\EditAlertStatus;
+use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\ViewAlertStatus;
+use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\CreateAlertStatus;
+use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\ListAlertStatuses;
 
-/**
- * @extends Factory<Alert>
- */
-class AlertFactory extends Factory
+class AlertStatusResource extends Resource
 {
-    public function definition(): array
+    protected static ?string $model = AlertStatus::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationLabel = 'Statuses';
+
+    protected static ?string $cluster = ConstituentManagement::class;
+
+    protected static ?string $navigationGroup = 'Alert';
+
+    protected static ?int $navigationSort = 10;
+
+    public static function canAccess(): bool
+    {
+        return AlertStatusId::active() && parent::canAccess();
+    }
+
+    public static function getPages(): array
     {
         return [
-            'concern_type' => fake()->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
-            'concern_id' => function (array $attributes) {
-                $concernClass = Relation::getMorphedModel($attributes['concern_type']);
-
-                /** @var Student|Prospect $concernModel */
-                $concernModel = new $concernClass();
-
-                $concern = $concernClass === Student::class
-                  ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                  : $concernModel::factory()->create();
-
-                return $concern->getKey();
-            },
-            'description' => fake()->sentence(),
-            'severity' => fake()->randomElement(AlertSeverity::cases()),
-            'status_id' => AlertStatus::factory(),
-            'suggested_intervention' => fake()->sentence(),
+            'index' => ListAlertStatuses::route('/'),
+            'create' => CreateAlertStatus::route('/create'),
+            'view' => ViewAlertStatus::route('/{record}'),
+            'edit' => EditAlertStatus::route('/{record}/edit'),
         ];
     }
 }

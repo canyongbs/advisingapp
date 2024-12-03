@@ -38,12 +38,13 @@ namespace AdvisingApp\Prospect\Filament\Widgets;
 
 use App\Models\User;
 use Illuminate\Support\Number;
+use App\Features\AlertStatusId;
 use Illuminate\Support\Facades\Cache;
-use AdvisingApp\Alert\Enums\AlertStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Widgets\StatsOverviewWidget;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 
 class ProspectStats extends StatsOverviewWidget
 {
@@ -66,7 +67,13 @@ class ProspectStats extends StatsOverviewWidget
                 })),
             Stat::make('My Alerts', Cache::tags(['prospects', "user-{$user->getKey()}-prospect-alerts"])
                 ->remember("user-{$user->getKey()}-prospect-alerts-count", now()->addHour(), function () use ($user): int {
-                    return $user->prospectAlerts()->status(AlertStatus::Active)->count();
+                    if (AlertStatusId::active()) {
+                        return $user->prospectAlerts()->whereHas('status', function ($query) {
+                            $query->where('classification', SystemAlertStatusClassification::Active);
+                        })->count();
+                    } else {
+                        return $user->prospectAlerts()->alertStatus(SystemAlertStatusClassification::Active)->count();
+                    }
                 })),
             Stat::make('My Population Segments', Cache::tags(["user-{$user->getKey()}-prospect-segments"])
                 ->remember("user-{$user->getKey()}-prospect-segments-count", now()->addHour(), function () use ($user): int {

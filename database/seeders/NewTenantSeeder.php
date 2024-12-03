@@ -39,6 +39,7 @@ namespace Database\Seeders;
 use App\Models\Tenant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
+use AdvisingApp\Alert\Database\Seeders\AlertStatusSeeder;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Authorization\Console\Commands\SetupRoles;
 use AdvisingApp\CaseManagement\Database\Seeders\CaseTypeSeeder;
@@ -85,6 +86,7 @@ class NewTenantSeeder extends Seeder
             // Change Request
             ChangeRequestTypeSeeder::class,
             ChangeRequestStatusSeeder::class,
+            AlertStatusSeeder::class,
         ]);
     }
 }
