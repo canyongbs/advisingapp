@@ -46,6 +46,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListSt
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentTasks;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentCareTeam;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudentActivityFeed;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentSubscriptions;
 
 class StudentResource extends Resource
@@ -91,6 +92,7 @@ class StudentResource extends Resource
         return [
             'index' => ListStudents::route('/'),
             'view' => ViewStudent::route('/{record}'),
+            'activity-feed' => ViewStudentActivityFeed::route('/{record}/activity'),
             'alerts' => ManageStudentAlerts::route('/{record}/alerts'),
             'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
             'subscriptions' => ManageStudentSubscriptions::route('/{record}/subscriptions'),
