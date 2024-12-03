@@ -93,5 +93,5 @@ it('will create the appropriate records for educatables in the segment', functio
     expect(Alert::first()->description)->toBe('This is the description');
     expect(Alert::first()->severity)->toBe(AlertSeverity::Low);
     expect(Alert::first()->suggested_intervention)->toBe('This is the suggested intervention');
-    expect(Alert::first()->status)->toEqual(AlertStatus::first());
+    expect(Alert::first()->status->getKey())->toEqual($alertStatus->getKey());
 });
