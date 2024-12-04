@@ -12,7 +12,7 @@ type Alert @model(class: "AdvisingApp\\Alert\\Models\\Alert") {
     severity: AlertSeverity!
 
     "The status of the alert."
-    status: AlertStatus!
+    status: AlertStatus! @belongsTo
 
     "The suggested intervention for the alert."
     suggested_intervention: String!
@@ -39,7 +39,7 @@ input AlertsQuery {
     concern_type: EducatableType
     description: String
     severity: AlertSeverity
-    status: AlertStatus
+    status: AlertStatusesQuery
     suggested_intervention: String
     created_at: DateTime
     updated_at: DateTime
@@ -85,7 +85,7 @@ input CreateAlertInput {
     severity: AlertSeverity! @rules(apply: ["required"])
 
     "The status of the alert."
-    status: AlertStatus! @rules(apply: ["required"])
+    status_id: UUID! @rules(apply: ["required", "string", "in:alert_statuses"])
 
     "The suggested intervention for the alert."
     suggested_intervention: String! @rules(apply: ["required", "string"])
@@ -99,7 +99,7 @@ input UpdateAlertInput {
     severity: AlertSeverity @rules(apply: ["filled"])
 
     "The status of the alert."
-    status: AlertStatus @rules(apply: ["filled"])
+    status_id: UUID @rules(apply: ["filled", "string", "in:alert_statuses"])
 
     "The suggested intervention for the alert."
     suggested_intervention: String @rules(apply: ["filled", "string"])

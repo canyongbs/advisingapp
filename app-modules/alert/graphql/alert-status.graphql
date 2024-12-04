@@ -1,0 +1,106 @@
+type AlertStatus @model(class: "AdvisingApp\\Alert\\Models\\AlertStatus") {
+    "Unique primary key."
+    id: UUID!
+
+    "The Classification of the alert status."
+    classification: SystemAlertStatusClassification!
+
+    "The name of the alert status."
+    name: String!
+
+    "The order of the alert status."
+    order: Int!
+
+    "Whether or not the alert status is the default."
+    is_default: Boolean!
+
+    "The created datetime of the alert."
+    created_at: DateTime
+
+    "The updated datetime of the alert."
+    updated_at: DateTime
+
+    "The deleted datetime of the alert."
+    deleted_at: DateTime
+}
+
+input AlertStatusesQuery {
+    id: UUID
+    classification: SystemAlertStatusClassification
+    name: String
+    order: Int
+    is_default: Boolean
+    created_at: DateTime
+    updated_at: DateTime
+    deleted_at: DateTime
+}
+
+type AlertStatusQueries {
+    "Find a single alert status by an identifying attribute."
+    find(
+        "The value of the attribute to match."
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:alert_statuses"])
+    ): AlertStatus @find @softDeletes @canResolved(ability: "view")
+
+    "List multiple alert statuses."
+    list(where: AlertStatusesQuery @searchBy): [AlertStatus!]!
+        @paginate
+        @softDeletes
+        @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    alertStatus: AlertStatusQueries! @namespaced
+}
+
+input CreateAlertStatusInput {
+    "The name of the alert status."
+    name: String! @rules(apply: ["required", "string", "max:255"])
+
+    "The classification of the alert status."
+    classification: SystemAlertStatusClassification!
+
+    # Add the ability to set default later
+}
+
+input UpdateAlertStatusInput {
+    "The name of the alert status."
+    name: String! @rules(apply: ["required", "string", "max:255"])
+
+    "The classification of the alert status."
+    classification: SystemAlertStatusClassification!
+
+    # Add the ability to set default later
+}
+
+type AlertStatusMutations {
+    "Create an alert status."
+    create(input: CreateAlertStatusInput! @spread): AlertStatus!
+        @create
+        @canModel(ability: "create")
+
+    "Update an existing alert status."
+    update(
+        "The identifier of the alert status you would like to update."
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:alert_statuses"])
+
+        "The fields you would like to update."
+        input: UpdateAlertStatusInput! @spread
+    ): AlertStatus! @canFind(ability: "update", find: "id") @update
+
+    "Delete an existing alert status."
+    delete(
+        "The identifier of the alert status you would like to delete."
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:alert_statuses"])
+    ): AlertStatus @canFind(ability: "delete", find: "id") @delete
+}
+
+extend type Mutation {
+    alertStatus: AlertStatusMutations! @namespaced
+}
