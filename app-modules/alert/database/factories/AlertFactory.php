@@ -37,7 +37,7 @@
 namespace AdvisingApp\Alert\Database\Factories;
 
 use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Alert\Enums\AlertStatus;
+use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -60,14 +60,14 @@ class AlertFactory extends Factory
                 $concernModel = new $concernClass();
 
                 $concern = $concernClass === Student::class
-                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                    : $concernModel::factory()->create();
+                  ? Student::inRandomOrder()->first() ?? Student::factory()->create()
+                  : $concernModel::factory()->create();
 
                 return $concern->getKey();
             },
             'description' => fake()->sentence(),
             'severity' => fake()->randomElement(AlertSeverity::cases()),
-            'status' => fake()->randomElement(AlertStatus::cases()),
+            'status_id' => AlertStatus::factory(),
             'suggested_intervention' => fake()->sentence(),
         ];
     }

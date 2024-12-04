@@ -40,7 +40,6 @@ use Exception;
 use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
-use AdvisingApp\Alert\Enums\AlertStatus;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
@@ -51,6 +50,7 @@ use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use AdvisingApp\Timeline\Models\Contracts\HasHistory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -78,13 +78,12 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
         'concern_type',
         'description',
         'severity',
-        'status',
         'suggested_intervention',
+        'status_id',
     ];
 
     protected $casts = [
         'severity' => AlertSeverity::class,
-        'status' => AlertStatus::class,
     ];
 
     public function processCustomHistories(string $event, Collection $old, Collection $new, Collection $pending): void
@@ -114,9 +113,14 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
         return $this->concern instanceof Subscribable ? $this->concern : null;
     }
 
-    public function scopeStatus(Builder $query, AlertStatus $status): void
+    public function scopeAlertStatus(Builder $query, AlertStatus $status): void
     {
         $query->where('status', $status);
+    }
+
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(AlertStatus::class, 'status_id');
     }
 
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
@@ -132,7 +136,7 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
                         'concern_id' => $educatable->getKey(),
                         'description' => $action->data['description'],
                         'severity' => $action->data['severity'],
-                        'status' => $action->data['status'],
+                        'status_id' => $action->data['status'],
                         'suggested_intervention' => $action->data['suggested_intervention'],
                     ]);
                 });

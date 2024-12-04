@@ -51,6 +51,7 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 
 class StudentsTable
 {
@@ -96,6 +97,15 @@ class StudentsTable
                             ->icon('heroicon-m-phone'),
                         TextConstraint::make('address')
                             ->icon('heroicon-m-map-pin'),
+                        RelationshipConstraint::make('tags')
+                            ->label('Tags')
+                            ->icon('heroicon-m-rectangle-group')
+                            ->selectable(
+                                IsRelatedToOperator::make()
+                                    ->titleAttribute('name')
+                                    ->multiple()
+                                    ->preload(),
+                            ),
                         TextConstraint::make('holds')
                             ->icon('heroicon-m-exclamation-triangle'),
                         BooleanConstraint::make('sap')

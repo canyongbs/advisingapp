@@ -150,7 +150,6 @@ abstract class TestCase extends BaseTestCase
                         eventManagement: true,
                         realtimeChat: true,
                         mobileApps: true,
-                        experimentalReporting: true,
                         scheduleAndAppointments: true,
                     )
                 )
@@ -266,7 +265,6 @@ abstract class TestCase extends BaseTestCase
                     eventManagement: true,
                     realtimeChat: true,
                     mobileApps: true,
-                    experimentalReporting: true,
                     scheduleAndAppointments: true,
                 ),
             ),

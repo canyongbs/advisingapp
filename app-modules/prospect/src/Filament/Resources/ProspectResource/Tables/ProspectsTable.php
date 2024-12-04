@@ -112,6 +112,15 @@ class ProspectsTable
                             ->icon('heroicon-m-phone'),
                         TextConstraint::make('address')
                             ->icon('heroicon-m-map-pin'),
+                        RelationshipConstraint::make('tags')
+                            ->label('Tags')
+                            ->icon('heroicon-m-rectangle-group')
+                            ->selectable(
+                                IsRelatedToOperator::make()
+                                    ->titleAttribute('name')
+                                    ->multiple()
+                                    ->preload(),
+                            ),
                         TextConstraint::make('address_2')
                             ->icon('heroicon-m-map-pin'),
                         BooleanConstraint::make('sms_opt_out')

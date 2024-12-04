@@ -76,10 +76,12 @@ class EngagementFailedNotification extends BaseNotification implements EmailNoti
             default => ''
         };
 
+        $morph = str($this->engagement->recipient->getMorphClass());
+
         return FilamentNotification::make()
             ->danger()
             ->title('Engagement Delivery Failed')
-            ->body("Your engagement {$engagementType} failed to be delivered to {$this->engagement->recipient->display_name}.")
+            ->body("Your engagement {$engagementType} failed to be delivered to {$morph} {$this->engagement->recipient->display_name}.")
             ->getDatabaseMessage();
     }
 

@@ -34,25 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Enums;
+use Illuminate\Database\Migrations\Migration;
+use App\Features\TwilioDemoAutoReplyModeFeature;
 
-use Filament\Support\Contracts\HasLabel;
-
-enum AlertStatus: string implements HasLabel
-{
-    case Active = 'active';
-
-    case Resolved = 'resolved';
-
-    case Canceled = 'canceled';
-
-    public function getLabel(): ?string
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->name;
+        TwilioDemoAutoReplyModeFeature::activate();
     }
 
-    public static function default(): AlertStatus
+    public function down(): void
     {
-        return AlertStatus::Active;
+        TwilioDemoAutoReplyModeFeature::deactivate();
     }
-}
+};

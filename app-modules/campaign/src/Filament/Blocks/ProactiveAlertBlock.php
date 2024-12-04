@@ -37,12 +37,14 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use Carbon\CarbonImmutable;
+use App\Features\AlertStatusId;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use AdvisingApp\Alert\Enums\AlertStatus;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 
 class ProactiveAlertBlock extends CampaignActionBlock
 {
@@ -70,12 +72,20 @@ class ProactiveAlertBlock extends CampaignActionBlock
             Textarea::make($fieldPrefix . 'suggested_intervention')
                 ->required()
                 ->string(),
-            Select::make($fieldPrefix . 'status')
-                ->options(AlertStatus::class)
+            Select::make($fieldPrefix . 'status_id')
+                ->label('Status')
+                ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
                 ->selectablePlaceholder(false)
-                ->default(AlertStatus::default())
+                ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
                 ->required()
-                ->enum(AlertStatus::class),
+                ->visible(AlertStatusId::active()),
+            Select::make($fieldPrefix . 'status')
+                ->options(SystemAlertStatusClassification::class)
+                ->selectablePlaceholder(false)
+                ->default(fn () => SystemAlertStatusClassification::Active)
+                ->required()
+                ->enum(SystemAlertStatusClassification::class)
+                ->visible(! AlertStatusId::active()),
             DateTimePicker::make($fieldPrefix . 'execute_at')
                 ->label('When should the journey step be executed?')
                 ->columnSpanFull()

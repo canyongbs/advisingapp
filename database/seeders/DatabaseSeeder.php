@@ -46,6 +46,7 @@ use AdvisingApp\Task\Database\Seeders\TaskSeeder;
 use AdvisingApp\Team\Database\Seeders\TeamSeeder;
 use AdvisingApp\Alert\Database\Seeders\AlertSeeder;
 use AdvisingApp\Ai\Database\Seeders\PromptTypeSeeder;
+use AdvisingApp\Alert\Database\Seeders\AlertStatusSeeder;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSeeder;
 use AdvisingApp\Authorization\Console\Commands\SetupRoles;
@@ -104,6 +105,7 @@ class DatabaseSeeder extends Seeder
             ResourceHubArticleSeeder::class,
             TaskSeeder::class,
             FormSeeder::class,
+            AlertStatusSeeder::class,
             AlertSeeder::class,
             TeamSeeder::class,
             SuperAdminSeeder::class,

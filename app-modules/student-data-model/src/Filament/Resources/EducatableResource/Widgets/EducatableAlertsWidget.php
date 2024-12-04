@@ -37,11 +37,13 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
 
 use Filament\Widgets\Widget;
+use App\Features\AlertStatusId;
 use Livewire\Attributes\Locked;
 use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Alert\Enums\AlertStatus;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Alert\Enums\AlertSeverity;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
 class EducatableAlertsWidget extends Widget
@@ -61,9 +63,17 @@ class EducatableAlertsWidget extends Widget
 
     protected function getActiveCount(): int
     {
-        return $this->educatable->alerts()
-            ->where('status', AlertStatus::Active)
-            ->count();
+        if (AlertStatusId::active()) {
+            return $this->educatable->alerts()
+                ->whereHas('status', function (Builder $query) {
+                    $query->where('classification', SystemAlertStatusClassification::Active);
+                })
+                ->count();
+        } else {
+            return $this->educatable->alerts()
+                ->where('status', SystemAlertStatusClassification::Active)
+                ->count();
+        }
     }
 
     protected function getSeverityCounts(): array

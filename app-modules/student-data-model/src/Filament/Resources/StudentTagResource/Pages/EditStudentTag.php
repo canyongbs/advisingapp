@@ -34,46 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages;
 
-use App\Models\User;
-use App\Enums\Feature;
-use Filament\Pages\Page;
-use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
+use Filament\Forms\Form;
+use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource;
 
-class ReportAssistant extends Page
+class EditStudentTag extends EditRecord
 {
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
+    protected static string $resource = StudentTagResource::class;
 
-    public const APPLICATION = AiApplication::ReportAssistant;
-
-    protected static string $view = 'report::filament.pages.report-assistant';
-
-    protected static ?string $navigationGroup = 'Reporting';
-
-    protected static ?int $navigationSort = 50;
-
-    public static function canAccess(): bool
+    public function form(Form $form): Form
     {
-        /** @var User $user */
-        $user = auth()->user();
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->label('Name')
+                    ->required()
+                    ->maxLength(255)
+                    ->string(),
+            ]);
+    }
 
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        if (! $user->can(Feature::ExperimentalReporting->getGateName())) {
-            return false;
-        }
-
-        return $user->can('report.access_assistant');
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
     }
 }

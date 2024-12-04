@@ -69,6 +69,9 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
     #[Locked]
     public Educatable&Model $educatable;
 
+    #[Locked]
+    public string $viewUrl;
+
     public function mount(): void
     {
         // @todo: Refactor

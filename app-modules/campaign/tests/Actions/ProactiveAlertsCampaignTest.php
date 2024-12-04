@@ -36,7 +36,7 @@
 
 use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Segment\Models\Segment;
-use AdvisingApp\Alert\Enums\AlertStatus;
+use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Alert\Enums\AlertSeverity;
@@ -68,6 +68,11 @@ it('will create the appropriate records for educatables in the segment', functio
         'segment_id' => $segment->id,
     ]);
 
+    $alertStatus = AlertStatus::factory()->create([
+        'classification' => 'active',
+        'name' => 'Active',
+    ]);
+
     $action = CampaignAction::factory()
         ->for($campaign, 'campaign')
         ->create([
@@ -76,7 +81,7 @@ it('will create the appropriate records for educatables in the segment', functio
                 'description' => 'This is the description',
                 'severity' => 'low',
                 'suggested_intervention' => 'This is the suggested intervention',
-                'status' => 'active',
+                'status' => $alertStatus->getKey(),
             ],
         ]);
 
@@ -88,5 +93,5 @@ it('will create the appropriate records for educatables in the segment', functio
     expect(Alert::first()->description)->toBe('This is the description');
     expect(Alert::first()->severity)->toBe(AlertSeverity::Low);
     expect(Alert::first()->suggested_intervention)->toBe('This is the suggested intervention');
-    expect(Alert::first()->status)->toBe(AlertStatus::Active);
+    expect(Alert::first()->status->getKey())->toEqual($alertStatus->getKey());
 });

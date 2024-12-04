@@ -54,11 +54,15 @@
 
         @foreach ($managers as $managerKey => $manager)
             <div x-show="activeTab === @js($managerKey)">
-                @livewire($manager, [
-                    'ownerRecord' => $this->getRecord(),
-                    'pageClass' => static::class,
-                    'lazy' => $loop->first ? false : 'on-load',
-                ])
+                @livewire(
+                    $manager,
+                    [
+                        'ownerRecord' => $this->getRecord(),
+                        'pageClass' => static::class,
+                        'lazy' => $loop->first ? false : 'on-load',
+                    ],
+                    key('relation-manager-' . $managerKey)
+                )
             </div>
         @endforeach
     </div>

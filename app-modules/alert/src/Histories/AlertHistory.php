@@ -38,12 +38,11 @@ namespace AdvisingApp\Alert\Histories;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Alert\Enums\AlertStatus;
 use AdvisingApp\Timeline\Models\History;
-use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Timelines\AlertHistoryTimeline;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 
 class AlertHistory extends History implements ProvidesATimeline
@@ -64,8 +63,15 @@ class AlertHistory extends History implements ProvidesATimeline
         return match ($key) {
             'status' => [
                 'key' => 'Status',
-                'old' => array_key_exists($key, $this->old) ? AlertStatus::tryFrom($this->old[$key])?->getLabel() : null,
-                'new' => AlertStatus::tryFrom($this->new[$key])?->getLabel(),
+                'old' => array_key_exists($key, $this->old) ? SystemAlertStatusClassification::tryFrom($this->old[$key])?->getLabel() : null,
+                'new' => SystemAlertStatusClassification::tryFrom($this->new[$key])?->getLabel(),
+            ],
+            'status_id' => [
+                'key' => 'Status',
+                'old' => array_key_exists($key, $this->old)
+                  ? AlertStatus::find($this->old[$key])?->name
+                  : null,
+                'new' => AlertStatus::find($this->new[$key])?->name,
             ],
             'severity' => [
                 'key' => 'Severity',

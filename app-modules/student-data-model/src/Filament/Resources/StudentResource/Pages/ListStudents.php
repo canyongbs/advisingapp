@@ -36,8 +36,11 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
+use App\Models\Tag;
 use App\Models\User;
+use App\Enums\TagType;
 use Filament\Tables\Table;
+use App\Features\TagFeatureFlag;
 use Filament\Tables\Filters\Filter;
 use AdvisingApp\Segment\Models\Segment;
 use Filament\Tables\Actions\ViewAction;
@@ -135,6 +138,24 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
                                 ->get();
                         }
                     ),
+                SelectFilter::make('tags')
+                    ->label('Tags')
+                    ->options(fn (): array => Tag::query()->where('type', TagType::Student)->pluck('name', 'id')->toArray())
+                    ->searchable()
+                    ->preload()
+                    ->optionsLimit(20)
+                    ->multiple()
+                    ->query(
+                        function (Builder $query, array $data) {
+                            if (blank($data['values'])) {
+                                return;
+                            }
+
+                            $query->whereHas('tags', function (Builder $query) use ($data) {
+                                $query->whereIn('tag_id', $data['values']);
+                            });
+                        }
+                    )->visible(fn (): bool => TagFeatureFlag::active()),
             ])
             ->actions([
                 ViewAction::make()

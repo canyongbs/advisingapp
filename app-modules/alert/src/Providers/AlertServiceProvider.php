@@ -42,13 +42,15 @@ use AdvisingApp\Alert\Models\Alert;
 use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Alert\Enums\AlertStatus;
+use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Events\AlertCreated;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Alert\Observers\AlertObserver;
+use AdvisingApp\Alert\Observers\AlertStatusObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Alert\Observers\AlertHistoryObserver;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Listeners\NotifySubscribersOfAlertCreated;
 
 class AlertServiceProvider extends ServiceProvider
@@ -78,6 +80,7 @@ class AlertServiceProvider extends ServiceProvider
     {
         Alert::observe(AlertObserver::class);
         AlertHistory::observe(AlertHistoryObserver::class);
+        AlertStatus::observe(AlertStatusObserver::class);
     }
 
     protected function registerEvents(): void
@@ -93,6 +96,6 @@ class AlertServiceProvider extends ServiceProvider
         $this->discoverSchema(__DIR__ . '/../../graphql/alert.graphql');
 
         $this->registerEnum(AlertSeverity::class);
-        $this->registerEnum(AlertStatus::class);
+        $this->registerEnum(SystemAlertStatusClassification::class);
     }
 }

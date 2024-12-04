@@ -59,6 +59,7 @@
                     @livewire(EducatableActivityFeedWidget::class, [
                         'educatable' => $this->getRecord(),
                         'lazy' => 'on-load',
+                        'viewUrl' => StudentResource::getUrl('activity-feed', ['record' => $this->getRecord()]),
                     ])
                 @endif
             </div>

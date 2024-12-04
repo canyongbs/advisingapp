@@ -68,7 +68,6 @@ class CreateTenantRequest extends FormRequest
             'addons.eventManagement' => ['required', 'boolean'],
             'addons.realtimeChat' => ['required', 'boolean'],
             'addons.mobileApps' => ['required', 'boolean'],
-            'addons.experimentalReporting' => ['required', 'boolean'],
             'addons.scheduleAndAppointments' => ['required', 'boolean'],
             'addons.customAiAssistants' => ['required', 'boolean'],
             'subscription' => ['required', 'array'],

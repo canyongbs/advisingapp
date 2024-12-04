@@ -34,56 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources;
 
-use App\Models\User;
-use App\Enums\Feature;
-use Filament\Forms\Form;
-use Filament\Pages\SettingsPage;
-use Filament\Forms\Components\Textarea;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\Report\Settings\ReportAssistantSettings;
+use App\Models\Tag;
+use App\Enums\TagType;
+use App\Features\TagFeatureFlag;
+use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Clusters\ConstituentManagement;
+use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages\EditProspectTag;
+use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages\ViewProspectTag;
+use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages\ListProspectTags;
+use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages\CreateProspectTag;
 
-class ManageReportAssistantSettings extends SettingsPage
+class ProspectTagResource extends Resource
 {
-    protected static string $settings = ReportAssistantSettings::class;
+    protected static ?string $model = Tag::class;
 
-    protected static ?string $title = 'Experimental Reporting';
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?string $cluster = ArtificialIntelligence::class;
+    protected static ?string $navigationLabel = 'Tags';
 
-    protected static ?string $navigationIcon = 'heroicon-o-beaker';
+    protected static ?int $navigationSort = 50;
 
-    protected static ?int $navigationSort = 20;
+    protected static ?string $cluster = ConstituentManagement::class;
+
+    protected static ?string $navigationGroup = 'Prospects';
 
     public static function canAccess(): bool
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        if (! $user->can(Feature::ExperimentalReporting->getGateName())) {
-            return false;
-        }
-
-        return $user->can(['report.access_assistant_settings']);
+        return TagFeatureFlag::active() && parent::canAccess();
     }
 
-    public function form(Form $form): Form
+    public static function getPages(): array
     {
-        return $form
-            ->schema([
-                Textarea::make('prompt_system_context')
-                    ->label('Base Prompt')
-                    ->required()
-                    ->helperText(str('`{{ schema }}` is used to denote the location in the prompt for the underlying database schema to be provided to the AI. This is dynamic for each user based on their permissions.')->inlineMarkdown()->toHtmlString())
-                    ->string()
-                    ->rows(12)
-                    ->columnSpan('full'),
-            ]);
+        return [
+            'index' => ListProspectTags::route('/'),
+            'create' => CreateProspectTag::route('/create'),
+            'view' => ViewProspectTag::route('/{record}'),
+            'edit' => EditProspectTag::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('type', TagType::Prospect);
     }
 }
