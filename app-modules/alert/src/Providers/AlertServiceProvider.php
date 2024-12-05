@@ -93,7 +93,7 @@ class AlertServiceProvider extends ServiceProvider
 
     protected function registerGraphQL(): void
     {
-        $this->discoverSchema(__DIR__ . '/../../graphql/alert.graphql');
+        $this->discoverSchema(__DIR__ . '/../../graphql/*');
 
         $this->registerEnum(AlertSeverity::class);
         $this->registerEnum(SystemAlertStatusClassification::class);
