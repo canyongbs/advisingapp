@@ -245,7 +245,6 @@ class ListUsers extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        // dd(LicenseType::cases());
         return [
             ImportAction::make()
                 ->importer(UserImporter::class)
