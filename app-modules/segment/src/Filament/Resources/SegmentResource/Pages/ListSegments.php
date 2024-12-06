@@ -41,6 +41,7 @@ use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Notifications\Notification;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
@@ -76,7 +77,24 @@ class ListSegments extends ListRecords
             ])
             ->actions([
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->action(function (DeleteAction $action) {
+                        if ($action->getRecord()->campaigns()->exists()) {
+                            Notification::make()
+                                ->title('This population segment is associated with a campaign. Please remove the campaign before attempting to remove the segment.')
+                                ->warning()
+                                ->send();
+
+                            $action->cancel();
+                        }
+
+                        $action->getRecord()->delete();
+
+                        Notification::make()
+                            ->title('Deleted.')
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->filters([
                 Filter::make('my_segments')
