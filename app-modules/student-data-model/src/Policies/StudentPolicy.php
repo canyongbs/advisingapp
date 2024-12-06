@@ -53,7 +53,7 @@ class StudentPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if ($authenticatable->canAny(['student.view-any', 'student_record_manager.view-any'])) {
+        if ($authenticatable->canAny(['student.view-any', 'product_admin.view-any'])) {
             return Response::allow();
         }
 
@@ -62,7 +62,7 @@ class StudentPolicy
 
     public function view(Authenticatable $authenticatable, Student $student): Response
     {
-        if ($authenticatable->canAny(["student.{$student->getKey()}.view", 'student_record_manager.*.view'])) {
+        if ($authenticatable->canAny(["student.{$student->getKey()}.view", 'product_admin.*.view'])) {
             return Response::allow();
         }
 
@@ -72,7 +72,7 @@ class StudentPolicy
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.create',
+            abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create student.'
         );
     }
@@ -80,7 +80,7 @@ class StudentPolicy
     public function update(Authenticatable $authenticatable, Student $student): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.*.update',
+            abilities: 'product_admin.*.update',
             denyResponse: 'Students cannot be updated.'
         );
     }
@@ -88,7 +88,7 @@ class StudentPolicy
     public function delete(Authenticatable $authenticatable, Student $student): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.*.delete',
+            abilities: 'product_admin.*.delete',
             denyResponse: 'Students cannot be deleted.'
         );
     }
@@ -96,7 +96,7 @@ class StudentPolicy
     public function restore(Authenticatable $authenticatable, Student $student): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.*.restore',
+            abilities: 'product_admin.*.restore',
             denyResponse: 'Students cannot be restored.'
         );
     }
@@ -104,7 +104,7 @@ class StudentPolicy
     public function forceDelete(Authenticatable $authenticatable, Student $student): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.*.force-delete',
+            abilities: 'product_admin.*.force-delete',
             denyResponse: 'Students cannot be force deleted.'
         );
     }
@@ -112,7 +112,7 @@ class StudentPolicy
     public function import(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.create',
+            abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to import students.',
         );
     }

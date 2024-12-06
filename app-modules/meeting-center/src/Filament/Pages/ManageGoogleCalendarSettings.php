@@ -66,7 +66,7 @@ class ManageGoogleCalendarSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE) && parent::canAccess();
+        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE);
     }
 
     public function form(Form $form): Form

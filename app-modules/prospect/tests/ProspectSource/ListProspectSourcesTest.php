@@ -90,7 +90,7 @@ test('ListProspectSources is gated with proper access control', function () {
             ProspectSourceResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('prospect_source.view-any');
+    $user->givePermissionTo('product_admin.view-any');
 
     actingAs($user)
         ->get(

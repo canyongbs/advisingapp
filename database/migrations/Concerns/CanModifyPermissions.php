@@ -96,5 +96,11 @@ trait CanModifyPermissions
             ->where('guard_name', $guardName)
             ->whereIn('name', $names)
             ->delete();
+
+        // Delete groups that no longer have any permissions
+        DB::table('permission_groups')
+            ->leftJoin('permissions', 'permission_groups.id', '=', 'permissions.group_id')
+            ->whereNull('permissions.id')
+            ->delete();
     }
 }

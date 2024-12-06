@@ -60,7 +60,7 @@ class ManageDisplaySettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return parent::canAccess() && $user->can('display_settings.manage');
+        return $user->can('display_settings.manage');
     }
 
     public function form(Form $form): Form
