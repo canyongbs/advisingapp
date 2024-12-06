@@ -45,7 +45,7 @@ class SmsTemplatePolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'sms_template.view-any',
+            abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view sms templates.'
         );
     }
@@ -53,7 +53,7 @@ class SmsTemplatePolicy
     public function view(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["sms_template.{$smsTemplate->id}.view"],
+            abilities: ["product_admin.{$smsTemplate->id}.view"],
             denyResponse: 'You do not have permission to view this sms template.'
         );
     }
@@ -61,7 +61,7 @@ class SmsTemplatePolicy
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'sms_template.create',
+            abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create sms templates.'
         );
     }
@@ -69,7 +69,7 @@ class SmsTemplatePolicy
     public function update(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["sms_template.{$smsTemplate->id}.update"],
+            abilities: ["product_admin.{$smsTemplate->id}.update"],
             denyResponse: 'You do not have permission to update this sms template.'
         );
     }
@@ -77,7 +77,7 @@ class SmsTemplatePolicy
     public function delete(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["sms_template.{$smsTemplate->id}.delete"],
+            abilities: ["product_admin.{$smsTemplate->id}.delete"],
             denyResponse: 'You do not have permission to delete this sms template.'
         );
     }
@@ -85,7 +85,7 @@ class SmsTemplatePolicy
     public function restore(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["sms_template.{$smsTemplate->id}.restore"],
+            abilities: ["product_admin.{$smsTemplate->id}.restore"],
             denyResponse: 'You do not have permission to restore this sms template.'
         );
     }
@@ -93,7 +93,7 @@ class SmsTemplatePolicy
     public function forceDelete(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["sms_template.{$smsTemplate->id}.force-delete"],
+            abilities: ["product_admin.{$smsTemplate->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this sms template.'
         );
     }

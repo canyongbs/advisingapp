@@ -38,7 +38,6 @@ namespace AdvisingApp\Division\Filament\Resources;
 
 use Filament\Resources\Resource;
 use AdvisingApp\Division\Models\Division;
-use App\Filament\Clusters\UserManagement;
 use AdvisingApp\Division\Filament\Resources\DivisionResource\Pages\EditDivision;
 use AdvisingApp\Division\Filament\Resources\DivisionResource\Pages\ViewDivision;
 use AdvisingApp\Division\Filament\Resources\DivisionResource\Pages\ListDivisions;
@@ -49,9 +48,7 @@ class DivisionResource extends Resource
 {
     protected static ?string $model = Division::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-bars-2';
-
-    protected static ?string $cluster = UserManagement::class;
+    protected static ?string $navigationGroup = 'People Administration';
 
     protected static ?int $navigationSort = 70;
 

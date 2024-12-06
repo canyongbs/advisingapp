@@ -67,7 +67,7 @@ class ManageProspectConversionSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return parent::canAccess() && $user->can('prospect_conversion.manage');
+        return $user->can(['product_admin.*.view-any', 'product_admin.*.view']);
     }
 
     public function form(Form $form): Form
@@ -92,7 +92,29 @@ class ManageProspectConversionSettings extends SettingsPage
                             ->rule('decimal:0,2')
                             ->required(),
                     ]),
-            ]);
+            ])
+            ->disabled(! auth()->user()->can('product_admin.*.update'));
+    }
+
+    public function save(): void
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return;
+        }
+
+        parent::save();
+    }
+
+    /**
+     * @return array<Action | ActionGroup>
+     */
+    public function getFormActions(): array
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return [];
+        }
+
+        return parent::getFormActions();
     }
 
     protected function mutateFormDataBeforeSave(array $data): array

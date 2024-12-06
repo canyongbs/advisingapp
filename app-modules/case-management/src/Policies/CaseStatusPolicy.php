@@ -65,7 +65,7 @@ class CaseStatusPolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'case_status.view-any',
+            abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permissions to view case statuses.'
         );
     }
@@ -73,7 +73,7 @@ class CaseStatusPolicy
     public function view(Authenticatable $authenticatable, CaseStatus $caseStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_status.{$caseStatus->id}.view"],
+            abilities: ["product_admin.{$caseStatus->id}.view"],
             denyResponse: 'You do not have permissions to view this case status.'
         );
     }
@@ -81,7 +81,7 @@ class CaseStatusPolicy
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'case_status.create',
+            abilities: 'product_admin.create',
             denyResponse: 'You do not have permissions to create case statuses.'
         );
     }
@@ -89,7 +89,7 @@ class CaseStatusPolicy
     public function update(Authenticatable $authenticatable, CaseStatus $caseStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_status.{$caseStatus->id}.update"],
+            abilities: ["product_admin.{$caseStatus->id}.update"],
             denyResponse: 'You do not have permissions to update this case status.'
         );
     }
@@ -97,7 +97,7 @@ class CaseStatusPolicy
     public function delete(Authenticatable $authenticatable, CaseStatus $caseStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_status.{$caseStatus->id}.delete"],
+            abilities: ["product_admin.{$caseStatus->id}.delete"],
             denyResponse: 'You do not have permissions to delete this case status.'
         );
     }
@@ -105,7 +105,7 @@ class CaseStatusPolicy
     public function restore(Authenticatable $authenticatable, CaseStatus $caseStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_status.{$caseStatus->id}.restore"],
+            abilities: ["product_admin.{$caseStatus->id}.restore"],
             denyResponse: 'You do not have permissions to restore this case status.'
         );
     }
@@ -117,7 +117,7 @@ class CaseStatusPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["case_status.{$caseStatus->id}.force-delete"],
+            abilities: ["product_admin.{$caseStatus->id}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this case status.'
         );
     }

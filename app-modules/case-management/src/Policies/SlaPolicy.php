@@ -65,7 +65,7 @@ class SlaPolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'sla.view-any',
+            abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view SLAs.'
         );
     }
@@ -73,7 +73,7 @@ class SlaPolicy
     public function view(Authenticatable $authenticatable, Sla $sla): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["sla.{$sla->id}.view"],
+            abilities: ["product_admin.{$sla->id}.view"],
             denyResponse: 'You do not have permission to view this SLA.'
         );
     }
@@ -81,7 +81,7 @@ class SlaPolicy
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'sla.create',
+            abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create SLAs.'
         );
     }
@@ -89,7 +89,7 @@ class SlaPolicy
     public function update(Authenticatable $authenticatable, Sla $sla): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["sla.{$sla->id}.update"],
+            abilities: ["product_admin.{$sla->id}.update"],
             denyResponse: 'You do not have permission to update this SLA.'
         );
     }
@@ -97,7 +97,7 @@ class SlaPolicy
     public function delete(Authenticatable $authenticatable, Sla $sla): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["sla.{$sla->id}.delete"],
+            abilities: ["product_admin.{$sla->id}.delete"],
             denyResponse: 'You do not have permission to delete this SLA.'
         );
     }
@@ -105,7 +105,7 @@ class SlaPolicy
     public function restore(Authenticatable $authenticatable, Sla $sla): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["sla.{$sla->id}.restore"],
+            abilities: ["product_admin.{$sla->id}.restore"],
             denyResponse: 'You do not have permission to restore this SLA.'
         );
     }
@@ -113,7 +113,7 @@ class SlaPolicy
     public function forceDelete(Authenticatable $authenticatable, Sla $sla): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["sla.{$sla->id}.force-delete"],
+            abilities: ["product_admin.{$sla->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this SLA.'
         );
     }

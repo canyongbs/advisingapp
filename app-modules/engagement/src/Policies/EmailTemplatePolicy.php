@@ -45,7 +45,7 @@ class EmailTemplatePolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'email_template.view-any',
+            abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view email templates.'
         );
     }
@@ -53,7 +53,7 @@ class EmailTemplatePolicy
     public function view(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["email_template.{$emailTemplate->id}.view"],
+            abilities: ["product_admin.{$emailTemplate->id}.view"],
             denyResponse: 'You do not have permission to view this email template.'
         );
     }
@@ -61,7 +61,7 @@ class EmailTemplatePolicy
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'email_template.create',
+            abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create email templates.'
         );
     }
@@ -69,7 +69,7 @@ class EmailTemplatePolicy
     public function update(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["email_template.{$emailTemplate->id}.update"],
+            abilities: ["product_admin.{$emailTemplate->id}.update"],
             denyResponse: 'You do not have permission to update this email template.'
         );
     }
@@ -77,7 +77,7 @@ class EmailTemplatePolicy
     public function delete(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["email_template.{$emailTemplate->id}.delete"],
+            abilities: ["product_admin.{$emailTemplate->id}.delete"],
             denyResponse: 'You do not have permission to delete this email template.'
         );
     }
@@ -85,7 +85,7 @@ class EmailTemplatePolicy
     public function restore(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["email_template.{$emailTemplate->id}.restore"],
+            abilities: ["product_admin.{$emailTemplate->id}.restore"],
             denyResponse: 'You do not have permission to restore this email template.'
         );
     }
@@ -93,7 +93,7 @@ class EmailTemplatePolicy
     public function forceDelete(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["email_template.{$emailTemplate->id}.force-delete"],
+            abilities: ["product_admin.{$emailTemplate->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this email template.'
         );
     }

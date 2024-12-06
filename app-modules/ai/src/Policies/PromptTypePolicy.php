@@ -59,7 +59,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'prompt_type.view-any',
+            abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view prompt types.'
         );
     }
@@ -67,7 +67,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, PromptType $promptType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["prompt_type.{$promptType->id}.view"],
+            abilities: ["product_admin.{$promptType->id}.view"],
             denyResponse: 'You do not have permission to view this prompt type.'
         );
     }
@@ -75,7 +75,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'prompt_type.create',
+            abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create prompt types.'
         );
     }
@@ -83,7 +83,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, PromptType $promptType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["prompt_type.{$promptType->id}.update"],
+            abilities: ["product_admin.{$promptType->id}.update"],
             denyResponse: 'You do not have permission to update this prompt type.'
         );
     }
@@ -95,7 +95,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["prompt_type.{$promptType->id}.delete"],
+            abilities: ["product_admin.{$promptType->id}.delete"],
             denyResponse: 'You do not have permission to delete this prompt type.'
         );
     }
@@ -103,7 +103,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, PromptType $promptType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["prompt_type.{$promptType->id}.restore"],
+            abilities: ["product_admin.{$promptType->id}.restore"],
             denyResponse: 'You do not have permission to restore this prompt type.'
         );
     }
@@ -115,7 +115,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["prompt_type.{$promptType->id}.force-delete"],
+            abilities: ["product_admin.{$promptType->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this prompt type.'
         );
     }

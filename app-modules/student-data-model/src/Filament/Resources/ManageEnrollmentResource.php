@@ -64,7 +64,7 @@ class ManageEnrollmentResource extends Resource
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('student_record_manager.view-any')
+        return $user->can('product_admin.view-any')
             && app(ManageStudentConfigurationSettings::class)->is_enabled;
     }
 
