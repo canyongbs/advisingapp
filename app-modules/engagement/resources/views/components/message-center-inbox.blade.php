@@ -34,6 +34,8 @@
 @php
     use Carbon\Carbon;
     use App\Settings\DisplaySettings;
+
+    $activeFiltersCount = $this->getActiveFiltersCount();
 @endphp
 
 <div
@@ -54,6 +56,8 @@
                 icon="heroicon-m-funnel"
                 x-on:click="showFilters = !showFilters"
                 label="Show Filters and Search"
+                :badge="$activeFiltersCount ?: null"
+                wire:target="filterPeopleType,filterStartDate,filterEndDate,filterSubscribed,filterOpenTasks,filterOpenCases,filterMemberOfCareTeam"
             />
         </div>
 

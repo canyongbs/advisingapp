@@ -311,6 +311,44 @@ class MessageCenter extends Page
             });
     }
 
+    public function getActiveFiltersCount(): int
+    {
+        $count = 0;
+
+        if (
+            filled($this->filterPeopleType) &&
+            ($this->filterPeopleType !== 'all')
+        ) {
+            $count++;
+        }
+
+        if ($this->filterStartDate) {
+            $count++;
+        }
+
+        if ($this->filterEndDate) {
+            $count++;
+        }
+
+        if ($this->filterSubscribed) {
+            $count++;
+        }
+
+        if ($this->filterOpenTasks) {
+            $count++;
+        }
+
+        if ($this->filterOpenCases) {
+            $count++;
+        }
+
+        if ($this->filterMemberOfCareTeam) {
+            $count++;
+        }
+
+        return $count;
+    }
+
     public function engage(): void
     {
         $this->mountAction('create');
