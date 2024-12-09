@@ -46,12 +46,14 @@ use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\Alert\Observers\AlertObserver;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use AdvisingApp\Timeline\Models\Contracts\HasHistory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Timeline\Models\Concerns\InteractsWithHistory;
@@ -66,6 +68,7 @@ use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
  *
  * @mixin IdeHelperAlert
  */
+#[ObservedBy([AlertObserver::class])]
 class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction, HasHistory
 {
     use SoftDeletes;

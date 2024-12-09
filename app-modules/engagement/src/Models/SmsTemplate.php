@@ -40,10 +40,13 @@ use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use AdvisingApp\Engagement\Observers\SmsTemplateObserver;
 
 /**
  * @mixin IdeHelperSmsTemplate
  */
+#[ObservedBy([SmsTemplateObserver::class])]
 class SmsTemplate extends BaseModel
 {
     use SoftDeletes;

@@ -42,9 +42,11 @@ use Illuminate\Support\Facades\DB;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use AdvisingApp\CareTeam\Observers\CareTeamObserver;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
@@ -53,6 +55,7 @@ use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 /**
  * @mixin IdeHelperCareTeam
  */
+#[ObservedBy([CareTeamObserver::class])]
 class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanTriggerAutoSubscription
 {
     use HasFactory;

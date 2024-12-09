@@ -48,11 +48,14 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Timeline\Timelines\CaseHistoryTimeline;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
+use AdvisingApp\CaseManagement\Observers\CaseHistoryObserver;
 
 /**
  * @mixin IdeHelperCaseHistory
  */
+#[ObservedBy([CaseHistoryObserver::class])]
 class CaseHistory extends BaseModel implements ProvidesATimeline
 {
     use SoftDeletes;

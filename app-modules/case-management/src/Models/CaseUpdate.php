@@ -45,8 +45,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Timeline\Timelines\CaseUpdateTimeline;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use AdvisingApp\CaseManagement\Observers\CaseUpdateObserver;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
@@ -54,6 +56,7 @@ use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 /**
  * @mixin IdeHelperCaseUpdate
  */
+#[ObservedBy([CaseUpdateObserver::class])]
 class CaseUpdate extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline
 {
     use SoftDeletes;

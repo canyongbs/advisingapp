@@ -41,12 +41,15 @@ use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use AdvisingApp\Consent\Observers\ConsentAgreementObserver;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * @mixin IdeHelperConsentAgreement
  */
+#[ObservedBy([ConsentAgreementObserver::class])]
 class ConsentAgreement extends BaseModel implements Auditable
 {
     use AuditableTrait;

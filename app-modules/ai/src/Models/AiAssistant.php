@@ -45,14 +45,17 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\MediaCollections\File;
 use OwenIt\Auditing\Auditable as AuditableTrait;
+use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
 
 /**
  * @mixin IdeHelperAiAssistant
  */
+#[ObservedBy([AiAssistantObserver::class])]
 class AiAssistant extends BaseModel implements HasMedia, Auditable
 {
     use CanAddAssistantLicenseGlobalScope;

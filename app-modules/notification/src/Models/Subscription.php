@@ -47,8 +47,10 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use AdvisingApp\Notification\Observers\SubscriptionObserver;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
@@ -56,6 +58,7 @@ use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 /**
  * @mixin IdeHelperSubscription
  */
+#[ObservedBy([SubscriptionObserver::class])]
 class Subscription extends MorphPivot implements ExecutableFromACampaignAction
 {
     use BelongsToEducatable;

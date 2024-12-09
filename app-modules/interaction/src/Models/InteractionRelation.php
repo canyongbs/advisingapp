@@ -39,12 +39,15 @@ namespace AdvisingApp\Interaction\Models;
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Interaction\Observers\InteractionRelationObserver;
 
 /**
  * @mixin IdeHelperInteractionRelation
  */
+#[ObservedBy([InteractionRelationObserver::class])]
 class InteractionRelation extends BaseModel implements Auditable
 {
     use AuditableTrait;
