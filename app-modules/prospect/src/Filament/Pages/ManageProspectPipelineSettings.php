@@ -66,7 +66,7 @@ class ManageProspectPipelineSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return PipelineFlag::active() && $user->can(['product_admin.*.view-any', 'product_admin.*.view']);
+        return PipelineFlag::active() && $user->can(['product_admin.view-any', 'product_admin.*.view']);
     }
 
     public function form(Form $form): Form

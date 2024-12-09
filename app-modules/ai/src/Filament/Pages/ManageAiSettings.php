@@ -84,7 +84,7 @@ class ManageAiSettings extends SettingsPage
             return false;
         }
 
-        return $user->can(['product_admin.*.view-any', 'product_admin.*.view']);
+        return $user->can(['product_admin.view-any', 'product_admin.*.view']);
     }
 
     #[Computed]
