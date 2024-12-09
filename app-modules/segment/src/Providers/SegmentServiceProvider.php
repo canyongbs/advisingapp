@@ -41,7 +41,6 @@ use AdvisingApp\Segment\SegmentPlugin;
 use AdvisingApp\Segment\Models\Segment;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Segment\Models\SegmentSubject;
-use AdvisingApp\Segment\Observers\SegmentObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class SegmentServiceProvider extends ServiceProvider
@@ -57,12 +56,5 @@ class SegmentServiceProvider extends ServiceProvider
             'segment' => Segment::class,
             'segment_subject' => SegmentSubject::class,
         ]);
-
-        $this->registerObservers();
-    }
-
-    protected function registerObservers(): void
-    {
-        Segment::observe(SegmentObserver::class);
     }
 }

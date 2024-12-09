@@ -48,14 +48,7 @@ use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Interaction\Observers\InteractionObserver;
-use AdvisingApp\Interaction\Observers\InteractionTypesObserver;
 use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
-use AdvisingApp\Interaction\Observers\InteractionDriverObserver;
-use AdvisingApp\Interaction\Observers\InteractionStatusObserver;
-use AdvisingApp\Interaction\Observers\InteractionOutcomeObserver;
-use AdvisingApp\Interaction\Observers\InteractionRelationObserver;
-use AdvisingApp\Interaction\Observers\InteractionInitiativesObserver;
 
 class InteractionServiceProvider extends ServiceProvider
 {
@@ -78,21 +71,8 @@ class InteractionServiceProvider extends ServiceProvider
             'interaction' => Interaction::class,
         ]);
 
-        $this->registerObservers();
-
         $this->discoverSchema(__DIR__ . '/../../graphql/interaction.graphql');
 
         $this->registerEnum(InteractionStatusColorOptions::class);
-    }
-
-    protected function registerObservers(): void
-    {
-        Interaction::observe(InteractionObserver::class);
-        InteractionOutcome::observe(InteractionOutcomeObserver::class);
-        InteractionStatus::observe(InteractionStatusObserver::class);
-        InteractionRelation::observe(InteractionRelationObserver::class);
-        InteractionInitiative::observe(InteractionInitiativesObserver::class);
-        InteractionType::observe(InteractionTypesObserver::class);
-        InteractionDriver::observe(InteractionDriverObserver::class);
     }
 }

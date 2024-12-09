@@ -52,14 +52,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Actions\DeliverEngagements;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Engagement\Observers\EngagementObserver;
-use AdvisingApp\Engagement\Models\EngagementFileEntities;
-use AdvisingApp\Engagement\Observers\SmsTemplateObserver;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
-use AdvisingApp\Engagement\Observers\EmailTemplateObserver;
-use AdvisingApp\Engagement\Observers\EngagementBatchObserver;
-use AdvisingApp\Engagement\Observers\EngagementFileEntitiesObserver;
 
 class EngagementServiceProvider extends ServiceProvider
 {
@@ -99,18 +93,7 @@ class EngagementServiceProvider extends ServiceProvider
                 ->withoutOverlapping();
         });
 
-        $this->registerObservers();
-
         $this->registerGraphQL();
-    }
-
-    public function registerObservers(): void
-    {
-        EmailTemplate::observe(EmailTemplateObserver::class);
-        Engagement::observe(EngagementObserver::class);
-        EngagementBatch::observe(EngagementBatchObserver::class);
-        EngagementFileEntities::observe(EngagementFileEntitiesObserver::class);
-        SmsTemplate::observe(SmsTemplateObserver::class);
     }
 
     protected function registerGraphQL(): void
