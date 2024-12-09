@@ -37,6 +37,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckOlympusKey;
 use App\Http\Controllers\UpdateAzureSsoSettingsController;
+use App\Http\Controllers\UtilizationMetricsApisController;
 use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
 
 Route::middleware([
@@ -47,4 +48,7 @@ Route::middleware([
 
     Route::get('/health', HealthCheckJsonResultsController::class)
         ->name('health');
+
+    Route::get('/utilization-metrics', UtilizationMetricsApisController::class)
+        ->name('utilization-metrics');
 });
