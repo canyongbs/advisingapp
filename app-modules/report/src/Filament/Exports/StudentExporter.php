@@ -47,7 +47,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Models\InteractionStatus;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 
 class StudentExporter extends Exporter
 {

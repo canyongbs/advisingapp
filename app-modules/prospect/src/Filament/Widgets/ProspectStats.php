@@ -66,11 +66,9 @@ class ProspectStats extends StatsOverviewWidget
                 })),
             Stat::make('My Alerts', Cache::tags(['prospects', "user-{$user->getKey()}-prospect-alerts"])
                 ->remember("user-{$user->getKey()}-prospect-alerts-count", now()->addHour(), function () use ($user): int {
-                   
                     return $user->prospectAlerts()->whereHas('status', function ($query) {
                         $query->where('classification', SystemAlertStatusClassification::Active);
                     })->count();
-                    
                 })),
             Stat::make('My Population Segments', Cache::tags(["user-{$user->getKey()}-prospect-segments"])
                 ->remember("user-{$user->getKey()}-prospect-segments-count", now()->addHour(), function () use ($user): int {

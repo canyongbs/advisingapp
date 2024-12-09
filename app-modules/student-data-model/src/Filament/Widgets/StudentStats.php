@@ -66,11 +66,9 @@ class StudentStats extends StatsOverviewWidget
                 })),
             Stat::make('My Alerts', Cache::tags(['students', "user-{$user->getKey()}-student-alerts"])
                 ->remember("user-{$user->getKey()}-student-alerts-count", now()->addHour(), function () use ($user): int {
-                   
                     return $user->studentAlerts()->whereHas('status', function ($query) {
                         $query->where('classification', SystemAlertStatusClassification::Active);
                     })->count();
-                    
                 })),
             Stat::make('My Population Segments', Cache::tags(["user-{$user->getKey()}-student-segments"])
                 ->remember("user-{$user->getKey()}-student-segments-count", now()->addHour(), function () use ($user): int {

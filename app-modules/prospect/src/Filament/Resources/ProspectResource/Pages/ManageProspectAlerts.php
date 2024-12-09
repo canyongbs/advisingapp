@@ -161,6 +161,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
                 CreateAction::make()
                     ->authorize(function () {
                         $ownerRecord = $this->getOwnerRecord();
+
                         return auth()->user()->can('create', [Alert::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
                     })
                     ->mutateFormDataUsing(function (array $data): array {
