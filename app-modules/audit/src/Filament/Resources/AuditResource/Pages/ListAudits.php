@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
+use Carbon\Carbon;
 use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Actions\ExportAction;
@@ -52,7 +53,6 @@ use Filament\Tables\Actions\ExportBulkAction;
 use AdvisingApp\Audit\Filament\Exports\AuditExporter;
 use AdvisingApp\Audit\Actions\Finders\AuditableModels;
 use AdvisingApp\Audit\Filament\Resources\AuditResource;
-use Carbon\Carbon;
 
 class ListAudits extends ListRecords
 {
