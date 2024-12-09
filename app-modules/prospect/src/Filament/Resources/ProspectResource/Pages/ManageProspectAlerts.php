@@ -38,7 +38,6 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use App\Features\AlertStatusId;
 use Filament\Infolists\Infolist;
 use AdvisingApp\Alert\Models\Alert;
 use Filament\Forms\Components\Select;
@@ -47,7 +46,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\CreateAction;
@@ -91,11 +89,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
                 "alert-count-{$ownerRecord->getKey()}",
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
-                    if (AlertStatusId::active()) {
-                        return $ownerRecord->alerts()->whereRelation('status', 'classification', SystemAlertStatusClassification::Active->value)->count();
-                    }
-
-                    return $ownerRecord->alerts()->alertStatus(SystemAlertStatusClassification::Active)->count();
+                    return $ownerRecord->alerts()->whereRelation('status', 'classification', SystemAlertStatusClassification::Active->value)->count();
                 },
             );
 
@@ -111,8 +105,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
                 TextEntry::make('description'),
                 TextEntry::make('severity'),
                 TextEntry::make('suggested_intervention'),
-                TextEntry::make('status.name')->visible(AlertStatusId::active()),
-                TextEntry::make('status')->visible(! AlertStatusId::active()),
+                TextEntry::make('status.name'),
                 TextEntry::make('createdBy.name')->label('Created By')->default('N/A'),
                 TextEntry::make('created_at')->label('Created Date'),
             ]);
@@ -139,15 +132,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
                     ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
                     ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
                     ->selectablePlaceholder(false)
-                    ->required()
-                    ->visible(AlertStatusId::active()),
-                Select::make('status')
-                    ->options(SystemAlertStatusClassification::class)
-                    ->selectablePlaceholder(false)
-                    ->default(SystemAlertStatusClassification::Active)
-                    ->required()
-                    ->enum(SystemAlertStatusClassification::class)
-                    ->visible(! AlertStatusId::active()),
+                    ->required(),
             ]);
     }
 
@@ -162,11 +147,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
                 TextColumn::make('severity')
                     ->sortable(),
                 TextColumn::make('status.name')
-                    ->sortable()
-                    ->visible(AlertStatusId::active()),
-                TextColumn::make('status')
-                    ->sortable()
-                    ->visible(! AlertStatusId::active()),
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->sortable(),
             ])
@@ -174,17 +155,12 @@ class ManageProspectAlerts extends ManageRelatedRecords
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
                 SelectFilter::make('status_id')
-                    ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
-                    ->visible(AlertStatusId::active()),
-                SelectFilter::make('status')
-                    ->options(AlertStatus::class)
-                    ->visible(! AlertStatusId::active()),
+                    ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order')),
             ])
             ->headerActions([
                 CreateAction::make()
                     ->authorize(function () {
                         $ownerRecord = $this->getOwnerRecord();
-
                         return auth()->user()->can('create', [Alert::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
                     })
                     ->mutateFormDataUsing(function (array $data): array {
