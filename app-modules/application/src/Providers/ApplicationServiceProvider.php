@@ -48,7 +48,6 @@ use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
-use AdvisingApp\Application\Observers\ApplicationSubmissionObserver;
 use AdvisingApp\Application\Listeners\NotifySubscribersOfApplicationSubmission;
 
 class ApplicationServiceProvider extends ServiceProvider
@@ -68,14 +67,7 @@ class ApplicationServiceProvider extends ServiceProvider
             'application_authentication' => ApplicationAuthentication::class,
             'application_submission_state' => ApplicationSubmissionState::class,
         ]);
-
-        $this->registerObservers();
         $this->registerEvents();
-    }
-
-    public function registerObservers(): void
-    {
-        ApplicationSubmission::observe(ApplicationSubmissionObserver::class);
     }
 
     public function registerEvents(): void

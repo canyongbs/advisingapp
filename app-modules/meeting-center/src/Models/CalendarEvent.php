@@ -38,10 +38,13 @@ namespace AdvisingApp\MeetingCenter\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use AdvisingApp\MeetingCenter\Observers\CalendarEventObserver;
 
 /**
  * @mixin IdeHelperCalendarEvent
  */
+#[ObservedBy([CalendarEventObserver::class])]
 class CalendarEvent extends BaseModel
 {
     protected $fillable = [

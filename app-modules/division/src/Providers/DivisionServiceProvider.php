@@ -41,7 +41,6 @@ use App\Concerns\ImplementsGraphQL;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Division\DivisionPlugin;
 use AdvisingApp\Division\Models\Division;
-use AdvisingApp\Division\Observers\DivisionObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class DivisionServiceProvider extends ServiceProvider
@@ -58,13 +57,6 @@ class DivisionServiceProvider extends ServiceProvider
         Relation::morphMap([
             'division' => Division::class,
         ]);
-
-        $this->registerObservers();
         $this->discoverSchema(__DIR__ . '/../../graphql/division.graphql');
-    }
-
-    protected function registerObservers(): void
-    {
-        Division::observe(DivisionObserver::class);
     }
 }

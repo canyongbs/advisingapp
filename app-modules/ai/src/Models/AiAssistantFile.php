@@ -41,11 +41,14 @@ use Spatie\MediaLibrary\HasMedia;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\Ai\Observers\AiAssistantFileObserver;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 
 /**
  * @mixin IdeHelperAiAssistantFile
  */
+#[ObservedBy([AiAssistantFileObserver::class])]
 class AiAssistantFile extends BaseModel implements AiFile, HasMedia
 {
     use SoftDeletes;

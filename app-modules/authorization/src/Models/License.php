@@ -42,11 +42,14 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use AdvisingApp\Authorization\Observers\LicenseObserver;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableConcern;
 
 /**
  * @mixin IdeHelperLicense
  */
+#[ObservedBy([LicenseObserver::class])]
 class License extends BaseModel implements Auditable
 {
     use AuditableConcern;

@@ -41,6 +41,8 @@ use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use AdvisingApp\CaseManagement\Observers\ChangeRequestObserver;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\CaseManagement\Enums\SystemChangeRequestClassification;
 use AdvisingApp\Application\Models\Concerns\HasRelationBasedStateMachine;
@@ -48,6 +50,7 @@ use AdvisingApp\Application\Models\Concerns\HasRelationBasedStateMachine;
 /**
  * @mixin IdeHelperChangeRequest
  */
+#[ObservedBy([ChangeRequestObserver::class])]
 class ChangeRequest extends BaseModel implements Auditable
 {
     use AuditableTrait;

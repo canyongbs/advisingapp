@@ -42,6 +42,8 @@ use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Form\Enums\FormSubmissionStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Form\Observers\FormSubmissionObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
@@ -51,6 +53,7 @@ use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
  *
  * @mixin IdeHelperFormSubmission
  */
+#[ObservedBy([FormSubmissionObserver::class])]
 class FormSubmission extends Submission
 {
     protected $fillable = [

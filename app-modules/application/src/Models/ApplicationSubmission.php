@@ -39,13 +39,16 @@ namespace AdvisingApp\Application\Models;
 use AdvisingApp\Form\Models\Submission;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use AdvisingApp\Application\Observers\ApplicationSubmissionObserver;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\Application\Models\Concerns\HasRelationBasedStateMachine;
 
 /**
  * @mixin IdeHelperApplicationSubmission
  */
+#[ObservedBy([ApplicationSubmissionObserver::class])]
 class ApplicationSubmission extends Submission
 {
     use HasRelationBasedStateMachine;

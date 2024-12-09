@@ -44,7 +44,6 @@ use AdvisingApp\Campaign\CampaignPlugin;
 use AdvisingApp\Campaign\Models\Campaign;
 use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Campaign\Observers\CampaignObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Campaign\Actions\ExecuteCampaignActions;
 
@@ -78,12 +77,5 @@ class CampaignServiceProvider extends ServiceProvider
                 ->onOneServer()
                 ->withoutOverlapping();
         });
-
-        $this->registerObservers();
-    }
-
-    public function registerObservers(): void
-    {
-        Campaign::observe(CampaignObserver::class);
     }
 }

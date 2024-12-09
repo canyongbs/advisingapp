@@ -43,12 +43,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use AdvisingApp\Campaign\Observers\CampaignObserver;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * @mixin IdeHelperCampaign
  */
+#[ObservedBy([CampaignObserver::class])]
 class Campaign extends BaseModel implements Auditable
 {
     use AuditableTrait;

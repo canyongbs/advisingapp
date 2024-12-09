@@ -45,13 +45,16 @@ use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Segment\Enums\SegmentType;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\Segment\Observers\SegmentObserver;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 
 /**
  * @mixin IdeHelperSegment
  */
+#[ObservedBy([SegmentObserver::class])]
 class Segment extends BaseModel
 {
     use SoftDeletes;
