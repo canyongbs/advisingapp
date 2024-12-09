@@ -60,7 +60,7 @@ class ManageStudentConfiguration extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can(['product_admin.view-any', 'product_admin.*.view']);
+        return $user->can(['product_admin.view-any']);
     }
 
     public function form(Form $form): Form
