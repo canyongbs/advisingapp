@@ -1,4 +1,3 @@
-data_activate_feature_flag_alert_status_id
 <?php
 
 /*

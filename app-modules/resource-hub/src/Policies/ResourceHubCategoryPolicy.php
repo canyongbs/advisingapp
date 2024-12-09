@@ -66,7 +66,7 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'resource_hub_category.view-any',
+            abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view resource hub categories.'
         );
     }
@@ -74,7 +74,7 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, ResourceHubCategory $resourceHubCategory): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["resource_hub_category.{$resourceHubCategory->id}.view"],
+            abilities: ["product_admin.{$resourceHubCategory->id}.view"],
             denyResponse: 'You do not have permission to view this resource hub category.'
         );
     }
@@ -82,7 +82,7 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'resource_hub_category.create',
+            abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create resource hub categories.'
         );
     }
@@ -90,7 +90,7 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, ResourceHubCategory $resourceHubCategory): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["resource_hub_category.{$resourceHubCategory->id}.update"],
+            abilities: ["product_admin.{$resourceHubCategory->id}.update"],
             denyResponse: 'You do not have permission to update this resource hub category.'
         );
     }
@@ -98,7 +98,7 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, ResourceHubCategory $resourceHubCategory): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["resource_hub_category.{$resourceHubCategory->id}.delete"],
+            abilities: ["product_admin.{$resourceHubCategory->id}.delete"],
             denyResponse: 'You do not have permissions to delete this resource hub category.'
         );
     }
@@ -106,7 +106,7 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, ResourceHubCategory $resourceHubCategory): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["resource_hub_category.{$resourceHubCategory->id}.restore"],
+            abilities: ["product_admin.{$resourceHubCategory->id}.restore"],
             denyResponse: 'You do not have permission to restore this resource hub category.'
         );
     }
@@ -114,7 +114,7 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, ResourceHubCategory $resourceHubCategory): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["resource_hub_category.{$resourceHubCategory->id}.force-delete"],
+            abilities: ["product_admin.{$resourceHubCategory->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this resource hub category.'
         );
     }

@@ -49,7 +49,7 @@ test('ListInteractionDrivers is gated with proper access control', function () {
             InteractionDriverResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('interaction_driver.view-any');
+    $user->givePermissionTo('product_admin.view-any');
 
     actingAs($user)
         ->get(

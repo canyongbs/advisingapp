@@ -49,7 +49,7 @@ test('ListInteractionOutcomes is gated with proper access control', function () 
             InteractionOutcomeResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('interaction_outcome.view-any');
+    $user->givePermissionTo('product_admin.view-any');
 
     actingAs($user)
         ->get(

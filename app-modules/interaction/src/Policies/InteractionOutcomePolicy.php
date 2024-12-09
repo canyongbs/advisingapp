@@ -56,7 +56,7 @@ class InteractionOutcomePolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'interaction_outcome.view-any',
+            abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view interaction outcomes.'
         );
     }
@@ -64,7 +64,7 @@ class InteractionOutcomePolicy
     public function view(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["interaction_outcome.{$outcome->id}.view"],
+            abilities: ["product_admin.{$outcome->id}.view"],
             denyResponse: 'You do not have permission to view this interaction outcome.'
         );
     }
@@ -72,7 +72,7 @@ class InteractionOutcomePolicy
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'interaction_outcome.create',
+            abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create interaction outcomes.'
         );
     }
@@ -80,7 +80,7 @@ class InteractionOutcomePolicy
     public function update(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["interaction_outcome.{$outcome->id}.update"],
+            abilities: ["product_admin.{$outcome->id}.update"],
             denyResponse: 'You do not have permission to update this interaction outcome.'
         );
     }
@@ -88,7 +88,7 @@ class InteractionOutcomePolicy
     public function delete(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["interaction_outcome.{$outcome->id}.delete"],
+            abilities: ["product_admin.{$outcome->id}.delete"],
             denyResponse: 'You do not have permission to delete this interaction outcome.'
         );
     }
@@ -96,7 +96,7 @@ class InteractionOutcomePolicy
     public function restore(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["interaction_outcome.{$outcome->id}.restore"],
+            abilities: ["product_admin.{$outcome->id}.restore"],
             denyResponse: 'You do not have permission to restore this interaction outcome.'
         );
     }
@@ -104,7 +104,7 @@ class InteractionOutcomePolicy
     public function forceDelete(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["interaction_outcome.{$outcome->id}.force-delete"],
+            abilities: ["product_admin.{$outcome->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction outcome.'
         );
     }
