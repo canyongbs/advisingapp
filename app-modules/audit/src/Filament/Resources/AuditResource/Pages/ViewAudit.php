@@ -42,6 +42,7 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Audit\Filament\Resources\AuditResource;
+use Carbon\Carbon;
 
 class ViewAudit extends ViewRecord
 {
@@ -68,6 +69,9 @@ class ViewAudit extends ViewRecord
                             ->label('IP Address'),
                         TextEntry::make('user_agent')
                             ->label('User Agent'),
+                        TextEntry::make('created_at')
+                            ->label('Occurred At')
+                            ->formatStateUsing(fn (string $state) => Carbon::parse($state)->format('d-m-Y h:i A')),
                         TextEntry::make('getModified')
                             ->label('Changes')
                             ->columnSpanFull()

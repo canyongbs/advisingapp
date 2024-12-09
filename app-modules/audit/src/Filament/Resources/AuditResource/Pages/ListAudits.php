@@ -52,6 +52,7 @@ use Filament\Tables\Actions\ExportBulkAction;
 use AdvisingApp\Audit\Filament\Exports\AuditExporter;
 use AdvisingApp\Audit\Actions\Finders\AuditableModels;
 use AdvisingApp\Audit\Filament\Resources\AuditResource;
+use Carbon\Carbon;
 
 class ListAudits extends ListRecords
 {
@@ -74,6 +75,9 @@ class ListAudits extends ListRecords
                 TextColumn::make('event')
                     ->label('Event')
                     ->sortable(),
+                TextColumn::make('created_at')
+                    ->label('Occurred At')
+                    ->formatStateUsing(fn (string $state) => Carbon::parse($state)->format('d-m-Y h:i A')),
             ])
             ->defaultSort('id', 'desc')
             ->filters([
