@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Alert\Filament\Resources;
 
-use App\Features\AlertStatusId;
 use Filament\Resources\Resource;
 use AdvisingApp\Alert\Models\AlertStatus;
 use App\Filament\Clusters\ConstituentManagement;
@@ -58,11 +57,6 @@ class AlertStatusResource extends Resource
     protected static ?string $navigationGroup = 'Alert';
 
     protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
-    {
-        return AlertStatusId::active() && parent::canAccess();
-    }
 
     public static function getPages(): array
     {

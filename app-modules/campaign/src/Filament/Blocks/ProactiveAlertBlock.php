@@ -37,7 +37,6 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use Carbon\CarbonImmutable;
-use App\Features\AlertStatusId;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Builder;
@@ -77,15 +76,7 @@ class ProactiveAlertBlock extends CampaignActionBlock
                 ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
                 ->selectablePlaceholder(false)
                 ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
-                ->required()
-                ->visible(AlertStatusId::active()),
-            Select::make($fieldPrefix . 'status')
-                ->options(SystemAlertStatusClassification::class)
-                ->selectablePlaceholder(false)
-                ->default(fn () => SystemAlertStatusClassification::Active)
-                ->required()
-                ->enum(SystemAlertStatusClassification::class)
-                ->visible(! AlertStatusId::active()),
+                ->required(),
             DateTimePicker::make($fieldPrefix . 'execute_at')
                 ->label('When should the journey step be executed?')
                 ->columnSpanFull()

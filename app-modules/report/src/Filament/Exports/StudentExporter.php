@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Report\Filament\Exports;
 
-use App\Features\AlertStatusId;
 use AdvisingApp\Task\Enums\TaskStatus;
 use Filament\Actions\Exports\Exporter;
 use Filament\Tables\Columns\TextColumn;
@@ -48,7 +47,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Models\InteractionStatus;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 
 class StudentExporter extends Exporter
 {
@@ -112,21 +110,8 @@ class StudentExporter extends Exporter
             static::notDefault($type::make('engagement_files_count')
                 ->label('Count of Files')
                 ->counts('engagementFiles')),
-            static::notDefault($type::make('alerts_count')
-                ->label('Count of Alerts')
-                ->counts('alerts'))
-                ->visible(! AlertStatusId::active()),
-            ...array_map(
-                fn (SystemAlertStatusClassification $status): TextColumn | ExportColumn => static::notDefault($type::make("alerts_{$status->value}_count")
-                    ->label("Count of {$status->getLabel()} Alerts")
-                    ->counts([
-                        "alerts as alerts_{$status->value}_count" => fn (Builder $query) => $query->alertStatus($status),
-                    ])),
-                SystemAlertStatusClassification::cases(),
-            ),
             ...AlertStatus::all()->map(fn (AlertStatus $status): TextColumn | ExportColumn => static::notDefault($type::make("alerts_{$status->getKey()}_count")
                 ->label("Count of {$status->name} Alerts")
-                ->visible(AlertStatusId::active())
                 ->counts([
                     "Alerts as alerts_{$status->getKey()}_count" => fn (Builder $query) => $query->whereBelongsTo($status, 'status'),
                 ]))),
