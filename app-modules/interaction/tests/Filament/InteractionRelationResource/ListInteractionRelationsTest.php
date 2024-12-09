@@ -49,7 +49,7 @@ test('ListInteractionRelations is gated with proper access control', function ()
             InteractionRelationResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('interaction_relation.view-any');
+    $user->givePermissionTo('product_admin.view-any');
 
     actingAs($user)
         ->get(

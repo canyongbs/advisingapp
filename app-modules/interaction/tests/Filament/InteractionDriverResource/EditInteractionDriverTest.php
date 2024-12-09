@@ -52,8 +52,8 @@ test('EditInteractionDriver is gated with proper access control', function () {
             InteractionDriverResource::getUrl('edit', ['record' => $driver])
         )->assertForbidden();
 
-    $user->givePermissionTo('interaction_driver.view-any');
-    $user->givePermissionTo('interaction_driver.*.update');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.update');
 
     actingAs($user)
         ->get(

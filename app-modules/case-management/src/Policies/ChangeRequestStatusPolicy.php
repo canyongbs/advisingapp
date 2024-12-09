@@ -66,7 +66,7 @@ class ChangeRequestStatusPolicy implements PerformsChecksBeforeAuthorization
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'change_request_status.view-any',
+            abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view change request statuses.'
         );
     }
@@ -74,7 +74,7 @@ class ChangeRequestStatusPolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, ChangeRequestStatus $changeRequestStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["change_request_status.{$changeRequestStatus->id}.view"],
+            abilities: ["product_admin.{$changeRequestStatus->id}.view"],
             denyResponse: 'You do not have permission to view this change request status.'
         );
     }
@@ -82,7 +82,7 @@ class ChangeRequestStatusPolicy implements PerformsChecksBeforeAuthorization
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'change_request_status.create',
+            abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create change request statuses.'
         );
     }
@@ -90,7 +90,7 @@ class ChangeRequestStatusPolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, ChangeRequestStatus $changeRequestStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["change_request_status.{$changeRequestStatus->id}.update"],
+            abilities: ["product_admin.{$changeRequestStatus->id}.update"],
             denyResponse: 'You do not have permission to update this change request status.'
         );
     }
@@ -98,7 +98,7 @@ class ChangeRequestStatusPolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, ChangeRequestStatus $changeRequestStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["change_request_status.{$changeRequestStatus->id}.delete"],
+            abilities: ["product_admin.{$changeRequestStatus->id}.delete"],
             denyResponse: 'You do not have permission to delete this change request status.'
         );
     }
@@ -106,7 +106,7 @@ class ChangeRequestStatusPolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, ChangeRequestStatus $changeRequestStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["change_request_status.{$changeRequestStatus->id}.restore"],
+            abilities: ["product_admin.{$changeRequestStatus->id}.restore"],
             denyResponse: 'You do not have permission to restore this change request status.'
         );
     }
@@ -118,7 +118,7 @@ class ChangeRequestStatusPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["change_request_status.{$changeRequestStatus->id}.force-delete"],
+            abilities: ["product_admin.{$changeRequestStatus->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this change request status.'
         );
     }

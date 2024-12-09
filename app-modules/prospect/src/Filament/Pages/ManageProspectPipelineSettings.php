@@ -66,7 +66,7 @@ class ManageProspectPipelineSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return parent::canAccess() && PipelineFlag::active() && $user->can('manage_prospect_pipeline_settings');
+        return PipelineFlag::active() && $user->can(['product_admin.view-any']);
     }
 
     public function form(Form $form): Form
@@ -76,6 +76,28 @@ class ManageProspectPipelineSettings extends SettingsPage
                 ->inline(true)
                 ->label('Is Enabled?')
                 ->columnSpanFull(),
-        ]);
+        ])
+            ->disabled(! auth()->user()->can('product_admin.*.update'));
+    }
+
+    public function save(): void
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return;
+        }
+
+        parent::save();
+    }
+
+    /**
+     * @return array<Action | ActionGroup>
+     */
+    public function getFormActions(): array
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return [];
+        }
+
+        return parent::getFormActions();
     }
 }

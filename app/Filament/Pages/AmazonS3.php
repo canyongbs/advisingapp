@@ -84,7 +84,7 @@ class AmazonS3 extends Page implements HasForms
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE) && parent::canAccess();
+        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE);
     }
 
     public function mount(): void

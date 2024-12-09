@@ -49,7 +49,7 @@ test('ListInteractionTypes is gated with proper access control', function () {
             InteractionTypeResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('interaction_type.view-any');
+    $user->givePermissionTo('product_admin.view-any');
 
     actingAs($user)
         ->get(

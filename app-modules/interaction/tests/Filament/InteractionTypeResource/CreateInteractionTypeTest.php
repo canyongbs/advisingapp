@@ -49,8 +49,8 @@ test('CreateInteractionType is gated with proper access control', function () {
             InteractionTypeResource::getUrl('create')
         )->assertForbidden();
 
-    $user->givePermissionTo('interaction_type.view-any');
-    $user->givePermissionTo('interaction_type.create');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.create');
 
     actingAs($user)
         ->get(

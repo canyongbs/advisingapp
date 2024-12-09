@@ -57,11 +57,11 @@ $licenses = [
 ];
 
 $permissions = [
-    'prompt_type.view-any',
-    'prompt_type.create',
-    'prompt_type.*.view',
-    'prompt_type.*.update',
-    'prompt_type.*.delete',
+    'product_admin.view-any',
+    'product_admin.create',
+    'product_admin.*.view',
+    'product_admin.*.update',
+    'product_admin.*.delete',
 ];
 
 it('cannot render without a license', function () use ($permissions) {

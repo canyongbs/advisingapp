@@ -60,7 +60,7 @@ class ManageStudentConfiguration extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return parent::canAccess() && $user->can('student_record_manager.configuration');
+        return $user->can(['product_admin.view-any']);
     }
 
     public function form(Form $form): Form
@@ -70,11 +70,33 @@ class ManageStudentConfiguration extends SettingsPage
                 Toggle::make('is_enabled')
                     ->label('Enable')
                     ->default(false),
-            ]);
+            ])
+            ->disabled(! auth()->user()->can('product_admin.*.update'));
     }
 
     public function getRedirectUrl(): ?string
     {
         return ManageStudentConfiguration::getUrl();
+    }
+
+    public function save(): void
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return;
+        }
+
+        parent::save();
+    }
+
+    /**
+     * @return array<Action | ActionGroup>
+     */
+    public function getFormActions(): array
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return [];
+        }
+
+        return parent::getFormActions();
     }
 }

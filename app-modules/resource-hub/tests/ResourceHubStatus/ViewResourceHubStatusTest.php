@@ -60,8 +60,8 @@ test('ViewResourceHubStatus is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo('resource_hub_status.view-any');
-    $user->givePermissionTo('resource_hub_status.*.view');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.view');
 
     actingAs($user)
         ->get(
@@ -80,8 +80,8 @@ test('ViewResourceHubStatus is gated with proper feature access control', functi
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $user->givePermissionTo('resource_hub_status.view-any');
-    $user->givePermissionTo('resource_hub_status.*.view');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.view');
 
     $resourceHubStatus = ResourceHubStatus::factory()->create();
 

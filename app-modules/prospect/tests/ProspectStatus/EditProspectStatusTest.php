@@ -127,8 +127,8 @@ test('EditProspectStatus is gated with proper access control', function () {
     ])
         ->assertForbidden();
 
-    $user->givePermissionTo('prospect_status.view-any');
-    $user->givePermissionTo('prospect_status.*.update');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.update');
 
     actingAs($user)
         ->get(

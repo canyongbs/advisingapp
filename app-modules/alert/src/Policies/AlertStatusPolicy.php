@@ -45,7 +45,7 @@ class AlertStatusPolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'alert_status.view-any',
+            abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view alert statuses.'
         );
     }
@@ -53,7 +53,7 @@ class AlertStatusPolicy
     public function view(Authenticatable $authenticatable, AlertStatus $alertStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["alert_status.{$alertStatus->getKey()}.view"],
+            abilities: ["product_admin.{$alertStatus->getKey()}.view"],
             denyResponse: 'You do not have permission to view this alert status.'
         );
     }
@@ -61,7 +61,7 @@ class AlertStatusPolicy
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'alert_status.create',
+            abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create alert statuses.'
         );
     }
@@ -69,7 +69,7 @@ class AlertStatusPolicy
     public function update(Authenticatable $authenticatable, AlertStatus $alertStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["alert_status.{$alertStatus->getKey()}.update"],
+            abilities: ["product_admin.{$alertStatus->getKey()}.update"],
             denyResponse: 'You do not have permission to update this alert status.'
         );
     }
@@ -81,7 +81,7 @@ class AlertStatusPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["alert_status.{$alertStatus->getKey()}.delete"],
+            abilities: ["product_admin.{$alertStatus->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this alert status.'
         );
     }
@@ -89,7 +89,7 @@ class AlertStatusPolicy
     public function restore(Authenticatable $authenticatable, AlertStatus $alertStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["alert_status.{$alertStatus->getKey()}.restore"],
+            abilities: ["product_admin.{$alertStatus->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this alert status.'
         );
     }
@@ -101,7 +101,7 @@ class AlertStatusPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["alert_status.{$alertStatus->getKey()}.force-delete"],
+            abilities: ["product_admin.{$alertStatus->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this alert status.'
         );
     }

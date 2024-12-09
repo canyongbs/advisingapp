@@ -100,7 +100,7 @@ test('ListProspectStatuses is gated with proper access control', function () {
             ProspectStatusResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('prospect_status.view-any');
+    $user->givePermissionTo('product_admin.view-any');
 
     actingAs($user)
         ->get(
