@@ -38,7 +38,6 @@ namespace AdvisingApp\Authorization\Filament\Forms\Components;
 
 use Closure;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log;
 use Filament\Forms\Components\Field;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -79,12 +78,10 @@ class PermissionsMatrix extends Field
 
     public function getAvailablePermissions(): array
     {
-        $invalidPermissions = [];
-
         $permissions = PermissionGroup::query()
             ->with(['permissions' => fn (HasMany $query) => $query->where('guard_name', $this->getGuard())])
             ->get()
-            ->reduce(function (array $carry, PermissionGroup $permissionGroup) use (&$invalidPermissions): array {
+            ->reduce(function (array $carry, PermissionGroup $permissionGroup): array {
                 $permissionGroupNameSlug = Str::slug($permissionGroup->name);
 
                 $permissions = $permissionGroup->permissions
@@ -108,10 +105,7 @@ class PermissionsMatrix extends Field
                     };
 
                     if (blank($operation)) {
-                        $invalidPermissions[$permissionKey] = [
-                            'name' => $permissionName,
-                            'group' => $permissionGroup->name,
-                        ];
+                        continue;
                     }
 
                     $carry[$permissionGroup->name][$operation] = $permissionKey;
@@ -119,10 +113,6 @@ class PermissionsMatrix extends Field
 
                 return $carry;
             }, initial: []);
-
-        if ($invalidPermissions) {
-            Log::warning('Invalid permissions found.', $invalidPermissions);
-        }
 
         return $permissions;
     }
