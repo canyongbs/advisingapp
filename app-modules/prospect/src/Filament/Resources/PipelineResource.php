@@ -51,8 +51,6 @@ class PipelineResource extends Resource
 {
     protected static ?string $model = Pipeline::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-circle-stack';
-
     protected static ?string $navigationGroup = 'Recruitment CRM';
 
     protected static ?int $navigationSort = 30;
