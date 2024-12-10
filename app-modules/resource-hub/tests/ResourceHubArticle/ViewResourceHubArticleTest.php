@@ -52,57 +52,57 @@ use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
 // Permission Tests
 
 test('ViewResourceHubArticle is gated with proper access control', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
+  $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $resourceHubArticle = ResourceHubArticle::factory()->create();
+  $resourceHubArticle = ResourceHubArticle::factory()->create();
 
-    actingAs($user);
+  actingAs($user);
 
-    get(
-        ResourceHubArticleResource::getUrl('view', [
-            'record' => $resourceHubArticle,
-        ])
-    )->assertForbidden();
+  get(
+    ResourceHubArticleResource::getUrl('view', [
+      'record' => $resourceHubArticle,
+    ])
+  )->assertForbidden();
 
-    $user->givePermissionTo('resource_hub_article.view-any');
-    $user->givePermissionTo('resource_hub_article.*.view');
+  $user->givePermissionTo('resource_hub_article.view-any');
+  $user->givePermissionTo('resource_hub_article.*.view');
 
-    get(
-        ResourceHubArticleResource::getUrl('view', [
-            'record' => $resourceHubArticle,
-        ])
-    )->assertSuccessful();
+  get(
+    ResourceHubArticleResource::getUrl('view', [
+      'record' => $resourceHubArticle,
+    ])
+  )->assertSuccessful();
 });
 
 test('ViewResourceHubArticle is gated with proper feature access control', function () {
-    $settings = app(LicenseSettings::class);
+  $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->resourceHub = false;
+  $settings->data->addons->resourceHub = false;
 
-    $settings->save();
+  $settings->save();
 
-    $user = User::factory()->licensed(LicenseType::cases())->create();
+  $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $user->givePermissionTo('resource_hub_article.view-any');
-    $user->givePermissionTo('resource_hub_article.*.view');
+  $user->givePermissionTo('resource_hub_article.view-any');
+  $user->givePermissionTo('resource_hub_article.*.view');
 
-    $resourceHubArticle = ResourceHubArticle::factory()->create();
+  $resourceHubArticle = ResourceHubArticle::factory()->create();
 
-    actingAs($user);
+  actingAs($user);
 
-    get(
-        ResourceHubArticleResource::getUrl('view', [
-            'record' => $resourceHubArticle,
-        ])
-    )->assertForbidden();
+  get(
+    ResourceHubArticleResource::getUrl('view', [
+      'record' => $resourceHubArticle,
+    ])
+  )->assertForbidden();
 
-    $settings->data->addons->resourceHub = true;
+  $settings->data->addons->resourceHub = true;
 
-    $settings->save();
+  $settings->save();
 
-    get(
-        ResourceHubArticleResource::getUrl('view', [
-            'record' => $resourceHubArticle,
-        ])
-    )->assertSuccessful();
+  get(
+    ResourceHubArticleResource::getUrl('view', [
+      'record' => $resourceHubArticle,
+    ])
+  )->assertSuccessful();
 });

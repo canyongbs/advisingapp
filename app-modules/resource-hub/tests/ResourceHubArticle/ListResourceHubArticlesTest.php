@@ -56,63 +56,63 @@ use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
 // Permission Tests
 
 testResourceRequiresPermissionForAccess(
-    resource: ResourceHubArticleResource::class,
-    permissions: 'resource_hub_article.view-any',
-    method: 'index'
+  resource: ResourceHubArticleResource::class,
+  permissions: 'resource_hub_article.view-any',
+  method: 'index'
 );
 
 test('ListResourceHubArticles is gated with proper feature access control', function () {
-    $settings = app(LicenseSettings::class);
+  $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->resourceHub = false;
+  $settings->data->addons->resourceHub = false;
 
-    $settings->save();
+  $settings->save();
 
-    $user = User::factory()->licensed(LicenseType::cases())->create();
+  $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $user->givePermissionTo('resource_hub_article.view-any');
+  $user->givePermissionTo('resource_hub_article.view-any');
 
-    actingAs($user);
+  actingAs($user);
 
-    get(
-        ResourceHubArticleResource::getUrl('index')
-    )->assertForbidden();
+  get(
+    ResourceHubArticleResource::getUrl('index')
+  )->assertForbidden();
 
-    $settings->data->addons->resourceHub = true;
+  $settings->data->addons->resourceHub = true;
 
-    $settings->save();
+  $settings->save();
 
-    get(
-        ResourceHubArticleResource::getUrl('index')
-    )->assertSuccessful();
+  get(
+    ResourceHubArticleResource::getUrl('index')
+  )->assertSuccessful();
 });
 
 test('ListResourceHubArticles is gated with proper license access control', function () {
-    $settings = app(LicenseSettings::class);
+  $settings = app(LicenseSettings::class);
 
-    // When the feature is enabled
-    $settings->data->addons->resourceHub = true;
+  // When the feature is enabled
+  $settings->data->addons->resourceHub = true;
 
-    $settings->save();
+  $settings->save();
 
-    $user = User::factory()->create();
+  $user = User::factory()->create();
 
-    // And the authenticatable has the correct permissions
-    // But they do not have the appropriate license
-    $user->givePermissionTo('resource_hub_article.view-any');
+  // And the authenticatable has the correct permissions
+  // But they do not have the appropriate license
+  $user->givePermissionTo('resource_hub_article.view-any');
 
-    // They should not be able to access the resource
-    actingAs($user);
+  // They should not be able to access the resource
+  actingAs($user);
 
-    get(
-        ResourceHubArticleResource::getUrl('index')
-    )->assertForbidden();
+  get(
+    ResourceHubArticleResource::getUrl('index')
+  )->assertForbidden();
 
-    $user->grantLicense(LicenseType::RecruitmentCrm);
+  $user->grantLicense(LicenseType::RecruitmentCrm);
 
-    $user->refresh();
+  $user->refresh();
 
-    get(
-        ResourceHubArticleResource::getUrl('index')
-    )->assertSuccessful();
+  get(
+    ResourceHubArticleResource::getUrl('index')
+  )->assertSuccessful();
 });

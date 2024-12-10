@@ -44,10 +44,10 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 #[MapInputName(SnakeCaseMapper::class)]
 class LicenseData extends Data
 {
-    public function __construct(
-        public Carbon $updatedAt,
-        public LicenseSubscriptionData $subscription,
-        public LicenseLimitsData $limits,
-        public LicenseAddonsData $addons,
-    ) {}
+  public function __construct(
+    public Carbon $updatedAt,
+    public LicenseSubscriptionData $subscription,
+    public LicenseLimitsData $limits,
+    public LicenseAddonsData $addons,
+  ) {}
 }
