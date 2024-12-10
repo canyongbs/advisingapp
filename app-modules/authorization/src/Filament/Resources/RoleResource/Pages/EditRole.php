@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
+use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -45,6 +46,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
+use AdvisingApp\Authorization\Filament\Forms\Components\PermissionsMatrix;
 
 class EditRole extends EditRecord
 {
@@ -73,10 +75,15 @@ class EditRole extends EditRecord
                         'web' => 'Web',
                         'api' => 'API',
                     ])
-                    ->disabled()->dehydrated(),
+                    ->disabled()
+                    ->dehydrated(),
                 Textarea::make('description')
                     ->nullable()
-                    ->maxLength(65535),
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
+                PermissionsMatrix::make('permissions')
+                    ->columnSpanFull()
+                    ->guard(fn (Get $get): string => $get('guard_name')),
             ]);
     }
 
