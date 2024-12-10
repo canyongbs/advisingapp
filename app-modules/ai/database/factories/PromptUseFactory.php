@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
+use App\Models\User;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptUse;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -55,7 +55,7 @@ class PromptUseFactory extends Factory
     {
         return [
             'prompt_id' => Prompt::factory(),
-            'user_id' => User::factory()
+            'user_id' => User::factory(),
         ];
     }
 }
