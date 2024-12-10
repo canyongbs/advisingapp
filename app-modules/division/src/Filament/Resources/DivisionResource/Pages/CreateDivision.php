@@ -77,7 +77,6 @@ class CreateDivision extends CreateRecord
                 Toggle::make('is_default')
                   ->visible(DivisionIsDefault::active())
                   ->label('Default')
-                  ->live()
                   ->hint(function (?Division $record, $state): ?string {
                       if ($record?->is_default) {
                           return null;

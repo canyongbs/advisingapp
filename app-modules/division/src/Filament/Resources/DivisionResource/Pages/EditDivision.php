@@ -84,7 +84,6 @@ class EditDivision extends EditRecord
                     ->searchable(),
                 Toggle::make('is_default')
                     ->label('Default')
-                    ->live()
                     ->visible(DivisionIsDefault::active())
                     ->hint(function (?Division $record, $state): ?string {
                         if ($record?->is_default) {
