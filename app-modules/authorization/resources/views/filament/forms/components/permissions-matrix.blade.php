@@ -162,29 +162,14 @@
 
                 <div
                     class="grid grid-cols-2 gap-1 divide-gray-950/5 px-3 py-2 text-sm dark:divide-white/10 md:grid-cols-3 lg:grid-cols-6 lg:gap-0 lg:divide-x lg:px-0 lg:py-0">
-                    @foreach ([
-        'view-any' => 'View',
-        'create' => 'Create',
-        'update' => 'Update',
-        'delete' => 'Delete',
-        'force-delete' => 'Force Delete',
-        'restore' => 'Restore',
-    ] as $operation => $operationLabel)
-        'view-any' => 'View',
-        'create' => 'Create',
-        'update' => 'Update',
-        'delete' => 'Delete',
-        'force-delete' => 'Force Delete',
-        'restore' => 'Restore',
-    ] as $operation => $operationLabel)
+                    @foreach (['view-any' => 'View', 'create' => 'Create', 'update' => 'Update', 'delete' => 'Delete', 'force-delete' => 'Force Delete', 'restore' => 'Restore'] as $operation => $operationLabel)
                         <label
                             class="flex items-center gap-2 lg:flex lg:w-28 lg:justify-center lg:px-3 lg:py-2"
                             @if ($operation !== 'view-any') x-bind:class="{
                             class="flex items-center gap-2 lg:flex lg:w-28 lg:justify-center lg:px-3 lg:py-2"
                             @if ($operation !== 'view-any') x-bind:class="{
                                     'opacity-50': ! state.includes(availablePermissions[group]['view-any']),
-                                    'hidden' => ! Object.keys(availablePermissions[group]).includes(@js($operation)),
-                                }" @endif
+                                    'hidden': ! Object.keys(availablePermissions[group]).includes(@js($operation)),
                                 }" @endif
                         >
                             <x-filament::input.checkbox
