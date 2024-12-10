@@ -43,16 +43,16 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 #[MapInputName(SnakeCaseMapper::class)]
 class LicenseAddonsData extends Data
 {
-  public function __construct(
-    public bool $onlineForms,
-    public bool $onlineSurveys,
-    public bool $onlineAdmissions,
-    public bool $serviceManagement,
-    public bool $resourceHub,
-    public bool $eventManagement,
-    public bool $realtimeChat,
-    public bool $mobileApps,
-    public bool $scheduleAndAppointments = false,
-    public bool $customAiAssistants = false,
-  ) {}
+    public function __construct(
+        public bool $onlineForms,
+        public bool $onlineSurveys,
+        public bool $onlineAdmissions,
+        public bool $serviceManagement,
+        public bool $resourceHub,
+        public bool $eventManagement,
+        public bool $realtimeChat,
+        public bool $mobileApps,
+        public bool $scheduleAndAppointments = false,
+        public bool $customAiAssistants = false,
+    ) {}
 }
