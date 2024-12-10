@@ -38,8 +38,10 @@ namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
+use App\Features\DivisionIsDefault;
 use App\Models\NotificationSetting;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -50,6 +52,8 @@ use AdvisingApp\Division\Filament\Resources\DivisionResource;
 class EditDivision extends EditRecord
 {
     protected static string $resource = DivisionResource::class;
+
+    protected ?bool $hasDatabaseTransactions = true;
 
     public function form(Form $form): Form
     {
@@ -78,6 +82,30 @@ class EditDivision extends EditRecord
                     ->label('Notification Setting')
                     ->options(NotificationSetting::pluck('name', 'id'))
                     ->searchable(),
+                Toggle::make('is_default')
+                    ->label('Default')
+                    ->visible(DivisionIsDefault::active())
+                    ->hint(function (?Division $record, $state): ?string {
+                        if ($record?->is_default) {
+                            return null;
+                        }
+
+                        if (! $state) {
+                            return null;
+                        }
+
+                        $currentDefault = Division::query()
+                            ->where('is_default', true)
+                            ->value('name');
+
+                        if (blank($currentDefault)) {
+                            return null;
+                        }
+
+                        return "The current default status is '{$currentDefault}', you are replacing it.";
+                    })
+                    ->hintColor('danger')
+                    ->columnStart(1),
             ]);
     }
 

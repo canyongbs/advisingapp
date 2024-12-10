@@ -34,38 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Filament\Resources\TeamResource\Pages;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\Team\Filament\Resources\TeamResource;
-
-class ViewTeam extends ViewRecord
-{
-    protected static string $resource = TeamResource::class;
-
-    public function infolist(Infolist $infolist): Infolist
+return new class () extends Migration {
+    public function up(): void
     {
-        return $infolist
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('name'),
-                        TextEntry::make('division.name')->default('N/A'),
-                        TextEntry::make('description')
-                            ->columnSpanFull(),
-                    ])
-                    ->columns(),
-            ]);
+        Schema::table('divisions', function (Blueprint $table) {
+            $table->boolean('is_default')->default(false);
+        });
     }
 
-    protected function getHeaderActions(): array
+    public function down(): void
     {
-        return [
-            EditAction::make(),
-        ];
+        Schema::table('divisions', function (Blueprint $table) {
+            $table->dropColumn('is_default');
+        });
     }
-}
+};
