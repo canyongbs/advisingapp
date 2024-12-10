@@ -46,8 +46,6 @@ class AiAssistantResource extends Resource
 {
     protected static ?string $model = AiAssistant::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
-
     protected static ?string $navigationGroup = 'Artificial Intelligence';
 
     protected static ?string $navigationLabel = 'Assistant Library';

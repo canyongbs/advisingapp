@@ -44,6 +44,8 @@ use ShuvroRoy\FilamentSpatieLaravelHealth\Pages\HealthCheckResults;
 
 class ProductHealth extends HealthCheckResults
 {
+    protected static ?string $navigationIcon = null;
+
     public static function getNavigationLabel(): string
     {
         return 'Product Health';
