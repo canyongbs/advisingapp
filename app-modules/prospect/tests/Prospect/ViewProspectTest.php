@@ -236,7 +236,7 @@ test('can see prospect converted to student badge on', function (string $pages) 
 
     $user->givePermissionTo('event_attendee.view-any');
 
-    $user->givePermissionTo('basic_needs_program.view-any');
+    $user->givePermissionTo('product_admin.view-any');
 
     $user->givePermissionTo('timeline.access');
 

@@ -49,7 +49,7 @@ test('ListInteractionStatuses is gated with proper access control', function () 
             InteractionStatusResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('interaction_status.view-any');
+    $user->givePermissionTo('product_admin.view-any');
 
     actingAs($user)
         ->get(

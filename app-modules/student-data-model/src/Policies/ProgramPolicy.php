@@ -44,7 +44,7 @@ class ProgramPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if ($authenticatable->canAny(['program.view-any', 'student_record_manager.view-any'])) {
+        if ($authenticatable->canAny(['program.view-any', 'product_admin.view-any'])) {
             return Response::allow();
         }
 
@@ -53,7 +53,7 @@ class ProgramPolicy
 
     public function view(Authenticatable $authenticatable, Program $program): Response
     {
-        if ($authenticatable->canAny(["program.{$program->getKey()}.view", 'student_record_manager.*.view'])) {
+        if ($authenticatable->canAny(["program.{$program->getKey()}.view", 'product_admin.*.view'])) {
             return Response::allow();
         }
 
@@ -63,7 +63,7 @@ class ProgramPolicy
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.create',
+            abilities: 'product_admin.create',
             denyResponse: 'Programs cannot be created.'
         );
     }
@@ -71,7 +71,7 @@ class ProgramPolicy
     public function update(Authenticatable $authenticatable, Program $program): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.*.update',
+            abilities: 'product_admin.*.update',
             denyResponse: 'Programs cannot be updated.'
         );
     }
@@ -79,7 +79,7 @@ class ProgramPolicy
     public function delete(Authenticatable $authenticatable, Program $program): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.*.delete',
+            abilities: 'product_admin.*.delete',
             denyResponse: 'Programs cannot be deleted.'
         );
     }
@@ -87,7 +87,7 @@ class ProgramPolicy
     public function restore(Authenticatable $authenticatable, Program $program): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.*.restore',
+            abilities: 'product_admin.*.restore',
             denyResponse: 'Programs cannot be restored.'
         );
     }
@@ -95,7 +95,7 @@ class ProgramPolicy
     public function forceDelete(Authenticatable $authenticatable, Program $program): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.*.force-delete',
+            abilities: 'product_admin.*.force-delete',
             denyResponse: 'Programs cannot be force deleted.'
         );
     }
@@ -103,7 +103,7 @@ class ProgramPolicy
     public function import(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.create',
+            abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to import programs.',
         );
     }

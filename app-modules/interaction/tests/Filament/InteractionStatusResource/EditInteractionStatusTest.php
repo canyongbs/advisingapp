@@ -52,8 +52,8 @@ test('EditInteractionStatus is gated with proper access control', function () {
             InteractionStatusResource::getUrl('edit', ['record' => $status])
         )->assertForbidden();
 
-    $user->givePermissionTo('interaction_status.view-any');
-    $user->givePermissionTo('interaction_status.*.update');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.update');
 
     actingAs($user)
         ->get(

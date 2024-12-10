@@ -56,7 +56,7 @@ class InteractionStatusPolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'interaction_status.view-any',
+            abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view interaction statuses.'
         );
     }
@@ -64,7 +64,7 @@ class InteractionStatusPolicy
     public function view(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["interaction_status.{$status->id}.view"],
+            abilities: ["product_admin.{$status->id}.view"],
             denyResponse: 'You do not have permission to view this interaction status.'
         );
     }
@@ -72,7 +72,7 @@ class InteractionStatusPolicy
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'interaction_status.create',
+            abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create interaction statuses.'
         );
     }
@@ -80,7 +80,7 @@ class InteractionStatusPolicy
     public function update(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["interaction_status.{$status->id}.update"],
+            abilities: ["product_admin.{$status->id}.update"],
             denyResponse: 'You do not have permission to update this interaction status.'
         );
     }
@@ -88,7 +88,7 @@ class InteractionStatusPolicy
     public function delete(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["interaction_status.{$status->id}.delete"],
+            abilities: ["product_admin.{$status->id}.delete"],
             denyResponse: 'You do not have permission to delete this interaction status.'
         );
     }
@@ -96,7 +96,7 @@ class InteractionStatusPolicy
     public function restore(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["interaction_status.{$status->id}.restore"],
+            abilities: ["product_admin.{$status->id}.restore"],
             denyResponse: 'You do not have permission to restore this interaction status.'
         );
     }
@@ -104,7 +104,7 @@ class InteractionStatusPolicy
     public function forceDelete(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["interaction_status.{$status->id}.force-delete"],
+            abilities: ["product_admin.{$status->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction status.'
         );
     }
