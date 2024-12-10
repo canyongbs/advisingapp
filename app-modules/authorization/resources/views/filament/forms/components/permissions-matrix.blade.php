@@ -143,7 +143,7 @@
                             class="flex items-center gap-2 lg:flex lg:w-28 lg:justify-center lg:px-3 lg:py-2"
                             @if ($operation !== 'view-any') x-bind:class="{
                                     'opacity-50': ! state.includes(availablePermissions[group]['view-any']),
-                                    'hidden' => ! Object.keys(availablePermissions[group]).includes(@js($operation)),
+                                    'hidden': ! Object.keys(availablePermissions[group]).includes(@js($operation)),
                                 }" @endif
                         >
                             <x-filament::input.checkbox
