@@ -34,23 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Database\Factories;
+namespace AdvisingApp\Ai\Database\Factories;
 
-use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Models\TrackedEventCount;
+use App\Models\User;
+use AdvisingApp\Ai\Models\Prompt;
+use AdvisingApp\Ai\Models\PromptUse;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<TrackedEventCount>
+ * @extends PromptUse
  */
-class TrackedEventCountFactory extends Factory
+class PromptUseFactory extends Factory
 {
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
     public function definition(): array
     {
         return [
-            'type' => fake()->unique()->randomElement(TrackedEventType::cases()),
-            'count' => fake()->numberBetween(1, 100),
-            'last_occurred_at' => fake()->dateTime(),
+            'prompt_id' => Prompt::factory(),
+            'user_id' => User::factory(),
         ];
     }
 }
