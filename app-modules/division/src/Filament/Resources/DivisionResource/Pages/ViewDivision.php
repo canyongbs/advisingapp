@@ -38,15 +38,15 @@ namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
 
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\Grid;
 use App\Filament\Resources\UserResource;
 use Filament\Resources\Pages\ViewRecord;
 use AdvisingApp\Division\Models\Division;
 use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use App\Filament\Resources\NotificationSettingResource;
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
-use Filament\Infolists\Components\Grid;
-use Filament\Infolists\Components\IconEntry;
 
 class ViewDivision extends ViewRecord
 {
@@ -63,7 +63,7 @@ class ViewDivision extends ViewRecord
                                 TextEntry::make('name'),
                                 TextEntry::make('code'),
                                 IconEntry::make('is_default')
-                                            ->label('Default'),
+                                    ->label('Default'),
                             ])
                             ->columns(3),
                         TextEntry::make('description')

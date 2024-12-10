@@ -49,7 +49,7 @@ class DivisionObserver
     public function saving(Division $division): void
     {
         if ($division->is_default) {
-          Division::query()
+            Division::query()
                 ->where('is_default', true)
                 ->update(['is_default' => false]);
         }
