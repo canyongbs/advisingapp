@@ -34,29 +34,43 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+use Database\Migrations\Concerns\CanModifySettings;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-return new class () extends Migration {
+return new class () extends SettingsMigration {
+    use CanModifySettings;
+
     public function up(): void
     {
-        $payload = DB::table('settings')->where('group', 'license')
-            ->where('name', 'data')
-            ->value('payload');
+        $this->updateSettings(
+            group: 'license',
+            name: 'data',
+            modifyPayload: function (array $data) {
+                if (array_key_exists('knowledge_management', $data['addons'] ?? [])) {
+                    $data['addons']['resource_hub'] = $data['addons']['knowledge_management'];
+                    unset($data['addons']['knowledge_management']);
+                }
 
-        $payload = decrypt(json_decode($payload));
-        $payload['addons']['resource_hub'] = $payload['addons']['knowledge_management'];
-        unset($payload['addons']['knowledge_management']);
-
-        DB::table('settings')->where('group', 'license')
-            ->where('name', 'data')
-            ->update(['payload' => encrypt(json_encode($payload))]);
+                return $data;
+            },
+            isEncrypted: true,
+        );
     }
 
     public function down(): void
     {
-        Schema::table('settings', function (Blueprint $table) {});
+        $this->updateSettings(
+            group: 'license',
+            name: 'data',
+            modifyPayload: function (array $data) {
+                if (array_key_exists('resource_hub', $data['addons'] ?? [])) {
+                    $data['addons']['knowledge_management'] = $data['addons']['resource_hub'];
+                    unset($data['addons']['resource_hub']);
+                }
+
+                return $data;
+            },
+            isEncrypted: true,
+        );
     }
 };

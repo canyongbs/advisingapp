@@ -122,7 +122,7 @@ class ManagePortalSettings extends SettingsPage
                             ->label('Portal Notifications'),
                         Toggle::make('has_knowledge_base')
                             ->label('Resource Hub')
-                            ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                            ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Resource Hub is not a part of your current subscription.'),
                         Toggle::make('has_tasks')
@@ -145,7 +145,7 @@ class ManagePortalSettings extends SettingsPage
                     ->schema([
                         Toggle::make('knowledge_management_portal_enabled')
                             ->label('Resource Hub')
-                            ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                            ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Resource Hub is not a part of your current subscription.')
                             ->live()
@@ -153,7 +153,7 @@ class ManagePortalSettings extends SettingsPage
                         ColorSelect::make('knowledge_management_portal_primary_color')
                             ->label('Primary Color')
                             ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled'))
-                            ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                            ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
                             ->hintIcon(fn (ColorSelect $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Resource Hub is not a part of your current subscription.')
                             ->columnSpan(1),
@@ -161,7 +161,7 @@ class ManagePortalSettings extends SettingsPage
                             ->label('Rounding')
                             ->options(Rounding::class)
                             ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled'))
-                            ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                            ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
                             ->hintIcon(fn (Select $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Resource Hub is not a part of your current subscription.')
                             ->columnSpan(1),
@@ -169,7 +169,7 @@ class ManagePortalSettings extends SettingsPage
                             ->label('Authorized Domain')
                             ->url()
                             ->visible(fn (Get $get) => $get('knowledge_management_portal_enabled'))
-                            ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                            ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
                             ->hintIcon(fn (TextInput $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Resource Hub is not a part of your current subscription.')
                             ->columnSpanFull(),
@@ -189,11 +189,11 @@ class ManagePortalSettings extends SettingsPage
                             Action::make('view')
                                 ->url(fn () => route('portal.resource-hub.show'))
                                 ->icon('heroicon-m-arrow-top-right-on-square')
-                                ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                                ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
                                 ->openUrlInNewTab(),
                             Action::make('embed_snippet')
                                 ->label('Embed Snippet')
-                                ->disabled(! Gate::check(Feature::KnowledgeManagement->getGateName()))
+                                ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
                                 ->infolist(
                                     [
                                         TextEntry::make('snippet')
@@ -221,8 +221,8 @@ class ManagePortalSettings extends SettingsPage
                         ])
                             ->visible(
                                 fn (Get $get) => $get('knowledge_management_portal_enabled') &&
-                            ! is_null($get('knowledge_management_portal_primary_color')) &&
-                            ! is_null($get('knowledge_management_portal_rounding'))
+                                    ! is_null($get('knowledge_management_portal_primary_color')) &&
+                                    ! is_null($get('knowledge_management_portal_rounding'))
                             )
                             ->columnSpanFull(),
                     ])->columns(2),
