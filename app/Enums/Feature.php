@@ -42,36 +42,36 @@ use Illuminate\Support\Facades\Gate;
 
 enum Feature: string
 {
-    case OnlineForms = 'online-forms';
+  case OnlineForms = 'online-forms';
 
-    case OnlineSurveys = 'online-surveys';
+  case OnlineSurveys = 'online-surveys';
 
-    case OnlineAdmissions = 'online-admissions';
+  case OnlineAdmissions = 'online-admissions';
 
-    case ServiceManagement = 'service-management';
+  case ServiceManagement = 'service-management';
 
-    case KnowledgeManagement = 'knowledge-management';
+  case ResourceHub = 'resource-hub';
 
-    case EventManagement = 'event-management';
-    case RealtimeChat = 'realtime-chat';
+  case EventManagement = 'event-management';
+  case RealtimeChat = 'realtime-chat';
 
-    case MobileApps = 'mobile-apps';
+  case MobileApps = 'mobile-apps';
 
-    case ScheduleAndAppointments = 'schedule-and-appointments';
+  case ScheduleAndAppointments = 'schedule-and-appointments';
 
-    case CustomAiAssistants = 'custom-ai-assistants';
+  case CustomAiAssistants = 'custom-ai-assistants';
 
-    public function generateGate(): void
-    {
-        // If features are added that are not based on a License Addon we will need to update this
-        Gate::define(
-            $this->getGateName(),
-            fn (?Authenticatable $authenticatable) => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
-        );
-    }
+  public function generateGate(): void
+  {
+    // If features are added that are not based on a License Addon we will need to update this
+    Gate::define(
+      $this->getGateName(),
+      fn(?Authenticatable $authenticatable) => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
+    );
+  }
 
-    public function getGateName(): string
-    {
-        return "feature-{$this->value}";
-    }
+  public function getGateName(): string
+  {
+    return "feature-{$this->value}";
+  }
 }

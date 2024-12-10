@@ -121,6 +121,6 @@ class ResourceHubQualityPolicy implements PerformsChecksBeforeAuthorization
 
     protected function requiredFeatures(): array
     {
-        return [Feature::KnowledgeManagement];
+        return [Feature::ResourceHub];
     }
 }

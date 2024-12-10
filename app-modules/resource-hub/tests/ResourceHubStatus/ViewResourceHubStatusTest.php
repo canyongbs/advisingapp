@@ -74,7 +74,7 @@ test('ViewResourceHubStatus is gated with proper access control', function () {
 test('ViewResourceHubStatus is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->knowledgeManagement = false;
+    $settings->data->addons->resourceHub = false;
 
     $settings->save();
 
@@ -92,7 +92,7 @@ test('ViewResourceHubStatus is gated with proper feature access control', functi
             ])
         )->assertForbidden();
 
-    $settings->data->addons->knowledgeManagement = true;
+    $settings->data->addons->resourceHub = true;
 
     $settings->save();
 
