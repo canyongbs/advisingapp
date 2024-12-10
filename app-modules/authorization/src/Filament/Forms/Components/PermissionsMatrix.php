@@ -77,7 +77,7 @@ class PermissionsMatrix extends Field
         return $this->evaluate($this->guard);
     }
 
-    public function getPermissions(): array
+    public function getAvailablePermissions(): array
     {
         $invalidPermissions = [];
 
