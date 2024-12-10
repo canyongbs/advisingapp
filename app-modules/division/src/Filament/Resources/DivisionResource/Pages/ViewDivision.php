@@ -45,6 +45,8 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use App\Filament\Resources\NotificationSettingResource;
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
+use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\IconEntry;
 
 class ViewDivision extends ViewRecord
 {
@@ -56,8 +58,14 @@ class ViewDivision extends ViewRecord
             ->schema([
                 Section::make()
                     ->schema([
-                        TextEntry::make('name'),
-                        TextEntry::make('code'),
+                        Grid::make()
+                            ->schema([
+                                TextEntry::make('name'),
+                                TextEntry::make('code'),
+                                IconEntry::make('is_default')
+                                            ->label('Default'),
+                            ])
+                            ->columns(3),
                         TextEntry::make('description')
                             ->columnSpanFull(),
                         Section::make()

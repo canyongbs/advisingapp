@@ -42,10 +42,15 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
+use AdvisingApp\Division\Models\Division;
+use App\Features\DivisionIsDefault;
+use Filament\Forms\Components\Toggle;
 
 class CreateDivision extends CreateRecord
 {
     protected static string $resource = DivisionResource::class;
+
+    protected ?bool $hasDatabaseTransactions = true;
 
     public function form(Form $form): Form
     {
@@ -69,6 +74,31 @@ class CreateDivision extends CreateRecord
                     ->disk('s3-public')
                     ->string()
                     ->columnSpanFull(),
+                Toggle::make('is_default')
+                  ->visible(DivisionIsDefault::active())
+                  ->label('Default')
+                  ->live()
+                  ->hint(function (?Division $record, $state): ?string {
+                      if ($record?->is_default) {
+                          return null;
+                      }
+
+                      if (! $state) {
+                          return null;
+                      }
+
+                      $currentDefault = Division::query()
+                          ->where('is_default', true)
+                          ->value('name');
+
+                      if (blank($currentDefault)) {
+                          return null;
+                      }
+
+                      return "The current default status is '{$currentDefault}', you are replacing it.";
+                  })
+                  ->hintColor('danger')
+                  ->columnStart(1),
             ]);
     }
 }

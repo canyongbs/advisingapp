@@ -46,10 +46,14 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
+use App\Features\DivisionIsDefault;
+use Filament\Forms\Components\Toggle;
 
 class EditDivision extends EditRecord
 {
     protected static string $resource = DivisionResource::class;
+
+    protected ?bool $hasDatabaseTransactions = true;
 
     public function form(Form $form): Form
     {
@@ -78,6 +82,31 @@ class EditDivision extends EditRecord
                     ->label('Notification Setting')
                     ->options(NotificationSetting::pluck('name', 'id'))
                     ->searchable(),
+                Toggle::make('is_default')
+                    ->label('Default')
+                    ->live()
+                    ->visible(DivisionIsDefault::active())
+                    ->hint(function (?Division $record, $state): ?string {
+                        if ($record?->is_default) {
+                            return null;
+                        }
+
+                        if (! $state) {
+                            return null;
+                        }
+
+                        $currentDefault = Division::query()
+                            ->where('is_default', true)
+                            ->value('name');
+
+                        if (blank($currentDefault)) {
+                            return null;
+                        }
+
+                        return "The current default status is '{$currentDefault}', you are replacing it.";
+                    })
+                    ->hintColor('danger')
+                    ->columnStart(1),
             ]);
     }
 

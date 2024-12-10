@@ -46,6 +46,8 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
+use App\Features\DivisionIsDefault;
+use Filament\Tables\Columns\IconColumn;
 
 class ListDivisions extends ListRecords
 {
@@ -70,6 +72,10 @@ class ListDivisions extends ListRecords
                     ->label('Updated At')
                     ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
                     ->sortable(),
+                IconColumn::make('is_default')
+                    ->label('Default')
+                    ->visible(DivisionIsDefault::active())
+                    ->boolean(),
                 TextColumn::make('notificationSetting.setting.name')
                     ->label('Notification Setting'),
             ])

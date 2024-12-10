@@ -60,6 +60,8 @@ test('CreateTeam is gated with proper access control', function () {
 
     $user->givePermissionTo('team.view-any');
     $user->givePermissionTo('team.create');
+    $user->givePermissionTo('division.view-any');
+    $user->givePermissionTo('division.create');
 
     actingAs($user)
         ->get(
