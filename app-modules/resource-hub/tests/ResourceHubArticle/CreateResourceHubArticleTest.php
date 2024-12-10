@@ -55,75 +55,75 @@ use AdvisingApp\ResourceHub\Tests\ResourceHubArticle\RequestFactories\CreateReso
 // Permission Tests
 
 test('CreateResourceHubArticle is gated with proper access control', function () {
-  $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
-  actingAs($user);
+    actingAs($user);
 
-  $user->givePermissionTo('resource_hub_article.view-any');
+    $user->givePermissionTo('resource_hub_article.view-any');
 
-  livewire(ListResourceHubArticles::class)
-    ->assertSuccessful()
-    ->assertActionDisabled('create');
+    livewire(ListResourceHubArticles::class)
+        ->assertSuccessful()
+        ->assertActionDisabled('create');
 
-  $user->givePermissionTo('resource_hub_article.create');
+    $user->givePermissionTo('resource_hub_article.create');
 
-  livewire(ListResourceHubArticles::class)
-    ->assertActionEnabled('create');
+    livewire(ListResourceHubArticles::class)
+        ->assertActionEnabled('create');
 
-  $request = collect(CreateResourceHubArticleRequestFactory::new()->create());
+    $request = collect(CreateResourceHubArticleRequestFactory::new()->create());
 
-  livewire(ListResourceHubArticles::class)
-    ->callAction('create', $request->toArray())
-    ->assertHasNoActionErrors();
+    livewire(ListResourceHubArticles::class)
+        ->callAction('create', $request->toArray())
+        ->assertHasNoActionErrors();
 
-  assertCount(1, ResourceHubArticle::all());
+    assertCount(1, ResourceHubArticle::all());
 
-  $data = $request->except('division')->toArray();
+    $data = $request->except('division')->toArray();
 
-  assertDatabaseHas(ResourceHubArticle::class, $data);
+    assertDatabaseHas(ResourceHubArticle::class, $data);
 
-  $resourceHubArticle = ResourceHubArticle::first();
+    $resourceHubArticle = ResourceHubArticle::first();
 
-  expect($resourceHubArticle->division->pluck('id')->toArray())->toEqual($request['division']);
+    expect($resourceHubArticle->division->pluck('id')->toArray())->toEqual($request['division']);
 });
 
 test('CreateResourceHubArticle is gated with proper feature access control', function () {
-  $settings = app(LicenseSettings::class);
+    $settings = app(LicenseSettings::class);
 
-  $settings->data->addons->resourceHub = false;
+    $settings->data->addons->resourceHub = false;
 
-  $settings->save();
+    $settings->save();
 
-  $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
-  actingAs($user);
+    actingAs($user);
 
-  $user->givePermissionTo('resource_hub_article.view-any');
-  $user->givePermissionTo('resource_hub_article.create');
+    $user->givePermissionTo('resource_hub_article.view-any');
+    $user->givePermissionTo('resource_hub_article.create');
 
-  livewire(ListResourceHubArticles::class)
-    ->assertForbidden();
+    livewire(ListResourceHubArticles::class)
+        ->assertForbidden();
 
-  $settings->data->addons->resourceHub = true;
+    $settings->data->addons->resourceHub = true;
 
-  $settings->save();
+    $settings->save();
 
-  livewire(ListResourceHubArticles::class)
-    ->assertSuccessful();
+    livewire(ListResourceHubArticles::class)
+        ->assertSuccessful();
 
-  $request = collect(CreateResourceHubArticleRequestFactory::new()->create());
+    $request = collect(CreateResourceHubArticleRequestFactory::new()->create());
 
-  livewire(ListResourceHubArticles::class)
-    ->callAction('create', $request->toArray())
-    ->assertHasNoActionErrors();
+    livewire(ListResourceHubArticles::class)
+        ->callAction('create', $request->toArray())
+        ->assertHasNoActionErrors();
 
-  assertCount(1, ResourceHubArticle::all());
+    assertCount(1, ResourceHubArticle::all());
 
-  $data = $request->except('division')->toArray();
+    $data = $request->except('division')->toArray();
 
-  assertDatabaseHas(ResourceHubArticle::class, $data);
+    assertDatabaseHas(ResourceHubArticle::class, $data);
 
-  $resourceHubArticle = ResourceHubArticle::first();
+    $resourceHubArticle = ResourceHubArticle::first();
 
-  expect($resourceHubArticle->division->pluck('id')->toArray())->toEqual($request['division']);
+    expect($resourceHubArticle->division->pluck('id')->toArray())->toEqual($request['division']);
 });
