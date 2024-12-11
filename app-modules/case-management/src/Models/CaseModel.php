@@ -57,6 +57,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
+use AdvisingApp\CaseManagement\Observers\CaseObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
@@ -70,7 +71,6 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Identifiable;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
-use AdvisingApp\CaseManagement\Providers\CaseManagementServiceProvider;
 use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
@@ -82,7 +82,7 @@ use AdvisingApp\CaseManagement\Cases\CaseNumber\Contracts\CaseNumberGenerator;
  *
  * @mixin IdeHelperCaseModel
  */
-#[ObservedBy([CaseManagementServiceProvider::class])]
+#[ObservedBy([CaseObserver::class])]
 class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable, ExecutableFromACampaignAction
 {
     use BelongsToEducatable;
