@@ -44,7 +44,6 @@ use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\EditRole;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\ViewRole;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\ListRoles;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\CreateRole;
-use AdvisingApp\Authorization\Filament\Resources\RoleResource\RelationManagers\PermissionsRelationManager;
 
 class RoleResource extends Resource
 {
@@ -55,13 +54,6 @@ class RoleResource extends Resource
     protected static ?string $cluster = UserManagement::class;
 
     protected static ?int $navigationSort = 30;
-
-    public static function getRelations(): array
-    {
-        return [
-            PermissionsRelationManager::class,
-        ];
-    }
 
     public static function getPages(): array
     {
