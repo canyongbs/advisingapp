@@ -34,44 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace App\Enums;
+use Database\Migrations\Concerns\CanModifySettings;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use App\Models\Authenticatable;
-use App\Settings\LicenseSettings;
-use Illuminate\Support\Facades\Gate;
+return new class () extends SettingsMigration {
+    use CanModifySettings;
 
-enum Feature: string
-{
-    case OnlineForms = 'online-forms';
-
-    case OnlineSurveys = 'online-surveys';
-
-    case OnlineAdmissions = 'online-admissions';
-
-    case ServiceManagement = 'service-management';
-
-    case ResourceHub = 'resource-hub';
-
-    case EventManagement = 'event-management';
-    case RealtimeChat = 'realtime-chat';
-
-    case MobileApps = 'mobile-apps';
-
-    case ScheduleAndAppointments = 'schedule-and-appointments';
-
-    case CustomAiAssistants = 'custom-ai-assistants';
-
-    public function generateGate(): void
+    public function up(): void
     {
-        // If features are added that are not based on a License Addon we will need to update this
-        Gate::define(
-            $this->getGateName(),
-            fn (?Authenticatable $authenticatable) => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
+        $this->updateSettings(
+            group: 'license',
+            name: 'data',
+            modifyPayload: function (array $data) {
+                if (array_key_exists('knowledge_management', $data['addons'] ?? [])) {
+                    $data['addons']['resource_hub'] = $data['addons']['knowledge_management'];
+                    unset($data['addons']['knowledge_management']);
+                }
+
+                return $data;
+            },
+            isEncrypted: true,
         );
     }
 
-    public function getGateName(): string
+    public function down(): void
     {
-        return "feature-{$this->value}";
+        $this->updateSettings(
+            group: 'license',
+            name: 'data',
+            modifyPayload: function (array $data) {
+                if (array_key_exists('resource_hub', $data['addons'] ?? [])) {
+                    $data['addons']['knowledge_management'] = $data['addons']['resource_hub'];
+                    unset($data['addons']['resource_hub']);
+                }
+
+                return $data;
+            },
+            isEncrypted: true,
+        );
     }
-}
+};

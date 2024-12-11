@@ -34,44 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Enums;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use App\Models\Authenticatable;
-use App\Settings\LicenseSettings;
-use Illuminate\Support\Facades\Gate;
-
-enum Feature: string
-{
-    case OnlineForms = 'online-forms';
-
-    case OnlineSurveys = 'online-surveys';
-
-    case OnlineAdmissions = 'online-admissions';
-
-    case ServiceManagement = 'service-management';
-
-    case ResourceHub = 'resource-hub';
-
-    case EventManagement = 'event-management';
-    case RealtimeChat = 'realtime-chat';
-
-    case MobileApps = 'mobile-apps';
-
-    case ScheduleAndAppointments = 'schedule-and-appointments';
-
-    case CustomAiAssistants = 'custom-ai-assistants';
-
-    public function generateGate(): void
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        // If features are added that are not based on a License Addon we will need to update this
-        Gate::define(
-            $this->getGateName(),
-            fn (?Authenticatable $authenticatable) => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
-        );
+        $this->migrator->rename('portal.knowledge_management_portal_enabled', 'portal.resource_hub_portal_enabled');
+        $this->migrator->rename('portal.knowledge_management_portal_service_management', 'portal.resource_hub_portal_service_management');
+        $this->migrator->rename('portal.knowledge_management_portal_primary_color', 'portal.resource_hub_portal_primary_color');
+        $this->migrator->rename('portal.knowledge_management_portal_rounding', 'portal.resource_hub_portal_rounding');
+        $this->migrator->rename('portal.knowledge_management_portal_authorized_domain', 'portal.resource_hub_portal_authorized_domain');
     }
 
-    public function getGateName(): string
+    public function down(): void
     {
-        return "feature-{$this->value}";
+        $this->migrator->rename('portal.resource_hub_portal_enabled', 'portal.knowledge_management_portal_enabled');
+        $this->migrator->rename('portal.resource_hub_portal_service_management', 'portal.knowledge_management_portal_service_management');
+        $this->migrator->rename('portal.resource_hub_portal_primary_color', 'portal.knowledge_management_portal_primary_color');
+        $this->migrator->rename('portal.resource_hub_portal_rounding', 'portal.knowledge_management_portal_rounding');
+        $this->migrator->rename('portal.resource_hub_portal_authorized_domain', 'portal.knowledge_management_portal_authorized_domain');
     }
-}
+};

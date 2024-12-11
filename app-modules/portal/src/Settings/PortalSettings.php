@@ -77,19 +77,19 @@ class PortalSettings extends SettingsWithMedia
     public ?array $footer_copyright_statement = null;
 
     /**
-    * Resource Hub Portal
-    */
-    public bool $knowledge_management_portal_enabled = false;
+     * Resource Hub Portal
+     */
+    public bool $resource_hub_portal_enabled = false;
 
-    public bool $knowledge_management_portal_service_management = false;
+    public bool $resource_hub_portal_service_management = false;
 
-    public bool $knowledge_management_portal_requires_authentication = false;
+    public bool $resource_hub_portal_requires_authentication = false;
 
-    public ?string $knowledge_management_portal_primary_color = null;
+    public ?string $resource_hub_portal_primary_color = null;
 
-    public ?string $knowledge_management_portal_rounding = null;
+    public ?string $resource_hub_portal_rounding = null;
 
-    public ?string $knowledge_management_portal_authorized_domain = null;
+    public ?string $resource_hub_portal_authorized_domain = null;
 
     public array $gdpr_banner_text = [
         'type' => 'doc',

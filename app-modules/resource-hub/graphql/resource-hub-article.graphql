@@ -1,10 +1,10 @@
 type ResourceHubArticle
-    @addon(name: "knowledge-management")
+    @addon(name: "resource-hub")
     @model(class: "AdvisingApp\\ResourceHub\\Models\\ResourceHubArticle") {
     id: UUID!
 }
 
-type ResourceHubArticleQueries @addon(name: "knowledge-management") {
+type ResourceHubArticleQueries @addon(name: "resource-hub") {
     "Find a single resource hub article by an identifying attribute."
     find(
         "The value of the attribute to match."
@@ -17,6 +17,6 @@ type ResourceHubArticleQueries @addon(name: "knowledge-management") {
     list: [ResourceHubArticle!]! @canModel(ability: "viewAny") @paginate
 }
 
-extend type Query @addon(name: "knowledge-management") {
+extend type Query @addon(name: "resource-hub") {
     ResourceHubArticle: ResourceHubArticleQueries! @namespaced
 }
