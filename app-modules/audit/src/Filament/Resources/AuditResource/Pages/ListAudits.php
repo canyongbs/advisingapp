@@ -77,7 +77,7 @@ class ListAudits extends ListRecords
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('Occurred At')
-                    ->formatStateUsing(fn (string $state) => Carbon::parse($state)->format('d-m-Y h:i A')),
+                    ->formatStateUsing(fn (string $state) => Carbon::parse($state)->format('m-d-Y h:i A')),
             ])
             ->defaultSort('id', 'desc')
             ->filters([
