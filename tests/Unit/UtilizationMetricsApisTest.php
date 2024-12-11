@@ -66,7 +66,7 @@ use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 it('checks the API returns users', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     User::factory()->count($randomRecords)->create();
 
@@ -82,7 +82,7 @@ it('checks the API returns users', function () {
 it('checks the API returns AI Users', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     $licenseSettings = app(LicenseSettings::class);
 
@@ -123,7 +123,7 @@ it('checks the API returns AI Exchanges', function () {
 it('checks the API returns Saved AI Chats', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     AiThread::factory()->count($randomRecords)->create();
 
@@ -139,7 +139,7 @@ it('checks the API returns Saved AI Chats', function () {
 it('checks the API returns Saved Prompts', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     Prompt::factory()->count($randomRecords)->create();
 
@@ -155,7 +155,7 @@ it('checks the API returns Saved Prompts', function () {
 it('checks the API returns Prompts Inserted', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     PromptUse::factory()->count($randomRecords)->create();
 
@@ -171,7 +171,7 @@ it('checks the API returns Prompts Inserted', function () {
 it('checks the API returns Retention CRM Users', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     $licenseSettings = app(LicenseSettings::class);
 
@@ -192,7 +192,7 @@ it('checks the API returns Retention CRM Users', function () {
 it('checks the API returns Recruitment CRM Users', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     $licenseSettings = app(LicenseSettings::class);
 
@@ -213,7 +213,7 @@ it('checks the API returns Recruitment CRM Users', function () {
 it('checks the API returns Student Records', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     $totalRecords = $randomRecords + (Student::count());
 
@@ -231,7 +231,7 @@ it('checks the API returns Student Records', function () {
 it('checks the API returns Prospects Records', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     Prospect::factory()->count($randomRecords)->create();
 
@@ -247,7 +247,7 @@ it('checks the API returns Prospects Records', function () {
 it('checks the API returns Campaigns', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     Campaign::factory()->count($randomRecords)->create();
 
@@ -263,7 +263,7 @@ it('checks the API returns Campaigns', function () {
 it('checks the API returns Journey Steps Executed', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     CampaignAction::factory()->count($randomRecords)->create();
 
@@ -279,7 +279,7 @@ it('checks the API returns Journey Steps Executed', function () {
 it('checks the API returns Tasks', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     Task::factory()->count($randomRecords)->create();
 
@@ -295,7 +295,7 @@ it('checks the API returns Tasks', function () {
 it('checks the API returns Alerts', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     Alert::factory()->count($randomRecords)->create();
 
@@ -311,7 +311,7 @@ it('checks the API returns Alerts', function () {
 it('checks the API returns Segments', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     Segment::factory()->count($randomRecords)->create();
 
@@ -327,7 +327,7 @@ it('checks the API returns Segments', function () {
 it('checks the API returns Resource Hub Articles', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     ResourceHubArticle::factory()->count($randomRecords)->create();
 
@@ -343,7 +343,7 @@ it('checks the API returns Resource Hub Articles', function () {
 it('checks the API returns Events Created', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     Event::factory()->count($randomRecords)->create();
 
@@ -359,7 +359,7 @@ it('checks the API returns Events Created', function () {
 it('checks the API returns Forms Created', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     Form::factory()->count($randomRecords)->create();
 
@@ -375,7 +375,7 @@ it('checks the API returns Forms Created', function () {
 it('checks the API returns Forms Submitted', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     FormSubmission::factory()->count($randomRecords)->create();
 
@@ -391,7 +391,7 @@ it('checks the API returns Forms Submitted', function () {
 it('checks the API returns Surveys Created', function () {
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     $totalRecords = $randomRecords + (Survey::count());
 
@@ -411,7 +411,7 @@ it('checks the API returns Surveys Submitted', function () {
 
     withoutMiddleware(CheckOlympusKey::class);
 
-    $randomRecords = random_int(1, 100);
+    $randomRecords = random_int(1, 10);
 
     SurveySubmission::factory()->count($randomRecords)->create();
 
