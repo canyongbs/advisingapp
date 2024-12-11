@@ -152,7 +152,7 @@ class ManagePortalSettings extends SettingsPage
                             ->columnSpanFull(),
                         ColorSelect::make('resource_hub_portal_primary_color')
                             ->label('Primary Color')
-                            ->visible(fn(Get $get) => $get('knowledge_management_portal_enabled'))
+                            ->visible(fn(Get $get) => $get('resource_hub_portal_enabled'))
                             ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
                             ->hintIcon(fn(ColorSelect $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Resource Hub is not a part of your current subscription.')
@@ -160,7 +160,7 @@ class ManagePortalSettings extends SettingsPage
                         Select::make('resource_hub_portal_rounding')
                             ->label('Rounding')
                             ->options(Rounding::class)
-                            ->visible(fn(Get $get) => $get('knowledge_management_portal_enabled'))
+                            ->visible(fn(Get $get) => $get('resource_hub_portal_enabled'))
                             ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
                             ->hintIcon(fn(Select $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Resource Hub is not a part of your current subscription.')
@@ -168,7 +168,7 @@ class ManagePortalSettings extends SettingsPage
                         TextInput::make('resource_hub_portal_authorized_domain')
                             ->label('Authorized Domain')
                             ->url()
-                            ->visible(fn(Get $get) => $get('knowledge_management_portal_enabled'))
+                            ->visible(fn(Get $get) => $get('resource_hub_portal_enabled'))
                             ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
                             ->hintIcon(fn(TextInput $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Resource Hub is not a part of your current subscription.')
@@ -220,9 +220,9 @@ class ManagePortalSettings extends SettingsPage
                                 ->modalCancelActionLabel('Close'),
                         ])
                             ->visible(
-                                fn(Get $get) => $get('knowledge_management_portal_enabled') &&
-                                    ! is_null($get('knowledge_management_portal_primary_color')) &&
-                                    ! is_null($get('knowledge_management_portal_rounding'))
+                                fn(Get $get) => $get('resource_hub_portal_enabled') &&
+                                    ! is_null($get('resource_hub_portal_primary_color')) &&
+                                    ! is_null($get('resource_hub_portal_rounding'))
                             )
                             ->columnSpanFull(),
                     ])->columns(2),
