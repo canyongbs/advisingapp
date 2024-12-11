@@ -68,7 +68,7 @@ class ListAudits extends ListRecords
                 TextColumn::make('auditable_type')
                     ->label('Auditable')
                     ->sortable()
-                    ->formatStateUsing(fn ($state) => Str::title($state)),
+                    ->formatStateUsing(fn ($state) => Str::of($state)->headline()),
                 TextColumn::make('change_agent_name')
                     ->label('Change Agent (User)')
                     ->sortable()

@@ -58,7 +58,7 @@ class ViewAudit extends ViewRecord
                     ->schema([
                         TextEntry::make('auditable_type')
                             ->label('Auditable')
-                            ->formatStateUsing(fn ($state) => Str::title($state)),
+                            ->formatStateUsing(fn ($state) => Str::of($state)->headline()),
                         TextEntry::make('change_agent_name')
                             ->label('Change Agent (User)')
                             ->placeholder('System'),
