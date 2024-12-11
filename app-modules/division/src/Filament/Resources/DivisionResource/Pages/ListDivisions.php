@@ -38,8 +38,10 @@ namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
 
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
+use App\Features\DivisionIsDefault;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
@@ -70,6 +72,10 @@ class ListDivisions extends ListRecords
                     ->label('Updated At')
                     ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
                     ->sortable(),
+                IconColumn::make('is_default')
+                    ->label('Default')
+                    ->visible(DivisionIsDefault::active())
+                    ->boolean(),
                 TextColumn::make('notificationSetting.setting.name')
                     ->label('Notification Setting'),
             ])

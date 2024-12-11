@@ -46,6 +46,15 @@ class DivisionObserver
         $division->lastUpdatedBy()->associate($division->lastUpdatedBy ?? auth()->user());
     }
 
+    public function saving(Division $division): void
+    {
+        if ($division->is_default) {
+            Division::query()
+                ->where('is_default', true)
+                ->update(['is_default' => false]);
+        }
+    }
+
     public function updating(Division $division): void
     {
         $division->lastUpdatedBy()->associate(auth()->user());

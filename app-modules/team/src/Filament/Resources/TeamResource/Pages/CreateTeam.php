@@ -37,8 +37,12 @@
 namespace AdvisingApp\Team\Filament\Resources\TeamResource\Pages;
 
 use Filament\Forms\Form;
+use App\Features\DivisionIsDefault;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use AdvisingApp\Division\Models\Division;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Team\Filament\Resources\TeamResource;
 
@@ -57,6 +61,12 @@ class CreateTeam extends CreateRecord
                 Textarea::make('description')
                     ->required()
                     ->string(),
+                Select::make('division_id')
+                    ->visible(DivisionIsDefault::active())
+                    ->relationship('division', 'name', modifyQueryUsing: fn (Builder $query) => $query->orderBy('is_default', 'DESC'))
+                    ->searchable()
+                    ->preload()
+                    ->default(fn () => Division::query()->where('is_default', true)->first()?->getKey()),
             ]);
     }
 }

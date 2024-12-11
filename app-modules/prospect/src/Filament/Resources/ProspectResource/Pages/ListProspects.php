@@ -40,7 +40,6 @@ use App\Models\Tag;
 use App\Enums\TagType;
 use Filament\Forms\Get;
 use Filament\Tables\Table;
-use App\Features\TagFeatureFlag;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
 use Filament\Tables\Filters\Filter;
@@ -171,8 +170,7 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                                 $query->whereIn('tag_id', $data['values']);
                             });
                         }
-                    )
-                    ->visible(fn (): bool => TagFeatureFlag::active()),
+                    ),
             ])
             ->actions([
                 ViewAction::make(),

@@ -56,7 +56,17 @@ class DivisionFactory extends Factory
             'description' => fake()->optional()->sentences(asText: true),
             'header' => fake()->words(asText: true),
             'footer' => fake()->words(asText: true),
+            'is_default' => false,
         ];
+    }
+
+    public function default(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'is_default' => true,
+            ];
+        });
     }
 
     public function configure(): DivisionFactory|Factory

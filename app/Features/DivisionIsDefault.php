@@ -34,17 +34,14 @@
 </COPYRIGHT>
 */
 
-use App\Features\AlertStatusId;
-use Illuminate\Database\Migrations\Migration;
+namespace App\Features;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        AlertStatusId::activate();
-    }
+use App\Support\AbstractFeatureFlag;
 
-    public function down(): void
+class DivisionIsDefault extends AbstractFeatureFlag
+{
+    public function resolve(mixed $scope): mixed
     {
-        AlertStatusId::deactivate();
+        return false;
     }
-};
+}

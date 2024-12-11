@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Alert\Filament\Actions;
 
-use App\Features\AlertStatusId;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -62,12 +61,7 @@ class AlertHistoryCreatedViewAction extends ViewAction
                         ->getStateUsing(fn (AlertHistory $record): ?string => $record->formatted['suggested_intervention']['new']),
                     TextEntry::make('status')
                         ->label(fn (AlertHistory $record): ?string => $record->formatted['status_id']['key'])
-                        ->getStateUsing(fn (AlertHistory $record): ?string => $record->formatted['status_id']['new'])
-                        ->visible(AlertStatusId::active()),
-                    TextEntry::make('status')
-                        ->label(fn (AlertHistory $record): ?string => $record->formatted['status']['key'])
-                        ->getStateUsing(fn (AlertHistory $record): ?string => $record->formatted['status']['new'])
-                        ->visible(! AlertStatusId::active()),
+                        ->getStateUsing(fn (AlertHistory $record): ?string => $record->formatted['status_id']['new']),
                 ])
                 ->columns(),
         ]);

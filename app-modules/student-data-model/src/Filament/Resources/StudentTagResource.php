@@ -38,7 +38,6 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources;
 
 use App\Models\Tag;
 use App\Enums\TagType;
-use App\Features\TagFeatureFlag;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Clusters\ConstituentManagement;
@@ -60,11 +59,6 @@ class StudentTagResource extends Resource
     protected static ?string $cluster = ConstituentManagement::class;
 
     protected static ?string $navigationGroup = 'Students';
-
-    public static function canAccess(): bool
-    {
-        return TagFeatureFlag::active() && parent::canAccess();
-    }
 
     public static function getPages(): array
     {
