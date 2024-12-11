@@ -71,7 +71,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["campaign.{$campaign->id}.view"],
+            abilities: ["campaign.{$campaign->getKey()}.view"],
             denyResponse: 'You do not have permission to view this campaign.'
         );
     }
@@ -91,7 +91,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["campaign.{$campaign->id}.update"],
+            abilities: ["campaign.{$campaign->getKey()}.update"],
             denyResponse: 'You do not have permission to update this campaign.'
         );
     }
@@ -103,7 +103,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["campaign.{$campaign->id}.delete"],
+            abilities: ["campaign.{$campaign->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this campaign.'
         );
     }
@@ -115,7 +115,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["campaign.{$campaign->id}.restore"],
+            abilities: ["campaign.{$campaign->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this campaign.'
         );
     }
@@ -127,7 +127,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["campaign.{$campaign->id}.force-delete"],
+            abilities: ["campaign.{$campaign->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this campaign.'
         );
     }

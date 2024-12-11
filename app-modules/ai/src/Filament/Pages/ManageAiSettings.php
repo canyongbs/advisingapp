@@ -84,7 +84,7 @@ class ManageAiSettings extends SettingsPage
             return false;
         }
 
-        return $user->can(['assistant.access_ai_settings']);
+        return $user->can(['product_admin.view-any']);
     }
 
     #[Computed]
@@ -144,7 +144,8 @@ class ManageAiSettings extends SettingsPage
                         ->all())
                     ->searchable()
                     ->required(),
-            ]);
+            ])
+            ->disabled(! auth()->user()->can('product_admin.*.update'));
     }
 
     public function getSaveFormAction(): Action
@@ -194,6 +195,27 @@ class ManageAiSettings extends SettingsPage
                     $reInitializeAiServiceAssistant($this->defaultAssistant);
                 }
             });
+    }
+
+    public function save(): void
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return;
+        }
+
+        parent::save();
+    }
+
+    /**
+     * @return array<Action | ActionGroup>
+     */
+    public function getFormActions(): array
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return [];
+        }
+
+        return parent::getFormActions();
     }
 
     protected function mutateFormDataBeforeFill(array $data): array

@@ -55,12 +55,12 @@ class TaskKanbanViewAction extends ViewAction
                 ->label('Mark as In Progress')
                 ->action(fn (Task $record) => $record->getStateMachine('status')->transitionTo(TaskStatus::InProgress))
                 ->cancelParentActions()
-                ->hidden(fn (Task $record) => $record->getStateMachine('status')->getStateTransitions()->doesntContain(TaskStatus::InProgress->value) || auth()?->user()?->cannot("task.{$record->id}.update")),
+                ->hidden(fn (Task $record) => $record->getStateMachine('status')->getStateTransitions()->doesntContain(TaskStatus::InProgress->value) || auth()?->user()?->cannot("task.{$record->getKey()}.update")),
             Action::make('mark_as_completed')
                 ->label('Mark as Completed')
                 ->action(fn (Task $record) => $record->getStateMachine('status')->transitionTo(TaskStatus::Completed))
                 ->cancelParentActions()
-                ->hidden(fn (Task $record) => $record->getStateMachine('status')->getStateTransitions()->doesntContain(TaskStatus::Completed->value) || auth()?->user()?->cannot("task.{$record->id}.update")),
+                ->hidden(fn (Task $record) => $record->getStateMachine('status')->getStateTransitions()->doesntContain(TaskStatus::Completed->value) || auth()?->user()?->cannot("task.{$record->getKey()}.update")),
         ])->infolist($this->taskInfoList());
     }
 }

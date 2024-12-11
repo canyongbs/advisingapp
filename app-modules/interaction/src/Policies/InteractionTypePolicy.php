@@ -56,7 +56,7 @@ class InteractionTypePolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'interaction_type.view-any',
+            abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view interaction types.'
         );
     }
@@ -64,7 +64,7 @@ class InteractionTypePolicy
     public function view(Authenticatable $authenticatable, InteractionType $type): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["interaction_type.{$type->id}.view"],
+            abilities: ["product_admin.{$type->getKey()}.view"],
             denyResponse: 'You do not have permission to view this interaction type.'
         );
     }
@@ -72,7 +72,7 @@ class InteractionTypePolicy
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'interaction_type.create',
+            abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create interaction types.'
         );
     }
@@ -80,7 +80,7 @@ class InteractionTypePolicy
     public function update(Authenticatable $authenticatable, InteractionType $type): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["interaction_type.{$type->id}.update"],
+            abilities: ["product_admin.{$type->getKey()}.update"],
             denyResponse: 'You do not have permission to update this interaction type.'
         );
     }
@@ -88,7 +88,7 @@ class InteractionTypePolicy
     public function delete(Authenticatable $authenticatable, InteractionType $type): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["interaction_type.{$type->id}.delete"],
+            abilities: ["product_admin.{$type->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this interaction type.'
         );
     }
@@ -96,7 +96,7 @@ class InteractionTypePolicy
     public function restore(Authenticatable $authenticatable, InteractionType $type): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["interaction_type.{$type->id}.restore"],
+            abilities: ["product_admin.{$type->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this interaction type.'
         );
     }
@@ -104,7 +104,7 @@ class InteractionTypePolicy
     public function forceDelete(Authenticatable $authenticatable, InteractionType $type): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["interaction_type.{$type->id}.force-delete"],
+            abilities: ["product_admin.{$type->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction type.'
         );
     }

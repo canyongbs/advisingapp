@@ -49,8 +49,8 @@ test('CreateInteractionDriver is gated with proper access control', function () 
             InteractionDriverResource::getUrl('create')
         )->assertForbidden();
 
-    $user->givePermissionTo('interaction_driver.view-any');
-    $user->givePermissionTo('interaction_driver.create');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.create');
 
     actingAs($user)
         ->get(

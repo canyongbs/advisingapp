@@ -74,7 +74,7 @@ class FormPolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, Form $form): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["form.{$form->id}.view"],
+            abilities: ["form.{$form->getKey()}.view"],
             denyResponse: 'You do not have permission to view this form.'
         );
     }
@@ -90,7 +90,7 @@ class FormPolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, Form $form): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["form.{$form->id}.update"],
+            abilities: ["form.{$form->getKey()}.update"],
             denyResponse: 'You do not have permission to update this form.'
         );
     }
@@ -98,7 +98,7 @@ class FormPolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, Form $form): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["form.{$form->id}.delete"],
+            abilities: ["form.{$form->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this form.'
         );
     }
@@ -106,7 +106,7 @@ class FormPolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, Form $form): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["form.{$form->id}.restore"],
+            abilities: ["form.{$form->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this form.'
         );
     }
@@ -114,7 +114,7 @@ class FormPolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, Form $form): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["form.{$form->id}.force-delete"],
+            abilities: ["form.{$form->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this form.'
         );
     }

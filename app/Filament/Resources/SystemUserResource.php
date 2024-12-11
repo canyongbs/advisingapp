@@ -38,7 +38,6 @@ namespace App\Filament\Resources;
 
 use App\Models\SystemUser;
 use Filament\Resources\Resource;
-use App\Filament\Clusters\UserManagement;
 use App\Filament\Resources\SystemUserResource\Pages\EditSystemUser;
 use App\Filament\Resources\SystemUserResource\Pages\ListSystemUsers;
 use App\Filament\Resources\SystemUserResource\Pages\CreateSystemUser;
@@ -48,9 +47,7 @@ class SystemUserResource extends Resource
 {
     protected static ?string $model = SystemUser::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
-
-    protected static ?string $cluster = UserManagement::class;
+    protected static ?string $navigationGroup = 'People Administration';
 
     protected static ?string $navigationLabel = 'Programmatic Users';
 

@@ -162,7 +162,7 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
                         /** @var User $user */
                         $user = auth()->user();
 
-                        return $user->can('student_record_manager.*.view');
+                        return $user->can('product_admin.*.view');
                     }),
                 SubscribeTableAction::make(),
             ])

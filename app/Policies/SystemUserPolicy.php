@@ -53,7 +53,7 @@ class SystemUserPolicy
     public function view(Authenticatable $authenticatable, SystemUser $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["system_user.{$model->id}.view"],
+            abilities: ["system_user.{$model->getKey()}.view"],
             denyResponse: 'You do not have permission to view this user.'
         );
     }
@@ -69,7 +69,7 @@ class SystemUserPolicy
     public function update(Authenticatable $authenticatable, SystemUser $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["system_user.{$model->id}.update"],
+            abilities: ["system_user.{$model->getKey()}.update"],
             denyResponse: 'You do not have permission to update this user.'
         );
     }
@@ -77,7 +77,7 @@ class SystemUserPolicy
     public function delete(Authenticatable $authenticatable, SystemUser $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["system_user.{$model->id}.delete"],
+            abilities: ["system_user.{$model->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this user.'
         );
     }
@@ -85,7 +85,7 @@ class SystemUserPolicy
     public function restore(Authenticatable $authenticatable, SystemUser $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["system_user.{$model->id}.restore"],
+            abilities: ["system_user.{$model->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this user.'
         );
     }
@@ -93,7 +93,7 @@ class SystemUserPolicy
     public function forceDelete(Authenticatable $authenticatable, SystemUser $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["system_user.{$model->id}.force-delete"],
+            abilities: ["system_user.{$model->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this user.'
         );
     }

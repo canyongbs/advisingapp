@@ -74,7 +74,7 @@ class SurveyPolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, Survey $survey): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["survey.{$survey->id}.view"],
+            abilities: ["survey.{$survey->getKey()}.view"],
             denyResponse: 'You do not have permission to view this survey.'
         );
     }
@@ -90,7 +90,7 @@ class SurveyPolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, Survey $survey): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["survey.{$survey->id}.update"],
+            abilities: ["survey.{$survey->getKey()}.update"],
             denyResponse: 'You do not have permission to update this survey.'
         );
     }
@@ -98,7 +98,7 @@ class SurveyPolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, Survey $survey): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["survey.{$survey->id}.delete"],
+            abilities: ["survey.{$survey->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this survey.'
         );
     }
@@ -106,7 +106,7 @@ class SurveyPolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, Survey $survey): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["survey.{$survey->id}.restore"],
+            abilities: ["survey.{$survey->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this survey.'
         );
     }
@@ -114,7 +114,7 @@ class SurveyPolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, Survey $survey): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["survey.{$survey->id}.force-delete"],
+            abilities: ["survey.{$survey->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this survey.'
         );
     }

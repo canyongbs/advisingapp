@@ -57,7 +57,7 @@ class SubscriptionPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["subscription.{$subscription->id}.view"],
+            abilities: ["subscription.{$subscription->getKey()}.view"],
             denyResponse: 'You do not have permission to view this subscription.'
         );
     }
@@ -77,7 +77,7 @@ class SubscriptionPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["subscription.{$subscription->id}.update"],
+            abilities: ["subscription.{$subscription->getKey()}.update"],
             denyResponse: 'You do not have permission to update this subscription.'
         );
     }
@@ -89,7 +89,7 @@ class SubscriptionPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["subscription.{$subscription->id}.delete"],
+            abilities: ["subscription.{$subscription->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this subscription.'
         );
     }
@@ -101,7 +101,7 @@ class SubscriptionPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["subscription.{$subscription->id}.restore"],
+            abilities: ["subscription.{$subscription->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this subscription.'
         );
     }
@@ -113,7 +113,7 @@ class SubscriptionPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["subscription.{$subscription->id}.force-delete"],
+            abilities: ["subscription.{$subscription->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this subscription.'
         );
     }

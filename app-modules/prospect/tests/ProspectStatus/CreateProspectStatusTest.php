@@ -101,8 +101,8 @@ test('CreateProspectStatus is gated with proper access control', function () {
     livewire(ProspectStatusResource\Pages\CreateProspectStatus::class)
         ->assertForbidden();
 
-    $user->givePermissionTo('prospect_status.view-any');
-    $user->givePermissionTo('prospect_status.create');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.create');
 
     actingAs($user)
         ->get(

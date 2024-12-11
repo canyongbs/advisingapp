@@ -37,7 +37,6 @@
 namespace AdvisingApp\Authorization\Filament\Resources;
 
 use Filament\Resources\Resource;
-use App\Filament\Clusters\UserManagement;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\EditRole;
@@ -49,9 +48,7 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shield-check';
-
-    protected static ?string $cluster = UserManagement::class;
+    protected static ?string $navigationGroup = 'People Administration';
 
     protected static ?int $navigationSort = 30;
 

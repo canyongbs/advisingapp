@@ -40,6 +40,6 @@ use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestStatusResource;
 
 testResourceRequiresPermissionForAccess(
     resource: ChangeRequestStatusResource::class,
-    permissions: 'change_request_status.view-any',
+    permissions: 'product_admin.view-any',
     method: 'index'
 );
