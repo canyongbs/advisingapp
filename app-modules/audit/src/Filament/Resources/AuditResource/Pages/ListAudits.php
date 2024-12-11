@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
+use Carbon\Carbon;
 use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Actions\ExportAction;
@@ -74,6 +75,9 @@ class ListAudits extends ListRecords
                 TextColumn::make('event')
                     ->label('Event')
                     ->sortable(),
+                TextColumn::make('created_at')
+                    ->label('Occurred At')
+                    ->formatStateUsing(fn (string $state) => Carbon::parse($state)->format('m-d-Y h:i A')),
             ])
             ->defaultSort('id', 'desc')
             ->filters([
