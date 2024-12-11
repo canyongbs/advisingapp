@@ -89,7 +89,7 @@ test('CreateResourceHubStatus is gated with proper access control', function () 
 test('CreateResourceHubStatus is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->knowledgeManagement = false;
+    $settings->data->addons->resourceHub = false;
 
     $settings->save();
 
@@ -106,7 +106,7 @@ test('CreateResourceHubStatus is gated with proper feature access control', func
     livewire(CreateResourceHubStatus::class)
         ->assertForbidden();
 
-    $settings->data->addons->knowledgeManagement = true;
+    $settings->data->addons->resourceHub = true;
 
     $settings->save();
 

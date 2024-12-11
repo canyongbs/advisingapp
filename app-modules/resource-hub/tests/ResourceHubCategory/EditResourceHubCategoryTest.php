@@ -96,7 +96,7 @@ test('EditResourceHubCategory is gated with proper access control', function () 
 test('EditResourceHubCategory is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->knowledgeManagement = false;
+    $settings->data->addons->resourceHub = false;
 
     $settings->save();
 
@@ -119,7 +119,7 @@ test('EditResourceHubCategory is gated with proper feature access control', func
     ])
         ->assertForbidden();
 
-    $settings->data->addons->knowledgeManagement = true;
+    $settings->data->addons->resourceHub = true;
 
     $settings->save();
 

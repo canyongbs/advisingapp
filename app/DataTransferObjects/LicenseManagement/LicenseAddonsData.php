@@ -48,7 +48,7 @@ class LicenseAddonsData extends Data
         public bool $onlineSurveys,
         public bool $onlineAdmissions,
         public bool $serviceManagement,
-        public bool $knowledgeManagement,
+        public bool $resourceHub,
         public bool $eventManagement,
         public bool $realtimeChat,
         public bool $mobileApps,
