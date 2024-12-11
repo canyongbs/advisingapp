@@ -68,7 +68,7 @@ test('The correct details are displayed on the ListCaseStatuses page', function 
         ->assertTableColumnExists('cases_count');
 
     $caseStatuses->each(
-        fn (CaseStatus $caseType) => $component
+        fn(CaseStatus $caseType) => $component
             ->assertTableColumnStateSet(
                 'id',
                 $caseType->id,
