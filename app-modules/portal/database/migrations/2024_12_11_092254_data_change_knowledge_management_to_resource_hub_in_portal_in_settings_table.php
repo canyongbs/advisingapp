@@ -34,12 +34,9 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-return new class() extends SettingsMigration {
+return new class () extends SettingsMigration {
     public function up(): void
     {
         $this->migrator->rename('portal.knowledge_management_portal_enabled', 'portal.resource_hub_portal_enabled');
