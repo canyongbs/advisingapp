@@ -40,35 +40,35 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class SyncTenantRequest extends FormRequest
 {
-  public function rules(): array
-  {
-    return [
-      'limits' => ['required', 'array'],
-      'limits.conversationalAiSeats' => ['required', 'integer', 'min:0'],
-      'limits.conversationalAiAssistants' => ['required', 'integer', 'min:0'],
-      'limits.retentionCrmSeats' => ['required', 'integer', 'min:0'],
-      'limits.recruitmentCrmSeats' => ['required', 'integer', 'min:0'],
-      'limits.emails' => ['required', 'integer', 'min:0'],
-      'limits.sms' => ['required', 'integer', 'min:0'],
-      'limits.resetDate' => ['required', 'string', 'date_format:m-d'],
-      'addons' => ['required', 'array'],
-      'addons.onlineForms' => ['required', 'boolean'],
-      'addons.onlineSurveys' => ['required', 'boolean'],
-      'addons.onlineAdmissions' => ['required', 'boolean'],
-      'addons.caseManagement' => ['required', 'boolean'],
-      'addons.resourceHub' => ['required', 'boolean'],
-      'addons.eventManagement' => ['required', 'boolean'],
-      'addons.realtimeChat' => ['required', 'boolean'],
-      'addons.mobileApps' => ['required', 'boolean'],
-      'addons.scheduleAndAppointments' => ['required', 'boolean'],
-      'addons.customAiAssistants' => ['required', 'boolean'],
-      'subscription' => ['required', 'array'],
-      'subscription.clientName' => ['required', 'string'],
-      'subscription.partnerName' => ['required', 'string'],
-      'subscription.clientPo' => ['required', 'string'],
-      'subscription.partnerPo' => ['required', 'string'],
-      'subscription.startDate' => ['required', 'string'],
-      'subscription.endDate' => ['required', 'string'],
-    ];
-  }
+    public function rules(): array
+    {
+        return [
+            'limits' => ['required', 'array'],
+            'limits.conversationalAiSeats' => ['required', 'integer', 'min:0'],
+            'limits.conversationalAiAssistants' => ['required', 'integer', 'min:0'],
+            'limits.retentionCrmSeats' => ['required', 'integer', 'min:0'],
+            'limits.recruitmentCrmSeats' => ['required', 'integer', 'min:0'],
+            'limits.emails' => ['required', 'integer', 'min:0'],
+            'limits.sms' => ['required', 'integer', 'min:0'],
+            'limits.resetDate' => ['required', 'string', 'date_format:m-d'],
+            'addons' => ['required', 'array'],
+            'addons.onlineForms' => ['required', 'boolean'],
+            'addons.onlineSurveys' => ['required', 'boolean'],
+            'addons.onlineAdmissions' => ['required', 'boolean'],
+            'addons.caseManagement' => ['required', 'boolean'],
+            'addons.resourceHub' => ['required', 'boolean'],
+            'addons.eventManagement' => ['required', 'boolean'],
+            'addons.realtimeChat' => ['required', 'boolean'],
+            'addons.mobileApps' => ['required', 'boolean'],
+            'addons.scheduleAndAppointments' => ['required', 'boolean'],
+            'addons.customAiAssistants' => ['required', 'boolean'],
+            'subscription' => ['required', 'array'],
+            'subscription.clientName' => ['required', 'string'],
+            'subscription.partnerName' => ['required', 'string'],
+            'subscription.clientPo' => ['required', 'string'],
+            'subscription.partnerPo' => ['required', 'string'],
+            'subscription.startDate' => ['required', 'string'],
+            'subscription.endDate' => ['required', 'string'],
+        ];
+    }
 }

@@ -71,7 +71,7 @@ test('The correct details are displayed on the ListCases page', function () {
         ->assertCountTableRecords(10);
 
     $cases->each(
-        fn(CaseModel $case) => $component
+        fn (CaseModel $case) => $component
             ->assertTableColumnStateSet(
                 'case_number',
                 $case->case_number,

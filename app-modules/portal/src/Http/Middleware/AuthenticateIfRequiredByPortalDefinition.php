@@ -44,24 +44,24 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
 class AuthenticateIfRequiredByPortalDefinition
 {
-  public function handle(Request $request, Closure $next): Response
-  {
-    $settings = resolve(PortalSettings::class);
+    public function handle(Request $request, Closure $next): Response
+    {
+        $settings = resolve(PortalSettings::class);
 
-    if (! $settings->resource_hub_portal_requires_authentication) {
-      return $next($request);
+        if (! $settings->resource_hub_portal_requires_authentication) {
+            return $next($request);
+        }
+
+        $user = auth('sanctum')->user();
+
+        if (! $user instanceof Educatable) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
+        if (! $user->tokenCan('resource-hub-portal')) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
+        return $next($request);
     }
-
-    $user = auth('sanctum')->user();
-
-    if (! $user instanceof Educatable) {
-      abort(Response::HTTP_FORBIDDEN);
-    }
-
-    if (! $user->tokenCan('resource-hub-portal')) {
-      abort(Response::HTTP_FORBIDDEN);
-    }
-
-    return $next($request);
-  }
 }
