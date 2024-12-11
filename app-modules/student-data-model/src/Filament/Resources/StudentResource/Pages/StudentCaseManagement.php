@@ -47,42 +47,42 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationMana
 
 class StudentCaseManagement extends ManageRelatedRecords
 {
-    use FiltersManagersFromGroups;
+  use FiltersManagersFromGroups;
 
-    protected static string $resource = StudentResource::class;
+  protected static string $resource = StudentResource::class;
 
-    protected static string $relationship = 'cases';
+  protected static string $relationship = 'cases';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Case Management';
+  // TODO: Automatically set from Filament based on relationship name
+  protected static ?string $navigationLabel = 'Case Management';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Case Management';
+  // TODO: Automatically set from Filament based on relationship name
+  protected static ?string $breadcrumb = 'Case Management';
 
-    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
+  protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
-    public function getTitle(): string | Htmlable
-    {
-        return 'Student Case Management';
-    }
+  public function getTitle(): string | Htmlable
+  {
+    return 'Student Case Management';
+  }
 
-    public static function canAccess(array $parameters = []): bool
-    {
-        return parent::canAccess($parameters) && Gate::check(Feature::ServiceManagement->getGateName()) && count(static::managers($parameters['record'] ?? null));
-    }
+  public static function canAccess(array $parameters = []): bool
+  {
+    return parent::canAccess($parameters) && Gate::check(Feature::CaseManagement->getGateName()) && count(static::managers($parameters['record'] ?? null));
+  }
 
-    public function getRelationManagers(): array
-    {
-        return static::managers($this->getRecord());
-    }
+  public function getRelationManagers(): array
+  {
+    return static::managers($this->getRecord());
+  }
 
-    private static function managers(?Model $record = null): array
-    {
-        return collect([
-            CasesRelationManager::class,
-        ])
-            ->map(fn ($relationManager) => self::filterRelationManagers($relationManager, $record))
-            ->filter()
-            ->toArray();
-    }
+  private static function managers(?Model $record = null): array
+  {
+    return collect([
+      CasesRelationManager::class,
+    ])
+      ->map(fn($relationManager) => self::filterRelationManagers($relationManager, $record))
+      ->filter()
+      ->toArray();
+  }
 }

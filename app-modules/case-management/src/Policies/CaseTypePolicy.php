@@ -54,7 +54,7 @@ class CaseTypePolicy
         }
 
         if (! Gate::check(
-            collect($this->requiredFeatures())->map(fn (Feature $feature) => $feature->getGateName())
+            collect($this->requiredFeatures())->map(fn(Feature $feature) => $feature->getGateName())
         )) {
             return FeatureAccessResponse::deny();
         }
@@ -124,6 +124,6 @@ class CaseTypePolicy
 
     protected function requiredFeatures(): array
     {
-        return [Feature::ServiceManagement];
+        return [Feature::CaseManagement];
     }
 }

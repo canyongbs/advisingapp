@@ -121,6 +121,6 @@ class CaseFormPolicy implements PerformsChecksBeforeAuthorization
 
     protected function requiredFeatures(): array
     {
-        return [Feature::ServiceManagement];
+        return [Feature::CaseManagement];
     }
 }

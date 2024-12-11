@@ -113,7 +113,7 @@ class ManageLicenseSettings extends SettingsPage
                                 ->numeric()
                                 ->minValue(0)
                                 ->required()
-                                ->disabled(fn (Get $get): bool => (bool) $get('conversationalAiSeats')),
+                                ->disabled(fn(Get $get): bool => (bool) $get('conversationalAiSeats')),
                             TextInput::make('data.limits.retentionCrmSeats')
                                 ->label('Student Success / Retention Seats')
                                 ->numeric()
@@ -149,7 +149,7 @@ class ManageLicenseSettings extends SettingsPage
                                 ->label('Online Surveys'),
                             Toggle::make('data.addons.onlineAdmissions')
                                 ->label('Online Admissions'),
-                            Toggle::make('data.addons.serviceManagement')
+                            Toggle::make('data.addons.caseManagement')
                                 ->label('Case Management'),
                             Toggle::make('data.addons.resourceHub')
                                 ->label('Resource Hub'),
