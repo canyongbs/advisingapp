@@ -43,16 +43,16 @@ use AdvisingApp\Portal\Settings\PortalSettings;
 
 class EnsureResourceHubPortalIsEnabled
 {
-    public function handle(Request $request, Closure $next): Response
-    {
-        if (! app(PortalSettings::class)->resource_hub_portal_enabled) {
-            if ($request->wantsJson() || $request->fullUrlIs('*/api/portal/resource-hub/*')) {
-                return response()->json(['error' => 'The Resource Hub Portal is not enabled.'], Response::HTTP_FORBIDDEN);
-            }
+  public function handle(Request $request, Closure $next): Response
+  {
+    if (! app(PortalSettings::class)->resource_hub_portal_enabled) {
+      if ($request->wantsJson() || $request->fullUrlIs('*/api/portal/resource-hub/*')) {
+        return response()->json(['error' => 'The Resource Hub Portal is not enabled.'], Response::HTTP_FORBIDDEN);
+      }
 
-            abort(Response::HTTP_FORBIDDEN);
-        }
-
-        return $next($request);
+      abort(Response::HTTP_FORBIDDEN);
     }
+
+    return $next($request);
+  }
 }
