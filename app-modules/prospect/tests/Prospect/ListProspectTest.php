@@ -157,6 +157,7 @@ it('can filter prospects by `subscribed` prospects', function () {
     $notSubscribedProspects = Prospect::factory()->count(3)->create();
 
     livewire(ListProspects::class)
+        ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($notSubscribedProspects->merge($subscribedProspects))
         ->filterTable('subscribed')
         ->assertCanSeeTableRecords($subscribedProspects)
