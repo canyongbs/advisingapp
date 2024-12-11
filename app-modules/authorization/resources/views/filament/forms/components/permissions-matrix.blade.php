@@ -97,14 +97,14 @@
 
     <div
         class="grid divide-y divide-gray-950/5 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-gray-900 dark:ring-white/10">
-        <div class="divide-gray-950/5 dark:divide-white/10 lg:flex lg:divide-x lg:divide-y-0">
-            <div class="px-3 py-2 font-medium text-gray-950 dark:text-white lg:flex-1">
+        <div class="divide-gray-950/5 dark:divide-white/10 xl:flex xl:divide-x xl:divide-y-0">
+            <div class="px-3 py-2 font-medium text-gray-950 dark:text-white xl:flex-1">
                 Permissions
             </div>
 
-            <div class="hidden divide-x divide-gray-950/5 text-sm dark:divide-white/10 lg:grid lg:grid-cols-6 lg:gap-0">
-                @foreach (['View', 'Create', 'Update', 'Delete', 'Force Delete', 'Restore'] as $operationLabel)
-                    <div class="flex items-center justify-center px-3 py-2 text-gray-950 dark:text-white lg:w-28">
+            <div class="hidden divide-x divide-gray-950/5 text-sm dark:divide-white/10 xl:grid xl:grid-cols-7 xl:gap-0">
+                @foreach (['View', 'Create', 'Update', 'Delete', 'Import', 'Force Delete', 'Restore'] as $operationLabel)
+                    <div class="flex items-center justify-center px-3 py-2 text-gray-950 dark:text-white xl:w-28">
                         {{ $operationLabel }}
                     </div>
                 @endforeach
@@ -116,8 +116,8 @@
             x-bind:key="group"
         >
             <div
-                class="flex flex-col divide-y divide-gray-950/5 dark:divide-white/10 lg:flex-row lg:divide-x lg:divide-y-0">
-                <div class="group flex items-center justify-between gap-3 px-3 py-2 lg:flex-1">
+                class="flex flex-col divide-y divide-gray-950/5 dark:divide-white/10 xl:flex-row xl:divide-x xl:divide-y-0">
+                <div class="group flex items-center justify-between gap-3 px-3 py-2 xl:flex-1">
                     <div
                         class="text-sm text-gray-950 dark:text-white"
                         x-text="group"
@@ -125,7 +125,7 @@
 
                     @if (!$isDisabled)
                         <x-filament::link
-                            class="transition group-hover:opacity-100 lg:opacity-0"
+                            class="transition group-hover:opacity-100 xl:opacity-0"
                             x-on:click="removeGroup(group)"
                             color="danger"
                             size="xs"
@@ -137,10 +137,10 @@
                 </div>
 
                 <div
-                    class="grid grid-cols-2 gap-1 divide-gray-950/5 px-3 py-2 text-sm dark:divide-white/10 md:grid-cols-3 lg:grid-cols-6 lg:gap-0 lg:divide-x lg:px-0 lg:py-0">
-                    @foreach (['view-any' => 'View', 'create' => 'Create', 'update' => 'Update', 'delete' => 'Delete', 'force-delete' => 'Force Delete', 'restore' => 'Restore'] as $operation => $operationLabel)
+                    class="grid grid-cols-2 gap-1 divide-gray-950/5 px-3 py-2 text-sm dark:divide-white/10 md:grid-cols-4 xl:grid-cols-7 xl:gap-0 xl:divide-x xl:px-0 xl:py-0">
+                    @foreach (['view-any' => 'View', 'create' => 'Create', 'update' => 'Update', 'delete' => 'Delete', 'import' => 'Import', 'force-delete' => 'Force Delete', 'restore' => 'Restore'] as $operation => $operationLabel)
                         <label
-                            class="flex items-center gap-2 lg:flex lg:w-28 lg:justify-center lg:px-3 lg:py-2"
+                            class="flex items-center gap-2 xl:flex xl:w-28 xl:justify-center xl:px-3 xl:py-2"
                             @if ($operation !== 'view-any') x-bind:class="{
                                     'opacity-50': ! state.includes(availablePermissions[group]['view-any']),
                                     'hidden': ! Object.keys(availablePermissions[group]).includes(@js($operation)),
@@ -159,7 +159,7 @@
                                     ')'"
                             />
 
-                            <span class="lg:sr-only">
+                            <span class="xl:sr-only">
                                 {{ $operationLabel }}
                             </span>
                         </label>

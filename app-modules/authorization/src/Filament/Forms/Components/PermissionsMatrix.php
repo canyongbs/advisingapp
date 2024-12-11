@@ -99,6 +99,7 @@ class PermissionsMatrix extends Field
                         "{$permissionGroupNameSlug}.create" => 'create',
                         "{$permissionGroupNameSlug}.*.update" => 'update',
                         "{$permissionGroupNameSlug}.*.delete" => 'delete',
+                        "{$permissionGroupNameSlug}.import" => 'import',
                         "{$permissionGroupNameSlug}.*.force-delete" => 'force-delete',
                         "{$permissionGroupNameSlug}.*.restore" => 'restore',
                         default => null,
