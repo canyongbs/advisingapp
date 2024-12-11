@@ -48,41 +48,41 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\Ca
 
 class ProspectCaseManagement extends ManageRelatedRecords
 {
-  use FiltersManagersFromGroups;
-  use ProspectHolisticViewPage;
+    use FiltersManagersFromGroups;
+    use ProspectHolisticViewPage;
 
-  protected static string $resource = ProspectResource::class;
+    protected static string $resource = ProspectResource::class;
 
-  protected static string $relationship = 'cases';
+    protected static string $relationship = 'cases';
 
-  protected static ?string $navigationLabel = 'Case Management';
+    protected static ?string $navigationLabel = 'Case Management';
 
-  protected static ?string $breadcrumb = 'Case Management';
+    protected static ?string $breadcrumb = 'Case Management';
 
-  protected static ?string $navigationIcon = 'heroicon-o-briefcase';
+    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
-  public function getTitle(): string | Htmlable
-  {
-    return 'Prospect Case Management';
-  }
+    public function getTitle(): string | Htmlable
+    {
+        return 'Prospect Case Management';
+    }
 
-  public static function canAccess(array $parameters = []): bool
-  {
-    return parent::canAccess($parameters) && Gate::check(Feature::CaseManagement->getGateName()) && count(static::managers($parameters['record'] ?? null));
-  }
+    public static function canAccess(array $parameters = []): bool
+    {
+        return parent::canAccess($parameters) && Gate::check(Feature::CaseManagement->getGateName()) && count(static::managers($parameters['record'] ?? null));
+    }
 
-  public function getRelationManagers(): array
-  {
-    return static::managers($this->getRecord());
-  }
+    public function getRelationManagers(): array
+    {
+        return static::managers($this->getRecord());
+    }
 
-  private static function managers(?Model $record = null): array
-  {
-    return collect([
-      CasesRelationManager::class,
-    ])
-      ->map(fn($relationManager) => self::filterRelationManagers($relationManager, $record))
-      ->filter()
-      ->toArray();
-  }
+    private static function managers(?Model $record = null): array
+    {
+        return collect([
+            CasesRelationManager::class,
+        ])
+            ->map(fn ($relationManager) => self::filterRelationManagers($relationManager, $record))
+            ->filter()
+            ->toArray();
+    }
 }

@@ -54,7 +54,7 @@ class CaseModelPolicy
         }
 
         if (! Gate::check(
-            collect($this->requiredFeatures())->map(fn(Feature $feature) => $feature->getGateName())
+            collect($this->requiredFeatures())->map(fn (Feature $feature) => $feature->getGateName())
         )) {
             return FeatureAccessResponse::deny();
         }
