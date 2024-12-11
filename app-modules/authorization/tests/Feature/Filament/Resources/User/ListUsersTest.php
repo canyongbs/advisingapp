@@ -371,3 +371,45 @@ it('filters users based on roles', function () {
             $usersInRoleA->merge($usersInRoleB)->merge($usersInRoleC)
         );
 });
+
+it('Filter users based on licenses', function () {
+    asSuperAdmin();
+
+    $usersWithRetentionCrmLicense = User::factory()
+        ->count(3)
+        ->create()
+        ->each(function ($user) {
+            $user->grantLicense(LicenseType::RetentionCrm);
+        });
+
+    $usersWithRecruitmentCrmLicense = User::factory()
+        ->count(3)
+        ->create()
+        ->each(function ($user) {
+            $user->grantLicense(LicenseType::RecruitmentCrm);
+        });
+
+    $usersWithConversationalAiLicense = User::factory()
+        ->count(3)
+        ->create()
+        ->each(function ($user) {
+            $user->grantLicense(LicenseType::ConversationalAi);
+        });
+    $usersWithoutLicense = User::factory()
+        ->count(3)
+        ->create();
+
+    livewire(ListUsers::class)
+        ->filterTable('licenses', [LicenseType::RetentionCrm->value])
+        ->assertCanSeeTableRecords($usersWithRetentionCrmLicense)
+        ->assertCanNotSeeTableRecords($usersWithRecruitmentCrmLicense->merge($usersWithConversationalAiLicense)->merge($usersWithoutLicense))
+        ->filterTable('licenses', [LicenseType::RecruitmentCrm->value])
+        ->assertCanSeeTableRecords($usersWithRecruitmentCrmLicense)
+        ->assertCanNotSeeTableRecords($usersWithRetentionCrmLicense->merge($usersWithConversationalAiLicense)->merge($usersWithoutLicense))
+        ->filterTable('licenses', [LicenseType::ConversationalAi->value])
+        ->assertCanSeeTableRecords($usersWithConversationalAiLicense)
+        ->assertCanNotSeeTableRecords($usersWithRetentionCrmLicense->merge($usersWithRecruitmentCrmLicense)->merge($usersWithoutLicense))
+        ->filterTable('licenses', ['no_assigned_license'])
+        ->assertCanSeeTableRecords($usersWithoutLicense)
+        ->assertCanNotSeeTableRecords($usersWithRetentionCrmLicense->merge($usersWithRecruitmentCrmLicense)->merge($usersWithConversationalAiLicense));
+});

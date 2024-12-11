@@ -37,7 +37,6 @@
 namespace AdvisingApp\Alert\Filament\Resources\AlertResource\Pages;
 
 use Filament\Tables\Table;
-use App\Features\AlertStatusId;
 use Filament\Infolists\Infolist;
 use Filament\Actions\CreateAction;
 use AdvisingApp\Alert\Models\Alert;
@@ -87,10 +86,7 @@ class ListAlerts extends ListRecords
                 TextEntry::make('description'),
                 TextEntry::make('severity'),
                 TextEntry::make('suggested_intervention'),
-                TextEntry::make('status.name')
-                    ->visible(AlertStatusId::active()),
-                TextEntry::make('status')
-                    ->visible(! AlertStatusId::active()),
+                TextEntry::make('status.name'),
             ]);
     }
 
@@ -115,10 +111,7 @@ class ListAlerts extends ListRecords
                     ->limit(),
                 TextColumn::make('severity')
                     ->sortable(),
-                TextColumn::make('status')
-                    ->visible(! AlertStatusId::active()),
                 TextColumn::make('status.name')
-                    ->visible(AlertStatusId::active())
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->sortable(),
@@ -159,14 +152,10 @@ class ListAlerts extends ListRecords
                     ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
-                SelectFilter::make('status')
-                    ->options(SystemAlertStatusClassification::class)
-                    ->visible(! AlertStatusId::active()),
                 SelectFilter::make('status_id')
                     ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
                     ->multiple()
                     ->preload()
-                    ->visible(AlertStatusId::active())
                     ->default([SystemAlertStatusClassification::default()]),
             ])
             ->actions([
@@ -202,15 +191,11 @@ class ListAlerts extends ListRecords
                             Textarea::make('suggested_intervention')
                                 ->required()
                                 ->string(),
-                            Select::make('status')
-                                ->options(SystemAlertStatusClassification::class)
-                                ->visible(! AlertStatusId::active()),
                             Select::make('status_id')
                                 ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
                                 ->selectablePlaceholder(false)
                                 ->default(SystemAlertStatusClassification::default())
-                                ->required()
-                                ->visible(AlertStatusId::active()),
+                                ->required(),
                         ])
                         ->columns(),
                 ]),

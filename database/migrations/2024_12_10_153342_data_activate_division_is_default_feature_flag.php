@@ -34,14 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use App\Features\DivisionIsDefault;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Support\AbstractFeatureFlag;
-
-class TagFeatureFlag extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
+return new class () extends Migration {
+    public function up(): void
     {
-        return false;
+        DivisionIsDefault::activate();
     }
-}
+
+    public function down(): void
+    {
+        DivisionIsDefault::deactivate();
+    }
+};
