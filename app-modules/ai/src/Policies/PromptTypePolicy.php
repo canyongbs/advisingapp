@@ -67,7 +67,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, PromptType $promptType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$promptType->id}.view"],
+            abilities: ["product_admin.{$promptType->getKey()}.view"],
             denyResponse: 'You do not have permission to view this prompt type.'
         );
     }
@@ -83,7 +83,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, PromptType $promptType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$promptType->id}.update"],
+            abilities: ["product_admin.{$promptType->getKey()}.update"],
             denyResponse: 'You do not have permission to update this prompt type.'
         );
     }
@@ -95,7 +95,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$promptType->id}.delete"],
+            abilities: ["product_admin.{$promptType->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this prompt type.'
         );
     }
@@ -103,7 +103,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, PromptType $promptType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$promptType->id}.restore"],
+            abilities: ["product_admin.{$promptType->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this prompt type.'
         );
     }
@@ -115,7 +115,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$promptType->id}.force-delete"],
+            abilities: ["product_admin.{$promptType->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this prompt type.'
         );
     }

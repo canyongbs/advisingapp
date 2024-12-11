@@ -73,7 +73,7 @@ class CasePriorityPolicy
     public function view(Authenticatable $authenticatable, CasePriority $casePriority): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$casePriority->id}.view"],
+            abilities: ["product_admin.{$casePriority->getKey()}.view"],
             denyResponse: 'You do not have permissions to view this case priority.'
         );
     }
@@ -89,7 +89,7 @@ class CasePriorityPolicy
     public function update(Authenticatable $authenticatable, CasePriority $casePriority): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$casePriority->id}.update"],
+            abilities: ["product_admin.{$casePriority->getKey()}.update"],
             denyResponse: 'You do not have permissions to update this case priority.'
         );
     }
@@ -97,7 +97,7 @@ class CasePriorityPolicy
     public function delete(Authenticatable $authenticatable, CasePriority $casePriority): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$casePriority->id}.delete"],
+            abilities: ["product_admin.{$casePriority->getKey()}.delete"],
             denyResponse: 'You do not have permissions to delete this case priority.'
         );
     }
@@ -105,7 +105,7 @@ class CasePriorityPolicy
     public function restore(Authenticatable $authenticatable, CasePriority $casePriority): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$casePriority->id}.restore"],
+            abilities: ["product_admin.{$casePriority->getKey()}.restore"],
             denyResponse: 'You do not have permissions to restore this case priority.'
         );
     }
@@ -113,7 +113,7 @@ class CasePriorityPolicy
     public function forceDelete(Authenticatable $authenticatable, CasePriority $casePriority): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$casePriority->id}.force-delete"],
+            abilities: ["product_admin.{$casePriority->getKey()}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this case priority.'
         );
     }

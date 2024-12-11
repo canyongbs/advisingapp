@@ -63,7 +63,7 @@ class ProspectStatusPolicy
     public function view(Authenticatable $authenticatable, ProspectStatus $prospectStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$prospectStatus->id}.view"],
+            abilities: ["product_admin.{$prospectStatus->getKey()}.view"],
             denyResponse: 'You do not have permission to view prospect statuses.'
         );
     }
@@ -83,7 +83,7 @@ class ProspectStatusPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$prospectStatus->id}.update"],
+            abilities: ["product_admin.{$prospectStatus->getKey()}.update"],
             denyResponse: 'You do not have permission to update prospect statuses.'
         );
     }
@@ -95,7 +95,7 @@ class ProspectStatusPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$prospectStatus->id}.delete"],
+            abilities: ["product_admin.{$prospectStatus->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete prospect statuses.'
         );
     }
@@ -103,7 +103,7 @@ class ProspectStatusPolicy
     public function restore(Authenticatable $authenticatable, ProspectStatus $prospectStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$prospectStatus->id}.restore"],
+            abilities: ["product_admin.{$prospectStatus->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore prospect statuses.'
         );
     }
@@ -115,7 +115,7 @@ class ProspectStatusPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$prospectStatus->id}.force-delete"],
+            abilities: ["product_admin.{$prospectStatus->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to force delete prospect statuses.'
         );
     }

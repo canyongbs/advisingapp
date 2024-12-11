@@ -74,7 +74,7 @@ class ChangeRequestStatusPolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, ChangeRequestStatus $changeRequestStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$changeRequestStatus->id}.view"],
+            abilities: ["product_admin.{$changeRequestStatus->getKey()}.view"],
             denyResponse: 'You do not have permission to view this change request status.'
         );
     }
@@ -90,7 +90,7 @@ class ChangeRequestStatusPolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, ChangeRequestStatus $changeRequestStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$changeRequestStatus->id}.update"],
+            abilities: ["product_admin.{$changeRequestStatus->getKey()}.update"],
             denyResponse: 'You do not have permission to update this change request status.'
         );
     }
@@ -98,7 +98,7 @@ class ChangeRequestStatusPolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, ChangeRequestStatus $changeRequestStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$changeRequestStatus->id}.delete"],
+            abilities: ["product_admin.{$changeRequestStatus->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this change request status.'
         );
     }
@@ -106,7 +106,7 @@ class ChangeRequestStatusPolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, ChangeRequestStatus $changeRequestStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$changeRequestStatus->id}.restore"],
+            abilities: ["product_admin.{$changeRequestStatus->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this change request status.'
         );
     }
@@ -118,7 +118,7 @@ class ChangeRequestStatusPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$changeRequestStatus->id}.force-delete"],
+            abilities: ["product_admin.{$changeRequestStatus->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this change request status.'
         );
     }

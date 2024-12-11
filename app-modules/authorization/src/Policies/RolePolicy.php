@@ -53,7 +53,7 @@ class RolePolicy
     public function view(Authenticatable $authenticatable, Role $role): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["role.{$role->id}.view"],
+            abilities: ["role.{$role->getKey()}.view"],
             denyResponse: 'You do not have permission to view this role.'
         );
     }
@@ -69,7 +69,7 @@ class RolePolicy
     public function update(Authenticatable $authenticatable, Role $role): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["role.{$role->id}.update"],
+            abilities: ["role.{$role->getKey()}.update"],
             denyResponse: 'You do not have permission to update this role.'
         );
     }
@@ -77,7 +77,7 @@ class RolePolicy
     public function delete(Authenticatable $authenticatable, Role $role): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["role.{$role->id}.delete"],
+            abilities: ["role.{$role->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this role.'
         );
     }
@@ -85,7 +85,7 @@ class RolePolicy
     public function restore(Authenticatable $authenticatable, Role $role): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["role.{$role->id}.restore"],
+            abilities: ["role.{$role->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this role.'
         );
     }
@@ -93,7 +93,7 @@ class RolePolicy
     public function forceDelete(Authenticatable $authenticatable, Role $role): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["role.{$role->id}.force-delete"],
+            abilities: ["role.{$role->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this role.'
         );
     }

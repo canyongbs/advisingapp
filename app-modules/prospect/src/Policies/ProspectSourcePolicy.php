@@ -63,7 +63,7 @@ class ProspectSourcePolicy
     public function view(Authenticatable $authenticatable, ProspectSource $prospectSource): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$prospectSource->id}.view"],
+            abilities: ["product_admin.{$prospectSource->getKey()}.view"],
             denyResponse: 'You do not have permission to view this prospect source.'
         );
     }
@@ -79,7 +79,7 @@ class ProspectSourcePolicy
     public function update(Authenticatable $authenticatable, ProspectSource $prospectSource): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$prospectSource->id}.update"],
+            abilities: ["product_admin.{$prospectSource->getKey()}.update"],
             denyResponse: 'You do not have permission to update this prospect source.'
         );
     }
@@ -87,7 +87,7 @@ class ProspectSourcePolicy
     public function delete(Authenticatable $authenticatable, ProspectSource $prospectSource): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$prospectSource->id}.delete"],
+            abilities: ["product_admin.{$prospectSource->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this prospect source.'
         );
     }
@@ -95,7 +95,7 @@ class ProspectSourcePolicy
     public function restore(Authenticatable $authenticatable, ProspectSource $prospectSource): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$prospectSource->id}.restore"],
+            abilities: ["product_admin.{$prospectSource->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this prospect source.'
         );
     }
@@ -103,7 +103,7 @@ class ProspectSourcePolicy
     public function forceDelete(Authenticatable $authenticatable, ProspectSource $prospectSource): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$prospectSource->id}.force-delete"],
+            abilities: ["product_admin.{$prospectSource->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to force delete this prospect source.'
         );
     }

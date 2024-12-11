@@ -53,7 +53,7 @@ class PronounsPolicy
     public function view(Authenticatable $authenticatable, Pronouns $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$model->id}.view"],
+            abilities: ["product_admin.{$model->getKey()}.view"],
             denyResponse: 'You do not have permission to view these pronouns.'
         );
     }
@@ -69,7 +69,7 @@ class PronounsPolicy
     public function update(Authenticatable $authenticatable, Pronouns $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$model->id}.update"],
+            abilities: ["product_admin.{$model->getKey()}.update"],
             denyResponse: 'You do not have permission to update these pronouns.'
         );
     }
@@ -77,7 +77,7 @@ class PronounsPolicy
     public function delete(Authenticatable $authenticatable, Pronouns $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$model->id}.delete"],
+            abilities: ["product_admin.{$model->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete these pronouns.'
         );
     }
@@ -85,7 +85,7 @@ class PronounsPolicy
     public function restore(Authenticatable $authenticatable, Pronouns $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$model->id}.restore"],
+            abilities: ["product_admin.{$model->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore these pronouns.'
         );
     }
@@ -93,7 +93,7 @@ class PronounsPolicy
     public function forceDelete(Authenticatable $authenticatable, Pronouns $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$model->id}.force-delete"],
+            abilities: ["product_admin.{$model->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete these pronouns.'
         );
     }

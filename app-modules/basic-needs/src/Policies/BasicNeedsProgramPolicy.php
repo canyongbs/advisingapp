@@ -63,7 +63,7 @@ class BasicNeedsProgramPolicy
     public function view(Authenticatable $authenticatable, BasicNeedsProgram $basicNeedsProgram): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$basicNeedsProgram->id}.view"],
+            abilities: ["product_admin.{$basicNeedsProgram->getKey()}.view"],
             denyResponse: 'You do not have permission to view this basic needs program.'
         );
     }
@@ -79,7 +79,7 @@ class BasicNeedsProgramPolicy
     public function update(Authenticatable $authenticatable, BasicNeedsProgram $basicNeedsProgram): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$basicNeedsProgram->id}.update"],
+            abilities: ["product_admin.{$basicNeedsProgram->getKey()}.update"],
             denyResponse: 'You do not have permission to update this basic needs program.'
         );
     }
@@ -87,7 +87,7 @@ class BasicNeedsProgramPolicy
     public function delete(Authenticatable $authenticatable, BasicNeedsProgram $basicNeedsProgram): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$basicNeedsProgram->id}.delete"],
+            abilities: ["product_admin.{$basicNeedsProgram->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this basic needs program.'
         );
     }
@@ -95,7 +95,7 @@ class BasicNeedsProgramPolicy
     public function restore(Authenticatable $authenticatable, BasicNeedsProgram $basicNeedsProgram): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$basicNeedsProgram->id}.restore"],
+            abilities: ["product_admin.{$basicNeedsProgram->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this basic needs program.'
         );
     }
@@ -103,7 +103,7 @@ class BasicNeedsProgramPolicy
     public function forceDelete(Authenticatable $authenticatable, BasicNeedsProgram $basicNeedsProgram): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$basicNeedsProgram->id}.force-delete"],
+            abilities: ["product_admin.{$basicNeedsProgram->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to force delete this basic needs program.'
         );
     }

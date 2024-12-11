@@ -74,7 +74,7 @@ class ResourceHubQualityPolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, ResourceHubQuality $resourceHubQuality): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$resourceHubQuality->id}.view"],
+            abilities: ["product_admin.{$resourceHubQuality->getKey()}.view"],
             denyResponse: 'You do not have permission to view this resource hub quality.'
         );
     }
@@ -90,7 +90,7 @@ class ResourceHubQualityPolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, ResourceHubQuality $resourceHubQuality): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$resourceHubQuality->id}.update"],
+            abilities: ["product_admin.{$resourceHubQuality->getKey()}.update"],
             denyResponse: 'You do not have permission to update this resource hub quality.'
         );
     }
@@ -98,7 +98,7 @@ class ResourceHubQualityPolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, ResourceHubQuality $resourceHubQuality): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$resourceHubQuality->id}.delete"],
+            abilities: ["product_admin.{$resourceHubQuality->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this resource hub quality.'
         );
     }
@@ -106,7 +106,7 @@ class ResourceHubQualityPolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, ResourceHubQuality $resourceHubQuality): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$resourceHubQuality->id}.restore"],
+            abilities: ["product_admin.{$resourceHubQuality->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this resource hub quality.'
         );
     }
@@ -114,7 +114,7 @@ class ResourceHubQualityPolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, ResourceHubQuality $resourceHubQuality): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$resourceHubQuality->id}.force-delete"],
+            abilities: ["product_admin.{$resourceHubQuality->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this resource hub quality.'
         );
     }

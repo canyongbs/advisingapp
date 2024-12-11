@@ -74,7 +74,7 @@ class CaseFormPolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, CaseForm $caseForm): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseForm->id}.view"],
+            abilities: ["product_admin.{$caseForm->getKey()}.view"],
             denyResponse: 'You do not have permission to view this case form.'
         );
     }
@@ -90,7 +90,7 @@ class CaseFormPolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, CaseForm $caseForm): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseForm->id}.update"],
+            abilities: ["product_admin.{$caseForm->getKey()}.update"],
             denyResponse: 'You do not have permission to update this case form.'
         );
     }
@@ -98,7 +98,7 @@ class CaseFormPolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, CaseForm $caseForm): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseForm->id}.delete"],
+            abilities: ["product_admin.{$caseForm->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this case form.'
         );
     }
@@ -106,7 +106,7 @@ class CaseFormPolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, CaseForm $caseForm): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseForm->id}.restore"],
+            abilities: ["product_admin.{$caseForm->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this case form.'
         );
     }
@@ -114,7 +114,7 @@ class CaseFormPolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, CaseForm $caseForm): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseForm->id}.force-delete"],
+            abilities: ["product_admin.{$caseForm->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this case form.'
         );
     }

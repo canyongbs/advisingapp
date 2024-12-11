@@ -53,7 +53,7 @@ class SmsTemplatePolicy
     public function view(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$smsTemplate->id}.view"],
+            abilities: ["product_admin.{$smsTemplate->getKey()}.view"],
             denyResponse: 'You do not have permission to view this sms template.'
         );
     }
@@ -69,7 +69,7 @@ class SmsTemplatePolicy
     public function update(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$smsTemplate->id}.update"],
+            abilities: ["product_admin.{$smsTemplate->getKey()}.update"],
             denyResponse: 'You do not have permission to update this sms template.'
         );
     }
@@ -77,7 +77,7 @@ class SmsTemplatePolicy
     public function delete(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$smsTemplate->id}.delete"],
+            abilities: ["product_admin.{$smsTemplate->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this sms template.'
         );
     }
@@ -85,7 +85,7 @@ class SmsTemplatePolicy
     public function restore(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$smsTemplate->id}.restore"],
+            abilities: ["product_admin.{$smsTemplate->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this sms template.'
         );
     }
@@ -93,7 +93,7 @@ class SmsTemplatePolicy
     public function forceDelete(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$smsTemplate->id}.force-delete"],
+            abilities: ["product_admin.{$smsTemplate->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this sms template.'
         );
     }

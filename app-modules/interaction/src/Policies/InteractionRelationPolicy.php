@@ -64,7 +64,7 @@ class InteractionRelationPolicy
     public function view(Authenticatable $authenticatable, InteractionRelation $relation): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$relation->id}.view"],
+            abilities: ["product_admin.{$relation->getKey()}.view"],
             denyResponse: 'You do not have permission to view this interaction relation.'
         );
     }
@@ -80,7 +80,7 @@ class InteractionRelationPolicy
     public function update(Authenticatable $authenticatable, InteractionRelation $relation): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$relation->id}.update"],
+            abilities: ["product_admin.{$relation->getKey()}.update"],
             denyResponse: 'You do not have permission to update this interaction relation.'
         );
     }
@@ -88,7 +88,7 @@ class InteractionRelationPolicy
     public function delete(Authenticatable $authenticatable, InteractionRelation $relation): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$relation->id}.delete"],
+            abilities: ["product_admin.{$relation->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this interaction relation.'
         );
     }
@@ -96,7 +96,7 @@ class InteractionRelationPolicy
     public function restore(Authenticatable $authenticatable, InteractionRelation $relation): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$relation->id}.restore"],
+            abilities: ["product_admin.{$relation->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this interaction relation.'
         );
     }
@@ -104,7 +104,7 @@ class InteractionRelationPolicy
     public function forceDelete(Authenticatable $authenticatable, InteractionRelation $relation): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$relation->id}.force-delete"],
+            abilities: ["product_admin.{$relation->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction relation.'
         );
     }

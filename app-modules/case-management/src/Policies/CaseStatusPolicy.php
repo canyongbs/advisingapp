@@ -73,7 +73,7 @@ class CaseStatusPolicy
     public function view(Authenticatable $authenticatable, CaseStatus $caseStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseStatus->id}.view"],
+            abilities: ["product_admin.{$caseStatus->getKey()}.view"],
             denyResponse: 'You do not have permissions to view this case status.'
         );
     }
@@ -89,7 +89,7 @@ class CaseStatusPolicy
     public function update(Authenticatable $authenticatable, CaseStatus $caseStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseStatus->id}.update"],
+            abilities: ["product_admin.{$caseStatus->getKey()}.update"],
             denyResponse: 'You do not have permissions to update this case status.'
         );
     }
@@ -97,7 +97,7 @@ class CaseStatusPolicy
     public function delete(Authenticatable $authenticatable, CaseStatus $caseStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseStatus->id}.delete"],
+            abilities: ["product_admin.{$caseStatus->getKey()}.delete"],
             denyResponse: 'You do not have permissions to delete this case status.'
         );
     }
@@ -105,7 +105,7 @@ class CaseStatusPolicy
     public function restore(Authenticatable $authenticatable, CaseStatus $caseStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseStatus->id}.restore"],
+            abilities: ["product_admin.{$caseStatus->getKey()}.restore"],
             denyResponse: 'You do not have permissions to restore this case status.'
         );
     }
@@ -117,7 +117,7 @@ class CaseStatusPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseStatus->id}.force-delete"],
+            abilities: ["product_admin.{$caseStatus->getKey()}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this case status.'
         );
     }

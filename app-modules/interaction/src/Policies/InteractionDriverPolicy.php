@@ -64,7 +64,7 @@ class InteractionDriverPolicy
     public function view(Authenticatable $authenticatable, InteractionDriver $driver): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$driver->id}.view"],
+            abilities: ["product_admin.{$driver->getKey()}.view"],
             denyResponse: 'You do not have permission to view this interaction driver.'
         );
     }
@@ -80,7 +80,7 @@ class InteractionDriverPolicy
     public function update(Authenticatable $authenticatable, InteractionDriver $driver): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$driver->id}.update"],
+            abilities: ["product_admin.{$driver->getKey()}.update"],
             denyResponse: 'You do not have permission to update this interaction driver.'
         );
     }
@@ -88,7 +88,7 @@ class InteractionDriverPolicy
     public function delete(Authenticatable $authenticatable, InteractionDriver $driver): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$driver->id}.delete"],
+            abilities: ["product_admin.{$driver->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this interaction driver.'
         );
     }
@@ -96,7 +96,7 @@ class InteractionDriverPolicy
     public function restore(Authenticatable $authenticatable, InteractionDriver $driver): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$driver->id}.restore"],
+            abilities: ["product_admin.{$driver->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this interaction driver.'
         );
     }
@@ -104,7 +104,7 @@ class InteractionDriverPolicy
     public function forceDelete(Authenticatable $authenticatable, InteractionDriver $driver): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$driver->id}.force-delete"],
+            abilities: ["product_admin.{$driver->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction driver.'
         );
     }

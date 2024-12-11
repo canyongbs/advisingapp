@@ -63,7 +63,7 @@ class ConsentAgreementPolicy
     public function view(Authenticatable $authenticatable, ConsentAgreement $agreement): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$agreement->id}.view"],
+            abilities: ["product_admin.{$agreement->getKey()}.view"],
             denyResponse: 'You do not have permission to view this consent agreement.'
         );
     }
@@ -76,7 +76,7 @@ class ConsentAgreementPolicy
     public function update(Authenticatable $authenticatable, ConsentAgreement $agreement): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$agreement->id}.update"],
+            abilities: ["product_admin.{$agreement->getKey()}.update"],
             denyResponse: 'You do not have permission to update this consent agreement.'
         );
     }

@@ -69,7 +69,7 @@ test('EditTask is gated with proper access control', function () {
         ->assertForbidden();
 
     $user->givePermissionTo('task.view-any');
-    $user->givePermissionTo("task.{$task->id}.update");
+    $user->givePermissionTo("task.{$task->getKey()}.update");
 
     actingAs($user)
         ->get(

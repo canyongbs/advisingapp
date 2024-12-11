@@ -64,7 +64,7 @@ class InteractionInitiativePolicy
     public function view(Authenticatable $authenticatable, InteractionInitiative $initiative): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$initiative->id}.view"],
+            abilities: ["product_admin.{$initiative->getKey()}.view"],
             denyResponse: 'You do not have permission to view this interaction initiative.'
         );
     }
@@ -80,7 +80,7 @@ class InteractionInitiativePolicy
     public function update(Authenticatable $authenticatable, InteractionInitiative $initiative): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$initiative->id}.update"],
+            abilities: ["product_admin.{$initiative->getKey()}.update"],
             denyResponse: 'You do not have permission to update this interaction initiative.'
         );
     }
@@ -88,7 +88,7 @@ class InteractionInitiativePolicy
     public function delete(Authenticatable $authenticatable, InteractionInitiative $initiative): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$initiative->id}.delete"],
+            abilities: ["product_admin.{$initiative->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this interaction initiative.'
         );
     }
@@ -96,7 +96,7 @@ class InteractionInitiativePolicy
     public function restore(Authenticatable $authenticatable, InteractionInitiative $initiative): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$initiative->id}.restore"],
+            abilities: ["product_admin.{$initiative->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this interaction initiative.'
         );
     }
@@ -104,7 +104,7 @@ class InteractionInitiativePolicy
     public function forceDelete(Authenticatable $authenticatable, InteractionInitiative $initiative): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$initiative->id}.force-delete"],
+            abilities: ["product_admin.{$initiative->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction initiative.'
         );
     }

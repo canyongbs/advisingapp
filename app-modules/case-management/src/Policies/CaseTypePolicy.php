@@ -73,7 +73,7 @@ class CaseTypePolicy
     public function view(Authenticatable $authenticatable, CaseType $caseType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseType->id}.view"],
+            abilities: ["product_admin.{$caseType->getKey()}.view"],
             denyResponse: 'You do not have permissions to view this case type.'
         );
     }
@@ -89,7 +89,7 @@ class CaseTypePolicy
     public function update(Authenticatable $authenticatable, CaseType $caseType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseType->id}.update"],
+            abilities: ["product_admin.{$caseType->getKey()}.update"],
             denyResponse: 'You do not have permissions to update this case type.'
         );
     }
@@ -97,7 +97,7 @@ class CaseTypePolicy
     public function delete(Authenticatable $authenticatable, CaseType $caseType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseType->id}.delete"],
+            abilities: ["product_admin.{$caseType->getKey()}.delete"],
             denyResponse: 'You do not have permissions to delete this case type.'
         );
     }
@@ -105,7 +105,7 @@ class CaseTypePolicy
     public function restore(Authenticatable $authenticatable, CaseType $caseType): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseType->id}.restore"],
+            abilities: ["product_admin.{$caseType->getKey()}.restore"],
             denyResponse: 'You do not have permissions to restore this case type.'
         );
     }
@@ -117,7 +117,7 @@ class CaseTypePolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseType->id}.force-delete"],
+            abilities: ["product_admin.{$caseType->getKey()}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this case type.'
         );
     }

@@ -64,7 +64,7 @@ class InteractionStatusPolicy
     public function view(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$status->id}.view"],
+            abilities: ["product_admin.{$status->getKey()}.view"],
             denyResponse: 'You do not have permission to view this interaction status.'
         );
     }
@@ -80,7 +80,7 @@ class InteractionStatusPolicy
     public function update(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$status->id}.update"],
+            abilities: ["product_admin.{$status->getKey()}.update"],
             denyResponse: 'You do not have permission to update this interaction status.'
         );
     }
@@ -88,7 +88,7 @@ class InteractionStatusPolicy
     public function delete(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$status->id}.delete"],
+            abilities: ["product_admin.{$status->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this interaction status.'
         );
     }
@@ -96,7 +96,7 @@ class InteractionStatusPolicy
     public function restore(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$status->id}.restore"],
+            abilities: ["product_admin.{$status->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this interaction status.'
         );
     }
@@ -104,7 +104,7 @@ class InteractionStatusPolicy
     public function forceDelete(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$status->id}.force-delete"],
+            abilities: ["product_admin.{$status->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction status.'
         );
     }

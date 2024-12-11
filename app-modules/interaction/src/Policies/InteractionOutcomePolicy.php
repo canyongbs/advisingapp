@@ -64,7 +64,7 @@ class InteractionOutcomePolicy
     public function view(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$outcome->id}.view"],
+            abilities: ["product_admin.{$outcome->getKey()}.view"],
             denyResponse: 'You do not have permission to view this interaction outcome.'
         );
     }
@@ -80,7 +80,7 @@ class InteractionOutcomePolicy
     public function update(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$outcome->id}.update"],
+            abilities: ["product_admin.{$outcome->getKey()}.update"],
             denyResponse: 'You do not have permission to update this interaction outcome.'
         );
     }
@@ -88,7 +88,7 @@ class InteractionOutcomePolicy
     public function delete(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$outcome->id}.delete"],
+            abilities: ["product_admin.{$outcome->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this interaction outcome.'
         );
     }
@@ -96,7 +96,7 @@ class InteractionOutcomePolicy
     public function restore(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$outcome->id}.restore"],
+            abilities: ["product_admin.{$outcome->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this interaction outcome.'
         );
     }
@@ -104,7 +104,7 @@ class InteractionOutcomePolicy
     public function forceDelete(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$outcome->id}.force-delete"],
+            abilities: ["product_admin.{$outcome->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction outcome.'
         );
     }

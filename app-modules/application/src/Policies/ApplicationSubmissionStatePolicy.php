@@ -71,7 +71,7 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
     public function view(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$model->id}.view"],
+            abilities: ["product_admin.{$model->getKey()}.view"],
             denyResponse: 'You do not have permission to view this state.'
         );
     }
@@ -87,7 +87,7 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
     public function update(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$model->id}.update"],
+            abilities: ["product_admin.{$model->getKey()}.update"],
             denyResponse: 'You do not have permission to update this state.'
         );
     }
@@ -95,7 +95,7 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
     public function delete(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$model->id}.delete"],
+            abilities: ["product_admin.{$model->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this state.'
         );
     }
@@ -103,7 +103,7 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
     public function restore(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$model->id}.restore"],
+            abilities: ["product_admin.{$model->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this state.'
         );
     }
@@ -111,7 +111,7 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
     public function forceDelete(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$model->id}.force-delete"],
+            abilities: ["product_admin.{$model->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this state.'
         );
     }
