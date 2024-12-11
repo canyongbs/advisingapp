@@ -51,6 +51,11 @@ return new class () extends SettingsMigration {
                     unset($data['addons']['knowledgeManagement']);
                 }
 
+                if (array_key_exists('knowledge_management', $data['addons'] ?? [])) {
+                    $data['addons']['resource_hub'] = $data['addons']['knowledge_management'];
+                    unset($data['addons']['knowledge_management']);
+                }
+
                 return $data;
             },
             isEncrypted: true,
@@ -66,6 +71,11 @@ return new class () extends SettingsMigration {
                 if (array_key_exists('resourceHub', $data['addons'] ?? [])) {
                     $data['addons']['knowledgeManagement'] = $data['addons']['resourceHub'];
                     unset($data['addons']['resourceHub']);
+                }
+
+                if (array_key_exists('resource_hub', $data['addons'] ?? [])) {
+                    $data['addons']['knowledge_management'] = $data['addons']['resource_hub'];
+                    unset($data['addons']['resource_hub']);
                 }
 
                 return $data;
