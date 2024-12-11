@@ -145,7 +145,7 @@ abstract class TestCase extends BaseTestCase
                         onlineForms: true,
                         onlineSurveys: true,
                         onlineAdmissions: true,
-                        serviceManagement: true,
+                        caseManagement: true,
                         resourceHub: true,
                         eventManagement: true,
                         realtimeChat: true,
@@ -260,7 +260,7 @@ abstract class TestCase extends BaseTestCase
                     onlineForms: true,
                     onlineSurveys: true,
                     onlineAdmissions: true,
-                    serviceManagement: true,
+                    caseManagement: true,
                     resourceHub: true,
                     eventManagement: true,
                     realtimeChat: true,
@@ -323,7 +323,7 @@ abstract class TestCase extends BaseTestCase
 
     protected function getCachedMigrationChecksum(string $connection): ?string
     {
-        return rescue(fn () => file_get_contents($this->getMigrationChecksumFile($connection)), null, false);
+        return rescue(fn() => file_get_contents($this->getMigrationChecksumFile($connection)), null, false);
     }
 
     protected function getMigrationChecksumFile(string $connection): string

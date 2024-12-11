@@ -104,7 +104,7 @@ test('ViewCase is gated with proper access control', function () {
 test('ViewCase is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->serviceManagement = false;
+    $settings->data->addons->caseManagement = false;
 
     $settings->save();
 
@@ -122,7 +122,7 @@ test('ViewCase is gated with proper feature access control', function () {
             ])
         )->assertForbidden();
 
-    $settings->data->addons->serviceManagement = true;
+    $settings->data->addons->caseManagement = true;
 
     $settings->save();
 

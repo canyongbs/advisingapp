@@ -71,7 +71,7 @@ test('The correct details are displayed on the ListCases page', function () {
         ->assertCountTableRecords(10);
 
     $cases->each(
-        fn (CaseModel $case) => $component
+        fn(CaseModel $case) => $component
             ->assertTableColumnStateSet(
                 'case_number',
                 $case->case_number,
@@ -128,7 +128,7 @@ test('ListCases is gated with proper access control', function () {
 test('ListCases is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->serviceManagement = false;
+    $settings->data->addons->caseManagement = false;
 
     $settings->save();
 
@@ -141,7 +141,7 @@ test('ListCases is gated with proper feature access control', function () {
             CaseResource::getUrl()
         )->assertForbidden();
 
-    $settings->data->addons->serviceManagement = true;
+    $settings->data->addons->caseManagement = true;
 
     $settings->save();
 
