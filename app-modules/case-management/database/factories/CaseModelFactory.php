@@ -62,6 +62,7 @@ class CaseModelFactory extends Factory
             'status_id' => CaseStatus::inRandomOrder()->first() ?? CaseStatus::factory(),
             'priority_id' => CasePriority::inRandomOrder()->first() ?? CasePriority::factory(),
             'created_by_id' => User::factory(),
+            'case_number' => fake()->randomNumber(8),
         ];
     }
 }
