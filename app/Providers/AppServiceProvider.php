@@ -155,12 +155,10 @@ class AppServiceProvider extends ServiceProvider
 
         Feature::discover();
 
-        if (! app()->runningUnitTests()) {
-            Table::configureUsing(function (Table $table): void {
-                $table
-                    ->paginationPageOptions([5, 10, 20, 'all'])
-                    ->defaultPaginationPageOption(5);
-            });
-        }
+        Table::configureUsing(function (Table $table): void {
+            $table
+                ->paginationPageOptions([5, 10, 20, 'all'])
+                ->defaultPaginationPageOption(5);
+        });
     }
 }

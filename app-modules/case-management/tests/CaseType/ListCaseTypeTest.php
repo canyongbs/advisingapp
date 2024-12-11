@@ -58,7 +58,8 @@ test('The correct details are displayed on the ListCaseType page', function () {
 
     asSuperAdmin();
 
-    $component = livewire(ListCaseTypes::class);
+    $component = livewire(ListCaseTypes::class)
+        ->set('tableRecordsPerPage', 10);
 
     $component
         ->assertSuccessful()
