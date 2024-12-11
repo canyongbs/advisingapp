@@ -41,8 +41,6 @@ use AdvisingApp\Task\TaskPlugin;
 use AdvisingApp\Task\Models\Task;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Task\Histories\TaskHistory;
-use AdvisingApp\Task\Observers\TaskObserver;
-use AdvisingApp\Task\Observers\TaskHistoryObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class TaskServiceProvider extends ServiceProvider
@@ -58,13 +56,5 @@ class TaskServiceProvider extends ServiceProvider
             'task' => Task::class,
             'task_history' => TaskHistory::class,
         ]);
-
-        $this->registerObservers();
-    }
-
-    protected function registerObservers(): void
-    {
-        Task::observe(TaskObserver::class);
-        TaskHistory::observe(TaskHistoryObserver::class);
     }
 }

@@ -39,9 +39,7 @@ namespace AdvisingApp\Team\Providers;
 use Filament\Panel;
 use AdvisingApp\Team\TeamPlugin;
 use AdvisingApp\Team\Models\Team;
-use AdvisingApp\Team\Models\TeamUser;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Team\Observers\TeamUserObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class TeamServiceProvider extends ServiceProvider
@@ -56,12 +54,5 @@ class TeamServiceProvider extends ServiceProvider
         Relation::morphMap([
             'team' => Team::class,
         ]);
-
-        $this->registerObservers();
-    }
-
-    protected function registerObservers(): void
-    {
-        TeamUser::observe(TeamUserObserver::class);
     }
 }

@@ -44,7 +44,6 @@ use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Consent\Models\UserConsentAgreement;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Consent\Observers\ConsentAgreementObserver;
 
 class ConsentServiceProvider extends ServiceProvider
 {
@@ -62,14 +61,7 @@ class ConsentServiceProvider extends ServiceProvider
             'user_consent_agreement' => UserConsentAgreement::class,
         ]);
 
-        $this->registerObservers();
-
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
         $this->registerEnum(ConsentAgreementType::class);
-    }
-
-    public function registerObservers(): void
-    {
-        ConsentAgreement::observe(ConsentAgreementObserver::class);
     }
 }

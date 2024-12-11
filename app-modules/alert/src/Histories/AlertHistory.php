@@ -41,10 +41,13 @@ use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Timeline\Models\History;
 use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Alert\Enums\AlertSeverity;
+use AdvisingApp\Alert\Observers\AlertHistoryObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Timeline\Timelines\AlertHistoryTimeline;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 
+#[ObservedBy([AlertHistoryObserver::class])]
 class AlertHistory extends History implements ProvidesATimeline
 {
     public function timeline(): AlertHistoryTimeline

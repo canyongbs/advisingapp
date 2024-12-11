@@ -41,13 +41,16 @@ use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
+use AdvisingApp\Prospect\Observers\ProspectStatusObserver;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * @mixin IdeHelperProspectStatus
  */
+#[ObservedBy([ProspectStatusObserver::class])]
 class ProspectStatus extends BaseModel implements Auditable
 {
     use SoftDeletes;

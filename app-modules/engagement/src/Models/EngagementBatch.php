@@ -45,7 +45,9 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
+use AdvisingApp\Engagement\Observers\EngagementBatchObserver;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
@@ -53,6 +55,7 @@ use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
 /**
  * @mixin IdeHelperEngagementBatch
  */
+#[ObservedBy([EngagementBatchObserver::class])]
 class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction, HasMedia
 {
     use HasManyEngagements;

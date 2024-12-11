@@ -43,11 +43,9 @@ use Illuminate\Support\Facades\Event;
 use AdvisingApp\Form\Models\FormField;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Form\Observers\FormObserver;
 use AdvisingApp\Form\Models\FormEmailAutoReply;
 use AdvisingApp\Form\Events\FormSubmissionCreated;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Form\Observers\FormSubmissionObserver;
 use AdvisingApp\Form\Listeners\ClearFormFormSubmissionCountCache;
 use AdvisingApp\Form\Listeners\NotifySubscribersOfFormSubmission;
 use AdvisingApp\Form\Listeners\ClearAuthorFormSubmissionCountCache;
@@ -68,15 +66,7 @@ class FormServiceProvider extends ServiceProvider
             'form_submission' => FormSubmission::class,
             'form_email_auto_reply' => FormEmailAutoReply::class,
         ]);
-
-        $this->registerObservers();
         $this->registerEvents();
-    }
-
-    public function registerObservers(): void
-    {
-        FormSubmission::observe(FormSubmissionObserver::class);
-        Form::observe(FormObserver::class);
     }
 
     public function registerEvents(): void
