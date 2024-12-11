@@ -47,7 +47,6 @@ use SocialiteProviders\Azure\AzureExtendSocialite;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use SocialiteProviders\Google\GoogleExtendSocialite;
-use AdvisingApp\Authorization\Observers\LicenseObserver;
 use AdvisingApp\Authorization\Http\Controllers\Auth\LogoutController;
 use Filament\Http\Controllers\Auth\LogoutController as FilamentLogoutController;
 
@@ -72,8 +71,6 @@ class AuthorizationServiceProvider extends ServiceProvider
             'license' => License::class,
         ]);
 
-        $this->registerObservers();
-
         Event::listen(
             events: SocialiteWasCalled::class,
             listener: AzureExtendSocialite::class . '@handle'
@@ -83,10 +80,5 @@ class AuthorizationServiceProvider extends ServiceProvider
             events: SocialiteWasCalled::class,
             listener: GoogleExtendSocialite::class . '@handle'
         );
-    }
-
-    public function registerObservers(): void
-    {
-        License::observe(LicenseObserver::class);
     }
 }

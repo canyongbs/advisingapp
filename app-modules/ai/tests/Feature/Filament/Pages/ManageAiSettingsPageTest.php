@@ -69,7 +69,7 @@ it('does not load if you do not have any permissions to access', function () {
 it('loads if you have the correct access to ai settings', function () {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $user->givePermissionTo(['assistant.access_ai_settings']);
+    $user->givePermissionTo(['product_admin.view-any']);
 
     actingAs($user);
 

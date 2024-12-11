@@ -49,8 +49,8 @@ test('CreateInteractionInitiative is gated with proper access control', function
             InteractionInitiativeResource::getUrl('create')
         )->assertForbidden();
 
-    $user->givePermissionTo('interaction_initiative.view-any');
-    $user->givePermissionTo('interaction_initiative.create');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.create');
 
     actingAs($user)
         ->get(

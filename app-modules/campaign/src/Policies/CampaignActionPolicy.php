@@ -53,7 +53,7 @@ class CampaignActionPolicy
     public function view(Authenticatable $authenticatable, CampaignAction $campaignAction): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["campaign_action.{$campaignAction->id}.view"],
+            abilities: ["campaign_action.{$campaignAction->getKey()}.view"],
             denyResponse: 'You do not have permission to view this campaign action.'
         );
     }
@@ -69,7 +69,7 @@ class CampaignActionPolicy
     public function update(Authenticatable $authenticatable, CampaignAction $campaignAction): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["campaign_action.{$campaignAction->id}.update"],
+            abilities: ["campaign_action.{$campaignAction->getKey()}.update"],
             denyResponse: 'You do not have permission to update this campaign action.'
         );
     }
@@ -77,7 +77,7 @@ class CampaignActionPolicy
     public function delete(Authenticatable $authenticatable, CampaignAction $campaignAction): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["campaign_action.{$campaignAction->id}.delete"],
+            abilities: ["campaign_action.{$campaignAction->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this campaign action.'
         );
     }
@@ -85,7 +85,7 @@ class CampaignActionPolicy
     public function restore(Authenticatable $authenticatable, CampaignAction $campaignAction): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["campaign_action.{$campaignAction->id}.restore"],
+            abilities: ["campaign_action.{$campaignAction->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this campaign action.'
         );
     }
@@ -93,7 +93,7 @@ class CampaignActionPolicy
     public function forceDelete(Authenticatable $authenticatable, CampaignAction $campaignAction): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["campaign_action.{$campaignAction->id}.force-delete"],
+            abilities: ["campaign_action.{$campaignAction->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this campaign action.'
         );
     }

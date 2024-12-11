@@ -37,6 +37,7 @@
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -44,6 +45,7 @@ use Illuminate\Validation\Rules\Unique;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
+use AdvisingApp\Authorization\Filament\Forms\Components\PermissionsMatrix;
 
 class CreateRole extends CreateRecord
 {
@@ -68,10 +70,18 @@ class CreateRole extends CreateRecord
                     ->options([
                         'web' => 'Web',
                         'api' => 'API',
-                    ]),
+                    ])
+                    ->default('web')
+                    ->live()
+                    ->afterStateUpdated(fn (Set $set) => $set('permissions', [])),
                 Textarea::make('description')
                     ->nullable()
-                    ->maxLength(65535),
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
+                PermissionsMatrix::make('permissions')
+                    ->columnSpanFull()
+                    ->guard(fn (Get $get): string => $get('guard_name'))
+                    ->visible(fn (Get $get): bool => filled($get('guard_name'))),
             ]);
     }
 }

@@ -40,7 +40,6 @@ use Filament\Panel;
 use AdvisingApp\Report\ReportPlugin;
 use AdvisingApp\Report\Models\Report;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Report\Observers\ReportObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class ReportServiceProvider extends ServiceProvider
@@ -55,12 +54,5 @@ class ReportServiceProvider extends ServiceProvider
         Relation::morphMap([
             'report' => Report::class,
         ]);
-
-        $this->registerObservers();
-    }
-
-    protected function registerObservers(): void
-    {
-        Report::observe(ReportObserver::class);
     }
 }

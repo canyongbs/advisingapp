@@ -41,11 +41,14 @@ use App\Models\BaseModel;
 use App\Models\Authenticatable;
 use AdvisingApp\Report\Enums\ReportModel;
 use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Report\Observers\ReportObserver;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 
 /**
  * @mixin IdeHelperReport
  */
+#[ObservedBy([ReportObserver::class])]
 class Report extends BaseModel
 {
     protected $fillable = [

@@ -75,7 +75,7 @@ class ReportPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["report.{$report->id}.view"],
+            abilities: ["report.{$report->getKey()}.view"],
             denyResponse: 'You do not have permission to view this report.'
         );
     }
@@ -95,7 +95,7 @@ class ReportPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["report.{$report->id}.update"],
+            abilities: ["report.{$report->getKey()}.update"],
             denyResponse: 'You do not have permission to update this report.'
         );
     }
@@ -107,7 +107,7 @@ class ReportPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["report.{$report->id}.delete"],
+            abilities: ["report.{$report->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this report.'
         );
     }
@@ -119,7 +119,7 @@ class ReportPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["report.{$report->id}.restore"],
+            abilities: ["report.{$report->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this report.'
         );
     }
@@ -131,7 +131,7 @@ class ReportPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["report.{$report->id}.force-delete"],
+            abilities: ["report.{$report->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this report.'
         );
     }

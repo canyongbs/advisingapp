@@ -66,7 +66,7 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'resource_hub_status.view-any',
+            abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view any resource hub statuses.'
         );
     }
@@ -74,7 +74,7 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, ResourceHubStatus $resourceHubStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["resource_hub_status.{$resourceHubStatus->id}.view"],
+            abilities: ["product_admin.{$resourceHubStatus->getKey()}.view"],
             denyResponse: 'You do not have permission to view this resource hub status.'
         );
     }
@@ -82,7 +82,7 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'resource_hub_status.create',
+            abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create resource hub statuses.'
         );
     }
@@ -90,7 +90,7 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, ResourceHubStatus $resourceHubStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["resource_hub_status.{$resourceHubStatus->id}.update"],
+            abilities: ["product_admin.{$resourceHubStatus->getKey()}.update"],
             denyResponse: 'You do not have permission to update this resource hub status.'
         );
     }
@@ -98,7 +98,7 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, ResourceHubStatus $resourceHubStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["resource_hub_status.{$resourceHubStatus->id}.delete"],
+            abilities: ["product_admin.{$resourceHubStatus->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this resource hub status.'
         );
     }
@@ -106,7 +106,7 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, ResourceHubStatus $resourceHubStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["resource_hub_status.{$resourceHubStatus->id}.restore"],
+            abilities: ["product_admin.{$resourceHubStatus->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this resource hub status.'
         );
     }
@@ -114,7 +114,7 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, ResourceHubStatus $resourceHubStatus): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["resource_hub_status.{$resourceHubStatus->id}.force-delete"],
+            abilities: ["product_admin.{$resourceHubStatus->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this resource hub status.'
         );
     }

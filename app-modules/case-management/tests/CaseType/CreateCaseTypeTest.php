@@ -103,8 +103,8 @@ test('CreateCaseType is gated with proper access control', function () {
     livewire(CreateCaseType::class)
         ->assertForbidden();
 
-    $user->givePermissionTo('case_type.view-any');
-    $user->givePermissionTo('case_type.create');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.create');
 
     actingAs($user)
         ->get(
@@ -132,8 +132,8 @@ test('CreateCaseType is gated with proper feature access control', function () {
 
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
-    $user->givePermissionTo('case_type.view-any');
-    $user->givePermissionTo('case_type.create');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.create');
 
     actingAs($user)
         ->get(

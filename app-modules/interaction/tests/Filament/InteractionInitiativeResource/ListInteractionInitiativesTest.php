@@ -49,7 +49,7 @@ test('ListInteractionInitiatives is gated with proper access control', function 
             InteractionInitiativeResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('interaction_initiative.view-any');
+    $user->givePermissionTo('product_admin.view-any');
 
     actingAs($user)
         ->get(

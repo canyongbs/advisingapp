@@ -68,7 +68,7 @@ class ManageStudentResource extends Resource
         $user = auth()->user();
 
         return app(ManageStudentConfigurationSettings::class)->is_enabled
-            && $user->can('student_record_manager.view-any');
+            && $user->can('product_admin.view-any');
     }
 
     public static function form(Form $form): Form

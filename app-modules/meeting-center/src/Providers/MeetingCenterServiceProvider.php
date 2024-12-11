@@ -50,7 +50,6 @@ use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
-use AdvisingApp\MeetingCenter\Observers\CalendarEventObserver;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
@@ -97,13 +96,6 @@ class MeetingCenterServiceProvider extends ServiceProvider
                 ->withoutOverlapping();
         });
 
-        $this->registerObservers();
-
         Livewire::component('event-attendee-submissions-manager', EventAttendeeSubmissionsManager::class);
-    }
-
-    protected function registerObservers(): void
-    {
-        CalendarEvent::observe(CalendarEventObserver::class);
     }
 }

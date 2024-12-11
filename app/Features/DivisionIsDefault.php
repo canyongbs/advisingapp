@@ -34,17 +34,14 @@
 </COPYRIGHT>
 */
 
-use App\Features\TagFeatureFlag;
-use Illuminate\Database\Migrations\Migration;
+namespace App\Features;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        TagFeatureFlag::activate();
-    }
+use App\Support\AbstractFeatureFlag;
 
-    public function down(): void
+class DivisionIsDefault extends AbstractFeatureFlag
+{
+    public function resolve(mixed $scope): mixed
     {
-        TagFeatureFlag::deactivate();
+        return false;
     }
-};
+}

@@ -71,7 +71,7 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
             return false;
         }
 
-        return $user->can(['ai.access_integrated_assistant_settings']);
+        return $user->can(['product_admin.view-any']);
     }
 
     public function form(Form $form): Form
@@ -85,6 +85,28 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
                     ->searchable()
                     ->helperText('Used for general purposes like generating content when an assistant is not being used.')
                     ->required(),
-            ]);
+            ])
+            ->disabled(! auth()->user()->can('product_admin.*.update'));
+    }
+
+    public function save(): void
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return;
+        }
+
+        parent::save();
+    }
+
+    /**
+     * @return array<Action | ActionGroup>
+     */
+    public function getFormActions(): array
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return [];
+        }
+
+        return parent::getFormActions();
     }
 }

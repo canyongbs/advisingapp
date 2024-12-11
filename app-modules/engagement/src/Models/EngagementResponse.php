@@ -47,15 +47,18 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Timeline\Timelines\EngagementResponseTimeline;
+use AdvisingApp\Engagement\Observers\EngagementResponseObserver;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * @mixin IdeHelperEngagementResponse
  */
+#[ObservedBy([EngagementResponseObserver::class])]
 class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeline, HasDeliveryMethod
 {
     use AuditableTrait;

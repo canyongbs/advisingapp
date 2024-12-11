@@ -44,7 +44,7 @@ class EnrollmentPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if ($authenticatable->canAny(['enrollment.view-any', 'student_record_manager.view-any'])) {
+        if ($authenticatable->canAny(['enrollment.view-any', 'product_admin.view-any'])) {
             return Response::allow();
         }
 
@@ -53,7 +53,7 @@ class EnrollmentPolicy
 
     public function view(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
-        if ($authenticatable->canAny(["enrollment.{$enrollment->getKey()}.view", 'student_record_manager.*.view'])) {
+        if ($authenticatable->canAny(["enrollment.{$enrollment->getKey()}.view", 'product_admin.*.view'])) {
             return Response::allow();
         }
 
@@ -63,7 +63,7 @@ class EnrollmentPolicy
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.create',
+            abilities: 'product_admin.create',
             denyResponse: 'Enrollment cannot be created.'
         );
     }
@@ -71,7 +71,7 @@ class EnrollmentPolicy
     public function update(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.*.update',
+            abilities: 'product_admin.*.update',
             denyResponse: 'Enrollments cannot be updated.'
         );
     }
@@ -79,7 +79,7 @@ class EnrollmentPolicy
     public function delete(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.*.delete',
+            abilities: 'product_admin.*.delete',
             denyResponse: 'Enrollments cannot be deleted.'
         );
     }
@@ -87,7 +87,7 @@ class EnrollmentPolicy
     public function restore(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.*.restore',
+            abilities: 'product_admin.*.restore',
             denyResponse: 'Enrollments cannot be restored.'
         );
     }
@@ -95,7 +95,7 @@ class EnrollmentPolicy
     public function forceDelete(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.*.force-delete',
+            abilities: 'product_admin.*.force-delete',
             denyResponse: 'Enrollments cannot be force deleted.'
         );
     }
@@ -103,7 +103,7 @@ class EnrollmentPolicy
     public function import(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'student_record_manager.create',
+            abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to import enrollments.',
         );
     }

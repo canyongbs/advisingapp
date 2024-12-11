@@ -65,7 +65,7 @@ class ManageCollegeBrandingSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('college_branding.manage_college_brand_settings');
+        return $user->can(['product_admin.view-any']);
     }
 
     public function form(Form $form): Form
@@ -94,11 +94,16 @@ class ManageCollegeBrandingSettings extends SettingsPage
                     ->label('Branding Bar Color')
                     ->visible(fn (Get $get) => $get('is_enabled'))
                     ->required(),
-            ]);
+            ])
+            ->disabled(! auth()->user()->can('product_admin.*.update'));
     }
 
     public function save(): void
     {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return;
+        }
+
         // Save the settings first
         parent::save();
 
@@ -114,5 +119,17 @@ class ManageCollegeBrandingSettings extends SettingsPage
     public function getRedirectUrl(): ?string
     {
         return ManageCollegeBrandingSettings::getUrl();
+    }
+
+    /**
+     * @return array<Action | ActionGroup>
+     */
+    public function getFormActions(): array
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return [];
+        }
+
+        return parent::getFormActions();
     }
 }

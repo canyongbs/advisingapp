@@ -60,7 +60,7 @@ class ManageDisplaySettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return parent::canAccess() && $user->can('display_settings.manage');
+        return $user->can(['product_admin.view-any']);
     }
 
     public function form(Form $form): Form
@@ -69,6 +69,28 @@ class ManageDisplaySettings extends SettingsPage
             ->schema([
                 TimezoneSelect::make('timezone')
                     ->helperText('Default: ' . config('app.timezone')),
-            ]);
+            ])
+            ->disabled(! auth()->user()->can('product_admin.*.update'));
+    }
+
+    public function save(): void
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return;
+        }
+
+        parent::save();
+    }
+
+    /**
+     * @return array<Action | ActionGroup>
+     */
+    public function getFormActions(): array
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return [];
+        }
+
+        return parent::getFormActions();
     }
 }

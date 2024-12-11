@@ -72,7 +72,7 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["task.{$task->id}.view"],
+            abilities: ["task.{$task->getKey()}.view"],
             denyResponse: 'You do not have permission to view this task.'
         );
     }
@@ -100,7 +100,7 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["task.{$task->id}.update"],
+            abilities: ["task.{$task->getKey()}.update"],
             denyResponse: 'You do not have permission to update this task.'
         );
     }
@@ -112,7 +112,7 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["task.{$task->id}.delete"],
+            abilities: ["task.{$task->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this task.'
         );
     }
@@ -124,7 +124,7 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["task.{$task->id}.restore"],
+            abilities: ["task.{$task->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this task.'
         );
     }
@@ -136,7 +136,7 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["task.{$task->id}.force-delete"],
+            abilities: ["task.{$task->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this task.'
         );
     }

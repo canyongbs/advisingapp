@@ -53,17 +53,11 @@ use AdvisingApp\CaseManagement\Models\CaseFormField;
 use AdvisingApp\CaseManagement\Models\ChangeRequest;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
-use AdvisingApp\CaseManagement\Observers\CaseObserver;
 use AdvisingApp\CaseManagement\Models\ChangeRequestType;
 use AdvisingApp\CaseManagement\Models\CaseFormSubmission;
 use AdvisingApp\CaseManagement\Models\ChangeRequestStatus;
 use AdvisingApp\CaseManagement\Models\ChangeRequestResponse;
-use AdvisingApp\CaseManagement\Observers\CaseUpdateObserver;
 use AdvisingApp\CaseManagement\Models\CaseFormAuthentication;
-use AdvisingApp\CaseManagement\Observers\CaseHistoryObserver;
-use AdvisingApp\CaseManagement\Observers\ChangeRequestObserver;
-use AdvisingApp\CaseManagement\Observers\CaseAssignmentObserver;
-use AdvisingApp\CaseManagement\Observers\CaseFormSubmissionObserver;
 use AdvisingApp\CaseManagement\Cases\CaseNumber\Contracts\CaseNumberGenerator;
 use AdvisingApp\CaseManagement\Cases\CaseNumber\SqidPlusSixCaseNumberGenerator;
 
@@ -100,19 +94,6 @@ class CaseManagementServiceProvider extends ServiceProvider
             'sla' => Sla::class,
         ]);
 
-        $this->registerObservers();
-
         $this->discoverSchema(__DIR__ . '/../../graphql/case-management.graphql');
-    }
-
-    protected function registerObservers(): void
-    {
-        ChangeRequest::observe(ChangeRequestObserver::class);
-
-        CaseModel::observe(CaseObserver::class);
-        CaseAssignment::observe(CaseAssignmentObserver::class);
-        CaseFormSubmission::observe(CaseFormSubmissionObserver::class);
-        CaseHistory::observe(CaseHistoryObserver::class);
-        CaseUpdate::observe(CaseUpdateObserver::class);
     }
 }
