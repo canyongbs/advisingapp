@@ -102,9 +102,9 @@
                 Permissions
             </div>
 
-            <div class="hidden divide-x divide-gray-950/5 text-sm dark:divide-white/10 xl:grid xl:grid-cols-7 xl:gap-0">
+            <div class="hidden divide-x divide-gray-950/5 text-xs dark:divide-white/10 xl:grid xl:grid-cols-7 xl:gap-0">
                 @foreach (['View', 'Create', 'Update', 'Delete', 'Import', 'Force Delete', 'Restore'] as $operationLabel)
-                    <div class="flex items-center justify-center px-3 py-2 text-gray-950 dark:text-white xl:w-28">
+                    <div class="flex items-center justify-center p-2 text-gray-950 dark:text-white xl:w-24">
                         {{ $operationLabel }}
                     </div>
                 @endforeach
@@ -140,7 +140,7 @@
                     class="grid grid-cols-2 gap-1 divide-gray-950/5 px-3 py-2 text-sm dark:divide-white/10 md:grid-cols-4 xl:grid-cols-7 xl:gap-0 xl:divide-x xl:px-0 xl:py-0">
                     @foreach (['view-any' => 'View', 'create' => 'Create', 'update' => 'Update', 'delete' => 'Delete', 'import' => 'Import', 'force-delete' => 'Force Delete', 'restore' => 'Restore'] as $operation => $operationLabel)
                         <label
-                            class="flex items-center gap-2 xl:flex xl:w-28 xl:justify-center xl:px-3 xl:py-2"
+                            class="flex items-center gap-2 xl:flex xl:w-24 xl:justify-center xl:px-3 xl:py-2"
                             @if ($operation !== 'view-any') x-bind:class="{
                                     'opacity-50': ! state.includes(availablePermissions[group]['view-any']),
                                     'hidden': ! Object.keys(availablePermissions[group]).includes(@js($operation)),
