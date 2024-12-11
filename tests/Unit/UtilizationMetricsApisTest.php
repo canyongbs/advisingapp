@@ -373,8 +373,6 @@ it('checks the API returns Forms Created', function () {
 });
 
 it('checks the API returns Forms Submitted', function () {
-    FormSubmission::truncate();
-
     withoutMiddleware(CheckOlympusKey::class);
 
     $randomRecords = random_int(1, 100);
