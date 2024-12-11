@@ -44,20 +44,20 @@ use AdvisingApp\Portal\Settings\PortalSettings;
 
 class ResourceHubPortalController extends Controller
 {
-    public function show(): JsonResponse
-    {
-        $settings = resolve(PortalSettings::class);
+  public function show(): JsonResponse
+  {
+    $settings = resolve(PortalSettings::class);
 
-        return response()->json([
-            'primary_color' => Color::all()[$settings->resource_hub_portal_primary_color ?? 'blue'],
-            'rounding' => $settings->resource_hub_portal_rounding,
-            'requires_authentication' => $settings->resource_hub_portal_requires_authentication,
-            'authentication_url' => URL::to(
-                URL::signedRoute(
-                    name: 'api.portal.resource-hub.request-authentication',
-                    absolute: false,
-                )
-            ),
-        ]);
-    }
+    return response()->json([
+      'primary_color' => Color::all()[$settings->resource_hub_portal_primary_color ?? 'blue'],
+      'rounding' => $settings->resource_hub_portal_rounding,
+      'requires_authentication' => $settings->resource_hub_portal_requires_authentication,
+      'authentication_url' => URL::to(
+        URL::signedRoute(
+          name: 'api.portal.resource-hub.request-authentication',
+          absolute: false,
+        )
+      ),
+    ]);
+  }
 }
