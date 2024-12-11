@@ -61,7 +61,8 @@ test('ListTasks page displays the correct details for available my tasks', funct
             ]
         );
 
-    $component = livewire(ListTasks::class);
+    $component = livewire(ListTasks::class)
+        ->set('tableRecordsPerPage', 10);
 
     $component->removeTableFilters()
         ->assertSuccessful()

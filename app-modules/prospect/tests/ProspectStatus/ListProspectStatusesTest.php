@@ -54,7 +54,8 @@ test('The correct details are displayed on the ListProspectStatuses page', funct
 
     asSuperAdmin();
 
-    $component = livewire(ListProspectStatuses::class);
+    $component = livewire(ListProspectStatuses::class)
+        ->set('tableRecordsPerPage', 10);
 
     $component
         ->assertSuccessful()
