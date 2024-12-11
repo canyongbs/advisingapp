@@ -38,6 +38,7 @@ namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
 use App\Models\User;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Filament\Actions\ExportAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Checkbox;
@@ -66,7 +67,8 @@ class ListAudits extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('auditable_type')
                     ->label('Auditable')
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(fn ($state) => Str::title($state)),
                 TextColumn::make('change_agent_name')
                     ->label('Change Agent (User)')
                     ->sortable()
