@@ -46,6 +46,11 @@ return new class () extends SettingsMigration {
             group: 'license',
             name: 'data',
             modifyPayload: function (array $data) {
+                if (array_key_exists('service_management', $data['addons'] ?? [])) {
+                    $data['addons']['case_management'] = $data['addons']['service_management'];
+                    unset($data['addons']['service_management']);
+                }
+
                 if (array_key_exists('serviceManagement', $data['addons'] ?? [])) {
                     $data['addons']['caseManagement'] = $data['addons']['serviceManagement'];
                     unset($data['addons']['serviceManagement']);
@@ -63,6 +68,11 @@ return new class () extends SettingsMigration {
             group: 'license',
             name: 'data',
             modifyPayload: function (array $data) {
+                if (array_key_exists('case_management', $data['addons'] ?? [])) {
+                    $data['addons']['service_management'] = $data['addons']['case_management'];
+                    unset($data['addons']['case_management']);
+                }
+
                 if (array_key_exists('caseManagement', $data['addons'] ?? [])) {
                     $data['addons']['serviceManagement'] = $data['addons']['caseManagement'];
                     unset($data['addons']['caseManagement']);

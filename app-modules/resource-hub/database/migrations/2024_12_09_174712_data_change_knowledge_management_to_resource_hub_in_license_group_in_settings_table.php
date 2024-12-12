@@ -46,6 +46,11 @@ return new class () extends SettingsMigration {
             group: 'license',
             name: 'data',
             modifyPayload: function (array $data) {
+                if (array_key_exists('knowledgeManagement', $data['addons'] ?? [])) {
+                    $data['addons']['resourceHub'] = $data['addons']['knowledgeManagement'];
+                    unset($data['addons']['knowledgeManagement']);
+                }
+
                 if (array_key_exists('knowledge_management', $data['addons'] ?? [])) {
                     $data['addons']['resource_hub'] = $data['addons']['knowledge_management'];
                     unset($data['addons']['knowledge_management']);
@@ -63,6 +68,11 @@ return new class () extends SettingsMigration {
             group: 'license',
             name: 'data',
             modifyPayload: function (array $data) {
+                if (array_key_exists('resourceHub', $data['addons'] ?? [])) {
+                    $data['addons']['knowledgeManagement'] = $data['addons']['resourceHub'];
+                    unset($data['addons']['resourceHub']);
+                }
+
                 if (array_key_exists('resource_hub', $data['addons'] ?? [])) {
                     $data['addons']['knowledge_management'] = $data['addons']['resource_hub'];
                     unset($data['addons']['resource_hub']);
